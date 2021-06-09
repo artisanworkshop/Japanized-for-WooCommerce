@@ -1,0 +1,9 @@
+.woo_linepay_ec_button_cart{
+  background-color: #08bf5b;
+  margin-top: 20px;
+}
+.woo_linepay_ec_button_cart a img{
+  margin: 0 auto;
+  height: 70px;
+  padding: 10px 0;
+}

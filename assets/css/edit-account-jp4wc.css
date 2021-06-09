@@ -1,0 +1,9 @@
+/* CSS Document */
+form.woocommerce-EditAccountForm p.form-row-first{
+	float: right!important;
+	margin-right: 0!important;
+}
+form.woocommerce-EditAccountForm p.form-row-last{
+	float: left!important;
+	clear: none!important;
+}

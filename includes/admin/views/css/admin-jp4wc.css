@@ -1,0 +1,96 @@
+/* CSS Document */
+#order_data .order_data_column ._billing_yomigana_last_name_field,
+#order_data .order_data_column ._shipping_yomigana_last_name_field,
+#order_data .order_data_column ._billing_state_field,
+#order_data .order_data_column ._shipping_state_field,
+#order_data .order_data_column ._billing_last_name_field,
+#order_data .order_data_column ._shipping_last_name_field{
+	float: left;
+	clear: none;
+}
+#order_data .order_data_column ._billing_yomigana_first_name_field,
+#order_data .order_data_column ._shipping_yomigana_first_name_field,
+#order_data .order_data_column ._billing_city_field,
+#order_data .order_data_column ._shipping_city_field,
+#order_data .order_data_column ._billing_first_name_field,
+#order_data .order_data_column ._shipping_first_name_field{
+	float: right;
+	clear: none;
+}
+#order_data .order_data_column ._billing_postcode_field,
+#order_data .order_data_column ._shipping_postcode_field{
+	margin-bottom: 7px;
+}
+
+.jp4wc-settings {
+    margin-right: 300px;
+}
+.jp4wc-settings form {
+    float: left;
+    min-width: 100%;
+    width: auto;
+}
+.jp4wc-sidebar {
+    float: right;
+    width: 280px;
+    margin: 20px -300px 20px 20px;
+    position: relative;
+/*    background: #fff;*/
+}
+.jp4wc-sidebar .jp4wc-credits {
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+.jp4wc-sidebar h3 {
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+}
+.metabox-holder h3.hndle {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+}
+.jp4wc-sidebar .inner {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+img.jp4wc-logo{
+    width: 140px;
+}
+p.jp4wc-link{
+	padding-bottom: 10px;
+}
+#delivery_time_zone td.sort{
+	cursor: move;
+	font-size: 15px;
+	background: #f9f9f9;
+	text-align: center;
+	vertical-align: middle;
+}
+#delivery_time_zone td.sort:before {
+    content: "\f333";
+    font-family: Dashicons;
+    text-align: center;
+    line-height: 1;
+    color: #999;
+    display: block;
+    width: 17px;
+    float: left;
+    height: 100%;
+}
+#delivery_time_zone td, #delivery_time_zone th{
+	text-align: center;
+}
+/* Larger sizes */
+@media only screen and (min-width: 959px) {
+    .jp4wc-sidebar { position: absolute; right: 0; margin: 0 35px; }
+}
+
+.form-table th {
+    padding-left: 20px;
+}
