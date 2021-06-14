@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 4.9.0
 Tested up to: 5.7.2
-Stable tag: 2.2.15
+Stable tag: 2.2.16
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,10 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.2.16 - 2021-06-14 =
+*Fixed - Support for product names that include double quotes at Paidy
+* Fixed - Last name and first name reversal at LINE PAY
 
 = 2.2.15 - 2021-05-17 =
 * Fixed - save Shipping time bug.
