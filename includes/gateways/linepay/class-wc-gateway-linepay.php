@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_LINEPay
  * @extends		WC_Payment_Gateway
- * @version		1.0.6
+ * @version		1.0.8
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -315,11 +315,11 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
             $post_data['options']['shipping']['address']['state'] = $states[$order->get_shipping_country()][$order->get_shipping_state()];
             $post_data['options']['shipping']['address']['city'] = $order->get_shipping_city();
             $post_data['options']['shipping']['address']['detail'] = $order->get_shipping_address_1().$order->get_shipping_address_2();
-            $post_data['options']['shipping']['address']['recipient']['firstName'] = $order->get_shipping_last_name();
-            $post_data['options']['shipping']['address']['recipient']['lastName'] = $order->get_shipping_first_name();
+            $post_data['options']['shipping']['address']['recipient']['firstName'] = $order->get_shipping_first_name();
+            $post_data['options']['shipping']['address']['recipient']['lastName'] = $order->get_shipping_last_name();
             if(get_option( 'wc4jp-yomigana')){
-                $post_data['options']['shipping']['address']['recipient']['firstNameOptional'] = get_post_meta( $order_id, '_shipping_yomigana_last_name', true );
-                $post_data['options']['shipping']['address']['recipient']['lastNameOptional'] = get_post_meta( $order_id, '_shipping_yomigana_first_name', true );
+                $post_data['options']['shipping']['address']['recipient']['firstNameOptional'] = get_post_meta( $order_id, '_shipping_yomigana_first_name', true );
+                $post_data['options']['shipping']['address']['recipient']['lastNameOptional'] = get_post_meta( $order_id, '_shipping_yomigana_last_name', true );
             }
             $shipping_phone = get_post_meta( $order_id, '_shipping_phone', true );
             if(!empty($shipping_phone)){
@@ -733,27 +733,32 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
     }
 }
 
-/**
- * Add the gateway to woocommerce
- *
- * @param array $methods
- * @return array $methods
- */
-function add_wc4jp_linepay_gateway( $methods ) {
-    $methods[] = 'WC_Gateway_LINEPay';
-	return $methods;
-}
-add_filter( 'woocommerce_payment_gateways', 'add_wc4jp_linepay_gateway' );
-
-/**
- * The available gateway to woocommerce only Japanese currency
- */
-function wc4jp_linepay_available_gateways( $methods ) {
-    $currency = get_woocommerce_currency();
-    if($currency !='JPY'){
-        unset($methods['linepay']);
+if( function_exists( 'add_wc4jp_linepay_gateway' ) === false ){
+    /**
+     * Add the gateway to woocommerce
+     *
+     * @param array $methods
+     * @return array $methods
+     */
+    function add_wc4jp_linepay_gateway( $methods ) {
+        $methods[] = 'WC_Gateway_LINEPay';
+        return $methods;
     }
-    return $methods;
+    add_filter( 'woocommerce_payment_gateways', 'add_wc4jp_linepay_gateway' );
 }
 
-add_filter( 'woocommerce_available_payment_gateways', 'wc4jp_linepay_available_gateways' );
+if( function_exists( 'wc4jp_linepay_available_gateways' ) === false ) {
+    /**
+     * The available gateway to woocommerce only Japanese currency
+     */
+    function wc4jp_linepay_available_gateways($methods)
+    {
+        $currency = get_woocommerce_currency();
+        if ($currency != 'JPY') {
+            unset($methods['linepay']);
+        }
+        return $methods;
+    }
+
+    add_filter('woocommerce_available_payment_gateways', 'wc4jp_linepay_available_gateways');
+}

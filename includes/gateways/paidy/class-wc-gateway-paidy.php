@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_Paidy
  * @extends		WC_Payment_Gateway
- * @version		1.1.5
+ * @version		1.1.9
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -302,25 +302,29 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         }
 
         //Get products and coupons information from order
-        $order_items = $order->get_items(array('line_item','coupon'));
+        $order_items = apply_filters( 'jp4wc_paidy_order_items', $order->get_items(array('line_item','coupon')) );
         $items_count = 0;
         $cart_total = 0;
         $fees = $order->get_fees();
         $items = '';
+        $paidy_amount = 0;
         foreach( $order_items as $key => $item){
             if(isset($item['product_id'])) {
-                $unit_price = round($item['subtotal'], 0) / $item['quantity'];
+                $item['name'] = str_replace('"','\"',$item['name']);
+                $unit_price = round($item['subtotal'] / $item['quantity'], 0);
                 $items .= '{
                     "id":"' . $item['product_id'] . '",
                     "quantity":' . $item['quantity'] . ',
                     "title":"' . $item['name'] . '",
                     "unit_price":' . $unit_price;
+                $paidy_amount += $item['quantity']*$unit_price;
             }elseif(isset($item['discount'])){
                 $items .= '{
                     "id":"'.$item['code'].'",
                     "quantity":1,
                     "title":"'.$item['name'].'",
                     "unit_price":-'.$item['discount'];
+                $paidy_amount -= $item['discount'];
             }
             if ($item === end($order_items) and (!isset($fees))) {
                 $items .= '}
@@ -340,6 +344,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                     "quantity":1,
                     "title":"'.esc_html($fee->get_name()).'",
                     "unit_price":'.esc_html($fee->get_amount());
+                $paidy_amount += esc_html($fee->get_amount());
                 if ($fee === end($fees)) {
                     $items .= '}
 ';
@@ -350,12 +355,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                 $i++;
             }
         }
-        $taxes = $order->get_tax_totals();
-        $tax = 0;
-        foreach($taxes as $each_tax){
-            $tax_amount = preg_replace('/[^0-9]/', '', strip_tags( $each_tax->formatted_amount ) );
-            $tax += $tax_amount;
-        }
+
         // Get latest order
         $args = array(
             'customer_id' => $user_id,
@@ -397,6 +397,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             $diff_day = 0;
         }
         $order_amount = $order->get_total();
+        $tax = $order_amount - $paidy_amount - $order->get_shipping_total();
         if( $this->enabled =='yes' and isset($api_public_key) and $api_public_key != '' ):
             ?>
             <script type="text/javascript">
@@ -894,27 +895,32 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
     }
 }
 
-/**
- * Add the gateway to woocommerce
- *
- * @param array $methods
- * @return array $methods
- */
-function add_wc4jp_paidy_gateway( $methods ) {
-    $methods[] = 'WC_Gateway_Paidy';
-	return $methods;
+if( function_exists( 'add_wc4jp_paidy_gateway' ) === false ){
+    /**
+     * Add the gateway to woocommerce
+     *
+     * @param array Methods
+     * @return array Methods
+     */
+    function add_wc4jp_paidy_gateway( $methods ) {
+        $methods[] = 'WC_Gateway_Paidy';
+        return $methods;
+    }
+    add_filter( 'woocommerce_payment_gateways', 'add_wc4jp_paidy_gateway' );
 }
-add_filter( 'woocommerce_payment_gateways', 'add_wc4jp_paidy_gateway' );
 
 /**
  * The available gateway to woocommerce only Japanese currency
  */
-function wc4jp_paidy_available_gateways( $methods ) {
-    $currency = get_woocommerce_currency();
-    if( $currency !='JPY' ){
-        unset( $methods['paidy'] );
+if( function_exists( 'wc4jp_paidy_available_gateways' ) === false ) {
+    function wc4jp_paidy_available_gateways($methods)
+    {
+        $currency = get_woocommerce_currency();
+        if ($currency != 'JPY') {
+            unset($methods['paidy']);
+        }
+        return $methods;
     }
-    return $methods;
-}
 
-add_filter( 'woocommerce_available_payment_gateways', 'wc4jp_paidy_available_gateways' );
+    add_filter('woocommerce_available_payment_gateways', 'wc4jp_paidy_available_gateways');
+}
