@@ -27,3 +27,6 @@ node_modules/
 
 # Windows junk
 Thumbs.db
+
+#php storm file
+.idea/
