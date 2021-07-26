@@ -128,10 +128,29 @@ class WC_Gateway_PPEC_Plugin {
 			delete_option( 'pp_woo_enabled' );
 		}
 
+		$previous_version = get_option( 'wc_ppec_version' );
+
 		// Check the the WC version on plugin update to determine if we need to display a warning.
 		// The option was added in 1.6.19 so we only need to check stores updating from before that version. Updating from 1.6.19 or greater would already have it set.
-		if ( version_compare( get_option( 'wc_ppec_version' ), '1.6.19', '<' ) && version_compare( WC_VERSION, '3.0', '<' ) ) {
+		if ( version_compare( $previous_version, '1.6.19', '<' ) && version_compare( WC_VERSION, '3.0', '<' ) ) {
 			update_option( 'wc_ppec_display_wc_3_0_warning', 'true' );
+		}
+
+		// Credit messaging is disabled by default for merchants upgrading from < 2.1.
+		if ( $previous_version && version_compare( $previous_version, '2.1.0', '<' ) ) {
+			$settings = get_option( 'woocommerce_ppec_paypal_settings', array() );
+
+			if ( is_array( $settings ) ) {
+				$settings['credit_message_enabled']                = 'no';
+				$settings['single_product_credit_message_enabled'] = 'no';
+				$settings['mark_credit_message_enabled']           = 'no';
+
+				update_option( 'woocommerce_ppec_paypal_settings', $settings );
+			}
+		}
+
+		if ( function_exists( 'add_woocommerce_inbox_variant' ) ) {
+			add_woocommerce_inbox_variant();
 		}
 
 		update_option( 'wc_ppec_version', $new_version );
@@ -142,7 +161,7 @@ class WC_Gateway_PPEC_Plugin {
 	 */
 	public function maybe_run() {
 		register_activation_hook( $this->file, array( $this, 'activate' ) );
-		//Add from here (Change by Shohei)
+        //Add from here (Change by Shohei)
         try {
             if ( $this->_bootstrapped ) {
                 throw new Exception( __( 'bootstrap() in WooCommerce Gateway PayPal Checkout plugin can only be called once', 'woocommerce-gateway-paypal-express-checkout' ), self::ALREADY_BOOTSTRAPED );
@@ -172,18 +191,20 @@ class WC_Gateway_PPEC_Plugin {
         //Add still here by Shohei Tanaka
 
 //		add_action( 'plugins_loaded', array( $this, 'bootstrap' ) );//Change by Shohei
-		add_filter( 'allowed_redirect_hosts', array( $this, 'whitelist_paypal_domains_for_redirect' ) );
+        add_filter( 'allowed_redirect_hosts', array( $this, 'whitelist_paypal_domains_for_redirect' ) );
 //		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );//Change by Shohei
 
 //		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array( $this, 'plugin_action_links' ) );//Change by Shohei
 //		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );//Change by Shohei
 		add_action( 'wp_ajax_ppec_dismiss_notice_message', array( $this, 'ajax_dismiss_notice' ) );
+
+//		add_action( 'after_plugin_row_' . plugin_basename( $this->file ), array( $this, 'ppec_upgrade_notice' ), 10, 3 );//Change by Shohei
 	}
 
 	public function bootstrap() {
 		try {
 			if ( $this->_bootstrapped ) {
-				throw new Exception( __( 'bootstrap() in WooCommerce Gateway PayPal Checkout plugin can only be called once', 'woocommerce-gateway-paypal-express-checkout' ), self::ALREADY_BOOTSTRAPED );
+				throw new Exception( __( 'bootstrap() in WooCommerce Gateway PayPal Checkout plugin can only be called once', 'woocommerce-for-japan' ), self::ALREADY_BOOTSTRAPED );
 			}
 
 			$this->_check_dependencies();
@@ -285,18 +306,18 @@ class WC_Gateway_PPEC_Plugin {
 	 */
 	protected function _check_dependencies() {
 		if ( ! function_exists( 'WC' ) ) {
-			throw new Exception( __( 'WooCommerce Gateway PayPal Checkout requires WooCommerce to be activated', 'woocommerce-gateway-paypal-express-checkout' ), self::DEPENDENCIES_UNSATISFIED );
+			throw new Exception( __( 'WooCommerce Gateway PayPal Checkout requires WooCommerce to be activated', 'woocommerce-for-japan' ), self::DEPENDENCIES_UNSATISFIED );
 		}
 
-		if ( version_compare( WC()->version, '2.5', '<' ) ) {
-			throw new Exception( __( 'WooCommerce Gateway PayPal Checkout requires WooCommerce version 2.5 or greater', 'woocommerce-gateway-paypal-express-checkout' ), self::DEPENDENCIES_UNSATISFIED );
+		if ( version_compare( WC()->version, '3.2.0', '<' ) ) {
+			throw new Exception( __( 'WooCommerce Gateway PayPal Checkout requires WooCommerce version 3.2.0 or greater', 'woocommerce-for-japan' ), self::DEPENDENCIES_UNSATISFIED );
 		}
 
 		if ( ! function_exists( 'curl_init' ) ) {
-			throw new Exception( __( 'WooCommerce Gateway PayPal Checkout requires cURL to be installed on your server', 'woocommerce-gateway-paypal-express-checkout' ), self::DEPENDENCIES_UNSATISFIED );
+			throw new Exception( __( 'WooCommerce Gateway PayPal Checkout requires cURL to be installed on your server', 'woocommerce-for-japan' ), self::DEPENDENCIES_UNSATISFIED );
 		}
 
-		$openssl_warning = __( 'WooCommerce Gateway PayPal Checkout requires OpenSSL >= 1.0.1 to be installed on your server', 'woocommerce-gateway-paypal-express-checkout' );
+		$openssl_warning = __( 'WooCommerce Gateway PayPal Checkout requires OpenSSL >= 1.0.1 to be installed on your server', 'woocommerce-for-japan' );
 		if ( ! defined( 'OPENSSL_VERSION_TEXT' ) ) {
 			throw new Exception( $openssl_warning, self::DEPENDENCIES_UNSATISFIED );
 		}
@@ -324,7 +345,7 @@ class WC_Gateway_PPEC_Plugin {
 		if ( ! is_a( $credential, 'WC_Gateway_PPEC_Client_Credential' ) || '' === $credential->get_username() ) {
 			$setting_link = $this->get_admin_setting_link();
 			// Translators: placeholder is the URL of the gateway settings page.
-			throw new Exception( sprintf( __( 'PayPal Checkout is almost ready. To get started, <a href="%s">connect your PayPal account</a>.', 'woocommerce-gateway-paypal-express-checkout' ), esc_url( $setting_link ) ), self::NOT_CONNECTED );
+			throw new Exception( sprintf( __( 'PayPal Checkout is almost ready. To get started, <a href="%s">connect your PayPal account</a>.', 'woocommerce-for-japan' ), esc_url( $setting_link ) ), self::NOT_CONNECTED );
 		}
 	}
 
@@ -437,7 +458,7 @@ class WC_Gateway_PPEC_Plugin {
 	 * @since 1.1.2
 	 */
 	public function load_plugin_textdomain() {
-		load_plugin_textdomain( 'woocommerce-gateway-paypal-express-checkout', false, plugin_basename( $this->plugin_path ) . '/languages' );
+		load_plugin_textdomain( 'woocommerce-for-japan', false, plugin_basename( $this->plugin_path ) . '/languages' );
 	}
 
 	/**
@@ -454,7 +475,7 @@ class WC_Gateway_PPEC_Plugin {
 
 		if ( function_exists( 'WC' ) ) {
 			$setting_url    = $this->get_admin_setting_link();
-			$plugin_links[] = '<a href="' . esc_url( $setting_url ) . '">' . esc_html__( 'Settings', 'woocommerce-gateway-paypal-express-checkout' ) . '</a>';
+			$plugin_links[] = '<a href="' . esc_url( $setting_url ) . '">' . esc_html__( 'Settings', 'woocommerce-for-japan' ) . '</a>';
 		}
 
 		return array_merge( $plugin_links, $links );
@@ -473,7 +494,7 @@ class WC_Gateway_PPEC_Plugin {
 
 		if ( false !== strpos( $file, plugin_basename( dirname( __DIR__ ) ) ) ) {
 			$row_meta = array(
-				'docs'    => sprintf( '<a href="%s" title="%s">%s</a>', esc_url( 'https://docs.woocommerce.com/document/paypal-express-checkout/' ), esc_attr__( 'View Documentation', 'woocommerce-gateway-paypal-express-checkout' ), esc_html__( 'Docs', 'woocommerce-gateway-paypal-express-checkout' ) ),
+				'docs'    => sprintf( '<a href="%s" title="%s">%s</a>', esc_url( 'https://docs.woocommerce.com/document/paypal-express-checkout/' ), esc_attr__( 'View Documentation', 'woocommerce-for-japan' ), esc_html__( 'Docs', 'woocommerce-gateway-paypal-express-checkout' ) ),
 				'support' => sprintf( '<a href="%s" title="%s">%s</a>', esc_url( 'https://woocommerce.com/my-account/create-a-ticket?select=woocommerce-gateway-paypal-checkout' ), esc_attr__( 'Open a support request at WooCommerce.com', 'woocommerce-gateway-paypal-express-checkout' ), esc_html__( 'Support', 'woocommerce-gateway-paypal-express-checkout' ) ),
 			);
 		}
@@ -503,6 +524,22 @@ class WC_Gateway_PPEC_Plugin {
 		}
 
 		return apply_filters( 'woocommerce_cart_needs_shipping', $needs_shipping );
+	}
+
+	/**
+	 * Displays notice to upgrade to PayPal Payments.
+	 *
+	 * @param string $plugin_file Path to the plugin file relative to the plugins directory.
+	 * @param array $plugin_data An array of plugin data.
+	 * @param string $status Status filter currently applied to the plugin list.
+	 */
+	public function ppec_upgrade_notice( $plugin_file, $plugin_data, $status ) {
+		// Load styles & scripts required for the notice.
+		wp_enqueue_style( 'ppec-upgrade-notice', plugin_dir_url( __DIR__ ) . '/assets/css/admin/ppec-upgrade-notice.css', array(), WC_GATEWAY_PPEC_VERSION );
+		wp_enqueue_script( 'ppec-upgrade-notice-js', plugin_dir_url( __DIR__ ) . '/assets/js/admin/ppec-upgrade-notice.js', array(), WC_GATEWAY_PPEC_VERSION, false );
+
+		// Load notice template.
+		include_once $this->plugin_path . 'templates/paypal-payments-upgrade-notice.php';
 	}
 
 	/* Deprecated Functions */

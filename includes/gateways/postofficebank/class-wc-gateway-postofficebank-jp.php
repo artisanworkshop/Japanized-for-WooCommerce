@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_PostOfficeBank_JP
  * @extends		WC_Payment_Gateway
- * @version		2.1.10
+ * @version		2.2.17
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -204,19 +204,19 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
      * Add content to the WC emails.
      *
      * @access public
-     * @param WC_Order $order
-     * @param bool $sent_to_admin
-     * @param bool $plain_text
+     * @param WC_Order order
+     * @param bool Sent to admin
+     * @param bool Plain text
      * @return void
      */
     public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-	    $payment_method = version_compare( WC_VERSION, '2.7', '<' ) ? $order->payment_method : $order->get_payment_method();
-		$order_status = version_compare( WC_VERSION, '2.7', '<' ) ? $order->status : $order->get_status();
+	    $payment_method = $order->get_payment_method();
+		$order_status = $order->get_status();
     	if ( ! $sent_to_admin && $this->id == $payment_method && ('on-hold' === $order_status || 'pending' === $order_status ) ) {
 			if ( $this->instructions ) {
 				echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 			}
-			$order_id = version_compare( WC_VERSION, '2.7', '<' ) ? $order->id : $order->get_id();
+			$order_id = $order->get_id();
 			$this->bank_details( $order_id );
 		}
     }

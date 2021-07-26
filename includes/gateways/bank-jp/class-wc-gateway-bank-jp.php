@@ -225,13 +225,13 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 	 * @param bool     $plain_text Email format: plain text or HTML.
 	 */
     public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-	    $payment_method = version_compare( WC_VERSION, '2.7', '<' ) ? $order->payment_method : $order->get_payment_method();
-		$order_status = version_compare( WC_VERSION, '2.7', '<' ) ? $order->status : $order->get_status();
+	    $payment_method = $order->get_payment_method();
+		$order_status = $order->get_status();
     	if (! $sent_to_admin && 'bankjp' === $payment_method && ('on-hold' === $order_status || 'pending' === $order_status )) {
 			if ( $this->instructions ) {
 				echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 			}
-			$order_id = version_compare( WC_VERSION, '2.7', '<' ) ? $order->id : $order->get_id();
+			$order_id = $order->get_id();
 			$this->bank_details( $order_id );
 		}
     }

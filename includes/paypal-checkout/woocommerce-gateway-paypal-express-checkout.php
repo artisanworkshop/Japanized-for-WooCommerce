@@ -9,38 +9,47 @@
  */
 /**
  * Following file customized for Japanese Market by Shohei Tanaka
- * includes/class-wc-gateway-ppec-cart-handler.php : row 256
- * includes/class-wc-gateway-ppec-client.php : row 916 and 1028
-*/
-/**
- * Following file customized for Japanese Market by Shohei Tanaka
- * includes/class-wc-gateway-ppec-plugins.php : some rows add comment 'Change by Shohei'
+ * includes/class-wc-gateway-ppec-cart-handler.php : row 261
+ * includes/class-wc-gateway-ppec-client.php : row 916 and 1028 : Change by Shohei
+ * includes/class-wc-gateway-ppec-plugin.php : some rows add comment 'Change by Shohei'
 */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+define( 'WC_GATEWAY_PPEC_JP4WC_VERSION', '2.1.2' );
 
 /**
  * Return instance of WC_Gateway_PPEC_Plugin.
  *
  * @return WC_Gateway_PPEC_Plugin
  */
-if ( ! class_exists( 'WC_Gateway_PPEC_Plugin', false ) ) {
-    define( 'WC_GATEWAY_PPEC_WC4JP_VERSION', '2.0.3' );
+function wc_gateway_ppec() {
+    static $plugin;
 
-    function wc_gateway_ppec()
-    {
-        static $plugin;
+    if ( ! isset( $plugin ) ) {
+        require_once 'includes/class-wc-gateway-ppec-plugin.php';
 
-        if (!isset($plugin)) {
-            require_once 'includes/class-wc-gateway-ppec-plugin.php';
-
-            $plugin = new WC_Gateway_PPEC_Plugin(__FILE__, WC_GATEWAY_PPEC_WC4JP_VERSION);
-        }
-
-        return $plugin;
+        $plugin = new WC_Gateway_PPEC_Plugin( __FILE__, WC_GATEWAY_PPEC_JP4WC_VERSION );
     }
 
-    wc_gateway_ppec()->maybe_run();
+    return $plugin;
 }
+
+wc_gateway_ppec()->maybe_run();
+
+/**
+ * Adds the WooCommerce Inbox option on plugin activation
+ *
+ * @since 2.1.2
+ */
+if ( ! function_exists( 'add_woocommerce_inbox_variant' ) ) {
+    function add_woocommerce_inbox_variant() {
+        $option = 'woocommerce_inbox_variant_assignment';
+
+        if ( false === get_option( $option, false ) ) {
+            update_option( $option, wp_rand( 1, 12 ) );
+        }
+    }
+}
+register_activation_hook( __FILE__, 'add_woocommerce_inbox_variant' );

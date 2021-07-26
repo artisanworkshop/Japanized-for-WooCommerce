@@ -164,15 +164,15 @@ class WC_Gateway_PPEC_Client {
 	protected function _validate_request() {
 		// Make sure $_credential and $_environment have been configured.
 		if ( ! $this->_credential ) {
-			throw new Exception( __( 'Missing credential', 'woocommerce-for-japan' ), self::INVALID_CREDENTIAL_ERROR );
+			throw new Exception( __( 'Missing credential', 'woocommerce-gateway-paypal-express-checkout' ), self::INVALID_CREDENTIAL_ERROR );
 		}
 
 		if ( ! is_a( $this->_credential, 'WC_Gateway_PPEC_Client_Credential' ) ) {
-			throw new Exception( __( 'Invalid credential object', 'woocommerce-for-japan' ), self::INVALID_CREDENTIAL_ERROR );
+			throw new Exception( __( 'Invalid credential object', 'woocommerce-gateway-paypal-express-checkout' ), self::INVALID_CREDENTIAL_ERROR );
 		}
 
 		if ( ! in_array( $this->_environment, array( 'live', 'sandbox' ), true ) ) {
-			throw new Exception( __( 'Invalid environment', 'woocommerce-for-japan' ), self::INVALID_ENVIRONMENT_ERROR );
+			throw new Exception( __( 'Invalid environment', 'woocommerce-gateway-paypal-express-checkout' ), self::INVALID_ENVIRONMENT_ERROR );
 		}
 	}
 
@@ -190,13 +190,13 @@ class WC_Gateway_PPEC_Client {
 	protected function _process_response( $response ) {
 		if ( is_wp_error( $response ) ) {
 			// Translators: placeholder is an error message.
-			throw new Exception( sprintf( __( 'An error occurred while trying to connect to PayPal: %s', 'woocommerce-for-japan' ), $response->get_error_message() ), self::REQUEST_ERROR );
+			throw new Exception( sprintf( __( 'An error occurred while trying to connect to PayPal: %s', 'woocommerce-gateway-paypal-express-checkout' ), $response->get_error_message() ), self::REQUEST_ERROR );
 		}
 
 		parse_str( wp_remote_retrieve_body( $response ), $result );
 
 		if ( ! array_key_exists( 'ACK', $result ) ) {
-			throw new Exception( __( 'Malformed response received from PayPal', 'woocommerce-for-japan' ), self::REQUEST_ERROR );
+			throw new Exception( __( 'Malformed response received from PayPal', 'woocommerce-gateway-paypal-express-checkout' ), self::REQUEST_ERROR );
 		}
 
 		wc_gateway_ppec_log( sprintf( '%s: acknowleged response body: %s', __METHOD__, print_r( $result, true ) ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
@@ -252,8 +252,8 @@ class WC_Gateway_PPEC_Client {
 		$params              = array();
 		$logo_url_or_id      = $settings->logo_image_url;
 		$header_url_or_id    = $settings->header_image_url;
-		$params['LOGOIMG']   = filter_var( $logo_url_or_id, FILTER_VALIDATE_URL ) ? $logo_url_or_id : wp_get_attachment_image_url( $logo_url_or_id, 'thumbnail' );
-		$params['HDRIMG']    = filter_var( $header_url_or_id, FILTER_VALIDATE_URL ) ? $header_url_or_id : wp_get_attachment_image_url( $header_url_or_id, 'thumbnail' );
+		$params['LOGOIMG']   = filter_var( $logo_url_or_id, FILTER_VALIDATE_URL ) ? $logo_url_or_id : wp_get_attachment_image_url( $logo_url_or_id, 'ppec_logo_image_size' );
+		$params['HDRIMG']    = filter_var( $header_url_or_id, FILTER_VALIDATE_URL ) ? $header_url_or_id : wp_get_attachment_image_url( $header_url_or_id, 'ppec_header_image_size' );
 		$params['PAGESTYLE'] = $settings->page_style;
 		$params['BRANDNAME'] = $settings->get_brand_name();
 		$params['RETURNURL'] = $this->_get_return_url( $args );
@@ -401,7 +401,7 @@ class WC_Gateway_PPEC_Client {
 	 */
 	protected function _get_billing_agreement_description() {
 		/* Translators: placeholder is blogname. */
-		$description = sprintf( _x( 'Orders with %s', 'data sent to PayPal', 'woocommerce-for-japan' ), get_bloginfo( 'name' ) );
+		$description = sprintf( _x( 'Orders with %s', 'data sent to PayPal', 'woocommerce-gateway-paypal-express-checkout' ), get_bloginfo( 'name' ) );
 
 		if ( strlen( $description ) > 127 ) {
 			$description = substr( $description, 0, 124 ) . '...';
@@ -508,8 +508,8 @@ class WC_Gateway_PPEC_Client {
 			}
 
 			$item = array(
-				'name'        => $name,
-				'description' => $description,
+				'name'        => apply_filters( 'woocommerce_paypal_express_checkout_cart_line_item_name', $name, $values, $cart_item_key ),
+				'description' => apply_filters( 'woocommerce_paypal_express_checkout_cart_line_item_description', $description, $values, $cart_item_key ),
 				'quantity'    => $values['quantity'],
 				'amount'      => $amount,
 				'sku'         => $values['data']->get_sku(),
@@ -520,8 +520,8 @@ class WC_Gateway_PPEC_Client {
 
 		foreach ( WC()->cart->get_fees() as $fee_key => $fee_values ) {
 			$item = array(
-				'name'        => $fee_values->name,
-				'description' => '',
+				'name'        => apply_filters( 'woocommerce_paypal_express_checkout_cart_fee_name', $fee_values->name, $fee_values, $fee_key ),
+				'description' => apply_filters( 'woocommerce_paypal_express_checkout_cart_fee_description', '', $fee_values, $fee_key ),
 				'quantity'    => 1,
 				'amount'      => round( $fee_values->total, $decimals ),
 			);
@@ -828,7 +828,7 @@ class WC_Gateway_PPEC_Client {
 
 			if ( 'fee' === $order_item['type'] ) {
 				$item = array(
-					'name'     => $order_item['name'],
+					'name'     => apply_filters( 'woocommerce_paypal_express_checkout_order_line_item_name', $order_item['name'], $order_item, $cart_item_key ),
 					'quantity' => 1,
 					'amount'   => round( $order_item['line_total'], $decimals ),
 				);
@@ -836,10 +836,10 @@ class WC_Gateway_PPEC_Client {
 				$amount  = round( $order_item['line_subtotal'] / $order_item['qty'], $decimals );
 				$product = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_product_from_item( $order_item ) : $order_item->get_product();
 				$item    = array(
-					'name'     => $order_item['name'],
+					'name'     => apply_filters( 'woocommerce_paypal_express_checkout_order_line_item_name', $order_item['name'], $order_item, $cart_item_key ),
 					'quantity' => $order_item['qty'],
 					'amount'   => $amount,
-					'sku'      => $product->get_sku(),
+					'sku'      => ( $product && is_callable( array( $product, 'get_sku' ) ) ) ? $product->get_sku() : '',
 				);
 			}
 
@@ -913,7 +913,7 @@ class WC_Gateway_PPEC_Client {
 	public function do_express_checkout_payment( array $params ) {
 		$params['METHOD']       = 'DoExpressCheckoutPayment';
 		$params['VERSION']      = self::API_VERSION;
-		$params['BUTTONSOURCE'] = 'ArtisanWorkshop_Cart_EC_JP';
+		$params['BUTTONSOURCE'] = 'ArtisanWorkshop_Cart_EC_JP';//Change by Shohei
 
 		return $this->_request( $params );
 	}
@@ -932,10 +932,10 @@ class WC_Gateway_PPEC_Client {
 		$order    = wc_get_order( $args['order_id'] );
 
 		$old_wc       = version_compare( WC_VERSION, '3.0', '<' );
-		$order_id     = $old_wc ? $order->id : $order->get_id();
+		$order_id     = $order->get_id();
 		$order_number = $order->get_order_number();
 		$details      = $this->_get_details_from_order( $order_id );
-		$order_key    = $old_wc ? $order->order_key : $order->get_order_key();
+		$order_key    = $order->get_order_key();
 
 		$params = array(
 			'TOKEN'                          => $args['token'],
@@ -1025,7 +1025,7 @@ class WC_Gateway_PPEC_Client {
 	public function do_reference_transaction( array $params ) {
 		$params['METHOD']       = 'DoReferenceTransaction';
 		$params['VERSION']      = self::API_VERSION;
-		$params['BUTTONSOURCE'] = 'ArtisanWorkshop_Cart_EC_JP';
+		$params['BUTTONSOURCE'] = 'ArtisanWorkshop_Cart_EC_JP';//Change by Shohei
 
 		return $this->_request( $params );
 	}
@@ -1044,9 +1044,9 @@ class WC_Gateway_PPEC_Client {
 		$order    = wc_get_order( $args['order_id'] );
 
 		$old_wc    = version_compare( WC_VERSION, '3.0', '<' );
-		$order_id  = $old_wc ? $order->id : $order->get_id();
+		$order_id  = $order->get_id();
 		$details   = $this->_get_details_from_order( $order_id );
-		$order_key = $old_wc ? $order->order_key : $order->get_order_key();
+		$order_key = $order->get_order_key();
 
 		$params = array(
 			'REFERENCEID'   => $args['reference_id'],
@@ -1057,7 +1057,7 @@ class WC_Gateway_PPEC_Client {
 			'SHIPDISCAMT'   => $details['ship_discount_amount'],
 			'INSURANCEAMT'  => 0,
 			'HANDLINGAMT'   => 0,
-			'CURRENCYCODE'  => $old_wc ? $order->order_currency : $order->get_currency(),
+			'CURRENCYCODE'  => $order->get_currency(),
 			'NOTIFYURL'     => WC()->api_request_url( 'WC_Gateway_PPEC' ),
 			'PAYMENTACTION' => $settings->get_paymentaction(),
 			'INVNUM'        => $settings->invoice_prefix . $order->get_order_number(),

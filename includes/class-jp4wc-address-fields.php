@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.2.14
+ * @version     2.2.17
  * @category    Address Setting for Japan
  * @author      Artisan Workshop
  */
@@ -283,13 +283,13 @@ class AddressField4jp{
      * Set shipping phone display for e-mail and complete page
      *
      * @since 2.2.13
-     * @param $address
+     * @param string address
      * @param $raw_address
      * @param $object
      * @return string
      */
 	public function jp4wc_shipping_address_add_phone( $address, $raw_address, $object ){
-	    if(is_order_received_page() || is_admin()){
+	    if( is_order_received_page() || is_admin() ){
             return $address;
         }else{
             $field_value = get_post_meta( $object->get_id(), '_shipping_phone', true );

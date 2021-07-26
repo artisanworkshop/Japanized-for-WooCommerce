@@ -3,7 +3,7 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.2.16
+ * Version: 2.2.17
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 4.9
@@ -18,7 +18,7 @@
  * @category Core
  * @author Artisan Workshop
  */
-//use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_9 as Framework;
+//use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -33,14 +33,14 @@ class JP4WC{
 	 *
 	 * @var string
 	 */
-	public $version = '2.2.16';
+	public $version = '2.2.17';
 
     /**
      * Japanized for WooCommerce Framework version.
      *
      * @var string
      */
-	public $framework_version = '2.0.9';
+	public $framework_version = '2.0.11';
 
     /**
      * The single instance of the class.
@@ -114,7 +114,7 @@ class JP4WC{
      */
     protected function define_constants() {
         $this->define( 'JP4WC_ABSPATH', dirname( __FILE__ ) . '/' );
-        $this->define( 'JP4WC_URL_PATH', plugins_url( '/' ) . 'woocommerce-for-japan/' );
+        $this->define( 'JP4WC_URL_PATH', plugins_url( '/', __FILE__ ) );
         $this->define( 'JP4WC_INCLUDES_PATH', JP4WC_ABSPATH . 'includes/' );
         $this->define( 'JP4WC_PLUGIN_FILE', __FILE__ );
         $this->define( 'JP4WC_VERSION', $this->version );
@@ -280,7 +280,7 @@ endif;
 add_action( 'plugins_loaded', 'JP4WC_plugin');
 
 function JP4WC_plugin() {
-    if ( is_woocommerce_active() ) {
+    if ( is_woocommerce_active() && class_exists('WooCommerce') ) {
         JP4WC::instance()->init();
     } else {
         add_action( 'admin_notices', 'jp4wc_fallback_notice' );

@@ -3,7 +3,7 @@
  * Japanized for WooCommerce
  * Shortcodes
  *
- * @version     2.2.7
+ * @version     2.2.17
  * @category    Shortcodes
  * @author      Artisan Workshop
  */
@@ -82,7 +82,7 @@ class JP4WC_Shortcodes{
         );
         foreach($laws_array as $key => $value){
             if($value){
-                $content .= '        <tr><th>'.$key.'</th><td>'.wp_kses( $value, $allowed_html ).'</td></tr>
+                $content .= '        <tr><th>'.esc_attr( $key ).'</th><td>'.wp_kses( $value, $allowed_html ).'</td></tr>
 ';
             }elseif($key != __( 'Special conditions', 'woocommerce-for-japan' )){
                 $no_content[] = $key;
@@ -91,7 +91,7 @@ class JP4WC_Shortcodes{
         }
         $content .= '    </tbody>
 </table>';
-        if(isset($no_content)){
+        if( isset( $no_content ) ){
             $count = count($no_content);
             $i = 0;
             $no_content_names = '';
@@ -104,7 +104,7 @@ class JP4WC_Shortcodes{
                 }
             }
             $content = '<p>'.__( 'The following items of "Notation based on the Specified Commercial Transactions Law" have not been entered. Please enter the item of "Notation based on Specified Commercial Transactions Law" from the management screen.', 'woocommerce-for-japan' );
-            $content .= '<br />'.$no_content_names.'</p>';
+            $content .= '<br />'.esc_attr( $no_content_names ).'</p>';
         }
         return $content;
     }

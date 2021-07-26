@@ -1,6 +1,6 @@
 <?php
 
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_9 as Framework;
+use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 

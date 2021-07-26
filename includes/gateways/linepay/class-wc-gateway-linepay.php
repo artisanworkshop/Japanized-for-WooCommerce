@@ -5,7 +5,7 @@
  * @package WooCommerce\Gateways
  */
 
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_9 as Framework;
+use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_LINEPay
  * @extends		WC_Payment_Gateway
- * @version		1.0.8
+ * @version		1.0.9
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */

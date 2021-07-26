@@ -97,7 +97,7 @@ class JP4WC_Delivery{
                 $today = date_i18n('Y/m/d');
             }
             // Get delivery start day
-            $delivery_start_day = new DateTime();
+            $delivery_start_day = new DateTime( $today );
             if(
                 isset($setting['holiday-start-date']) and
                 isset($setting['holiday-end-date']) and

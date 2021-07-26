@@ -74,7 +74,7 @@ class WC_Gateway_PPEC_Checkout_Handler {
 	 */
 	public function endpoint_page_titles( $title ) {
 		if ( ! is_admin() && is_main_query() && in_the_loop() && is_page() && is_checkout() && $this->has_active_session() ) {
-			$title = __( 'Confirm your PayPal order', 'woocommerce-for-japan' );
+			$title = __( 'Confirm your PayPal order', 'woocommerce-gateway-paypal-express-checkout' );
 			remove_filter( 'the_title', array( $this, 'endpoint_page_titles' ) );
 		}
 		return $title;
@@ -135,7 +135,7 @@ class WC_Gateway_PPEC_Checkout_Handler {
 			return $fields;
 		}
 
-		if ( method_exists( WC()->cart, 'needs_shipping' ) && ! WC()->cart->needs_shipping() && 'no' === wc_gateway_ppec()->settings->require_billing ) {
+		if ( is_callable( array( WC()->cart, 'needs_shipping' ) ) && ! WC()->cart->needs_shipping() && 'no' === wc_gateway_ppec()->settings->require_billing ) {
 			$not_required_fields = array( 'first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'postcode', 'country' );
 			foreach ( $not_required_fields as $not_required_field ) {
 				if ( array_key_exists( $not_required_field, $fields ) ) {
@@ -255,22 +255,22 @@ class WC_Gateway_PPEC_Checkout_Handler {
 			$fields = WC()->checkout->get_checkout_fields( 'billing' );
 		}
 		?>
-		<h3><?php esc_html_e( 'Billing details', 'woocommerce-for-japan' ); ?></h3>
+		<h3><?php esc_html_e( 'Billing details', 'woocommerce-gateway-paypal-express-checkout' ); ?></h3>
 		<ul>
 			<?php if ( ! empty( $checkout_details->payer_details->billing_address ) ) : ?>
-				<li><strong><?php esc_html_e( 'Address:', 'woocommerce-for-japan' ); ?></strong></br><?php echo WC()->countries->get_formatted_address( $this->get_mapped_billing_address( $checkout_details ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></li>
+				<li><strong><?php esc_html_e( 'Address:', 'woocommerce-gateway-paypal-express-checkout' ); ?></strong></br><?php echo WC()->countries->get_formatted_address( $this->get_mapped_billing_address( $checkout_details ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></li>
 			<?php elseif ( ! empty( $checkout_details->payer_details->first_name ) && ! empty( $checkout_details->payer_details->last_name ) ) : ?>
-				<li><strong><?php esc_html_e( 'Name:', 'woocommerce-for-japan' ); ?></strong> <?php echo esc_html( $checkout_details->payer_details->last_name . ' ' . $checkout_details->payer_details->first_name ); ?></li>
+				<li><strong><?php esc_html_e( 'Name:', 'woocommerce-gateway-paypal-express-checkout' ); ?></strong> <?php echo esc_html( $checkout_details->payer_details->first_name . ' ' . $checkout_details->payer_details->last_name ); ?></li>
 			<?php endif; ?>
 
 			<?php if ( ! empty( $checkout_details->payer_details->email ) ) : ?>
-				<li><strong><?php esc_html_e( 'Email:', 'woocommerce-for-japan' ); ?></strong> <?php echo esc_html( $checkout_details->payer_details->email ); ?></li>
+				<li><strong><?php esc_html_e( 'Email:', 'woocommerce-gateway-paypal-express-checkout' ); ?></strong> <?php echo esc_html( $checkout_details->payer_details->email ); ?></li>
 			<?php else : ?>
 				<li><?php woocommerce_form_field( 'billing_email', $fields['billing_email'], WC()->checkout->get_value( 'billing_email' ) ); ?></li>
 			<?php endif; ?>
 
 			<?php if ( ! empty( $checkout_details->payer_details->phone_number ) ) : ?>
-				<li><strong><?php esc_html_e( 'Phone:', 'woocommerce-for-japan' ); ?></strong> <?php echo esc_html( $checkout_details->payer_details->phone_number ); ?></li>
+				<li><strong><?php esc_html_e( 'Phone:', 'woocommerce-gateway-paypal-express-checkout' ); ?></strong> <?php echo esc_html( $checkout_details->payer_details->phone_number ); ?></li>
 			<?php elseif ( 'yes' === wc_gateway_ppec()->settings->require_phone_number ) : ?>
 				<li><?php woocommerce_form_field( 'billing_phone', $fields['billing_phone'], WC()->checkout->get_value( 'billing_phone' ) ); ?></li>
 			<?php endif; ?>
@@ -294,7 +294,7 @@ class WC_Gateway_PPEC_Checkout_Handler {
 			if ( $checkout->enable_guest_checkout ) {
 				?>
 				<p class="form-row form-row-wide create-account">
-					<input class="input-checkbox" id="createaccount" <?php checked( ( true === $checkout->get_value( 'createaccount' ) || ( true === apply_filters( 'woocommerce_create_account_default_checked', false ) ) ), true ); ?> type="checkbox" name="createaccount" value="1" /> <label for="createaccount" class="checkbox"><?php esc_html_e( 'Create an account?', 'woocommerce-for-japan' ); ?></label>
+					<input class="input-checkbox" id="createaccount" <?php checked( ( true === $checkout->get_value( 'createaccount' ) || ( true === apply_filters( 'woocommerce_create_account_default_checked', false ) ) ), true ); ?> type="checkbox" name="createaccount" value="1" /> <label for="createaccount" class="checkbox"><?php esc_html_e( 'Create an account?', 'woocommerce-gateway-paypal-express-checkout' ); ?></label>
 				</p>
 				<?php
 			}
@@ -303,7 +303,7 @@ class WC_Gateway_PPEC_Checkout_Handler {
 				?>
 				<div class="create-account">
 
-					<p><?php esc_html_e( 'Create an account by entering the information below. If you are a returning customer please login at the top of the page.', 'woocommerce-for-japan' ); ?></p>
+					<p><?php esc_html_e( 'Create an account by entering the information below. If you are a returning customer please login at the top of the page.', 'woocommerce-gateway-paypal-express-checkout' ); ?></p>
 
 					<?php foreach ( $checkout->checkout_fields['account'] as $key => $field ) : ?>
 
@@ -342,7 +342,7 @@ class WC_Gateway_PPEC_Checkout_Handler {
 		}
 
 		?>
-		<h3><?php esc_html_e( 'Shipping details', 'woocommerce-for-japan' ); ?></h3>
+		<h3><?php esc_html_e( 'Shipping details', 'woocommerce-gateway-paypal-express-checkout' ); ?></h3>
 		<?php
 		echo WC()->countries->get_formatted_address( $this->get_mapped_shipping_address( $checkout_details ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
@@ -441,7 +441,7 @@ class WC_Gateway_PPEC_Checkout_Handler {
 		$session                  = WC()->session->get( 'paypal' );
 
 		if ( empty( $session ) || $this->session_has_expired( $token ) ) {
-			wc_add_notice( __( 'Your PayPal checkout session has expired. Please check out again.', 'woocommerce-for-japan' ), 'error' );
+			wc_add_notice( __( 'Your PayPal checkout session has expired. Please check out again.', 'woocommerce-gateway-paypal-express-checkout' ), 'error' );
 			return;
 		}
 
@@ -491,12 +491,12 @@ class WC_Gateway_PPEC_Checkout_Handler {
 				exit;
 			}
 		} catch ( PayPal_API_Exception $e ) {
-			wc_add_notice( __( 'Sorry, an error occurred while trying to retrieve your information from PayPal. Please try again.', 'woocommerce-for-japan' ), 'error' );
+			wc_add_notice( __( 'Sorry, an error occurred while trying to retrieve your information from PayPal. Please try again.', 'woocommerce-gateway-paypal-express-checkout' ), 'error' );
 			$this->maybe_clear_session_data();
 			wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 			exit;
 		} catch ( PayPal_Missing_Session_Exception $e ) {
-			wc_add_notice( __( 'Your PayPal checkout session has expired. Please check out again.', 'woocommerce-for-japan' ), 'error' );
+			wc_add_notice( __( 'Your PayPal checkout session has expired. Please check out again.', 'woocommerce-gateway-paypal-express-checkout' ), 'error' );
 			$this->maybe_clear_session_data();
 			wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 			exit;
@@ -598,7 +598,7 @@ class WC_Gateway_PPEC_Checkout_Handler {
 			printf(
 				'<a href="%s" class="wc-gateway-ppec-cancel">%s</a>',
 				esc_url( add_query_arg( 'wc-gateway-ppec-clear-session', true, wc_get_cart_url() ) ),
-				esc_html__( 'Cancel', 'woocommerce-for-japan' )
+				esc_html__( 'Cancel', 'woocommerce-gateway-paypal-express-checkout' )
 			);
 		}
 	}
@@ -875,7 +875,7 @@ class WC_Gateway_PPEC_Checkout_Handler {
 		}
 
 		$old_wc   = version_compare( WC_VERSION, '3.0', '<' );
-		$order_id = $old_wc ? $order->id : $order->get_id();
+		$order_id = $order->get_id();
 		if ( $old_wc ) {
 			update_post_meta( $order_id, '_ppec_billing_agreement_id', $resp['BILLINGAGREEMENTID'] );
 		} else {
@@ -992,12 +992,15 @@ class WC_Gateway_PPEC_Checkout_Handler {
 		$destination = $this->get_mapped_shipping_address( $checkout_details );
 
 		if ( ! empty( $destination ) ) {
-			$packages[0]['destination']['country']   = $destination['country'];
-			$packages[0]['destination']['state']     = $destination['state'].'state';
-			$packages[0]['destination']['postcode']  = $destination['postcode'];
-			$packages[0]['destination']['city']      = $destination['city'];
-			$packages[0]['destination']['address']   = $destination['address_1'];
-			$packages[0]['destination']['address_2'] = $destination['address_2'];
+			// WC Subscriptions uses string package keys so we need to get the package key dynamically.
+			$package_key = key( $packages );
+
+			$packages[ $package_key ]['destination']['country']   = $destination['country'];
+			$packages[ $package_key ]['destination']['state']     = $destination['state'];
+			$packages[ $package_key ]['destination']['postcode']  = $destination['postcode'];
+			$packages[ $package_key ]['destination']['city']      = $destination['city'];
+			$packages[ $package_key ]['destination']['address']   = $destination['address_1'];
+			$packages[ $package_key ]['destination']['address_2'] = $destination['address_2'];
 		}
 
 		return $packages;

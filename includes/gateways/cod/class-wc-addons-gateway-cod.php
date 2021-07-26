@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @class 		WC_Addons_Gateway_COD2
  * @extends		WC_Gateway_COD2
  * @since       2.6.0
- * @version		1.1.0
+ * @version		2.2.17
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -62,7 +62,7 @@ class WC_Addons_Gateway_COD2 extends WC_Gateway_COD2 {
 		$order      = wc_get_order( $order_id );
 
 		// Processing subscription
-		$order_id = version_compare( WC_VERSION, '2.7', '<' ) ? $order->id : $order->get_id();
+		$order_id = $order->get_id();
 		if ( 'standard' == $this->mode && ( $this->order_contains_subscription( $order_id ) || ( function_exists( 'wcs_is_subscription' ) && wcs_is_subscription( $order_id ) ) ) ) {
 			return $this->process_subscription( $order );
 
@@ -71,6 +71,7 @@ class WC_Addons_Gateway_COD2 extends WC_Gateway_COD2 {
 			return parent::process_payment( $order_id );
 		}
 	}
+
 	/**
 	 * Check if order contains subscriptions.
 	 *
@@ -100,16 +101,8 @@ class WC_Addons_Gateway_COD2 extends WC_Gateway_COD2 {
 		$order->update_status( 'processing' , __( 'Payment to be made upon delivery.', 'woocommerce-for-japan' ) );
 
 		// Reduce stock levels
-        wc_reduce_stock_levels( $order_id );
+        wc_reduce_stock_levels( $order->get_id() );
 
-		// Remove cart
-//		WC()->cart->empty_cart();
-
-		// Return thankyou redirect
-/*		return array(
-			'result' 	=> 'success',
-			'redirect'	=> $this->get_return_url( $order )
-		);*/
 		return true;
 
 	}

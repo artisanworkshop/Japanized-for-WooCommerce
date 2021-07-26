@@ -34,8 +34,10 @@ class WC_Gateway_PPEC_Cart_Handler {
 		if ( 'yes' === wc_gateway_ppec()->settings->checkout_on_single_product_enabled ) {
 			add_action( 'woocommerce_after_add_to_cart_form', array( $this, 'display_paypal_button_product' ), 1 );
 			add_action( 'wc_ajax_wc_ppec_generate_cart', array( $this, 'wc_ajax_generate_cart' ) );
-			add_action( 'wp', array( $this, 'ensure_session' ) ); // Ensure there is a customer session so that nonce is not invalidated by new session created on AJAX POST request.
 		}
+
+		// Ensure there is a customer session so that nonce is not invalidated by new session created on AJAX POST request.
+		add_action( 'wp', array( $this, 'maybe_ensure_session' ) );
 
 		add_action( 'wc_ajax_wc_ppec_update_shipping_costs', array( $this, 'wc_ajax_update_shipping_costs' ) );
 		add_action( 'wc_ajax_wc_ppec_start_checkout', array( $this, 'wc_ajax_start_checkout' ) );
@@ -44,6 +46,9 @@ class WC_Gateway_PPEC_Cart_Handler {
 		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
 			add_filter( 'woocommerce_paypal_express_checkout_payment_button_data', array( $this, 'hide_card_payment_buttons_for_subscriptions' ), 10, 2 );
 		}
+
+		// Credit messaging.
+		add_filter( 'woocommerce_paypal_express_checkout_payment_button_data', array( $this, 'inject_credit_messaging_configuration' ), 10, 2 );
 	}
 
 	/**
@@ -253,7 +258,7 @@ class WC_Gateway_PPEC_Cart_Handler {
 			$shipping_postcode   = $billing_postcode;
 		}
 
-		//Add code for Japanese user for PayPal 2020/08/21
+        //Add code for Japanese user for PayPal 2020/08/21 Change by Shohei
         $wc_countries = new WC_Countries;
         $wc_states = $wc_countries->get_states();
         $jp_states = $wc_states['JP'];
@@ -264,7 +269,7 @@ class WC_Gateway_PPEC_Cart_Handler {
             $shipping_state = $jp_states[$shipping_state];
         }
 
-		$customer->set_shipping_country( $shipping_country );
+        $customer->set_shipping_country( $shipping_country );
 		$customer->set_shipping_address( $shipping_address_1 );
 		$customer->set_shipping_address_2( $shipping_address_2 );
 		$customer->set_shipping_city( $shipping_city );
@@ -449,11 +454,9 @@ class WC_Gateway_PPEC_Cart_Handler {
 	protected function get_button_settings( $settings, $context = '' ) {
 		$prefix = $context ? $context . '_' : $context;
 		$data   = array(
-			'button_layout'        => $settings->{ $prefix . 'button_layout' },
-			'button_size'          => $settings->{ $prefix . 'button_size' },
-			'button_label'         => $settings->{ $prefix . 'button_label' },
-			'hide_funding_methods' => $settings->{ $prefix . 'hide_funding_methods' },
-			'credit_enabled'       => $settings->{ $prefix . 'credit_enabled' },
+			'button_layout' => $settings->{ $prefix . 'button_layout' },
+			'button_size'   => $settings->{ $prefix . 'button_size' },
+			'button_label'  => $settings->{ $prefix . 'button_label' },
 		);
 
 		$button_layout       = $data['button_layout'];
@@ -461,22 +464,86 @@ class WC_Gateway_PPEC_Cart_Handler {
 			? 'medium'
 			: $data['button_size'];
 
-		if ( ! wc_gateway_ppec_is_credit_supported() ) {
-			$data['credit_enabled'] = 'no';
-			if ( ! is_array( $data['hide_funding_methods'] ) ) {
-				$data['hide_funding_methods'] = array( 'CREDIT' );
-			} elseif ( ! in_array( 'CREDIT', $data['hide_funding_methods'], true ) ) {
-				$data['hide_funding_methods'][] = 'CREDIT';
-			}
+		// PayPal Credit.
+		$credit_supported = wc_gateway_ppec_is_credit_supported();
+
+		if ( 'horizontal' === $button_layout ) {
+			$data['allowed_methods']    = ( $credit_supported && 'yes' === $settings->{ $prefix . 'credit_enabled' } ) ? array( 'PAYLATER' ) : array();
+			$data['disallowed_methods'] = ( ! $credit_supported || 'yes' !== $settings->{ $prefix . 'credit_enabled' } ) ? array( 'CREDIT', 'PAYLATER' ) : array();
+		} else {
+			$hide_funding_methods = $settings->{ $prefix . 'hide_funding_methods' };
+			$hide_funding_methods = is_array( $hide_funding_methods ) ? $hide_funding_methods : array();
+
+			$data['disallowed_methods'] = array_values(
+				array_unique(
+					array_merge(
+						$hide_funding_methods,
+						( ! $credit_supported || in_array( 'CREDIT', $hide_funding_methods, true ) ) ? array( 'CREDIT', 'PAYLATER' ) : array()
+					)
+				)
+			);
 		}
 
-		if ( 'vertical' === $button_layout ) {
-			$data['disallowed_methods'] = $data['hide_funding_methods'];
-		} else {
-			$data['allowed_methods']    = 'yes' === $data['credit_enabled'] ? array( 'CREDIT' ) : array();
-			$data['disallowed_methods'] = 'yes' !== $data['credit_enabled'] ? array( 'CREDIT' ) : array();
+		return $data;
+	}
+
+	/**
+	 * Adds PayPal Credit Message context to `wc_ppec_context` for consumption by frontend scripts.
+	 *
+	 * @since 2.1
+	 * @param array  $data
+	 * @param string $page
+	 * @return array
+	 */
+	public function inject_credit_messaging_configuration( $data, $page = '' ) {
+		$context = ( 'product' === $page ) ? 'single_product_' : ( 'checkout' === $page ? 'mark_' : '' );
+		$context = ( $context && 'yes' === wc_gateway_ppec()->settings->{ $context . 'settings_toggle' } ) ? $context : '';
+
+		$show_credit_messaging = in_array( $page, array( 'product', 'cart', 'checkout' ), true );
+		$show_credit_messaging = $show_credit_messaging && ( 'no' !== wc_gateway_ppec()->settings->{ $context . 'credit_message_enabled' } );
+
+		// Credit messaging is disabled when Credit is not supported/enabled.
+		$show_credit_messaging = $show_credit_messaging && wc_gateway_ppec_is_credit_supported();
+		$show_credit_messaging = $show_credit_messaging && ( empty( $data['disallowed_methods'] ) || ( ! in_array( 'CREDIT', $data['disallowed_methods'], true ) && ! in_array( 'PAYLATER', $data['disallowed_methods'], true ) ) );
+
+		if ( $show_credit_messaging ) {
+			$style = wp_parse_args(
+				array(
+					'layout'        => wc_gateway_ppec()->settings->{ $context . 'credit_message_layout' },
+					'logo'          => wc_gateway_ppec()->settings->{ $context . 'credit_message_logo' },
+					'logo_position' => wc_gateway_ppec()->settings->{ $context . 'credit_message_logo_position' },
+					'text_color'    => wc_gateway_ppec()->settings->{ $context . 'credit_message_text_color' },
+					'flex_color'    => wc_gateway_ppec()->settings->{ $context . 'credit_message_flex_color' },
+					'flex_ratio'    => wc_gateway_ppec()->settings->{ $context . 'credit_message_flex_ratio' },
+				),
+				array(
+					'layout'        => 'text',
+					'logo'          => 'primary',
+					'logo_position' => 'left',
+					'text_color'    => 'black',
+					'flex_color'    => 'black',
+					'flex_ratio'    => '1x1',
+				)
+			);
+
+			$data['credit_messaging'] = array(
+				'style'     => array(
+					'layout' => $style['layout'],
+					'logo'   => array(
+						'type'     => $style['logo'],
+						'position' => $style['logo_position'],
+					),
+					'text'   => array(
+						'color' => $style['text_color'],
+					),
+					'color'  => $style['flex_color'],
+					'ratio'  => $style['flex_ratio'],
+				),
+				'placement' => ( 'checkout' === $page ) ? 'payment' : $page,
+				// If Subscriptions is installed, we should not pass the 'amount' value.
+				'amount'    => class_exists( 'WC_Subscriptions' ) ? '' : ( ( 'product' === $page ) ? wc_get_price_including_tax( wc_get_product() ) : WC()->cart->get_total( 'raw' ) ),
+			);
 		}
-		unset( $data['hide_funding_methods'], $data['credit_enabled'] );
 
 		return $data;
 	}
@@ -559,10 +626,14 @@ class WC_Gateway_PPEC_Cart_Handler {
 					'merchant-id' => $client->get_payer_id(),
 					'intent'      => 'authorization' === $settings->get_paymentaction() ? 'authorize' : 'capture',
 					'locale'      => $settings->get_paypal_locale(),
-					'components'  => 'buttons,funding-eligibility',
+					'components'  => 'buttons,funding-eligibility,messages',
 					'commit'      => 'checkout' === $page ? 'true' : 'false',
 					'currency'    => get_woocommerce_currency(),
 				);
+
+				if ( ( 'product' === $page && class_exists( 'WC_Subscriptions_Product' ) && WC_Subscriptions_Product::is_subscription( $GLOBALS['post']->ID ) ) || ( 'product' !== $page && wc_gateway_ppec()->checkout->needs_billing_agreement_creation( array() ) ) ) {
+					$script_args['vault'] = 'true';
+				}
 
 				$script_args = apply_filters( 'woocommerce_paypal_express_checkout_sdk_script_args', $script_args, $settings, $client );
 
@@ -587,7 +658,7 @@ class WC_Gateway_PPEC_Cart_Handler {
 	}
 
 	/**
-	 * Adds the data-namespace attribute when enqueuing the PayPal SDK script
+	 * Adds the data-namespace and data-partner-attribution-id attributes when enqueuing the PayPal SDK script.
 	 *
 	 * @since 2.0.1
 	 * @param string  $tag
@@ -595,13 +666,19 @@ class WC_Gateway_PPEC_Cart_Handler {
 	 * @return string
 	 */
 	public function add_paypal_sdk_namespace_attribute( $tag, $handle ) {
-		return ( 'paypal-checkout-sdk' === $handle ) ? str_replace( ' src', ' data-namespace="paypal_sdk" src', $tag ) : $tag;
+		if ( 'paypal-checkout-sdk' === $handle ) {
+			$tag = str_replace( ' src=', ' data-namespace="paypal_sdk" data-partner-attribution-id="WooThemes_EC" src=', $tag );
+		}
+
+		return $tag;
 	}
 
 	/**
 	 * Creates a customer session if one is not already active.
+	 *
+	 * @since 2.1.2
 	 */
-	public function ensure_session() {
+	public function maybe_ensure_session() {
 		// TODO: this tries to replicate Woo core functionality of checking for frontend requests.
 		// It can be removed once we drop support for pre-3.5 versions.
 		$frontend = ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' ) && ! defined( 'REST_REQUEST' );
@@ -610,7 +687,9 @@ class WC_Gateway_PPEC_Cart_Handler {
 			return;
 		}
 
-		if ( ! empty( WC()->session ) && ! WC()->session->has_session() ) {
+		$ensure_sesion = ( 'yes' === wc_gateway_ppec()->settings->checkout_on_single_product_enabled && is_product() ) || is_wc_endpoint_url( 'order-pay' );
+
+		if ( ! empty( WC()->session ) && ! WC()->session->has_session() && $ensure_sesion ) {
 			WC()->session->set_customer_session_cookie( true );
 		}
 	}
@@ -679,5 +758,13 @@ class WC_Gateway_PPEC_Cart_Handler {
 	 */
 	public function setECParams() {
 		_deprecated_function( __METHOD__, '1.2.0', '' );
+	}
+
+	/**
+	 * @deprecated since 2.1.2
+	 */
+	public function ensure_session() {
+		_deprecated_function( __METHOD__, '2.1.2', 'WC_Gateway_PPEC_Cart_Handler::maybe_ensure_session()' );
+		$this->maybe_ensure_session();
 	}
 }

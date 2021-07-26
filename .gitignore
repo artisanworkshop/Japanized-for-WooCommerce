@@ -27,3 +27,9 @@ node_modules/
 
 # Windows junk
 Thumbs.db
+
+# remove .idea directory
+.idea/*
+
+# remove .scss map data
+*.css.map

@@ -5,7 +5,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_9 as Framework;
+use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 /**
  * WC_Gateway_LINEPay_Cart_Handler handles button display in the cart.

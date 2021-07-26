@@ -19,7 +19,7 @@
 		// Adapted from https://github.com/woocommerce/woocommerce/blob/ea9aa8cd59c9fa735460abf0ebcb97fa18f80d03/assets/js/frontend/checkout.js#L514-L529
 		$( '.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message' ).remove();
 		$container.prepend( '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' + errorMessage + '</div>' );
-		$container.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).blur();
+		$container.find( '.input-text, select, input:checkbox' ).trigger( 'validate' ).trigger( 'blur' );
 
 		var scrollElement = $( '.woocommerce-NoticeGroup-checkout' );
 		if ( ! scrollElement.length ) {
@@ -45,13 +45,33 @@
 		}
 
 		var paypal_funding_methods = [];
-		for ( var i = 0; i < methods.length; i++ ) {
-			var method = paypal.FUNDING[ methods[ i ].toUpperCase() ];
+
+		$.each( methods, function( index, method_name ) {
+			var method = paypal.FUNDING[ method_name.toUpperCase() ];
 			if ( method ) {
 				paypal_funding_methods.push( method );
 			}
-		}
+		} );
+
 		return paypal_funding_methods;
+	}
+
+	var renderCreditMessaging = function( buttonSelector ) {
+		if ( 'undefined' === typeof wc_ppec_context.credit_messaging || ! wc_ppec_context.credit_messaging || 'undefined' === typeof paypal.Messages ) {
+			return;
+		}
+
+		if ( 'undefined' != typeof paypal.isFundingEligible && ! paypal.isFundingEligible( paypal.FUNDING.CREDIT ) && ! paypal.isFundingEligible( paypal.FUNDING.PAYLATER ) ) {
+			return;
+		}
+
+		if ( 0 === $( buttonSelector ).length ) {
+			return;
+		}
+
+		// Add an element for messaging.
+		var messagingWrapper = $( '<div id="woo-ppec-credit-messaging"></div>' ).prependTo( buttonSelector ).get( 0 );
+		paypal.Messages( wc_ppec_context.credit_messaging ).render( messagingWrapper );
 	}
 
 	var render = function( isMiniCart ) {
@@ -166,7 +186,7 @@
 					$( 'form.checkout' )
 						.append( $( '<input type="hidden" name="paymentToken" /> ' ).attr( 'value', ! wc_ppec_context.use_checkout_js ? data.orderID : data.paymentToken ) )
 						.append( $( '<input type="hidden" name="payerID" /> ' ).attr( 'value', data.payerID ) )
-						.submit();
+						.trigger( 'submit' );
 				} else {
 					// Navigate to order confirmation URL specified in original request to PayPal from back-end.
 					if ( ! wc_ppec_context.use_checkout_js ) {
@@ -192,6 +212,10 @@
 		};
 
 		if ( ! wc_ppec_context.use_checkout_js ) {
+			if ( ! isMiniCart ) {
+				renderCreditMessaging( selector );
+			}
+
 			// 'payment()' and 'onAuthorize()' callbacks from checkout.js are now 'createOrder()' and 'onApprove()'.
 			Object.defineProperty( button_args, 'createOrder', Object.getOwnPropertyDescriptor( button_args, 'payment' ) );
 			Object.defineProperty( button_args, 'onApprove', Object.getOwnPropertyDescriptor( button_args, 'onAuthorize' ) );
@@ -224,7 +248,7 @@
 						onError:       button_args.onError,
 						onCancel:      button_args.onCancel,
 						fundingSource: fundingSource,
-						style:         ( paypal.FUNDING.PAYPAL === fundingSource ) ? button_args.style : { layout: button_args.style.layout }
+						style:         ( paypal.FUNDING.PAYPAL === fundingSource ) ? button_args.style : { layout: button_args.style.layout, shape: button_args.style.shape }
 					};
 
 					var button = paypal.Buttons( buttonSettings );
@@ -244,6 +268,7 @@
 		if ( 'checkout' !== wc_ppec_context.page ) {
 			render();
 		}
+
 		$( document.body ).on( 'updated_cart_totals updated_checkout', render.bind( this, false ) );
 	}
 

@@ -72,6 +72,11 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 		}
 
 		add_filter( 'woocommerce_ajax_get_endpoint', array( $this, 'pass_return_args_to_ajax' ), 10, 2 );
+
+		if ( function_exists( 'add_image_size' ) ) {
+			add_image_size( 'ppec_logo_image_size', 190, 60 );
+			add_image_size( 'ppec_header_image_size', 750, 90 );
+		}
 	}
 
 	/**
@@ -221,9 +226,15 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 			}
 
 			$expiry_date = new WC_DateTime( "@{$valid_until}", new DateTimeZone( 'UTC' ) );
-			$expiry_date->setTimezone( wp_timezone() );
+			$timestamp   = $expiry_date->getTimestamp();
 
-			$expires = sprintf( $expires, date_i18n( get_option( 'date_format' ), $expiry_date->getTimestamp() + $expiry_date->getOffset() ), $expiry_date->format( 'T' ) );
+			// If there's support for wp_timezone(), display the expiry date in server time. Otherwise, use UTC.
+			if ( function_exists( 'wp_timezone' ) ) {
+				$timestamp += $expiry_date->getOffset();
+				$expiry_date->setTimezone( wp_timezone() );
+			}
+
+			$expires = sprintf( $expires, date_i18n( get_option( 'date_format' ), $timestamp ), $expiry_date->format( 'T' ) );
 			// Translators: 1) is a certificate's CN, 2) is the expiration date.
 			$output = sprintf( __( 'Certificate belongs to API username %1$s; %2$s.', 'woocommerce-for-japan' ), $cert_info['subject']['CN'], $expires );
 		} else {
@@ -359,7 +370,7 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 			if ( ! $is_account_enabled_for_billing_address ) {
 				$settings_array['require_billing'] = 'no';
 				update_option( 'woocommerce_ppec_paypal_settings', $settings_array );
-				$errors[] = __( 'The "require billing address" option is not enabled by your account and has been disabled.', 'woocommerce-for-japan' );
+				$errors[] = __( 'The "require billing address" option is not enabled by your account and has been disabled.', 'woocommerce-gateway-paypal-express-checkout' );
 			}
 		}
 
@@ -384,7 +395,7 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 
 		if ( 0 == $amount || null == $amount ) { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
-			return new WP_Error( 'paypal_refund_error', __( 'Refund Error: You need to specify a refund amount.', 'woocommerce-for-japan' ) );
+			return new WP_Error( 'paypal_refund_error', __( 'Refund Error: You need to specify a refund amount.', 'woocommerce-gateway-paypal-express-checkout' ) );
 		}
 
 		// load up refundable_txns from Post Meta
@@ -396,7 +407,7 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 		$order_currency = $old_wc ? $order->order_currency : $order->get_currency();
 
 		if ( ! isset( $txn_data['refundable_txns'] ) ) {
-			return new WP_Error( 'paypal_refund_error', __( 'Refund Error: Sorry! This is not a refundable transaction.', 'woocommerce-for-japan' ) );
+			return new WP_Error( 'paypal_refund_error', __( 'Refund Error: Sorry! This is not a refundable transaction.', 'woocommerce-gateway-paypal-express-checkout' ) );
 		}
 
 		foreach ( $txn_data['refundable_txns'] as $key => $value ) {
@@ -409,7 +420,7 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 					$refund_txn_id = WC_Gateway_PPEC_Refund::refund_order( $order, $amount, $refund_type, $reason, $order_currency );
 					$txn_data['refundable_txns'][ $key ]['refunded_amount'] += $amount;
 					// Translators: placeholder is a transaction ID.
-					$order->add_order_note( sprintf( __( 'PayPal refund completed; transaction ID = %s', 'woocommerce-for-japan' ), $refund_txn_id ) );
+					$order->add_order_note( sprintf( __( 'PayPal refund completed; transaction ID = %s', 'woocommerce-gateway-paypal-express-checkout' ), $refund_txn_id ) );
 					if ( $old_wc ) {
 						update_post_meta( $order_id, '_woo_pp_txnData', $txn_data );
 					} else {
@@ -434,7 +445,7 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 					$refund_txn_id = WC_Gateway_PPEC_Refund::refund_order( $order, $amount, 'Partial', $reason, $order_currency );
 					$txn_data['refundable_txns'][ $key ]['refunded_amount'] += $amount;
 					// Translators: placeholder is a transaction ID.
-					$order->add_order_note( sprintf( __( 'PayPal refund completed; transaction ID = %s', 'woocommerce-for-japan' ), $refund_txn_id ) );
+					$order->add_order_note( sprintf( __( 'PayPal refund completed; transaction ID = %s', 'woocommerce-gateway-paypal-express-checkout' ), $refund_txn_id ) );
 					if ( $old_wc ) {
 						update_post_meta( $order_id, '_woo_pp_txnData', $txn_data );
 					} else {
@@ -458,10 +469,10 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 
 		if ( $total_refundable_amount < $amount ) {
 			if ( 0 == $total_refundable_amount ) { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
-				return new WP_Error( 'paypal_refund_error', __( 'Refund Error: All transactions have been fully refunded. There is no amount left to refund', 'woocommerce-for-japan' ) );
+				return new WP_Error( 'paypal_refund_error', __( 'Refund Error: All transactions have been fully refunded. There is no amount left to refund', 'woocommerce-gateway-paypal-express-checkout' ) );
 			} else {
 				// Translators: placeholder is an amount (with currency symbol).
-				return new WP_Error( 'paypal_refund_error', sprintf( __( 'Refund Error: The requested refund amount is too large. The refund amount must be less than or equal to %s.', 'pp-express-wc4jp' ), html_entity_decode( get_woocommerce_currency_symbol() ) . $total_refundable_amount ) );
+				return new WP_Error( 'paypal_refund_error', sprintf( __( 'Refund Error: The requested refund amount is too large. The refund amount must be less than or equal to %s.', 'woocommerce-gateway-paypal-express-checkout' ), html_entity_decode( get_woocommerce_currency_symbol() ) . $total_refundable_amount ) );
 			}
 		} else {
 			$total_to_refund = $amount;
@@ -486,7 +497,7 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 						$total_to_refund -= $amount_to_refund;
 						$txn_data['refundable_txns'][ $key ]['refunded_amount'] += $amount_to_refund;
 						// Translators: placeholder is a transaction ID.
-						$order->add_order_note( sprintf( __( 'PayPal refund completed; transaction ID = %s', 'pp-express-wc4jp' ), $refund_txn_id ) );
+						$order->add_order_note( sprintf( __( 'PayPal refund completed; transaction ID = %s', 'woocommerce-gateway-paypal-express-checkout' ), $refund_txn_id ) );
 						if ( $old_wc ) {
 							update_post_meta( $order_id, '_woo_pp_txnData', $txn_data );
 						} else {
@@ -576,7 +587,7 @@ abstract class WC_Gateway_PPEC extends WC_Payment_Gateway {
 				<div class="image-preview-wrapper">
 					<?php
 					if ( ! $value_is_url ) {
-						echo wp_get_attachment_image( $value, 'thumbnail' );
+						echo wp_get_attachment_image( $value, 'logo_image_url' === $key ? 'ppec_logo_image_size' : 'ppec_header_image_size' );
 					} else {
 						// Translators: placeholder is an image's URL.
 						echo sprintf( esc_html__( 'Already using URL as image: %s', 'woocommerce-gateway-paypal-express-checkout' ), esc_attr( $value ) );

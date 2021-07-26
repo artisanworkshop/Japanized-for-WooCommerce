@@ -26,7 +26,7 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 	public function check_request() {
 		try {
 			if ( empty( $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-				throw new Exception( esc_html__( 'Empty POST data.', 'woocommerce-gateway-paypal-express-checkout' ) );
+				throw new Exception( esc_html__( 'Empty POST data.', 'woocommerce-for-japan' ) );
 			}
 
 			if ( $this->is_valid_ipn_request( $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -35,10 +35,10 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 				exit;
 			} else {
 				wc_gateway_ppec_log( 'IPN request is NOT valid according to PayPal.' );
-				throw new Exception( esc_html__( 'Invalid IPN request.', 'woocommerce-gateway-paypal-express-checkout' ) );
+				throw new Exception( esc_html__( 'Invalid IPN request.', 'woocommerce-for-japan' ) );
 			}
 		} catch ( Exception $e ) {
-			wp_die( $e->getMessage(), esc_html__( 'PayPal IPN Request Failure', 'woocommerce-gateway-paypal-express-checkout' ), array( 'response' => 500 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			wp_die( $e->getMessage(), esc_html__( 'PayPal IPN Request Failure', 'woocommerce-for-japan' ), array( 'response' => 500 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 
@@ -101,7 +101,7 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 				$posted_data['payment_status'] = 'completed';
 			}
 
-			$order_id = version_compare( WC_VERSION, '3.0', '<' ) ? $order->id : $order->get_id();
+			$order_id = $order->get_id();
 			wc_gateway_ppec_log( 'Found order #' . $order_id );
 			wc_gateway_ppec_log( 'Payment status: ' . $posted_data['payment_status'] );
 
@@ -140,7 +140,7 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 			wc_gateway_ppec_log( 'Payment error: Currencies do not match (sent "' . $order_currency . '" | returned "' . $currency . '")' );
 			// Put this order on-hold for manual checking.
 			// Translators: placeholder is a currency code.
-			$order->update_status( 'on-hold', sprintf( __( 'Validation error: PayPal currencies do not match (code %s).', 'woocommerce-gateway-paypal-express-checkout' ), $currency ) );
+			$order->update_status( 'on-hold', sprintf( __( 'Validation error: PayPal currencies do not match (code %s).', 'woocommerce-for-japan' ), $currency ) );
 			exit;
 		}
 	}
@@ -168,8 +168,8 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 	 * @param array $posted_data Posted data
 	 */
 	protected function payment_status_completed( $order, $posted_data ) {
-		$old_wc   = version_compare( WC_VERSION, '3.0', '<' );
-		$order_id = $old_wc ? $order->id : $order->get_id();
+
+		$order_id = $order->get_id();
 
 		if ( $order->has_status( array( 'completed' ) ) ) {
 			wc_gateway_ppec_log( 'Aborting, Order #' . $order_id . ' is already complete.' );
@@ -256,7 +256,7 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 	 */
 	protected function payment_status_refunded( $order, $posted_data ) {
 		// Only handle full refunds, not partial.
-		$order_id = version_compare( WC_VERSION, '3.0', '<' ) ? $order->id : $order->get_id();
+		$order_id = $order->get_id();
 		if ( $order->get_total() == ( $posted_data['mc_gross'] * -1 ) ) { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
 			// Mark order as refunded.
 			// Translators: placeholder is a payment status.
@@ -277,7 +277,7 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 	 * @param array $posted_data Posted data
 	 */
 	protected function payment_status_reversed( $order, $posted_data ) {
-		$order_id = version_compare( WC_VERSION, '3.0', '<' ) ? $order->id : $order->get_id();
+		$order_id = $order->get_id();
 		// Translators: placeholder is a payment status.
 		$order->update_status( 'on-hold', sprintf( __( 'Payment %s via IPN.', 'woocommerce-gateway-paypal-express-checkout' ), wc_clean( $posted_data['payment_status'] ) ) );
 		$this->send_ipn_email_notification(
@@ -295,7 +295,7 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 	 * @param array $posted_data Posted data
 	 */
 	protected function payment_status_canceled_reversal( $order, $posted_data ) {
-		$order_id = version_compare( WC_VERSION, '3.0', '<' ) ? $order->id : $order->get_id();
+		$order_id = $order->get_id();
 		$this->send_ipn_email_notification(
 			/* Translators: placeholder is an order number. */
 			sprintf( __( 'Reversal cancelled for order #%s', 'woocommerce-gateway-paypal-express-checkout' ), $order->get_order_number() ),
@@ -325,11 +325,7 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 		foreach ( $mapped_keys as $post_key => $meta_key ) {
 			if ( ! empty( $posted_data[ $post_key ] ) ) {
 				$value = wc_clean( $posted_data[ $post_key ] );
-				if ( $old_wc ) {
-					update_post_meta( $order->id, $meta_key, $value );
-				} else {
-					$order->update_meta_data( $meta_key, $value );
-				}
+				$order->update_meta_data( $meta_key, $value );
 			}
 		}
 
@@ -338,7 +334,7 @@ class WC_Gateway_PPEC_IPN_Handler extends WC_Gateway_PPEC_PayPal_Request_Handler
 		}
 
 		if ( ! empty( $posted_data['txn_id'] ) ) {
-			update_post_meta( $old_wc ? $order->id : $order->get_id(), '_transaction_id', wc_clean( $posted_data['txn_id'] ) );
+			update_post_meta( $order->get_id(), '_transaction_id', wc_clean( $posted_data['txn_id'] ) );
 		}
 	}
 

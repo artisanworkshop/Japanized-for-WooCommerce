@@ -5,7 +5,7 @@
  * @package WooCommerce\Gateways
  */
 
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_9 as Framework;
+use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_Paidy
  * @extends		WC_Payment_Gateway
- * @version		1.1.9
+ * @version		1.1.10
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -62,7 +62,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      */
     public function __construct() {
 		$this->id                 = 'paidy';
-		$this->icon               = apply_filters('woocommerce_paidy_icon', '');
+		$this->icon               = apply_filters('woocommerce_paidy_icon', JP4WC_URL_PATH . '/assets/images/paidy_logo_tagline_100.png');
 		$this->has_fields         = false;
         $this->order_button_text = sprintf(__( 'Proceed to %s', 'woocommerce-for-japan' ), __('Paidy', 'woocommerce-for-japan' ));
 
@@ -129,6 +129,14 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                 'default'     => __( 'No matter how many times you shop a month, you pay once in the following month. <br /> The following payment methods are available.', 'woocommerce-for-japan' ),
 				'desc_tip'    => true,
 			),
+            'paidy_description' => array(
+                'title'       => __( 'Paidy description', 'woocommerce-for-japan' ),
+                'type'        => 'textarea',
+                'custom_attributes' => array( 'rows' => 6 ),
+                'description' => __( 'Payment method description for paidy explanation that the customer will see on your checkout.', 'woocommerce-for-japan' ),
+                'default'     => $this->paidy_explanation(),
+                'desc_tip'    => true,
+            ),
             'order_button_text' => array(
                 'title'       => __( 'Order Button Text', 'woocommerce-for-japan' ),
                 'type'        => 'text',
@@ -218,11 +226,34 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         ?>
         <br />
         <a href="https://paidy.com/consumer" target="_blank" class="jp4wc-paidy-icon">
-            <img src="<?php echo JP4WC_URL_PATH;?>assets/images/checkout_banner_320x100.png" alt="Paidy 翌月まとめてお支払い" style="max-height: none; float: none;">
+            <img src="<?php echo JP4WC_URL_PATH;?>assets/images/2021Checkout_320x100.png" alt="Paidy 翌月まとめてお支払い" style="max-height: none; float: none;">
         </a>
         <br />
         <p class="jp4wc-paidy-description"><?php echo $this->description; ?></p>
         <br />
+        <?php
+        if(empty($this->paidy_description)){
+            $paidy_explanation = $this->paidy_explanation();
+        }else{
+            $paidy_explanation = $this->paidy_description;
+        }
+        $allowed_html = array(
+            'a' => array( 'href' => array (), 'target' => array(), ),
+            'br' => array(),
+            'strong' => array(),
+            'b' => array(),
+            'div' => array(),
+            'ul' => array(),
+            'li' => array(),
+        );
+        echo wp_kses( $paidy_explanation, $allowed_html );
+    }
+
+    /**
+     *
+     */
+    function paidy_explanation(){
+        $explain_html = '
         <div class="jp4wc-paidy-explanation">
         <ul>
             <li style="list-style: disc !important;">口座振替(支払手数料:無料)</li>
@@ -231,9 +262,9 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         </ul>
         Paidyについて詳しくは<a href="https://paidy.com/whatspaidy" target="_blank">こちら</a>。
         </div>
-        <?php
+        ';
+        return apply_filters( 'jp4wc_paidy_explanation', $explain_html );
     }
-
     /**
      * Process the payment and return the result
      *
@@ -492,27 +523,28 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      * Load Paidy Token javascript
      */
     public function paidy_token_scripts_method() {
-        // Image upload.
-        wp_enqueue_media();
+        if( is_checkout_pay_page() ){
+            // Image upload.
+            wp_enqueue_media();
 
-        $paygent_token_js_link = 'https://apps.paidy.com/';
-        if(is_checkout()){
-            wp_enqueue_script(
-                'paidy-token',
-                $paygent_token_js_link,
-                array(),
-                '',
-                false
-            );
-            // Paidy Payment for Checkout page
-            wp_register_style(
-                'jp4wc-paidy',
-                JP4WC_URL_PATH .
-                '/assets/css/jp4wc-paidy.css',
-                false,
-                JP4WC_VERSION
-            );
-            wp_enqueue_style( 'jp4wc-paidy' );
+            $paygent_token_js_link = 'https://apps.paidy.com/';
+            if(is_checkout()){
+                wp_enqueue_script(
+                    'paidy-token',
+                    $paygent_token_js_link,
+                    array(),
+                    '',
+                    false
+                );
+                // Paidy Payment for Checkout page
+                wp_register_style(
+                    'jp4wc-paidy',
+                    JP4WC_URL_PATH . '/assets/css/jp4wc-paidy.css',
+                    false,
+                    JP4WC_VERSION
+                );
+                wp_enqueue_style( 'jp4wc-paidy' );
+            }
         }
     }
 
@@ -530,6 +562,15 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                 JP4WC_VERSION,
                 true
             );
+        }
+        if( is_admin() && isset($_GET['section']) && isset($_GET['tab']) && $_GET['section'] == 'paidy' && $_GET['tab'] == 'checkout' ){
+            wp_register_style(
+                'jp4wc_paidy_admin',
+                JP4WC_URL_PATH . 'assets/css/admin-jp4wc-paidy.css',
+                false,
+                JP4WC_VERSION
+            );
+            wp_enqueue_style( 'jp4wc_paidy_admin' );
         }
     }
 

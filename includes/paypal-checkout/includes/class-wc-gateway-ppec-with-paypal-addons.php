@@ -152,10 +152,10 @@ class WC_Gateway_PPEC_With_PayPal_Addons extends WC_Gateway_PPEC_With_PayPal {
 	 * @param int|WC_Order $order  Order ID or order object
 	 */
 	public function scheduled_subscription_payment( $amount, $order ) {
-		$old_wc               = version_compare( WC_VERSION, '3.0', '<' );
+
 		$order                = wc_get_order( $order );
-		$order_id             = $old_wc ? $order->id : $order->get_id();
-		$billing_agreement_id = $old_wc ? get_post_meta( $order_id, '_ppec_billing_agreement_id', true ) : $order->get_meta( '_ppec_billing_agreement_id', true );
+		$order_id             = $order->get_id();
+		$billing_agreement_id = $order->get_meta( '_ppec_billing_agreement_id', true );
 
 		if ( empty( $billing_agreement_id ) ) {
 			wc_gateway_ppec_log( sprintf( '%s: Could not found billing agreement. Skip reference transaction', __METHOD__ ) );
@@ -195,7 +195,7 @@ class WC_Gateway_PPEC_With_PayPal_Addons extends WC_Gateway_PPEC_With_PayPal {
 
 		try {
 			if ( ! $client->response_has_success_status( $response ) ) {
-				throw new Exception( __( 'PayPal API error', 'woocommerce-gateway-paypal-express-checkout' ) );
+				throw new Exception( __( 'PayPal API error', 'woocommerce-for-japan' ) );
 			}
 
 			wc_gateway_ppec_save_transaction_data( $order, $response );
@@ -205,7 +205,7 @@ class WC_Gateway_PPEC_With_PayPal_Addons extends WC_Gateway_PPEC_With_PayPal {
 			switch ( $status ) {
 				case 'Pending':
 					/* translators: placeholder is pending reason from PayPal API. */
-					$order_note = sprintf( __( 'PayPal transaction held: %s', 'woocommerce-gateway-paypal-express-checkout' ), $response['PENDINGREASON'] );
+					$order_note = sprintf( __( 'PayPal transaction held: %s', 'woocommerce-for-japan' ), $response['PENDINGREASON'] );
 					if ( ! $order->has_status( 'on-hold' ) ) {
 						$order->update_status( 'on-hold', $order_note );
 					} else {
@@ -217,11 +217,11 @@ class WC_Gateway_PPEC_With_PayPal_Addons extends WC_Gateway_PPEC_With_PayPal {
 				case 'In-Progress':
 					$transaction_id = $response['TRANSACTIONID'];
 					// Translators: %s is a transaction ID.
-					$order->add_order_note( sprintf( __( 'PayPal payment approved (ID: %s)', 'woocommerce-gateway-paypal-express-checkout' ), $transaction_id ) );
+					$order->add_order_note( sprintf( __( 'PayPal payment approved (ID: %s)', 'woocommerce-for-japan' ), $transaction_id ) );
 					$order->payment_complete( $transaction_id );
 					break;
 				default:
-					throw new Exception( __( 'PayPal payment declined', 'woocommerce-gateway-paypal-express-checkout' ) );
+					throw new Exception( __( 'PayPal payment declined', 'woocommerce-for-japan' ) );
 			}
 		} catch ( Exception $e ) {
 			$order->update_status( 'failed', $e->getMessage() );

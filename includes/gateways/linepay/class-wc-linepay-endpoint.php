@@ -1,5 +1,5 @@
 <?php
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_9 as Framework;
+use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 add_action( 'rest_api_init', function () {
     register_rest_route( 'linepay/v1', '/shippings/', array(

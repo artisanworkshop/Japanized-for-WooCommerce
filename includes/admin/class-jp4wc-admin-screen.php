@@ -2,11 +2,11 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.2.13
+ * @version     2.2.17
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_9 as Framework;
+use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -40,14 +40,16 @@ class JP4WC_Admin_Screen {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 80 );
 		add_action( 'admin_menu', array( $this, 'jp4wc_admin_menu' ) ,60 );
 		add_action( 'admin_init', array( $this, 'jp4wc_setting_init') );
+        add_action( 'wp_dashboard_setup', array( __CLASS__, 'jp4wc_dashboard_widget' ), 1 );
 		$this->jp4wc_plugin = new Framework\JP4WC_Plugin();
 		$this->prefix =  'wc4jp-';
 	}
+
 	/**
 	 * Admin Menu
 	 */
 	public function jp4wc_admin_menu() {
-		$page = add_submenu_page( 'woocommerce', __( 'For Japanese', 'woocommerce-for-japan' ), __( 'For Japanese', 'woocommerce-for-japan' ), 'manage_woocommerce', 'wc4jp-options', array( $this, 'jp4wc_output_display' ) );
+		add_submenu_page( 'woocommerce', __( 'For Japanese', 'woocommerce-for-japan' ), __( 'For Japanese', 'woocommerce-for-japan' ), 'manage_woocommerce', 'wc4jp-options', array( $this, 'jp4wc_output_display' ) );
 	}
 
 	/**
@@ -534,6 +536,7 @@ class JP4WC_Admin_Screen {
             }
 		}
 	}
+
 	/**
 	 * Add a message.
 	 * @param string $text
@@ -564,11 +567,11 @@ class JP4WC_Admin_Screen {
 			}
 		}
 	}
+
 	/**
 	 * save option.
 	 *
      * @param array add　methods array
-	 * @return mixed
 	 */
 	public function jp4wc_save_methods( $add_methods ) {
 		foreach($add_methods as $add_method){
@@ -579,69 +582,62 @@ class JP4WC_Admin_Screen {
 			}
 		}
 	}
+
 	/**
 	 * Yomigana option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_yomigana() {
 		$title = __( 'Name Yomigana', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_description_address_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('yomigana', $description, $this->prefix);
 	}
+
     /**
      * Yomigana option.
-     *
-     * @return mixed
      */
     public function jp4wc_options_yomigana_required() {
         $description = __( 'Check if you want to require yomigana.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_checkbox('yomigana-required', $description, $this->prefix);
     }
+
 	/**
 	 * Honorific Suffix option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_honorific_suffix() {
 		$title = __( 'Honorific Suffix(Sama)', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_description_address_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('honorific-suffix', $description, $this->prefix);
 	}
+
 	/**
 	 * Company Name option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_company_name() {
 		$title = __( 'Company Name', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_description_address_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('company-name', $description, $this->prefix);
 	}
+
 	/**
 	 * Free Shipping Display option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_free_shipping() {
 		$title = __( 'Free Shipping Display', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_description_address_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('free-shipping', $description, $this->prefix);
 	}
+
 	/**
 	 * Free Shipping Display option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_zip2address() {
 		$title = __( 'Automatic zip code entry', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('zip2address', $description, $this->prefix);
 	}
+
 	/**
 	 * Free Shipping Display option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_yahoo_app_id() {
 		$title = __( 'Yahoo! APP ID', 'woocommerce-for-japan' );
@@ -651,66 +647,58 @@ class JP4WC_Admin_Screen {
 
 	/**
 	 * Eliminate the order of addresses option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_no_ja() {
 		$description = __( 'Eliminate the order of addresses for Japan.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('no-ja', $description, $this->prefix);
 	}
+
 	/**
 	 * Delivery date designation enable.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_delivery_date_designation(){
 		$title = __( 'Delivery date designation', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('delivery-date', $description, $this->prefix);
 	}
+
     /**
      * Delivery date designation required.
-     *
-     * @return mixed
      */
     public function jp4wc_delivery_date_required(){
         $description = __( 'Check here if you want to specify the delivery date as a required.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_checkbox('delivery-date-required', $description, $this->prefix);
     }
+
 	/**
 	 * Start date for delivery date.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_start_date(){
 		$title = __( 'Start Date', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the number of days until the first day you can receive the delivery date / time. If you enter 0 you can specify delivery from today.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_number('start-date', $description, 2, $this->prefix);
 	}
+
 	/**
 	 * Term for delivery date.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_reception_period(){
 		$title = __( 'Reception period', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the number of days for which you can accept the delivery reservation. Please enter 1 or more.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_number('reception-period', $description, 7, $this->prefix);
 	}
+
 	/**
 	 * Unspecified for delivery date.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_unspecified_date(){
 		$title = __( 'Unspecified Date', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the sentence when you do not need to specify the delivery date.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_text('unspecified-date', $description, 60, __( 'No specified date', 'woocommerce-for-japan' ), $this->prefix);
 	}
+
 	/**
 	 * Unspecified for delivery date.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_date_format(){
 		$title = __( 'Date format', 'woocommerce-for-japan' );
@@ -718,30 +706,27 @@ class JP4WC_Admin_Screen {
 		$description .= '<a href="http://php.net/manual/ja/function.date.php" target="_blank">'.' '.__('Check from here.', 'woocommerce-for-japan' ).'</a>';
 		$this->jp4wc_plugin->jp4wc_input_text('date-format', $description, 10, 'Y/m/d', $this->prefix);
 	}
+
     /**
      * Delivery date designation enable.
-     *
-     * @return mixed
      */
     public function jp4wc_day_of_week(){
         $title = __( 'Display day of week', 'woocommerce-for-japan' );
         $description = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title );
         $this->jp4wc_plugin->jp4wc_input_checkbox('day-of-week', $description, $this->prefix);
     }
+
 	/**
 	 * Delivery deadline setting.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_delivery_deadline(){
 		$title = __( 'Delivery deadline', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the time delivery deadline of your store.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_time('delivery-deadline', $description, '15:00', $this->prefix);
 	}
+
 	/**
 	 * Delivery No delivery weekday setting.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_no_delivery_weekday(){
 		$weekdays = array(
@@ -783,10 +768,9 @@ class JP4WC_Admin_Screen {
 		}
 		echo '<br />'.__( 'Please check the days of the week that you do not ship. In case of continuous, we will correspond up to three days.', 'woocommerce-for-japan' );
 	}
+
 	/**
-	 * Delivery holioday term setting.
-	 * 
-	 * @return mixed
+	 * Delivery holiday term setting.
 	 */
 	public function jp4wc_holiday_term(){
 		$start_date = array(
@@ -808,40 +792,33 @@ class JP4WC_Admin_Screen {
 
 	/**
 	 * Delivery time zone enable.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_delivery_time_zone(){
 		$title = __( 'Delivery time zone', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('delivery-time-zone', $description, $this->prefix);
 	}
+
     /**
      * Delivery time zone required.
-     *
-     * @return mixed
      */
     public function jp4wc_delivery_time_zone_required(){
         $description = __( 'Check here if you want to specify the delivery time zone as a required item.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_checkbox('delivery-time-zone-required', $description, $this->prefix);
     }
+
 	/**
 	 * Unspecified for delivery time zone.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_unspecified_time(){
-		$title = __( 'Unspecified Time', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the sentence when you do not need to specify the delivery time.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_text('unspecified-time', $description, 60, __( 'No designated time zone', 'woocommerce-for-japan' ), $this->prefix);
 	}
+
 	/**
 	 * Delivery time zone Management.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_delivery_time_zone_mgn(){
-		$title = __( 'Delivery time zone Management', 'woocommerce-for-japan' );
 		$time_zone_details = array(
 			array ( 'start_time' => '08:00', 'end_time' => '12:00' ), 
 			array ( 'start_time' => '12:00', 'end_time' => '14:00' ),
@@ -853,20 +830,9 @@ class JP4WC_Admin_Screen {
 		);
 		$this->jp4wc_input_time_zone_html($time_zone_details );
 	}
-	/**
-	 * Delivery tracking enable.
-	 * 
-	 * @return mixed
-	 */
-	public function jp4wc_delivery_tracking(){
-		$title = __( 'Delivery tracking', 'woocommerce-for-japan' );
-		$description = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title );
-		$this->jp4wc_plugin->jp4wc_input_checkbox('delivery-tracking', $description, $this->prefix);
-	}
+
 	/**
 	 * BANK PAYMENT IN JAPAN option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_bankjp() {
 		$title = __( 'BANK PAYMENT IN JAPAN', 'woocommerce-for-japan' );
@@ -875,8 +841,6 @@ class JP4WC_Admin_Screen {
 	}
 	/**
 	 * Postal transfer option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_postofficebank() {
 		$title = __( 'Postal transfer', 'woocommerce-for-japan' );
@@ -885,18 +849,15 @@ class JP4WC_Admin_Screen {
 	}
 	/**
 	 * Pay at store option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_atstore() {
 		$title = __( 'Pay at store', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_plugin->jp4wc_description_payment_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('atstore', $description, $this->prefix);
 	}
+
 	/**
 	 * COD option.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_options_cod2() {
 		$title = __( 'COD for Subscriptions', 'woocommerce-for-japan' );
@@ -906,35 +867,30 @@ class JP4WC_Admin_Screen {
 
     /**
      * Shop Name option.
-     *
-     * @return mixed
      */
     public function jp4wc_law_shop_name() {
         $description = __( 'Please enter the shop name.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_text('law-shop-name', $description, 60, get_bloginfo('name'), $this->prefix);
     }
+
     /**
      * Company Name option.
-     *
-     * @return mixed
      */
     public function jp4wc_law_company_name() {
         $description = __( 'Please enter the company name.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_text('law-company-name', $description, 60, '', $this->prefix);
     }
+
     /**
      * Owner Name option.
-     *
-     * @return mixed
      */
     public function jp4wc_law_owner_name() {
         $description = __( 'Please enter the owner name.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_text('law-owner-name', $description, 60, '', $this->prefix);
     }
+
     /**
      * Owner Name option.
-     *
-     * @return mixed
      */
     public function jp4wc_law_location() {
         $description = __( 'Please enter the location.', 'woocommerce-for-japan' );
@@ -950,124 +906,91 @@ class JP4WC_Admin_Screen {
         $location = $this->get_option('woocommerce_store_postcode').' '.$states[$country_code][$state_code].get_option('woocommerce_store_city').get_option('woocommerce_store_address').get_option('woocommerce_store_address_2').$country_code;
         $this->jp4wc_plugin->jp4wc_input_text('law-location', $description, 60, $location, $this->prefix);
     }
+
     /**
      * Contact rules explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_contact() {
         $description = __( 'Please enter the contact rule.', 'woocommerce-for-japan' );
         $default_value = __( 'Please contact us from the inquiry form.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_textarea('law-contact', $description, $default_value, $this->prefix);
     }
+
     /**
      * Selling price rules explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_price() {
         $description = __( 'Please enter the Selling price rules.', 'woocommerce-for-japan' );
         $default_value = __( 'The product price is displayed on each product screen.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_textarea('law-price', $description, $default_value, $this->prefix);
     }
+
     /**
      * Payment methods rules explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_payment() {
         $description = __( 'Please enter the Payment methods rules.', 'woocommerce-for-japan' );
         $default_value = __( 'Payment methods are limited to various credit cards.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_textarea('law-payment', $description, $default_value, $this->prefix);
     }
+
     /**
      * Purchase rules explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_purchase() {
         $description = __( 'Please enter the purchase rules.', 'woocommerce-for-japan' );
         $default_value = __( 'Put the product you want to purchase in the cart, proceed to purchase, pay with credit card and purchase.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_textarea('law-purchase', $description, $default_value, $this->prefix);
     }
+
     /**
      * Product delivery time rules explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_delivery() {
         $description = __( 'Please enter the product delivery time rules.', 'woocommerce-for-japan' );
         $default_value = __( 'The shipping date of the product is listed on each product page.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_textarea('law-delivery', $description, $default_value, $this->prefix);
     }
+
     /**
      * Cost rules explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_cost() {
         $description = __( 'Please enter the cost rules.', 'woocommerce-for-japan' );
         $default_value = __( 'A separate shipping fee will be added to the purchase price.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_textarea('law-cost', $description, $default_value, $this->prefix);
     }
+
     /**
      * Return and cancellation rules explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_return() {
         $description = __( 'Please enter the return and cancellation rules.', 'woocommerce-for-japan' );
         $default_value = __( 'We will not accept returns or exchanges other than mistakes at the time of delivery on our company side.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_textarea('law-return', $description, $default_value, $this->prefix);
     }
+
     /**
      * Selling price rules explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_special() {
         $description = __( 'Please enter the Special rules.', 'woocommerce-for-japan' );
         $this->jp4wc_plugin->jp4wc_input_textarea('law-special', $description,'', $this->prefix);
     }
+
     /**
      * How to use short code explanation.
-     *
-     * @return mixed
      */
     public function jp4wc_law_explanation() {
         echo __( 'It will be displayed if you put [jp4wc_law] shortcode on a page or post.', 'woocommerce-for-japan' );
     }
 
 	/**
-     * create input time zone form.
-	 *
-     * @param string $slug
-     * @param string $description
-     * @param string $default_value
-	 * @return mixed
-	 */
-	 public function jp4wc_input_time($slug, $description, $default_value){
-	    ?>
-		<label for="woocommerce_input_<?php echo $slug;?>">
-		<?php 
-			$wc4jp_meta_name = 'wc4jp-'.$slug;
-			if(get_option($wc4jp_meta_name)){
-				$wc4jp_options_setting = get_option($wc4jp_meta_name) ;
-			}else{
-				$wc4jp_options_setting = $default_value;
-			}
-			?>
-			<input type="time" name="<?php echo $slug;?>" value="<?php echo $wc4jp_options_setting; ?>" ><br />
-			<?php echo $description; ?>
-		</label>
-	<?php }
-	/**
 	 * create input time zone form.
 	 *
-     * @param string $default_value
-	 * @return mixed
+     * @param array Default array
 	 */
-	 public function jp4wc_input_time_zone_html( $default_value ){
+	 public function jp4wc_input_time_zone_html( $default_array ){
 		if(get_option( 'wc4jp_time_zone_details')){			
 	    	$time_zone_details = get_option( 'wc4jp_time_zone_details',
 				array(
@@ -1078,7 +1001,7 @@ class JP4WC_Admin_Screen {
 				)
 			);
 		}else{
-			$time_zone_details = $default_value;
+			$time_zone_details = $default_array;
 		}
 ?>
 	 			    <table class="widefat wc_input_table sortable" id="delivery_time_zone" cellspacing="0">
@@ -1132,11 +1055,11 @@ class JP4WC_Admin_Screen {
 				</script>
        <?php
 	 }
+
 	/**
 	 * create description for address pattern.
 	 *
-     * @param string $title
-	 * @return mixed
+     * @param string Title
 	 */
 	 public function jp4wc_description_address_pattern( $title ){
 			$description = sprintf(__( 'Please check it if you want to use input field for %s', 'woocommerce-for-japan' ), $title);
@@ -1149,26 +1072,22 @@ class JP4WC_Admin_Screen {
 	 * @return array
 	 */
 	public function validate_options( $input ) {
-//		if ( ! current_user_can( 'administrator' ) )
-//			return $input;
 		if ( isset( $_POST['save_wc4jp_options'] ) ) {
 			add_settings_error( 'wc4jp_settings_errors', 'wc4jp_settings_saved', __( 'Settings saved.', 'woocommerce-for-japan' ), 'updated' );
 		}
 		return $input;
 	}
+
 	/**
-	 * Plguins information display.
-	 * 
-	 * @return mixed
+	 * Plugins information display.
 	 */
 	public function jp4wc_informations_plugins() {
 		echo sprintf(__('<a href="%s" target="_blank" title="Paygent Payment">Paygent Payment</a> :  You can handle Credit Card payment and Convini payment, etc<br >', 'woocommerce-for-japan'),'https://wc.artws.info/shop/wordpress-official/paygent-for-woocommerce/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=plugins-information');
 		echo sprintf(__('<a href="%s" target="_blank" title="WooCommerce Subscriptions">WooCommerce Subscriptions</a> : You can handle Subscriptions.<br >', 'woocommerce-for-japan'),'https://wc.artws.info/shop/woothemes-official/woocommerce-subscriptions/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=plugins-information');
 	}
+
 	/**
 	 * Services information display.
-	 * 
-	 * @return mixed
 	 */
 	public function jp4wc_informations_services() {
 		echo sprintf(__('<a href="%s" target="_blank" title="Payment Setting Support">Payment Setting Support</a> :  We support Payment Plugins Setting.<br >', 'woocommerce-for-japan'),'https://wc.artws.info/shop/setting-support/payment-support/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information');
@@ -1186,10 +1105,10 @@ class JP4WC_Admin_Screen {
 		if ( $page === 'woocommerce_page_wc4jp-options' ) {
 			wp_enqueue_script( 'jp4wc-admin-script', JP4WC_URL_PATH. 'includes/admin/views/js/admin-settings.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-slider', 'jquery-ui-button' ), JP4WC_VERSION );
 			wp_enqueue_script( 'postbox' );
-            wp_enqueue_script('jp4wc-tooltip', WC()->plugin_url(). '/assets/js/jquery-tiptip/jquery.tipTip.min.js', array('jquery'));
-
+            wp_enqueue_script('jp4wc-tooltip', plugins_url( '/', WC_PLUGIN_FILE ) . 'assets/js/jquery-tiptip/jquery.tipTip.min.js', array('jquery'));
 		}
 	}
+
 	/**
 	 * Get a setting from the settings API.
 	 *
@@ -1230,6 +1149,128 @@ class JP4WC_Admin_Screen {
 
 		return $option_value === null ? $default : $option_value;
 	}
+
+    public static function is_dashboard_active() {
+        $flag = false;
+        if ( 'ja' == get_locale() ) {
+            $flag = true;
+        }
+        return apply_filters( 'jp4wc-admin-is-dashboard-active', $flag );
+    }
+
+    /**
+     * admin _ Dashboard Widget
+     */
+    public static function jp4wc_dashboard_widget() {
+        if ( self::is_dashboard_active() ) {
+            wp_add_dashboard_widget(
+                'jp4wc_dashboard_widget',
+                __( 'Japanized for WooCommerce Information', 'woocommerce-for-japan' ),
+                array( __CLASS__, 'jp4wc_dashboard_widget_body' )
+            );
+        }
+    }
+
+    /**
+     * Dashboard Widget body
+     */
+    public static function jp4wc_dashboard_widget_body() {
+        if ( 'ja' == get_locale() ) {
+            echo self::jp4wc_get_news_body();
+        }
+        echo self::jp4wc_get_admin_banner();
+    }
+
+    /**
+     * Dashboard Widget News body
+     */
+    public static function jp4wc_get_news_body() {
+        if ( 'ja' == get_locale() ) {
+            return self::get_news_from_rest_api();
+        }
+        return '<p>Sorry this information is Japanese only.</p>';
+    }
+
+    /**
+     * Dashboard Widget admin banner
+     */
+    public static function jp4wc_get_admin_banner() {
+        $banner_html = '<div class="jp4wc-admin-banner">';
+        $banner_html .= '<a href="//wc.artws.info" class="jp4wc_logo" target="_blank" class="admin_banner">';
+        $banner_html .= '<img src="' . JP4WC_URL_PATH . '/assets/images/woo-logo.png" alt="職人工房" /></a>';
+        $banner_html .= '</div>';
+
+        return apply_filters( 'jp4wc_admin_banner_html', $banner_html );
+    }
+
+    /**
+     * Dashboard html from rest api
+     */
+    public static function get_news_from_rest_api() {
+
+        $html = '<h4 class="jp4wc-metabox-sub-title">';
+        $html .= 'WooCommerce Meetups in Japan';
+        $html .= '<a href="https://wc4jp-pro.work/category/wc-meetups/?rel=jp4wc_admin" target="_blank" class="jp4wc-metabox-more-link">記事一覧<span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
+        $html .= '</h4>';
+        $html .= '<ul id="jp4wc-wc-meetups" class="jp4wc-metabox-post-list"></ul>';
+
+        $html .= '<h4 class="jp4wc-metabox-sub-title">';
+        $html .= 'News';
+        $html .= '<a href="https://www.vektor-inc.co.jp/info/?rel=jp4wc_admin" target="_blank" class="jp4wc-metabox-more-link">記事一覧<span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
+        $html .= '</h4>';
+        $html .= '<ul id="jp4wc-wc-news" class="jp4wc-metabox-post-list"></ul>';
+
+        $html = apply_filters( 'jp4wc_admin_news_html', $html );
+
+        add_action( 'admin_footer', array( __CLASS__, 'load_rest_api_js' ) );
+
+        return $html;
+        ?>
+        <?php
+    }
+
+    /**
+     * Get notifications with WP REST API
+     */
+    public static function load_rest_api_js() {
+        ?>
+        <script>
+            /*-------------------------------------------*/
+            /* Get notifications with WP REST API
+            /*-------------------------------------------*/
+            ;(function($){
+                jQuery(document).ready(function($){
+
+                    // WooCommerce Meetup in Japan
+                    $.getJSON( "https://wc4jp-pro.work/wp-json/wp/v2/posts/?categories=47&per_page=3",
+                        function(results) {
+                            // Loop the contents of the retrieved JSON
+                            $.each(results, function(i, item) {
+                                // Get date data
+                                var date = new Date(item.date_gmt);
+                                var formate_date = date.toLocaleDateString();
+                                // Output the JSON content element before </ ul>
+                                $("ul#jp4wc-wc-meetups").append('<li><span class="date">'+ formate_date +'</span><a href="' + item.link + '?rel=vkadmin" target="_blank">' + item.title.rendered + '</a></li>');
+                            });
+                        });
+
+                    // News
+                    $.getJSON( "https://wc4jp-pro.work/wp-json/wp/v2/posts/?categories=1&per_page=3",
+                        function(results) {
+                            // Loop the contents of the retrieved JSON
+                            $.each(results, function(i, item) {
+                                // Get date data
+                                var date = new Date(item.date_gmt);
+                                var formate_date = date.toLocaleDateString();
+                                // Output the JSON content element before </ ul>
+                                $("ul#jp4wc-wc-news").append('<li><span class="date">'+ formate_date +'</span><a href="' + item.link + '?rel=vkadmin" target="_blank">' + item.title.rendered + '</a></li>');
+                            });
+                        });
+                });
+            })(jQuery);
+        </script>
+        <?php
+    }
 
 }
 

@@ -67,11 +67,7 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 
 		if ( is_admin() ) {
 			foreach ( WC()->shipping()->load_shipping_methods() as $method ) {
-				if ( ! defined( 'WC_VERSION' ) || version_compare( WC_VERSION, 2.6, '<' ) ) {
-					$shipping_methods[ $method->id ] = $method->method_title;
-				}else{
-					$shipping_methods[ $method->id ] = $method->get_method_title();
-				}
+                $shipping_methods[ $method->id ] = $method->get_method_title();
 			}
 		}
 
