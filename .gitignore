@@ -28,8 +28,13 @@ node_modules/
 # Windows junk
 Thumbs.db
 
+<<<<<<< HEAD
 # remove .idea directory
 .idea/*
 
 # remove .scss map data
 *.css.map
+=======
+#php storm file
+.idea/
+>>>>>>> 8729e8f871b5d28c1c6e8b071cc9cc3c7955cc26
