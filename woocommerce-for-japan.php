@@ -7,9 +7,9 @@
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 4.9
- * Tested up to: 5.7.2
+ * Tested up to: 5.8.0
  * WC requires at least: 3.0
- * WC tested up to: 5.4.1
+ * WC tested up to: 5.5.2
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/

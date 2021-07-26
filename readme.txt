@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, shohei.tanaka, mt8biz
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 4.9.0
-Tested up to: 5.7.2
-Stable tag: 2.2.16
+Tested up to: 5.8.0
+Stable tag: 2.2.17
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -59,8 +59,14 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
+= 2.2.17 - 2021-07-27 =
+* Fixed - Paidy logo renewal
+* Update - PayPal Express checkout payment to v2.1.2
+* Fixed - delivery class bug fixed
+* Enhancement - some css files change to scss
+
 = 2.2.16 - 2021-06-14 =
-*Fixed - Support for product names that include double quotes at Paidy
+* Fixed - Support for product names that include double quotes at Paidy
 * Fixed - Last name and first name reversal at LINE PAY
 
 = 2.2.15 - 2021-05-17 =
