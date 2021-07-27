@@ -62,6 +62,7 @@ The manual installation method involves downloading our plugin and uploading it 
 = 2.2.17 - 2021-07-27 =
 * Fixed - Paidy logo renewal
 * Update - PayPal Express checkout payment to v2.1.2
+* Dev - News for admin dashboard
 * Fixed - delivery class bug fixed
 * Enhancement - some css files change to scss
 
