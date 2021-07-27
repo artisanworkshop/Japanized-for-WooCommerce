@@ -135,48 +135,48 @@ class JP4WC{
 		//load framework
         $version_text = 'v'.str_replace('.', '_', JP4WC_FRAMEWORK_VERSION);
 		if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\'.$version_text.'\\JP4WC_Plugin' ) ) {
-            require_once JP4WC_ABSPATH.'includes/jp4wc-framework/class-jp4wc-framework.php';
+            require_once JP4WC_INCLUDES_PATH . 'jp4wc-framework/class-jp4wc-framework.php';
 		}
         // Admin Setting Screen
-        require_once JP4WC_ABSPATH.'includes/admin/class-jp4wc-admin-screen.php';
-        require_once JP4WC_ABSPATH.'includes/admin/class-jp4wc-admin-product-meta.php';
+        require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-screen.php';
+        require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
 		// Payment Gateway For Bank
-		require_once JP4WC_ABSPATH.'includes/gateways/bank-jp/class-wc-gateway-bank-jp.php';
+		require_once JP4WC_INCLUDES_PATH . 'gateways/bank-jp/class-wc-gateway-bank-jp.php';
 		// Payment Gateway For Post Office Bank
-		require_once JP4WC_ABSPATH.'includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php';
+		require_once JP4WC_INCLUDES_PATH . 'gateways/postofficebank/class-wc-gateway-postofficebank-jp.php';
 		// Payment Gateway at Real Store
-		require_once JP4WC_ABSPATH.'includes/gateways/atstore/class-wc-gateway-atstore-jp.php';
+		require_once JP4WC_INCLUDES_PATH . 'gateways/atstore/class-wc-gateway-atstore-jp.php';
 		// Payment Gateway For COD subscriptions
-        require_once JP4WC_ABSPATH . 'includes/gateways/cod/class-wc-gateway-cod-4sub.php';
-        require_once JP4WC_ABSPATH . 'includes/gateways/cod/class-wc-addons-gateway-cod.php';
+        require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-gateway-cod-4sub.php';
+        require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-addons-gateway-cod.php';
 		// Address Setting
-        require_once JP4WC_ABSPATH.'includes/class-jp4wc-address-fields.php';
+        require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-address-fields.php';
 		// Delivery Setting
-        require_once JP4WC_ABSPATH.'includes/class-jp4wc-delivery.php';
+        require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-delivery.php';
 		// ADD COD Fee
-        require_once JP4WC_ABSPATH.'includes/class-jp4wc-cod-fee.php';
+        require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-cod-fee.php';
         // ADD Shortcodes
-        require_once JP4WC_ABSPATH . 'includes/class-jp4wc-shortcodes.php';
+        require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-shortcodes.php';
 		// Add Free Shipping display
-		require_once JP4WC_ABSPATH . 'includes/class-jp4wc-free-shipping.php';
+		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-free-shipping.php';
         // Add PayPal Checkout
-        require_once JP4WC_ABSPATH . 'includes/paypal-checkout/woocommerce-gateway-paypal-express-checkout.php';
+        require_once JP4WC_INCLUDES_PATH . 'paypal-checkout/woocommerce-gateway-paypal-express-checkout.php';
         // Include the main WooCommerce class.
         if ( ! class_exists( 'WC_Gateway_Paidy', false ) ) {
             // Add Paidy Checkout
-            require_once JP4WC_ABSPATH . '/includes/gateways/paidy/class-wc-gateway-paidy.php';
-            require_once JP4WC_ABSPATH . '/includes/gateways/paidy/class-wc-paidy-endpoint.php';
-            require_once JP4WC_ABSPATH . '/includes/gateways/paidy/class-wc-paidy-admin-notices.php';
+            require_once JP4WC_INCLUDES_PATH . 'gateways/paidy/class-wc-gateway-paidy.php';
+            require_once JP4WC_INCLUDES_PATH . 'gateways/paidy/class-wc-paidy-endpoint.php';
+            require_once JP4WC_INCLUDES_PATH . 'gateways/paidy/class-wc-paidy-admin-notices.php';
         }
         if ( ! class_exists( 'WC_Gateway_LINEPay', false ) ) {
             // Add LINE Pay Checkout
-            require_once JP4WC_ABSPATH . '/includes/gateways/linepay/class-wc-gateway-linepay.php';
-            require_once JP4WC_ABSPATH . '/includes/gateways/linepay/class-wc-gateway-linepay-cart-handler.php';
-            require_once JP4WC_ABSPATH . '/includes/gateways/linepay/class-wc-linepay-endpoint.php';
-            require_once JP4WC_ABSPATH . '/includes/gateways/linepay/class-wc-linepay-admin-notices.php';
+            require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-gateway-linepay.php';
+            require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-gateway-linepay-cart-handler.php';
+            require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-linepay-endpoint.php';
+            require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-linepay-admin-notices.php';
         }
         // Add Subscriptions setting
-        require_once JP4WC_ABSPATH . 'includes/class-jp4wc-subscriptions.php';
+        require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-subscriptions.php';
 	}
 
     /**
