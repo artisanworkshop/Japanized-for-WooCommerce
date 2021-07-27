@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: Japanized for WooCommerce\n"
-"POT-Creation-Date: 2019-08-15 16:27+0900\n"
-"PO-Revision-Date: 2019-08-15 16:26+0900\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"POT-Creation-Date: 2021-07-27 17:47+0900\n"
+"PO-Revision-Date: 2021-07-27 17:47+0900\n"
+"Last-Translator: Shohei Tanaka <cs@artws.info>\n"
+"Language-Team: Shohei Tanaka <cs@artws.info>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 3.0\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: woocommerce-for-japan.php\n"
@@ -21,523 +21,522 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 
-#: includes/class-jp4wc-address-fields.php:68
-msgid "Last Name (Yomigana)"
+#: includes/admin/class-jp4wc-admin-product-meta.php:53
+msgid "Change the price display in the product display of subscription."
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:74
-msgid "First Name (Yomigana)"
+#: includes/admin/class-jp4wc-admin-product-meta.php:61
+#: includes/admin/class-jp4wc-admin-product-meta.php:90
+msgid "Subscription price string"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:110
-#: includes/class-jp4wc-address-fields.php:256
-msgid "Shipping Phone"
+#: includes/admin/class-jp4wc-admin-product-meta.php:65
+#: includes/admin/class-jp4wc-admin-product-meta.php:93
+msgctxt "example price string"
+msgid "e.g. 5.90 per month"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:313
-#: includes/class-jp4wc-address-fields.php:355
-#: includes/class-jp4wc-address-fields.php:396
-#: includes/class-jp4wc-address-fields.php:419
-msgid "Last Name Yomigana"
-msgstr ""
-
-#: includes/class-jp4wc-address-fields.php:317
-#: includes/class-jp4wc-address-fields.php:359
-#: includes/class-jp4wc-address-fields.php:400
-#: includes/class-jp4wc-address-fields.php:423
-msgid "First Name Yomigana"
-msgstr ""
-
-#: includes/class-jp4wc-address-fields.php:370
-#: includes/class-jp4wc-address-fields.php:434
-msgid "Phone"
-msgstr ""
-
-#: includes/class-jp4wc-address-fields.php:483
-msgid "Please enter a hyphen [-] when entering a zip code."
-msgstr ""
-
-#: includes/class-jp4wc-admin-screen.php:45
+#: includes/admin/class-jp4wc-admin-screen.php:52
 msgid "For Japanese"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:84
+#: includes/admin/class-jp4wc-admin-screen.php:86
 msgid "Address Display Setting"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:90
-#: includes/class-jp4wc-admin-screen.php:555
+#: includes/admin/class-jp4wc-admin-screen.php:92
+#: includes/admin/class-jp4wc-admin-screen.php:590
 msgid "Name Yomigana"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:97
+#: includes/admin/class-jp4wc-admin-screen.php:99
+msgid "Required Name Yomigana"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:106
 msgid "Honorific suffix(Sama)"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:104
-#: includes/class-jp4wc-admin-screen.php:575
+#: includes/admin/class-jp4wc-admin-screen.php:113
+#: includes/admin/class-jp4wc-admin-screen.php:616
 msgid "Company Name"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:111
-#: includes/class-jp4wc-admin-screen.php:595
+#: includes/admin/class-jp4wc-admin-screen.php:120
+#: includes/admin/class-jp4wc-admin-screen.php:634
 msgid "Automatic zip code entry"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:118
+#: includes/admin/class-jp4wc-admin-screen.php:127
 msgid "Yahoo APP ID"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:125
+#: includes/admin/class-jp4wc-admin-screen.php:134
 msgid "No Japanese Address"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:132
-#: includes/class-jp4wc-admin-screen.php:585
+#: includes/admin/class-jp4wc-admin-screen.php:141
+#: includes/admin/class-jp4wc-admin-screen.php:625
 msgid "Free Shipping Display"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:141
-#: includes/class-jp4wc-admin-screen.php:625
+#: includes/admin/class-jp4wc-admin-screen.php:150
+#: includes/admin/class-jp4wc-admin-screen.php:660
 msgid "Delivery date designation"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:147
-#: includes/class-jp4wc-delivery.php:123
+#: includes/admin/class-jp4wc-admin-screen.php:156
+#: includes/class-jp4wc-delivery.php:181
 msgid "Preferred delivery date"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:154
-#: includes/class-jp4wc-admin-screen.php:635
+#: includes/admin/class-jp4wc-admin-screen.php:163
+msgid "Preferred delivery date required"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:170
+#: includes/admin/class-jp4wc-admin-screen.php:677
 msgid "Start Date"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:161
+#: includes/admin/class-jp4wc-admin-screen.php:177
 msgid "Delivery Term"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:168
+#: includes/admin/class-jp4wc-admin-screen.php:184
 msgid "Unspecified date description"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:175
-#: includes/class-jp4wc-admin-screen.php:665
+#: includes/admin/class-jp4wc-admin-screen.php:191
+#: includes/admin/class-jp4wc-admin-screen.php:704
 msgid "Date format"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:182
-#: includes/class-jp4wc-admin-screen.php:676
+#: includes/admin/class-jp4wc-admin-screen.php:198
+#: includes/admin/class-jp4wc-admin-screen.php:714
+msgid "Display day of week"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:205
+#: includes/admin/class-jp4wc-admin-screen.php:723
 msgid "Delivery deadline"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:189
+#: includes/admin/class-jp4wc-admin-screen.php:212
 msgid "No delivery weekday"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:196
-#: includes/class-jp4wc-admin-screen.php:743
+#: includes/admin/class-jp4wc-admin-screen.php:219
+#: includes/admin/class-jp4wc-admin-screen.php:788
 msgid "Holiday term"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:205
+#: includes/admin/class-jp4wc-admin-screen.php:228
 msgid "Delivery Time designation"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:211
-#: includes/class-jp4wc-admin-screen.php:754
+#: includes/admin/class-jp4wc-admin-screen.php:234
+#: includes/admin/class-jp4wc-admin-screen.php:797
 msgid "Delivery time zone"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:218
+#: includes/admin/class-jp4wc-admin-screen.php:241
+msgid "Delivery time zone required"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:248
 msgid "Unspecified Time description"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:225
+#: includes/admin/class-jp4wc-admin-screen.php:255
 msgid "Delivery time zone management"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:234
+#: includes/admin/class-jp4wc-admin-screen.php:264
 msgid "Payment Method"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:240
-#: includes/class-jp4wc-admin-screen.php:802
+#: includes/admin/class-jp4wc-admin-screen.php:270
+#: includes/admin/class-jp4wc-admin-screen.php:838
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:30
 msgid "BANK PAYMENT IN JAPAN"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:247
-#: includes/class-jp4wc-admin-screen.php:812
+#: includes/admin/class-jp4wc-admin-screen.php:277
+#: includes/admin/class-jp4wc-admin-screen.php:846
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:29
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:79
 msgid "Postal transfer"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:254
-#: includes/class-jp4wc-admin-screen.php:822
+#: includes/admin/class-jp4wc-admin-screen.php:284
+#: includes/admin/class-jp4wc-admin-screen.php:854
 msgid "Pay at store"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:261
-#: includes/class-jp4wc-admin-screen.php:832
+#: includes/admin/class-jp4wc-admin-screen.php:291
+#: includes/admin/class-jp4wc-admin-screen.php:863
 msgid "COD for Subscriptions"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:268
-#: includes/class-jp4wc-admin-screen.php:842
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:18
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:12
-msgid "PayPal Checkout"
-msgstr ""
-
-#: includes/class-jp4wc-admin-screen.php:277
-#: includes/views/html-admin-screen.php:15
+#: includes/admin/class-jp4wc-admin-screen.php:300
+#: includes/admin/views/html-admin-screen.php:15
 msgid "Specified Commercial Transaction Law"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:283
+#: includes/admin/class-jp4wc-admin-screen.php:306
 #: includes/class-jp4wc-shortcodes.php:62
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:217
 msgid "Shop Name"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:290
+#: includes/admin/class-jp4wc-admin-screen.php:313
 #: includes/class-jp4wc-shortcodes.php:63
 msgid "Sales company name (company name)"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:297
+#: includes/admin/class-jp4wc-admin-screen.php:320
 #: includes/class-jp4wc-shortcodes.php:64
 msgid "Owner Name"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:304
+#: includes/admin/class-jp4wc-admin-screen.php:327
 #: includes/class-jp4wc-shortcodes.php:65
 msgid "Location"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:311
+#: includes/admin/class-jp4wc-admin-screen.php:334
 #: includes/class-jp4wc-shortcodes.php:66
 msgid "Contact"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:318
+#: includes/admin/class-jp4wc-admin-screen.php:341
 #: includes/class-jp4wc-shortcodes.php:67
 msgid "Selling price"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:325
+#: includes/admin/class-jp4wc-admin-screen.php:348
 #: includes/class-jp4wc-shortcodes.php:68
 msgid "Payment method"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:332
+#: includes/admin/class-jp4wc-admin-screen.php:355
 #: includes/class-jp4wc-shortcodes.php:69
 msgid "Product purchase method"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:339
+#: includes/admin/class-jp4wc-admin-screen.php:362
 #: includes/class-jp4wc-shortcodes.php:70
 msgid "Product delivery time"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:346
+#: includes/admin/class-jp4wc-admin-screen.php:369
 #: includes/class-jp4wc-shortcodes.php:71
 msgid "Costs other than product charges"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:353
+#: includes/admin/class-jp4wc-admin-screen.php:376
 #: includes/class-jp4wc-shortcodes.php:72
 msgid "Returns / Cancellations"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:360
+#: includes/admin/class-jp4wc-admin-screen.php:383
 #: includes/class-jp4wc-shortcodes.php:73
+#: includes/class-jp4wc-shortcodes.php:87
 msgid "Special conditions"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:374
+#: includes/admin/class-jp4wc-admin-screen.php:390
+msgid "Setting method"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:404
 msgid "Plugins Information"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:380
+#: includes/admin/class-jp4wc-admin-screen.php:410
 msgid "Featured Plugins"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:389
+#: includes/admin/class-jp4wc-admin-screen.php:419
 msgid "Professional services Information"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:395
+#: includes/admin/class-jp4wc-admin-screen.php:425
 msgid "Featured Services"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:414
-#: includes/class-jp4wc-admin-screen.php:440
-#: includes/class-jp4wc-admin-screen.php:482
-#: includes/class-jp4wc-admin-screen.php:501
+#: includes/admin/class-jp4wc-admin-screen.php:445
+#: includes/admin/class-jp4wc-admin-screen.php:471
+#: includes/admin/class-jp4wc-admin-screen.php:516
+#: includes/admin/class-jp4wc-admin-screen.php:535
 msgid "Your settings have been saved."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:565
+#: includes/admin/class-jp4wc-admin-screen.php:599
+msgid "Check if you want to require yomigana."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:607
 msgid "Honorific Suffix(Sama)"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:605
+#: includes/admin/class-jp4wc-admin-screen.php:643
 msgid "Yahoo! APP ID"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:606
+#: includes/admin/class-jp4wc-admin-screen.php:644
 #, php-format
 msgid ""
 "If you use it a bit for testing, you do not need to enter it here. But if "
 "you want to use Automatic zip code entry, you must get and input %s here. "
 "Please get it from <a href=\"https://e.developer.yahoo.co.jp/dashboard/\" "
-"target=\"_blank\">here</a>. If you need our support, please access <a href="
-"\"https://wc.artws.info/shop/setting-support/yahoo-app-id/\" target=\"_blank"
-"\">here</a> and pay for an aid to development costs "
+"target=\"_blank\">here</a>."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:616
+#: includes/admin/class-jp4wc-admin-screen.php:652
 msgid "Eliminate the order of addresses for Japan."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:636
+#: includes/admin/class-jp4wc-admin-screen.php:669
+msgid "Check here if you want to specify the delivery date as a required."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:678
 msgid ""
 "Please enter the number of days until the first day you can receive the "
 "delivery date / time. If you enter 0 you can specify delivery from today."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:645
+#: includes/admin/class-jp4wc-admin-screen.php:686
 msgid "Reception period"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:646
+#: includes/admin/class-jp4wc-admin-screen.php:687
 msgid ""
 "Please enter the number of days for which you can accept the delivery "
 "reservation. Please enter 1 or more."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:655
+#: includes/admin/class-jp4wc-admin-screen.php:695
 msgid "Unspecified Date"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:656
+#: includes/admin/class-jp4wc-admin-screen.php:696
 msgid ""
 "Please enter the sentence when you do not need to specify the delivery date."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:657
+#: includes/admin/class-jp4wc-admin-screen.php:697
 msgid "No specified date"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:666
+#: includes/admin/class-jp4wc-admin-screen.php:705
 msgid ""
 "Please enter the format when you want to save the data by format. Use PHP "
 "format type."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:667
+#: includes/admin/class-jp4wc-admin-screen.php:706
 msgid "Check from here."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:677
+#: includes/admin/class-jp4wc-admin-screen.php:724
 msgid "Please enter the time delivery deadline of your store."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:688
+#: includes/admin/class-jp4wc-admin-screen.php:734
 msgid "Sunday"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:693
+#: includes/admin/class-jp4wc-admin-screen.php:739
 msgid "Moday"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:697
+#: includes/admin/class-jp4wc-admin-screen.php:743
 msgid "Tuesday"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:701
+#: includes/admin/class-jp4wc-admin-screen.php:747
 msgid "Wednesday"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:705
+#: includes/admin/class-jp4wc-admin-screen.php:751
 msgid "Thursday"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:709
+#: includes/admin/class-jp4wc-admin-screen.php:755
 msgid "Friday"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:713
+#: includes/admin/class-jp4wc-admin-screen.php:759
 msgid "Saturday"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:723
+#: includes/admin/class-jp4wc-admin-screen.php:769
 msgid ""
 "Please check the days of the week that you do not ship. In case of "
 "continuous, we will correspond up to three days."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:732
+#: includes/admin/class-jp4wc-admin-screen.php:777
 msgid "Holiday Start Date"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:738
+#: includes/admin/class-jp4wc-admin-screen.php:783
 msgid "Holiday End Date"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:744
+#: includes/admin/class-jp4wc-admin-screen.php:789
 msgid "Please enter the date term long holiday of your store."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:764
-msgid "Unspecified Time"
+#: includes/admin/class-jp4wc-admin-screen.php:806
+msgid ""
+"Check here if you want to specify the delivery time zone as a required item."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:765
+#: includes/admin/class-jp4wc-admin-screen.php:814
 msgid ""
 "Please enter the sentence when you do not need to specify the delivery time."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:766
+#: includes/admin/class-jp4wc-admin-screen.php:815
 msgid "No designated time zone"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:774
-msgid "Delivery time zone Management"
-msgstr ""
-
-#: includes/class-jp4wc-admin-screen.php:792
-msgid "Delivery tracking"
-msgstr ""
-
-#: includes/class-jp4wc-admin-screen.php:853
+#: includes/admin/class-jp4wc-admin-screen.php:872
 msgid "Please enter the shop name."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:862
+#: includes/admin/class-jp4wc-admin-screen.php:880
 msgid "Please enter the company name."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:871
+#: includes/admin/class-jp4wc-admin-screen.php:888
 msgid "Please enter the owner name."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:880
+#: includes/admin/class-jp4wc-admin-screen.php:896
 msgid "Please enter the location."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:899
+#: includes/admin/class-jp4wc-admin-screen.php:914
 msgid "Please enter the contact rule."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:900
+#: includes/admin/class-jp4wc-admin-screen.php:915
 msgid "Please contact us from the inquiry form."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:909
+#: includes/admin/class-jp4wc-admin-screen.php:923
 msgid "Please enter the Selling price rules."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:910
+#: includes/admin/class-jp4wc-admin-screen.php:924
 msgid "The product price is displayed on each product screen."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:919
+#: includes/admin/class-jp4wc-admin-screen.php:932
 msgid "Please enter the Payment methods rules."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:920
+#: includes/admin/class-jp4wc-admin-screen.php:933
 msgid "Payment methods are limited to various credit cards."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:929
+#: includes/admin/class-jp4wc-admin-screen.php:941
 msgid "Please enter the purchase rules."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:930
+#: includes/admin/class-jp4wc-admin-screen.php:942
 msgid ""
 "Put the product you want to purchase in the cart, proceed to purchase, pay "
 "with credit card and purchase."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:939
+#: includes/admin/class-jp4wc-admin-screen.php:950
 msgid "Please enter the product delivery time rules."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:940
+#: includes/admin/class-jp4wc-admin-screen.php:951
 msgid "The shipping date of the product is listed on each product page."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:949
+#: includes/admin/class-jp4wc-admin-screen.php:959
 msgid "Please enter the cost rules."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:950
+#: includes/admin/class-jp4wc-admin-screen.php:960
 msgid "A separate shipping fee will be added to the purchase price."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:959
+#: includes/admin/class-jp4wc-admin-screen.php:968
 msgid "Please enter the return and cancellation rules."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:960
+#: includes/admin/class-jp4wc-admin-screen.php:969
 msgid ""
 "We will not accept returns or exchanges other than mistakes at the time of "
 "delivery on our company side."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:969
+#: includes/admin/class-jp4wc-admin-screen.php:977
 msgid "Please enter the Special rules."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1020
+#: includes/admin/class-jp4wc-admin-screen.php:985
+msgid ""
+"It will be displayed if you put [jp4wc_law] shortcode on a page or post."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1011
 msgid "Delivery time zone start time"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1022
+#: includes/admin/class-jp4wc-admin-screen.php:1013
 msgid "Delivery time zone end time"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1027
+#: includes/admin/class-jp4wc-admin-screen.php:1018
 msgid "+ Add Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1027
+#: includes/admin/class-jp4wc-admin-screen.php:1018
 msgid "Remove selected Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1074
+#: includes/admin/class-jp4wc-admin-screen.php:1065
 #, php-format
 msgid "Please check it if you want to use input field for %s"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1087
+#: includes/admin/class-jp4wc-admin-screen.php:1076
 msgid "Settings saved."
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1097
+#: includes/admin/class-jp4wc-admin-screen.php:1085
 #, php-format
 msgid ""
 "<a href=\"%s\" target=\"_blank\" title=\"Paygent Payment\">Paygent Payment</"
 "a> :  You can handle Credit Card payment and Convini payment, etc<br >"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1098
+#: includes/admin/class-jp4wc-admin-screen.php:1086
 #, php-format
 msgid ""
 "<a href=\"%s\" target=\"_blank\" title=\"WooCommerce Subscriptions"
 "\">WooCommerce Subscriptions</a> : You can handle Subscriptions.<br >"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1106
+#: includes/admin/class-jp4wc-admin-screen.php:1093
 #, php-format
 msgid ""
 "<a href=\"%s\" target=\"_blank\" title=\"Payment Setting Support\">Payment "
 "Setting Support</a> :  We support Payment Plugins Setting.<br >"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1107
+#: includes/admin/class-jp4wc-admin-screen.php:1094
 #, php-format
 msgid ""
 "<a href=\"%s\" target=\"_blank\" title=\"Maintenance Support\">Maintenance "
@@ -545,9 +544,114 @@ msgid ""
 "somethings.<br >"
 msgstr ""
 
-#: includes/class-jp4wc-admin-screen.php:1128
-#: includes/jp4wc-framework/class-jp4wc-framework.php:366
-msgid "Toggle panel"
+#: includes/admin/class-jp4wc-admin-screen.php:1168
+msgid "Japanized for WooCommerce Information"
+msgstr ""
+
+#: includes/admin/views/html-admin-info-screen.php:2
+msgid "Information of Our Support"
+msgstr ""
+
+#: includes/admin/views/html-admin-info-screen.php:3
+msgid "Sorry, Mainly Japanese and some English support Only"
+msgstr ""
+
+#: includes/admin/views/html-admin-info-screen.php:15
+#, php-format
+msgid "The currently working framework version is %s."
+msgstr ""
+
+#: includes/admin/views/html-admin-info-screen.php:18
+msgid "Nice to meet you on Facebook page!"
+msgstr ""
+
+#: includes/admin/views/html-admin-info-screen.php:19
+msgid "Woo Japan Wave Facebook page!"
+msgstr ""
+
+#: includes/admin/views/html-admin-screen.php:12
+msgid "Setting"
+msgstr ""
+
+#: includes/admin/views/html-admin-screen.php:13
+msgid "Shipment"
+msgstr ""
+
+#: includes/admin/views/html-admin-screen.php:14
+msgid "Payment"
+msgstr ""
+
+#: includes/admin/views/html-admin-screen.php:16
+msgid "Infomations"
+msgstr ""
+
+#: includes/admin/views/html-admin-setting-screen.php:10
+msgid "General Setting"
+msgstr ""
+
+#: includes/admin/views/html-admin-setting-screen.php:11
+msgid "Shipment Setting"
+msgstr ""
+
+#: includes/admin/views/html-admin-setting-screen.php:12
+msgid "Payment Setting"
+msgstr ""
+
+#: includes/admin/views/html-admin-setting-screen.php:13
+msgid "Notation based on Specified Commercial Transaction Law"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+#: includes/admin/views/html-admin-setting-screen.php:22
+msgid "Japanized for WooCommerce"
+msgstr ""
+
+#: includes/admin/views/html-admin-setting-screen.php:31
+msgid "Do you like this plugin?"
+msgstr ""
+
+#: includes/admin/views/html-admin-setting-screen.php:32
+msgid "Rate it 5"
+msgstr ""
+
+#: includes/admin/views/html-admin-setting-screen.php:32
+msgid "on WordPress.org"
+msgstr ""
+
+#: includes/class-jp4wc-address-fields.php:86
+msgid "Last Name ( Yomigana )"
+msgstr ""
+
+#: includes/class-jp4wc-address-fields.php:92
+msgid "First Name ( Yomigana )"
+msgstr ""
+
+#: includes/class-jp4wc-address-fields.php:131
+#: includes/class-jp4wc-address-fields.php:310
+msgid "Shipping Phone"
+msgstr ""
+
+#: includes/class-jp4wc-address-fields.php:367
+#: includes/class-jp4wc-address-fields.php:409
+#: includes/class-jp4wc-address-fields.php:450
+#: includes/class-jp4wc-address-fields.php:473
+msgid "Last Name Yomigana"
+msgstr ""
+
+#: includes/class-jp4wc-address-fields.php:371
+#: includes/class-jp4wc-address-fields.php:413
+#: includes/class-jp4wc-address-fields.php:454
+#: includes/class-jp4wc-address-fields.php:477
+msgid "First Name Yomigana"
+msgstr ""
+
+#: includes/class-jp4wc-address-fields.php:424
+#: includes/class-jp4wc-address-fields.php:488
+msgid "Phone"
+msgstr ""
+
+#: includes/class-jp4wc-address-fields.php:536
+msgid "Please enter a hyphen [-] when entering a zip code."
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:67
@@ -614,131 +718,186 @@ msgstr ""
 msgid "Note : This function is only available to PRO purchasers."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:60
+#: includes/class-jp4wc-delivery.php:74
 msgid "Delivery request date and time"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:139 includes/class-jp4wc-delivery.php:143
+#: includes/class-jp4wc-delivery.php:171
+msgid "Sun"
+msgstr ""
+
+#: includes/class-jp4wc-delivery.php:172
+msgid "Mon"
+msgstr ""
+
+#: includes/class-jp4wc-delivery.php:173
+msgid "Tue"
+msgstr ""
+
+#: includes/class-jp4wc-delivery.php:174
+msgid "Wed"
+msgstr ""
+
+#: includes/class-jp4wc-delivery.php:175
+msgid "Thr"
+msgstr ""
+
+#: includes/class-jp4wc-delivery.php:176
+msgid "Fri"
+msgstr ""
+
+#: includes/class-jp4wc-delivery.php:177
+msgid "Sat"
+msgstr ""
+
+#: includes/class-jp4wc-delivery.php:189
 msgid "Y/m/d"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:161
+#: includes/class-jp4wc-delivery.php:192
+#, php-format
+msgid "(%s)"
+msgstr ""
+
+#: includes/class-jp4wc-delivery.php:214
 msgid "Delivery Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:166
+#: includes/class-jp4wc-delivery.php:221
 msgid "-"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:238 includes/class-jp4wc-delivery.php:254
+#: includes/class-jp4wc-delivery.php:306 includes/class-jp4wc-delivery.php:322
 msgid "Scheduled Delivery date and time"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:242 includes/class-jp4wc-delivery.php:258
+#: includes/class-jp4wc-delivery.php:310 includes/class-jp4wc-delivery.php:326
 msgid "Scheduled Delivery Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:246 includes/class-jp4wc-delivery.php:262
+#: includes/class-jp4wc-delivery.php:314 includes/class-jp4wc-delivery.php:330
 msgid "Scheduled Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:330
+#: includes/class-jp4wc-delivery.php:396
 msgid "Delivery"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:375
+#: includes/class-jp4wc-delivery.php:441
 msgid "Shipping Detail"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:428
+#: includes/class-jp4wc-delivery.php:495
 msgid "Delivery Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:430
+#: includes/class-jp4wc-delivery.php:497
 msgid "Date on which the customer wished delivery."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:437
+#: includes/class-jp4wc-delivery.php:504
 msgid "Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:438
+#: includes/class-jp4wc-delivery.php:505
 msgid "Time Zone on which the customer wished delivery."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:445
+#: includes/class-jp4wc-delivery.php:512
 msgid "Tracking Ship Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:447
+#: includes/class-jp4wc-delivery.php:514
 msgid "Actually shipped to date"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:25
+#: includes/class-jp4wc-shortcodes.php:103
+msgid " and "
+msgstr ""
+
+#: includes/class-jp4wc-shortcodes.php:106
+msgid ""
+"The following items of \"Notation based on the Specified Commercial "
+"Transactions Law\" have not been entered. Please enter the item of "
+"\"Notation based on Specified Commercial Transactions Law\" from the "
+"management screen."
+msgstr ""
+
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:24
 msgid "Pay At Store"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:26
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:25
 msgid "Allows At Store payments."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:52
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:51
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:73
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:145
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:113
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:70
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:255
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:75
 msgid "Enable/Disable"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:54
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:53
 msgid "Enable At Store Payment"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:58
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:57
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:79
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:87
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:83
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:151
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:119
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:76
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:264
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:84
 msgid "Title"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:60
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:59
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:81
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:153
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:121
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:78
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:266
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:86
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:61
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:60
 msgid "At Store Payment"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:65
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:64
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:86
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:94
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:90
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:158
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:126
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:83
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:271
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:91
 msgid "Description"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:67
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:66
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:88
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:89
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:85
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:160
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:128
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:85
 msgid "Payment method description that the customer will see on your checkout."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:68
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:67
 msgid "Please pay the fee at Store."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:72
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:71
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:93
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:101
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:97
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:90
 msgid "Instructions"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:74
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:73
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:95
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:92
 msgid "Instructions that will be added to the thank you page and emails."
@@ -783,14 +942,14 @@ msgstr ""
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:121
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:255
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:116
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:248
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:247
 msgid "Account Number"
 msgstr ""
 
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:122
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:256
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:117
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:246
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:245
 msgid "Account Name"
 msgstr ""
 
@@ -812,12 +971,12 @@ msgstr ""
 msgid "Awaiting BANK payment"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-addons-gateway-cod.php:100
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:221
+#: includes/gateways/cod/class-wc-addons-gateway-cod.php:101
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:217
 msgid "Payment to be made upon delivery."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-addons-gateway-cod.php:127
+#: includes/gateways/cod/class-wc-addons-gateway-cod.php:120
 #, php-format
 msgid "COD Failed (%s)"
 msgstr ""
@@ -830,51 +989,674 @@ msgstr ""
 msgid "Have your customers pay with cash (or by other means) upon delivery."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:80
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:76
 msgid "Enable COD"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:81
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:77
 msgid "Enable Cash on Delivery"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:90
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:86
 msgid "Cash on Delivery"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:96
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:92
 msgid "Payment method description that the customer will see on your website."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:97
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:104
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:93
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:100
 msgid "Pay with cash upon delivery."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:103
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:99
 msgid "Instructions that will be added to the thank you page."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:108
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:104
 msgid "Enable for shipping methods"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:113
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:109
 msgid ""
 "If COD is only available for certain methods, set it up here. Leave blank to "
 "enable for all methods."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:117
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:113
 msgid "Select shipping methods"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:121
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:117
 msgid "Accept for virtual orders"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:122
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:118
 msgid "Accept COD if the order is virtual"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay-cart-handler.php:147
+msgid "&mdash; or &mdash;"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:102
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:168
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:67
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:144
+#, php-format
+msgid "Proceed to %s"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:102
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:108
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:154
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:168
+msgid "LINE Pay"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:109
+msgid "Pay using LINE Pay."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:147
+msgid "Enable LINE Pay"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:165
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:141
+msgid "Order Button Text"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:167
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:143
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:94
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:171
+msgid "API Environment setting"
+msgstr ""
+
+#. translators: %s: URL
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:174
+#, php-format
+msgid ""
+"Please refer to <a href=\"%s\" target=\"_blank\">the LINE Pay setting flow "
+"page</a> for setting up the LINE Pay API. Examination is necessary for the "
+"use."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:177
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:147
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:104
+msgid "Environment"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:180
+msgid ""
+"This setting specifies whether you will process production transactions, or "
+"whether you will process simulated transactions using the LINEPay Test."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:184
+msgid "Production"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:185
+msgid "Test merchant"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:189
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:191
+msgid "Channel Id"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:191
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:198
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:161
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:168
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:175
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:182
+#, php-format
+msgid "Please enter %s from Paidy Admin site."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:191
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:205
+msgid "This field is numeric only."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:196
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:198
+msgid "Channel Secret Key"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:203
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:205
+msgid "Test Channel Id"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:205
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:212
+#, php-format
+msgid "Please enter %s from LINE pay Admin site."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:210
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:212
+msgid "Test Channel Secret Key"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:219
+msgid "Please enter shop name for LINE pay."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:224
+msgid "Order prefix"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:226
+msgid "Please enter Order prefix for LINE pay."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:231
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:287
+msgid "Payment Action"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:234
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:290
+msgid ""
+"Choose whether you wish to capture funds immediately or authorize payment "
+"only."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:238
+msgid "Capture"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:239
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:295
+msgid "Authorize"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:243
+msgid "Checkout on cart page"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:245
+msgid "Enable LINEPay Checkout on the cart page"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:246
+msgid "This shows or hides the LINEPay Checkout button on the cart page."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:251
+msgid "Contracting company name"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:253
+msgid ""
+"Please enter the name of the company or sole proprietor contracted with LINE "
+"Pay."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:258
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:201
+msgid "Debug Mode"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:260
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:203
+msgid "Enable Debug Mode"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:262
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:205
+msgid "Save debug data using WooCommerce logging."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:374
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:380
+msgid "All Yomigana must be katakana."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:480
+msgid "Shipping Fee"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:502
+#, php-format
+msgid "Authorization Expire Date is %s."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:508
+msgid "Confirm API processing was successful."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:510
+msgid "Confirm API processing failed."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:513
+msgid "Not match the order ID WooCommerce and LINE Pay, and WC status."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:565
+msgid "Fail get order detail from LINE Pay."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:598
+msgid "Capture API processing was successful."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:600
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:603
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:606
+msgid "Capture API processing failed."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:603
+msgid " Not Authorize or not match amount."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:616
+msgid "This order is cancelled by LINE Pay."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:648
+msgid "The Void was successful."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:651
+msgid "The Void was failed."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:660
+msgid "The refund was successful."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:663
+msgid "The refund was failed."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:667
+msgid "The refund was failed. not match some conditions"
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-gateway-linepay.php:719
+msgid "LINE Pay Channel data"
+msgstr ""
+
+#. translators: 1) Wikipedia link
+#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:94
+#, php-format
+msgid ""
+"LINE Pay is enabled, but a SSL certificate is not detected. Your checkout "
+"may not be secure! Please ensure your server has a valid <a href=\"%1$s\" "
+"target=\"_blank\">SSL certificate</a>."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:99
+msgid "LINE Pay for WooCommerce - cURL is not installed."
+msgstr ""
+
+#. translators: 1) LINE Pay PR link
+#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:105
+#, php-format
+msgid ""
+"LINE Pay can reach many LINE users from the payment method without fixed "
+"monthly fee. <a href=\"%s\">Click here for details.</a>."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:118
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:136
+msgid "Action failed. Please refresh the page and retry."
+msgstr ""
+
+#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:122
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:140
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:76
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:146
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:167
+msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:67
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:144
+msgid "Paidy"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:73
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:122
+msgid "Paidy Payment"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:74
+msgid ""
+"\"Paidy next month payment\" reduces the opportunity loss due to the payment "
+"method and contributes to sales increase."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:115
+msgid "Enable Paidy"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:129
+msgid ""
+"No matter how many times you shop a month, you pay once in the following "
+"month. <br /> The following payment methods are available."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:133
+msgid "Paidy description"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:136
+msgid ""
+"Payment method description for paidy explanation that the customer will see "
+"on your checkout."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:150
+msgid ""
+"This setting specifies whether you will process live transactions, or "
+"whether you will process simulated transactions using the Paidy Sandbox."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:154
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:111
+msgid "Live"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:155
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:112
+msgid "Sandbox"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:159
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:161
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:622
+msgid "API Public Key"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:166
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:168
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:633
+msgid "API Secret Key"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:173
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:175
+msgid "Test API Public Key"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:180
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:182
+msgid "Test API Secret Key"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:187
+msgid "Store Name"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:189
+msgid "This controls the store name which the user sees during paidy checkout."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:193
+msgid "Logo Image (168×168 recommend)"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:195
+msgid ""
+"URL of a custom logo that can be displayed in the checkout application "
+"header. If no value is specified, the Paidy logo will be displayed."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:198
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:155
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:196
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:216
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:224
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:232
+msgid "Optional"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:208
+msgid "About Webhook"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:210
+msgid "The webhooks set in the Paidy management screen are as follows. <br />"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:213
+msgid "Notice e-mail"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:215
+msgid ""
+"Set an e-mail address to send an e-mail when an error occurs during "
+"connection with paidy."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:504
+msgid ""
+"API Public key is not set. Please set an API public key in the admin page."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:586
+msgid "Once the customer interrupted the payment.. Order ID:"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:589
+msgid ""
+"This Paidy payment has been declined. Please select another payment method."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:608
+msgid ""
+"Paidy Payment succeeds to authorize and move to thank you page. Get data is "
+"following."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:622
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:633
+msgid "Production environment"
+msgstr ""
+
+#. translators: 1) Field title 2) Environment 3) Paidy PR link
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:648
+#, php-format
+msgid ""
+"If you do not set %1$s, it will not work in the %2$s. Application is "
+"necessary for acquisition."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:691
+msgid ""
+"Cancelled processing has not been completed due to a Paidy error. Please "
+"check Paidy admin."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:723
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:732
+msgid ""
+"In the payment completion process, the amount and ID match were confirmed."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:735
+msgid ""
+"In the payment completion process, the amount and ID did not match. Check on "
+"the Paidy admin."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:744
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:806
+msgid "Completion processing has not been completed due to a Paidy error."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:746
+msgid "Status Change from Processing to completed."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:785
+msgid "Refund is not possible because Paidy has not completed processing."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:800
+msgid "Completion refunding has been completed at Paidy."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:820
+msgid "[WooCommerce] Notice of error occurrence in Paidy payment linkage"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:837
+msgid ""
+"An error has occurred in the Paidy payment linkage when changing the status "
+"of WooCommerce."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:838
+msgid "Please check the status of Paidy payment and respond accordingly."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:839
+msgid "Order number:"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:840
+msgid "Order details URL:"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:841
+msgid "Paidy payment ID:"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:842
+msgid "Error occurrence time:"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:843
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:845
+msgid "Error situation:"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:847
+msgid ""
+"* This e-mail is for sending only, so you cannot reply directly to this e-"
+"mail."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:902
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:593
+#, php-format
+msgid "Already using URL as image: %s"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:910
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:601
+msgid "Select a image to upload"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:911
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:602
+msgid "Use this image"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:912
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:915
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:603
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:606
+msgid "Add image"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:923
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:614
+msgid "Remove image"
+msgstr ""
+
+#. translators: 1) Wikipedia link
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:95
+#, php-format
+msgid ""
+"Paidy is enabled, but a SSL certificate is not detected. Your checkout may "
+"not be secure! Please ensure your server has a valid <a href=\"%1$s\" target="
+"\"_blank\">SSL certificate</a>."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:100
+msgid "Paidy for WooCommerce - cURL is not installed."
+msgstr ""
+
+#. translators: 1) setting link
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:109
+#, php-format
+msgid ""
+"Paidy is in test mode however your test keys may not be valid. Test keys "
+"start with pk_test and sk_test. Please go to your settings and, <a href=\"%s"
+"\">set your Paidy account keys</a>."
+msgstr ""
+
+#. translators: 1) setting link
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:117
+#, php-format
+msgid ""
+"Paidy is in live mode however your test keys may not be valid. Live keys "
+"start with pk_live and sk_live. Please go to your settings and, <a href=\"%s"
+"\">set your Paidy account keys</a>."
+msgstr ""
+
+#. translators: 1) Paidy PR link
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:123
+#, php-format
+msgid ""
+"Paidy payment is a monthly postpaid payment that is adopted by Amazon and "
+"Yodobashi Camera. <a href=\"%s\">Click here for details.</a>."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:47
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:51
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:53
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:55
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:57
+#, php-format
+msgid "It succeeded to check the %s of the order in Paidy Webhook."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:47
+msgid "authorization"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:49
+msgid ""
+"This order status is processing, this site received authorize_success from "
+"the Paidy webhook."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:51
+msgid "completed"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:53
+msgid "cancelled"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:55
+msgid "close"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:57
+msgid "refunded"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:59
+#, php-format
+msgid "It failed to check the %s of the order in Paidy Webhook."
 msgstr ""
 
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:30
@@ -897,46 +1679,46 @@ msgstr ""
 msgid "Bank Symbol"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:233
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:232
 msgid "Our Post Office Bank Details"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:275
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:274
 msgid "Awaiting Post Office BANK payment"
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:261
+#: includes/jp4wc-framework/config-jp4wc-framework.php:21
 #, php-format
 msgid "Please check it if you want to use %s."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:272
+#: includes/jp4wc-framework/config-jp4wc-framework.php:22
 #, php-format
 msgid "Please check it if you want to use the payment method of %s."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:283
+#: includes/jp4wc-framework/config-jp4wc-framework.php:23
 #, php-format
 msgid "Please input %s."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:294
+#: includes/jp4wc-framework/config-jp4wc-framework.php:24
 #, php-format
 msgid "Please select one from these as %s."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:303
+#: includes/jp4wc-framework/config-jp4wc-framework.php:25
 msgid "Need support?"
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:304
+#: includes/jp4wc-framework/config-jp4wc-framework.php:26
 #, php-format
 msgid ""
 "If you are having problems with this plugin, talk about them in the <a href="
 "\"%s\" target=\"_blank\" title=\"Pro Version\">Support forum</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:305
+#: includes/jp4wc-framework/config-jp4wc-framework.php:27
 #, php-format
 msgid ""
 "If you need professional support, please consider about <a href=\"%1$s\" "
@@ -945,28 +1727,28 @@ msgid ""
 "\"Maintenance Support service\">Maintenance Support service</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:314
+#: includes/jp4wc-framework/config-jp4wc-framework.php:28
 msgid "Pro version"
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:315
+#: includes/jp4wc-framework/config-jp4wc-framework.php:29
 #, php-format
 msgid ""
 "The pro version is available <a href=\"%s\" target=\"_blank\" title="
 "\"Support forum\">here</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:316
+#: includes/jp4wc-framework/config-jp4wc-framework.php:30
 msgid ""
 "The pro version includes support for bulletin boards. Please consider "
 "purchasing the pro version."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:323
+#: includes/jp4wc-framework/config-jp4wc-framework.php:31
 msgid "Finished Latest Update, WordPress and WooCommerce?"
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:324
+#: includes/jp4wc-framework/config-jp4wc-framework.php:32
 #, php-format
 msgid ""
 "One the security, latest update is the most important thing. If you need "
@@ -974,434 +1756,463 @@ msgid ""
 "\"_blank\" title=\"Support forum\">Site Maintenance Support service</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:332
+#: includes/jp4wc-framework/config-jp4wc-framework.php:33
 msgid "Where is the study group of Woocommerce in Japan?"
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:333
+#: includes/jp4wc-framework/config-jp4wc-framework.php:34
 #, php-format
 msgid ""
 "<a href=\"%s\" target=\"_blank\" title=\"Tokyo WooCommerce Meetup\">Tokyo "
 "WooCommerce Meetup</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:334
+#: includes/jp4wc-framework/config-jp4wc-framework.php:35
 #, php-format
 msgid ""
 "<a href=\"%s\" target=\"_blank\" title=\"Kansai WooCommerce Meetup\">Kansai "
 "WooCommerce Meetup</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:335
+#: includes/jp4wc-framework/config-jp4wc-framework.php:36
 msgid "Join Us!"
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:343
+#: includes/jp4wc-framework/config-jp4wc-framework.php:37
 msgid "Created by"
 msgstr ""
 
-#: includes/jp4wc-framework/class-jp4wc-framework.php:344
+#: includes/jp4wc-framework/config-jp4wc-framework.php:38
 msgid "WooCommerce Doc in Japanese"
+msgstr ""
+
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:18
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:12
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:370
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:416
+msgid "PayPal Checkout"
 msgstr ""
 
 #: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:19
 msgid "Allow customers to conveniently checkout directly with PayPal."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:22
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:59
 msgid "Continue to payment"
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:157
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:174
 msgid ""
 "Sorry, an error occurred while trying to process your payment. Please try "
 "again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:190
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:207
 msgid "No API certificate on file."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:202
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:217
 #, php-format
-msgid "expired on %s"
+msgid "expires on %1$s (%2$s)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:205
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:208
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:222
 #, php-format
-msgid "expires on %s"
+msgid "expired on %1$s (%2$s)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:212
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:239
 #, php-format
-msgid "Certificate belongs to API username %1$s; %2$s"
+msgid "Certificate belongs to API username %1$s; %2$s."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:214
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:241
 msgid "The certificate on file is not valid."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:269
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:306
+msgid "Error: You must enter API username."
+msgstr ""
+
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:310
 msgid "Error: You must enter API password."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:280
 #: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:314
+msgid "Error: You must provide API signature or certificate."
+msgstr ""
+
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:324
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:351
 msgid ""
 "Error: The API credentials you provided are not valid.  Please double-check "
 "that you entered them correctly and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:285
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:318
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:328
+msgid ""
+"An error occurred while trying to validate your API credentials. Unable to "
+"verify that your API credentials are correct."
+msgstr ""
+
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:335
+msgid "Error: The API certificate is not valid."
+msgstr ""
+
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:342
+msgid "Error: The API certificate has expired."
+msgstr ""
+
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:344
+msgid ""
+"Error: The API username does not match the name in the API certificate. Make "
+"sure that you have the correct API certificate."
+msgstr ""
+
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:354
 msgid ""
 "An error occurred while trying to validate your API credentials.  Unable to "
 "verify that your API credentials are correct."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:292
-msgid "Error: The API certificate is not valid."
-msgstr ""
-
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:300
-msgid "Error: The API certificate has expired."
-msgstr ""
-
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:305
-msgid ""
-"Error: The API username does not match the name in the API certificate.  "
-"Make sure that you have the correct API certificate."
-msgstr ""
-
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:323
-msgid "Error: You must provide API signature or certificate."
-msgstr ""
-
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:341
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:373
 msgid ""
 "The \"require billing address\" option is not enabled by your account and "
 "has been disabled."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:360
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:398
 msgid "Refund Error: You need to specify a refund amount."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:380
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:403
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:453
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:410
+msgid "Refund Error: Sorry! This is not a refundable transaction."
+msgstr ""
+
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:423
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:448
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:500
 #, php-format
 msgid "PayPal refund completed; transaction ID = %s"
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:427
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:472
 msgid ""
 "Refund Error: All transactions have been fully refunded. There is no amount "
 "left to refund"
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:429
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:475
 #, php-format
 msgid ""
 "Refund Error: The requested refund amount is too large. The refund amount "
 "must be less than or equal to %s."
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:544
-#, php-format
-msgid "Already using URL as image: %s"
+#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:653
+msgid "Remove"
 msgstr ""
 
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:552
-msgid "Select a image to upload"
-msgstr ""
-
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:553
-msgid "Use this image"
-msgstr ""
-
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:554
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:557
-msgid "Add image"
-msgstr ""
-
-#: includes/paypal-checkout/includes/abstracts/abstract-wc-gateway-ppec.php:565
-msgid "Remove image"
-msgstr ""
-
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:57
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:62
 msgid "Capture Charge"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:81
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:86
 msgid ""
 "NOTE: PayPal does not accept decimal places for the currency in which you "
 "are transacting.  The \"Number of Decimals\" option in WooCommerce has "
 "automatically been set to 0 for you."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:171
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:181
 msgid "Unable to capture charge!"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:179
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:190
 #, php-format
 msgid "PayPal Checkout charge complete (Charge ID: %s)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:221
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:232
 msgid "Unable to void charge!"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:223
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:235
 #, php-format
 msgid "PayPal Checkout charge voided (Charge ID: %s)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:330
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:342
 msgid "This represents the fee PayPal collects for the transaction."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:331
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:343
 msgid "PayPal Fee:"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:340
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:352
 msgid ""
 "This represents the net total that will be credited to your PayPal account. "
 "This may be in a different currency than is set in your PayPal account."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:341
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:353
 msgid "PayPal Payout:"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:22
-msgid "Unable to communicate with PayPal.  Please try your payment again."
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-admin-handler.php:393
+#, php-format
+msgid ""
+"%1$sWarning!%2$s PayPal Checkout will drop support for WooCommerce %3$s in a "
+"soon to be released update. To continue using PayPal Checkout please "
+"%4$supdate to %1$sWooCommerce 3.0%2$s or greater%5$s."
 msgstr ""
 
 #: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:23
+msgid "Unable to communicate with PayPal.  Please try your payment again."
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:24
 msgid ""
 "PayPal rejected your email address because it is not valid.  Please double-"
 "check your email address and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:26
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:27
 msgid "Your PayPal checkout session is invalid.  Please check out again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:27
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:28
 msgid "Your PayPal checkout session has expired.  Please check out again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:29
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:30
 msgid ""
 "Your PayPal payment has already been completed.  Please contact the store "
 "owner for more information."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:30
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:31
 msgid ""
 "Your PayPal payment could not be processed.  Please check out again or "
 "contact PayPal for assistance."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:31
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:32
 msgid ""
 "Your PayPal payment could not be processed.  Please select an alternative "
 "method of payment or contact PayPal for assistance."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:33
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:34
 msgid ""
 "Your PayPal payment could not be processed.  Please return to PayPal and "
 "select a new method of payment."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:35
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:36
 msgid ""
 "You have not approved this transaction on the PayPal website.  Please check "
 "out again and be sure to complete all steps of the PayPal checkout process."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:36
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:37
 msgid ""
 "Your shipping address may not be in a different country than your country of "
 "residence.  Please double-check your shipping address and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:37
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:38
 msgid ""
 "This store does not accept transactions from buyers in your country.  Please "
 "contact the store owner for assistance."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:38
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:39
 msgid ""
 "The transaction is over the threshold allowed by this store.  Please contact "
 "the store owner for assistance."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:40
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:41
 msgid ""
 "Your transaction was declined.  Please contact the store owner for "
 "assistance."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:41
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:46
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:42
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:47
 msgid ""
 "The country in your shipping address is not valid.  Please double-check your "
 "shipping address and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:42
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:43
 msgid ""
 "The street address in your shipping address is not valid.  Please double-"
 "check your shipping address and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:43
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:44
 msgid ""
 "The city in your shipping address is not valid.  Please double-check your "
 "shipping address and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:44
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:45
 msgid ""
 "The state in your shipping address is not valid.  Please double-check your "
 "shipping address and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:45
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:46
 msgid ""
 "The ZIP code or postal code in your shipping address is not valid.  Please "
 "double-check your shipping address and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:47
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:48
 msgid ""
 "PayPal rejected your shipping address because the city, state, and/or ZIP "
 "code are incorrect.  Please double-check that they are all spelled correctly "
 "and try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:49
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:50
 msgid ""
 "Your PayPal payment could not be processed.  Please contact PayPal for "
 "assistance."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:51
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:52
 msgid ""
 "The redemption code(s) you entered on PayPal cannot be used at this time.  "
 "Please return to PayPal and remove them."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:54
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:55
 msgid ""
 "Your funding instrument is invalid.  Please check out again and select a new "
 "funding source."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:55
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-api-error.php:58
 #, php-format
 msgid ""
 "An error (%s) occurred while processing your PayPal payment.  Please contact "
 "the store owner for assistance."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:65
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:117
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:138
-msgid "Cheatin&#8217; huh?"
-msgstr ""
-
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:294
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:331
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:366
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:342
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:389
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:424
 msgid "Check out with PayPal"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:321
-msgid "&mdash; or &mdash;"
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:378
+msgid "OR"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:336
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:394
 msgid "Pay with PayPal Credit"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:79
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-cart-handler.php:598
+msgid ""
+"An error occurred while processing your PayPal payment. Please contact the "
+"store owner for assistance."
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:77
 msgid "Confirm your PayPal order"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:256
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:258
 msgid "Billing details"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:259
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:261
 msgid "Address:"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:261
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:263
 msgid "Name:"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:265
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:267
 msgid "Email:"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:271
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:273
 msgid "Phone:"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:295
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:297
 msgid "Create an account?"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:304
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:306
 msgid ""
 "Create an account by entering the information below. If you are a returning "
 "customer please login at the top of the page."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:344
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:345
 msgid "Shipping details"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:434
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:477
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:444
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:499
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:1133
 msgid "Your PayPal checkout session has expired. Please check out again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:472
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:494
 msgid ""
 "Sorry, an error occurred while trying to retrieve your information from "
 "PayPal. Please try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:580
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:601
 msgid "Cancel"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:594
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:626
 msgid ""
 "You have cancelled Checkout with PayPal. Please try to process your order "
 "again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:953
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:190
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:956
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:192
 msgid ""
 "Payment authorized. Change payment status to processing or complete to "
 "capture funds."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:955
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:192
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:959
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:195
 #, php-format
 msgid "Payment pending (%s)."
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:1144
+msgid "The payment method was updated for this subscription."
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:1149
+msgid "The payment method was updated for all your current subscriptions."
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:1158
+msgid ""
+"There was a problem updating your payment method. Please try again later or "
+"use a different payment method."
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-checkout-handler.php:1181
+msgid ""
+"You have cancelled Checkout with PayPal. The payment method was not updated."
 msgstr ""
 
 #: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:66
@@ -1412,43 +2223,42 @@ msgstr ""
 msgid "Unable to accept certificate password during cURL configuration"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:87
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:133
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:88
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:135
 #, php-format
 msgid "Unable to write certificate file %s during cURL configuration"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:113
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:114
 msgid "Failed to retrieve private key during cURL configuration"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:117
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client-credential-certificate.php:118
 msgid "Failed to export PKCS12 file during cURL configuration"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:166
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:167
 msgid "Missing credential"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:170
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:171
 msgid "Invalid credential object"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:174
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:175
 msgid "Invalid environment"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:191
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:193
 #, php-format
 msgid "An error occurred while trying to connect to PayPal: %s"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:197
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:199
 msgid "Malformed response received from PayPal"
 msgstr ""
 
-#. translators: placeholder is blogname
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:394
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-client.php:404
 #, php-format
 msgctxt "data sent to PayPal"
 msgid "Orders with %s"
@@ -1466,55 +2276,55 @@ msgstr ""
 msgid "PayPal IPN Request Failure"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:142
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:143
 #, php-format
 msgid "Validation error: PayPal currencies do not match (code %s)."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:157
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:159
 #, php-format
 msgid "Validation error: PayPal amounts do not match (gross %s)."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:183
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:185
 msgid "IPN payment completed"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:214
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:258
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:274
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:218
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:263
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:282
 #, php-format
 msgid "Payment %s via IPN."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:260
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:266
 #, php-format
 msgid "Payment for order %s refunded"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:261
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:268
 #, php-format
 msgid "Order #%1$s has been marked as refunded - PayPal reason code: %2$s"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:276
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:285
 #, php-format
 msgid "Payment for order %s reversed"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:277
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:287
 #, php-format
 msgid ""
 "Order #%1$s has been marked on-hold due to a reversal - PayPal reason code: "
 "%2$s"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:290
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:301
 #, php-format
 msgid "Reversal cancelled for order #%s"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:291
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ipn-handler.php:303
 #, php-format
 msgid ""
 "Order #%1$s has had a reversal cancelled. Please check the status of payment "
@@ -1530,76 +2340,89 @@ msgstr ""
 msgid "Sorry, Easy Setup encountered an error.  Please try again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ips-handler.php:173
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ips-handler.php:169
 msgid ""
 "Easy Setup was able to obtain your API credentials, but was unable to verify "
 "that they work correctly.  Please make sure your PayPal account is set up "
 "properly and try Easy Setup again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ips-handler.php:177
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ips-handler.php:173
 msgid ""
 "Easy Setup was able to obtain your API credentials, but an error occurred "
 "while trying to verify that they work correctly.  Please try Easy Setup "
 "again."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ips-handler.php:182
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-ips-handler.php:178
 msgid "Success!  Your PayPal account has been set up successfully."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:157
-#, php-format
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:167
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:207
 msgid ""
-"%s in WooCommerce Gateway PayPal Checkout plugin can only be called once"
+"bootstrap() in WooCommerce Gateway PayPal Checkout plugin can only be called "
+"once"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:239
-#, php-format
-msgid ""
-"<p>PayPal&nbsp;Checkout with new <strong>Smart&nbsp;Payment&nbsp;Buttons™</"
-"strong> gives your customers the power to pay the way they want without "
-"leaving your site.</p><p>The <strong>existing buttons will be deprecated and "
-"removed</strong> in future releases. Upgrade to Smart&nbsp;Payment&nbsp;"
-"Buttons in the <a href=\"%s\">PayPal&nbsp;Checkout settings</a>.</p>"
-msgstr ""
-
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:292
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:309
 msgid ""
 "WooCommerce Gateway PayPal Checkout requires WooCommerce to be activated"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:296
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:313
 msgid ""
-"WooCommerce Gateway PayPal Checkout requires WooCommerce version 2.5 or "
+"WooCommerce Gateway PayPal Checkout requires WooCommerce version 3.2.0 or "
 "greater"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:300
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:317
 msgid ""
 "WooCommerce Gateway PayPal Checkout requires cURL to be installed on your "
 "server"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:303
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:320
 msgid ""
 "WooCommerce Gateway PayPal Checkout requires OpenSSL >= 1.0.1 to be "
 "installed on your server"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:330
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:348
 #, php-format
 msgid ""
 "PayPal Checkout is almost ready. To get started, <a href=\"%s\">connect your "
 "PayPal account</a>."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:452
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:478
 msgid "Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:455
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:497
+msgid "View Documentation"
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:497
 msgid "Docs"
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:498
+msgid "Open a support request at WooCommerce.com"
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:498
+msgid "Support"
+msgstr ""
+
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-plugin.php:570
+#, php-format
+msgid ""
+"<p>PayPal Checkout with new <strong>Smart Payment Buttons™</strong> gives "
+"your customers the power to pay the way they want without leaving your site."
+"</p><p>The <strong>existing buttons will be removed</strong> in the "
+"<strong>next release</strong>. Please upgrade to Smart Payment Buttons on "
+"the <a href=\"%s\">PayPal Checkout settings page</a>.</p>"
 msgstr ""
 
 #: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:14
@@ -1614,7 +2437,7 @@ msgstr ""
 msgid "WooCommerce PPEC Data"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:53
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:54
 #, php-format
 msgid ""
 "By using this extension, you may be storing personal data or sharing data "
@@ -1623,58 +2446,58 @@ msgid ""
 "policy.</a>"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:76
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:77
 msgid "Orders"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:80
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:145
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:81
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:146
 msgid "PPEC Refundable transaction data"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:84
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:149
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:85
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:150
 msgid "PPEC Billing agreement id"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:141
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:142
 msgid "Subscriptions"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:230
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:234
 #, php-format
 msgid "Order ID %d contains an active Subscription"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:245
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:249
 msgid "PayPal Checkout Subscriptions Data Erased."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:268
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-privacy.php:272
 msgid "PayPal Checkout Order Data Erased."
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-addons.php:157
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-addons.php:198
 msgid "PayPal API error"
 msgstr ""
 
 #. translators: placeholder is pending reason from PayPal API.
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-addons.php:165
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-addons.php:208
 #, php-format
 msgid "PayPal transaction held: %s"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-addons.php:176
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-addons.php:220
 #, php-format
 msgid "PayPal payment approved (ID: %s)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-addons.php:180
+#: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-addons.php:224
 msgid "PayPal payment declined"
 msgstr ""
 
 #: includes/paypal-checkout/includes/class-wc-gateway-ppec-with-paypal-credit.php:15
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:574
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:430
 msgid "PayPal Credit"
 msgstr ""
 
@@ -1693,64 +2516,66 @@ msgstr ""
 msgid "The buyer's session information could not be found."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:15
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:18
 msgid "Setup or link an existing PayPal account"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:16
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:20
 #, php-format
 msgid ""
 "%s or <a href=\"#\" class=\"ppec-toggle-settings\">click here to toggle "
 "manual API credential input</a>."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:27
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:33
 #, php-format
 msgid ""
-"To reset current credentials and use other account <a href=\"%1$s\" title="
-"\"%2$s\">click here</a>."
+"To reset current credentials and use another account %1$sclick here%2$s. "
+"%3$sLearn more about your API Credentials%2$s."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:27
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:34
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:57
 msgid "Reset current credentials"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:31
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:36
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:59
+msgid "Learn more"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:41
 msgid "Setup or link an existing PayPal Sandbox account"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:32
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:43
 #, php-format
 msgid ""
 "%s or <a href=\"#\" class=\"ppec-toggle-sandbox-settings\">click here to "
 "toggle manual API credential input</a>."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:43
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:56
 #, php-format
 msgid ""
 "Your account setting is set to sandbox, no real charging takes place. To "
 "accept live payments, switch your environment to live and connect your "
 "PayPal account. To reset current credentials and use other sandbox account "
-"<a href=\"%1$s\" title=\"%2$s\">click here</a>."
+"%1$sclick here%2$s. %3$sLearn more about your API Credentials%2$s."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:43
-msgid "Reset current sandbox credentials"
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:63
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:446
+msgid "Enable PayPal Credit to eligible customers"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:46
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:580
-msgid "Enable PayPal Credit"
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:48
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:65
 msgid ""
 "This option is disabled. Currently PayPal Credit only available for U.S. "
 "merchants using USD currency."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:51
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:68
 msgid ""
 "This enables PayPal Credit, which displays a PayPal Credit button next to "
 "the primary PayPal Checkout button. PayPal Checkout lets you give customers "
@@ -1761,92 +2586,78 @@ msgid ""
 "involved in Real Money Gaming.)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:257
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:77
 msgid "Enable PayPal Checkout"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:258
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:78
 msgid ""
 "This enables PayPal Checkout which allows customers to checkout directly via "
 "PayPal from your cart page."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:267
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:87
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:369
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:415
 msgid "PayPal"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:274
-msgid "This controls the description which the user sees during checkout."
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:275
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:95
 msgid ""
 "Pay via PayPal; you can pay with your credit card if you don't have a PayPal "
 "account."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:279
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:99
 msgid "Account Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:284
-msgid "Environment"
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:287
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:107
 msgid ""
 "This setting specifies whether you will process live transactions, or "
 "whether you will process simulated transactions using the PayPal Sandbox."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:291
-msgid "Live"
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:292
-msgid "Sandbox"
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:297
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:117
 msgid "API Credentials"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:302
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:122
 msgid "Live API Username"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:304
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:311
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:318
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:346
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:353
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:360
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:367
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:124
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:131
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:138
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:165
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:172
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:179
 msgid "Get your API credentials from PayPal."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:309
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:129
 msgid "Live API Password"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:316
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:136
 msgid "Live API Signature"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:321
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:141
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:182
 msgid "Optional if you provide a certificate below"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:324
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:144
 msgid "Live API Certificate"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:330
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:150
 msgid "Live API Subject"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:332
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:374
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:152
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:193
 msgid ""
 "If you're processing transactions on behalf of someone else's PayPal "
 "account, enter their email address or Secure Merchant Account ID (also known "
@@ -1855,142 +2666,134 @@ msgid ""
 "transactions for them."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:335
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:377
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:398
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:406
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:414
-msgid "Optional"
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:339
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:158
 msgid "Sandbox API Credentials"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:344
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:163
 msgid "Sandbox API Username"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:351
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:170
 msgid "Sandbox API Password"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:358
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:177
 msgid "Sandbox API Signature"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:365
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:185
 msgid "Sandbox API Certificate"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:372
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:191
 msgid "Sandbox API Subject"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:381
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:199
 msgid "PayPal-hosted Checkout Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:383
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:201
 msgid "Customize the appearance of PayPal Checkout on the PayPal side."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:386
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:204
 msgid "Brand Name"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:388
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:206
 msgid ""
 "A label that overrides the business name in the PayPal account on the PayPal "
 "hosted checkout pages."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:393
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:211
 msgid "Logo Image (190×60)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:395
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:213
 msgid ""
 "If you want PayPal to co-brand the checkout page with your logo, enter the "
 "URL of your logo image here.<br/>The image must be no larger than 190x60, "
 "GIF, PNG, or JPG format, and should be served over HTTPS."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:401
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:219
 msgid "Header Image (750×90)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:403
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:221
 msgid ""
 "If you want PayPal to co-brand the checkout page with your header, enter the "
 "URL of your header image here.<br/>The image must be no larger than 750x90, "
 "GIF, PNG, or JPG format, and should be served over HTTPS."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:409
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:227
 msgid "Page Style"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:411
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:229
 msgid ""
 "Optionally enter the name of the page style you wish to use. These are "
 "defined within your PayPal account."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:417
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:235
 msgid "Landing Page"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:420
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:238
 msgid "Type of PayPal page to display."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:424
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:242
 msgctxt "Type of PayPal page"
 msgid "Billing (Non-PayPal account)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:425
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:243
 msgctxt "Type of PayPal page"
 msgid "Login (PayPal account login)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:430
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:248
 msgid "Advanced Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:435
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:253
 msgid "Debug Log"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:437
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:255
 msgid "Enable Logging"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:440
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:258
 msgid "Log PayPal events, such as IPN requests."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:443
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:261
 msgid "Invoice Prefix"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:445
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:263
 msgid ""
 "Please enter a prefix for your invoice numbers. If you use your PayPal "
 "account for multiple stores ensure this prefix is unique as PayPal will not "
 "allow orders with the same invoice number."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:450
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:268
 msgid "Billing Addresses"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:452
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:270
 msgid "Require Billing Address"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:454
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:274
 #, php-format
 msgid ""
 "PayPal only returns a shipping address back to the website. To make sure "
@@ -1998,44 +2801,31 @@ msgid ""
 "your PayPal account by calling %1$sPayPal Technical Support%2$s."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:457
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:459
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:280
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:282
 msgid "Require Phone Number"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:461
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:284
 msgid ""
 "Require buyer to enter their telephone number during checkout if none is "
-"provided by PayPal"
+"provided by PayPal. Disabling this option doesn't affect direct Debit or "
+"Credit Card payments offered by PayPal."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:464
-msgid "Payment Action"
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:467
-msgid ""
-"Choose whether you wish to capture funds immediately or authorize payment "
-"only."
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:471
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:294
 msgid "Sale"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:472
-msgid "Authorize"
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:476
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:299
 msgid "Instant Payments"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:478
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:301
 msgid "Require Instant Payment"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:481
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:304
 msgid ""
 "If you enable this setting, PayPal will be instructed not to allow the buyer "
 "to use funding sources that take additional time to complete (for example, "
@@ -2043,11 +2833,11 @@ msgid ""
 "source, such as an instant transfer, a credit/debit card, or PayPal Credit."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:484
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:307
 msgid "Subtotal Mismatch Behavior"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:487
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:310
 msgid ""
 "Internally, WC calculates line item prices and taxes out to four decimal "
 "places; however, PayPal can only handle amounts out to two decimal places "
@@ -2057,31 +2847,31 @@ msgid ""
 "controls how the order is dealt with so payment can still be taken."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:491
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:314
 msgid "Add another line item"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:492
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:315
 msgid "Do not send line items to PayPal"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:497
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:320
 msgid "Button Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:499
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:322
 msgid "Customize the appearance of PayPal Checkout on your site."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:502
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:325
 msgid "Smart Payment Buttons"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:505
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:328
 msgid "Use Smart Payment Buttons"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:506
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:331
 #, php-format
 msgid ""
 "PayPal Checkout's Smart Payment Buttons provide a variety of button "
@@ -2089,57 +2879,79 @@ msgid ""
 "layout. <a href=\"%s\">Learn more about Smart Payment Buttons</a>."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:509
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:336
 msgid "Button Color"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:514
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:341
 msgid ""
 "Controls the background color of the primary button. Use \"Gold\" to "
 "leverage PayPal's recognition and preference, or change it to match your "
 "site design or aesthetic."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:516
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:343
 msgid "Gold (Recommended)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:517
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:344
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:530
 msgid "Blue"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:518
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:345
 msgid "Silver"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:519
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:346
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:514
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:529
 msgid "Black"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:523
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:350
 msgid "Button Shape"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:528
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:355
 msgid ""
 "The pill-shaped button's unique and powerful shape signifies PayPal in "
 "people's minds. Use the rectangular button as an alternative when pill-"
 "shaped buttons might pose design challenges."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:530
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:357
 msgid "Pill"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:531
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:358
 msgid "Rectangle"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:541
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:362
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:408
+msgid "Button Label"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:367
+msgid "This controls the label on the primary button."
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:371
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:417
+msgid "PayPal Buy Now"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:372
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:418
+msgid "Pay with PayPal"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:382
 msgid "Button Layout"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:546
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:387
 msgid ""
 "If additional funding sources are available to the buyer through PayPal, "
 "such as Venmo, then multiple buttons are displayed in the space provided. "
@@ -2147,19 +2959,19 @@ msgid ""
 "options, or \"horizontal\" when space is limited."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:548
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:389
 msgid "Vertical"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:549
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:390
 msgid "Horizontal"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:553
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:394
 msgid "Button Size"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:558
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:399
 msgid ""
 "PayPal offers different sizes of the \"PayPal Checkout\" buttons, allowing "
 "you to select a size that best fits your site's theme. This setting will "
@@ -2168,195 +2980,297 @@ msgid ""
 "recommended for Smart Payment Buttons.)"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:560
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:401
 msgid "Responsive"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:561
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:402
 msgid "Small"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:562
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:403
 msgid "Medium"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:563
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:404
 msgid "Large"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:572
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:413
+msgid ""
+"PayPal offers different labels on the \"PayPal Checkout\" buttons, allowing "
+"you to select a suitable label.)"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:427
 msgid "Hides the specified funding methods."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:575
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:429
+msgid "Credit or debit cards"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:431
+msgid "Bancontact"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:432
+msgid "BLIK"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:433
 msgid "ELV"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:576
-msgid "Credit Card"
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:434
+msgid "eps"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:599
-msgid "Checkout on cart page"
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:435
+msgid "giropay"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:602
-msgid "Enable PayPal Checkout on the cart page"
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:436
+msgid "iDEAL"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:603
-msgid "This shows or hides the PayPal Checkout button on the cart page."
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:437
+msgid "MercadoPago"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:612
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:438
+msgid "MyBank"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:439
+msgid "Przelewy24"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:440
+msgid "SEPA-Lastschrift"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:441
+msgid "Sofort"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:442
+msgid "Venmo"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:462
+msgid "Enable PayPal Credit messages"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:464
+msgid ""
+"Display credit messages on your website to promote special financing offers, "
+"which help increase sales."
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:467
+msgid "Credit Messaging Layout"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:472
+msgid "Text"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:473
+msgid "Graphic"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:477
+msgid "The layout of the message."
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:480
+msgid "Credit Messaging logo"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:485
+msgid "Primary"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:486
+msgid "Alternative"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:487
+msgid "In-Line"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:488
+msgid "None"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:492
+msgid "PayPal Credit logo used in the message."
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:495
+msgid "Credit Messaging logo position"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:500
+msgid "Left"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:501
+msgid "Right"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:502
+msgid "Top"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:506
+msgid "Position of the PayPal logo in the message."
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:509
+msgid "Credit Messaging text color"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:515
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:534
+msgid "White"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:516
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:531
+msgid "Monochrome"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:517
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:533
+msgid "Grayscale"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:521
+msgid "Text and logo color of the message."
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:524
+msgid "Credit Messaging color"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:532
+msgid "Gray"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:535
+msgid "White no border"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:539
+msgid "Color of the message."
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:542
+msgid "Credit Messaging ratio"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:547
+msgid "1x1"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:548
+msgid "1x4"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:549
+msgid "8x1"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:550
+msgid "20x1"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:554
+msgid "Shape and size of the message."
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:569
+msgid "Enable on the cart page"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:572
+msgid "Enable PayPal Checkout buttons on the cart page"
+msgstr ""
+
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:581
 msgid "Mini-cart Button Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:617
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:648
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:680
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:587
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:624
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:657
 msgid "Configure Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:618
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:588
 msgid "Configure settings specific to mini-cart"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:623
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:654
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:686
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:593
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:630
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:663
 msgid ""
 "Optionally override global button settings above and configure buttons for "
 "this context."
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:634
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:609
 msgid "Single Product Button Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:639
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:642
-msgid "Checkout on Single Product"
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:615
+msgid "Enable on the single product page"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:645
-msgid "Enable PayPal Checkout on Single Product view."
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:618
+msgid "Enable PayPal Checkout buttons on the single product page"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:649
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:625
 msgid "Configure settings specific to Single Product view"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:666
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:642
 msgid "Regular Checkout Button Settings"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:671
-msgid "PayPal Mark"
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:648
+msgid "Enable on the checkout page"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:674
-msgid "Enable the PayPal Mark on regular checkout"
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:651
+msgid "Enable PayPal Checkout buttons on the regular checkout page"
 msgstr ""
 
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:675
-msgid ""
-"This enables the PayPal mark, which can be shown on regular WooCommerce "
-"checkout to use PayPal Checkout like a regular WooCommerce gateway."
-msgstr ""
-
-#: includes/paypal-checkout/includes/settings/settings-ppec.php:681
+#: includes/paypal-checkout/includes/settings/settings-ppec.php:658
 msgid "Configure settings specific to regular checkout"
 msgstr ""
 
-#: includes/views/html-admin-info-screen.php:2
-msgid "Information of Our Support"
-msgstr ""
-
-#: includes/views/html-admin-info-screen.php:3
-msgid "Sorry, Mainly Japanese and some English support Only"
-msgstr ""
-
-#: includes/views/html-admin-info-screen.php:15
-#, php-format
-msgid "The currently working framework version is %s."
-msgstr ""
-
-#: includes/views/html-admin-info-screen.php:18
-msgid "Nice to meet you on Facebook page!"
-msgstr ""
-
-#: includes/views/html-admin-info-screen.php:19
-msgid "Woo Japan Wave Facebook page!"
-msgstr ""
-
-#: includes/views/html-admin-screen.php:12
-msgid "Setting"
-msgstr ""
-
-#: includes/views/html-admin-screen.php:13
-msgid "Shipment"
-msgstr ""
-
-#: includes/views/html-admin-screen.php:14
-msgid "Payment"
-msgstr ""
-
-#: includes/views/html-admin-screen.php:16
-msgid "Infomations"
-msgstr ""
-
-#: includes/views/html-admin-setting-screen.php:10
-msgid "General Setting"
-msgstr ""
-
-#: includes/views/html-admin-setting-screen.php:11
-msgid "Shipment Setting"
-msgstr ""
-
-#: includes/views/html-admin-setting-screen.php:12
-msgid "Payment Setting"
-msgstr ""
-
-#: includes/views/html-admin-setting-screen.php:13
-msgid "Notation based on Specified Commercial Transaction Law"
-msgstr ""
-
-#. Plugin Name of the plugin/theme
-#: includes/views/html-admin-setting-screen.php:22
-msgid "Japanized for WooCommerce"
-msgstr ""
-
-#: includes/views/html-admin-setting-screen.php:31
-msgid "Do you like this plugin?"
-msgstr ""
-
-#: includes/views/html-admin-setting-screen.php:32
-msgid "Rate it 5"
-msgstr ""
-
-#: includes/views/html-admin-setting-screen.php:32
-msgid "on WordPress.org"
-msgstr ""
-
-#: woocommerce-for-japan.php:233
+#: woocommerce-for-japan.php:236
 #, php-format
 msgid ""
-"If you like <strong>WooCommerce for Japan</strong> please leave us a "
+"If you like <strong>Japanized for WooCommerce</strong> please leave us a "
 "%s&#9733;&#9733;&#9733;&#9733;&#9733;%s rating. A huge thanks in advance!"
 msgstr ""
 
-#: woocommerce-for-japan.php:233
+#: woocommerce-for-japan.php:236
 msgid "Thanks :)"
 msgstr ""
 
-#: woocommerce-for-japan.php:241
+#: woocommerce-for-japan.php:244
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr ""
 
-#: woocommerce-for-japan.php:290
+#: woocommerce-for-japan.php:294
 msgid ""
-"WooCommerce for Japanese is enabled but not effective. It requires "
+"Japanized for WooCommerce is enabled but not effective. It requires "
 "WooCommerce in order to work."
 msgstr ""
 
