@@ -1216,7 +1216,7 @@ class JP4WC_Admin_Screen {
 
         $html .= '<h4 class="jp4wc-metabox-sub-title">';
         $html .= 'News';
-        $html .= '<a href="https://www.vektor-inc.co.jp/info/?rel=jp4wc_admin" target="_blank" class="jp4wc-metabox-more-link">記事一覧<span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
+        $html .= '<a href="https://wc4jp-pro.work/category/news/?rel=jp4wc_admin" target="_blank" class="jp4wc-metabox-more-link">記事一覧<span aria-hidden="true" class="dashicons dashicons-external"></span></a>';
         $html .= '</h4>';
         $html .= '<ul id="jp4wc-wc-news" class="jp4wc-metabox-post-list"></ul>';
 
