@@ -16,28 +16,28 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+if ( ! class_exists( 'WC_Gateway_PPEC_Plugin', false ) ) {
+	define( 'WC_GATEWAY_PPEC_JP4WC_VERSION', '2.1.2' );
 
-define( 'WC_GATEWAY_PPEC_JP4WC_VERSION', '2.1.2' );
+	/**
+	 * Return instance of WC_Gateway_PPEC_Plugin.
+	 *
+	 * @return WC_Gateway_PPEC_Plugin
+	 */
+	function wc_gateway_ppec() {
+		static $plugin;
 
-/**
- * Return instance of WC_Gateway_PPEC_Plugin.
- *
- * @return WC_Gateway_PPEC_Plugin
- */
-function wc_gateway_ppec() {
-    static $plugin;
+		if ( ! isset( $plugin ) ) {
+			require_once 'includes/class-wc-gateway-ppec-plugin.php';
 
-    if ( ! isset( $plugin ) ) {
-        require_once 'includes/class-wc-gateway-ppec-plugin.php';
+			$plugin = new WC_Gateway_PPEC_Plugin( __FILE__, WC_GATEWAY_PPEC_JP4WC_VERSION );
+		}
 
-        $plugin = new WC_Gateway_PPEC_Plugin( __FILE__, WC_GATEWAY_PPEC_JP4WC_VERSION );
-    }
+		return $plugin;
+	}
 
-    return $plugin;
+	wc_gateway_ppec()->maybe_run();
 }
-
-wc_gateway_ppec()->maybe_run();
-
 /**
  * Adds the WooCommerce Inbox option on plugin activation
  *

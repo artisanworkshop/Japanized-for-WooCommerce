@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 4.9.0
 Tested up to: 5.8.0
-Stable tag: 2.2.17
+Stable tag: 2.2.18
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,9 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.2.18 - 2021-07-29 =
+* Fixed - PayPal Payment class conflict.
 
 = 2.2.17 - 2021-07-27 =
 * Fixed - Paidy logo renewal
