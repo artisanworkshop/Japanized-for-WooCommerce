@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class 		WC_Gateway_COD2
  * @extends		WC_Payment_Gateway
- * @version		1.1.0
+ * @version		2.2.19
  * @package		WooCommerce/Classes/Payment
  * @author 		ArtsanWorkshop
  */
@@ -28,7 +28,7 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                 = 'cod2';
-		$this->icon               = apply_filters( 'woocommerce_cod_icon', '' );
+		$this->icon               = apply_filters( 'woocommerce_cod_icon', JP4WC_URL_PATH . '/assets/images/jp4wc-cash-on-delivery.png' );
 		$this->method_title       = __( 'Cash on Delivery for Subscriptions', 'woocommerce-for-japan' );
 		$this->method_description = __( 'Have your customers pay with cash (or by other means) upon delivery.', 'woocommerce-for-japan' );
 		$this->has_fields         = false;

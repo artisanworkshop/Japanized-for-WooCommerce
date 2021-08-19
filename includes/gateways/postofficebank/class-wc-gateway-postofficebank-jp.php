@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_PostOfficeBank_JP
  * @extends		WC_Payment_Gateway
- * @version		2.2.17
+ * @version		2.2.19
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -25,6 +25,7 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
      */
     public function __construct() {
 		$this->id                 = 'postofficebank';
+	    $this->icon               = apply_filters( 'woocommerce_postofficebank_icon', JP4WC_URL_PATH . '/assets/images/jp4wc-jppost-bank.png' );
 		$this->has_fields         = false;
 		$this->method_title       = __( 'Postal transfer', 'woocommerce-for-japan' );
 		$this->method_description = __( 'Allows payments by Postal transfer in Japan.', 'woocommerce-for-japan' );

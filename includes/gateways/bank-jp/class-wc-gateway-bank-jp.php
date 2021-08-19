@@ -5,7 +5,9 @@
  * @package WooCommerce\Gateways
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Bank Payment Gateway in Japanese
@@ -14,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_BANK_JP
  * @extends		WC_Payment_Gateway
- * @version		2.2.13
+ * @version		2.2.19
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -25,7 +27,7 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
      */
     public function __construct() {
 		$this->id                 = 'bankjp';
-		$this->icon               = apply_filters('woocommerce_bankjp_icon', '');
+		$this->icon               = apply_filters('woocommerce_bankjp_icon', JP4WC_URL_PATH . '/assets/images/jp4wc-bank-transfer.png');
 		$this->has_fields         = false;
 		$this->method_title       = __( 'BANK PAYMENT IN JAPAN', 'woocommerce-for-japan' );
 		$this->method_description = __( 'Allows payments by bank transfer in Japan.', 'woocommerce-for-japan' );

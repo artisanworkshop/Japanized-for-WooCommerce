@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.2.17
+ * @version     2.2.19
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
@@ -140,6 +140,13 @@ class JP4WC_Admin_Screen {
 			'jp4wc_options_free_shipping',
 			__( 'Free Shipping Display', 'woocommerce-for-japan' ),
 			array( $this, 'jp4wc_options_free_shipping' ),
+			'jp4wc_setting',
+			'jp4wc_general'
+		);
+		add_settings_field(
+			'jp4wc_options_custom_email_customer_name',
+			__( 'Custamize Email template at customer name', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_options_custom_email_customer_name' ),
 			'jp4wc_setting',
 			'jp4wc_general'
 		);
@@ -436,10 +443,11 @@ class JP4WC_Admin_Screen {
                     'yomigana-required',
 					'honorific-suffix',
 					'company-name',
-					'free-shipping',
 					'zip2address',
 					'yahoo-app-id',
-					'no-ja'
+					'no-ja',
+					'free-shipping',
+					'custom-email-customer-name'
 				);
 				$this->jp4wc_save_methods( $add_methods );
 				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
@@ -625,6 +633,15 @@ class JP4WC_Admin_Screen {
 		$title = __( 'Free Shipping Display', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_description_address_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('free-shipping', $description, $this->prefix);
+	}
+
+	/**
+	 * Email customize Customer name option.
+	 */
+	public function jp4wc_options_custom_email_customer_name() {
+		$title = __( 'Custamize Email template at customer name', 'woocommerce-for-japan' );
+		$description = __( 'Please check it if you want to change customer name display.( from first name to full name )', 'woocommerce-for-japan' );
+		$this->jp4wc_plugin->jp4wc_input_checkbox('custom-email-customer-name', $description, $this->prefix);
 	}
 
 	/**
