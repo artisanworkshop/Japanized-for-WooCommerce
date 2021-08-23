@@ -60,9 +60,9 @@ class WC_Gateway_LINEPay_Cart_Handler {
             //Create new order
             $order_id = wc_create_order();
             $order = wc_get_order($order_id);
-            $order->set_payment_method('linepay');
-            $cart_hash = WC()->cart->get_cart_hash();
+	        $order->set_payment_method( 'linepay' );
             $order->set_created_via('checkout');
+	        $cart_hash = WC()->cart->get_cart_hash();
             $order->set_cart_hash($cart_hash);
             $order->set_customer_id(apply_filters('woocommerce_checkout_customer_id', get_current_user_id()));
             $order_vat_exempt = WC()->cart->get_customer()->get_is_vat_exempt() ? 'yes' : 'no';
@@ -83,7 +83,7 @@ class WC_Gateway_LINEPay_Cart_Handler {
             $order->save();
 
             $requestUri = '/v3/payments/request';
-            $post_data = $this->gateway_linepay->set_api_order($order);
+            $post_data = $this->gateway_linepay->set_api_cart_order($order);
             //Shipping setting with Virtual order
             $post_data['options']['shipping']['type'] = 'NO_SHIPPING';
             $items = $order->get_items();
@@ -121,8 +121,6 @@ class WC_Gateway_LINEPay_Cart_Handler {
                 } else {
                     echo '<script type="text/javascript"> window.location.href = "' . $response->info->paymentUrl->web . '"; </script>';
                 }
-            } else {
-                return false;
             }
         }
     }
@@ -151,7 +149,7 @@ class WC_Gateway_LINEPay_Cart_Handler {
             ?>
 
                 <div id="woo_linepay_ec_button_cart" class="woo_linepay_ec_button_cart">
-                    <a href="<?php echo esc_url( add_query_arg( array( 'startcheckout' => 'true' ), wc_get_page_permalink( 'cart' ) ) ); ?>"><img src="<?php echo JP4WC_URL_PATH;?>assets/images/linepay_white.png"/></a>
+                    <a href="<?php echo esc_url( add_query_arg( array( 'startcheckout' => 'true' ), wc_get_page_permalink( 'cart' ) ) ); ?>"><img src="<?php echo JP4WC_URL_PATH;?>assets/images/linepay_white.png" alt="LINE Pay logo"/></a>
                 </div>
             </div>
 <?php

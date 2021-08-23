@@ -2,7 +2,8 @@
   "type": "wordpress-plugin-for-woocommerce",
   "license": "GPL-2.0-or-later",
   "require": {
-    "php": ">=7.3"
+    "php": ">=7.3",
+    "ext-json": "*"
   },
   "require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7",

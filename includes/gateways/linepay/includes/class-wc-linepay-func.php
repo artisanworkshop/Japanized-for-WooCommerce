@@ -1,6 +1,6 @@
 <?php
 
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
+use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -121,7 +121,29 @@ class LINEPay_func {
         }
         return $items;
 	}
-
+	/**
+	 * Make json content from array
+	 *
+	 * @return int $amount
+	 */
+	public function get_cart_subtotal(){
+		$cart_data = WC()->cart->get_cart();
+		$fees      = WC()->cart->get_fees();
+		$coupons   = WC()->cart->get_coupons();
+		$amount    = 0;
+		foreach ( $cart_data as $cart_item_key => $cart_item ) {
+			$_product = $cart_item['data'];
+			if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_checkout_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
+				$amount += $cart_item['line_subtotal'] + $cart_item['line_subtotal_tax'];
+			}
+		}
+		if(isset( $coupons )) {
+			foreach ( $coupons as $coupon ){
+				$amount -= $coupon->get_amount();
+			}
+		}
+		return round($amount);
+	}
     /**
      * Send data by Post data for LINE Pay API
      *
@@ -135,7 +157,10 @@ class LINEPay_func {
      */
 	public function send_api_linepay( $uri, $json_content, $debug, $send_method ,$order_id = null ){
 	    $url = $this->api_endpoint_production;
-        $this->jp4wc_framework->jp4wc_debug_log( 'Send api data. requestUri is '.$uri.'. Post data is following'.$json_content, $debug, 'linepay-wc');
+	    // Set the Log of post data.
+	    $message = 'Send api data. requestUri is ' . $uri . '.' . "\n" . 'Post data is following' . "\n" . $json_content;
+        $this->jp4wc_framework->jp4wc_debug_log($message , $debug, 'linepay-wc');
+
         $headers = $this->get_linepay_headers($uri, $json_content);
         $args = array(
             'method' => $send_method,
@@ -169,43 +194,6 @@ class LINEPay_func {
     }
 
     /**
-     * Send data by Get data for LINE Pay API
-     *
-     * @param string $requestUri
-     * @param string $get_content
-     * @param string $debug
-     * @throws
-     * @return array | mixed
-     */
-    public function send_get_api_linepay( $requestUri, $get_content, $debug ){
-        $url = $this->api_endpoint_production;
-        $this->jp4wc_framework->jp4wc_debug_log( 'Send api data. requestUri is '.$requestUri.'. Get data is following'.$get_content, $debug, 'linepay-wc');
-        $headers = $this->get_linepay_headers($requestUri, $json_content);
-        $args = array(
-            'method' => 'GET',
-            'httpversion'	=> '1.1',
-            'timeout'		=> 20,
-            'headers' => $headers,
-            'body' => $json_content
-        );
-        $response = wp_remote_post($url.$requestUri, $args);
-
-        $response_body = static::json_custom_decode( $response['body'] );
-        if ( is_wp_error( $response ) ){
-            $error_message = $response->get_error_message();
-            $this->jp4wc_framework->jp4wc_debug_log($error_message, $debug, 'linepay-wc');
-            return false;
-        }elseif ( $response['response']['code'] != 200 ) {
-            $this->jp4wc_framework->jp4wc_debug_log($response['response']['code'].' - '.$response['response']['message'], $debug, 'linepay-wc');
-            return false;
-        } else {
-            $response_message = var_export($response_body, true);
-            $this->jp4wc_framework->jp4wc_debug_log($response_message, $debug, 'linepay-wc');
-            return $response_body;
-        }
-    }
-
-    /**
      * Get payments detail by LINE Pay API
      *
      * @param array $send_get
@@ -217,7 +205,8 @@ class LINEPay_func {
         $url = $this->api_endpoint_production;
         $query_string = http_build_query($send_get);
         $requestUri = '/v3/payments';
-        $this->jp4wc_framework->jp4wc_debug_log( 'Send api data. requestUri is '.$requestUri.'. Get data is following'.$send_get, $debug, 'linepay-wc');
+        $message = 'Send api data. requestUri is ' . $requestUri . '.' .  "\n" . 'Get data is following' . "\n" . $send_get;
+        $this->jp4wc_framework->jp4wc_debug_log( $message , $debug, 'linepay-wc' );
         $headers = $this->get_linepay_headers($requestUri, $query_string);
         $args = array(
             'method' => 'GET',
@@ -275,7 +264,7 @@ class LINEPay_func {
     public function make_debug_message($message, $order_id = null){
         $return_message = $message;
         if(isset($order_id)){
-            $return_message = 'Order ID :'.$order_id.'; '.$message;
+            $return_message = 'Order ID :'.$order_id.';' . "\n" . $message;
         }
         return $return_message;
     }

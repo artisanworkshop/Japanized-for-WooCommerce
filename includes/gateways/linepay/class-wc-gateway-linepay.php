@@ -5,7 +5,7 @@
  * @package WooCommerce\Gateways
  */
 
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
+use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_LINEPay
  * @extends		WC_Payment_Gateway
- * @version		1.0.9
+ * @version		1.1.0
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -25,7 +25,7 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
     /**
      * Framework.
      *
-     * @var class
+     * @var stdClass
      */
     public $jp4wc_framework;
 
@@ -42,34 +42,6 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
      * @var string
      */
     public $environment;
-
-    /**
-     * LINE Pay API connect channel id for Production.
-     *
-     * @var string
-     */
-    public $api_channel_id;
-
-    /**
-     * LINE Pay API connect channel secret key for Production.
-     *
-     * @var string
-     */
-    public $api_channel_secret_key;
-
-    /**
-     * LINE Pay API connect channel id for Test.
-     *
-     * @var string
-     */
-    public $test_api_channel_id;
-
-    /**
-     * LINE Pay API connect channel secret key for Test.
-     *
-     * @var string
-     */
-    public $test_api_channel_secret_key;
 
     /**
      * Order Prefix text
@@ -97,7 +69,7 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
      */
     public function __construct() {
 		$this->id                 = 'linepay';
-		$this->icon               = apply_filters('woocommerce_linepay_icon', '');
+		$this->icon               = apply_filters('woocommerce_linepay_icon', JP4WC_URL_PATH . '/assets/images/linepay_logo.png');
 		$this->has_fields         = false;
         $this->order_button_text = sprintf(__( 'Proceed to %s', 'woocommerce-for-japan' ), __('LINE Pay', 'woocommerce-for-japan' ));
 
@@ -129,11 +101,11 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
 		// Actions Hook
         add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-        add_action( 'woocommerce_thankyou_' . $this->id , array( $this, 'check_captured' ) );
         add_action( 'woocommerce_order_status_completed', array( $this, 'sales_complete' ) );
 //        add_action( 'woocommerce_before_cart', array($this, 'cart_cancel' ) );
         add_filter( 'gettext', array( $this, 'change_hiragana_validation'), 20, 3 );
         add_filter( 'woocommerce_settings_api_sanitized_fields_' . $this->id, array( $this, 'linepay_check_sent_data'), 20, 1 );
+        add_filter( 'woocommerce_thankyou_order_id', array( $this, 'linepay_set_order_data'), 20, 1);
     }
 
     /**
@@ -272,6 +244,17 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
         ?>
         <p><?php echo $this->description; ?></p>
         <?php
+	    $package['destination']['country'] = 'JP';
+	    $package['destination']['state'] = 'JP03';
+	    $package['destination']['postcode'] = '673-0005';
+	    $shipping_zone = WC_Shipping_Zones::get_zone_matching_package( $package );
+	    $shipping_methods = $shipping_zone->get_shipping_methods( true );
+//	    print_r($shipping_methods[1]);
+	    $method_setting = get_option('woocommerce_flat_rate_1_settings');
+//        print_r($method_setting);
+	    $shipping_rate = new WC_Shipping_Rate(0);
+//        print($shipping_rate->get_cost());
+	    $tax_rates = WC_Tax::get_rates();
     }
 
     /**
@@ -314,7 +297,10 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
             $post_data['options']['shipping']['address']['postalCode'] = $order->get_shipping_postcode();
             $post_data['options']['shipping']['address']['state'] = $states[$order->get_shipping_country()][$order->get_shipping_state()];
             $post_data['options']['shipping']['address']['city'] = $order->get_shipping_city();
-            $post_data['options']['shipping']['address']['detail'] = $order->get_shipping_address_1().$order->get_shipping_address_2();
+            $post_data['options']['shipping']['address']['detail'] = $order->get_shipping_address_1();
+            if($order->get_shipping_address_2()){
+	            $post_data['options']['shipping']['address']['optional'] = $order->get_shipping_address_2();
+            }
             $post_data['options']['shipping']['address']['recipient']['firstName'] = $order->get_shipping_first_name();
             $post_data['options']['shipping']['address']['recipient']['lastName'] = $order->get_shipping_last_name();
             if(get_option( 'wc4jp-yomigana')){
@@ -381,6 +367,7 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
                 }
             }
         }
+        return true;
     }
 
     /**
@@ -424,7 +411,48 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
         return $post_data;
     }
 
-    /**
+	/**
+	 * Make array for LinePay Request API order data
+	 *
+	 * @param object $order
+	 * @return array $post_data
+	 */
+	public function set_api_cart_order( $order ){
+		$post_data['amount'] = $this->linepay_func->get_cart_subtotal();
+		$post_data['currency'] = get_woocommerce_currency();
+		$post_data['orderId'] = $this->order_prefix.$order->get_id();
+		//Set package data
+		$packages['id'] = 1;
+		$packages['name'] = $this->shop_name;
+		$packages['amount'] = $this->linepay_func->get_cart_subtotal();
+		$packages['products'] = $this->linepay_func->array_products();
+		$post_data['packages'] = array( $packages );
+
+		//Set Payment capture
+		if($this->payment_action == 'sale'){
+			$payment_capture = 'true';
+		}else{
+			$payment_capture = 'false';
+		}
+		$post_data['options']['payment']['capture'] = $payment_capture;
+
+		//Set Display language
+		$allowed_langs =array('ja','th','zh_TW','zh_CN');
+		$wp_current_lang = get_locale();
+		if(strpos($wp_current_lang, 'en') !== false){
+			$current_lang = 'en';
+		}elseif(strpos($wp_current_lang, 'ko') !== false){
+			$current_lang = 'ko';
+		}elseif(in_array($wp_current_lang, $allowed_langs)){
+			$current_lang = $wp_current_lang;
+		}else{
+			$current_lang = 'en';
+		}
+		$post_data['options']['display']['locale'] = $current_lang;
+		return $post_data;
+	}
+
+	/**
      * Make message for LinePay Request API response
      *
      * @param object $response
@@ -460,118 +488,133 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
         return $response_message;
     }
 
-    /**
-     * Make message for LinePay Request API response
-     *
-     * @param string $order_id
-     * @throws
-     */
-    public function check_captured($order_id){
-        if(isset($_GET['transactionId']) and isset($_GET['orderId'])) {
-            $order = wc_get_order($order_id);
-            $auth = $order->get_meta('_linepay_authorization_expire_date', true);
+	/**
+	 *
+	 */
+    public function linepay_set_order_data( $order_id ){
+	    $order = wc_get_order($order_id);
+	    $auth = $order->get_meta('_linepay_authorization_expire_date', true);
 
-            if($_GET['orderId'] == $this->order_prefix.$order_id && $order->get_status() != 'processing'){
-                $requestUri = '/v3/payments/'.sanitize_text_field( $_GET['transactionId'] ).'/confirm';
-                $order_shipping_method = $order->get_shipping_method();
-                if(isset($_GET['shippingFeeAmount']) and empty($order_shipping_method)){
-                    $post_data['amount'] = (int) $order->get_total() + (int) $_GET['shippingFeeAmount'];
-                    // Set Shipping method and fee.
-                    $rate = new WC_Shipping_Rate( $_GET['shippingMethodId'], __('Shipping Fee', 'woocommerce-for-japan'), isset( $_GET['shippingFeeAmount'] ) ? intval( $_GET['shippingFeeAmount'] ) : 0, array(), $_GET['shippingMethodId'] );
-                    $item = new WC_Order_Item_Shipping();
-                    $item->set_order_id( $order->get_id() );
-                    $item->set_shipping_rate( $rate );
-                    $order->add_item( $item );
-                    $amount = (int) $order->get_total() + (int) $_GET['shippingFeeAmount'];
-                    $order->set_shipping_total($_GET['shippingFeeAmount']);
-                    $order->set_total($amount);
-                    $order->save();
-                }else{
-                    $post_data['amount'] = $order->get_total();
-                }
-                $post_data['currency'] = get_woocommerce_currency();
-                $json_content = json_encode( $post_data );
+	    if($order->get_payment_method() == $this->id && $_GET['orderId'] == $this->order_prefix.$order_id && $order->get_status() != 'processing') {
+	        $post_data = array();
 
-                $response = $this->linepay_func->send_api_linepay( $requestUri, $json_content, $this->debug, 'POST', $order_id );
-                $response_message = $this->response_confirm_message($response);
-                $this->jp4wc_framework->jp4wc_debug_log($response_message, $this->debug, 'linepay-wc');
-                if($response->returnCode == '0000'){
-                    if(isset($response->info->authorizationExpireDate)){
-                        $order->set_meta_data( array( '_linepay_authorization_expire_date' => $response->info->authorizationExpireDate ) );
-                        $order->save();
-                        $order->add_order_note( sprintf( __('Authorization Expire Date is %s.', 'woocommerce-for-japan' ),$response->info->authorizationExpireDate ) );
-                    }
-                    // Reduce stock levels
-                    wc_reduce_stock_levels( $order_id );
-                    // Set order status to processingß
-                    $order->payment_complete($_GET['transactionId']);
-                    $order->add_order_note(__( 'Confirm API processing was successful.', 'woocommerce-for-japan' ));
-                }else{
-                    $order->add_order_note(__( 'Confirm API processing failed.', 'woocommerce-for-japan' ).$response->returnCode.' : '.$response->returnMessage);
-                }
-            }elseif(empty($auth) && empty($auth)){
-                $order->add_order_note( __( 'Not match the order ID WooCommerce and LINE Pay, and WC status.', 'woocommerce-for-japan' ) );
-            }
+		    $order_shipping_method = $order->get_shipping_method();
+		    if(isset($_GET['shippingFeeAmount']) and empty($order_shipping_method)){
+			    $post_data['amount'] = (int) $order->get_total() + (int) $_GET['shippingFeeAmount'];
+			    // Set Shipping method and fee.
+			    $rate = new WC_Shipping_Rate( $_GET['shippingMethodId'], __('Shipping Fee', 'woocommerce-for-japan'), isset( $_GET['shippingFeeAmount'] ) ? intval( $_GET['shippingFeeAmount'] ) : 0, array(), $_GET['shippingMethodId'] );
+			    $item = new WC_Order_Item_Shipping();
+			    $item->set_order_id( $order->get_id() );
+			    $item->set_shipping_rate( $rate );
+			    $order->add_item( $item );
+			    $amount = (int) $order->get_total() + (int) $_GET['shippingFeeAmount'];
+			    $order->set_shipping_total($_GET['shippingFeeAmount']);
+			    $order->set_total($amount);
+			    $order->save();
+		    }else{
+			    $post_data['amount'] = $order->get_total();
+		    }
+		    $requestUri = '/v3/payments/' . sanitize_text_field( $_GET['transactionId'] ) . '/confirm';
+		    $post_data['currency'] = get_woocommerce_currency();
+		    $json_content = json_encode( $post_data );
 
-            if($_GET['orderId'] == $this->order_prefix.$order_id && $order->get_status() == 'processing' && isset($_GET['shippingMethodId']) && isset($_GET['shippingFeeAmount'])){
-                $order_get['orderId'] = $_GET['orderId'];
-                $order_get['fields'] = 'ORDER';
-
-                $linepay_order = $this->linepay_func->send_api_linepay('/v3/payments', http_build_query($order_get), $this->debug, 'GET', $order_id);
-
-                if($linepay_order->returnCode == '0000'){
-                    //Set States
-                    if(version_compare( WC_VERSION, '3.6', '>=' )){
-                        $jp4wc_countries = new WC_Countries;
-                        $states = $jp4wc_countries->get_states();
-                    }else{
-                        global $states;
-                    }
-                    $country_code = $linepay_order->info[0]->shipping->address->country;
-                    if($country_code == 'JP'){
-                        $post_code = substr($linepay_order->info[0]->shipping->address->postalCode,0,3).'-'.substr($linepay_order->info[0]->shipping->address->postalCode,-4);
-                    }
-                    $state_code = array_search($linepay_order->info[0]->shipping->address->state, $states[$country_code]);
-                    //Set address to Order
-                    $order->set_billing_first_name($linepay_order->info[0]->shipping->address->recipient->firstName);
-                    $order->set_shipping_first_name($linepay_order->info[0]->shipping->address->recipient->firstName);
-                    $order->set_billing_last_name($linepay_order->info[0]->shipping->address->recipient->lastName);
-                    $order->set_shipping_last_name($linepay_order->info[0]->shipping->address->recipient->lastName);
-                    $order->set_billing_phone($linepay_order->info[0]->shipping->address->recipient->phoneNo);
-                    $order->update_meta_data('_shipping_phone',$linepay_order->info[0]->shipping->address->recipient->phoneNo);
-                    $order->set_billing_email($linepay_order->info[0]->shipping->address->recipient->email);
-                    $order->set_billing_country($country_code);
-                    $order->set_shipping_country($country_code);
-                    $order->set_billing_state($state_code);
-                    $order->set_shipping_state($state_code);
-                    $order->set_billing_postcode($post_code);
-                    $order->set_shipping_postcode($post_code);
-                    $order->set_billing_city($linepay_order->info[0]->shipping->address->city);
-                    $order->set_shipping_city($linepay_order->info[0]->shipping->address->city);
-                    $order->set_billing_address_1($linepay_order->info[0]->shipping->address->detail);
-                    $order->set_shipping_address_1($linepay_order->info[0]->shipping->address->detail);
-                    if(isset($linepay_order->info[0]->shipping->address->optional)){
-                        $order->set_billing_address_2($linepay_order->info[0]->shipping->address->optional);
-                        $order->set_shipping_address_2($linepay_order->info[0]->shipping->address->optional);
-                    }
-                    $order->save();
-                    // Set order status to processing
-                    $order->payment_complete($_GET['transactionId']);
-
-                    echo '<script type="text/javascript"> window.location.href = "' . $this->get_return_url( $order ) . '"; </script>';
-                }else{
-                    $message = 'Fail get order detail. '.$linepay_order->returnCode.':'.$linepay_order->returnMessage;
-                    $this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'linepay-wc');
-                    $order->add_order_note(__('Fail get order detail from LINE Pay.', 'woocommerce-for-japan'));
-                }
-            }
-        }
+		    $response = $this->linepay_func->send_api_linepay( $requestUri, $json_content, $this->debug, 'POST', $order_id );
+		    $response_message = $this->response_confirm_message($response);
+		    $this->jp4wc_framework->jp4wc_debug_log($response_message, $this->debug, 'linepay-wc');
+		    if($response->returnCode == '0000'){
+			    if(isset($response->info->authorizationExpireDate)){
+				    $order->set_meta_data( array( '_linepay_authorization_expire_date' => $response->info->authorizationExpireDate ) );
+				    $order->save();
+				    $order->add_order_note( sprintf( __('Authorization Expire Date is %s.', 'woocommerce-for-japan' ),$response->info->authorizationExpireDate ) );
+			    }
+			    // Reduce stock levels
+			    wc_reduce_stock_levels( $order_id );
+			    // Set order status of processing
+			    $order->payment_complete($_GET['transactionId']);
+			    $order->add_order_note(__( 'Confirm API processing was successful.', 'woocommerce-for-japan' ));
+			    $this->set_shipping_address( $order );
+		    }else{
+			    $order->add_order_note(__( 'Confirm API processing failed.', 'woocommerce-for-japan' ).$response->returnCode.' : '.$response->returnMessage);
+		    }
+	    }
+        return $order_id;
     }
+
+	/**
+	 *
+     * @param object WC_Order
+	 */
+	public function set_shipping_address( $order ){
+		if( isset( $_GET['transactionId']) && isset( $_GET['shippingMethodId'])){
+			$order_get['orderId'] = (string)$_GET['orderId'];
+			$order_get['fields'] = 'ORDER';
+			$order_id = $order->get_id();
+			$linepay_order = $this->linepay_func->send_api_linepay('/v3/payments', http_build_query($order_get), $this->debug, 'GET', $order_id);
+			// Set log data get payment
+			$message = 'Check order data at LinePay. '.$linepay_order->returnCode.':'.$linepay_order->returnMessage;
+			$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'linepay-wc');
+
+			if($linepay_order->returnCode == '0000') {
+			    $jp4wc_countries = new WC_Countries;
+			    $states = $jp4wc_countries->get_states();
+				$country_code = $linepay_order->info[0]->shipping->address->country;
+				if ( $country_code == 'JP' ) {
+					$post_code = substr( $linepay_order->info[0]->shipping->address->postalCode, 0, 3 ) . '-' . substr( $linepay_order->info[0]->shipping->address->postalCode, - 4 );
+				}else{
+					$post_code = $linepay_order->info[0]->shipping->address->postalCode;
+				}
+				$state_code = array_search( $linepay_order->info[0]->shipping->address->state, $states[ $country_code ] );
+				//Set address to Order
+                // Billing address
+                if(is_user_logged_in()) {
+                    $user = wp_get_current_user();
+                    $user_id = $user->ID;
+	                $order->set_billing_first_name(get_user_meta($user_id, 'billing_last_name', true));
+	                $order->set_billing_last_name(get_user_meta($user_id, 'billing_first_name', true));
+	                $order->set_billing_phone(get_user_meta($user_id, 'billing_phone', true));
+	                $order->set_billing_email(get_user_meta($user_id, 'billing_email', true));
+	                $order->set_billing_country(get_user_meta($user_id, 'billing_country', true));
+	                $order->set_billing_state(get_user_meta($user_id, 'billing_state', true));
+	                $order->set_billing_postcode(get_user_meta($user_id, 'billing_postcode', true));
+	                $order->set_billing_city(get_user_meta($user_id, 'billing_city', true));
+	                $order->set_billing_address_1(get_user_meta($user_id, 'billing_address_1', true));
+	                $order->set_billing_address_2(get_user_meta($user_id, 'billing_address_2', true));
+                }else{
+	                $order->set_billing_first_name($linepay_order->info[0]->shipping->address->recipient->firstName);
+	                $order->set_billing_last_name($linepay_order->info[0]->shipping->address->recipient->lastName);
+	                $order->set_billing_phone($linepay_order->info[0]->shipping->address->recipient->phoneNo);
+	                $order->set_billing_email($linepay_order->info[0]->shipping->address->recipient->email);
+	                $order->set_billing_country($country_code);
+	                $order->set_billing_state($state_code);
+	                $order->set_billing_postcode($post_code);
+	                $order->set_billing_city($linepay_order->info[0]->shipping->address->city);
+	                $order->set_billing_address_1($linepay_order->info[0]->shipping->address->detail);
+	                if(isset($linepay_order->info[0]->shipping->address->optional)){
+		                $order->set_billing_address_2($linepay_order->info[0]->shipping->address->optional);
+	                }
+                }
+				// Shipping address
+				$order->set_shipping_first_name($linepay_order->info[0]->shipping->address->recipient->firstName);
+				$order->set_shipping_last_name($linepay_order->info[0]->shipping->address->recipient->lastName);
+				$order->update_meta_data('_shipping_phone',$linepay_order->info[0]->shipping->address->recipient->phoneNo);
+				$order->update_meta_data('_shipping_email',$linepay_order->info[0]->shipping->address->recipient->email);
+				$order->set_shipping_country($country_code);
+				$order->set_shipping_state($state_code);
+				$order->set_shipping_postcode($post_code);
+				$order->set_shipping_city($linepay_order->info[0]->shipping->address->city);
+				$order->set_shipping_address_1($linepay_order->info[0]->shipping->address->detail);
+				if(isset($linepay_order->info[0]->shipping->address->optional)){
+					$order->set_shipping_address_2($linepay_order->info[0]->shipping->address->optional);
+				}
+				$order->save();
+			}
+		}
+	}
 
     /**
      * Process a sales payment after complete order to ship.
      *
-     * @param  int $order_id
+     * @param  int Order ID
      */
     public function sales_complete( $order_id ) {
         $order = wc_get_order( $order_id );
@@ -648,7 +691,7 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
                 $order->add_order_note(__( 'The Void was successful.', 'woocommerce-for-japan' ));
                 return true;
             }else{
-                $order->add_order_note(__( 'The Void was failed.', 'woocommerce-for-japan' ).$void_response->returnCode.' : '.$response->returnMessage);
+                $order->add_order_note(__( 'The Void was failed.', 'woocommerce-for-japan' ).$void_response->returnCode.' : '.$void_response->returnMessage);
                 return false;
             }
         }elseif(isset($auth) && $order->get_status() === 'completed' && $order->get_total() >= $amount){

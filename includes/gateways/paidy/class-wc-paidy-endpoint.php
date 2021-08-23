@@ -30,13 +30,24 @@ function paidy_check_webhook( $data ){
     }elseif( isset( $main_data['payment_id'] ) && isset( $main_data['order_ref'] )){
         if(is_numeric($main_data['order_ref'])){
             // Debug
-            $message = 'Exist [payment_id] and [order_ref]'. "\n" . $jp4wc_framework->jp4wc_array_to_message($main_data);
-            $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
+	        if($main_data['payment_id'] == 'pay_0000000000000001'){
+		        $message = 'This notification is a test request from Paidy.'. "\n" . $jp4wc_framework->jp4wc_array_to_message($main_data);
+		        $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
+		        return new WP_REST_Response($main_data, 200);
+	        }else{
+		        $message = 'Exist [payment_id] and [order_ref]'. "\n" . $jp4wc_framework->jp4wc_array_to_message($main_data);
+		        $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
+	        }
 
             $order = wc_get_order( $main_data['order_ref'] );
+	        if($order === false){
+		        $message = 'The order with this order number does not exist in the store.'. "\n" . 'Order# :' . $main_data['order_ref'];
+		        $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
+		        return new WP_REST_Response($main_data, 200);
+	        }
             $status = $order->get_status();
 
-            if( $main_data["status"] == 'authorize_success' && $status == 'pending' ) {
+            if( $main_data["status"] == 'authorize_success' && $status == 'pending' || $status == 'cancelled' ){
                 // Reduce stock levels
                 wc_reduce_stock_levels($main_data['order_ref']);
                 if(isset($main_data['payment_id'])){
