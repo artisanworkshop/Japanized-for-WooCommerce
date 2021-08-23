@@ -5,7 +5,7 @@
  * @package WooCommerce\Gateways
  */
 
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
+use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -25,7 +25,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
     /**
      * Framework.
      *
-     * @var class
+     * @var stdClass
      */
     public $jp4wc_framework;
 
@@ -56,6 +56,10 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      * @var string
      */
     public $test_api_secret_key;
+    public $store_name;
+    public $api_public_key;
+	public $test_api_public_key;
+	public $notice_email;
 
     /**
      * Constructor for the gateway.
@@ -269,7 +273,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      * Process the payment and return the result
      *
      * @param int $order_id
-     * @return array | mixed
      */
     public function process_payment( $order_id ) {
         $order = wc_get_order( $order_id );
@@ -284,8 +287,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      * Make Paidy JavaScript for payment process
      *
      * @param string $order_id
-     * @return string
-     * @throws Exception
      */
     public function paidy_make_order( $order_id ){
         //Set Order
@@ -375,7 +376,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                     "quantity":1,
                     "title":"'.esc_html($fee->get_name()).'",
                     "unit_price":'.esc_html($fee->get_amount());
-                $paidy_amount += esc_html($fee->get_amount());
+                $paidy_amount += intval($fee->get_amount());
                 if ($fee === end($fees)) {
                     $items .= '}
 ';
@@ -387,7 +388,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             }
         }
 
-        // Get latest order
+        // Get the latest order
         $args = array(
             'customer_id' => $user_id,
             'status' => 'completed',
@@ -429,9 +430,11 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         }
         $order_amount = $order->get_total();
         $tax = $order_amount - $paidy_amount - $order->get_shipping_total();
-        if( $this->enabled =='yes' and isset($api_public_key) and $api_public_key != '' ):
+
+        if( $this->enabled =='yes' and isset($api_public_key) and $api_public_key != '' and $order->get_status() == 'pending'):
             ?>
             <script type="text/javascript">
+                // Paidy Payment apply
                 jQuery(window).on('load', function(){
                     paidyPay();
                 })
@@ -500,6 +503,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                     paidyHandler.launch(payload);
                 }
             </script>
+        <?php elseif($this->enabled =='yes' and isset($api_public_key) and $api_public_key == ''): ?>
+            <h2><?php echo __('This order has already been settled.', 'woocommerce-for-japan'); ?></h2>
         <?php else: ?>
             <h2><?php echo __('API Public key is not set. Please set an API public key in the admin page.', 'woocommerce-for-japan'); ?></h2>
         <?php endif;
@@ -527,19 +532,26 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             // Image upload.
             wp_enqueue_media();
 
+	        wp_enqueue_script(
+		        'paidy-redirect',
+		        JP4WC_URL_PATH.'assets/js/jp4wc-paidy.js',
+		        array(),
+		        JP4WC_VERSION,
+		        true
+	        );
             $paygent_token_js_link = 'https://apps.paidy.com/';
             if(is_checkout()){
                 wp_enqueue_script(
                     'paidy-token',
                     $paygent_token_js_link,
                     array(),
-                    '',
+	                JP4WC_VERSION,
                     false
                 );
                 // Paidy Payment for Checkout page
                 wp_register_style(
                     'jp4wc-paidy',
-                    JP4WC_URL_PATH . '/assets/css/jp4wc-paidy.css',
+                    JP4WC_URL_PATH . 'assets/css/jp4wc-paidy.css',
                     false,
                     JP4WC_VERSION
                 );
@@ -578,7 +590,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      * Update Cancel from Auth to Paidy System
      *
      * @param object $checkout
-     * @return mixed
      */
     public function checkout_reject_to_cancel( $checkout ){
         if( isset($_GET['status']) ){
@@ -596,12 +607,11 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      * Update Complete at thank you page for Paidy Payment
      *
      * @param string $order_id
-     * @return mixed
      */
     public function thankyou_completed($order_id){
         $order = wc_get_order($order_id);
         $current_status = $order->get_status();
-        if($current_status == 'pending'){
+        if($current_status == 'pending' || $current_status == 'cancelled'){
             // Reduce stock levels
             wc_reduce_stock_levels( $order_id );
             $order->payment_complete($_GET['transaction_id']);
@@ -655,7 +665,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      * Update Cancel from Auth to Paidy System
      *
      * @param string $order_id
-     * @return mixed
      */
     public function jp4wc_order_paidy_status_cancelled( $order_id ){
         $secret_key = $this->set_api_secret_key();
@@ -697,7 +706,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      * Update Sale from Auth to Paidy System
      *
      * @param string $order_id
-     * @return mixed
+     * @return boolean true or false
      */
     public function jp4wc_order_paidy_status_completed( $order_id ){
         $secret_key = $this->set_api_secret_key();
@@ -748,6 +757,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             $this->send_notice_email( $email_message );
             return false;
         }
+        return true;
     }
 
     /**
@@ -807,6 +817,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                 return false;
             }
         }
+        return true;
     }
 
     /**
@@ -888,7 +899,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 
         ob_start();
         ?>
-        <tr valign="top">
+        <tr>
             <th scope="row" class="titledesc">
                 <label for="<?php echo esc_attr( $field_key ); ?>"><?php echo wp_kses_post( $data['title'] ); ?> <?php echo $this->get_tooltip_html( $data ); ?></label>
             </th>
