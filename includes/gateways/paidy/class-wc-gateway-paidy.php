@@ -150,7 +150,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             'environment' => array(
                 'title'       => __( 'Environment', 'woocommerce-for-japan' ),
                 'type'        => 'select',
-                'class'       => 'wc-enhanced-select',
                 'description' => __( 'This setting specifies whether you will process live transactions, or whether you will process simulated transactions using the Paidy Sandbox.', 'woocommerce-for-japan' ),
                 'default'     => 'live',
                 'desc_tip'    => true,
