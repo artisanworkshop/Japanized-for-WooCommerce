@@ -705,51 +705,59 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
      * @param  int $order_id
      * @param  float $amount
      * @param  string $reason
-     * @return  boolean True or false based on success, or a WP_Error object
+     * @return  bool True or false based on success, or a WP_Error object
      */
     public function process_refund( $order_id, $amount = null, $reason = '' ) {
         $order = wc_get_order($order_id);
-        $transaction_id = $order->get_transaction_id();
-        $refundUri = '/v3/payments/'.$transaction_id.'/refund';
-        $voidUri = '/v3/payments/authorizations/'.$transaction_id.'/void';
-        $auth = $order->get_meta('_linepay_authorization_expire_date', true);
+        if( $order->get_payment_method() == $this->id ){
+	        $transaction_id = $order->get_transaction_id();
+	        $refundUri      = '/v3/payments/' . $transaction_id . '/refund';
+	        $voidUri        = '/v3/payments/authorizations/' . $transaction_id . '/void';
+	        $auth           = $order->get_meta( '_linepay_authorization_expire_date', true );
 
-        $order_get['orderId'] = $this->order_prefix.$order_id;
-        $order_get['fields'] = 'TRANSACTION';
-        $linepay_order = $this->linepay_func->send_api_linepay('/v3/payments', http_build_query($order_get), $this->debug, 'GET', $order_id);
-        $last_total_amount = 0;
-        foreach ($linepay_order->info as $info){
-            if ($info === reset($linepay_order->info)) {
-                $last_total_amount += $info->payInfo[0]->amount;
-            }
+	        $order_get['orderId'] = $this->order_prefix . $order_id;
+	        $order_get['fields']  = 'TRANSACTION';
+	        $linepay_order        = $this->linepay_func->send_api_linepay( '/v3/payments', http_build_query( $order_get ), $this->debug, 'GET', $order_id );
+	        $last_total_amount    = 0;
+	        foreach ( $linepay_order->info as $info ) {
+		        if ( $info === reset( $linepay_order->info ) ) {
+			        $last_total_amount += $info->payInfo[0]->amount;
+		        }
+	        }
+
+	        if ( isset( $auth ) && $order->get_status() === 'processing' && $order->get_total() == $amount && $linepay_order->info[0]->payStatus == 'AUTHORIZATION' ) {
+		        $void_response = $this->linepay_func->send_api_linepay( $voidUri, '', $this->debug, 'POST', $order_id );
+		        if ( $void_response->returnCode == '0000' ) {
+			        $order->add_order_note( __( 'The Void was successful.', 'woocommerce-for-japan' ) );
+
+			        return true;
+		        } else {
+			        $order->add_order_note( __( 'The Void was failed.', 'woocommerce-for-japan' ) . $void_response->returnCode . ' : ' . $void_response->returnMessage );
+
+			        return false;
+		        }
+	        } elseif ( isset( $auth ) && $order->get_status() === 'completed' && $order->get_total() >= $amount ) {
+		        $post_data['refundAmount'] = $amount;
+		        $json_content              = json_encode( $post_data );
+
+		        $response = $this->linepay_func->send_api_linepay( $refundUri, $json_content, $this->debug, 'POST', $order_id );
+		        if ( $response->returnCode == '0000' ) {
+			        $order->add_order_note( __( 'The refund was successful.', 'woocommerce-for-japan' ) );
+
+			        return true;
+		        } else {
+			        $order->add_order_note( __( 'The refund was failed.', 'woocommerce-for-japan' ) . $response->returnCode . ' : ' . $response->returnMessage );
+
+			        return false;
+		        }
+	        } else {
+		        $order->add_order_note( __( 'The refund was failed. not match some conditions', 'woocommerce-for-japan' ) );
+		        $this->jp4wc_framework->jp4wc_debug_log( $auth . ' : ' . $order->get_status() . ' : ' . $amount . ' : ' . $linepay_order->info[0]->payStatus, $this->debug, 'linepay-wc' );
+
+		        return false;
+	        }
         }
-
-        if(isset($auth) && $order->get_status() === 'processing' && $order->get_total() == $amount && $linepay_order->info[0]->payStatus == 'AUTHORIZATION'){
-            $void_response = $this->linepay_func->send_api_linepay( $voidUri, '', $this->debug, 'POST', $order_id );
-            if($void_response->returnCode == '0000'){
-                $order->add_order_note(__( 'The Void was successful.', 'woocommerce-for-japan' ));
-                return true;
-            }else{
-                $order->add_order_note(__( 'The Void was failed.', 'woocommerce-for-japan' ).$void_response->returnCode.' : '.$void_response->returnMessage);
-                return false;
-            }
-        }elseif(isset($auth) && $order->get_status() === 'completed' && $order->get_total() >= $amount){
-            $post_data['refundAmount'] = $amount;
-            $json_content = json_encode( $post_data );
-
-            $response = $this->linepay_func->send_api_linepay( $refundUri, $json_content, $this->debug, 'POST', $order_id );
-            if($response->returnCode == '0000'){
-                $order->add_order_note(__( 'The refund was successful.', 'woocommerce-for-japan' ));
-                return true;
-            }else{
-                $order->add_order_note(__( 'The refund was failed.', 'woocommerce-for-japan' ).$response->returnCode.' : '.$response->returnMessage);
-                return false;
-            }
-        }else{
-            $order->add_order_note(__( 'The refund was failed. not match some conditions', 'woocommerce-for-japan' ));
-        $this->jp4wc_framework->jp4wc_debug_log($auth.' : '.$order->get_status().' : '.$amount.' : '.$linepay_order->info[0]->payStatus, $this->debug, 'linepay-wc');
-            return false;
-        }
+	    return true;
     }
 
     /**

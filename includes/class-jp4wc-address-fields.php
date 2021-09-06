@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.2.17
+ * @version     2.2.21
  * @category    Address Setting for Japan
  * @author      Artisan Workshop
  */
@@ -289,7 +289,7 @@ class AddressField4jp{
      * @return string
      */
 	public function jp4wc_shipping_address_add_phone( $address, $raw_address, $object ){
-	    if( is_order_received_page() || is_admin() ){
+	    if( is_order_received_page() || is_admin() || version_compare( WC_VERSION, '5.6', '>=' )){
             return $address;
         }else{
             $field_value = get_post_meta( $object->get_id(), '_shipping_phone', true );

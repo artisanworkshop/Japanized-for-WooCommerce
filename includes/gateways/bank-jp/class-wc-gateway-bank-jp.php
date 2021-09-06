@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class 		WC_Gateway_BANK_JP
  * @extends		WC_Payment_Gateway
- * @version		2.2.19
+ * @version		2.2.21
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -249,7 +249,7 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
     		return;
     	}
 
-    	echo '<h2>' . __( 'Our Bank Details', 'woocommerce-for-japan' ) . '</h2>' . PHP_EOL;
+    	$html = '<h2>' . __( 'Our Bank Details', 'woocommerce-for-japan' ) . '</h2>' . PHP_EOL;
 
     	$bankjp_accounts = apply_filters( 'woocommerce_bankjp_accounts', $this->account_details );
 
@@ -257,7 +257,7 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 			$number_label = __( 'Account Number', 'woocommerce-for-japan' );
 			$name_label = __( 'Account Name', 'woocommerce-for-japan' );
 	    	foreach ( $bankjp_accounts as $bankjp_account ) {
-	    		echo '<ul class="order_details bankjp_details">' . PHP_EOL;
+			    $html .= '<ul class="order_details bankjp_details">' . "\n";
 
 	    		$bankjp_account = (object) $bankjp_account;
 
@@ -272,16 +272,16 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 					)
 				), $order_id );
 
-
 	    		foreach ( $account_fields as $field_key => $field ) {
-					echo '<li class="' . esc_attr( $field_key ) . '"><strong>' . implode( ' - ', array_filter( array( esc_attr( $field['bank_name'] ), esc_attr( $field['bank_branch'] ),esc_attr( $field['bank_type'] ) ) ) ) . '</strong>' . PHP_EOL;
-				    echo $number_label . ': <strong>' . wptexturize( $field['value'] ) . '</strong>' . PHP_EOL;
-				    echo $name_label . ': <strong>' . wptexturize( $field['account_name'] ) . '</strong></li>' . PHP_EOL;
+				    $html .= '<li class="' . esc_attr( $field_key ) . '">'."\n".'<strong>' . implode( ' - ', array_filter( array( esc_attr( $field['bank_name'] ), esc_attr( $field['bank_branch'] ),esc_attr( $field['bank_type'] ) ) ) ) . '</strong><br/>';
+				    $html .= $number_label . ': <strong>' . wptexturize( $field['value'] ) . '</strong><br/>';
+				    $html .= $name_label . ': <strong>' . wptexturize( $field['account_name'] ) . '</strong>'."\n".'</li>';
 				}
 
-	    		echo '</ul>';
+			    $html .= '</ul>';
 	    	}
 	    }
+        echo apply_filters( 'jp4wc_bank_details', $html, $bankjp_accounts, $order_id );
     }
 
     /**
