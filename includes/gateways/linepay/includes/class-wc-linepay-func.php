@@ -1,6 +1,6 @@
 <?php
 
-use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
+use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * LINE Pay use functions.
  *
  * @class 	WC_Gateway_LINEPay
- * @version	1.0.8
+ * @version	1.1.1
  * @author	Artisan Workshop
  */
 
@@ -93,7 +93,8 @@ class LINEPay_func {
                 $item['name'] = $_product->get_name();
                 $item['imageUrl'] = wp_get_attachment_image_url( $_product->get_image_id(), 'thumbnail' );
                 $item['quantity'] = $cart_item['quantity'];
-                $item['price'] = $price;
+                $item['price'] = $this->jp4wc_framework->jp4wc_price_round_cal( $cart_item['line_subtotal'] + $cart_item['line_subtotal_tax'] )/$cart_item['quantity'];
+	            $item['originalPrice'] = $price;
                 array_push($items, $item);
             }
         }

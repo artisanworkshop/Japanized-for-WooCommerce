@@ -298,39 +298,43 @@ class JP4WC_Delivery{
 		$date_time['time'] = apply_filters('wc4jp-unspecified-time', $date_time['time'], $order);
 		$show_title = apply_filters('wc4jp-show-title', $show_title, $date_time['date'], $date_time['time'], $order);
 
+		$html = '';
+
 		if( $plain_text ) {
 
-			echo "\n\n==========\n\n";
+			$html = "\n\n==========\n\n";
 
 			if( $show_title ) {
-				printf( "%s \n", strtoupper( apply_filters( 'wc4jp_delivery_details_text', __('Scheduled Delivery date and time', 'woocommerce-for-japan') ) ) );
+				$html .= sprintf( "%s \n", strtoupper( apply_filters( 'wc4jp_delivery_details_text', __('Scheduled Delivery date and time', 'woocommerce-for-japan') ) ) );
 			}
 
 			if( $date_time['date'] ){
-				printf( "\n%s: %s", apply_filters( 'wc4jp_delivery_date_text', __('Scheduled Delivery Date', 'woocommerce-for-japan') ), $date_time['date'] );
+				$html .= sprintf( "\n%s: %s", apply_filters( 'wc4jp_delivery_date_text', __('Scheduled Delivery Date', 'woocommerce-for-japan') ), $date_time['date'] );
 			}
 
 			if( $date_time['time'] ){
-				printf( "\n%s: %s", apply_filters( 'wc4jp_time_zone_text', __('Scheduled Time Zone', 'woocommerce-for-japan') ), $date_time['time'] );
+				$html .= sprintf( "\n%s: %s", apply_filters( 'wc4jp_time_zone_text', __('Scheduled Time Zone', 'woocommerce-for-japan') ), $date_time['time'] );
 			}
 
-			echo "\n\n==========\n\n";
+			$html .= "\n\n==========\n\n";
 
 		} else {
 
 			if( $show_title ) {
-				printf( '<h2>%s</h2>', apply_filters( 'wc4jp_delivery_details_text', __('Scheduled Delivery date and time', 'woocommerce-for-japan') ) );
+				$html .= sprintf( '<h2>%s</h2>', apply_filters( 'wc4jp_delivery_details_text', __('Scheduled Delivery date and time', 'woocommerce-for-japan') ) );
 			}
 
 			if( $date_time['date'] ){
-				printf( "<p><strong>%s</strong> <br>%s</p>", apply_filters( 'wc4jp_delivery_date_text', __('Scheduled Delivery Date', 'woocommerce-for-japan') ), $date_time['date'] );
+				$html .= sprintf( '<p class="jp4wc_date"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_delivery_date_text', __('Scheduled Delivery Date', 'woocommerce-for-japan') ), $date_time['date'] );
 			}
 
 			if( $date_time['time'] ){
-				printf( "<p><strong>%s</strong> <br>%s</p>", apply_filters( 'wc4jp_time_zone_text', __('Scheduled Time Zone', 'woocommerce-for-japan') ), $date_time['time'] );
+				$html .= sprintf( '<p class="jp4wc_time"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_time_zone_text', __('Scheduled Time Zone', 'woocommerce-for-japan') ), $date_time['time'] );
 			}
 		}
+		echo apply_filters( 'jp4wc_display_date_and_time_zone', $html, $date_time, $show_title );
 	}
+
 	/**
 	 * Frontend: Add date and timeslot to order email
 	 *
@@ -356,7 +360,7 @@ class JP4WC_Delivery{
      * Helper: Check if order has date or time
      *
      * @param object WP_Order
-     * @return bool
+     * @return array|bool
      */
 	function has_date_or_time( $order ) {
 		$meta = array(
@@ -407,7 +411,7 @@ class JP4WC_Delivery{
 	 */
 	public function render_shop_order_columns( $column ) {
 
-		global $post, $woocommerce, $the_order;
+		global $post, $the_order;
 		if ( empty( $the_order ) || $the_order->get_id() != $post->ID ) {
 			$the_order = wc_get_order( $post->ID );
 		}
@@ -423,7 +427,7 @@ class JP4WC_Delivery{
 	/**
 	 * Admin: Display date and timeslot on the admin order page
 	 *
-	 * @param object $order
+	 * @param object WP_Order
 	 */
 	function display_admin_order_meta( $order ) {
 

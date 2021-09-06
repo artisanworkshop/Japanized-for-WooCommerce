@@ -1,5 +1,13 @@
 <?php
-use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
+/**
+ * Line Pay endpoint for Shipping
+ *
+ * @version		1.1.1
+ * @author 		Artisan Workshop
+ */
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
 
 add_action( 'rest_api_init', function () {
     register_rest_route( 'linepay/v1', '/shippings/', array(
@@ -63,28 +71,28 @@ function linepay_shipping_webhook( $data ){
     $package['destination']['country'] = $country;
     $package['destination']['state'] = $state_code;
     $package['destination']['postcode'] = $postalCode;
-	// debug Received data at webhook
-//	$message = 'package data ' . "\n" . $country.':'.$state_code.':'.$postalCode;
-//	$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'linepay-wc');
 
     $shipping_zone = WC_Shipping_Zones::get_zone_matching_package( $package );
     $shipping_methods = $shipping_zone->get_shipping_methods( true );
     $returnCode = '0000';
     $returnMessage = 'OK';
-    foreach($shipping_methods as $shipping_method){
-        $method_setting = get_option('woocommerce_'.$shipping_method->id.'_'.$shipping_method->instance_id.'_settings');
-
+	foreach($shipping_methods as $shipping_method){
         if($shipping_method->id == 'flat_rate') {
             $response_id = $shipping_method->id;
             $response_name = $shipping_method->title;
-	        $response_amount = (int)($method_setting['cost']);
-	        if($method_setting['tax_status'] == 'taxable'){
+	        $response_amount = $jp4wc_framework->jp4wc_price_round_cal((float)$shipping_method->instance_settings['cost']);
+	        if($shipping_method->instance_settings['tax_status'] == 'taxable'){
 	        	$tax_rates = WC_Tax::get_rates();
-		        $response_amount = (int)($response_amount * (1 + $tax_rates[1]['rate']/100));
+	        	foreach ($tax_rates as $tax_rate){
+	        		if($tax_rate['shipping'] == 'yes'){
+	        			$rate = $tax_rate['rate'];
+			        }
+		        }
+		        if(isset($rate))$response_amount = $jp4wc_framework->jp4wc_price_round_cal(($response_amount * (1 + $rate/100)));
 	        }
         }elseif($shipping_method->id == 'free_shipping'){
-            if($method_setting['requires'] == 'min_amount'){
-                if($method_setting['min_amount'] <= $order->get_total()){
+            if($shipping_method->instance_settings['requires'] == 'min_amount'){
+                if((float)$shipping_method->instance_settings['min_amount'] <= $order->get_total()){
                     $response_id = $shipping_method->id;
                     $response_name = $shipping_method->title;
                     $response_amount = 0;
@@ -95,7 +103,7 @@ function linepay_shipping_webhook( $data ){
             $returnMessage = 'Mistake shipment.';
             $response_id = $shipping_method->id;
             $response_name = $shipping_method->title;
-            $response_amount = $method_setting['cost'];
+            $response_amount = $shipping_method->instance_settings['cost'];
         }
     }
     $log_message = 'Return '.$returnCode.':'.$returnMessage."\n";

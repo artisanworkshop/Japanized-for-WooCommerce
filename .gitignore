@@ -28,6 +28,9 @@ node_modules/
 # Windows junk
 Thumbs.db
 
+# remove composer.lock
+composer.lock
+
 <<<<<<< HEAD
 # remove .idea directory
 .idea/*

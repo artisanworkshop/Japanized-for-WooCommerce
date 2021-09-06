@@ -1,7 +1,7 @@
 <?php
 /**
  * Framework Name: Artisan Workshop FrameWork for WooCommerce
- * Framework Version : 2.0.11
+ * Framework Version : 2.0.12
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  *
@@ -9,13 +9,13 @@
  * @author Artisan Workshop
  */
 
-namespace ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11;
+namespace ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12;
 
-if ( ! defined( 'ABSPATH' ) ) {
+use WP_Error;if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-if (!class_exists('\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_11\\JP4WC_Plugin')):
+if (!class_exists('\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\JP4WC_Plugin')):
     class JP4WC_Plugin {
         /**
          * Text to be translated by the framework
@@ -675,6 +675,26 @@ if (!class_exists('\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_11\\JP4
                 foreach ( $object->messages as $message ) {
                     echo '<div id="message" class="updated inline"><p><strong>' . esc_html( $message ) . '</strong></p></div>';
                 }
+            }
+        }
+
+        /**
+         * Display numbers (price) according to WooCommerce settings.
+         *
+         * @param float number
+         * @param string round or round_up or round_down
+         * @return false|float|WP_Error WP_Error and number
+         */
+        public function jp4wc_price_round_cal($num, $round = 'round'){
+            $num_decimals = get_option('woocommerce_price_num_decimals');
+            if($round  == 'round'){
+                return round($num, $num_decimals);
+            }elseif( $round  == 'round_up' ){
+                return ceil($num, $num_decimals);
+            }elseif( $round  == 'round_down' ){
+                return floor($num, $num_decimals);
+            }else{
+                return new WP_Error('round_type_error', 'Round Type Error');
             }
         }
     }

@@ -6,7 +6,7 @@
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
+use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 

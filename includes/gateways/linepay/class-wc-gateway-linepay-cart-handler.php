@@ -1,11 +1,13 @@
 <?php
 /**
  * Cart handler.
+ *
+ * @version		1.1.1
+ * @author 		Artisan Workshop
  */
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_11 as Framework;
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
 
 /**
  * WC_Gateway_LINEPay_Cart_Handler handles button display in the cart.
