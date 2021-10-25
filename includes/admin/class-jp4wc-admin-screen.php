@@ -400,6 +400,22 @@ class JP4WC_Admin_Screen {
             'jp4wc_laws'
         );
 
+		// affiliates setting
+		add_settings_section(
+			'jp4wc_affiliates',
+			__( 'Affiliate Setting', 'woocommerce-for-japan' ),
+			'',
+			'jp4wc_affiliate'
+		);
+
+		add_settings_field(
+			'jp4wc_affiliates_a8',
+			__( 'A8.net Setting', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_affiliates_a8' ),
+			'jp4wc_affiliate',
+			'jp4wc_affiliates'
+		);
+
 		register_setting(
 			'jp4wc_informations',
 			'jp4wc_informations_name'
@@ -542,6 +558,15 @@ class JP4WC_Admin_Screen {
                 $this->jp4wc_save_methods( $add_methods );
                 self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
             }
+			if((isset($_GET['tab']) and $_GET['tab'] == 'affiliate')){
+				//Save affiliate setting
+				$add_methods = array(
+					'affiliate-a8',
+					'affiliate-a8-test',
+				);
+				$this->jp4wc_save_methods( $add_methods );
+				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
+			}
 		}
 	}
 
@@ -1001,6 +1026,22 @@ class JP4WC_Admin_Screen {
     public function jp4wc_law_explanation() {
         echo __( 'It will be displayed if you put [jp4wc_law] shortcode on a page or post.', 'woocommerce-for-japan' );
     }
+
+	/**
+	 * A8.net tracking settings option.
+	 */
+	public function jp4wc_affiliates_a8() {
+		$title = __( 'A8.net tracking settings', 'woocommerce-for-japan' );
+		$description = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title );
+		$this->jp4wc_plugin->jp4wc_input_checkbox('affiliate-a8', $description, $this->prefix);
+		echo '<br /><br />';
+		$description2 = __( 'Please enter your A8.net Advertising ID.', 'woocommerce-for-japan' );
+		$this->jp4wc_plugin->jp4wc_input_text('affiliate-a8-pid', $description2, 30, '', $this->prefix);
+        echo '<br /><br />';
+		$title3 = __( 'A8.net test mode', 'woocommerce-for-japan' );
+		$description3 = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title3 );
+		$this->jp4wc_plugin->jp4wc_input_checkbox('affiliate-a8-test', $description3, $this->prefix);
+	}
 
 	/**
 	 * create input time zone form.

@@ -3,13 +3,13 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.2.21
+ * Version: 2.3.0
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 4.9
- * Tested up to: 5.8.0
+ * Tested up to: 5.8.1
  * WC requires at least: 3.0
- * WC tested up to: 5.6.0
+ * WC tested up to: 5.8.0
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
@@ -33,7 +33,7 @@ class JP4WC{
 	 *
 	 * @var string
 	 */
-	public $version = '2.2.21';
+	public $version = '2.3.0';
 
     /**
      * Japanized for WooCommerce Framework version.
@@ -179,8 +179,10 @@ class JP4WC{
             require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-linepay-endpoint.php';
             require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-linepay-admin-notices.php';
         }
-        // Add Subscriptions setting
-        require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-subscriptions.php';
+        // Add affiliates setting
+        require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-affiliate.php';
+		// Add Subscriptions setting
+		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-subscriptions.php';
 	}
 
     /**

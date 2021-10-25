@@ -59,6 +59,9 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
+= 2.3.0 - 2021-10-25 =
+* Dev - Add Affiliate Setting.
+
 = 2.2.20 - 2021-08-23 =
 * Fixed - Some bugs at LINE Pay payment
 * Fixed - Some bugs at Paidy payment

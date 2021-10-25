@@ -11,6 +11,7 @@
 		'shipment' => __( 'Shipment Setting', 'woocommerce-for-japan' ),
 		'payment' => __( 'Payment Setting', 'woocommerce-for-japan' ),
         'law' => __( 'Notation based on Specified Commercial Transaction Law', 'woocommerce-for-japan' ),
+		'affiliate' => __( 'Affiliate Setting', 'woocommerce-for-japan' ),
 	);
     $title = apply_filters( 'wc4jp_admin_setting_title', $title );
 	?>

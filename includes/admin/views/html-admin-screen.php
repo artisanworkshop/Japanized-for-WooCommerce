@@ -13,8 +13,8 @@ $tabs = array(
 	'shipment' => __( 'Shipment', 'woocommerce-for-japan' ),
 	'payment' => __( 'Payment', 'woocommerce-for-japan' ),
     'law' => __( 'Specified Commercial Transaction Law', 'woocommerce-for-japan' ),
+	'affiliate' => __( 'Affiliate Setting', 'woocommerce-for-japan' ),
 	'info' => __( 'Infomations', 'woocommerce-for-japan' ),
-	
 );
 $tabs        = apply_filters( 'wc4jp_admin_setting_tabs', $tabs );
 
