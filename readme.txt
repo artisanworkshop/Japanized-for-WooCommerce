@@ -62,6 +62,13 @@ The manual installation method involves downloading our plugin and uploading it 
 = 2.3.0 - 2021-10-25 =
 * Dev - Add Affiliate Setting.
 
+= 2.2.21 - 2021-09-07 =
+* Fixed - Some bugs at LINE Pay payment
+* Add - Add jp4wc_bank_details as filter hook at Japan Bank Payment
+* Add - Add jp4wc_display_date_and_time_zone as filter hook at Delivery date
+* Fixed - Shipping Phone for Compatibility fixes for WooCommerce 5.6
+* Update - JP4WC Framework to v2.0.12
+
 = 2.2.20 - 2021-08-23 =
 * Fixed - Some bugs at LINE Pay payment
 * Fixed - Some bugs at Paidy payment
