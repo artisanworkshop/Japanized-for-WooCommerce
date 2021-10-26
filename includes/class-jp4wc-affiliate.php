@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.3.0
+ * @version     2.3.1
  * @package 	Affiliate Setting
  * @author 		ArtisanWorkshop
  */
@@ -46,7 +46,8 @@ class JP4WC_Affiliates{
 	    $total_price = 0;
 		foreach($order->get_items() as $item) {
 			$product_variation_id = $item->get_variation_id();
-			$product              = $item->get_product();
+			$product = $item->get_product();
+            print_r($item);
 			if ( $product_variation_id != 0 ) {
 				$product_id = $product_variation_id;
 			} elseif($product->get_sku()) {
@@ -56,13 +57,15 @@ class JP4WC_Affiliates{
 			}
 			$items .= '    {
       "code": "' . $product_id . '",
-      "price": ' . $product->get_price() . ',
-      "quantity": ' . $item->get_quantity() . '
+      "price": ' . round( $item->get_subtotal() ) . ',
+      "quantity": 1
     },
 ';
-			$total_price += $product->get_price()*$item->get_quantity();
+			$total_price += round( $item->get_subtotal() );
 		}
-		echo '<script>
+		echo '<span id="a8sales"></span>
+<script src="//statics.a8.net/a8sales/a8sales.js"></script>
+<script>
 a8sales({
   "pid": "'. $pid .'",
   "order_number": "'. $order->get_order_number() .'",
@@ -74,7 +77,6 @@ a8sales({
 });
 </script>';
 	}
-
 }
 
 new JP4WC_Affiliates();
