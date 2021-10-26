@@ -47,7 +47,6 @@ class JP4WC_Affiliates{
 		foreach($order->get_items() as $item) {
 			$product_variation_id = $item->get_variation_id();
 			$product = $item->get_product();
-            print_r($item);
 			if ( $product_variation_id != 0 ) {
 				$product_id = $product_variation_id;
 			} elseif($product->get_sku()) {
