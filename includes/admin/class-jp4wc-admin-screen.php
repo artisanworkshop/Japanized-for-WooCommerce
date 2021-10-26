@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.2.19
+ * @version     2.3.3
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
@@ -563,6 +563,7 @@ class JP4WC_Admin_Screen {
 				$add_methods = array(
 					'affiliate-a8',
 					'affiliate-a8-test',
+					'affiliate-a8-pid',
 				);
 				$this->jp4wc_save_methods( $add_methods );
 				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
