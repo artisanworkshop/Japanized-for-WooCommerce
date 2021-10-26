@@ -59,7 +59,7 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
-= 2.3.1 - 2021-10-27 =
+= 2.3.1 & 2.3.2 - 2021-10-27 =
 * Fixed - A8.net affiliate tracking tag.
 
 = 2.3.0 - 2021-10-25 =
