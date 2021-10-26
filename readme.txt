@@ -2,9 +2,9 @@
 Contributors: artisan-workshop-1, shohei.tanaka, mt8biz
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
-Requires at least: 4.9.0
-Tested up to: 5.8.0
-Stable tag: 2.2.20
+Requires at least: 5.0.0
+Tested up to: 5.8.1
+Stable tag: 2.3.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,9 +34,9 @@ This plugin is an additional feature plugin that makes WooCommerce easier to use
 
 = Minimum Requirements =
 
-* WordPress 4.9 or greater
-* WooCommerce 3.0 or greater
-* PHP version 7.2 or greater
+* WordPress 5.0 or greater
+* WooCommerce 4.0 or greater
+* PHP version 7.3 or greater
 * MySQL version 5.6 or greater
 * WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
@@ -58,6 +58,9 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.3.1 - 2021-10-27 =
+* Fixed - A8.net affiliate tracking tag.
 
 = 2.3.0 - 2021-10-25 =
 * Dev - Add Affiliate Setting.
