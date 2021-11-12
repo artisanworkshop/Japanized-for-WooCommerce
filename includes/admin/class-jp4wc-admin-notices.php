@@ -91,9 +91,9 @@ class JP4WC_Admin_Notices {
             ?>
             <div class="notice notice-info is-dismissible prli-review-notice" id="prli_review_notice">
                 <div id="prli_review_intro">
-                    <p><?php echo sprintf( __('WooCommerce\'s online conference <b><a href="%s?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=wooecfses2021" target="_blank">[Woo EC Fes Japan 2021]</b></a> will be held in Japan from November 19th to 20th, 2021.'), $pr_link );?><br />
-	                    <?php _e('You can get knowledge about online shops and learn the functions of WooCommerce from some Contributors.');?><br />
-	                    <strong style="color:orangered;font-size: large;"><?php echo sprintf( __('%s days until the event!'), $diff_days );?></strong>
+                    <p><?php echo sprintf( __('WooCommerce\'s online conference <b><a href="%s?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=wooecfses2021" target="_blank">[Woo EC Fes Japan 2021]</b></a> will be held in Japan from November 19th to 20th, 2021.', 'woocommerce-for-japan' ), $pr_link );?><br />
+	                    <?php _e('You can get knowledge about online shops and learn the functions of WooCommerce from some Contributors.', 'woocommerce-for-japan' );?><br />
+	                    <strong style="color:orangered;font-size: large;"><?php echo sprintf( __('%s days until the event!', 'woocommerce-for-japan' ), $diff_days );?></strong>
                         </p>
                     <p> <?php echo sprintf( __( 'Please join us. <a href="%stickets/?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=wooecfses2021" target="_blank">Click here to apply.</a>', 'woocommerce-for-japan' ), $pr_link ); ?>🙂</p>
                 </div>
