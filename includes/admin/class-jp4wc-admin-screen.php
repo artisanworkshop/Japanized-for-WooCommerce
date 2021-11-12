@@ -665,7 +665,6 @@ class JP4WC_Admin_Screen {
 	 * Email customize Customer name option.
 	 */
 	public function jp4wc_options_custom_email_customer_name() {
-		$title = __( 'Custamize Email template at customer name', 'woocommerce-for-japan' );
 		$description = __( 'Please check it if you want to change customer name display.( from first name to full name )', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('custom-email-customer-name', $description, $this->prefix);
 	}
@@ -717,7 +716,6 @@ class JP4WC_Admin_Screen {
 	 * Start date for delivery date.
 	 */
 	public function jp4wc_start_date(){
-		$title = __( 'Start Date', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the number of days until the first day you can receive the delivery date / time. If you enter 0 you can specify delivery from today.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_number('start-date', $description, 2, $this->prefix);
 	}
@@ -726,7 +724,6 @@ class JP4WC_Admin_Screen {
 	 * Term for delivery date.
 	 */
 	public function jp4wc_reception_period(){
-		$title = __( 'Reception period', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the number of days for which you can accept the delivery reservation. Please enter 1 or more.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_number('reception-period', $description, 7, $this->prefix);
 	}
@@ -735,7 +732,6 @@ class JP4WC_Admin_Screen {
 	 * Unspecified for delivery date.
 	 */
 	public function jp4wc_unspecified_date(){
-		$title = __( 'Unspecified Date', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the sentence when you do not need to specify the delivery date.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_text('unspecified-date', $description, 60, __( 'No specified date', 'woocommerce-for-japan' ), $this->prefix);
 	}
@@ -744,7 +740,6 @@ class JP4WC_Admin_Screen {
 	 * Unspecified for delivery date.
 	 */
 	public function jp4wc_date_format(){
-		$title = __( 'Date format', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the format when you want to save the data by format. Use PHP format type.', 'woocommerce-for-japan' );
 		$description .= '<a href="http://php.net/manual/ja/function.date.php" target="_blank">'.' '.__('Check from here.', 'woocommerce-for-japan' ).'</a>';
 		$this->jp4wc_plugin->jp4wc_input_text('date-format', $description, 10, 'Y/m/d', $this->prefix);
@@ -763,7 +758,6 @@ class JP4WC_Admin_Screen {
 	 * Delivery deadline setting.
 	 */
 	public function jp4wc_delivery_deadline(){
-		$title = __( 'Delivery deadline', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the time delivery deadline of your store.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_time('delivery-deadline', $description, '15:00', $this->prefix);
 	}
@@ -828,7 +822,6 @@ class JP4WC_Admin_Screen {
 			'name'=> 'holiday-end-date',
 			'title'=> 'End date:YYYY-MM-DD (Blank:Not specified)',
 		);
-		$title = __( 'Holiday term', 'woocommerce-for-japan' );
 		$description = __( 'Please enter the date term long holiday of your store.', 'woocommerce-for-japan' );
 		$this->jp4wc_plugin->jp4wc_input_date_term($start_date, $end_date, $description, $this->prefix);
 	}

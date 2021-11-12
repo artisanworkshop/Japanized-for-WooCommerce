@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 5.8.1
-Stable tag: 2.3.3
+Stable tag: 2.3.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,10 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.3.4 - 2021-11-12 =
+* Add - Admin notice for our PR.
+* Fixed - Some codes are cleared.
 
 = 2.3.1 & 2.3.2 & 2.3.3 - 2021-10-27 =
 * Fixed - A8.net affiliate tracking tag.

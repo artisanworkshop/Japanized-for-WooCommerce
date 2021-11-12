@@ -3,13 +3,13 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.3.3
+ * Version: 2.3.4
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 5.0
  * Tested up to: 5.8.1
  * WC requires at least: 5.0
- * WC tested up to: 5.8.0
+ * WC tested up to: 5.9.0
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
@@ -33,7 +33,7 @@ class JP4WC{
 	 *
 	 * @var string
 	 */
-	public $version = '2.3.3';
+	public $version = '2.3.4';
 
     /**
      * Japanized for WooCommerce Framework version.
@@ -140,6 +140,8 @@ class JP4WC{
         // Admin Setting Screen
         require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-screen.php';
         require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
+		// Admin PR notice
+		require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-notices.php';
 		// Payment Gateway For Bank
 		require_once JP4WC_INCLUDES_PATH . 'gateways/bank-jp/class-wc-gateway-bank-jp.php';
 		// Payment Gateway For Post Office Bank
