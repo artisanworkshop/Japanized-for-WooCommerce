@@ -59,7 +59,7 @@ class WC_Paidy_Admin_Notices {
 
 			if ( $notice['dismissible'] ) {
 				?>
-				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'wc-paidy-hide-notice', $notice_key ), 'wc_paidy_hide_notices_nonce', '_wc_paidy_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0px 9px 9px 9px;text-decoration:none;"></a>
+				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'wc-paidy-hide-notice', $notice_key ), 'wc_paidy_hide_notices_nonce', '_wc_paidy_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0 9px 9px;text-decoration:none;"></a>
 				<?php
 			}
 
