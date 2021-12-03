@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that represents admin notices.
  *
+ * @version 2.3.7
  * @since 2.3.4
  */
 class JP4WC_Admin_Notices {
@@ -21,7 +22,7 @@ class JP4WC_Admin_Notices {
 	 * @since 2.3.4
 	 */
 	public function __construct() {
-		add_action( 'admin_notices', array( $this, 'admin_jp4wc_notices' ) );
+//		add_action( 'admin_notices', array( $this, 'admin_jp4wc_notices' ) );
 		add_action( 'wp_ajax_jp4wc_pr_dismiss_prompt', array( $this, 'jp4wc_dismiss_review_prompt' ) );
 	}
 
