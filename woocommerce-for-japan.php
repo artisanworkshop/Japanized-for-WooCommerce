@@ -168,6 +168,7 @@ class JP4WC{
         // Add PayPal Checkout
         require_once JP4WC_INCLUDES_PATH . 'paypal-checkout/woocommerce-gateway-paypal-express-checkout.php';
         // Add PeachPay Checkout
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		if ( ! is_plugin_active( 'peachpay-for-woocommerce/peachpay.php' ) && get_option('wc4jp-peachpay') ) {
 			require_once JP4WC_INCLUDES_PATH . 'gateways/peachpay/peachpay.php';
 		}
