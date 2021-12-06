@@ -49,6 +49,7 @@ class AddressField4jp{
         add_action( 'woocommerce_after_checkout_shipping_form', array( $this, 'auto_zip2address_shipping'), 10 );
         add_action( 'woocommerce_after_edit_address_form_billing', array( $this, 'auto_zip2address_billing'), 10 );
         add_action( 'woocommerce_after_edit_address_form_shipping', array( $this, 'auto_zip2address_shipping'), 10 );
+
         // Remove checkout fields for PayPal cart checkout
         add_filter( 'woocommerce_default_address_fields' , array( $this, 'remove_checkout_fields_for_paypal') );
     }
@@ -528,35 +529,47 @@ class AddressField4jp{
 <script type="text/javascript">
 // Search Japanese Postal number
 jQuery(function($) {
-$(document).ready(function(){
-	$("#<?php echo $method;?>_postcode").keyup(function(){
-	    var zip = $("#<?php echo $method;?>_postcode").val(),
-	    zipCount = zip.length;
-	    if(zipCount == 4 && zip.charAt(zipCount -1) != "-") {
-		    alert("<?php echo __('Please enter a hyphen [-] when entering a zip code.','woocommerce-for-japan'); ?>");
-	    }else if(zipCount > 7) {
-    var url = "https://map.yahooapis.jp/search/zip/V1/zipCodeSearch";
-    var param = {
-        appid: "<?php echo $yahoo_app_id;?>",
-        output: "json",
-        query: $("#<?php echo $method;?>_postcode").val()
-    };
-    $.ajax({
-        url: url,
-        data: param,
-        dataType: "jsonp",
-        success: function(result) {
-            var ydf = new Y.YDF(result);
-            // Display Address from Zip
-            dispZipToAddress<?php echo $method;?>(ydf);
-        },
-        error: function() {
-            // Error handling
-        }
-    });
+    // Method to automatically insert hyphen in postal code
+    function insertStr(input){
+        return input.slice(0, 3) + '-' + input.slice(3,input.length);
     }
+
+    $(document).ready(function(){
+        $("#<?php echo $method;?>_postcode").keyup(function(e){
+            let zip = $("#<?php echo $method;?>_postcode").val(),
+                zipCount = zip.length;
+
+            // Control the delete key so that the hyphen addition process does not work (8 is Backspace, 46 is Delete)
+            let key = e.keyCode || e.charCode;
+            if( key === 8 || key === 46 ){
+                return false;
+            }
+
+            if(zipCount === 3){
+                $("#<?php echo $method;?>_postcode").val(insertStr(zip));
+            }else if( zipCount > 7) {
+                const url = "https://map.yahooapis.jp/search/zip/V1/zipCodeSearch";
+                let param = {
+                    appid: "<?php echo $yahoo_app_id;?>",
+                    output: "json",
+                    query: $("#<?php echo $method;?>_postcode").val()
+                };
+                $.ajax({
+                    url: url,
+                    data: param,
+                    dataType: "jsonp",
+                    success: function(result) {
+                        var ydf = new Y.YDF(result);
+                        // Display Address from Zip
+                        dispZipToAddress<?php echo $method;?>(ydf);
+                    },
+                    error: function() {
+                        // Error handling
+                    }
+                });
+            }
+        });
     });
-});
 });
 // Display Address from Zipcode
 function dispZipToAddress<?php echo $method;?>(ydf) {

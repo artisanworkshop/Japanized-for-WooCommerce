@@ -300,6 +300,13 @@ class JP4WC_Admin_Screen {
 			'jp4wc_payment',
 			'jp4wc_payments'
 		);
+		add_settings_field(
+			'jp4wc_options_peachpay',
+			__( 'PeachPay', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_options_peachpay' ),
+			'jp4wc_payment',
+			'jp4wc_payments'
+		);
 
         // Display of Specified Commercial Transaction Law
         add_settings_section(
@@ -416,6 +423,14 @@ class JP4WC_Admin_Screen {
 			'jp4wc_affiliates'
 		);
 
+		add_settings_field(
+			'jp4wc_affiliates_felmat',
+			__( 'felmat Setting', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_affiliates_felmat' ),
+			'jp4wc_affiliate',
+			'jp4wc_affiliates'
+		);
+
 		register_setting(
 			'jp4wc_informations',
 			'jp4wc_informations_name'
@@ -474,7 +489,8 @@ class JP4WC_Admin_Screen {
 				    'bankjp',
 					'postofficebank',
 					'atstore',
-					'cod2'
+					'cod2',
+					'peachpay',
 				);
 				foreach($payment_methods as $payment_method){
 					$woocommerce_settings = get_option('woocommerce_'.$payment_method.'_settings');
@@ -564,6 +580,8 @@ class JP4WC_Admin_Screen {
 					'affiliate-a8',
 					'affiliate-a8-test',
 					'affiliate-a8-pid',
+					'affiliate-felmat',
+					'affiliate-felmat-pid',
 				);
 				$this->jp4wc_save_methods( $add_methods );
 				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
@@ -679,7 +697,7 @@ class JP4WC_Admin_Screen {
 	}
 
 	/**
-	 * Free Shipping Display option.
+	 * Setting Yahoo App ID option.
 	 */
 	public function jp4wc_options_yahoo_app_id() {
 		$title = __( 'Yahoo! APP ID', 'woocommerce-for-japan' );
@@ -901,7 +919,16 @@ class JP4WC_Admin_Screen {
 		$this->jp4wc_plugin->jp4wc_input_checkbox('cod2', $description, $this->prefix);
 	}
 
-    /**
+	/**
+	 * PeachPay option.
+	 */
+	public function jp4wc_options_peachpay() {
+		$title = __( 'PeachPay', 'woocommerce-for-japan' );
+		$description = $this->jp4wc_plugin->jp4wc_description_payment_pattern( $title );
+		$this->jp4wc_plugin->jp4wc_input_checkbox('peachpay', $description, $this->prefix);
+	}
+
+	/**
      * Shop Name option.
      */
     public function jp4wc_law_shop_name() {
@@ -1035,6 +1062,19 @@ class JP4WC_Admin_Screen {
 		$title3 = __( 'A8.net test mode', 'woocommerce-for-japan' );
 		$description3 = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title3 );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('affiliate-a8-test', $description3, $this->prefix);
+	}
+
+	/**
+	 * felmat tracking settings option.
+	 */
+	public function jp4wc_affiliates_felmat() {
+		$title = __( 'felmat tracking settings', 'woocommerce-for-japan' );
+		$description = $this->jp4wc_plugin->jp4wc_description_check_pattern( $title );
+		$this->jp4wc_plugin->jp4wc_input_checkbox('affiliate-felmat', $description, $this->prefix);
+		echo '<br /><br />';
+		$description2 = __( 'Please enter your felmat Advertising ID.', 'woocommerce-for-japan' );
+		$this->jp4wc_plugin->jp4wc_input_text('affiliate-felmat-pid', $description2, 30, '', $this->prefix);
+		echo '<br />';
 	}
 
 	/**

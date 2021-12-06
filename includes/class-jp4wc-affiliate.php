@@ -24,9 +24,17 @@ class JP4WC_Affiliates{
 			// Show on order detail at thanks page (frontend)
 			add_action( 'woocommerce_before_thankyou', array( $this, 'jp4wc_a8_thankyou' ) );
 		}
+        // felmat tracking settings
+		if( get_option( 'wc4jp-affiliate-felmat' ) && $currency == 'JPY') {
+			add_action( 'wp_head', array( $this, 'jp4wc_felmat_js' ), 10 );
+			// Show on order detail at thanks page (frontend)
+			add_action( 'woocommerce_before_thankyou', array( $this, 'jp4wc_felmat_thankyou' ) );
+		}
 	}
 
-	// Add A8.net tracking javascript
+	/**
+     * Add A8.net tracking javascript
+     */
 	public function jp4wc_a8_js(){
 		?>
 <script src="//statics.a8.net/a8sales/a8sales.js"></script>
@@ -34,7 +42,7 @@ class JP4WC_Affiliates{
 	}
 
     /**
-     * Display Delivery date select at Checkout
+     * Display A8 affiliate conversion tag
      *
      * @throws
      * @param int Order ID
@@ -76,6 +84,42 @@ a8sales({
 });
 </script>';
 	}
+
+	/**
+	 * Add A8.net tracking javascript
+	 */
+    public function jp4wc_felmat_js(){
+        ?>
+        <script type="text/javascript" src="https://js.crossees.com/csslp.js" async></script>
+        <?php
+    }
+	/**
+	 * Display felmat affiliate conversion tag
+	 *
+	 * @throws
+	 * @param int Order ID
+	 */
+	function jp4wc_felmat_thankyou( $order_id ){
+		$order = wc_get_order( $order_id );
+		$item_line = '';//repeat (Product.Quantity.Unit Price:)
+		foreach($order->get_items() as $item) {
+			$product_variation_id = $item->get_variation_id();
+			$product              = $item->get_product();
+			if ( $product_variation_id != 0 ) {
+				$product_id = $product_variation_id;
+			} elseif ( $product->get_sku() ) {
+				$product_id = $product->get_sku();
+			} else {
+				$product_id = $item->get_product_id();
+			}
+            $product_price = $item->get_subtotal() /$item->get_quantity();
+			$item_line .= $product_id . '.' . $item->get_quantity() . '.' . round( $product_price ) . ':';
+		}
+		$item_line = rtrim( $item_line, ':' );
+        $pid = get_option( 'wc4jp-affiliate-felmat-pid' );
+        echo '<script type="text/javascript" src="https://js.felmat.net/fmcv.js?adid=' . $pid . '&uqid=' . $order->get_id() . '&item=' . $item_line . '"></script>';
+    }
+
 }
 
 new JP4WC_Affiliates();

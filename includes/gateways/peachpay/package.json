@@ -1,0 +1,40 @@
+{
+  "name": "peachpay-for-woocommerce",
+  "scripts": {
+    "lint": "xo",
+    "lint-fix": "xo --fix",
+    "test": "npm run lint",
+    "bundle": "mkdir bundle build || true && deno bundle --config deno.json ts/main.ts bundle/peachpay.intermediate.js && tsc && cp build/peachpay.intermediate.js js/peachpay.bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/peachpay/woocommerce.git"
+  },
+  "devDependencies": {
+    "typescript": "^4.5.2",
+    "xo": "^0.43.0"
+  },
+  "xo": {
+    "envs": [
+      "browser"
+    ],
+    "ignores": [
+      "js/translations.js",
+      "js/peachpay.bundle.js",
+      "build/*",
+      "bundle/*",
+      "ts/*"
+    ],
+    "rules": {
+      "camelcase": "off",
+      "no-alert": "off",
+      "no-undef": "off",
+      "no-unused-vars": "off",
+      "radix": "off",
+      "object-shorthand": "off",
+      "unicorn/prefer-includes": "off",
+      "unicorn/filename-case": "off",
+      "import/extensions": "off"
+    }
+  }
+}

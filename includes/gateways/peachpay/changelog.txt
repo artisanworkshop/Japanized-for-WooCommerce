@@ -1,0 +1,5 @@
+*** PeachPay for WooCommerce Changelog ***
+
+2021-05-14 - version 1.35.1
+* Initial release on WooCommerce Marketplace
+* For information about previous verions, see the changelog in readme.txt

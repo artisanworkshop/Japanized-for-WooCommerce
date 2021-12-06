@@ -1,0 +1,358 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: PeachPay Admin Settings\n"
+"Language: es\n"
+
+#. Plugin Name of the plugin
+#:
+msgid "PeachPay for WooCommerce | One-Click Checkout"
+msgstr "PeachPay para WooCommerce | Pago con un clic"
+
+#. Plugin URI of the plugin
+#:
+msgid "https://woocommerce.com/products/peachpay"
+msgstr "https://woocommerce.com/products/peachpay"
+
+#. Description of the plugin
+#:
+msgid "PeachPay is the fastest checkout for WooCommerce."
+msgstr "PeachPay es el proceso de pago más rápido para WooCommerce."
+
+#. Author of the plugin
+#:
+msgid "PeachPay, Inc."
+msgstr "PeachPay, Inc."
+
+#. Author URI of the plugin
+#:
+msgid "https://peachpay.app"
+msgstr "https://peachpay.app"
+
+#: includes/admin/settings-button.php:27
+#: includes/admin/settings.php:510
+msgid "Button preferences"
+msgstr "Preferencias de botones"
+
+#: includes/admin/settings-button.php:34
+#: includes/compatibility/class-peachpay-elementor-widget.php:105
+msgid "Color"
+msgstr "Color"
+
+#: includes/admin/settings-button.php:43
+msgid "Show icon"
+msgstr "Muestra el icono"
+
+#: includes/admin/settings-button.php:52
+msgid "Rounded corners"
+msgstr "Esquinas redondeadas"
+
+#: includes/admin/settings-button.php:64
+msgid "Text"
+msgstr "Texto"
+
+#: includes/admin/settings-button.php:82
+msgid "Hide on product page"
+msgstr "Ocultar en la página del producto"
+
+#: includes/admin/settings-button.php:91
+msgid "Hide payment methods"
+msgstr "Ocultar métodos de pago"
+
+#: includes/admin/settings-button.php:180
+msgid "Customize the text of the PeachPay button. Leaving it blank defaults it to \"Express checkout\" in your chosen language."
+msgstr "Personaliza el texto del botón PeachPay. Si lo deja en blanco, el valor predeterminado es \"Pago rápido\" en el idioma elegido."
+
+#: includes/admin/settings-button.php:196
+#: includes/compatibility/class-peachpay-elementor-widget.php:114
+msgid "Turn off button shine"
+msgstr "Apaga el brillo del botón"
+
+#: includes/admin/settings-button.php:212
+msgid "Don’t show the PeachPay button on individual product pages"
+msgstr "No mostrar el botón PeachPay en páginas de productos individuales"
+
+#: includes/admin/settings-button.php:228
+msgid "Hide the payment method icons below the PeachPay button"
+msgstr "Ocultar los íconos del método de pago debajo del botón PeachPay"
+
+#: includes/admin/settings-button.php:238
+msgid "Product page"
+msgstr "Página del producto"
+
+#: includes/admin/settings-button.php:245
+#: includes/admin/settings-button.php:420
+#: includes/admin/settings-button.php:496
+#: includes/compatibility/class-peachpay-elementor-widget.php:126
+msgid "Position"
+msgstr "Posición"
+
+#: includes/admin/settings-button.php:257
+#: includes/admin/settings-button.php:432
+#: includes/admin/settings-button.php:508
+#: includes/compatibility/class-peachpay-elementor-widget.php:141
+msgid "Width"
+msgstr "Ancho"
+
+#: includes/admin/settings-button.php:269
+#: includes/admin/settings-button.php:444
+#: includes/admin/settings-button.php:520
+msgid "Preview"
+msgstr "Avance"
+
+#: includes/admin/settings-button.php:413
+msgid "Cart page"
+msgstr "Página del carrito"
+
+#: includes/admin/settings-button.php:489
+msgid "Checkout page"
+msgstr "Página de pago"
+
+#: includes/admin/settings-button.php:560
+msgid "Reset settings"
+msgstr "Reiniciar ajustes"
+
+#: includes/admin/settings-button.php:567
+msgid "Reset button to default settings"
+msgstr "Botón de restablecimiento a la configuración predeterminada"
+
+#: includes/admin/settings-general.php:14
+#: includes/admin/settings.php:500
+msgid "General"
+msgstr "General"
+
+#: includes/admin/settings-general.php:26
+msgid "Language"
+msgstr "Idioma"
+
+#: includes/admin/settings-general.php:35
+msgid "Coupons"
+msgstr "Cupones"
+
+#: includes/admin/settings-general.php:44
+msgid "Order notes"
+msgstr "Pedidos"
+
+#: includes/admin/settings-general.php:53
+msgid "Test mode"
+msgstr "Modo de prueba"
+
+#: includes/admin/settings-general.php:62
+msgid "Product images"
+msgstr "Imágenes del producto"
+
+#: includes/admin/settings-general.php:79
+msgid "Hide product images"
+msgstr "Ocultar imágenes de productos"
+
+#: includes/admin/settings-general.php:80
+msgid "Don't show product images in the checkout window"
+msgstr "No mostrar imágenes de productos en la ventana de pago"
+
+#: includes/admin/settings-general.php:105
+msgid "Detect from page"
+msgstr "Detectar desde la página"
+
+#: includes/admin/settings-general.php:118
+msgid "Enable coupons"
+msgstr "Habilitar cupones"
+
+#: includes/admin/settings-general.php:119
+msgid "Allow customers to enter coupon codes inside the checkout window"
+msgstr "Permitir que los clientes ingresen códigos de cupón dentro de la ventana de pago"
+
+#: includes/admin/settings-general.php:133
+msgid "Enable order notes"
+msgstr "Habilitar notas de pedido"
+
+#: includes/admin/settings-general.php:134
+msgid "Allow customers to enter order notes inside the checkout window"
+msgstr "Permitir que los clientes ingresen notas de pedido dentro de la ventana de pago"
+
+#: includes/admin/settings-general.php:147
+msgid "Enable test mode"
+msgstr "Habilitar el modo de prueba"
+
+#: includes/admin/settings-general.php:149
+msgid "Make test payments with or without a connected payment method."
+msgstr "Realice pagos de prueba con o sin un método de pago conectado."
+
+#: includes/admin/settings-general.php:152
+msgid "For Stripe, use card number:"
+msgstr "Para Stripe, use el número de tarjeta:"
+
+#: includes/admin/settings-general.php:153
+msgid "with expiration:"
+msgstr "con vencimiento:"
+
+#: includes/admin/settings-general.php:153
+msgid "and CVC:"
+msgstr "y CVC:"
+
+#: includes/admin/settings-general.php:154
+msgid "For PayPal, see"
+msgstr "Para PayPal, consulte"
+
+#: includes/admin/settings-general.php:165
+msgid "Products"
+msgstr "Productos"
+
+#: includes/admin/settings-general.php:172
+msgid "Upsell items"
+msgstr "Venta de artículos"
+
+#: includes/admin/settings-general.php:201
+msgid "Hide upsell items in checkout window in product page"
+msgstr "Ocultar artículos de venta adicional en la ventana de pago en la página del producto"
+
+#: includes/admin/settings-general.php:202
+msgid "Only simple upsell products will be displayed in checkout window"
+msgstr "Solo los productos simples de venta adicional se mostrarán en la ventana de pago"
+
+#: includes/admin/settings-payment.php:7
+#: includes/admin/settings-payment.php:16
+#: includes/admin/settings.php:505
+msgid "Payment methods"
+msgstr "Métodos de pago"
+
+#: includes/admin/settings-payment.php:23
+msgid "Stripe"
+msgstr "Stripe"
+
+#: includes/admin/settings-payment.php:39
+msgid "PayPal"
+msgstr "PayPal"
+
+#: includes/admin/settings-payment.php:47
+#, fuzzy
+msgid "Enable PayPal"
+msgstr "Habilitar PayPal"
+
+#: includes/admin/settings-payment.php:58
+msgid "choose \"Approve\" on the permission screen"
+msgstr "elija \"Aprobar\" en la pantalla de permisos"
+
+#: includes/admin/settings-payment.php:71
+msgid "Connect with"
+msgstr "Conectar con"
+
+#: includes/admin/settings-payment.php:192
+msgid "You've successfully connected your PayPal account that has Merchant ID"
+msgstr "Ha conectado correctamente su cuenta de PayPal que tiene ID de comerciante"
+
+#: includes/admin/settings-payment.php:195
+msgid "Unlink PayPal"
+msgstr "Desvincular PayPal"
+
+#: includes/admin/settings-payment.php:206
+msgid "Connect your PayPal business account to start accepting payments through PayPal"
+msgstr "Conecte su cuenta comercial de PayPal para comenzar a aceptar pagos a través de PayPal"
+
+#: includes/admin/settings-payment.php:255
+#, fuzzy
+msgid "Show PayPal in the checkout window"
+msgstr "Mostrar PayPal en la ventana de pago"
+
+#: includes/admin/settings.php:249
+msgid "Success! Your settings have been saved."
+msgstr "¡Éxito! Su configuración ha sido guardada."
+
+#: includes/admin/settings.php:264
+msgid "You have successfully connected your Stripe account. You may set up other payment methods in the \"Payment methods\" tab."
+msgstr "Ha conectado correctamente su cuenta de Stripe. Puede configurar otros métodos de pago en la pestaña \"Métodos de pago\"."
+
+#: includes/admin/settings.php:288
+msgid "You have successfully connected your PayPal account. You may set up other payment methods in the \"Payment methods\" tab."
+msgstr "Ha conectado correctamente su cuenta PayPal. Puede configurar otros métodos de pago en la pestaña \"Métodos de pago\"."
+
+#: includes/admin/settings.php:301
+msgid "You can enable test mode below and can finish setting up payment methods for PeachPay from the \"Payment methods\" tab."
+msgstr "Puede habilitar el modo de prueba a continuación y puede terminar de configurar los métodos de pago para PeachPay desde la pestaña \"Métodos de pago\"."
+
+#: includes/admin/settings.php:312
+msgid "Unable to unlink PayPal account. Please try again or contact us if you need help."
+msgstr "No se puede desvincular la cuenta de PayPal. Inténtelo de nuevo o contáctenos si necesita ayuda."
+
+#: includes/admin/settings.php:322
+msgid "You have successfully unlinked your PayPal account. Please revoke the API permissions in your PayPal account settings as well."
+msgstr "Ha desvinculado correctamente su cuenta de PayPal. Revoca también los permisos de API en la configuración de tu cuenta de PayPal."
+
+#: includes/admin/settings.php:368
+#: includes/admin/settings.php:392
+msgid "Something went wrong while trying to validate your plugin activation status."
+msgstr "Se produjo un error al intentar validar el estado de activación de su complemento."
+
+#: includes/compatibility/class-peachpay-elementor-widget.php:59
+msgid "PeachPay"
+msgstr "PeachPay"
+
+#: includes/compatibility/class-peachpay-elementor-widget.php:88
+msgid "Content"
+msgstr "Contenido"
+
+#: includes/compatibility/class-peachpay-elementor-widget.php:96
+msgid "Button Text"
+msgstr "Botón de texto"
+
+#: includes/compatibility/class-peachpay-elementor-widget.php:129
+msgid "Left"
+msgstr "Izquierda"
+
+#: includes/compatibility/class-peachpay-elementor-widget.php:130
+msgid "Right"
+msgstr "Derecha"
+
+#: includes/compatibility/class-peachpay-elementor-widget.php:131
+msgid "Full"
+msgstr "Lleno"
+
+#: includes/compatibility/class-peachpay-elementor-widget.php:132
+msgid "Center"
+msgstr "Centrar"
+
+#: includes/admin/settings-button.php:73
+msgid "Shine"
+msgstr "Brillar"
+
+#: includes/admin/settings-general.php:105
+msgid "This will change the language on the button and in the checkout flow. Use the option"
+msgstr "Esto cambiará el idioma en el botón y en el proceso de pago. Usa la opción"
+
+#: includes/admin/settings-general.php:105
+msgid "if you are using a language switcher plugin."
+msgstr "si está utilizando un complemento de cambio de idioma."
+
+#: includes/admin/settings-general.php:154
+msgid "these instructions."
+msgstr "estas instrucciones."
+
+#: includes/admin/settings-payment.php:58
+msgid "To continue setting up PeachPay, please"
+msgstr "Para continuar configurando PeachPay, por favor"
+
+#: includes/admin/settings-payment.php:65
+msgid "You've successfully connected the Stripe account associated with"
+msgstr "Has conectado correctamente la cuenta de Stripe asociada a"
+
+#: includes/admin/settings-general.php:181
+msgid "Cross-sell items"
+msgstr "Artículos de venta cruzada"
+
+#: includes/admin/settings-general.php:218
+msgid "Hide cross-sell items in checkout window in cart page"
+msgstr "Ocultar artículos de venta cruzada en la ventana de pago en la página del carrito"
+
+#: includes/admin/settings-general.php:219
+msgid "Only simple cross-sell products will be displayed in checkout window"
+msgstr "Solo se mostrarán productos simples de venta cruzada en la ventana de pago"
+
+#: includes/admin/settings-payment.php:31
+msgid "Enable Stripe"
+msgstr "Habilitar Stripe"
+
+#: includes/admin/settings-payment.php:179
+msgid "Show Stripe in the checkout window"
+msgstr "Mostrar Stripe en la ventana de pago"

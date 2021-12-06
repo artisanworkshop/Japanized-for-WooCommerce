@@ -59,6 +59,11 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
+= 2.3.8 - 2021-12-07 =
+* Dev - Add felmat Affiliate Setting.
+* Fixed - auto postal code input.
+* Dev - Add PeachPay payment.
+
 = 2.3.7 - 2021-12-03 =
 * Fixed - Admin notice's bug.
 
