@@ -1,4 +1,4 @@
-# ようこそ Japanized for WooCommerce　のページへ
+# ようこそ Japanized for WooCommerce のページへ
 
 このページは Japanized for WooCommerce の使い方などを説明したページです。（英語版のページも作れたらいいな）
 Github page の機能を利用して作っています。
