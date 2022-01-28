@@ -1,0 +1,19 @@
+<!-- Stripe's 3D secure iframe will redirect here, and this too will be an
+iframe in our checkout window. Essentially a hack to let us know when the user
+has finished authentication in Stripe's iframe. -->
+<html>
+
+<head>
+	<script>
+		const params = new URLSearchParams(window.location.search);
+		// Let PeachPay know when the additional authentication is complete. This
+		// does not imply that it succeeded or failed. It only indicates that we
+		// can now check to see if it succeeded or failed.
+		window.parent.postMessage({
+			event: '3DS-authentication-complete',
+			paymentIntentClientSecret: params.get('payment_intent_client_secret'),
+		});
+	</script>
+</head>
+
+</html>

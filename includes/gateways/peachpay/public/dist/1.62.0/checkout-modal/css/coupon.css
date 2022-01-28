@@ -1,0 +1,124 @@
+form.coupon-code {
+	display: flex;
+	height: 40px;
+	padding-right: 1rem;
+}
+
+.coupon-code-input {
+	-webkit-appearance: none !important;
+	border: 2px solid #bdbdbd;
+	-webkit-appearance: none;
+	width: 80%;
+	border-radius: 0.5rem;
+}
+
+.coupon-code-input:focus-visible {
+	outline: none;
+}
+
+.coupon-code-apply {
+	-webkit-appearance: none !important;
+	border: 0;
+	font-size: 20px;
+	color: white;
+	border-radius: 0.5rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
+	margin-left: 10px;
+	background-color: var(--peachpay-theme-color);
+}
+
+.coupon-code-apply:hover {
+	cursor: pointer;
+}
+
+.invalid-coupon {
+	color: var(--peachpay-theme-color);
+	font-size: 12px;
+	margin-left: 7%;
+}
+
+.coupon-spinner {
+	-webkit-appearance: none !important;
+	background-color: white;
+	border-top: 2px solid #bdbdbd;
+	border-bottom: 2px solid #bdbdbd;
+	border-right: 2px solid #bdbdbd;
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+	padding: 0 5px;
+}
+
+.add-coupon-code {
+	font-size: 10px;
+	color: #828282;
+	border-top: 1px solid #c5c5c5;
+	border-bottom: 1px solid #c5c5c5;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cursor: pointer;
+	border-collapse: collapse;
+}
+
+.add-gift-card {
+	margin-top: -1px;
+	font-size: 10px;
+	color: #828282;
+	border-bottom: 1px solid #c5c5c5;
+	border-top: 1px solid #c5c5c5;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cursor: pointer;
+	border-collapse: collapse;
+}
+
+.exit-button {
+	padding: 0;
+	border: 0;
+	font-size: 20px;
+	background-color: transparent;
+	margin-left: 6px;
+	margin-right: 6px;
+}
+
+.remove-right-border {
+	border-right: 0;
+	border-top-left-radius: 0.5rem;
+	border-bottom-left-radius: 0.5rem;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+@media only screen and (max-width: 900px) {
+	form.coupon-code {
+		margin: 0 !important;
+	}
+	.invalid-coupon {
+		margin-left: 9%;
+		margin-bottom: 0 !important;
+	}
+	.coupon-code-input {
+		font-size: 14px;
+		width: 66%;
+	}
+	.coupon-spinner {
+		width: 18px;
+	}
+	.add-coupon-code, .add-gift-card {
+		font-size: 12px;
+	}
+	.option-mobile {
+		margin: 0.5rem 0.5rem 0 0.5rem;
+		background-color: #f3f3f3;
+		padding: 0.5rem;
+		border-radius: 0.5rem;
+	}
+	.options-mobile-new {
+		text-align: center;
+		border: 0;
+		padding: 0;
+	}
+	.pw-wc-gift-card {
+		padding-top: .5rem;
+	}
+}

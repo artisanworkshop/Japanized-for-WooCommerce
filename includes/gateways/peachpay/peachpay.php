@@ -3,7 +3,7 @@
  * Plugin Name: PeachPay for WooCommerce | One-Click Checkout
  * Plugin URI: https://woocommerce.com/products/peachpay
  * Description: PeachPay is the fastest checkout for WooCommerce.
- * Version: 1.58.1
+ * Version: 1.62.0
  * Author: PeachPay, Inc.
  * Author URI: https://peachpay.app
  *
@@ -17,68 +17,68 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
+/* remove there by Shohei Tanaka 2021-01-28
 if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 	exit;
 }
 
-peachpay_migrate_options();
-peachpay_default_options();
-peachpay_migrate_enable_stripe_checkbox();
-
-const PEACHPAY_PAYMENT_META_KEY = '_peachpay_payment_meta';
+define( 'PEACHPAY_ABSPATH', plugin_dir_path( __FILE__ ) );
 define( 'PEACHPAY_VERSION', get_plugin_data( __FILE__ )['Version'] );
+define( 'PEACHPAY_BASENAME', plugin_basename( __FILE__ ) );
+define( 'PEACHPAY_PLUGIN_FILE', __FILE__ );
+define( 'PEACHPAY_PAYMENT_META_KEY', '_peachpay_payment_meta' );
+*/
+peachpay_migrate_options();
+peachpay_migrate_enable_stripe_checkbox();
+peachpay_migrate_button_position();
+peachpay_default_options();
 add_action( 'wp', 'peachpay_has_valid_key' );
 add_action( 'activated_plugin', 'peachpay_ask_for_permission' );
 
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-peachpay-wc-gateway.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/analytics.php';
+require_once PEACHPAY_ABSPATH . 'core/class-peachpay-wc-gateway.php';
+require_once PEACHPAY_ABSPATH . 'core/analytics.php';
+require_once PEACHPAY_ABSPATH . 'core/modules/module.php';
+require_once PEACHPAY_ABSPATH . 'core/hide-peachpay.php';
+require_once PEACHPAY_ABSPATH . 'core/peachpay-stripe-email.php';
+require_once PEACHPAY_ABSPATH . 'core/product-page-button-locations.php';
+require_once PEACHPAY_ABSPATH . 'core/util/button.php';
+require_once PEACHPAY_ABSPATH . 'core/util/util.php';
+
+// add by Shohei Tanaka at 2021-01-29
+peachpay_init_gateway_class();
 
 /**
  * Initializes plugin compatibility and loads plugin files.
  */
 function peachpay_init() {
-	load_plugin_textdomain( 'woocommerce-for-japan', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+//	load_plugin_textdomain( 'peachpay-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );//remove there by Shohei Tanaka 2021-01-28
 
 	if ( is_admin() ) {
 		add_action( 'admin_notices', 'peachpay_admin_notice_retry_permission' );
 
-		require_once plugin_dir_path( __FILE__ ) . 'includes/admin/settings.php';
+		include_once PEACHPAY_ABSPATH . 'core/admin/settings.php';
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'peachpay_add_settings_link' );
 	}
 
 	if ( peachpay_gateway_enabled() && ( ! is_admin() || peachpay_is_rest() ) ) {
-
-		// Utilities.
-		require_once plugin_dir_path( __FILE__ ) . 'includes/util/array.php';
-		require_once plugin_dir_path( __FILE__ ) . 'includes/util/currency.php';
-		require_once plugin_dir_path( __FILE__ ) . 'includes/util/product.php';
-		require_once plugin_dir_path( __FILE__ ) . 'includes/util/cart.php';
-		require_once plugin_dir_path( __FILE__ ) . 'includes/util/shipping.php';
+		// Shortcodes.
+		include_once PEACHPAY_ABSPATH . 'core/shortcode.php';
 
 		// Rest API.
-		require_once plugin_dir_path( __FILE__ ) . 'includes/routes/rest-api.php';
+		include_once PEACHPAY_ABSPATH . 'core/routes/rest-api.php';
 
-		// Admin Rest API actions.
 		add_action( 'wc_ajax_wc_peachpay_create_order', 'peachpay_ajax_create_order' );
 
-		add_action( 'wp_ajax_peachpay_woocommerce_ajax_add_to_cart', 'peachpay_woocommerce_ajax_add_to_cart' );
-		add_action( 'wp_ajax_nopriv_peachpay_woocommerce_ajax_add_to_cart', 'peachpay_woocommerce_ajax_add_to_cart' );
-
-		add_action( 'wp_ajax_peachpay_wc_ajax_empty_cart', 'peachpay_wc_ajax_empty_cart' );
-		add_action( 'wp_ajax_nopriv_peachpay_wc_ajax_empty_cart', 'peachpay_wc_ajax_empty_cart' );
-
+		// Admin Rest API actions.
 		add_action( 'wp_ajax_peachpay_wc_ajax_order_payment_complete', 'peachpay_wc_ajax_order_payment_complete' );
 		add_action( 'wp_ajax_nopriv_peachpay_wc_ajax_order_payment_complete', 'peachpay_wc_ajax_order_payment_complete' );
 
 		add_action( 'wp_ajax_peachpay_wc_ajax_order_failed', 'peachpay_wc_ajax_order_failed' );
 		add_action( 'wp_ajax_nopriv_peachpay_wc_ajax_order_failed', 'peachpay_wc_ajax_order_failed' );
-
-		add_action( 'wp_ajax_peachpay_product_quantity_changer', 'peachpay_product_quantity_changer' );
-		add_action( 'wp_ajax_nopriv_peachpay_product_quantity_changer', 'peachpay_product_quantity_changer' );
 
 		// Conditionally include frontend js and css.
 		if ( ( peachpay_has_valid_key() || peachpay_is_test_mode() ) && ! peachpay_is_rest() ) {
@@ -94,67 +94,51 @@ function peachpay_init() {
 			array(
 				array(
 					'plugin'        => 'woocommerce-subscriptions/woocommerce-subscriptions.php',
-					'compatibility' => 'includes/compatibility/wc-subscriptions.php',
+					'compatibility' => 'compatibility/wc-subscriptions.php',
 				),
 				array(
 					'plugin'        => 'woocommerce-product-addons/woocommerce-product-addons.php',
-					'compatibility' => 'includes/compatibility/wc-product-addons.php',
+					'compatibility' => 'compatibility/wc-product-addons.php',
 				),
 				array(
 					'plugin'        => 'woo-product-country-base-restrictions/woocommerce-product-country-base-restrictions.php',
-					'compatibility' => 'includes/compatibility/wc-country-based-restrictions.php',
-				),
-				array(
-					'plugin'        => array( 'yaycurrency/yay-currency.php', 'yaycurrency-pro/yay-currency.php' ),
-					'compatibility' => 'includes/compatibility/yaycurrency.php',
-				),
-				array(
-					'plugin'        => 'woocommerce-product-addon/woocommerce-product-addon.php',
-					'compatibility' => 'includes/compatibility/wc-ppom.php',
+					'compatibility' => 'compatibility/wc-country-based-restrictions.php',
 				),
 				array(
 					'plugin'        => 'dc-woocommerce-multi-vendor/dc_product_vendor.php',
-					'compatibility' => 'includes/compatibility/wc-multi-vendor.php',
-				),
-				array(
-					'plugin'        => 'shared-variation-inventory-for-woocommerce/woocommerce-shared-variation-inventory.php',
-					'compatibility' => 'includes/compatibility/wc-shared-variation-inventory.php',
+					'compatibility' => 'compatibility/wc-multi-vendor.php',
 				),
 				array(
 					'plugin'        => 'booster-plus-for-woocommerce/booster-plus-for-woocommerce.php',
-					'compatibility' => 'includes/compatibility/booster-for-wc/booster-for-wc.php',
+					'compatibility' => 'compatibility/booster-for-wc/booster-for-wc.php',
 				),
 				array(
 					'plugin'        => 'woo-discount-rules/woo-discount-rules.php',
-					'compatibility' => 'includes/compatibility/woo-discount-rules.php',
+					'compatibility' => 'compatibility/woo-discount-rules.php',
 				),
 				array(
 					'plugin'        => array( 'elementor/elementor.php', 'elementor-pro/elementor-pro.php' ),
-					'compatibility' => 'includes/compatibility/class-peachpay-elementor-widget.php',
+					'compatibility' => 'compatibility/class-peachpay-elementor-widget.php',
 				),
 				array(
 					'plugin'        => 'woocommerce-product-bundles/woocommerce-product-bundles.php',
-					'compatibility' => 'includes/compatibility/wc-product-bundles.php',
+					'compatibility' => 'compatibility/wc-product-bundles.php',
 				),
 				array(
 					'plugin'        => array( 'pw-woocommerce-gift-cards/pw-gift-cards.php', 'pw-gift-cards/pw-gift-cards.php' ),
-					'compatibility' => 'includes/compatibility/wc-pw-gift-cards.php',
+					'compatibility' => 'compatibility/wc-pw-gift-cards.php',
 				),
 				array(
 					'plugin'        => 'custom-product-boxes/custom-product-boxes.php',
-					'compatibility' => 'includes/compatibility/custom-product-boxes.php',
+					'compatibility' => 'compatibility/custom-product-boxes.php',
 				),
 				array(
 					'plugin'        => 'woocommerce-all-products-for-subscriptions/woocommerce-all-products-for-subscriptions.php',
-					'compatibility' => 'includes/compatibility/wc-subscribe-all-things.php',
+					'compatibility' => 'compatibility/wc-subscribe-all-things.php',
 				),
 				array(
 					'plugin'        => 'flying-scripts/flying-scripts.php',
-					'compatibility' => 'includes/compatibility/flying-scripts.php',
-				),
-				array(
-					'plugin'        => 'woocommerce-tm-extra-product-options/tm-woo-extra-product-options.php',
-					'compatibility' => 'includes/compatibility/wc-tm-extra-product-options.php',
+					'compatibility' => 'compatibility/flying-scripts.php',
 				),
 			)
 		);
@@ -180,10 +164,10 @@ function load_plugin_compatibility( array $plugin_compatibility ) {
 		foreach ( $plugin_info['plugin'] as $plugin ) {
 			if ( is_plugin_active( $plugin ) ) {
 				try {
-					include_once plugin_dir_path( __FILE__ ) . $plugin_info['compatibility'];
+					include_once PEACHPAY_ABSPATH . $plugin_info['compatibility'];
+                // phpcs:ignore
 				} catch ( Error $error ) {
-					// phpcs:disable
-					error_log( print_r( $error, true ) );
+					// Do no harm.
 				}
 			}
 		}
@@ -210,14 +194,14 @@ function peachpay_migrate_options() {
 		'test_mode',
 		'enable_coupons',
 		'enable_order_notes',
-		'hide_product_images'
+		'hide_product_images',
 	);
-	$general_options = peachpay_migrate_option_group( 'peachpay_options', $general_options_keys );
+	$general_options      = peachpay_migrate_option_group( 'peachpay_options', $general_options_keys );
 	update_option( 'peachpay_general_options', $general_options );
 
 	// Payment section.
-	$payment_options_keys = array('paypal');
-	$payment_options = peachpay_migrate_option_group( 'peachpay_options', $payment_options_keys ) ;
+	$payment_options_keys = array( 'paypal' );
+	$payment_options      = peachpay_migrate_option_group( 'peachpay_options', $payment_options_keys );
 	update_option( 'peachpay_payment_options', $payment_options );
 
 	// Button section.
@@ -230,11 +214,12 @@ function peachpay_migrate_options() {
 		'hide_on_product_page',
 		'button_hide_payment_method_icons',
 		'product_button_position',
+		'product_button_alignment',
 		'button_width_product_page',
-		'cart_button_position',
-		'button_width_cart_page'
+		'cart_button_alignment',
+		'button_width_cart_page',
 	);
-	$button_options = peachpay_migrate_option_group( 'peachpay_options', $button_options_keys ) ;
+	$button_options      = peachpay_migrate_option_group( 'peachpay_options', $button_options_keys );
 	update_option( 'peachpay_button_options', $button_options );
 
 	// Clear out the old settings so that we don't run this function anymore.
@@ -242,16 +227,69 @@ function peachpay_migrate_options() {
 }
 
 /**
+ * Migrates the options after `<page>_button_position` was moved to `<page>_button_alignment`. `product_button_position` is
+ * now used for placing the product page button above or below the add to cart button. All other pages do not use `_button_position` now.
+ */
+function peachpay_migrate_button_position() {
+	if ( get_option( 'peachpay_migrate_button_position' ) ) {
+		return;
+	}
+
+	$button_options = get_option( 'peachpay_button_options' );
+	if ( ! isset( $button_options ) || ! is_array( $button_options ) ) {
+		return;
+	}
+
+	if ( isset( $button_options['product_button_position'] ) ) {
+		$position = $button_options['product_button_position'];
+		if ( 'left' === $position
+		|| 'right' === $position
+		|| 'full' === $position
+		|| 'center' === $position ) {
+
+			$button_options['product_button_alignment'] = $button_options['product_button_position'];
+			$button_options['product_button_position']  = 'beforebegin';
+		}
+	}
+
+	if ( isset( $button_options['checkout_button_position'] ) ) {
+		$position = $button_options['checkout_button_position'];
+		if ( 'center' === $position ) {
+			$button_options['checkout_button_alignment'] = $button_options['checkout_button_position'];
+		}
+		unset( $button_options['checkout_button_position'] );
+	}
+
+	if ( isset( $button_options['cart_button_position'] ) ) {
+		$position = $button_options['cart_button_position'];
+
+		if ( 'left' === $position
+		|| 'right' === $position
+		|| 'full' === $position
+		|| 'center' === $position ) {
+
+			$button_options['cart_button_alignment'] = $button_options['cart_button_position'];
+		}
+
+		unset( $button_options['cart_button_position'] );
+	}
+
+	update_option( 'peachpay_button_options', $button_options );
+
+	update_option( 'peachpay_migrate_button_position', 1 );
+}
+
+/**
  * Given the name of an old option and a set of keys for the new option,
  * migrates data from the given keys to a new array which is returned.
  *
  * @param string $from The name of the old option that we will call WP get_option on.
- * @param array $keys The array of option keys that should be moved from the old
- *              options to the new options.
+ * @param array  $keys The array of option keys that should be moved from the old
+ *                     options to the new options.
  */
 function peachpay_migrate_option_group( string $from, array $keys ) {
 	$old_option = get_option( $from );
-	$result = array();
+	$result     = array();
 	foreach ( $keys as $key ) {
 		if ( isset( $old_option[ $key ] ) ) {
 			$result[ $key ] = $old_option[ $key ];
@@ -264,8 +302,7 @@ function peachpay_migrate_option_group( string $from, array $keys ) {
  * Initializes default peachpay settings options.
  */
 function peachpay_default_options() {
-
-	// Initilize default payment settings values.
+	// Initializes default payment settings values.
 	$initialized = get_option( 'peachpay_payment_settings_initialized' );
 	if ( ! $initialized ) {
 		update_option( 'peachpay_payment_settings_initialized', 1 );
@@ -285,9 +322,10 @@ function peachpay_default_options() {
 /**
  * We have to use this instead of the null coalescing operator (??) due to
  * compatibility requirements for WooCommerce Marketplace.
+ *
  * @deprecated
  *
- * @param string $name The name of the option in the PeachPay settings.
+ * @param  string $name The name of the option in the PeachPay settings.
  * @return mixed|false Returns false if the option does not exist; otherwise
  * returns the option.
  */
@@ -300,89 +338,84 @@ function peachpay_get_option( $name ) {
  * We have to use this instead of the null coalescing operator (??) due to
  * compatibility requirements for WooCommerce Marketplace.
  *
- * @param string $setting_group The name of the option settings.
- * @param string $name The name of the option in the PeachPay settings.
+ * @param  string     $setting_group The name of the option settings.
+ * @param  string     $name          The name of the option in the PeachPay settings.
+ * @param  mixed|bool $default       The default value to return if the option is not set.
  * @return mixed|false Returns false if the option does not exist; otherwise
  * returns the option.
  */
-function peachpay_get_settings_option( string $setting_group, string $name) {
+function peachpay_get_settings_option( $setting_group, $name, $default = false ) {
 	$options = get_option( $setting_group );
-	return isset( $options[ $name ] ) ? $options[ $name ] : false;
-}
 
-function peachpay_set_settings_option( string $setting_group, string $name, $value ) {
-	$options = get_option( $setting_group );
-	$options[ $name ] = $value;
-	update_option( $setting_group, $options );
+	if ( isset( $options[ $name ] ) ) {
+		return $options[ $name ];
+	}
+
+	return $default;
 }
 
 /**
- * Determines which environment we are running in so we can call
- * the correct PeachPay API.
+ * Easily set peachpay option group property values.
+ *
+ * @param string $setting_group The option group to set.
+ * @param string $name          The name of the option in the group.
+ * @param mixed  $value         The value to set the targeted option.
  */
-function peachpay_api_url() {
-	if ( peachpay_is_test_mode() ) {
-		switch ( get_site_url() ) {
-			case 'https://woo.store.local':
-			case 'https://store.local':
-				return 'https://dev.peachpay.local/';
-			default:
-				return 'https://dev.peachpay.app/';
-		}
-	} else {
-		switch ( get_site_url() ) {
-			case 'https://woo.peachpay.app':
-			case 'https://theme1.peachpay.app':
-			case 'https://theme2.peachpay.app':
-			case 'https://theme3.peachpay.app':
-			case 'https://theme4.peachpay.app':
-			case 'https://theme5.peachpay.app':
-			case 'https://qa.peachpay.app':
-			case 'https://demo.peachpay.app':
-			case 'http://localhost:8000':
-				return 'https://dev.peachpay.app/';
-			case 'https://woo.store.local':
-			case 'https://store.local':
-				return 'https://prod.peachpay.local/';
-			default:
-				return 'https://prod.peachpay.app/';
-		}
+function peachpay_set_settings_option( $setting_group, $name, $value ) {
+	$options = get_option( $setting_group );
+
+	if ( ! is_array( $options ) ) {
+		$options = array();
 	}
+
+	$options[ $name ] = $value;
+
+	update_option( $setting_group, $options );
 }
 
 /**
  * Checks if the current request is a WP REST API request.
  *
- * Case #1: After WP_REST_Request initialisation
+ * Case #1: After WP_REST_Request initialization
  * Case #2: Support "plain" permalink settings and check if `rest_route` starts with `/`
  * Case #3: It can happen that WP_Rewrite is not yet initialized,
  *          so do this (wp-settings.php)
  * Case #4: URL Path begins with wp-json/ (your REST prefix)
- *          Also supports WP installations in subfolders
+ *          Also supports WP installations in subfolder
  *
  * @returns boolean
- * @author matzeeable
  * https://wordpress.stackexchange.com/questions/221202/does-something-like-is-rest-exist
  */
 function peachpay_is_rest() {
-	if (defined('REST_REQUEST') && REST_REQUEST // (#1)
-			|| isset($_GET['rest_route']) // (#2)
-					&& strpos( $_GET['rest_route'], '/', 0 ) === 0)
-			return true;
+    // phpcs:disable
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST // (#1)
+		|| isset( $_GET['rest_route'] ) // (#2)
+		&& strpos( $_GET['rest_route'], '/', 0 ) === 0
+	) {
+		return true;
+	}
 
 	// (#3)
 	global $wp_rewrite;
-	if ($wp_rewrite === null) $wp_rewrite = new WP_Rewrite();
+	if ( $wp_rewrite === null ) {
+		$wp_rewrite = new WP_Rewrite();
+	}
 
-	//Admin ajax is a rest request that we use
-	if(strpos( trailingslashit( $_SERVER['REQUEST_URI']) , "/wp-admin/admin-ajax.php") !== false){
+	// Admin ajax is a rest request that we use.
+	if ( strpos( trailingslashit( $_SERVER['REQUEST_URI'] ), '/wp-admin/admin-ajax.php' ) !== false ) {
 		return true;
 	}
 
 	// (#4)
-	$rest_url = wp_parse_url( trailingslashit( rest_url( ) ) );
-	$current_url = wp_parse_url( add_query_arg( array( ) ) );
+	$rest_url    = wp_parse_url( trailingslashit( rest_url() ) );
+	$current_url = wp_parse_url( add_query_arg( array() ) );
+
+	if ( ! isset( $current_url['path'] ) || ! isset( $rest_url['path'] ) ) {
+		return false;
+	}
+
 	return strpos( $current_url['path'], $rest_url['path'], 0 ) === 0;
+    // phpcs:enable
 }
 
 /**
@@ -390,18 +423,7 @@ function peachpay_is_rest() {
  */
 function peachpay_is_test_mode() {
 	return isset( get_option( 'peachpay_general_options' )['test_mode'] )
-		&& get_option( 'peachpay_general_options' )['test_mode'];
-}
-
-/**
- * Gets the left most subdomain out of a URL.
- *
- * @param string $url .
- */
-function peachpay_subdomain( $url ) {
-	$parsed_url = parse_url( $url );
-	$host       = explode( '.', $parsed_url['host'] );
-	return $host[ 0 ];
+	&& get_option( 'peachpay_general_options' )['test_mode'];
 }
 
 /**
@@ -409,21 +431,31 @@ function peachpay_subdomain( $url ) {
  */
 function peachpay_email_us() {
 	$body = array(
-		'url'             => get_site_url(),
-		'email'           => get_bloginfo( 'admin_email' ),
-		'salesLastMonth'  => peachpay_sales_last_month(),
-		'salesYTD'        => peachpay_sales_ytd(),
+		'url'            => get_site_url(),
+		'email'          => get_bloginfo( 'admin_email' ),
+		'salesLastMonth' => peachpay_sales_last_month(),
+		'salesYTD'       => peachpay_sales_ytd(),
 	);
 	peachpay_email( $body, 'plugin/activate' );
 }
 
+/**
+ * Sends a peachpay welcome email.
+ */
 function peachpay_email_merchant_welcome() {
 	$body = array(
-		'email' => get_bloginfo( 'admin_email' ),
+		'email'          => get_bloginfo( 'admin_email' ),
+		'merchantDomain' => explode( 'https://', get_site_url() )[1],
 	);
 	peachpay_email( $body, 'mail/welcome' );
 }
 
+/**
+ * Sends a peachpay email.
+ *
+ * @param array  $body The body of the email.
+ * @param string $endpoint The email endpoint to use.
+ */
 function peachpay_email( $body, $endpoint ) {
 	$post_body = wp_json_encode( $body );
 	$args      = array(
@@ -435,10 +467,13 @@ function peachpay_email( $body, $endpoint ) {
 	wp_remote_post( peachpay_api_url() . $endpoint, $args );
 }
 
+/**
+ * Creates a peachpay permissions authorization URL.
+ */
 function peachpay_authorize_url() {
-	$store_url    = get_site_url();
-	$endpoint     = '/wc-auth/v1/authorize';
-	$return_url   = peachpay_api_url() . "activation/verify?state=$store_url";
+	$store_url  = get_site_url();
+	$endpoint   = '/wc-auth/v1/authorize';
+	$return_url = peachpay_api_url() . "activation/verify?state=$store_url";
 
 	$params       = array(
 		'app_name'     => 'PeachPay',
@@ -452,74 +487,94 @@ function peachpay_authorize_url() {
 	return $url;
 }
 
+/**
+ * Sets a option to indicate permissions was denied.
+ */
 function peachpay_set_error_banner_flag() {
-	if ( isset( $_GET['api_access'] ) && $_GET['api_access'] === '0' ) {
+	// phpcs:ignore
+	if ( isset( $_GET['api_access'] ) && '0' === $_GET['api_access'] ) {
 		update_option( 'peachpay_api_access_denied', true );
 	}
 }
 add_action( 'admin_notices', 'peachpay_set_error_banner_flag' );
 
+/**
+ * Reattempt peachpay api permissions request.
+ */
 function peachpay_retry_permission() {
 	update_option( 'peachpay_api_access_denied', false );
 	$url = peachpay_authorize_url();
+	// phpcs:ignore
 	wp_redirect( $url );
 }
 
 /**
  * Asks the merchant that just activated the plugin for permission to access
  * the store's WooCommerce API.
+ *
+ * @param string $plugin The plugin key.
  */
 function peachpay_ask_for_permission( $plugin ) {
-	if ( plugin_basename( __FILE__ ) != $plugin ) {
+/* remove by Shohei Tanaka at 2022-01-29
+	if ( PEACHPAY_BASENAME !== $plugin ) {
 		// Because we run peachpay_ask_for_permission on the activated_plugin hook, it fires
 		// when any plugin is activated, not just ours. Exit if not ours.
 		return;
 	}
+*/
 	if ( peachpay_has_valid_key() ) {
 		// If the store has already given us their WooCommerce API keys, we
 		// don't need to ask for them again.
+		update_option( 'peachpay_api_access_denied', false );
 		return;
 	}
 	peachpay_email_us();
 	peachpay_email_merchant_welcome();
 	update_option( 'peachpay_api_access_denied', false );
 	$url = peachpay_authorize_url();
+    // phpcs:ignore
 	wp_redirect( $url );
 	exit();
 }
 
+/**
+ * Sets a admin notice if permissions were denied.
+ */
 function peachpay_admin_notice_retry_permission() {
-	if ( isset( $_GET['retry_permission'] ) && $_GET['retry_permission'] === '1' ) {
+    // phpcs:ignore
+	if ( isset( $_GET['retry_permission'] ) && '1' === $_GET['retry_permission'] ) {
 		peachpay_retry_permission();
 		exit();
 	}
 	if ( get_option( 'peachpay_api_access_denied' ) ) {
 		$retry_url = get_site_url() . '/wp-admin/admin.php?page=peachpay&retry_permission=1';
-		$message = "PeachPay will not work without access to WooCommerce. To continue setting up PeachPay, you will need to <a href=\"$retry_url\">choose \"Approve\" on the permission screen</a>. You can use PeachPay in test mode without giving permission.";
+		$message   = "PeachPay will not work without access to WooCommerce. To continue setting up PeachPay, you will need to <a href=\"$retry_url\">choose \"Approve\" on the permission screen</a>. You can use PeachPay in test mode without giving permission.";
 		add_settings_error(
 			'peachpay_messages',
 			'peachpay_message',
-			__( $message, 'peachpay' ),
+			$message,
 			'error'
 		);
 	}
 }
 
 /**
- * Send a deacivation email to us so that we can follow up if needed.
+ * Send a deactivation email to us so that we can follow up if needed.
  */
 function peachpay_send_deactivation_email() {
 	if ( peachpay_is_site( 'localhost' ) || peachpay_is_site( 'peachpay.app' ) ) {
 		return;
 	}
-	$body = wp_json_encode( array(
-		'merchant_url'         => get_site_url(),
-		'merchant_admin_email' => get_bloginfo( 'admin_email' ),
-		'stripe_connected'     => (bool) get_option( 'peachpay_connected_stripe_account' ),
-		'paypal_connected'     => (bool) get_option( 'peachpay_paypal_signup' ),
-		'salesLastMonth'       => peachpay_sales_last_month(),
-		'salesYTD'             => peachpay_sales_ytd(),
-	) );
+	$body = wp_json_encode(
+		array(
+			'merchant_url'         => get_site_url(),
+			'merchant_admin_email' => get_bloginfo( 'admin_email' ),
+			'stripe_connected'     => (bool) get_option( 'peachpay_connected_stripe_account' ),
+			'paypal_connected'     => (bool) get_option( 'peachpay_paypal_signup' ),
+			'salesLastMonth'       => peachpay_sales_last_month(),
+			'salesYTD'             => peachpay_sales_ytd(),
+		)
+	);
 	$args = array(
 		'body'        => $body,
 		'headers'     => array( 'Content-Type' => 'application/json' ),
@@ -535,16 +590,22 @@ register_deactivation_hook( __FILE__, 'peachpay_send_deactivation_email' );
  */
 function peachpay_has_valid_key() {
 	// The option is serialized as "1" or "0", so that's why true/false is
-	// returned explicitly
+	// returned explicitly.
 	return get_option( 'peachpay_valid_key' ) ? true : false;
 }
 
+/**
+ * Enqueues CSS styles for peachpay.
+ */
 function peachpay_load_styles() {
+	if ( ! peachpay_gateway_enabled() ) {
+		return;
+	}
 	wp_enqueue_style(
 		'peachpay-css',
-		plugin_dir_url( __FILE__ ) . 'css/peachpay.css',
+		peachpay_url( 'public/css/peachpay.css' ),
 		array(),
-		peachpay_file_version( 'css/peachpay.css' )
+		peachpay_file_version( 'public/css/peachpay.css' )
 	);
 }
 
@@ -553,32 +614,36 @@ function peachpay_load_styles() {
  * files insert the PeachPay button among other things.
  */
 function peachpay_load_button_scripts() {
+	if ( ! peachpay_gateway_enabled() ) {
+		return;
+	}
+
+	if ( ! peachpay_get_settings_option( 'peachpay_button_options', 'disabled_floating_button' ) ) {
+		add_action( 'woocommerce_before_shop_loop', 'peachpay_render_floating_button' );
+	}
+
 	if ( function_exists( 'is_product' ) && is_product() ) {
 		if ( apply_filters( 'peachpay_hide_button_on_product_page', false ) ) {
 			return;
 		}
 
-		// We don't yet support the fields required for buying a gift card product added by "PW WooCommerce Gift Cards".
-		if ( wc_get_product()->get_type() === 'pw-gift-card' ) {
-			return;
-		}
-
-		// This merchant does not want PeachPay appearing on free items because
+		// These merchants do not want PeachPay appearing on free items because
 		// we show the credit card field. Our choice here is intentional so
 		// that customers get one click when returning to items that cost money.
-		if (
-			strpos( get_site_url(), 'mattsteady.com' ) !== false
-			&& intval( wc_get_product()->get_price() ) === 0
-		) {
+		if ( intval( wc_get_product()->get_price() ) === 0 ) {
 			return;
 		}
 	}
 
-	if ( is_cart() && apply_filters( 'peachpay_hide_button_on_cart_page', false ) ) {
+	if ( ( ( function_exists( 'is_cart' ) && is_cart() ) || ( function_exists( 'is_checkout' ) && is_checkout() ) ) && floatval( WC()->cart->get_cart_contents_total() ) === 0.00 ) {
 		return;
 	}
 
-	if ( is_checkout() && apply_filters( 'peachpay_hide_button_on_checkout_page', false ) ) {
+	if ( function_exists( 'is_cart' ) && is_cart() && apply_filters( 'peachpay_hide_button_on_cart_page', false ) ) {
+		return;
+	}
+
+	if ( function_exists( 'is_checkout' ) && is_checkout() && apply_filters( 'peachpay_hide_button_on_checkout_page', false ) ) {
 		return;
 	}
 
@@ -586,137 +651,142 @@ function peachpay_load_button_scripts() {
 		'pp-sentry-lib',
 		'https://js.sentry-cdn.com/dd5e3292f8514baa872dcead0794f805.min.js',
 		array(),
-		1
+		1,
+		false
 	);
 	wp_enqueue_script(
 		'pp-sentry',
-		plugin_dir_url( __FILE__ ) . 'js/sentry.js',
+		peachpay_url( 'public/js/sentry.js' ),
 		array( 'pp-sentry-lib' ),
-		peachpay_file_version( 'js/sentry.js' )
+		peachpay_file_version( 'public/js/sentry.js' ),
+		false
 	);
 
-	if ( peachpay_get_settings_option("peachpay_payment_options", "stripe_payment_request") ){
+	if ( peachpay_get_settings_option( 'peachpay_payment_options', 'stripe_payment_request' ) ) {
 		wp_enqueue_script(
 			'pp-stripe-lib',
 			'https://js.stripe.com/v3/',
-			array( ),
-			1
+			array(),
+			1,
+			false
 		);
 
 		wp_enqueue_script(
 			'pp-stripe',
-			plugin_dir_url( __FILE__ ) . 'js/peachpay.bundle.js',
-			array('pp-stripe-lib' ),
-			peachpay_file_version( 'js/peachpay.bundle.js' )
+			peachpay_url( 'public/dist/' . PEACHPAY_VERSION . '/stripe-payment-request/bundle.js' ),
+			array( 'pp-stripe-lib' ),
+			peachpay_file_version( 'public/dist/' . PEACHPAY_VERSION . '/stripe-payment-request/bundle.js' ),
+			false
 		);
 
 	}
 
 	wp_enqueue_script(
 		'pp-translations',
-		plugin_dir_url( __FILE__ ) . 'js/translations.js',
+		peachpay_url( 'public/js/translations.js' ),
 		array(),
-		peachpay_file_version( 'js/translations.js' )
+		peachpay_file_version( 'public/js/translations.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-giftcards',
-		plugin_dir_url( __FILE__ ) . 'js/giftcard.js',
+		peachpay_url( 'public/js/giftcard.js' ),
 		array(),
-		peachpay_file_version( 'js/giftcard.js' )
+		peachpay_file_version( 'public/js/giftcard.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-coupons',
-		plugin_dir_url( __FILE__ ) . 'js/coupon.js',
+		peachpay_url( 'public/js/coupon.js' ),
 		array(),
-		peachpay_file_version( 'js/coupon.js' )
+		peachpay_file_version( 'public/js/coupon.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-button-product-page',
-		plugin_dir_url( __FILE__ ) . 'js/product-page.js',
+		peachpay_url( 'public/js/product-page.js' ),
 		array(),
-		peachpay_file_version( 'js/product-page.js' )
+		peachpay_file_version( 'public/js/product-page.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-button-cart-page',
-		plugin_dir_url( __FILE__ ) . 'js/cart-page.js',
+		peachpay_url( 'public/js/cart-page.js' ),
 		array(),
-		peachpay_file_version( 'js/cart-page.js' )
+		peachpay_file_version( 'public/js/cart-page.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-button-checkout-page',
-		plugin_dir_url( __FILE__ ) . 'js/checkout-page.js',
+		peachpay_url( 'public/js/checkout-page.js' ),
 		array(),
-		peachpay_file_version( 'js/checkout-page.js' )
+		peachpay_file_version( 'public/js/checkout-page.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-button-core',
-		plugin_dir_url( __FILE__ ) . 'js/button.js',
+		peachpay_url( 'public/js/button.js' ),
 		array( 'pp-translations' ),
-		peachpay_file_version( 'js/button.js' )
+		peachpay_file_version( 'public/js/button.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-button-shortcode',
-		plugin_dir_url( __FILE__ ) . 'js/shortcode.js',
+		peachpay_url( 'public/js/shortcode.js' ),
 		array(),
-		peachpay_file_version( 'js/shortcode.js' ),
-		true
+		peachpay_file_version( 'public/js/shortcode.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-upsell',
-		plugin_dir_url( __FILE__ ) . 'js/linked-products.js',
+		peachpay_url( 'public/js/linked-products.js' ),
 		array(),
-		peachpay_file_version( 'js/linked-products.js' )
+		peachpay_file_version( 'public/js/linked-products.js' ),
+		false
 	);
 
 	wp_enqueue_script(
 		'pp-quantity-changer',
-		plugin_dir_url( __FILE__ ) . 'js/quantity-changer.js',
+		peachpay_url( 'public/js/quantity-changer.js' ),
 		array(),
-		peachpay_file_version( 'js/quantity-changer.js' )
+		peachpay_file_version( 'public/js/quantity-changer.js' ),
+		false
 	);
 
 	add_shortcode( 'peachpay', 'peachpay_shortcode' );
 
 	$general_options = get_option( 'peachpay_general_options' );
 	$payment_options = get_option( 'peachpay_payment_options' );
-	$button_options = get_option( 'peachpay_button_options');
+	$button_options  = get_option( 'peachpay_button_options' );
 
 	wp_localize_script(
 		'pp-button-core',
-		'php_data',
+		'peachpay_data',
 		// This filter is to allow plugin compatibility to allow plugins to add meta data dynamically so we can 1 reduce
 		// what we have to send but also be loosely coupled with plugins we support. If the data will always be present
 		// then it should be added directly here.
 		apply_filters(
 			'peachpay_script_data',
 			array(
-				'_wpnonce'                                 => wp_create_nonce( 'woocommerce-process_checkout' ),
+				'checkout_nonce'                           => wp_create_nonce( 'peachpay_process_checkout' ),
 				'apply_coupon_nonce'                       => wp_create_nonce( 'apply-coupon' ),
-				'add_to_cart_nonce'                        => wp_create_nonce( 'peachpay_add_to_cart' ),
-				'empty_cart_nonce'                         => wp_create_nonce( 'peachpay_empty_cart' ),
-				'order_status_nonce'                       => wp_create_nonce( 'peachpay_set_order_status' ),
-				// Use to define new feature support going forward
+				// Use to define new feature support going forward.
 				'feature_support'                          => peachpay_feature_support_record(),
 				'merchant_name'                            => get_bloginfo( 'name' ),
 				'wp_site_url'                              => get_site_url(),
 				'wp_admin_or_editor'                       => current_user_can( 'editor' ) || current_user_can( 'administrator' ),
 				'wp_ajax_url'                              => admin_url( 'admin-ajax.php', 'relative' ),
+				'plugin_asset_url'                         => peachpay_url( '' ),
 				'version'                                  => PEACHPAY_VERSION,
 				'num_shipping_zones'                       => count( WC_Shipping_Zones::get_zones() ),
-				'cart'                                     => peachpay_get_cart(),
-				'cart_fees'                                => is_cart() ? WC()->cart->get_fees() : null,
-				'cart_coupons'                             => is_cart() ? WC()->cart->get_coupon_discount_totals() : array(),
-				'cart_coupon_names'                        => is_cart() ? peachpay_cart_coupon_names() : array(),
-				'enable_coupons'                           => isset( $general_options['enable_coupons'] ) ? $general_options['enable_coupons'] : null,
-				'enable_order_notes'                       => isset( $general_options['enable_order_notes'] ) ? $general_options['enable_order_notes'] : false,
 				'merchant_customer_account'                => peachpay_get_merchant_customer_account(),
 				// cart_total_tax is only used to fix a very specific bug on tires.pneupress.com where the
 				// usual server request must be called twice with cookies in order for it to send back
@@ -728,9 +798,9 @@ function peachpay_load_button_scripts() {
 				'is_cart_page'                             => is_cart(),
 				'is_checkout_page'                         => is_checkout(),
 				'wc_cart_url'                              => wc_get_cart_url(),
-				// This one is different from `cart` because it is always the actual cart,
-				// whereas the other one is only the product page item if on a product page.
-				'wc_cart'                                  => ( isset( WC()->cart ) && '' !== WC()->cart ) ? peachpay_make_cart_from_wc_cart( WC()->cart->get_cart() ) : array(),
+				'has_valid_key'                            => peachpay_has_valid_key(),
+				'authorize_url'                            => ! peachpay_has_valid_key() ? peachpay_authorize_url() : '',
+				'cart'                                     => peachpay_get_cart(),
 				'debug_cart'                               => WC()->cart,
 				'wc_prices_include_tax'                    => wc_prices_include_tax(),
 				'wc_tax_price_display'                     => ( isset( WC()->cart ) && '' !== WC()->cart ) ? WC()->cart->get_tax_price_display_mode() : '',
@@ -740,33 +810,33 @@ function peachpay_load_button_scripts() {
 				'wc_location_info'                         => peachpay_location_details(),
 				'test_mode'                                => isset( $general_options['test_mode'] ) ? $general_options['test_mode'] : null,
 				'connected_stripe_account'                 => (bool) get_option( 'peachpay_connected_stripe_account' ),
-				// This is the "Enable PayPal" checkbox in the Payment Methods tab of the plugin settings
+				// This is the "Enable PayPal" checkbox in the Payment Methods tab of the plugin settings.
 				'paypal'                                   => isset( $payment_options['paypal'] ) ? $payment_options['paypal'] : null,
 				'language'                                 => isset( $general_options['language'] ) ? $general_options['language'] : 'en-US',
 
 				'button_color'                             => isset( $button_options['button_color'] ) ? $button_options['button_color'] : '#FF876C',
-				'button_icon'                              => peachpay_get_settings_option( 'peachpay_button_options' ,'button_icon') ? peachpay_get_settings_option( 'peachpay_button_options' ,'button_icon') : 'lock',
-				'button_border_radius'                     => peachpay_get_settings_option( 'peachpay_button_options' , 'button_border_radius' ),
+				'button_icon'                              => peachpay_get_settings_option( 'peachpay_button_options', 'button_icon' ) ? peachpay_get_settings_option( 'peachpay_button_options', 'button_icon' ) : 'lock',
+				'button_border_radius'                     => peachpay_get_settings_option( 'peachpay_button_options', 'button_border_radius' ),
 				'button_text'                              => ( isset( $button_options['peachpay_button_text'] ) && '' !== $button_options['peachpay_button_text'] ) ? $button_options['peachpay_button_text'] : peachpay_get_button_text(),
-				'button_position_product_page'             => isset( $button_options['product_button_position'] ) ? $button_options['product_button_position'] : null,
-				'button_position_cart_page'                => isset( $button_options['cart_button_position'] ) ? $button_options['cart_button_position'] : null,
-				'button_position_checkout_page'            => isset( $button_options['checkout_button_position'] ) ? $button_options['checkout_button_position'] : null,
+				'button_alignment_product_page'            => isset( $button_options['product_button_alignment'] ) ? $button_options['product_button_alignment'] : null,
+				'button_alignment_cart_page'               => isset( $button_options['cart_button_alignment'] ) ? $button_options['cart_button_alignment'] : null,
+				'button_alignment_checkout_page'           => isset( $button_options['checkout_button_alignment'] ) ? $button_options['checkout_button_alignment'] : null,
 				'button_width_product_page'                => isset( $button_options['button_width_product_page'] ) ? $button_options['button_width_product_page'] : null,
 				'button_width_cart_page'                   => isset( $button_options['button_width_cart_page'] ) ? $button_options['button_width_cart_page'] : null,
 				'button_width_checkout_page'               => isset( $button_options['button_width_checkout_page'] ) ? $button_options['button_width_checkout_page'] : null,
-				'button_sheen'                             => peachpay_get_settings_option( 'peachpay_button_options' , 'button_sheen' ),
-				'button_hide_on_product_page'              => peachpay_get_settings_option( 'peachpay_button_options' , 'hide_on_product_page' ),
-				'button_hide_payment_method_icons'         => peachpay_get_settings_option( 'peachpay_button_options' , 'button_hide_payment_method_icons' ),
+				'button_sheen'                             => peachpay_get_settings_option( 'peachpay_button_options', 'button_sheen' ),
+				'button_hide_on_product_page'              => peachpay_get_settings_option( 'peachpay_button_options', 'hide_on_product_page' ),
+				'button_hide_payment_method_icons'         => peachpay_get_settings_option( 'peachpay_button_options', 'button_hide_payment_method_icons' ),
 
-				'should_place_order_before_payment'              => should_place_order_before_payment(),
-				'plugin_woocommerce_product_addon'               => is_plugin_active( 'woocommerce-product-addon/woocommerce-product-addon.php' ),
-				'plugin_woocommerce_points_and_rewards_active'   => is_plugin_active( 'woocommerce-points-and-rewards/woocommerce-points-and-rewards.php' ),
-				'plugin_woocommerce_order_delivery_options'      => woocommerce_order_delivery_options(),
-				'plugin_woocommerce_order_delivery_active'       => is_plugin_active( 'woocommerce-order-delivery/woocommerce-order-delivery.php' ),
-				'plugin_routeapp_active'                         => is_plugin_active( 'routeapp/routeapp.php' ),
+				'should_place_order_before_payment'        => should_place_order_before_payment(),
+				'plugin_woocommerce_product_addon'         => is_plugin_active( 'woocommerce-product-addon/woocommerce-product-addon.php' ),
+				'plugin_woocommerce_points_and_rewards_active' => is_plugin_active( 'woocommerce-points-and-rewards/woocommerce-points-and-rewards.php' ),
+				'plugin_woocommerce_order_delivery_options' => woocommerce_order_delivery_options(),
+				'plugin_woocommerce_order_delivery_active' => is_plugin_active( 'woocommerce-order-delivery/woocommerce-order-delivery.php' ),
+				'plugin_routeapp_active'                   => is_plugin_active( 'routeapp/routeapp.php' ),
 				'plugin_woo_thank_you_page_nextmove_lite_active' => is_plugin_active( 'woo-thank-you-page-nextmove-lite/thank-you-page-for-woocommerce-nextmove-lite.php' ),
-				'is_shortcode'                                   => false,
-				'hide_peachpay_upsell'                           => peachpay_get_settings_option( 'peachpay_general_options', 'hide_woocommerce_products_upsell' ),
+				'is_shortcode'                             => false,
+				'hide_peachpay_upsell'                     => peachpay_get_settings_option( 'peachpay_general_options', 'hide_woocommerce_products_upsell' ),
 			)
 		)
 	);
@@ -799,7 +869,7 @@ function peachpay_get_merchant_customer_account() {
 		'logins_and_registration_enabled' => 'yes' === get_option( 'woocommerce_enable_signup_and_login_from_checkout' ),
 		'auto_generate_username'          => 'yes' === get_option( 'woocommerce_registration_generate_username' ),
 		'auto_generate_password'          => 'yes' === get_option( 'woocommerce_registration_generate_password' ),
-		'allow_guest_checkout'            => 'yes' === get_option( 'woocommerce_enable_guest_checkout'),
+		'allow_guest_checkout'            => 'yes' === get_option( 'woocommerce_enable_guest_checkout' ),
 	);
 }
 
@@ -830,54 +900,50 @@ function peachpay_feature_support_record() {
 	}
 
 	$base_features = array(
-			"cart_calculation" => array(
-				"enabled" => true,
-				"version" => 1,
-			),
-			"coupon_input" => array(
-				"enabled" => peachpay_get_settings_option("peachpay_general_options", "enable_coupons"),
-				"version" => 1,
-			),
-			"order_notes_input" => array(
-				"enabled" => peachpay_get_settings_option("peachpay_general_options", "enable_order_notes"),
-				"version" => 1,
-			),
-			"stripe_payment_method" => array(
-				"enabled" => peachpay_get_settings_option("peachpay_payment_options", "enable_stripe"),
-				"version" => 1,
-			),
-			"stripe_payment_request" => array(
-				"enabled" => peachpay_get_settings_option("peachpay_payment_options", "stripe_payment_request") && $show_payment_request_option,
-				"version" => 1
-			),
-			"quantity_changer" => array(
-				"enabled" => true,
-				"version" => 1
-			)
-		);
+		'cart_calculation'       => array(
+			'enabled' => true,
+			'version' => 2,
+		),
+		'coupon_input'           => array(
+			'enabled' => peachpay_get_settings_option( 'peachpay_general_options', 'enable_coupons' ),
+			'version' => 2,
+		),
+		'order_notes_input'      => array(
+			'enabled' => peachpay_get_settings_option( 'peachpay_general_options', 'enable_order_notes' ),
+			'version' => 1,
+		),
+		'stripe_payment_method'  => array(
+			'enabled' => peachpay_get_settings_option( 'peachpay_payment_options', 'enable_stripe' ),
+			'version' => 1,
+		),
+		'stripe_payment_request' => array(
+			'enabled' => ( peachpay_get_settings_option( 'peachpay_payment_options', 'stripe_payment_request' ) && peachpay_has_valid_key() ) && $show_payment_request_option,
+			'version' => 1,
+		),
+		'quantity_changer'       => array(
+			'enabled' => true,
+			'version' => 3,
+		),
+	);
 
-	return (array) apply_filters("peachpay_register_feature", $base_features);
-}
-
-function peachpay_file_version( $file ) {
-	return gmdate( 'ymd-Gis', filemtime( plugin_dir_path( __FILE__ ) . $file ) );
+	return (array) apply_filters( 'peachpay_register_feature', $base_features );
 }
 
 define(
 	'BUTTON_TEXT_TRANSLATION',
 	array(
-		'ar' => 'الخروج السريع',
-		'ca' => 'Pagament exprés',
+		'ar'    => 'الخروج السريع',
+		'ca'    => 'Pagament exprés',
 		'cs-CZ' => 'Expresní pokladna',
 		'da-DK' => 'Hurtig betaling',
 		'de-DE' => 'Expresskauf',
-		'el' => 'Γρήγορο ταμείο',
+		'el'    => 'Γρήγορο ταμείο',
 		'en-US' => 'Express checkout',
 		'es-ES' => 'Chequeo rápido',
-		'fr' => 'Acheter maintenant',
+		'fr'    => 'Acheter maintenant',
 		'hi-IN' => 'स्पष्ट नियंत्रण',
-		'it' => 'Cassa rapida',
-		'ja' => 'エクスプレスチェックアウト',
+		'it'    => 'Cassa rapida',
+		'ja'    => 'エクスプレスチェックアウト',
 		'ko-KR' => '익스프레스 체크아웃',
 		'lb-LU' => 'Express Kees',
 		'nl-NL' => 'Snel afrekenen',
@@ -886,8 +952,8 @@ define(
 		'ru-RU' => 'Экспресс-касса',
 		'sl-SI' => 'Hitra odjava',
 		'sv-SE' => 'snabbkassa',
-		'th' => 'ชำระเงินด่วน',
-		'uk' => 'Експрес -оплата',
+		'th'    => 'ชำระเงินด่วน',
+		'uk'    => 'Експрес -оплата',
 		'zh-CN' => '快速结帐',
 		'zh-TW' => '快速結帳',
 	)
@@ -896,9 +962,11 @@ define(
 /**
  * Duplicate of peachpay_to_our_language_key in settings.php until we refactor
  * so that it can be used in both places.
+ *
+ * @param string $language_code_or_locale A given language code.
  */
-function peachpay_to_our_language_key_temp( $languageCodeOrLocale ) {
-	switch ( $languageCodeOrLocale ) {
+function peachpay_to_our_language_key_temp( $language_code_or_locale ) {
+	switch ( $language_code_or_locale ) {
 		case 'cs':
 			return 'cs-CZ';
 		case 'da':
@@ -954,10 +1022,13 @@ function peachpay_to_our_language_key_temp( $languageCodeOrLocale ) {
 		case 'sv':
 			return 'sv-SE';
 		default:
-			return $languageCodeOrLocale;
+			return $language_code_or_locale;
 	}
 }
 
+/**
+ * Gets the text to display on the peachpay button.
+ */
 function peachpay_get_button_text() {
 	$page_language = peachpay_to_our_language_key_temp( substr( get_locale(), 0, 2 ) );
 
@@ -969,6 +1040,7 @@ function peachpay_get_button_text() {
 		if ( ! isset( BUTTON_TEXT_TRANSLATION[ $page_language ] ) ) {
 			return BUTTON_TEXT_TRANSLATION['en-US'];
 		}
+
 		return BUTTON_TEXT_TRANSLATION[ $page_language ];
 	}
 
@@ -976,114 +1048,10 @@ function peachpay_get_button_text() {
 }
 
 /**
- * Returns an array of products that are in the "cart". If we are on a single
- * product page, the returned cart is only the single item regardless of the
- * actual contents of the cart.
- */
-function peachpay_get_cart() {
-	if ( function_exists( 'wc_get_product' ) ) {
-		$product = wc_get_product();
-
-		if ( get_site_url() === 'https://www.jogiachamasalo.com' || get_site_url() === 'https://www.jogiachamasalo.com/' ) {
-			$product = wc_get_product( 160 );
-		}
-
-		if ( $product ) {
-			return peachpay_product_page_cart( $product );
-		}
-	}
-
-	if ( is_null( WC()->cart ) ) {
-		return array();
-	}
-
-	return peachpay_make_cart_from_wc_cart( WC()->cart->get_cart() );
-}
-
-function peachpay_product_page_cart( WC_Product $product ) {
-	if ( ! isset( $product ) || ! $product ) {
-		return array();
-	}
-
-	// Grouped products.
-	$child_ids = $product->get_children();
-
-	if ( $product->get_type() === 'grouped' && $child_ids ) {
-		$children = array();
-		foreach ( $child_ids as $id ) {
-			array_push( $children, wc_get_product( $id ) );
-		}
-		return peachpay_make_product_page_cart( $children, true );
-	}
-
-	// WooCommerce Product Bundles plugin.
-	if ( $product->get_type() === 'bundle' ) {
-		$cart = array();
-		array_push( $cart, $product );
-		foreach ( $product->get_bundled_items() as $item ) {
-			array_push( $cart, wc_get_product( $item->get_product() ) );
-		}
-
-		return peachpay_make_product_page_cart( $cart, false, true );
-	}
-
-	return peachpay_make_product_page_cart( array( $product ) );
-}
-
-function peachpay_make_product_page_cart( $products, $is_grouped = false, $is_bundled = false ) {
-	$pp_cart = array();
-
-	foreach ( $products as $wc_product ) {
-		$price = peachpay_product_price( $wc_product );
-		// People might not buy one of the grouped items, so allow 0 quantity.
-		$quantity = $is_grouped ? 0 : null;
-
-		// The first check is for whether is group of products **contains** a parent bundle product,
-		// and the second check is for whether the current product in the loop **is** the
-		// parent bundle product.
-		if ( $is_bundled && $wc_product->get_type() !== 'bundle' ) {
-			// Only the parent in a bundle has a price.
-			$price    = 0;
-			$quantity = 1;
-		}
-
-		$pp_cart_item = array(
-			'product_id'   => $wc_product->get_id(),
-			'variation_id' => $wc_product->get_id(), // no variation support on grouped products for now.
-			'name'         => $wc_product->get_name(),
-			'price'        => $price,
-			'display_price'=> peachpay_product_display_price( $wc_product ),
-			'quantity'     => $quantity,
-			'virtual'      => $wc_product->is_virtual(),
-			'subtotal'     => strval( $price ), // subtotal and total are only relevant for what shows up in the order dashboard.
-			'total'        => strval( $price ),
-			'attributes'   => peachpay_product_variation_attributes( $wc_product->get_id()),
-			'meta_data'    => array(),
-			'image'        => peachpay_product_image( $wc_product ),
-			'on_sale'             => $wc_product->is_on_sale(),
-			'product_categories'  => $wc_product->get_category_ids(),
-			'upsell_items'        => peachpay_upsell_items ( $wc_product ),
-		);
-
-		// Don't show the price on the order dashboard for items that are part of a bundle.
-		if ( $is_bundled && $wc_product->get_type() !== 'bundle' ) {
-			$pp_cart_item['subtotal']          = '0';
-			$pp_cart_item['total']             = '0';
-			$pp_cart_item['is_part_of_bundle'] = true;
-		}
-
-		// Apply meta data for compatibility. This filter can be hooked into anywhere to add needed meta data to cart items on the cart page.
-		array_push( $pp_cart, apply_filters( 'peachpay_product_page_line_item', $pp_cart_item, $wc_product ) );
-	}
-
-	return $pp_cart;
-}
-
-/**
  * Checks if an item is a variation if so it will get the parent name so we can
  * use variations as subtitles if not returns the product's name.
  *
- * @param int $id the product ID.
+ * @param  int $id the product ID.
  * @return string the parent product name if exists, otherwise the product name.
  */
 function peachpay_get_parent_name( $id ) {
@@ -1111,7 +1079,7 @@ function peachpay_make_cart_from_wc_cart( $wc_line_items ) {
 	$pp_cart = array();
 
 	foreach ( $wc_line_items as $wc_line_item ) {
-		$wc_product = peachpay_product_from_line_item($wc_line_item);
+		$wc_product   = peachpay_product_from_line_item( $wc_line_item );
 		$pp_cart_item = array(
 			'product_id'          => $wc_product->get_id(),
 			'variation_id'        => $wc_product->get_id(), // Why? WC_Product::get_variation_id is deprecated since version 3.0. Use WC_Product::get_id(). It will always be the variation ID if this is a variation.
@@ -1123,12 +1091,12 @@ function peachpay_make_cart_from_wc_cart( $wc_line_items ) {
 			'virtual'             => $wc_product->is_virtual(),
 			'subtotal'            => strval( peachpay_product_price( $wc_product ) ), // subtotal and total are only relevant for what shows up in the order dashboard.
 			'total'               => strval( peachpay_product_price( $wc_product ) ),
-			'variation'           => $wc_line_item[ 'variation' ], // This is the actual selected variation attributes
+			'variation'           => $wc_line_item['variation'], // This is the actual selected variation attributes.
 			'attributes'          => peachpay_product_variation_attributes( $wc_product->get_id() ),
 			'image'               => peachpay_product_image( $wc_product ),
-			'upsell_items'        => peachpay_upsell_items ( $wc_product ),
-			'cross_sell_items'    => peachpay_cross_sell_items ( $wc_product ),
-			'item_key'			  => $wc_line_item[ 'key' ],
+			'upsell_items'        => peachpay_upsell_items( $wc_product ),
+			'cross_sell_items'    => peachpay_cross_sell_items( $wc_product ),
+			'item_key'            => $wc_line_item['key'],
 
 			// On the cart page only this replaces both including the variation
 			// in the name (not in the above code anymore) and using the
@@ -1154,7 +1122,6 @@ function peachpay_make_cart_from_wc_cart( $wc_line_items ) {
 	return $pp_cart;
 }
 
-
 /**
  * Gets the full product name even if the filter
  * woocommerce_product_variation_title_include_attributes has been set to not
@@ -1169,6 +1136,8 @@ function peachpay_make_cart_from_wc_cart( $wc_line_items ) {
  * and removes the filter part.
  *
  * If this is a simple product with no variations, it returns the base name.
+ *
+ * @param int $id The product id of a given product.
  */
 function peachpay_product_name_always_with_variation( $id ) {
 	$product = wc_get_product( $id );
@@ -1182,94 +1151,13 @@ function peachpay_product_name_always_with_variation( $id ) {
 	return $product->get_name();
 }
 
-function peachpay_woocommerce_ajax_add_to_cart() {
-	if ( ! isset( $_POST['product_id'] ) || ! isset( $_POST['variation_id'] ) ) {
-		wp_send_json_error( 'Missing required parameters', 400 );
-	}
-
-	$product_id   = absint( $_POST['product_id'] );
-	$quantity     = empty( $_POST['quantity'] ) ? 0 : wc_stock_amount( sanitize_text_field( wp_unslash( $_POST['quantity'] ) ) );
-	$variation_id = absint( $_POST['variation_id'] );
-
-	if ( peachpay_product_in_cart( $product_id, $variation_id ) ) {
-		wp_send_json_success( 'Product already in cart; no need to add again' );
-	}
-
-	$cart_item_key = peachpay_non_redirect_add_to_cart($product_id, $quantity, $product_id === $variation_id ? 0 : $variation_id);
-
-	if ( ! $cart_item_key ) {
-		wp_send_json_error( 'Could not add product to cart', 400 );
-	}
-
-	if ( is_plugin_active( 'woocommerce-product-addon/woocommerce-product-addon.php' ) ) {
-		ppom_woocommerce_add_cart_item_data( WC()->cart->get_cart_item( $cart_item_key ), $product_id );
-	}
-
-	wp_send_json_success(
-		array(
-			'message'            => "Successfully added product ID $product_id, variation ID $variation_id, quantity $quantity to cart (key $cart_item_key)",
-			// Sometimes (cause not known), calling WC()->cart->add_to_cart() resets
-			// either the session or checkout nonce, causing the order placement to
-			// fail because the nonce provided on page load is invalid. To quickly
-			// fix the issue we can generate a new nonce after the problematic
-			// function call and use it in place of the original checkout nonce.
-			'_wpnonce'           => wp_create_nonce( 'woocommerce-process_checkout' ),
-		)
-	);
-}
-
 /**
- * This is to override other people from adding a custom add_to_cart_redirect when
- * we are just trying to get some custom data for our plugin.
+ * Endpoint for indicating a successful payment.
  */
-function peachpay_do_not_redirect_checkout_add_cart_filter($url, $adding_to_cart) {
-	if("yes" === get_option("peachpay_deny_add_to_cart_redirect")){
-		return "";
-	}
-
-	return $url;
-}
-
-/**
- * Adds an item to the cart while disabling any add_to_cart_redirect functionality.
- */
-function peachpay_non_redirect_add_to_cart( $product_id, $quantity, $variation_id, $variations = array(), $cart_item_data = array() ) {
-	// Only need the filter with this call to ensure other custom redirects are not followed
-	add_filter( 'woocommerce_add_to_cart_redirect', 'peachpay_do_not_redirect_checkout_add_cart_filter', PHP_INT_MAX, 2 ); // Want the highest priority
-
-	$original_cart_redirect_after_add = get_option( 'woocommerce_cart_redirect_after_add' );
-	$qlwcdc = get_option( 'qlwcdc_add_to_cart' ); // Get WC Direct Checkout
-
-	update_option( 'qlwcdc_add_to_cart', 'no' ); // Disable WC Direct Checkout
-	update_option( 'woocommerce_cart_redirect_after_add', 'no' ); // Not sure if the frowned upon changing settings like this but it works
-	update_option( 'peachpay_deny_add_to_cart_redirect', 'yes' );
-
-	$cart_item_key = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variations, $cart_item_data );
-
-	update_option( 'peachpay_deny_add_to_cart_redirect', 'no' );
-	update_option( 'qlwcdc_add_to_cart', $qlwcdc ); // Restore WC Direct Checkout
-	update_option( 'woocommerce_cart_redirect_after_add', $original_cart_redirect_after_add );
-
-	return $cart_item_key;
-}
-
-function peachpay_product_in_cart( $product_id, $variation_id ) {
-	foreach ( WC()->cart->get_cart() as $cart_item_key => $values ) {
-		$_product = $values['data'];
-		if ( $product_id === $_product->get_id() || $variation_id === $_product->get_id() ) {
-			return true;
-		}
-	}
-	return false;
-}
-
-function peachpay_wc_ajax_empty_cart() {
-	WC()->cart->empty_cart();
-}
-
 function peachpay_wc_ajax_order_payment_complete() {
-	if ( ! isset( $_POST['order_id'] ) || ! isset( $_POST['_peachpay_stripe_customer_id'] )
-	|| ! isset( $_POST['payment_type'] ) || ! isset( $_POST['transaction_id'] ) ) {
+    // phpcs:disable
+	if ( ! isset( $_POST['order_id'] ) || ! isset( $_POST['_peachpay_stripe_customer_id'] ) || ! isset( $_POST['payment_type'] ) || ! isset( $_POST['transaction_id'] )
+	) {
 		wp_send_json_error( 'Missing required parameters', 400 );
 	}
 	$_POST['order_status_nonce'] = wp_create_nonce( 'peachpay_set_order_status' );
@@ -1282,7 +1170,9 @@ function peachpay_wc_ajax_order_payment_complete() {
 		$order->set_transaction_id( sanitize_text_field( wp_unslash( $_POST['transaction_id'] ) ) );
 	}
 
-	$order->add_meta_data("peachpay_is_test_mode", peachpay_is_test_mode() ? "true" : "false");
+    //phpcs:enable
+
+	$order->add_meta_data( 'peachpay_is_test_mode', peachpay_is_test_mode() ? 'true' : 'false' );
 
 	$order->payment_complete();
 
@@ -1294,7 +1184,7 @@ function peachpay_wc_ajax_order_payment_complete() {
 /**
  * Gets any available payment information from an order.
  *
- * @param int $order_id The original order id that payment information was stored in.
+ * @param  int $order_id The original order id that payment information was stored in.
  * @return Array
  */
 function peachpay_get_order_payment_meta( int $order_id ) {
@@ -1304,8 +1194,8 @@ function peachpay_get_order_payment_meta( int $order_id ) {
 /**
  * Sets peachpay order payment meta related to stripe
  *
- * @param int    $order_id The original order id that payment information was stored in.
- * @param string $stripe_customer_id The customer stripe id to store.
+ * @param  int    $order_id           The original order id that payment information was stored in.
+ * @param  string $stripe_customer_id The customer stripe id to store.
  * @return void
  */
 function peachpay_set_stripe_order_payment_meta( int $order_id, string $stripe_customer_id ) {
@@ -1321,7 +1211,7 @@ function peachpay_set_stripe_order_payment_meta( int $order_id, string $stripe_c
  * Gets all peachpay order payment meta related to stripe. If the payment
  * was not stripe it then returns a empty string.
  *
- * @param int $order_id The original order id that payment information was stored in.
+ * @param  int $order_id The original order id that payment information was stored in.
  * @return string
  */
 function peachpay_get_stripe_order_payment_meta( int $order_id ) {
@@ -1329,35 +1219,26 @@ function peachpay_get_stripe_order_payment_meta( int $order_id ) {
 	return ( 'stripe' === $data['payment_type'] ? $data['customer_id'] : '' );
 }
 
+/**
+ * Ajax endpoint for indicating that a order payment failed.
+ */
 function peachpay_wc_ajax_order_failed() {
+    // phpcs:ignore
 	if ( ! isset( $_POST['order_id'] ) ) {
 		wp_send_json_error( 'Missing required parameters', 400 );
 	}
+     // phpcs:ignore
 	$order = wc_get_order( $_POST['order_id'] );
 	$order->set_status( 'failed' );
 	$order->save();
+     // phpcs:ignore
 	$order->add_order_note( 'Payment failed. Reason: ' . $_POST['payment_failure_reason'] );
 	wp_send_json( array( 'success' => true ) );
 }
 
-function peachpay_cart_coupon_names() {
-	if ( ! is_cart() ) {
-		return;
-	}
-	$coupons = WC()->cart->get_coupon_discount_totals();
-	$names   = array();
-	foreach ( $coupons as $coupon_code => $amount ) {
-		$match = array();
-		preg_match( '/(?<=wc_)([^\d])*(?=_\d+)/', $coupon_code, $match );
-		if($match && $match[ 0 ]){
-			$names[ $coupon_code ] = ucfirst( str_replace( '_', ' ', $match[ 0 ] ) );
-		}
-	}
-	return $names;
-}
-
-
-
+/**
+ * Gets order delivery options got a Woocommerce Order Delivery plugin.
+ */
 function woocommerce_order_delivery_options() {
 	if ( ! is_plugin_active( 'woocommerce-order-delivery/woocommerce-order-delivery.php' ) ) {
 		return array();
@@ -1372,7 +1253,7 @@ function woocommerce_order_delivery_options() {
 		$days = array( 0, 1, 2, 3, 4, 5, 6 );
 		foreach ( $days as $day ) {
 			$wc_od_delivery_days_single = $wc_od_delivery_days[ $day ];
-			if ( $wc_od_delivery_days_single['enabled'] === 'no' ) {
+			if ( 'no' === $wc_od_delivery_days_single['enabled'] ) {
 				array_push( $delivery_unchecked_day, $day );
 			}
 		}
@@ -1385,164 +1266,42 @@ function woocommerce_order_delivery_options() {
 	return $order_delivery_options;
 }
 
-function peachpay_collect_debug_info( array $php_data ) {
-	$php_data[ "debug" ] = array(
-		"peachpay" => array(
-			"version"    => PEACHPAY_VERSION,
-			"test_mode"  => peachpay_is_test_mode(),
-			"feature_support" => array("alerts")
+/**
+ * Collects nonsensitive debug information.
+ *
+ * @param array $peachpay_data The starting data to be sent to the frontend.
+ */
+function peachpay_collect_debug_info( $peachpay_data ) {
+	$peachpay_data['debug'] = array(
+		'peachpay' => array(
+			'version'         => PEACHPAY_VERSION,
+			'test_mode'       => peachpay_is_test_mode(),
+			'feature_support' => array( 'alerts' ),
 		),
-		"plugins" => array()
+		'plugins'  => array(),
 	);
 
-	try{
+	try {
 		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 		$plugins = get_plugins();
 
-		foreach($plugins as $plugin_key => $plugin_data){
-			$php_data[ "debug" ]["plugins"][$plugin_key] = array(
-					"name" => $plugin_data['Name'],
-					"version" => $plugin_data[ "Version" ],
-					"pluginURI" => $plugin_data[ "PluginURI" ],
-					"active" => is_plugin_active($plugin_key)
+		foreach ( $plugins as $plugin_key => $plugin_data ) {
+			$peachpay_data['debug']['plugins'][ $plugin_key ] = array(
+				'name'      => $plugin_data['Name'],
+				'version'   => $plugin_data['Version'],
+				'pluginURI' => $plugin_data['PluginURI'],
+				'active'    => is_plugin_active( $plugin_key ),
 			);
 		}
-	} catch (Exception $ex) {
-		// Don't break anything
+
+    //phpcs:ignore
+	} catch ( Exception $ex ) {
+		// Do no harm.
 	}
 
-	if(peachpay_is_site("manicci.com") || peachpay_is_site("store.local")){
-		$php_data[ "debug" ]["manicci"] = array(
-			"actions" => $GLOBALS['wp_filter']["woocommerce_add_to_cart"],
-			"filters" => $GLOBALS['wp_filter']["woocommerce_add_to_cart_redirect"]
-		);
-	}
-
-	return $php_data;
-}
-
-/**
- * Determines if the given site is active
- *
- * @param string $site The site domain to check.
- */
-function peachpay_is_site( string $site ) {
-	return strpos( get_site_url(), $site ) !== false;
-}
-
-function peachpay_checkout_url() {
-	if ( peachpay_is_test_mode() ) {
-		switch ( get_site_url() ) {
-			case 'http://localhost':
-			case 'http://127.0.0.1':
-				return 'http://localhost:8080';
-			case 'https://store.local':
-			case 'https://woo.store.local':
-				return 'https://dev-connect.peachpay.local'; // Local HTTPS
-			default:
-				return 'https://dev-connect.peachpaycheckout.com';
-		}
-	}
-
-	switch ( get_site_url() ) {
-		case 'http://localhost':
-		case 'http://127.0.0.1':
-			return 'http://localhost:8080';
-		case 'https://woo.peachpay.app':
-		case 'https://theme1.peachpay.app':
-		case 'https://theme2.peachpay.app':
-		case 'https://theme3.peachpay.app':
-		case 'https://theme4.peachpay.app':
-		case 'https://theme5.peachpay.app':
-		case 'https://qa.peachpay.app':
-		case 'https://demo.peachpay.app':
-			return 'https://dev-connect.peachpaycheckout.com';
-		case 'https://store.local':
-		case 'https://woo.store.local':
-			return 'https://connect.peachpay.local'; // Local HTTPS
-		default:
-			return 'https://connect.peachpaycheckout.com';
-	}
-}
-
-function peachpay_shortcode( $atts ) {
-	$attributes = shortcode_atts([
-		'product_id' => null,
-	], $atts);
-
-	if ( is_null( $attributes['product_id'] ) ) {
-		return;
-	}
-
-	$product = wc_get_product( (int) $attributes['product_id'] );
-
-	if ( is_null( $product ) || ! $product ) {
-		return;
-	}
-
-	wp_localize_script(
-		'pp-button-shortcode',
-		'peachpayShortcodeData',
-		array( 'cart' => peachpay_product_page_cart( $product ) )
-	);
-
-	$options = get_option( 'peachpay_button_options' );
-	$button_text = ( isset( $options['peachpay_button_text'] ) && $options['peachpay_button_text'] !== '' ) ? $options['peachpay_button_text'] : peachpay_get_button_text();
-	$dark = gethostname() === 'www.blazecandles.co' ? '-dark' : '';
-	$spinnerURL= peachpay_checkout_url() . '/img/spinner' . $dark . '.svg';
-	$width = 'width:'.$options['button_width_product_page'].'px;';
-	$color = '--button-color:'.$options['button_color'].';';
-	$style = $width.$color;
-
-	$output = '
-	<div id="pp-button-container" class="button-container pp-button-container">
-		<button id="pp-button" class="pp-button" type="button" style='.$style.'>
-		<img src='.$spinnerURL.' id="loading-spinner" class="pp-spinner hide">
-		<div id="pp-button-content">
-			<span id="pp-button-text">'.$button_text.'</span>
-		</div>
-		</button>
-	</div>';
-
-	return $output;
-}
-
-register_activation_hook( __FILE__, 'peachpay_record_activation' );
-function peachpay_record_activation() {
-	peachpay_record_analytics( true, PEACHPAY_VERSION );
-}
-
-register_deactivation_hook( __FILE__, 'record_record_deactivation' );
-function record_record_deactivation() {
-	peachpay_record_analytics( false, PEACHPAY_VERSION );
-}
-
-function peachpay_product_quantity_changer() {
-	if ( ! isset( $_POST['key'] ) || ! isset( $_POST['value']) ) {
-		wp_send_json_error( 'Missing required parameters: key and value', 400 );
-	}
-
-	$item_key = $_POST['key'];
-	$value = $_POST['value'];
-
-	foreach( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-        // Check for specific item key and change its quantity
-		if($item_key === $cart_item_key && $cart_item['quantity'] >= 1 ){
-			$oldQty = $cart_item['quantity'];
-			$qty = $cart_item['quantity'] + ($value);
-			$newQty = $qty;
-			WC()->cart->set_quantity($cart_item_key, $qty);
-        }
-    }
-
-	wp_send_json_success(
-		array(
-			'success' => true,
-			'message' => "Changed quantity on $cart_item_key from $oldQty to $newQty",
-		)
-	);
+	return $peachpay_data;
 }
 
 /**
@@ -1566,4 +1325,11 @@ function peachpay_migrate_enable_stripe_checkbox() {
 	peachpay_set_settings_option( 'peachpay_payment_options', 'enable_stripe', 1 );
 
 	update_option( 'peachpay_migrated_to_enable_stripe_checkbox', 1 );
+}
+/** debug code from here */
+
+add_action('woocommerce_before_checkout_form','checkout_form');
+function checkout_form(){
+	echo do_shortcode('peachpay');
+	echo PEACHPAY_ABSPATH;
 }

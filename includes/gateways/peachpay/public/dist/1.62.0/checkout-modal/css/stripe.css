@@ -1,0 +1,49 @@
+.StripeElement {
+    box-sizing: border-box;
+    height: 50px;
+    padding: 15px;
+    border-radius: 0.5rem;
+    background-color: #e5e5e5;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+    margin-top: 0.75rem;
+}
+.StripeElement--focus {
+    border-color: #555;
+}
+.StripeElement--invalid {
+    border-color: var(--peachpay-theme-color);
+}
+.StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+}
+.stripe-3ds-frame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    z-index: 999998;
+}
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    z-index: 999997;
+    background-color: white;
+    justify-content: center;
+}
+
+@media only screen and (max-width: 900px) {
+    .StripeElement{
+        margin-right: 0;
+    }
+}

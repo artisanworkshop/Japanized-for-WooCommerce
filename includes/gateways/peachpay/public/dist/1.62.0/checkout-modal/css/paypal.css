@@ -1,0 +1,17 @@
+#paypal-button-container,
+#paypal-button-container-existing,
+#paypal-button-container-mobile {
+	width: 15rem;
+	height: 3.5rem;
+	margin: 0 auto;
+}
+
+#paypal-spinner,
+#paypal-spinner-existing,
+#paypal-spinner-mobile {
+	width: 30px;
+}
+
+#paypal-spinner {
+	margin-bottom: 1rem;
+}

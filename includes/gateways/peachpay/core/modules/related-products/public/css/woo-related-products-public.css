@@ -1,0 +1,30 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+#woorelatedproducts li.product {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0;
+}
+.customNavigation{
+  text-align: center;
+}
+.customNavigation a{
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+a.wprr.btn.prev,
+a.wprr.btn.next {
+    cursor: pointer;
+}
+.woo-related-shortcode .customNavigation {
+  display: none;
+}
+h2.woorelated-title.no-title {
+  display: none;
+}

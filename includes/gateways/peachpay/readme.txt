@@ -1,10 +1,10 @@
 === PeachPay for WooCommerce | One-Click Checkout ===
 Contributors: peachpay
 Tags: woocommerce, checkout, payments
-Requires at least: 4.7
+Requires at least: 5.6
 Tested up to: 5.8
-Stable tag: 1.58.1
-Requires PHP: 5.6
+Stable tag: 1.62.0
+Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -189,6 +189,98 @@ Yes! PeachPay is compatible with [WooCommerce Subscriptions](https://woocommerce
 6. PeachPay is also automatically added to the cart page.
 
 == Changelog ==
+
+= 1.62.0 (2022-01-27) =
+* [New] Floating checkout button on the WooCommerce "shop" page that can be customized or hidden
+* [New] Show custom related products in a slider on all product pages (Go to PeachPay settings > "Related products" to enable)
+* [Improvement] The WooCommerce cart page address is fully in sync with the address in PeachPay
+* [Improvement] Show Stripe transaction IDs in the WooCommerce order details for 3D Secure purchases
+* [Improvement] Show the account id of the connected Stripe account instead of the email, since an email can have multiple accounts associated with it
+* [Fix] Double custom fields showing in the order summary for "PPOM for WooCommerce" products
+* [Fix] Fatal error upon plugin activation
+* [Fix] Make sure the checkout window code always refreshes upon plugin update
+* [Fix] PayPal orders not showing the WooCommerce order ID in the PayPal dashboard
+* [Fix] Make sure themes don't affect the PeachPay button icon margin
+
+= 1.61.0 (2022-01-19) =
+* [New] The Stripe payment ID will be shown in the WooCommerce order details, automatically linked to your Stripe dashboard
+* [New] Setting to move the PeachPay button below the "add to cart" button on the product page
+* [New] Support for role-based pricing from Booster for WooCommerce
+* [New] Unlink your Stripe account from the Payment Methods settings
+* [Improvement] Show a message in the checkout window if the cart is empty
+* [Improvement] Remove an extra step in PayPal payment processing
+* [Improvement] Don't show PeachPay if the cart has a total of 0 (free items)
+* [Improvement] Center the checkout window in the screen
+* [Fix] Coupons with dashes not working
+* [Fix] The "Back to info" link's clickable area extends too far and can be clicked accidentally
+* [Fix] Loading spinner not showing on the product page after the button is clicked
+* [Fix] "Cannot ship to your location" message appearing breifly when opening the checkout window
+* [Fix] Coupon label not aligned with input text
+* [Fix] Conflict with file uploading plugins
+* [Fix] A check for when to use a custom form without the phone number
+* [Fix] Items being removed from the cart when using plugins that restrict products to certain countries
+* [Fix] Visual bugs on Safari and Firefox
+* [Fix] Prevent the payment method icons from being too large
+* [Fix] Don't show the PayPal additional payment method buttons for European regions
+* [Removed] Redirect to the cart page if WooCommerce Points and Rewards is active
+
+= 1.60.0 (2022-01-11) =
+* [Improvement] The checkout window is now bundled with the plugin for better compatibility
+
+= 1.59.7 (2021-12-31) =
+* [New] Settings to hide the PeachPay button on the cart, checkout, and mini cart
+* [Improvement] Shoppers can type in quantity amounts in the checkout window in addition to increasing and decreasing the quantity by one
+* [Improvement] Make field editor styles more consistent
+* [Improvement] There will be an alert on the admin dashboard if all PeachPay payment methods are disabled but PeachPay is still on the store
+* [Change] Button shine is slower
+* [Fix] Button shine doesn't look strange on Safari anymore
+
+= 1.59.6 (2021-12-22) =
+* [Fix] Bug where the mini cart button disappears after removing an item
+* [Fix] Default prodcut page button position upon first install
+* [Fix] Scrolling issue for a specific site
+
+= 1.59.5 (2021-12-20) =
+* [Improvement] Added WordPress dashboard submenus for easy navigation to a specific tab in the plugin settings
+* [Fix] Bug where custom styles might be cleared out on cart page fragment refresh
+
+= 1.59.4 (2021-12-19) =
+* [Fix] PayPal sign up link not working
+* [Fix] Missing PayPal merchant account id
+* [Fix] Wording for data retention setting
+* [Fix] Two issues that could cause PeachPay uninstall to fail
+
+= 1.59.3 (2021-12-17) =
+* [Improvement] Speed up tax and shipping calculation
+* [Improvement] More Japanese translations for the plugin settings
+* [Fix] Checkout window not opening when upsell items don't have images
+* [Fix] A few typos in the settings
+
+= 1.59.2 (2021-12-14) =
+* [Improvement] More of the button preferences translated to Japanese
+* [Improvement] Display WooCommerce error messages within the checkout window
+* [Fix] Catch potential PHP errors upon plugin update
+* [Fix] Cases where a shipping phone number may be required
+
+= 1.59.1 (2021-12-12) =
+* [Improvement] If the PeachPay gateway is disabled, don't load the PeachPay button
+* [Improvement] Make the field editor window resize for smaller screens
+* [Improvement] In the field editor, don't allow field names to have spaces because it won't work
+* [Fix] Potential for failed orders due to expired checkout nonce
+
+= 1.59.0 (2021-12-09) =
+* [New] Field editor! Add custom fields to the checkout window
+* [Fix] Prevent the button text from touching the edge of the button in some cases
+* [Fix] Stripe not working in test mode if WooCommerce API permission has not been given
+
+= 1.58.2 (2021-12-08) =
+* [Improvement] The help text around the button on the checkout page is now translated
+* [Improvement] The deactivation pop up is also translated
+* [Improvement] Also show the language name in English to help developers who are setting up sites for clients
+* [Change] The product page button will now pull up the full WooCommerce cart
+* [Fix] Prevent connecting a Stripe account while in test mode
+* [Fix] Rename a global variable conflicting with Aero Checkout
+* [Fix] PHP notices
 
 = 1.58.1 (2021-12-02) =
 * [Fix] Quantity changer not working if logged out
