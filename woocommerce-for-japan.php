@@ -170,12 +170,6 @@ class JP4WC{
         // Add PeachPay Checkout
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		if ( ! is_plugin_active( 'peachpay-for-woocommerce/peachpay.php' ) && get_option('wc4jp-peachpay') ) {
-			define( 'PEACHPAY_ABSPATH', JP4WC_INCLUDES_PATH.'gateways/peachpay/' );
-			define( 'PEACHPAY_VERSION', '1.62.0' );
-			define( 'PEACHPAY_BASENAME', 'peachpay-for-woocommerce/peachpay.php' );
-			define( 'PEACHPAY_PLUGIN_FILE', JP4WC_INCLUDES_PATH.'gateways/peachpay/peachpay.php' );
-			define( 'PEACHPAY_PAYMENT_META_KEY', '_peachpay_payment_meta' );
-
 			require_once JP4WC_INCLUDES_PATH . 'gateways/peachpay/peachpay.php';
 		}
 
