@@ -32,6 +32,13 @@ define( 'PEACHPAY_BASENAME', plugin_basename( __FILE__ ) );
 define( 'PEACHPAY_PLUGIN_FILE', __FILE__ );
 define( 'PEACHPAY_PAYMENT_META_KEY', '_peachpay_payment_meta' );
 */
+// add by Shohei Tanaka at 2021-01-29
+define( 'PEACHPAY_ABSPATH', JP4WC_INCLUDES_PATH.'gateways/peachpay/' );
+define( 'PEACHPAY_VERSION', '1.62.0' );
+define( 'PEACHPAY_BASENAME', 'peachpay-for-woocommerce/peachpay.php' );
+define( 'PEACHPAY_PLUGIN_FILE', JP4WC_INCLUDES_PATH.'gateways/peachpay/peachpay.php' );
+define( 'PEACHPAY_PAYMENT_META_KEY', '_peachpay_payment_meta' );
+
 peachpay_migrate_options();
 peachpay_migrate_enable_stripe_checkbox();
 peachpay_migrate_button_position();
