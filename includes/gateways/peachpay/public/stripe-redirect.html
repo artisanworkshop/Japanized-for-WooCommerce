@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #pp-content {
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            height: 100vh;
+            width: 100vw;
+            justify-content: center;
+            text-align: center;
+            align-content: center;
+            align-items: center;
+        }
+
+        #pp-spinner {
+            height: 2rem;
+        }
+
+        @keyframes pp-fade-in {
+            from {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            to {
+                opacity: 0.2;
+            }
+        }
+
+        #pp-manual-redirect {
+            width: fit-content;
+            color: white;
+            text-decoration: none;
+            border-radius: 1.8rem;
+            padding: 0.7rem 1.2rem;
+            font-size: 1.5rem;
+            font-family: Arial, Helvetica, sans-serif;
+            animation: pp-fade-in 3s;
+            animation-iteration-count: infinite;
+            transition: background-color 0.3s, opacity 0.3s;
+            margin: 2rem;
+        }
+
+        #pp-manual-redirect:hover {
+            animation: none;
+            background-color: rgb(73, 136, 232);
+            opacity: 1;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="pp-content">
+        <img id="pp-spinner" src="img/spinner-dark.svg">
+        <a id="pp-manual-redirect" class="hide" href="#">Return to merchant</a>
+    </div>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        // JS in this file needs to be able to support as many browsers 
+        // as we can manage. That means no use of newer JS features will
+        // be used(async/await,const,let,... etc).
+
+        let PEACHPAY_SESSION_KEY = 'PP_SESSION_KEY';
+
+        function buildStripeOptions(state) {
+            if (state.connectId) {
+                return {
+                    locale: 'auto',
+                    stripeAccount: state.connectId,
+                };
+            } else {
+                return {
+                    locale: 'auto',
+                };
+            }
+        }
+
+        function retrieveState() {
+            var rawState = new URLSearchParams(window.location.search).get(
+                "state"
+            );
+
+            if (!rawState) {
+                return null;
+            }
+
+            return JSON.parse(atob(rawState));
+        }
+
+        function revealManualRedirect(url, color) {
+            clearSession();
+            window.top.location.href = url;
+
+            var $a = document.querySelector("#pp-manual-redirect");
+            $a.style.backgroundColor = color
+            $a.classList.remove("hide");
+            $a.href = url;
+
+            var $spinner = document.querySelector("#pp-spinner");
+            if ($spinner) {
+                $spinner.classList.add('hide');
+            }
+        }
+
+        function checkStatus(state, stripe) {
+            var clientSecret = new URLSearchParams(window.location.search).get(
+                "payment_intent_client_secret"
+            );
+
+            if (!clientSecret) {
+                revealManualRedirect(state.failureURL, state.color);
+                return;
+            }
+
+            stripe.retrievePaymentIntent(clientSecret).then((result) => {
+                if (result.paymentIntent) {
+                    var paymentIntent = result.paymentIntent;
+                    switch (paymentIntent.status) {
+                        case "succeeded":
+                        case "processing":
+                            revealManualRedirect(state.successURL, state.color);
+                            return;
+                        case "requires_payment_method":
+                        default:
+                            revealManualRedirect(state.failureURL, state.color);
+                            return;
+                    }
+                }
+            }).catch(() => {
+                revealManualRedirect(state.failureURL, state.color);
+                return;
+            });
+
+            return true;
+        }
+
+        function clearSession() {
+            try {
+                localStorage.removeItem(PEACHPAY_SESSION_KEY);
+            } catch {
+                //do no harm
+            }
+        }
+
+
+        (function main() {
+            var state = retrieveState();
+            if (!state) {
+                // if the state is not defined we do not know where to redirect too. Best 
+                // thing to do is just get them off our page so they can continue. Perhaps
+                // this should only be a manual redirect with a message of "something went
+                // wrong".
+                window.top.location.pathname = "";
+                return;
+            }
+
+            var stripe = Stripe(state.key, buildStripeOptions(state));
+            if (!stripe) {
+                revealManualRedirect(state.failureURL, state.color);
+                return;
+            }
+
+            checkStatus(state, stripe);
+        })()
+    </script>
+</body>
+
+</html>

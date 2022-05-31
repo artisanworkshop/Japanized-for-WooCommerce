@@ -9,15 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_action( 'admin_enqueue_scripts', 'enqueue_field_editor_style' );
-add_action( 'admin_enqueue_scripts', 'enqueue_field_editor_script' );
+add_action( 'admin_enqueue_scripts', 'peachpay_enqueue_field_editor_style' );
+add_action( 'admin_enqueue_scripts', 'peachpay_enqueue_field_editor_script' );
 
 /**
  * Enqueues admin.css
+ *
+ * @param string $hook Page level hook.
  */
-function enqueue_field_editor_style() {
+function peachpay_enqueue_field_editor_style( $hook ) {
+	if ( 'toplevel_page_peachpay' !== $hook ) {
+		return;
+	}
 	wp_enqueue_style(
-		'field-editor.css',
+		'peachpay-field-editor',
 		plugin_dir_url( __FILE__ ) . 'assets/field-editor.css',
 		array(),
 		true
@@ -26,8 +31,13 @@ function enqueue_field_editor_style() {
 
 /**
  * Enqueues field-editor.js to the modal.
+ *
+ * @param string $hook Page level hook.
  */
-function enqueue_field_editor_script() {
+function peachpay_enqueue_field_editor_script( $hook ) {
+	if ( 'toplevel_page_peachpay' !== $hook ) {
+		return;
+	}
 	add_action( 'admin_footer', 'peachpay_add_new_field_modal' );
 	wp_enqueue_script(
 		'peachpay-field-editor',
@@ -37,7 +47,6 @@ function enqueue_field_editor_script() {
 		false
 	);
 }
-
 
 /**
  * Adds the div that will contain the deactivation form modal
@@ -53,8 +62,24 @@ function peachpay_add_new_field_modal() {
  */
 function peachpay_field_editor() {
 	add_settings_section(
-		'peachpay_section_field_editor',
+		'peachpay_presets_field_editor',
 		__( 'Checkout field editor', 'peachpay-for-woocommerce' ),
+		null,
+		'peachpay'
+	);
+
+	add_settings_field(
+		'peachpay_presets_field_editor',
+		__( 'Virtual product fields', 'peachpay-for-woocommerce' ),
+		'peachpay_virtual_product_field_preset_enable_cb',
+		'peachpay',
+		'peachpay_presets_field_editor',
+		array( 'label_for' => 'peachpay_hide_shipping_billing_fields' )
+	);
+
+	add_settings_section(
+		'peachpay_section_field_editor',
+		__( 'Additional fields', 'peachpay-for-woocommerce' ),
 		null,
 		'peachpay'
 	);
@@ -70,7 +95,7 @@ function peachpay_field_editor() {
 
 	add_settings_section(
 		'peachpay_checkout_field_editor',
-		__( 'Additional fields', 'peachpay-for-woocommerce' ),
+		null,
 		'peachpay_generate_table_cb',
 		'peachpay',
 		array( 'label_for' => 'peachpay_checkout_field_editor' )
@@ -91,6 +116,23 @@ function peachpay_field_editor_enable_cb() {
 	>
 	<label for="peachpay_enable_show_additional_fields"><b><?php esc_attr_e( 'Show additional fields in the checkout window', 'peachpay-for-woocommerce' ); ?></b></label>
 	<p class="description"><?php esc_attr_e( 'When enabled, the fields you add below will be displayed in the checkout window.', 'peachpay-for-woocommerce' ); ?></p>
+	<?php
+}
+
+/**
+ * Generates a checkbox for enable virtual products preset fields.
+ */
+function peachpay_virtual_product_field_preset_enable_cb() {
+	?>
+	<input
+		id="peachpay_enable_preset_virtual_product_fields"
+		name="peachpay_field_editor[enable_virtual_product_fields]"
+		type="checkbox"
+		value="1"
+		<?php checked( 1, peachpay_get_settings_option( 'peachpay_field_editor', 'enable_virtual_product_fields' ), true ); ?>
+	>
+	<label for="peachpay_enable_preset_virtual_product_fields"><b><?php esc_html_e( 'Hide the shipping/billing fields for virtual products', 'peachpay-for-woocommerce' ); ?></b></label>
+	<p class="description"><?php esc_html_e( 'If the cart only consists of virtual products, don\'t show the shipping/billing address fields.', 'peachpay-for-woocommerce' ); ?></p>
 	<?php
 }
 
@@ -122,6 +164,22 @@ function peachpay_generate_table_cb() {
 				$temp_field[ $key ] = $_POST[ $key ];
 			}
 		}
+
+		if( isset( $_POST['option'] ) ) { 
+			$temp_option_name = array();
+			foreach ( $_POST['option']['name'] as $name ) {
+				$temp_option_name[] = $name;
+			}
+			$temp_option_value = array();	
+			foreach ( $_POST['option']['value'] as $value ) {
+				$temp_option_value[] = $value;
+			}
+
+			for ($i = 0; $i <= sizeof( $temp_option_name ) - 1; $i++) {
+				$temp_field['option'][$temp_option_value[$i]] = $temp_option_name[$i];
+			}
+		}
+
 		if ( peachpay_field_name_exist( $_POST['field_name'] ) && ! empty( get_option( 'peachpay_field_editor' )['field'] ) ) {
 			$index      = peachpay_field_name_exist( $_POST['field_name'] );
 			$curent_row = isset( $_POST['edit-row'] ) ? $_POST['edit-row'] : null;
@@ -228,7 +286,7 @@ function peachpay_generate_body( array $field_keys ) {
 		<?php
 		foreach ( $field_option['order'] as $order_number ) {
 			?>
-			<tr class="row_<?php echo esc_html( $order_number ); ?> <?php echo ( ! isset( $field_option['field'][ $order_number ]['field_enable'] ) || '' === $field_option['field'][ $order_number ]['field_enable'] ) ? 'row-disabled' : ''; ?>" draggable="true" >
+			<tr class="field-data-row row_<?php echo esc_html( $order_number ); ?> <?php echo ( ! isset( $field_option['field'][ $order_number ]['field_enable'] ) || '' === $field_option['field'][ $order_number ]['field_enable'] ) ? 'row-disabled' : ''; ?>" draggable="false" >
 				<td class="sort">
 				<i class="dragable-icon" aria-hidden="true"></i>
 				<?php
@@ -242,8 +300,19 @@ function peachpay_generate_body( array $field_keys ) {
 					/>
 					<?php
 				}
+				if ( isset( $field_option['field'][ $order_number ]['option'] ) && ! empty( isset( $field_option['field'][ $order_number ]['option'] ) ) ) {
+					foreach ( $field_option['field'][ $order_number ]['option'] as $value => $name ) {
+						?>
+						<input
+							type="hidden"
+							name="peachpay_field_editor[field][<?php echo esc_html( $order_number ); ?>][option][<?php echo esc_html( $value ); ?>]"
+							value="<?php echo esc_html( $name ); ?>"
+						/>
+						<?php
+					}
+				}
 				?>
-					<input type="hidden" class="field_<?php echo esc_html( $order_number ); ?>" name="peachpay_field_editor[order][]" value="<?php echo esc_html( $order_number ); ?>" id =" order<?php echo esc_html( $order_number ); ?>" >
+					<input type="hidden" class="field_<?php echo esc_html( $order_number ); ?>" name="peachpay_field_editor[order][]" value="<?php echo esc_html( $order_number ); ?>" id ="order<?php echo esc_html( $order_number ); ?>" >
 					<input type="hidden" class="field_<?php echo esc_html( $order_number ); ?>" name="peachpay_field_editor[next_index]" value="<?php echo esc_html( $field_option['next_index'] ); ?>" id ="next_index<?php echo esc_html( $order_number ); ?>" />
 					<input type="hidden" class="field-data" id="field-data_<?php echo esc_html( $order_number ); ?>" value="<?php echo esc_html( htmlspecialchars( peachpay_generate_field_data_json( $field_keys, $order_number ) ) ); ?>" />
 				</td>
@@ -298,6 +367,20 @@ function peachpay_update_field_data( array $field, array $keys, int $current_row
 	foreach ( $keys as $key ) {
 		$field_option['field'][ $current_row ][ $key ] = $field[ $key ];
 	}
+	if ( isset( $field['option'] ) ) {
+		$temp_option_name = array();
+		foreach ( $field['option']['name'] as $name ) {
+			$temp_option_name[] = $name;
+		}
+		$temp_option_value = array();
+		foreach ( $field['option']['value'] as $value ) {
+			$temp_option_value[] = $value;
+		}
+		$temp_array_size = count( $temp_option_name );
+		for ( $i = 0; $i <= $temp_array_size - 1; $i++ ) {
+			$field_option['field'][ $current_row ]['option'][ $temp_option_name[ $i ] ] = $temp_option_value[ $i ];
+		}
+	}
 	update_option( 'peachpay_field_editor', $field_option );
 }
 
@@ -317,6 +400,15 @@ function peachpay_overlap_field( array $field, int $index, array $keys, $current
 		} else {
 			$field_option['field'][ $index ][ $key ] = $field[ $key ];
 		}
+	}
+
+	if ( isset( $field['option'] ) ) {
+		unset( $field_option['field'][ $index ]['option'] );
+		foreach ( $field['option'] as $value => $name ) {
+			$field_option['field'][ $index ]['option'][ $value ] = $name;
+		}
+	} else {
+		unset( $field_option['field'][ $index ]['option'] );
 	}
 
 	if ( peachpay_field_name_exist( $field['field_name'] ) && $index !== (int) $current_row && null !== $current_row ) {
@@ -360,6 +452,15 @@ function peachpay_generate_field_data_json( array $keys, int $current_index ) {
 			$temp = '"' . $key . '":"' . $field['field'][ $current_index ][ $key ] . '",';
 		}
 		$result .= $temp;
+	}
+	if ( isset( $field['field'][ $current_index ]['option'] ) && ! empty( $field['field'][ $current_index ]['option'] ) ) {
+		$result .= '"option":[';
+
+		foreach ( $field['field'][ $current_index ]['option'] as $value => $name ) {
+			$result .= '["' . $value . '","' . $name . '"],';
+		}
+		$result  = rtrim( $result, ', ' );
+		$result .= ']';
 	}
 	$result  = rtrim( $result, ', ' );
 	$result .= '}';

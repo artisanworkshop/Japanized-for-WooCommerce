@@ -31,7 +31,7 @@ function peachpay_button_section_overall() {
 	add_settings_section(
 		'peachpay_section_button',
 		__( 'Button preferences', 'peachpay-for-woocommerce' ),
-		null,
+		'peachpay_feedback_cb',
 		'peachpay'
 	);
 
@@ -81,6 +81,24 @@ function peachpay_button_section_overall() {
 		'peachpay',
 		'peachpay_section_button',
 		array( 'label_for' => 'peachpay_button_sheen' )
+	);
+
+	add_settings_field(
+		'peachpay_field_button_fade',
+		__( 'Fade', 'peachpay-for-woocommerce' ),
+		'peachpay_field_button_fade_cb',
+		'peachpay',
+		'peachpay_section_button',
+		array( 'label_for' => 'peachpay_button_fade' )
+	);
+
+	add_settings_field(
+		'peachpay_field_disable_default_font_css',
+		__( 'Font style', 'peachpay-for-woocommerce' ),
+		'peachpay_field_disable_default_font_css_cb',
+		'peachpay',
+		'peachpay_section_button',
+		array( 'label_for' => 'peachpay_disable_default_font_css' )
 	);
 
 	add_settings_field(
@@ -143,16 +161,86 @@ function peachpay_field_button_icon_cb() {
  * Callback for button color field.
  */
 function peachpay_field_button_color_cb() {
-	$options = get_option( 'peachpay_button_options' );
+	$options              = get_option( 'peachpay_button_options' );
+	$default_color_hex    = '#FF876C';
+	$current_button_color = ($options)?$options['button_color']:'';
 	?>
-	<input
-		id='peachpay_button_color'
-		name='peachpay_button_options[button_color]'
-		type='color'
-		value='<?php echo esc_attr( $options ? $options['button_color'] : '#FF876C' ); ?>'
-		style='width: 75px'
-		list='presets'
-	/>
+	<div class="pp-merged-inputs">
+		<div class="pp-color-input-container">
+			<input
+				id='peachpay_button_color'
+				name='peachpay_button_options[button_color]'
+				type='color'
+				value='<?php echo esc_attr( $options ? $options['button_color'] : $default_color_hex ); ?>'
+				list='presets'
+			/>
+		</div>
+		<input
+			id='peachpay_button_color_text'
+			name='button_color_text'
+			type='text'
+			value='<?php echo esc_attr( $current_button_color ); ?>'
+		/>
+	</div>
+	<style>
+		.pp-merged-inputs{
+			padding: 0;
+			margin: 0;
+			background-color: white;
+			border-radius: 0.2rem;
+			border: 1px solid #8c8f94;
+			width: fit-content;
+			display: flex;
+			flex-direction: row;
+		}
+		.pp-color-input-container {
+			border-right: 1px solid #8c8f94;
+		}
+		.pp-merged-inputs input{
+			padding: 0;
+			margin: 0;
+			border: none;
+			border-radius: 0;
+		}
+		.pp-merged-inputs input[type="color"]{
+			height:100%;
+			width: 65px;
+			border-top-left-radius: 0.2rem;
+			border-bottom-left-radius: 0.2rem;
+		}
+		.pp-merged-inputs input[type="text"]{
+			display: inline-block;
+			padding: 0 5px;
+			width: 100px;
+			border-top-right-radius: 0.2rem;
+			border-bottom-right-radius: 0.2rem;
+		}
+	</style>
+	<script>
+		function copyColorFromText(){
+			const hex_color = document.getElementById('peachpay_button_color_text').value;
+			if(document.getElementById('peachpay_button_color') != null)
+			document.getElementById('peachpay_button_color').value = hex_color;
+		}
+		if(document.getElementById('peachpay_button_color_text')!= null){
+			const hex_input = document.getElementById('peachpay_button_color_text');
+			if(document.getElementById('peachpay_button_color_text').value != null)
+			hex_input.addEventListener('change', copyColorFromText);
+			hex_input.addEventListener('input', copyColorFromText);
+		}
+		function copyColorFromDropBox(){
+			if(document.getElementById('peachpay_button_color_text')!= null){
+				const hex_color = document.getElementById('peachpay_button_color').value;
+				document.getElementById('peachpay_button_color_text').value = hex_color;
+			}
+		}
+		if(document.getElementById('peachpay_button_color')!= null){
+			const hex_dropBox = document.getElementById('peachpay_button_color');
+			if(document.getElementById('peachpay_button_color').value != null)
+			hex_dropBox.addEventListener('change', copyColorFromDropBox);
+		}
+	</script>
+
 	<datalist id="presets">
 		<option>#FF876C</option>
 		<option>#ff8ba8</option>
@@ -162,6 +250,7 @@ function peachpay_field_button_color_cb() {
 		<option>#af57ec</option>
 		<option>#111111</option>
 	</datalist>
+
 	<?php
 }
 
@@ -214,6 +303,49 @@ function peachpay_field_button_sheen_cb() {
 		<?php checked( 1, peachpay_get_settings_option( 'peachpay_button_options', 'button_sheen' ), true ); ?>
 	>
 	<label for='peachpay_button_sheen'><?php esc_html_e( 'Turn off button shine', 'peachpay-for-woocommerce' ); ?></label>
+	<?php
+}
+
+/**
+ * Callback for button shine field.
+ */
+function peachpay_field_button_fade_cb() {
+	?>
+	<input
+		id="peachpay_button_fade"
+		name="peachpay_button_options[button_fade]"
+		type="checkbox"
+		value="1"
+		<?php checked( 1, peachpay_get_settings_option( 'peachpay_button_options', 'button_fade' ), true ); ?>
+	>
+	<label for='peachpay_button_fade'><?php esc_html_e( 'Turn on button fade on hover', 'peachpay-for-woocommerce' ); ?></label>
+	<p
+	for='peachpay_button_fade'
+	class="description">
+	<?php
+	esc_html_e( 'It\'s recommended to have \'Show icon\' set to \'None\' if button fade is enabled.', 'peachpay-for-woocommerce' );
+	?>
+	</p>
+	<?php
+}
+
+/**
+ * Callback for disable default CSS for the button field.
+ */
+function peachpay_field_disable_default_font_css_cb() {
+	?>
+	<input
+		id="peachpay_disable_default_font_css"
+		name="peachpay_button_options[disable_default_font_css]"
+		type="checkbox"
+		value="1"
+		<?php checked( 1, peachpay_get_settings_option( 'peachpay_button_options', 'disable_default_font_css' ), true ); ?>
+	>
+	<label for='peachpay_disable_default_font_css'><?php esc_html_e( 'Make the PeachPay button font style match the theme font', 'peachpay-for-woocommerce' ); ?></label>
+	<p
+	for='peachpay_disable_default_font_css'
+	class="description">
+	<?php esc_html_e( 'This will disable the PeachPay button font style rules (font-family, font-size, font-weight, and transform-text) and use the styles from the website theme.', 'peachpay-for-woocommerce' ); ?></p>
 	<?php
 }
 
@@ -400,11 +532,61 @@ function peachpay_field_button_width_cb( $args ) {
 }
 
 /**
+ * Callback for peachpay_field_checkout_outline that renders the checkout outline display.
+ */
+function peachpay_field_checkout_outline_cb() {
+	?>
+	<input
+		id = "checkout_outline_disabled"
+		name = "peachpay_button_options[checkout_outline_disabled]"
+		type = "checkbox"
+		value = "1"
+		<?php checked( 1, peachpay_get_settings_option( 'peachpay_button_options', 'checkout_outline_disabled' ), true ); ?>
+	>
+	<label for='checkout_outline_disabled'>
+	<?php
+		esc_html_e( 'Don\'t show the outline around the PeachPay button on the checkout page', 'peachpay-for-woocommerce' );
+	?>
+	</label>
+	<?php
+}
+
+/**
+ * Callback for peachpay_field_checkout_text that renders the checkout text display.
+ */
+function peachpay_field_checkout_text_cb() {
+	?>
+	<input
+		id="checkout_header_text"
+		name="peachpay_button_options[checkout_header_text]"
+		type="text"
+		value='<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_button_options', 'checkout_header_text' ) ); ?>'
+	>
+	<p class="description"><?php esc_html_e( 'Customize the text above the PeachPay button on the checkout page. Leaving it blank defaults it to "Check out with PeachPay" in your chosen language.', 'peachpay-for-woocommerce' ); ?></p>
+	<?php
+}
+
+/**
+ * Callback for peachpay_field_checkout_subtext that renders the checkout subtext display.
+ */
+function peachpay_field_checkout_subtext_cb() {
+	?>
+	<input
+		id="checkout_subtext_text"
+		name="peachpay_button_options[checkout_subtext_text]"
+		type="text"
+		value='<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_button_options', 'checkout_subtext_text' ) ); ?>'
+	>
+	<p class="description"><?php esc_html_e( 'Customize the text below the PeachPay button on the checkout page. Leaving it blank defaults it to "The next time you come back, you’ll have one-click checkout and won’t have to waste time filling out the fields below." in your chosen language.', 'peachpay-for-woocommerce' ); ?></p>
+	<?php
+}
+
+/**
  * Callback for peachpay_field_product_button_preview that renders the product page button preview.
  */
 function peachpay_field_product_button_preview_cb() {
 	$options     = get_option( 'peachpay_button_options' );
-	$button_text = ( isset( $options['peachpay_button_text'] ) && '' !== $options['peachpay_button_text'] ) ? $options['peachpay_button_text'] : peachpay_get_button_text();
+	$button_text = ( isset( $options['peachpay_button_text'] ) && '' !== $options['peachpay_button_text'] ) ? $options['peachpay_button_text'] : peachpay_get_translated_text( 'button_text' );
 	?>
 		<div id="pp-button-container" class="button-container-preview pp-button-container margin-0">
 			<button
@@ -478,7 +660,7 @@ function peachpay_button_section_cart_page() {
  */
 function peachpay_field_cart_button_preview_cb() {
 	$options     = get_option( 'peachpay_button_options' );
-	$button_text = ( isset( $options['peachpay_button_text'] ) && '' !== $options['peachpay_button_text'] ) ? $options['peachpay_button_text'] : peachpay_get_button_text();
+	$button_text = ( isset( $options['peachpay_button_text'] ) && '' !== $options['peachpay_button_text'] ) ? $options['peachpay_button_text'] : peachpay_get_translated_text( 'button_text' );
 	?>
 		<div id="pp-button-container" class="button-container-preview pp-button-container margin-0">
 			<button
@@ -545,6 +727,30 @@ function peachpay_button_section_checkout_page() {
 		'peachpay_checkout_page_button',
 		array( 'label_for' => 'peachpay_field_button_preview' )
 	);
+
+	add_settings_field(
+		'peachpay_field_button_outline_checkout_page',
+		__( 'Display outline', 'peachpay-for-woocommerce' ),
+		'peachpay_field_checkout_outline_cb',
+		'peachpay',
+		'peachpay_checkout_page_button'
+	);
+
+	add_settings_field(
+		'peachpay_field_text_checkout_page',
+		__( 'Header text', 'peachpay-for-woocommerce' ),
+		'peachpay_field_checkout_text_cb',
+		'peachpay',
+		'peachpay_checkout_page_button'
+	);
+
+	add_settings_field(
+		'peachpay_field_subtext_checkout_page',
+		__( 'Additional text', 'peachpay-for-woocommerce' ),
+		'peachpay_field_checkout_subtext_cb',
+		'peachpay',
+		'peachpay_checkout_page_button'
+	);
 }
 
 /**
@@ -552,7 +758,7 @@ function peachpay_button_section_checkout_page() {
  */
 function peachpay_field_checkout_button_preview_cb() {
 	$options     = get_option( 'peachpay_button_options' );
-	$button_text = ( isset( $options['peachpay_button_text'] ) && '' !== $options['peachpay_button_text'] ) ? $options['peachpay_button_text'] : peachpay_get_button_text();
+	$button_text = ( isset( $options['peachpay_button_text'] ) && '' !== $options['peachpay_button_text'] ) ? $options['peachpay_button_text'] : peachpay_get_translated_text( 'button_text' );
 	?>
 		<div id="pp-button-container" class="button-container-preview pp-button-container margin-0">
 			<button
@@ -715,7 +921,7 @@ function peachpay_field_shop_button_preview_cb() {
 					<img id="button-icon-shop" class=""/>
 				</div>
 			</button>
-			<div id="pp-item-count">0</div>
+			<div class="item-count">0</div>
 		</div>
 	<?php
 }

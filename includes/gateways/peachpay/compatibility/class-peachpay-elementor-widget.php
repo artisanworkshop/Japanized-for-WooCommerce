@@ -14,16 +14,18 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 
 /**
  * Loads Peachpay Elementor support.
+ *
+ * @param \Elementor\Widgets_Manager $widgets_manager Elementor widgets manager.
  */
-function peachpay_load_elementor_widget() {
+function peachpay_load_elementor_widget( $widgets_manager ) {
 	try {
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor\PeachPay_Elementor_Widget() );
+		$widgets_manager->register( new \Elementor\PeachPay_Elementor_Widget() );
 		// phpcs:ignore
 	} catch ( \Exception $exception ) {
 		// Prevent a fatal error if Elementor class could not be loaded for whatever reason.
 	}
 }
-add_action( 'peachpay_init_compatibility', '\Elementor\peachpay_load_elementor_widget' );
+add_action( 'elementor/widgets/register', '\Elementor\peachpay_load_elementor_widget' );
 
 /**
  * Elementor widget that inserts the PeachPay button onto any page.
@@ -60,7 +62,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 	}
 //phpcs:ignore
 	public function get_title() {
-		return __( 'PeachPay', 'woocommerce-for-japan' );
+		return __( 'PeachPay', 'peachpay-for-woocommerce' );
 	}
 //phpcs:ignore
 	public function get_icon() {
@@ -89,7 +91,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->start_controls_section(
 			'content_section',
 			array(
-				'label' => __( 'Content', 'woocommerce-for-japan' ),
+				'label' => __( 'Content', 'peachpay-for-woocommerce' ),
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			)
 		);
@@ -97,7 +99,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->add_control(
 			'text',
 			array(
-				'label'       => __( 'Button Text', 'woocommerce-for-japan' ),
+				'label'       => __( 'Button Text', 'peachpay-for-woocommerce' ),
 				'type'        => \Elementor\Controls_Manager::TEXT,
 				'placeholder' => '',
 			)
@@ -106,7 +108,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->add_control(
 			'color',
 			array(
-				'label'   => __( 'Color', 'woocommerce-for-japan' ),
+				'label'   => __( 'Color', 'peachpay-for-woocommerce' ),
 				'type'    => \Elementor\Controls_Manager::COLOR,
 				'default' => $options['button_color'],
 			)
@@ -115,7 +117,19 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->add_control(
 			'shine',
 			array(
-				'label'        => __( 'Turn off button shine', 'woocommerce-for-japan' ),
+				'label'        => __( 'Turn off button shine', 'peachpay-for-woocommerce' ),
+				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'label_on'     => 'yes',
+				'label_off'    => 'no',
+				'default'      => 'no',
+				'return_value' => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'fade',
+			array(
+				'label'        => __( 'Turn on button fade on hover', 'peachpay-for-woocommerce' ),
 				'type'         => \Elementor\Controls_Manager::SWITCHER,
 				'label_on'     => 'yes',
 				'label_off'    => 'no',

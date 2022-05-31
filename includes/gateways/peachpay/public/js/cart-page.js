@@ -6,15 +6,33 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 self.addEventListener('load', () => {
-	jQuery(document.body).on('removed_from_cart updated_cart_totals', () => {
-		pp_placeButtonCartPage();
-		peachpay_addCustomMerchantStyles();
+	jQuery(document.body).on('removed_from_cart updated_cart_totals update_checkout', (event) => {
+		renderPeachPayButton();
 
-		if (document.querySelector('#button-icon-regular')) {
-			update_buttonIcon(peachpay_data.button_icon, 'regular');
+		// For Yith Gift card plugin that uses this event trigger only
+		if (event.type === 'update_checkout') {
+			setTimeout(reinsertPPButton, 3000);
 		}
 	});
 });
+
+// Renders the peachpay button in the cart page
+function renderPeachPayButton() {
+	pp_placeButtonCartPage();
+	peachpay_addCustomMerchantStyles();
+
+	if (document.querySelector('#button-icon-regular')) {
+		update_buttonIcon(peachpay_data.button_icon, 'regular');
+	}
+}
+
+// Reinsert the peachpay cart button if it goes missing, (only for Yith gift card plugin)
+function reinsertPPButton() {
+	const button = document.querySelector('#pp-button-container');
+	if (!button) {
+		renderPeachPayButton();
+	}
+}
 
 // deno-lint-ignore camelcase
 function pp_placeButtonCartPage() {
@@ -86,7 +104,7 @@ function insertPeachPayAt(element, location) {
 
 	peachpay_initButton({
 		width,
-		position: peachpay_data.button_alignment_cart_page,
+		alignment: peachpay_data.button_alignment_cart_page,
 		borderRadius: peachpay_data.button_border_radius,
 	});
 

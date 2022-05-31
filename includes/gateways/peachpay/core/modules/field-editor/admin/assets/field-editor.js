@@ -16,40 +16,42 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function reorderFields() {
-	const drag = document.querySelectorAll('#field-table tbody tr');
-	let	dragged = null;
+	const drag = document.querySelector('#field-table');
 
-	for (const i of drag) {
-		i.addEventListener('dragstart', event => {
-			dragged = event.target;
+	drag.addEventListener('drop', event => {
+		event.preventDefault();
+		const currentRow = document.querySelector('.field-data-row[draggable=true]');
+		const targetRow = event.target.closest('.field-data-row');
+		const all = Array.from(document.querySelectorAll('.field-data-row'));
+		const currentRowIndex = all.indexOf(currentRow);
+		const targetRowIndex = all.indexOf(targetRow);
+		if(currentRowIndex !== targetRowIndex) {
+			currentRow.remove();
+			targetRow.insertAdjacentElement((currentRowIndex - targetRowIndex) > 0 ? 'beforebegin' : 'afterend', currentRow);
+		}
+		document.querySelectorAll('.field-data-row').forEach((row) => {
+			row.setAttribute('draggable', false);
 		});
+	});
 
-		i.addEventListener('dragover', event => {
-			// Prevent default to allow drop
-			event.preventDefault();
-		}, false);
+	drag.addEventListener('mousedown', event => {
+		const target = event.target;
 
-		i.addEventListener('drop', function (event) {
-			// Prevent default action (open as link for some elements)
-			event.preventDefault();
-			if (dragged !== this) {
-				const all = document.querySelectorAll('#field-table tbody tr');
-				let currentpos = 0;
-				let droppedpos = 0;
-				for (const [i, element] of all.entries()) {
-					if (dragged === element) {
-						currentpos = i;
-					}
+		if(!target) {
+			return;
+		}
 
-					if (this === element) {
-						droppedpos = i;
-					}
-				}
+		if(target.closest('.dragable-icon')) {
+			const row = target.closest('.field-data-row');
+			row.setAttribute('draggable', true);
+		}
+	});
 
-				this.parentNode.insertBefore(dragged, currentpos < droppedpos ? this.nextSibling : this);
-			}
-		});
-	}
+	drag.addEventListener('dragover', event => {
+		// Prevent default to allow drop
+		event.preventDefault();
+	}, false);
+	
 }
 
 function addNewField() {
@@ -98,15 +100,17 @@ function showModal(event) {
 					>${window.pp_i18n['Type:'][getLanguage()]} <abbr class="required" title="required">*</abbr>
 			</label>
 			<div class="input-field">
-				<select id="field_type" class="p-1 input-box w-100" name="type_list" form="field-info">
+				<select id="field_type" class="p-1 input-box pp-w-100" name="type_list" form="field-info">
 					<option value="text">${window.pp_i18n['Text'][getLanguage()]}</option>
+					<option value="select">Select</option>
+					<option value="radio">Radio</option>
 					<!-- <option value="textarea">Textarea</option> -->
 				</select>
 			</div>
 			<div class="input-field flex">
 				<input
 					id="field_name"
-					class="input-box w-100"
+					class="input-box pp-w-100"
 					type="text"
 					name="field_name"
 					value="additional_"
@@ -125,7 +129,7 @@ function showModal(event) {
 			<div class="input-field flex">
 				<input
 					id="field_label"
-					class="input-box w-100"
+					class="input-box pp-w-100"
 					type="text"
 					name="field_label"
 					placeholder=" "
@@ -134,15 +138,16 @@ function showModal(event) {
 				<label for="field_label" class="form-label">
 				${window.pp_i18n['Label:'][getLanguage()]} <abbr class="required" title="required">*</abbr> </label><br />
 			</div>
-			<div class="input-field flex">
+			<div id="field_default_box" class="input-field flex">
 				<input
 					id="field_default"
-					class="input-box w-100"
+					class="input-box pp-w-100"
 					type="text"
 					name="field_default"
 					placeholder=" "
-				/><label for="field_default" class="form-label">${window.pp_i18n['Default value:'][getLanguage()]} </label
-				><br />
+				/>
+				<label for="field_default" class="form-label">${window.pp_i18n['Default value:'][getLanguage()]} </label>
+				<br />
 			</div>
 			<div class="input-checkboxes">
 				<div class="input-checkboxes">
@@ -182,12 +187,26 @@ function showModal(event) {
 					<label for="field_display_order_details"> ${window.pp_i18n['Display in Order Detail'][getLanguage()]} </label><br />
 				</div> -->
 			</div>
-			<div class="submit-field">
-				<input
+			<div id="option-list-summary" class="p-05 hide">
+				<div id="pp-option-list-dropdown" class="pp-option-dropdown-box pp-b-radius-05 flex" aria-expanded="false">
+					<label id="pp-option-label" class="select-lable pp-w-100 flex">Option Lists
+					<i class="pp-up-icon pp-summary-option-icon pp-option-dropdown-box-icon hide" aria-hidden="true"></i>
+					<i class="pp-down-icon pp-summary-option-icon pp-option-dropdown-box-icon" aria-hidden="true"></i></label> 
+				</div>
+				<!-- Generate the option list when needed -->
+				<div id="list-summary" class="pp-option-summary-box p-05">
+					<div id="list-item">
+						
+					</div>
+				</div>
+			</div>
+			<div class="submit-field flex">
+				<button
 					type="submit"
-					value="${window.pp_i18n['Submit'][getLanguage()]}"
 					class="field-button-submit button-primary"
-				/>
+				>
+				${window.pp_i18n['Submit'][getLanguage()]}
+				</button>
 			</div>
 		</form>
 	</div>
@@ -196,6 +215,167 @@ function showModal(event) {
 
 	$modal.insertAdjacentHTML('afterbegin', $modalContent);
 	$modal.addEventListener('click', hideAddFieldModal);
+	$modal.addEventListener('change', showOptionList);
+
+	initOptionSummaryEvents();
+}
+
+function initOptionSummaryEvents() {
+	const optionList = document.querySelector("#list-item");
+	optionList.addEventListener('click', addOptionRow);
+	optionList.addEventListener('click', deleteOptionRow);
+	optionList.addEventListener('drop', stopDraggingOptionRow);
+	optionList.addEventListener('mousedown', dragOptionRow);
+	optionList.addEventListener('dragover', event => {
+		// Prevent default to allow drop
+		event.preventDefault();
+	}, false);
+	document.querySelector('#pp-option-list-dropdown')?.addEventListener('click', optionSummaryDropdown);
+	document.querySelector('#pp-option-list-dropdown')?.addEventListener('keypress', (event) => {
+		if (event.key === 'Enter' || event.key === ' ') {
+			optionSummaryDropdown();
+		}
+	});
+}
+
+function optionSummaryDropdown() {
+	let dropdown = document.querySelector('#pp-option-list-dropdown')?.getAttribute('aria-expanded');
+	if(dropdown === 'false') {
+		dropdown = document.querySelector('#pp-option-list-dropdown')?.getAttribute('aria-expanded');
+		showOptionDropList();
+	} else {
+		dropdown = document.querySelector('#pp-option-list-dropdown')?.getAttribute('aria-expanded');
+		hideOptionDropList();
+	}
+}
+
+function showOptionDropList() {
+	document.querySelector('#pp-option-list-dropdown')?.setAttribute('aria-expanded', 'true');
+	document.querySelector('.pp-up-icon.pp-summary-option-icon')?.classList.remove('hide');
+	document.querySelector('.pp-down-icon.pp-summary-option-icon')?.classList.add('hide');
+	document.querySelector('#list-summary')?.classList.add('pp-option-summary-contents-opened');
+}
+
+function hideOptionDropList() {
+	document.querySelector('#pp-option-list-dropdown')?.setAttribute('aria-expanded', 'false');
+	document.querySelector('.pp-up-icon.pp-summary-option-icon')?.classList.add('hide');
+	document.querySelector('.pp-down-icon.pp-summary-option-icon')?.classList.remove('hide');
+	document.querySelector('#list-summary')?.classList.remove('pp-option-summary-contents-opened');
+}
+
+function dragOptionRow(event) {
+	const target = event.target;
+
+	if(!target) {
+		return;
+	}
+
+	if(target.closest('.pp-draggable-icon-option')) {
+		const row = target.closest('.list-option');
+		row.setAttribute('draggable', true);
+	}
+}
+
+function stopDraggingOptionRow(event) {
+	event.preventDefault();
+	const currentRow = document.querySelector('.list-option[draggable=true]');
+	const targetRow = event.target.closest('.list-option');
+	const all = Array.from(document.querySelectorAll('.list-option'));
+	const currentRowIndex = all.indexOf(currentRow);
+	const targetRowIndex = all.indexOf(targetRow);
+	if(currentRowIndex !== targetRowIndex) {
+		currentRow.remove();
+		targetRow.insertAdjacentElement((currentRowIndex - targetRowIndex) > 0 ? 'beforebegin' : 'afterend', currentRow);
+	}
+	document.querySelectorAll('.list-option').forEach((row) => {
+		row.setAttribute('draggable', false);
+	})
+}
+
+function showOptionList(event) {
+	if (event.target !== document.querySelector('select#field_type.input-box')) {
+		return;
+	}
+
+	const optionListSummary = document.querySelector('#option-list-summary');
+	const options = document.querySelector('#list-item');
+
+	if (event.target.value === 'select' || event.target.value === 'radio') {
+		optionListSummary.classList.remove('hide');
+		document.querySelector("#field_default_box.input-field").classList.add('hide');
+		if (options.children.length === 0) {
+			addNewOptionRow(options, true, options.children.length);
+		}
+	} else {
+		optionListSummary.classList.add('hide');
+		document.querySelector("#field_default_box.input-field").classList.remove('hide');
+		if (options.children.length > 0) {
+			while (options.firstChild) {
+				options.firstChild.remove();
+			}
+		}
+	}
+}
+
+function addNewOptionRow(target, endOfContainer = false, row, value = '', name = '') {
+	const newRow = `
+	<div class="flex list-option" draggable="false">
+		<div class="flex pp-w-23 p-025">
+			<i class="dragable-icon pp-draggable-icon-option pp-w-50" aria-hidden="true"></i>
+			<button type="button" class="p-05 pp-w-50 add-option button-secondary" title="Add new option row">
+				<i 
+					class="pp-option-dropdown-box-icon pp-add-remove-option-icon pp-add-option-row pp-w-50" 
+					aria-hidden="true"
+				>
+				</i>
+			</button>
+		</div>
+		<div class="flex pp-w-33 p-025">
+			<input id="option-name-row${row}" type="text" name="option[name][]" placeholder=" " class="pp-option-input-box pp-b-radius-05 p-05 pp-w-100" value="${name}">
+			<label for="option-name-row${row}" class="form-label pp-option-label">Option Text</label>
+		</div>
+		<div class="flex pp-w-33 p-025">
+			<input id="option-value-row${row}" type="text" name="option[value][]" placeholder=" " class="pp-option-input-box pp-b-radius-05 p-05 pp-w-100" value="${value}">
+			<label for="option-value-row${row}" class="form-label pp-option-label">Option Value</label>		
+		</div>
+		<div class="flex pp-w-10 p-025">
+			<button type="button" value="-" class="p-05 pp-w-100 remove-option button-secondary" title="Remove row">
+				<i 
+				class="pp-option-dropdown-box-icon pp-add-remove-option-icon pp-remove-option-row pp-w-50" 
+				aria-hidden="true"
+				>
+				</i>
+			</button>
+		</div>
+	</div>
+	`;
+
+	target.insertAdjacentHTML(endOfContainer ? 'beforeend' : 'afterend', newRow);
+}
+
+function addOptionRow(event) {
+	const target = event.target;
+
+	if (!target) {
+		return;
+	}
+
+	if(target.closest('.add-option')) {
+		addNewOptionRow(target.closest('.list-option'), false ,document.querySelector('#list-item').children.length);
+	}
+}
+
+function deleteOptionRow(event) {
+	const target = event.target;
+
+	if (!target) {
+		return;
+	} 
+	
+	const options = document.querySelector('#list-item');
+	if(target.closest('.remove-option') && options.children.length > 1) {
+		target.closest('.list-option').remove();
+	}
 }
 
 function enableField() {
@@ -316,6 +496,21 @@ function insertEditData(rawData) {
 		// document.querySelector(
 		// 	'#modal-content #field_display_order_details',
 		// ).checked = Boolean(data.field_display_order_details);
+		if(data.option && document.querySelector('#modal-content #field_type').value === 'select' 
+		|| document.querySelector('#modal-content #field_type').value === 'radio') {
+			const optionListSummary = document.querySelector('#option-list-summary');
+			const options = document.querySelector('#list-item');
+
+			document.querySelector("#field_default_box.input-field").classList.add('hide');
+
+			optionListSummary.classList.remove('hide');
+			let rowNum = 0;
+			for(const value in data.option) {
+				addNewOptionRow(options, true, rowNum, data.option[value][0], data.option[value][1]);
+				rowNum++;
+			}
+		}
+
 		document
 			.querySelector('#modal-content #field-info')
 			.insertAdjacentHTML(
@@ -353,6 +548,22 @@ function hideAddFieldModal(event) {
 			'#modal-content #field-info input[type=hidden]',
 		);
 		hidden.remove();
+	}
+
+	const options = document.querySelector('#list-item');
+	const optionListSummary = document.querySelector('#option-list-summary');
+
+	optionListSummary.classList.add('hide');
+
+	document.querySelector('#list-summary')?.classList.remove('pp-option-summary-contents-opened');
+	document.querySelector('#pp-option-list-dropdown')?.setAttribute('aria-expanded', 'false');
+	document.querySelector('.pp-up-icon.pp-summary-option-icon')?.classList.add('hide');
+	document.querySelector('.pp-down-icon.pp-summary-option-icon')?.classList.remove('hide');
+
+	if (options.children.length > 0) {
+		while (options.firstChild) {
+			options.firstChild.remove();
+		}
 	}
 
 	if (event.target.id === 'close') {

@@ -6,173 +6,107 @@ file link was not clickable. */
 	clip: unset !important;
 }
 
-.ppModal {
-	display: none;
-	position: fixed;
-	height: calc(100vh - 32px);
+#wpcontent {
+	padding: 0;
+}
+
+.wrap {
+	margin: 0px 0px 0px;
+}
+
+.peachpay-header {
+	background:white;
+	padding: 32px 18px 0;
+}
+
+.peachpay-heading {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	clear: both;
 	width: 100%;
-	bottom: 0;
-	left: 0;
-	background-color: rgba(0,0,0,.8);
+	font-weight: bolder;
+	margin-top: 0px;
+	margin-bottom: 0px;
 }
 
-.modal-content {
-	background-color: #fefefe;
-	position: absolute;
-	box-shadow: 2px 8px 20px 3px rgb(0 0 0 / 20%);
-	margin: auto;
-	top: calc(15%);
-	border-radius: 3px;
-	width: 550px;
-	left: calc(50% - 275px) ;
+.peachpay-logo {
+	height: 48px;
+	width: 228.24px;
+	padding: 0px 18px;
 }
 
-.modal-header {
-	font-size: 19px;
-	padding: 18px 15px;
-    -webkit-box-shadow: 0 0 8px rgb(0 0 0 / 10%);
-    box-shadow: 0 0 8px rgb(0 0 0 / 10%);
-    text-align: left;
+.nav-tab-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	clear: both;
+	padding-top: 8px;
+	border-bottom: 0px;
+	flex-wrap: wrap;
 }
 
-.modal-message {
-	padding: 30px 30px 0;
-    text-align: left;
-	min-height: 50px;
-}
-
-.modal-header {
-	padding: 15px;
-	padding-top: 10px;
-	text-align: center;
-}
-
-.deactivation-header {
-	font-size: 15px;
-	font-weight: 700;
-	text-transform: uppercase;
-	margin-right: 25px;
-	display: inline-block;
-	padding-bottom: 3.5px;
-}
-
-.peachpay-deactivate-feedback-form-caption {
-	font-weight: 700;
-    font-size: 15px;
-    color: #495157;
-    line-height: 1.4;
-}
-
-.feedback-input {
-	line-height: 1;
-    overflow: hidden;
-    margin-bottom: 15px;
-	font-weight: ;
-}
-
-.modal-buttons-wrapper {
-	border-top: none;
-    text-align: left;
-    padding: 20px 30px 30px;
-    overflow: hidden;
-}
-
-.feedback-button-submit {
-	background: none;
-	background-color: #ff876c;
-	border: none;
-    border-radius: 3px;
-    color: #fff;
-    line-height: 1;
-    padding: 12px 20px;
-    font-size: 13px;
-    width: 180px;
-    height: 38px;
-	cursor: pointer;
-}
-
-.feedback-button-skip {
-	border: none;
-	font-size: 12px;
-    color: #a4afb7;
-    background: none;
-    float: right;
-    width: auto;
-	padding: 13px 0;
-	cursor: pointer;
-}
-
-.peachpay-deactivate-feedback-form-wrapper {
-	padding-top: 30px;
-	text-align: left;
-	line-height: 1.5;
-	margin-bottom: 15px;
-	overflow: hidden;
-	font-size: 12px;
-
-}
-
-.peachpay-deactivate-feedback-input {
-	float: left;
-	margin: 0 15px 0 0 !important;
-	content: "";
-    border-radius: 50%;
-    width: .5rem;
-    height: .5rem;
-    margin: .1875rem;
-    background-color: #3582c4;
-    line-height: 1.14285714;
-	outline: none ! important;
-	box-shadow: none ! important;
-}
-
-.peachpay-deactivate-feedback-label {
+.nav-tab {
 	display: block;
-	margin-left: 25px;
-	font-size: 13px;
-	color: #394148;
+	text-decoration: none;
+	color: inherit;
+	padding: 0.5rem 1rem 1rem;margin: 0 1rem;
+	transition: box-shadow .5s ease-in-out;
+	background:white;
+	border: none;
+	flex-wrap: wrap;
 }
 
-.reason_dropdown_input {
-	width: 90%;
-	float: left;
-	margin: 10px 0 0 30px;
-	padding: 5px;
-	font-size: 12px;
-	display: none;
+.nav-tab-active {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	padding: 0.5rem 1rem 1rem;margin: 0 1rem;
+	transition: box-shadow .5s ease-in-out;
+	box-shadow: inset 0 -3px #FF876C;
+	font-weight: 600;
+	background: white;
+	border: none;
+	flex-wrap: wrap;
 }
 
-.dashicon-shopping-cart {
-    display: inline-block;
-    font-family: dashicons;
-    font-size: 25px;
-    font-weight: 400;
-    font-style: normal;
-    font-variant: normal;
-    line-height: 1;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-	color: #ff876c;
-	margin-top: 5px;
+.nav-tab:hover {
+	color: #FF876C;
 }
 
-.dashicon-shopping-cart:before {
-    content: '\f174';
+.nav-tab-active:hover {
+	color: #FF876C;
+	border-bottom: 0px;
+	background: none;
 }
 
-.pp-spinner {
-	width: 20px;
-	display: inline;
-	vertical-align: middle;
+#peachpay_settings_container {
+	max-width: 1000px;
+	margin: auto;
 }
 
-.customer-support-ask {
-	margin-left: 5px;
-	margin-top: 5px;
-	white-space: nowrap;
+.peachpay_settings_container_currency {
+	max-width: 90rem !important;
+	margin: auto;
 }
 
-.hide {
-	display: none !important;
+#peachpay_settings_container h2 {
+	border-bottom: 1px rgb(194, 194, 194) solid;
+	padding-bottom: 5px;
+}
+
+@media screen and (min-width: 782px) {
+	#peachpay_settings_container {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	#wpcontent {
+		padding-left: 0px;
+	}
+}
+
+.notice,
+.error {
+	margin: .5rem !important;
 }

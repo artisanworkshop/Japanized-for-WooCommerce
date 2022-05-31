@@ -307,6 +307,13 @@ class JP4WC_Admin_Screen {
 			'jp4wc_payment',
 			'jp4wc_payments'
 		);
+		add_settings_field(
+			'jp4wc_options_paypal',
+			__( 'PayPal', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_options_paypal' ),
+			'jp4wc_payment',
+			'jp4wc_payments'
+		);
 
         // Display of Specified Commercial Transaction Law
         add_settings_section(
@@ -350,6 +357,13 @@ class JP4WC_Admin_Screen {
             'jp4wc_law',
             'jp4wc_laws'
         );
+		add_settings_field(
+			'jp4wc_law_tel',
+			__( 'Telephone', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_law_tel' ),
+			'jp4wc_law',
+			'jp4wc_laws'
+		);
         add_settings_field(
             'jp4wc_law_price',
             __( 'Selling price', 'woocommerce-for-japan' ),
@@ -491,6 +505,7 @@ class JP4WC_Admin_Screen {
 					'atstore',
 					'cod2',
 					'peachpay',
+					'jp4wc-paypal',
 				);
 				foreach($payment_methods as $payment_method){
 					$woocommerce_settings = get_option('woocommerce_'.$payment_method.'_settings');
@@ -570,6 +585,7 @@ class JP4WC_Admin_Screen {
                     'law-cost',
                     'law-return',
                     'law-special',
+	                'law-tel',
                 );
                 $this->jp4wc_save_methods( $add_methods );
                 self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
@@ -929,6 +945,15 @@ class JP4WC_Admin_Screen {
 	}
 
 	/**
+	 * PayPal option.
+	 */
+	public function jp4wc_options_paypal() {
+		$title = __( 'PayPal', 'woocommerce-for-japan' );
+		$description = $this->jp4wc_plugin->jp4wc_description_payment_pattern( $title );
+		$this->jp4wc_plugin->jp4wc_input_checkbox('jp4wc-paypal', $description, $this->prefix);
+	}
+
+	/**
      * Shop Name option.
      */
     public function jp4wc_law_shop_name() {
@@ -979,7 +1004,16 @@ class JP4WC_Admin_Screen {
         $this->jp4wc_plugin->jp4wc_input_textarea('law-contact', $description, $default_value, $this->prefix);
     }
 
-    /**
+	/**
+	 * Telephone explanation.
+	 */
+	public function jp4wc_law_tel() {
+		$description = __( 'Please enter the telephone number.', 'woocommerce-for-japan' );
+		$default_value = '';
+		$this->jp4wc_plugin->jp4wc_input_textarea('law-tel', $description, $default_value, $this->prefix);
+	}
+
+	/**
      * Selling price rules explanation.
      */
     public function jp4wc_law_price() {

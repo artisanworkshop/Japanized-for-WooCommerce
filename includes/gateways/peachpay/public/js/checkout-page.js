@@ -12,6 +12,15 @@ function bugFixForNorthCostKeyless() {
 	return '';
 }
 
+function checkoutBorderRemoval() {
+	const container = document.querySelector('.checkout-container');
+	if (!container) {
+		return;
+	}
+	container.style.border = 'none';
+	container.style.boxShadow = 'none';
+}
+
 // deno-lint-ignore camelcase
 function pp_placeButtonCheckoutPage() {
 	if (!peachpay_data.is_checkout_page) {
@@ -26,11 +35,11 @@ function pp_placeButtonCheckoutPage() {
 
 	const buttonContainer = `
 		<div class="checkout-container ${(peachpay_data.test_mode && !peachpay_data.wp_admin_or_editor) ? 'hide' : ''}">
-			<h2 class="checkout-header">${window.pp_i18n['Check out with PeachPay'][getLanguage()]}</h2>
+			<h2 class="checkout-header">${peachpay_data.header_text_checkout_page}</h2>
 			${bugFixForNorthCostKeyless()}
 			${pp_peachpayButton}
 			<p class="peachpay-description">
-				${window.pp_i18n['The next time you come back, you’ll have one-click checkout and won’t have to waste time filling out the fields below.'][getLanguage()]}
+				${peachpay_data.subtext_text_checkout_page}
 			</p>
 		</div>
 	`;
@@ -62,7 +71,11 @@ function pp_placeButtonCheckoutPage() {
 
 	peachpay_initButton({
 		width,
-		position: peachpay_data.button_alignment_checkout_page,
+		alignment: peachpay_data.button_alignment_checkout_page,
 		borderRadius: peachpay_data.button_border_radius,
 	});
+
+	if (!peachpay_isElementor() && peachpay_data.checkout_outline_disabled) {
+		checkoutBorderRemoval();
+	}
 }

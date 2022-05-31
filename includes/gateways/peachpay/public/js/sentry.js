@@ -1,43 +1,26 @@
-// eslint-disable-next-line dot-notation
 if (window['Sentry']) { // Avoid exceptions from ad blockers and such
-	// eslint-disable-next-line prefer-arrow-callback
 	Sentry.onLoad(function () {
-		const devSite = location.hostname === 'localhost' || location.hostname === 'woo.peachpay.app';
+		const isDev = isDevEnvironment(basePeachPayAPIURL(location.hostnam));
 		Sentry.init({
-			environment: devSite ? 'development' : 'production',
-			debug: true,
-			beforeSend: function (event) {
-				try {
-					const exceptions = event.exception.values;
-
-					// Reverse search because deletions may occur
-					for (let i = exceptions.length - 1; i >= 0; i--) {
-						if (
-							exceptions[i].stacktrace &&
-							exceptions[i].stacktrace.frames &&
-							Array.isArray(exceptions[i].stacktrace.frames) &&
-							exceptions[i].stacktrace.frames.length > 0
-						) {
-							const frame = exceptions[i].stacktrace.frames[0];
-
-							if (frame.filename && frame.filename.indexOf('peachpay-for-woocommerce') >= 0) {
-								continue;
-							}
-						}
-
-						exceptions.splice(i, 1);
-					}
-
-					if (exceptions.length === 0) {
-						return null;
-					}
-
-					return event;
-					// eslint-disable-next-line unicorn/prefer-optional-catch-binding
-				} catch (_) {
-					return event;
-				}
-			},
+			environment: isDev ? 'development' : 'production',
+			release: `peachpay-plugin@${peachpay_data.version}`,
+			// Ignore errors produced by Chrome, Firefox, and Safari upon
+			// navigating away from a page that has a fetch request in progress.
+			// See https://forum.sentry.io/t/typeerror-failed-to-fetch-reported-over-and-overe/8447/2
+			ignoreErrors: [
+				'TypeError: Failed to fetch',
+				'TypeError: NetworkError when attempting to fetch resource.',
+				'TypeError: cancelled',
+				'TypeError: cancelado',
+				'TypeError: Abgebrochen',
+				'TypeError: annulé',
+				'Window navigated away',
+				'annullato',
+				'Load failed',
+			],
+			allowUrls: [
+				/peachpay-for-woocommerce/i,
+			],
 		});
 	});
 }
@@ -81,5 +64,26 @@ function captureSentryException(error, extra, fingerprint) {
 		});
 	} catch {
 		// Sentry is not present. Don't make things worse.
+	}
+}
+
+/**
+ * Captures a message of some sort of application event. This can be an
+ * error or just a situation the application encountered that may need
+ * reported.
+ *
+ * @param { string } eventMessage
+ */
+// deno-lint-ignore no-unused-vars
+function captureSentryEvent(eventMessage) {
+	try {
+		// eslint-disable-next-line dot-notation
+		if (window['Sentry']) {
+			return;
+		}
+
+		Sentry.captureMessage(eventMessage);
+	} catch {
+		//Do no harm
 	}
 }

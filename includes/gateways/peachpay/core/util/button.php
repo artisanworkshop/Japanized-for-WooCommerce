@@ -20,6 +20,8 @@ function peachpay_reset_button() {
 	$options['button_border_radius']             = 5;
 	$options['peachpay_button_text']             = '';
 	$options['button_sheen']                     = false;
+	$options['button_fade']                      = false;
+	$options['disable_default_font_css']         = false;
 	$options['hide_on_product_page']             = false;
 	$options['button_hide_payment_method_icons'] = false;
 
@@ -84,7 +86,7 @@ add_filter( 'woocommerce_add_to_cart_fragments', 'peachpay_update_cart_count' );
  */
 function peachpay_update_cart_count( $fragments ) {
 	$count                       = WC()->cart->cart_contents_count < 99 ? WC()->cart->cart_contents_count : '99+';
-	$fragments['#pp-item-count'] = '<div href="' . wc_get_cart_url() . '" id="pp-item-count">' . $count . '</div>';
+	$fragments['#pp-item-count'] = '<span href="' . wc_get_cart_url() . '" id="pp-item-count">' . $count . '</span>';
 	return $fragments;
 }
 
@@ -115,7 +117,9 @@ function peachpay_render_floating_button() {
 				<img id="button-icon-shop" style=' . $icon_size . ' class="pp-btn-symbol" src=' . $icon_url . '/>
 			</div>
 		</button>
-		<div href="' . wc_get_cart_url() . '" id="pp-item-count">' . WC()->cart->cart_contents_count . '</div>
+		<div class="item-count">
+			<span href="' . wc_get_cart_url() . '" id="pp-item-count">' . WC()->cart->cart_contents_count . '</span>
+		</div>
 		<div id="empty-cart-msg" class="hide">Cart is empty!</div>
 	</div>';
 	// phpcs:ignore

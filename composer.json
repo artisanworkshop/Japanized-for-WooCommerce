@@ -2,7 +2,7 @@
   "type": "wordpress-plugin-for-woocommerce",
   "license": "GPL-2.0-or-later",
   "require": {
-    "php": ">=7.3",
+    "php": ">=8.0",
     "ext-json": "*"
   },
   "require-dev": {
@@ -10,8 +10,8 @@
 		"squizlabs/php_codesniffer": "^3.6",
 		"phpcompatibility/php-compatibility": "^9.3",
 		"wp-coding-standards/wpcs": "^2.3",
-		"sirbrillig/phpcs-variable-analysis": "^2.10",
-        "wp-phpunit/wp-phpunit": "^5.0"
+		"sirbrillig/phpcs-variable-analysis": "^2.11",
+        "wp-phpunit/wp-phpunit": "^5.8"
   },
   "authors": [
     {

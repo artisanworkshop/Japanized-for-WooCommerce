@@ -144,6 +144,7 @@ function peachpay_upsell_items( WC_Product $product ) {
 	if ( peachpay_get_settings_option( 'peachpay_general_options', 'hide_woocommerce_products_upsell' ) ) {
 		return false;
 	}
+
 	$upsell_ids = $product->get_upsell_ids();
 	if ( ! $upsell_ids ) {
 		return;
@@ -151,7 +152,11 @@ function peachpay_upsell_items( WC_Product $product ) {
 	$upsell_items = array();
 	foreach ( $upsell_ids as $upsell_id ) {
 		$upsell = wc_get_product( $upsell_id );
-		$item   = array(
+
+		if ( ! $upsell ) {
+			break;
+		}
+		$item = array(
 			'id'        => $upsell->get_id(),
 			'name'      => $upsell->get_name(),
 			'price'     => $upsell->get_price(),
@@ -183,7 +188,10 @@ function peachpay_cross_sell_items( WC_Product $product ) {
 	$cross_sell_items = array();
 	foreach ( $cross_sell_ids as $cross_sell_id ) {
 		$cross_sell = wc_get_product( $cross_sell_id );
-		$item       = array(
+		if ( ! $cross_sell ) {
+			break;
+		}
+		$item = array(
 			'id'        => $cross_sell->get_id(),
 			'name'      => $cross_sell->get_name(),
 			'price'     => $cross_sell->get_price(),

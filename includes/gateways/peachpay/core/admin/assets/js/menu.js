@@ -1,9 +1,10 @@
 const tabNames = {
 	general: 'General',
-	payment: 'Payment Methods',
-	button: 'Button Preferences',
-	field: 'Field Editor',
-	related_products: 'Related Products',
+	payment: 'Payment methods',
+	button: 'Button preferences',
+	field: 'Field editor',
+	related_products: 'Related products',
+	currency: 'Currency'
 };
 
 function highlightCurrentSubmenu() {

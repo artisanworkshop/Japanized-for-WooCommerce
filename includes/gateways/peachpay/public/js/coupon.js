@@ -38,11 +38,9 @@ async function fetchAndSendCoupon(event) {
 		return;
 	}
 
-	if (peachpay_data.should_place_order_before_payment) {
-		if (!(await applyCoupon(coupon.code))) {
-			sendStopCouponLoadingMessage();
-			return;
-		}
+	if (!(await applyCoupon(coupon.code))) {
+		sendStopCouponLoadingMessage();
+		return;
 	}
 
 	document.querySelector('#peachpay-iframe').contentWindow.postMessage({

@@ -1,11 +1,35 @@
 body .modal-new-field-content {
-    font-family: avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        "Noto Sans", Ubuntu, Cantarell, "Helvetica Neue", sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-        "Noto Color Emoji";
+	font-family: avenir, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+		'Noto Sans', Ubuntu, Cantarell, 'Helvetica Neue', sans-serif,
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+		'Noto Color Emoji';
 }
 
-.w-100 {
+.pp-b-radius-05 {
+	border-radius: 5px;
+}
+
+.hide {
+	display: none !important;
+}
+
+.pp-w-10{
+	width: 10%;
+}
+
+.pp-w-23 {
+	width: 23%;
+}
+
+.pp-w-33{
+	width: 33%;
+}
+
+.pp-w-50 { 
+	width: 50%
+}
+
+.pp-w-100 {
 	width: 100%;
 }
 
@@ -13,195 +37,310 @@ body .modal-new-field-content {
 	display: flex;
 }
 
+.p-025{
+	padding: 0.25rem;
+}
+
+.p-05{
+	padding: 0.5rem;
+}
+
 select.p-1 {
 	padding: 1rem;
 }
 
 .col {
-    flex-direction: column !important;
+	flex-direction: column !important;
 }
 
 .dragable-icon {
-    display: inline-block;
-    font-family: dashicons;
-    font-size: 20px;
-    font-style: normal;
-    font-variant: normal;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    cursor: move;
+	display: inline-block;
+	font-family: dashicons;
+	font-size: 20px;
+	font-style: normal;
+	font-variant: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	cursor: move;
 }
 
 .dragable-icon:before {
-    content: "\f333";
+	content: '\f333';
+}
+
+.pp-draggable-icon-option {
+	font-size: 1.5rem;
+	padding: 0.5rem;
+}
+
+.pp-draggable-icon-option:before {
+	content: '\f333';
 }
 
 .modal-new-field-content {
-    background-color: #fefefe;
-    position: absolute;
-    box-shadow: 2px 8px 20px 3px rgb(0 0 0 / 20%);
-    margin: auto;
-    border-radius: 5px;
+	background-color: #fefefe;
+	position: absolute;
+	box-shadow: 2px 8px 20px 3px rgb(0 0 0 / 20%);
+	margin: auto;
+	border-radius: 5px;
 	width: 30rem;
 	top: 50%;
-  	left: 50%;
-  	transform: translate(-50%, -50%);
+	left: 50%;
+	transform: translate(-50%, -50%);
 	overflow-y: auto;
 }
 
 .new-field-modal-header {
-    padding: 18px 15px;
-    -webkit-box-shadow: 0 0 8px rgb(0 0 0 / 10%);
-    box-shadow: 0 0 8px rgb(0 0 0 / 10%);
-    text-align: center;
+	padding: 18px 15px;
+	-webkit-box-shadow: 0 0 8px rgb(0 0 0 / 10%);
+	box-shadow: 0 0 8px rgb(0 0 0 / 10%);
+	text-align: center;
 }
 
 .new-field-header {
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    display: inline-block;
-    padding-bottom: 3.5px;
+	font-size: 1.5rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	display: inline-block;
+	padding-bottom: 3.5px;
 }
 
 .dashicon-close {
-    font-family: dashicons;
-    font-size: 18px;
-    font-style: normal;
-    font-variant: normal;
-    line-height: 1;
-    float: right;
-    position: relative;
-    bottom: 7px;
-    cursor: pointer;
+	font-family: dashicons;
+	font-size: 18px;
+	font-style: normal;
+	font-variant: normal;
+	line-height: 1;
+	float: right;
+	position: relative;
+	bottom: 0.5rem;
+	cursor: pointer;
 }
 
 .dashicon-close:before {
-    content: "\f158";
+	content: '\f158';
 }
 
 .modal-add-field {
-    padding: 2rem;
+	padding: 2rem;
 }
 
 .column {
-    display: inline-block;
-    padding: 20px;
+	display: inline-block;
+	padding: 20px;
 }
 
 .field-button-submit {
-    width: 180px;
-    height: 50px;
-    cursor: pointer;
+	width: 9rem;
+	height: 3rem;
 }
 
 .select-lable {
-    font-size: 1rem;
-    padding: 0.5rem;
+	font-size: 1rem;
+	padding: 0.5rem;
 }
 
 .input-field {
-    transition: all 0.3s;
-    padding: 0.5rem;
+	transition: all 0.3s;
+	padding: 0.5rem;
 }
 
 .submit-field {
-    height: 45px;
-    width: 400px;
-    text-align: center;
+	text-align: center;
+	padding: 0.5rem;
+	align-items: center;
+	justify-content: center;
 }
 
 .form-label {
-    font-size: 1rem;
-    color: #aaa;
-    position: absolute;
-    opacity: 1;
+	font-size: 1rem;
+	color: #aaa;
+	position: absolute;
+	opacity: 1;
 	transform: translate3d(1rem, 1.3rem, 0rem);
-    transform-origin: 0 0;
-    transition: all 0.3s;
+	transform-origin: 0 0;
+	transition: all 0.3s;
 }
 
 .input-box {
-    transition: all 0.5s;
+	transition: all 0.5s;
 }
 
 select.input-box {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    border: 0;
+	border-radius: 5px;
+	background-color: #f2f2f2;
+	border: 0;
 }
 
 input.input-box {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    border: 0;
-    padding: 1.5rem 1rem 0.5rem 1rem;
+	border-radius: 5px;
+	background-color: #f2f2f2;
+	border: 0;
+	padding: 1.5rem 1rem 0.5rem 1rem;
 }
 
 .input-box::placeholder {
-    color: transparent;
+	color: transparent;
 }
 
 .input-box:focus {
-    box-shadow: none;
-    outline: none;
+	box-shadow: none;
+	outline: none;
 }
 
 .input-box:focus + .form-label {
-    transform: translate3d(1rem, 0.85rem, 0rem) scale(0.7);
+	transform: translate3d(1rem, 0.85rem, 0rem) scale(0.7);
 }
 
 .input-box:focus + .form-label,
 .input-box:not(:placeholder-shown) + .form-label {
-    transform: translate3d(1rem, 0.85rem, 0rem) scale(0.7);
+	transform: translate3d(1rem, 0.85rem, 0rem) scale(0.7);
 }
 
 .input-checkboxes {
-    padding: 0.5rem;
+	padding: 0.5rem;
 }
 
 .input-checkboxes label {
-    font-size: 1rem;
+	font-size: 1rem;
 }
 
 .input-checkboxes input {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    border: 0;
+	border-radius: 5px;
+	background-color: #f2f2f2;
+	border: 0;
 }
 
 .table-form{
-    overflow: hidden;
-    border-radius: 5px;
-    border: 1px solid #c3c4c7;
+	overflow: hidden;
+	border-radius: 5px;
+	border: 1px solid #c3c4c7;
 }
 
 table#field-table {
-    border-collapse: collapse;
-    width: 100%;
+	border-collapse: collapse;
+	width: 100%;
 }
 
 tr.table-header-footer{
-    background: #dcdcde;
+	background: #dcdcde;
 }
 
 table#field-table th, table#field-table td {
-    padding: 1rem; 
-    margin: none;
-    text-align: center;
+	padding: 1rem; 
+	margin: none;
+	text-align: center;
 }
 
 .row-disabled {
-    opacity: 0.3;
+	opacity: 0.3;
 }
 
 .row-removed {
-    background-color: lightcoral;
-    opacity: 0.3;
+	background-color: lightcoral;
+	opacity: 0.3;
 }
 
 tr.row-removed td {
-    text-decoration: line-through;
+	text-decoration: line-through;
+}
+
+.pp-option-dropdown-box-icon {
+	display: inline-block;
+	font-family: dashicons;
+	font-size: 1rem;
+	font-style: normal;
+	font-variant: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	position: relative;
+}
+
+.pp-summary-option-icon {
+	left: 0.5rem;
+}
+
+.pp-up-icon::before {
+	content: '\f343';
+}
+
+.pp-down-icon::before  {
+	content: '\f347';
+}
+
+.pp-add-remove-option-icon {
+	left: -0.25rem;
+	top: 0.25rem;
+}
+
+.pp-add-option-row::before {
+	content: '\f132';
+}
+
+.pp-remove-option-row::before {
+	content: '\f158';
+}
+
+.pp-option-dropdown-box {
+	background-color: #f2f2f2;
+	position: relative;
+	padding: 0.5rem 1.5rem;
+}
+
+.pp-option-summary-box {
+	transform-origin: bottom;
+	transform: scaleY(0);
+	transition: all .2s ease-in-out;
+	visibility: hidden;
+	opacity: 0;
+	position: absolute;
+	bottom: 23%;
+	width: 80%;
+	box-shadow: 0 2px 8px 0 rgb(24 24 32 / 24%);
+	border-radius: 0.5rem;
+	background-color: white;
+	max-height: 352px;
+	overflow-y: scroll;
+}
+
+.pp-option-summary-contents-opened {
+	transform: scaleY(1);
+	visibility: visible;
+	opacity: 1;
+}
+
+.pp-option-label {
+	transform: translate3d(1rem, 0.7rem, 0rem);
+	font-size: 0.8rem;
+}
+
+.pp-option-input-box {
+	transition: all 0.5s;
+}
+
+input.pp-option-input-box {
+	background-color: #f2f2f2;
+	border: 0;
+	padding: 1.2rem 1rem 0.4rem 1rem;
+	height: 2.5rem;
+}
+
+.pp-option-input-box::placeholder {
+	color: transparent;
+}
+
+.pp-option-input-box:focus {
+	box-shadow: none;
+	outline: none;
+}
+
+.pp-option-input-box:focus + .form-label {
+	transform: translate3d(1rem, 0.3rem, 0rem) scale(0.8);
+}
+
+.pp-option-input-box:focus + .form-label,
+.pp-option-input-box:not(:placeholder-shown) + .form-label {
+	transform: translate3d(1rem, 0.3rem, 0rem) scale(0.8);
 }
 

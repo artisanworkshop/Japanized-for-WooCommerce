@@ -24,7 +24,7 @@ function peachpay_settings_general_main() {
 	add_settings_section(
 		'peachpay_section_general',
 		__( 'General', 'peachpay-for-woocommerce' ),
-		'peachpay_section_general_cb',
+		'peachpay_feedback_cb',
 		'peachpay'
 	);
 
@@ -40,15 +40,6 @@ function peachpay_settings_general_main() {
 		'peachpay',
 		'peachpay_section_general',
 		array( 'label_for' => 'peachpay_language' )
-	);
-
-	add_settings_field(
-		'peachpay_field_enable_coupons',
-		__( 'Coupons', 'peachpay-for-woocommerce' ),
-		'peachpay_field_enable_coupons_cb',
-		'peachpay',
-		'peachpay_section_general',
-		array( 'label_for' => 'peachpay_enable_coupons' )
 	);
 
 	add_settings_field(
@@ -70,6 +61,24 @@ function peachpay_settings_general_main() {
 	);
 
 	add_settings_field(
+		'peachpay_field_checkout_methods',
+		__( 'Checkout methods', 'peachpay-for-woocommerce' ),
+		'peachpay_field_checkout_methods_cb',
+		'peachpay',
+		'peachpay_section_general',
+		array( 'label_for' => 'peachpay_checkout_methods' )
+	);
+
+	add_settings_field(
+		'peachpay_field_support_message',
+		__( 'Support message', 'peachpay-for-woocommerce' ),
+		'peachpay_field_support_message_cb',
+		'peachpay',
+		'peachpay_section_general',
+		array( 'label_for' => 'peachpay-support-message' )
+	);
+
+	add_settings_field(
 		'peachpay_field_data_retention',
 		__( 'Data retention', 'peachpay-for-woocommerce' ),
 		'peachpay_field_data_retention_cb',
@@ -77,15 +86,6 @@ function peachpay_settings_general_main() {
 		'peachpay_section_general',
 		array( 'label_for' => 'peachpay_test_mode' )
 	);
-}
-
-/**
- * Renders the heading for the general settings section.
- */
-function peachpay_section_general_cb() {
-	?>
-	<div class="elfsight-app-8ffcad85-9a1d-4fdf-a2d2-1ce2ec48b81c"></div>
-	<?php
 }
 
 /**
@@ -110,23 +110,6 @@ function peachpay_field_language_cb() {
 	<?php
 }
 
-/**
- * Renders the enable coupon input option.
- */
-function peachpay_field_enable_coupons_cb() {
-	?>
-	<input
-		id="peachpay_enable_coupons"
-		name="peachpay_general_options[enable_coupons]"
-		type="checkbox"
-		value="1"
-		<?php checked( 1, peachpay_get_settings_option( 'peachpay_general_options', 'enable_coupons' ), true ); ?>
-	>
-	<label for="peachpay_enable_coupons"><?php esc_html_e( 'Enable coupons', 'peachpay-for-woocommerce' ); ?></label>
-	<p class="description"><?php esc_html_e( 'Allow customers to enter coupon codes inside the checkout window', 'peachpay-for-woocommerce' ); ?></p>
-	<?php
-}
-
 /** A plugin function for enableling order notes  */
 function peachpay_field_enable_order_notes_cb() {
 	?>
@@ -146,6 +129,28 @@ function peachpay_field_enable_order_notes_cb() {
  * Renders the test mode option.
  */
 function peachpay_field_test_mode_cb() {
+
+	if ( peachpay_is_test_mode() && ! peachpay_get_settings_option( 'peachpay_payment_options', 'known_testmode' ) ) {
+		peachpay_set_settings_option( 'peachpay_payment_options', 'known_testmode', 1 );
+		peachpay_set_settings_option( 'peachpay_payment_options', 'stripe_payment_request', 1 );
+		peachpay_set_settings_option( 'peachpay_payment_options', 'enable_stripe', 1 );
+		peachpay_set_settings_option( 'peachpay_payment_options', 'paypal', 1 );
+	} elseif ( ! peachpay_is_test_mode() && peachpay_get_settings_option( 'peachpay_payment_options', 'known_testmode' ) ) {
+		peachpay_set_settings_option( 'peachpay_payment_options', 'known_testmode', 0 );
+		if ( get_option( 'peachpay_connected_stripe_account' ) ) {
+			peachpay_set_settings_option( 'peachpay_payment_options', 'stripe_payment_request', 1 );
+			peachpay_set_settings_option( 'peachpay_payment_options', 'enable_stripe', 1 );
+		} else {
+			peachpay_set_settings_option( 'peachpay_payment_options', 'stripe_payment_request', 0 );
+			peachpay_set_settings_option( 'peachpay_payment_options', 'enable_stripe', 0 );
+		}
+		if ( get_option( 'peachpay_paypal_signup' ) ) {
+			peachpay_set_settings_option( 'peachpay_payment_options', 'paypal', 1 );
+		} else {
+			peachpay_set_settings_option( 'peachpay_payment_options', 'paypal', 0 );
+		}
+	}
+
 	?>
 	<input
 		id="peachpay_test_mode"
@@ -162,6 +167,48 @@ function peachpay_field_test_mode_cb() {
 		<?php esc_html_e( 'For Stripe, use card number:', 'peachpay-for-woocommerce' ); ?>&nbsp<b>4242 4242 4242 4242</b>,&nbsp
 		<?php esc_html_e( 'with expiration:', 'peachpay-for-woocommerce' ); ?>&nbsp<b>04/24</b> <?php esc_html_e( 'and CVC:', 'peachpay-for-woocommerce' ); ?>&nbsp<b>444</b>.&nbsp
 		<?php esc_html_e( 'For PayPal, see', 'peachpay-for-woocommerce' ); ?>&nbsp<a target="_blank" href="https://docs.peachpay.app/paypal#test-mode"><?php esc_html_e( 'these instructions.', 'peachpay-for-woocommerce' ); ?></a>
+	</p>
+	<?php
+}
+
+/**
+ * Renders the checkout methods option.
+ */
+function peachpay_field_checkout_methods_cb() {
+	// Resets the option 'make_pp_the_only_checkout' to false, when 'test_mode' is on.
+	if ( peachpay_is_test_mode() ) {
+		peachpay_set_settings_option( 'peachpay_general_options', 'make_pp_the_only_checkout', 0 );
+	}
+	?>
+	<input
+		id="peachpay_make_pp_the_only_checkout"
+		name="peachpay_general_options[make_pp_the_only_checkout]"
+		type="checkbox"
+		value="1"
+		<?php checked( 1, peachpay_get_settings_option( 'peachpay_general_options', 'make_pp_the_only_checkout' ), true ); ?>
+		<?php disabled( 1, peachpay_get_settings_option( 'peachpay_general_options', 'test_mode' ), true ); ?>
+	>
+	<label for="peachpay_make_pp_the_only_checkout"><?php esc_html_e( 'Make PeachPay the only checkout method', 'peachpay-for-woocommerce' ); ?></label>
+	<p class="description">
+		<?php esc_html_e( 'Hide WooCommerce native checkout buttons (not available in test mode)', 'peachpay-for-woocommerce' ); ?>
+	</p>
+	<?php
+}
+
+/**
+ * Renders the Support message setting HTML.
+ */
+function peachpay_field_support_message_cb() {
+	?>
+	<input
+		id="peachpay-support-message"
+		name="peachpay_general_options[support_message]"
+		type="text"
+		style='width: 300px'
+		value="<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_general_options', 'support_message' ) ); ?>"
+	>
+	<p class="description">
+		<?php esc_html_e( 'Display a support message within the PeachPay checkout window for customers', 'peachpay-for-woocommerce' ); ?>
 	</p>
 	<?php
 }
@@ -204,6 +251,15 @@ function peachpay_general_section_product() {
 	);
 
 	add_settings_field(
+		'peachpay_hide_quantity_changer',
+		__( 'Quantity changer', 'peachpay-for-woocommerce' ),
+		'peachpay_hide_quantity_changer_cb',
+		'peachpay',
+		'peachpay_section_product',
+		array( 'label_for' => 'peachpay_quantity_changer' )
+	);
+
+	add_settings_field(
 		'peachpay_field_upsell',
 		__( 'Upsell items', 'peachpay-for-woocommerce' ),
 		'peachpay_hide_upsell_cb',
@@ -237,6 +293,24 @@ function peachpay_hide_product_images_cb() {
 	<label for="peachpay_product_images"><?php esc_html_e( 'Hide product images', 'peachpay-for-woocommerce' ); ?></label>
 	<p class="description"><?php esc_html_e( "Don't show product images in the checkout window", 'peachpay-for-woocommerce' ); ?></p>
 	<?php
+}
+
+/**
+ * Renders setting for merchants being able to disable in modal quantity changer.
+ */
+function peachpay_hide_quantity_changer_cb() {
+	?>
+	<input
+	id ='peachpay_quantity_hide'
+	name ='peachpay_general_options[hide_quantity_changer]'
+	type = 'checkbox'
+	value = 0
+	<?php checked( 0, peachpay_get_settings_option( 'peachpay_general_options', 'hide_quantity_changer' ), true ); ?>
+	>
+	<label for="peachpay_quantity_hide"> <?php esc_html_e( 'Hide quantity changer', 'peachpay-for-woocommerce' ); ?> </label>
+	<p class="description"><?php esc_html_e( 'Don\'t show the quantity changer next to items in the checkout window order summary', 'peachpay-for-woocommerce' ); ?></p>
+	<?php
+
 }
 
 /**

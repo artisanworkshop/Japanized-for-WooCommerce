@@ -1,15 +1,5 @@
 document.addEventListener('DOMContentLoaded', peachpay_placeButtonProductPage);
 
-if (location.hostname === 'skregear.com') {
-	// The site skregear.com has two issues: one is that the site takes a very long time
-	// to load, so waiting until the window load event is not feasible, and the
-	// other is that this mini cart will refresh its HTML removing our button.
-	// To fix this, we place the button early (it seems to work with this sidebar
-	// unlike the other mini carts) and then replace it if it gets removed.
-	document.addEventListener('DOMContentLoaded', peachpay_placeButtonMiniCart);
-	document.addEventListener('DOMContentLoaded', peachpay_watchForMiniButtonRemoval);
-}
-
 self.addEventListener('load', () => {
 	if (location.hostname === 'strandsofhumanity.com') {
 		jQuery(document.body).on('wc_fragments_refreshed', () => {
@@ -128,7 +118,7 @@ function peachpay_placeButtonProductPage() {
 	const width = full ? '100%' : ((peachpay_data.button_width_product_page || '220') + 'px');
 	peachpay_initButton({
 		width,
-		position: peachpay_data.button_alignment_product_page || 'left',
+		alignment: peachpay_data.button_alignment_product_page || 'left',
 		borderRadius: peachpay_data.button_border_radius,
 	});
 }
@@ -165,6 +155,13 @@ function peachpay_placeButtonMiniCart() {
 		document.querySelector('body').insertAdjacentHTML('beforeend', pp_checkoutForm);
 	}
 
+	const miniCart = document.querySelector('#pp-button-mini');
+
+	// Avoid placing mini-cart twice
+	if (miniCart) {
+		return;
+	}
+
 	miniCartButtons.insertAdjacentHTML('beforeend', pp_peachpayButtonMiniCart);
 
 	if (miniCartButtons.querySelector('#payment-methods-container-minicart') && peachpay_data.button_hide_payment_method_icons) {
@@ -178,7 +175,7 @@ function peachpay_placeButtonMiniCart() {
 	adjustMiniButtonPerSite();
 
 	peachpay_initButton({
-		position: peachpay_data.button_alignment_product_page,
+		alignment: peachpay_data.button_alignment_product_page,
 		isMiniCart: true,
 	});
 }
@@ -197,22 +194,6 @@ function adjustMiniButtonPerSite() {
 	if (location.hostname === 'salafibookstore.com') {
 		miniButton.style.padding = '18px';
 	}
-}
-
-// deno-lint-ignore camelcase
-function peachpay_watchForMiniButtonRemoval() {
-	const element = document.querySelector('#pp-button-mini');
-	let inDom = document.body.contains(element);
-	const observer = new MutationObserver(() => {
-		if (document.body.contains(element)) {
-			inDom = true;
-		} else if (inDom) {
-			inDom = false;
-			peachpay_placeButtonMiniCart();
-			peachpay_watchForMiniButtonRemoval();
-		}
-	});
-	observer.observe(document.body, { childList: true, subtree: true });
 }
 
 // deno-lint-ignore camelcase

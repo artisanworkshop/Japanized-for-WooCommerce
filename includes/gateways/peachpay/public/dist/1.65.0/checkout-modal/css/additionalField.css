@@ -1,0 +1,93 @@
+#additional-fields-new, #additional-fields-existing {
+	padding : 1rem 1rem 0rem 1rem;
+	margin-bottom: 0;
+}
+
+.flex {
+	display: flex;
+}
+
+.flex-col {
+	display: flex;
+	flex-direction: column;
+}
+
+.new-field {
+	padding-bottom: 0.5rem;
+}
+
+.new-field-text {
+	color: #828282;
+}
+
+.pp-form-label-text {
+	font-size: 1em;
+	color: #828282;
+	display: block;
+	transform: translate3d(1rem, 1.3rem, 0rem);
+	transform-origin: 0 0;
+	transition: all 0.3s;
+	height: 0rem;
+	position: absolute;
+}
+
+.pp-form-label-select {
+	font-size: 90%;
+	color: #828282;
+	display: block;
+	transform: translate3d(1rem, 0.5rem, 0rem) scale(0.8);
+	transform-origin: 0 0;
+	height: 0rem;
+	position: absolute;
+}
+
+.pp-input-box-text {
+	transition: all 0.5s;
+	border-radius: 5px;
+	border: 0;
+	padding: 1.6rem 1rem 0.4rem;
+	font-size: 1em;
+	font-family: avenir;
+	margin: 5px 0px;
+}
+
+.pp-select-box {
+	padding: 1.5rem 1rem 0.5rem 1rem;
+	color: #43454b;
+	border: 0;
+	-webkit-appearance: none;
+	box-sizing: border-box;
+	font-weight: normal;
+	font-size: 14px;
+	background-image: url('../img/select-arrow.svg');
+	background-repeat: no-repeat;
+	background-size: 11px;
+	background-position: center;
+	background-position-x: 97%;
+	box-shadow: none;
+	border-radius: 5px;
+}
+
+.pp-input-box-text::placeholder {
+	color: transparent;
+}
+
+.pp-input-box-text:focus + .pp-form-label-text {
+	transform: translate3d(1rem, 0.8rem, 0rem) scale(0.8);
+}
+
+.pp-input-box-text:focus + .pp-form-label-text,
+.pp-input-box-text:not(:placeholder-shown) + .pp-form-label-text {
+	transform: translate3d(1rem, 0.8rem, 0rem) scale(0.8);
+}
+
+@media only screen and (max-width: 900px) {
+	.input-box-text {
+		background-color: white;
+	}
+
+	.new-text {
+		background-color: #f2f2f2;
+		color: #43454b;
+	}
+}

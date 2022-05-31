@@ -3,13 +3,13 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.3.8
+ * Version: 2.4.0
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 5.0
- * Tested up to: 5.8.2
+ * Tested up to: 6.0.0
  * WC requires at least: 5.0
- * WC tested up to: 5.9.0
+ * WC tested up to: 6.5.1
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
@@ -33,7 +33,7 @@ class JP4WC{
 	 *
 	 * @var string
 	 */
-	public $version = '2.3.8';
+	public $version = '2.4.0';
 
     /**
      * Japanized for WooCommerce Framework version.
@@ -97,6 +97,7 @@ class JP4WC{
      */
     public function on_deactivation() {
         flush_rewrite_rules();
+	    do_action( 'woocommerce_paypal_payments_gateway_deactivate' );
     }
 
     /**
@@ -165,8 +166,16 @@ class JP4WC{
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-custom-email.php';
 		// Add Payments setting
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-payments.php';
-        // Add PayPal Checkout
-        require_once JP4WC_INCLUDES_PATH . 'paypal-checkout/woocommerce-gateway-paypal-express-checkout.php';
+        // Add PayPal Checkout(OLD)
+        $paypal_setting = get_option( 'woocommerce_ppec_paypal_settings' );
+        if($paypal_setting['enabled'] == 'yes'){
+	        require_once JP4WC_INCLUDES_PATH . 'paypal-checkout/woocommerce-gateway-paypal-express-checkout.php';
+        }
+		// Add PayPal Checkout(New from 2022/05 )
+        if(get_option('wc4jp-jp4wc-paypal', false) && !is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' )){
+	        require_once JP4WC_INCLUDES_PATH . 'gateways/paypal/woocommerce-paypal-payments.php';
+        }
+
         // Add PeachPay Checkout
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		if ( ! is_plugin_active( 'peachpay-for-woocommerce/peachpay.php' ) && get_option('wc4jp-peachpay') ) {

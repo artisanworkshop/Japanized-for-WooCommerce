@@ -79,11 +79,25 @@ function initPreviews() {
 	text.addEventListener('input', event => updateText(event, 'checkout'));
 
 	const shine = document.querySelector('#peachpay_button_sheen');
-	if (!shine.checked) {
+	if (shine && !shine.checked) {
 		addShine();
 	}
 
 	shine.addEventListener('input', updateShine);
+
+	const fade = document.querySelector('#peachpay_button_fade');
+	if (fade && fade.checked) {
+		addFade();
+	}
+
+	fade.addEventListener('input', updateFade);
+
+	const disablePeachPayFontCSS = document.querySelector('#peachpay_disable_default_font_css');
+	if (disablePeachPayFontCSS && !disablePeachPayFontCSS.checked) {
+		updateFontCSS(false);
+	}
+
+	disablePeachPayFontCSS.addEventListener('input', (event) => { event.target.checked ? updateFontCSS(true) : updateFontCSS(false) });
 
 	const paymentIcons = document.querySelector('#peachpay_payment_method_icons');
 	if (paymentIcons) {
@@ -246,9 +260,31 @@ function updateText(event, page) {
 function updateShine(event) {
 	if (event.target.checked) {
 		const buttonCSS = document.querySelector('#buttonShine');
-		buttonCSS.remove();
+		if (buttonCSS) {
+			buttonCSS.remove();
+		}
 	} else {
 		addShine();
+	}
+}
+
+function updateFade(event) {
+	if (!event.target.checked) {
+		const buttonCSS = document.querySelector('#buttonFade');
+		if (buttonCSS) {
+			buttonCSS.remove();
+		}
+	} else {
+		addFade();
+	}
+}
+
+function updateFontCSS(checked) {
+	const ppButtons = document.querySelectorAll('.pp-button');
+	if (ppButtons[0]) {
+		ppButtons.forEach((ppButton) => {
+			checked ? ppButton.classList.remove('pp-button-default-font') : ppButton.classList.add('pp-button-default-font');
+		})
 	}
 }
 
@@ -290,7 +326,37 @@ function addShine() {
         width: 40%;
     }
     </style>`;
-	document.querySelector('body').insertAdjacentHTML('beforeend', peachpay_buttonShineCSS);
+	const body = document.querySelector('body');
+	if (body) {
+		body.insertAdjacentHTML('beforeend', peachpay_buttonShineCSS);
+	} 
+}
+
+function addFade() {
+	const peachpay_buttonFadeCSS = `
+    <style id = buttonFade>
+    #pp-button-container .pp-button {
+		color: #FFF;
+		border: 2px solid var(--button-color);
+		background: linear-gradient(to right,#fff 50%,var(--button-color) 50%);
+		background-size: 210% 100%;
+		background-position: right bottom;
+		transition: all .4s ease;
+		border-radius: 8px!important;
+	}
+	#pp-button-container .pp-button:hover, #pp-button-container .pp-button:focus {
+		color: var(--button-color);
+		border: 2px solid var(--button-color);
+		background-position: left bottom;
+	}
+	.pp-button:hover {
+		opacity: 1.00 !important;
+	}
+    </style>`;
+	const body = document.querySelector('body');
+	if (body) {
+		body.insertAdjacentHTML('beforeend', peachpay_buttonFadeCSS);
+	}
 }
 
 function hidePaymentIcons(hide = true) {

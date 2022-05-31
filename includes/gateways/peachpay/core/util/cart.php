@@ -137,7 +137,7 @@ function peachpay_shipping_package_name( $cart_key, $package_index, $package ) {
 function peachpay_build_cart_response( $cart_key, $cart ) {
 	$result = array(
 		'package_record' => peachpay_cart_shipping_package_record( $cart_key, WC()->shipping->calculate_shipping( $cart->get_shipping_packages() ) ),
-		'cart'           => peachpay_make_cart_from_wc_cart( $cart->get_cart() ),
+		'cart'           => peachpay_get_cart(),
 		'summary'        => array(
 			'fees_record'      => peachpay_cart_applied_fee_record( $cart ),
 			'coupons_record'   => peachpay_cart_applied_coupon_record( $cart ),

@@ -14,6 +14,10 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  */
 function peachpay_settings_payment() {
 
+	if ( peachpay_approved_wc_api_access() ) {
+		update_option( 'peachpay_valid_key', true );
+	}
+
 	if ( ! get_option( 'peachpay_valid_key' ) && ! peachpay_is_test_mode() ) {
 		add_settings_section(
 			'peachpay_section_payment_cannot_continue',
@@ -24,47 +28,13 @@ function peachpay_settings_payment() {
 		return;
 	}
 
+	// Stripe settings.
+
 	add_settings_section(
 		'peachpay_section_payment',
-		__( 'Payment methods', 'peachpay-for-woocommerce' ),
-		null,
-		'peachpay'
-	);
-
-	add_settings_field(
-		'peachpay_field_stripe',
 		__( 'Stripe', 'peachpay-for-woocommerce' ),
-		'peachpay_field_stripe_cb',
-		'peachpay',
-		'peachpay_section_payment'
-	);
-
-	$test_sites = array(
-		'https://store.local',
-		'https://woo.store.local',
-		'https://shop.peachpay.app',
-		'https://woo.peachpay.app',
-		'https://theme1.peachpay.app',
-		'https://qa.peachpay.app',
-		'https://holistichuman.design',
-		'https://midfox.com',
-		'https://123duionline.com',
-		'https://arespta.org',
-		'https://legoudalier.com',
-	);
-
-	$show_payment_request_option = false;
-	if ( in_array( get_site_url(), $test_sites, true ) ) {
-		$show_payment_request_option = true;
-	}
-
-	add_settings_field(
-		'peachpay_field_stripe_payment_request',
-		__( 'Google Pay / Apple Pay', 'peachpay-for-woocommerce' ),
-		'peachpay_field_stripe_payment_request_cb',
-		'peachpay',
-		'peachpay_section_payment',
-		array( 'class' => $show_payment_request_option ? '' : 'hide' )
+		'peachpay_feedback_cb',
+		'peachpay'
 	);
 
 	add_settings_field(
@@ -76,11 +46,36 @@ function peachpay_settings_payment() {
 	);
 
 	add_settings_field(
-		'peachpay_field_paypal',
-		__( 'PayPal', 'peachpay-for-woocommerce' ),
-		'peachpay_field_paypal_cb',
+		'peachpay_field_stripe',
+		__( 'Connect', 'peachpay-for-woocommerce' ),
+		'peachpay_field_stripe_cb',
 		'peachpay',
 		'peachpay_section_payment'
+	);
+
+	add_settings_field(
+		'peachpay_field_stripe_payment_request',
+		__( 'Apple Pay  & Google Pay', 'peachpay-for-woocommerce' ),
+		'peachpay_field_stripe_payment_request_cb',
+		'peachpay',
+		'peachpay_section_payment',
+	);
+
+	add_settings_field(
+		'peachpay_field_stripe_more_payment_options',
+		__( 'Additional methods', 'peachpay-for-woocommerce' ),
+		'peachpay_field_stripe_more_payment_options_cb',
+		'peachpay',
+		'peachpay_section_payment'
+	);
+
+	// PayPal settings.
+
+	add_settings_section(
+		'peachpay_section_paypal_payment',
+		__( 'PayPal', 'peachpay-for-woocommerce' ),
+		'peachpay_feedback_cb',
+		'peachpay'
 	);
 
 	add_settings_field(
@@ -88,9 +83,18 @@ function peachpay_settings_payment() {
 		__( 'Enable PayPal', 'peachpay-for-woocommerce' ),
 		'peachpay_field_paypal_box_cb',
 		'peachpay',
-		'peachpay_section_payment',
+		'peachpay_section_paypal_payment',
 		array( 'label_for' => 'peachpay_paypal_box' )
 	);
+
+	add_settings_field(
+		'peachpay_field_paypal',
+		__( 'Connect', 'peachpay-for-woocommerce' ),
+		'peachpay_field_paypal_cb',
+		'peachpay',
+		'peachpay_section_paypal_payment'
+	);
+
 }
 
 /**
@@ -117,7 +121,7 @@ function peachpay_field_stripe_cb() {
 	if ( get_option( 'peachpay_connected_stripe_account' ) ) {
 		?>
 		<p>
-			<span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( "You've successfully connected the Stripe account associated with", 'peachpay-for-woocommerce' ); ?>&nbsp<strong><?php echo esc_html( get_option( 'peachpay_connected_stripe_account' )['id'] ); ?></strong>
+			<span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( "You've successfully connected the Stripe account", 'peachpay-for-woocommerce' ); ?>&nbsp<strong><?php echo esc_html( get_option( 'peachpay_connected_stripe_account' )['id'] ); ?></strong>
 		</p>
 		<br>
 		<a class="button button-unlink-stripe" href="?page=peachpay&tab=payment&unlink_stripe&merchant_store=<?php echo esc_url( get_site_url() ); ?>" ><?php esc_html_e( 'Unlink Stripe', 'peachpay-for-woocommerce' ); ?></a>
@@ -125,8 +129,9 @@ function peachpay_field_stripe_cb() {
 	} else {
 		?>
 		<a
-			href="<?php echo esc_url( peachpay_generate_stripe_url( get_site_url() ) ); ?>"
+			href="<?php echo esc_url( peachpay_generate_stripe_url( get_site_url(), get_home_url() ) ); ?>"
 			class="stripe-connect"
+			target="_blank"
 		>
 			<span><?php esc_html_e( 'Connect with', 'peachpay-for-woocommerce' ); ?></span>
 		</a>
@@ -213,24 +218,50 @@ function peachpay_field_stripe_cb() {
 /**
  * Creates the Stripe connect signup link.
  *
- * @param string $site_url The URL of the current site.
+ * @param string $site_url The admin URL of the current site.
+ * @param string $home_url The home URL of the current site.
  */
-function peachpay_generate_stripe_url( $site_url ) {
+function peachpay_generate_stripe_url( $site_url, $home_url ) {
 	// phpcs:ignore
 	$TEST_STRIPE_CLIENT_ID = 'ca_HHK0LPM3N7jbW1aV610tueC8zVOBtW2D';
 	// phpcs:ignore
 	$LIVE_STRIPE_CLIENT_ID = 'ca_HHK0N5DreIcJJAyqGbeOE77hAZD9gCFg';
 	// phpcs:ignore
-	$stripe_client_id = peachpay_is_development_site() ? $TEST_STRIPE_CLIENT_ID : $LIVE_STRIPE_CLIENT_ID;
+	$stripe_client_id = ( peachpay_is_local_development_site() || peachpay_is_staging_site() ) ? $TEST_STRIPE_CLIENT_ID : $LIVE_STRIPE_CLIENT_ID;
 
-	return "https://dashboard.stripe.com/oauth/authorize?response_type=code&client_id=$stripe_client_id&scope=read_write&state=$site_url&stripe_user[url]=$site_url";
+	$state               = new stdClass();
+	$state->merchant_url = $home_url;
+	$state->wp_admin_url = $site_url;
+
+	// Using JSON to pass multiple parameters through state.
+	$state_json = wp_json_encode( $state );
+	// Base64 encode as JSON includes chars removed by esc_url().
+	// phpcs:ignore
+	$state_base64 = base64_encode( $state_json );
+
+	$redirect_uri = peachpay_determine_stripe_redirect_uri();
+
+	return "https://dashboard.stripe.com/oauth/v2/authorize?response_type=code&client_id=$stripe_client_id&scope=read_write&state=$state_base64&stripe_user[url]=$home_url&redirect_uri=$redirect_uri";
 }
 
 /**
- * Indicates if the plugin is in development mode.
+ * Indicates if the current website is for local development.
  */
-function peachpay_is_development_site() {
-	switch ( get_site_url() ) {
+function peachpay_is_local_development_site() {
+	switch ( get_home_url() ) {
+		case 'https://store.local':
+		case 'https://woo.store.local':
+			return true;
+		default:
+			return false;
+	}
+}
+
+/**
+ * Indicates if the current website is a staging site.
+ */
+function peachpay_is_staging_site() {
+	switch ( get_home_url() ) {
 		case 'https://woo.peachpay.app':
 		case 'https://theme1.peachpay.app':
 		case 'https://theme2.peachpay.app':
@@ -239,13 +270,62 @@ function peachpay_is_development_site() {
 		case 'https://theme5.peachpay.app':
 		case 'https://qa.peachpay.app':
 		case 'https://demo.peachpay.app':
-		case 'http://localhost:8000':
-		case 'https://store.local':
-		case 'https://woo.store.local':
 			return true;
 		default:
 			return false;
 	}
+}
+
+/**
+ * Get the correct redirect URI that will be given to Stripe based on the
+ * current environment.
+ */
+function peachpay_determine_stripe_redirect_uri() {
+	if ( peachpay_is_local_development_site() ) {
+		return 'https://dev.peachpay.local/connect/oauth';
+	}
+
+	if ( peachpay_is_staging_site() ) {
+		return 'https://dev.peachpay.app/connect/oauth';
+	}
+
+	return 'https://prod.peachpay.app/connect/oauth';
+}
+
+/**
+ * Renders the more stripe payment method options.
+ */
+function peachpay_field_stripe_more_payment_options_cb() {
+	$stripe_account = get_option( 'peachpay_connected_stripe_account' );
+	?>
+		<p>
+			<?php
+			if ( $stripe_account ) {
+				esc_html_e( 'On your ', 'peachpay-for-woocommerce' );
+				// PHPCS:ignore ?>
+				<a href="https://dashboard.stripe.com/<?php echo $stripe_account['id']; ?>/settings/connect/payment_methods">Stripe <?php esc_html_e( 'connect dashboard', 'peachpay-for-woocommerce' ); ?></a> 
+				<?php
+				esc_html_e( 'you can configure additional payment methods that will show up in the PeachPay checkout window.', 'peachpay-for-woocommerce' );
+			} else {
+				esc_html_e( 'On your ', 'peachpay-for-woocommerce' );
+				?>
+			<a href="https://dashboard.stripe.com/settings">Stripe <?php esc_html_e( 'connect dashboard', 'peachpay-for-woocommerce' ); ?></a> 
+				<?php
+				esc_html_e( 'you can configure additional payment methods that will show up in the PeachPay checkout window.', 'peachpay-for-woocommerce' );
+			}
+			?>
+		</p>
+		<h4><?php esc_html_e( 'Supported methods', 'peachpay-for-woocommerce' ); ?></h4>
+		<ul style="list-style-type: disc; margin-left: 2rem">
+			<li>
+				Klarna 
+			</li>
+			<li>
+				AfterPay
+			</li>
+		</ul>
+    <p><?php esc_html_e( 'Learn more about additional <a href="https://stripe.com/payments/payment-methods-guide" target="_blank">payment methods</a> powered by Stripe and any associated <a href="https://stripe.com/pricing/local-payment-methods" target="_blank">fees</a>', 'peachpay-for-woocommerce' ); ?></p>
+    <?php
 }
 
 /**
@@ -264,7 +344,7 @@ function peachpay_field_stripe_payment_request_cb() {
 	?>
 	>
 	<label for="peachpay_stripe_payment_request">
-		<?php esc_html_e( 'Enable Google Pay and Apple Pay buttons', 'peachpay-for-woocommerce' ); ?>
+		<?php esc_html_e( 'Show Apple Pay and Google Pay buttons above the PeachPay button', 'peachpay-for-woocommerce' ); ?>
 	</label>
 	<?php
 }
@@ -308,14 +388,14 @@ function peachpay_field_paypal_cb() {
 	} elseif ( get_option( 'peachpay_paypal_signup' ) ) {
 		?>
 		<p>
-			<span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( "You've successfully connected your PayPal account that has Merchant ID", 'peachpay-for-woocommerce' ); ?>&nbsp<b><?php echo esc_html( $paypal_merchant_id ); ?></b>
+			<span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( "You've successfully connected your PayPal account with Merchant ID", 'peachpay-for-woocommerce' ); ?>&nbsp<b><?php echo esc_html( $paypal_merchant_id ); ?></b>
 		</p>
 		<br>
 		<a class="button button-unlink-paypal" href="?page=peachpay&tab=payment&unlink_paypal" ><?php esc_html_e( 'Unlink PayPal', 'peachpay-for-woocommerce' ); ?></a>
 			<?php
 	} else {
 		?>
-		<a href="<?php echo esc_url( peachpay_get_paypal_link() ); ?>" title="PayPal">
+		<a href="<?php echo esc_url( peachpay_get_paypal_link() ); ?>" title="PayPal" target="_blank">
 			<img
 				src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-150px.png"
 				alt="PayPal Logo"
@@ -333,7 +413,7 @@ function peachpay_field_paypal_cb() {
  * Gets the current PayPal merchant id.
  */
 function peachpay_get_paypal_merchant_id() {
-	$merchant_hostname = wp_parse_url( get_site_url(), PHP_URL_HOST );
+	$merchant_hostname = preg_replace( '(^https?://)', '', home_url() );
 	$response          = wp_remote_get( peachpay_api_url() . 'api/v1/paypal/merchantAndClient?merchantHostname=' . $merchant_hostname );
 
 	if ( ! peachpay_response_ok( $response ) ) {
@@ -354,7 +434,7 @@ function peachpay_get_paypal_merchant_id() {
  * Creates a PayPal signup link.
  */
 function peachpay_get_paypal_link() {
-	$response = wp_remote_get( peachpay_api_url() . 'api/v1/paypal/signup?merchantURL=' . get_site_url() );
+	$response = wp_remote_get( peachpay_api_url() . 'api/v1/paypal/signup?merchant_url=' . get_home_url() . '&wp_admin_url=' . get_site_url() );
 
 	if ( ! peachpay_response_ok( $response ) ) {
 		return;
@@ -409,15 +489,34 @@ function peachpay_connected_payments_check() {
 	}
 
 	// At this point, there must be at least one payment method connected but none of them are enabled.
+	add_filter( 'admin_notices', 'peachpay_display_payment_method_notice' );
+}
+
+/**
+ * Filter function for displaying admin notices.
+ */
+function peachpay_display_payment_method_notice() {
 	?>
 	<div class="error notice">
 		<p>
-		<?php
-		esc_html_e(
-			'You have disabled all PeachPay payment methods. The PeachPay checkout window will appear, but customers will have no way to pay. Please enable at least one payment method.',
-			'peachpay-for-woocommerce'
-		);
-		?>
+			<?php
+			esc_html_e(
+				'You have disabled all PeachPay payment methods. The PeachPay checkout window will appear, but customers will have no way to pay. Please ',
+				'peachpay-for-woocommerce'
+			);
+			$payment_settings = admin_url() . 'admin.php?page=peachpay&tab=payment';
+			?>
+
+			<a href="<?php echo esc_url_raw( $payment_settings ); ?>">
+
+			<?php
+			esc_html_e(
+				'enable at least one payment method',
+				'peachpay-for-woocommerce'
+			);
+
+			echo '</a>.'
+			?>
 		</p>
 	</div>
 	<?php

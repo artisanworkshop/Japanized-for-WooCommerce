@@ -11,31 +11,41 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 
 define( 'PEACHPAY_ROUTE_BASE', 'peachpay/v1' );
 
-add_action( 'rest_api_init', 'peachpay_rest_api_init' );
-peachpay_frontend_ajax_init();
+// Load any custom utilities we may need.
+require_once PEACHPAY_ABSPATH . 'core/util/button.php';
+require_once PEACHPAY_ABSPATH . 'core/routes/rest-api-utility.php';
 
-/**
- * Loads and intilizes ajax that does not require the admin backend. The WC cart is preloaded for these
- */
-function peachpay_frontend_ajax_init() {
-	require_once PEACHPAY_ABSPATH . 'core/routes/peachpay-cart-calculation.php';
-	require_once PEACHPAY_ABSPATH . 'core/routes/peachpay-quantity-changer.php';
+// Load endpoint files.
+require_once PEACHPAY_ABSPATH . 'core/routes/cart-coupon.php';
+require_once PEACHPAY_ABSPATH . 'core/routes/cart-item-quantity.php';
+require_once PEACHPAY_ABSPATH . 'core/routes/cart-calculation.php';
+require_once PEACHPAY_ABSPATH . 'core/routes/order-create.php';
+require_once PEACHPAY_ABSPATH . 'core/routes/payment-intent-create.php';
+require_once PEACHPAY_ABSPATH . 'core/routes/order-payment-status.php';
+require_once PEACHPAY_ABSPATH . 'core/routes/order-note.php';
 
-	add_action( 'wc_ajax_pp-cart', 'peachpay_cart_calculation_rest_api' );
-	add_action( 'wc_ajax_pp-cart-item-quantity', 'peachpay_product_quantity_changer_rest_api' );
-}
+// wc-ajax enpoints need intilized right away.
+add_action( 'wc_ajax_pp-cart', 'peachpay_wc_ajax_cart_calculation' );
+add_action( 'wc_ajax_pp-cart-item-quantity', 'peachpay_wc_ajax_product_quantity_changer' );
+add_action( 'wc_ajax_pp-order-create', 'peachpay_wc_ajax_create_order' );
+add_action( 'wc_ajax_pp-order-status', 'peachpay_wc_ajax_order_payment_status' );
+add_action( 'wc_ajax_pp-order-note', 'peachpay_wc_ajax_order_note' );
+add_action( 'wc_ajax_pp-create-stripe-payment-intent', 'peachpay_wc_ajax_create_stripe_payment_intent' );
 
 /**
  * Load external rest api files and register api endpoints.
  */
 function peachpay_rest_api_init() {
 
-	// Load any custom utilities we may need.
-	require_once PEACHPAY_ABSPATH . 'core/util/button.php';
-	require_once PEACHPAY_ABSPATH . 'core/routes/rest-api-utility.php';
-
-	// Load endpoint files.
-	require_once PEACHPAY_ABSPATH . 'core/routes/peachpay-coupon.php';
+	register_rest_route(
+		PEACHPAY_ROUTE_BASE,
+		'/order/status',
+		array(
+			'methods'             => 'POST',
+			'callback'            => 'peachpay_rest_api_order_payment_status',
+			'permission_callback' => '__return_true',
+		)
+	);
 
 	register_rest_route(
 		PEACHPAY_ROUTE_BASE,
@@ -117,7 +127,7 @@ function peachpay_rest_api_init() {
 		)
 	);
 }
-
+add_action( 'rest_api_init', 'peachpay_rest_api_init' );
 
 /**
  * RestAPI Endpoint for validating checkout address.
@@ -219,6 +229,9 @@ function peachpay_change_button_settings( WP_REST_Request $request ) {
 	}
 	if ( isset( $request['button_sheen'] ) ) {
 		$options['button_sheen'] = $request['button_sheen'];
+	}
+	if ( isset( $request['button_fade'] ) ) {
+		$options['button_fade'] = $request['button_fade'];
 	}
 	if ( isset( $request['hide_on_product_page'] ) ) {
 		$options['hide_on_product_page'] = $request['hide_on_product_page'];

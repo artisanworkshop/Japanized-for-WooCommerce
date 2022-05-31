@@ -4,6 +4,7 @@ let loaded = false;
 let buttonClickedBeforeLoad = false;
 let buttonClickedBeforeLoadID = '';
 let ppInitMessageSent = false;
+let ppButtonShine = false;
 const selectedOutOfStockItems = new Set();
 const pendingVariationDetailRequests = 0;
 
@@ -12,9 +13,16 @@ const peachpayVersion = peachpay_data.version;
 
 // In order to make sure the mini cart is always placed put this here and it on
 // loading the window will always place it.
-if (peachpay_data.hide_mini_cart !== '1' && location.hostname !== 'skregear.com') {
-	self.requestAnimationFrame(peachpay_placeButtonMiniCart);
-	self.addEventListener('load', peachpay_watchForMiniButtonRemoval);
+if (peachpay_data.hide_mini_cart !== '1') {
+	self.addEventListener('DOMContentLoaded', () => {
+		peachpay_placeButtonMiniCart();
+		jQuery(document.body).on(
+			'wc_fragments_loaded wc_fragments_refreshed',
+			() => {
+				peachpay_placeButtonMiniCart();
+			},
+		);
+	});
 }
 
 function ppOnWindowDataFetch(endpoint, requestCallback) {
@@ -32,6 +40,7 @@ function ppOnWindowDataFetch(endpoint, requestCallback) {
 	});
 }
 
+// deno-lint-ignore no-unused-vars
 function ppOnWindowMessage(eventName, cb) {
 	self.addEventListener('message', async (event) => {
 		if (event.data.event === eventName) {
@@ -39,6 +48,29 @@ function ppOnWindowMessage(eventName, cb) {
 		}
 	}, false);
 }
+
+ppOnWindowDataFetch('pp-create-stripe-payment-intent', async (request) => {
+	const formData = new FormData();
+
+	formData.append('session[id]', request.session.id);
+	formData.append('session[stripe][customer_id]', request.session.stripe.customer_id);
+	formData.append('session[stripe][connect_id]', request.session.stripe.connect_id);
+	formData.append('session[stripe][payment_method_id]', request.session.stripe.payment_method_id);
+	formData.append('session[stripe][payment_method_type]', request.session.stripe.payment_method_type);
+	formData.append('order[id]', request.order.id);
+	formData.append('order[data]', JSON.stringify(request.order.data));
+
+	const response = await fetch(`${peachpay_data.wp_site_url}?wc-ajax=pp-create-stripe-payment-intent`, {
+		method: 'POST',
+		body: formData,
+	});
+
+	if (!response.ok) {
+		return null;
+	}
+
+	return response.json();
+});
 
 ppOnWindowDataFetch('pp-place-order', placeOrder);
 ppOnWindowDataFetch('pp-set-order-status', async (data) => {
@@ -59,6 +91,20 @@ ppOnWindowDataFetch('pp-set-order-status', async (data) => {
 	return false;
 });
 
+ppOnWindowDataFetch('pp-add-order-note', async (data) => {
+	const formData = new FormData();
+
+	formData.append('id', data.id);
+	formData.append('note', data.note);
+
+	const response = await fetch(`${peachpay_data.wp_site_url}?wc-ajax=pp-order-note`, {
+		method: 'POST',
+		body: formData,
+	});
+
+	return response.ok;
+});
+
 ppOnWindowDataFetch('pp-validate-billing-address', (data) => validateAddress(formDataFromAddress(data)));
 
 ppOnWindowDataFetch('pp-calculate-cart', async (data) => {
@@ -75,7 +121,7 @@ ppOnWindowDataFetch('pp-calculate-cart', async (data) => {
 		formData.append('order[shipping_location][postcode]', data.order.shipping_location.postcode);
 	}
 
-	const response = await fetch(`${peachpay_data.wp_site_url}/?wc-ajax=pp-cart`, {
+	const response = await fetch(`${peachpay_data.wp_home_url}/?wc-ajax=pp-cart`, {
 		method: 'POST',
 		headers: {
 			'credentials': 'same-origin',
@@ -84,7 +130,7 @@ ppOnWindowDataFetch('pp-calculate-cart', async (data) => {
 	});
 
 	if (!response.ok) {
-		const error = new Error(`Cart calculation failed on ${peachpay_data.wp_site_url}`);
+		const error = new Error(`Cart calculation failed on ${peachpay_data.wp_home_url}`);
 		captureSentryException(error);
 		throw error;
 	}
@@ -105,13 +151,10 @@ ppOnWindowDataFetch('pp-change-quantity', async (data) => {
 	}
 
 	const responseData = await response.json(); // As ICartCalculationResponse
-	return responseData;
-});
-
-ppOnWindowMessage('pp-complete-transaction', (message) => {
-	if (message.redirectURL) {
-		window.location = message.redirectURL;
+	if (responseData.success && responseData.data) {
+		peachpay_data.cart = responseData.data.cart_calculation_record[0].cart;
 	}
+	return responseData;
 });
 
 self.addEventListener('message', async (event) => {
@@ -120,8 +163,10 @@ self.addEventListener('message', async (event) => {
 		document.querySelector('#peachpay-iframe').contentWindow.postMessage({ event: 'UI::modalOpened' }, '*');
 		document.querySelector('#loading-spinner-iframe').classList.add('hide');
 		document.querySelector('#pp-modal-overlay').style.display = 'block';
-		document.querySelector('body').style.overflow = 'hidden';
 
+		document.body.style.overflow = 'hidden';
+		document.body.style.position = 'fixed';
+		document.body.style.touchAction = 'none';
 		peachpay_hideLoadingSpinner();
 	}
 
@@ -132,6 +177,10 @@ self.addEventListener('message', async (event) => {
 			switch (event.data.action) {
 				case 'closeModal':
 					closeModal();
+					if (php_data.feature_support.currency_switcher_input.enabled) {
+						window.location.reload();
+					}
+
 					break;
 				default:
 					// Do nothing
@@ -140,11 +189,18 @@ self.addEventListener('message', async (event) => {
 		}
 	}
 
-	if (event.data === 'closeModal') {
-		closeModal();
+	if (event.data.event === 'currencyUpdate') {
+		await updateCurrencyCookie(event.data.currency);
 	}
 
-	if (event.data === 'loaded') {
+	if (event.data === 'closeModal') {
+		closeModal();
+		if (peachpay_data.feature_support.currency_switcher_input && peachpay_data.feature_support.currency_switcher_input.enabled === true) {
+			window.location.reload();
+		}
+	}
+
+	if (event.data === 'pp-loaded') {
 		loaded = true;
 		if (buttonClickedBeforeLoad) {
 			const options = {
@@ -180,7 +236,7 @@ self.addEventListener('message', async (event) => {
 	}
 
 	if (event.data.event === 'setOrderStatus') {
-		const response = await setOrderStatus(event.data.orderID, {
+		const response = await setOrderStatus(event.data.orderID, { //TODO make sure works!
 			status: event.data.status,
 			message: event.data.message,
 			paymentMethod: {
@@ -226,13 +282,20 @@ function closeModal() {
 		jQuery(document.body).trigger('wc_update_cart');
 	}
 
+	if (document.querySelector('#pp-button') && document.querySelector('#pp-button').classList.contains('pp-button-float')) {
+		jQuery(document.body).trigger('wc_fragment_refresh');
+	}
+
 	document.querySelector('#peachpay-iframe').contentWindow.postMessage({ event: 'UI::modalClosed' }, '*');
 	document.querySelector('#pp-modal-overlay').style.display = 'none';
-	document.querySelector('body').style.overflow = 'auto';
+	document.body.style.overflow = 'auto';
+	document.body.style.position = '';
+	document.body.style.touchAction = 'auto';
+	window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function baseStoreURL() {
-	return location.hostname === 'localhost' ? `http://${location.hostname}:8000` : `https://${location.hostname}`;
+	return location.hostname === 'localhost' ? `http://${location.hostname}:8000` : `https://${peachpay_data.wp_hostname}`;
 }
 
 function basePeachPayAPIURL(merchantHostname) {
@@ -266,12 +329,18 @@ function basePeachPayAPIURL(merchantHostname) {
 	}
 }
 
+// deno-lint-ignore no-unused-vars
+function isDevEnvironment(baseUrl) {
+	return baseUrl === 'https://dev.peachpay.app' ||
+		baseUrl === 'https://dev.peachpay.local' ||
+		baseUrl === 'https://prod.peachpay.local';
+}
+
 /**
  * Initializes the peachpay button.
  *
  * @param { IButtonConfigurationOptions } options Peachpay button configuration options.
  */
-// deno-lint-ignore no-unused-vars
 function peachpay_initButton(options) {
 	peachpay_initButtonContainer(options);
 	peachpay_initButtonEvents(options);
@@ -286,25 +355,24 @@ function peachpay_initButton(options) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	if (document.querySelector('#pp-button').classList.contains('pp-button-float') && peachpay_data.cart.length === 0) {
-		const float_button = document.querySelector('#pp-button');
+	if (!peachpay_data.cart) {
+		peachpay_data.cart = [];
+	}
 
-		float_button.addEventListener('click', () => {
-			if (peachpay_data.cart.length === 0 && document.querySelector('#empty-cart-msg').classList.contains('hide')) {
-				document.querySelector('#empty-cart-msg').classList.remove('hide');
-				setTimeout(() => {
-					document.querySelector('#empty-cart-msg').classList.add('hide');
-				}, 1000);
-			}
-		});
+	if (document.querySelector('#pp-button') && document.querySelector('#pp-button').classList.contains('pp-button-float')) {
+		if (!document.querySelector('#pp-modal-overlay')) {
+			document.querySelector('body').insertAdjacentHTML('beforeend', pp_checkoutForm);
+		}
+		peachpay_initButton({ isMiniCart: false });
 	}
 });
 
 function peachpay_initButtonEvents(options) {
-	const button = document.querySelector(`#pp-button${options.isMiniCart ? '-mini' : ''}`);
+	const elmtIdExt = options.isMiniCart ? '-mini' : options.isShortcode ? '-shortcode' : '';
+	const button = document.querySelector(`#pp-button${elmtIdExt}`);
 
 	// Apply some dynamic styles to the button
-	if (!peachpay_isElementor()) {
+	if (!peachpay_isElementor() && !button.classList.contains('pp-button-float')) {
 		button.style.width = options.width || '100%';
 		button.style.setProperty('--button-color', peachpay_data.button_color || '#ff876c');
 		if (options.borderRadius && !options.isMiniCart) {
@@ -337,13 +405,16 @@ function peachpay_initButtonEvents(options) {
 		return;
 	}
 
-	if (document.querySelector('#pp-button') && document.querySelector('#pp-button').classList.contains('pp-button-float')) {
-		const float_button = document.querySelector('#pp-button');
-
-		float_button.addEventListener('click', (event) => openPeachPay({ event, options }));
-	}
-
-	button.addEventListener('click', (event) => openPeachPay({ event, options }));
+	button.addEventListener('click', (event) => {
+		if (button.classList.contains('pp-button-float') && document.querySelector('#pp-item-count') && parseInt(document.querySelector('#pp-item-count').innerHTML) === 0) {
+			document.querySelector('#empty-cart-msg').classList.remove('hide');
+			setTimeout(() => {
+				document.querySelector('#empty-cart-msg').classList.add('hide');
+			}, 1000);
+		} else {
+			openPeachPay({ event, options });
+		}
+	});
 
 	// If coming from an extra feature redirect, open up PeachPay right away
 	const urlParameters = new URLSearchParams(location.search);
@@ -435,7 +506,7 @@ function openPeachPay(context) {
  * @param { IButtonConfigurationOptions } options PeachPay button configuration options.
  */
 function peachpay_initButtonContainer(options) {
-	if (options.isMiniCart) {
+	if (options.isMiniCart || options.isShortcode) {
 		// They cannot change the position of the button in the mini cart because
 		// only the native style looks good
 		return;
@@ -444,10 +515,10 @@ function peachpay_initButtonContainer(options) {
 	const container = document.querySelector('#pp-button-container');
 	// On the product page, no position option is provided
 	if (!peachpay_isElementor()) {
-		container.style.textAlign = options.position || 'inherit';
+		container.style.textAlign = options.alignment || 'inherit';
 	}
 
-	container.style.justifyContent = options.position || 'inherit';
+	container.style.justifyContent = options.alignment || 'inherit';
 }
 
 function peachpay_sendInitMessage() {
@@ -455,13 +526,14 @@ function peachpay_sendInitMessage() {
 
 	peachpay.addEventListener('load', () => {
 		// For detecting support of peachpay alerts to prevent silent failures of messages
-		peachpay_data.alertSupport = true;
 		peachpay.contentWindow.postMessage({
 			event: 'init',
-			merchantHostname: location.hostname,
+			// wp_hostname is based on site_url(), which prevents bugs for subdirectory-based sites
+			merchantHostname: peachpay_data.wp_hostname,
 			isTestMode: peachpay_data.test_mode,
 			isCartPage: peachpay_data.is_cart_page,
 			isCheckoutPage: peachpay_data.is_checkout_page,
+			isShopPage: peachpay_data.is_shop_page,
 			isGroupedProduct: isGroupedProduct(),
 			isMobile: peachpay_isMobile(),
 			phpData: peachpay_data,
@@ -512,7 +584,8 @@ function peachpay_isProductInWCCart(formData) {
 }
 
 async function sendButtonClickedMessage(options) {
-	const isProductPage = !peachpay_data.is_cart_page && !peachpay_data.is_checkout_page && !options.isMiniCart;
+	const isShopPage = document.querySelector('#pp-button') && document.querySelector('#pp-button').classList.contains('pp-button-float');
+	const isProductPage = !peachpay_data.is_cart_page && !peachpay_data.is_checkout_page && !options.isMiniCart && !isShopPage;
 	if (isProductPage || options.isShortcode) {
 		if (!peachpay_validateProductPageForm(options)) {
 			peachpay_hideLoadingSpinner();
@@ -583,7 +656,7 @@ function peachpay_refreshFragments(response) {
 	}
 
 	// Using promises and not (await/async) to avoid blocking.
-	fetch(`${peachpay_data.wp_site_url}?wc-ajax=get_refreshed_fragments`, {
+	fetch(`${peachpay_data.wp_home_url}/?wc-ajax=get_refreshed_fragments`, {
 		method: 'POST',
 		time: Date.now(),
 	}).then((response) => {
@@ -725,6 +798,12 @@ function sendStopPaymentProcessingAnimationsMessage(options) {
  * New Place order function for use with window fetch.
  */
 async function placeOrder(data) {
+	// Permission is denied we should only prompt for permission instead of placing a test order.
+	if (!peachpay_data.has_valid_key) {
+		peachpay_promptPermissions();
+		return;
+	}
+
 	// Make sure Route Shipping Protection fee by route.com is not added
 	// until we add compatibility for it
 	if (peachpay_data.plugin_routeapp_active) {
@@ -737,6 +816,7 @@ async function placeOrder(data) {
 
 	const formData = formDataFromAddress(data.order.billingAddress);
 	formData.append('peachpay_checkout_nonce', peachpay_data.checkout_nonce);
+
 	formData.append('payment_method', data.order.paymentMethod === 'paypal' ? 'peachpay_paypal' : 'peachpay_stripe');
 	// Tentatively 1 for future separation of billing/shipping
 	formData.append('ship_to_different_address', 1);
@@ -765,7 +845,7 @@ async function placeOrder(data) {
 	}
 
 	if (data.order.customerOrderNotes && data.order.customerOrderNotes !== '') {
-		formData.append('order_comments', data.customerOrderNotes);
+		formData.append('order_comments', data.order.customerOrderNotes);
 	}
 
 	// Set selected shipping options.
@@ -773,7 +853,13 @@ async function placeOrder(data) {
 		formData.append(`shipping_method[${packageKey}]`, selectedOption);
 	}
 
-	const orderResponse = await fetch(`${baseStoreURL()}/?wc-ajax=pp-create-order`, {
+	if (data.order.additionalFields && data.order.additionalFields.length > 0) {
+		for (const field of data.order.additionalFields) {
+			formData.append(field.name, field.value);
+		}
+	}
+
+	const orderResponse = await fetch(`${baseStoreURL()}/?wc-ajax=pp-order-create`, {
 		method: 'POST',
 		credentials: 'same-origin',
 		body: formData,
@@ -782,6 +868,7 @@ async function placeOrder(data) {
 	const orderResult = await orderResponse.json();
 
 	if (orderResult.result === 'failure' || orderResult.success === false) {
+		orderResult.result = 'failure';
 		if (orderResult.data) {
 			const message = `<ul class="woocommerce-error message-wrapper" role="alert">
 			<li>
@@ -802,7 +889,6 @@ async function placeOrder(data) {
 			orderResult,
 			orderResultErrorText: parseWooCommerceHTMLError(orderResult.messages),
 			formData: Object.fromEntries(formData),
-			debugCart: peachpay_data.debug_cart,
 		};
 
 		await fetch(`${basePeachPayAPIURL(location.hostname)}/api/v1/error-log`, {
@@ -811,9 +897,7 @@ async function placeOrder(data) {
 			body: JSON.stringify({ errorContext }),
 		});
 
-		document.querySelector('.woocommerce-notices-wrapper').innerHTML = orderResult.messages;
-		sendStopPaymentProcessingAnimationsMessage({ closeModal: true });
-		return;
+		return orderResult;
 	}
 
 	await removeGiftCardsFromSession();
@@ -846,7 +930,10 @@ function peachpay_promptPermissions() {
 
 /**
  * Places an order directly to the merchant store from the merchant host client
- * @returns { Promise<void> }
+ *
+ * Only PayPal uses this anymore. Update this only if requried. Use the function `placeOrder` instead.
+ *
+ * @deprecated
  */
 async function placeOrderViaWCAjax(data) {
 	// Permission is denied we should only prompt for permission instead of placing a test order.
@@ -909,7 +996,7 @@ async function placeOrderViaWCAjax(data) {
 		}
 	}
 
-	const orderResponse = await fetch(`${baseStoreURL()}/?wc-ajax=wc_peachpay_create_order`, {
+	const orderResponse = await fetch(`${baseStoreURL()}/?wc-ajax=pp-order-create`, {
 		method: 'POST',
 		credentials: 'same-origin',
 		body: formData,
@@ -938,7 +1025,6 @@ async function placeOrderViaWCAjax(data) {
 			orderResult,
 			orderResultErrorText: parseWooCommerceHTMLError(orderResult.messages),
 			formData: Object.fromEntries(formData),
-			debugCart: peachpay_data.debug_cart,
 		};
 
 		await fetch(`${basePeachPayAPIURL(location.hostname)}/api/v1/error-log`, {
@@ -1024,7 +1110,7 @@ async function peachpay_addProductToCart(options) {
 
 	try {
 		const formData = peachpay_getAddToCartFormData(options);
-		const response = await fetch(peachpay_data.wp_site_url + '?wc-ajax=add-to-cart', {
+		const response = await fetch(peachpay_data.wp_home_url + '/?wc-ajax=add-to-cart', {
 			method: 'POST',
 			headers: { Accept: 'application/json' },
 			body: formData,
@@ -1039,7 +1125,7 @@ async function peachpay_addProductToCart(options) {
 		return true;
 	} catch (error) {
 		if (error instanceof Error) {
-			captureSentryException(new Error(`Product page "add to cart" failed on ${peachpay_data.wp_site_url}. Error: ` + error.message));
+			captureSentryException(new Error(`Product page "add to cart" failed on ${peachpay_data.wp_home_url}. Error: ` + error.message));
 			alert(pp_i18n['place-order-failure'][getLanguage()]);
 		}
 
@@ -1066,30 +1152,23 @@ function peachpay_getAddToCartFormData(options) {
 	return formData;
 }
 
+// Only used by paypal now. Probably nothing in the future
 function setOrderStatus(orderID, { status, message, paymentMethod }) {
-	const data = new FormData();
-	data.append('order_id', orderID);
+	const formData = new FormData();
 
-	if (paymentMethod.method === 'stripe' || paymentMethod.method === 'Stripe') {
-		data.append('_peachpay_stripe_customer_id', paymentMethod.id);
-	} else {
-		data.append('_peachpay_stripe_customer_id', '');
-	}
+	formData.append('order_id', orderID);
+	formData.append('transaction_id', paymentMethod.transactionID);
 
 	if (status === 'wc-processing') {
-		data.append('payment_type', paymentMethod.method);
-		data.append('transaction_id', paymentMethod.transactionID);
-		data.append('action', 'peachpay_wc_ajax_order_payment_complete');
+		formData.append('status', 'success');
+	} else {
+		formData.append('status', 'failed');
+		formData.append('status_message', message);
 	}
 
-	if (status === 'wc-failed') {
-		data.append('action', 'peachpay_wc_ajax_order_failed');
-		data.append('payment_failure_reason', message);
-	}
-
-	return fetch(peachpay_data.wp_ajax_url, {
+	return fetch(`${peachpay_data.wp_site_url}/?wc-ajax=pp-order-status`, {
 		method: 'POST',
-		body: data,
+		body: formData,
 	});
 }
 
@@ -1233,8 +1312,10 @@ function peachpay_showLoadingSpinner(isMiniCart) {
 		return;
 	}
 
-	document.querySelector('#loading-spinner').classList.remove('hide');
-	document.querySelector('#pp-button-content').classList.add('hide');
+	if (document.querySelector('#pp-button') && !document.querySelector('#pp-button').classList.contains('pp-button-float')) {
+		document.querySelector('#loading-spinner').classList.remove('hide');
+		document.querySelector('#pp-button-content').classList.add('hide');
+	}
 
 	const $ppButton = document.querySelector('#pp-button');
 	if ($ppButton) {
@@ -1289,7 +1370,7 @@ window.pp_peachpayButton = `
 		</div>
 	</button>
 	<div id="payment-methods-container" class="cc-company-logos">
-		<img class="${(peachpay_data.paypal) ? 'cc-logo' : 'hide'}" src="${peachpay_data.plugin_asset_url}public/img/marks/paypal.svg"/>
+		<img class="${(peachpay_data.feature_support.paypal_payment_method.enabled) ? 'cc-logo' : 'hide'}" src="${peachpay_data.plugin_asset_url}public/img/marks/paypal.svg"/>
 		<img class="cc-logo" src="${peachpay_data.plugin_asset_url}public/img/marks/visa.svg"/>
 		<img class="cc-logo" src="${peachpay_data.plugin_asset_url}public/img/marks/amex.svg"/>
 		<img class="cc-logo" src="${peachpay_data.plugin_asset_url}public/img/marks/discover.svg"/>
@@ -1301,14 +1382,14 @@ window.pp_peachpayButton = `
 
 window.pp_peachpayButtonMiniCart = `
 <div id="pp-button-container-mini" class="button-container pp-button-container ${(peachpay_data.test_mode && !peachpay_data.wp_admin_or_editor) ? 'hide' : ''}">
-	<button id="pp-button-mini" class="pp-button" type="button" style="display: block;">
+	<button id="pp-button-mini" class="pp-button ${peachpay_data.disable_default_font_css == '1' ? '' : 'pp-button-default-font'}" type="button" style="display: block;">
 		<div id="pp-button-content-mini">
 			<span id="pp-button-text-mini">${peachpay_data.button_text}</span>
 			<img id="button-icon-minicart" class=""/>
 		</div>
 	</button>
 	<div id="payment-methods-container-minicart" class="cc-company-logos">
-		<img class="${(peachpay_data.paypal) ? 'cc-logo-sidebar' : 'hide'}" src="${peachpay_data.plugin_asset_url}public/img/marks/paypal.svg"/>
+		<img class="${(peachpay_data.feature_support.paypal_payment_method.enabled) ? 'cc-logo-sidebar' : 'hide'}" src="${peachpay_data.plugin_asset_url}public/img/marks/paypal.svg"/>
 		<img class="cc-logo-sidebar" src="${peachpay_data.plugin_asset_url}public/img/marks/visa.svg"/>
 		<img class="cc-logo-sidebar" src="${peachpay_data.plugin_asset_url}public/img/marks/amex.svg"/>
 		<img class="cc-logo-sidebar" src="${peachpay_data.plugin_asset_url}public/img/marks/discover.svg"/>
@@ -1326,26 +1407,44 @@ window.pp_checkoutForm = `
 	</iframe>
 </div>
 <div class="peachpay-translate-helper" style="height:0;width:0;overflow:hidden;">translate me</div>
-
-<style>
-#peachpay-iframe {
-	width: 100%;
-	height: 100%;
-	border: none;
-}
-.pp-overlay {
-	background: rgba(40, 40, 40, 0.75);
-	display: none;
-	justify-content: center;
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	z-index: 2147483647;
-	overscroll-behavior: contain;
-	top: 0; right: 0; bottom: 0; left: 0;
-}
-</style>
 `;
+
+// Watches for the WooCommerce out-of-stock behavior on products with variations and adjusts the
+// style of the PeachPay checkout button accordingly.
+const peachpay_stock_observer = new MutationObserver(function () {
+	let needs_muted = false;
+
+	// Checks the status of the WooCommerce cart button. If their button is disabled, PeachPay should be too.
+	const checkout_button = document.getElementsByClassName('single_add_to_cart_button');
+	if (checkout_button[0]) {
+		const cL = checkout_button[0].classList;
+		if (cL.contains('disabled')) {
+			needs_muted = true;
+		}
+	}
+
+	// Variable for the PeachPay button.
+	const button = document.querySelector('#pp-button');
+	if (button) {
+		if (needs_muted) {
+			button.classList.add('pp-button-mute');
+			if (ppButtonShine) {
+				button.classList.remove('pp-button-shine');
+			}
+		} else {
+			button.classList.remove('pp-button-mute');
+			if (ppButtonShine) {
+				button.classList.add('pp-button-shine');
+			}
+		}
+	}
+});
+
+// Start the observer.
+peachpay_stock_observer.observe(document, {
+	childList: true,
+	subtree: true,
+});
 
 // Per site customization to make the buttons look as native as possible
 document.addEventListener('DOMContentLoaded', () => peachpay_addCustomMerchantStyles());
@@ -1354,7 +1453,15 @@ function peachpay_addCustomMerchantStyles() {
 	// The setting button_sheen was flipped so that the default is on, and its
 	// presence as a truthy value indicates that the shine should be turned off.
 	if (!peachpay_isElementor() && !peachpay_data.button_sheen) {
-		peachpay_buttonShine();
+		ppButtonShine = true;
+	}
+
+	if (!peachpay_isElementor() && peachpay_data.button_fade) {
+		peachpay_buttonFade();
+	}
+
+	if (!peachpay_isElementor() && !peachpay_data.disable_default_font_css) {
+		peachpay_defaultFontCSS();
 	}
 
 	if (document.querySelector('#payment-methods-container') && peachpay_data.button_hide_payment_method_icons) {
@@ -1440,29 +1547,40 @@ function peachpay_addCustomMerchantStyles() {
 	pp_placeButtonCustomCheckoutPage();
 }
 
-function peachpay_buttonShine() {
-	document.querySelector('body').insertAdjacentHTML('beforeend', peachpay_buttonShineCSS);
-}
-
-const peachpay_buttonShineCSS = `
-<style>
-@keyframes shine {
-	100% {
-		left: 200%;
+function peachpay_buttonFade() {
+	const body = document.querySelector('body');
+	if (body) {
+		body.insertAdjacentHTML('beforeend', peachpay_buttonFadeCSS);
 	}
 }
-#pp-button:after,
-#pp-button-mini:after {
-	animation: shine 5s ease infinite;
-	background: linear-gradient(to right, rgba(255,255,255,0), rgba(255, 255, 255, 0.3), rgba(255,255,255,0));
-	content: '';
-	display: inherit;
-	height: 200%;
-	left: -200%;
-	position: absolute;
-	top: 0;
-	transform: skewX(-20deg);
-	width: 40%;
+
+function peachpay_defaultFontCSS() {
+	const ppButtons = document.querySelectorAll('.pp-button');
+	if (ppButtons[0]) {
+		ppButtons.forEach((ppButton) => {
+			ppButton.classList.add('pp-button-default-font');
+		});
+	}
+}
+
+const peachpay_buttonFadeCSS = `
+<style>
+#pp-button-container .pp-button {
+	color: #FFF;
+	border: 2px solid var(--button-color);
+	background: linear-gradient(to right,#fff 50%,var(--button-color) 50%);
+	background-size: 210% 100%;
+	background-position: right bottom;
+	transition: all .4s ease;
+	border-radius: 8px!important;
+}
+#pp-button-container .pp-button:hover, #pp-button-container .pp-button:focus {
+	color: var(--button-color);
+	border: 2px solid var(--button-color);
+	background-position: left bottom;
+}
+.pp-button:hover {
+	opacity: 1.00 !important;
 }
 </style>`;
 
@@ -1697,4 +1815,8 @@ function update_buttonIcon(icon_value, buttonType) {
 				icons.classList.add('hide');
 		}
 	}
+}
+
+function updateCurrencyCookie(newCurrency) {
+	document.cookie = `pp_active_currency=${newCurrency};path=/`;
 }
