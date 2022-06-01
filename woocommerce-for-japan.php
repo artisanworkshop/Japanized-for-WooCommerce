@@ -168,7 +168,7 @@ class JP4WC{
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-payments.php';
         // Add PayPal Checkout(OLD)
         $paypal_setting = get_option( 'woocommerce_ppec_paypal_settings' );
-        if($paypal_setting['enabled'] == 'yes'){
+        if( isset($paypal_setting['enabled']) && $paypal_setting['enabled'] == 'yes' ){
 	        require_once JP4WC_INCLUDES_PATH . 'paypal-checkout/woocommerce-gateway-paypal-express-checkout.php';
         }
 		// Add PayPal Checkout(New from 2022/05 )
