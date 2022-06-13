@@ -355,7 +355,7 @@ class WebhookEndpoint {
 					// translators: %s is the headers key.
 					__(
 						'Not a valid webhook event. Header %s is missing',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					),
 					$key
 				)

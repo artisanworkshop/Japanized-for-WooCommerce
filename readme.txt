@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.0.0
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,11 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.4.1 - 2022-06-03 =
+* Fixed - The PayPal Payments bug.
+* Fixed - Some localize text-domains.
+* Dev - Add argument $order for following filter hooks, wc4jp_delivery_details_text, wc4jp_delivery_date_text, wc4jp_time_zone_text
 
 = 2.4.0 - 2022-06-01 =
 * Dev - Add New PayPal Checkout Payments.

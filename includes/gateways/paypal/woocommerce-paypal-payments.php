@@ -13,6 +13,7 @@
  * Text Domain: woocommerce-paypal-payments
  *
  * Fixed module/ppcp-api-client/src/Factory/AddressFactory.php by Shohei Tanaka for Japanese situation.(2022/05/30)
+ * Fixed module/ppcp-api-client/services.php by Shohei Tanaka for Japanese situation.(2022/06/01)
  * @package WooCommerce\PayPalCommerce
  */
 

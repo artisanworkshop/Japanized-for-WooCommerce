@@ -120,7 +120,7 @@ class CheckoutOrderApproved implements RequestHandler {
 				// translators: %s is the PayPal webhook Id.
 					__(
 						'No paypal payment for webhook event %s was found.',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					),
 					isset( $request['id'] ) ? $request['id'] : ''
 				);
@@ -205,7 +205,7 @@ class CheckoutOrderApproved implements RequestHandler {
 				// translators: %s is the order ID.
 					__(
 						'Order %s has been updated through PayPal',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					),
 					(string) $wc_order->get_id()
 				),

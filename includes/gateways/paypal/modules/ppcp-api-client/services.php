@@ -574,6 +574,9 @@ return array(
 					'SGD',
 					'USD',
 				),
+				'JP' => array(// Edit by Shohei Tanaka 2022/06/01
+					'JPY',
+				),
 			)
 		);
 	},

@@ -3,7 +3,7 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.4.0
+ * Version: 2.4.1
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 5.0
@@ -33,7 +33,7 @@ class JP4WC{
 	 *
 	 * @var string
 	 */
-	public $version = '2.4.0';
+	public $version = '2.4.1';
 
     /**
      * Japanized for WooCommerce Framework version.

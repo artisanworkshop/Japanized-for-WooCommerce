@@ -141,7 +141,7 @@ class CheckoutOrderCompleted implements RequestHandler {
 					// translators: %s is the order ID.
 					__(
 						'Order %s has been updated through PayPal',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					),
 					(string) $wc_order->get_id()
 				),

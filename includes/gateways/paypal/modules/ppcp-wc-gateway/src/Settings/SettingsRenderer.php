@@ -508,7 +508,7 @@ $data_rows_html
 					<?php
 					esc_html_e(
 						'Credit Card processing for your account has not yet been activated by PayPal. If your account is new, this can take some days. Otherwise, please get in contact with PayPal.',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					);
 					?>
 				</p>
@@ -556,7 +556,7 @@ $data_rows_html
 					<?php
 					esc_html_e(
 						'Unfortunately, the card processing option is not yet available in your country.',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					);
 					?>
 					<a href="https://developer.paypal.com/docs/checkout/advanced/currency-availability-advanced-cards/">

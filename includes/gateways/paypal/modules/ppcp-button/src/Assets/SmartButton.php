@@ -812,11 +812,11 @@ class SmartButton implements SmartButtonInterface {
 					'mm_yy'                    => __( 'MM/YY', 'woocommerce-for-japan' ),
 					'fields_not_valid'         => __(
 						'Unfortunately, your credit card details are not valid.',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					),
 					'card_not_supported'       => __(
 						'Unfortunately, we do not support your credit card.',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					),
 					'cardholder_name_required' => __( 'Cardholder\'s first and last name are required, please fill the checkout form required fields.', 'woocommerce-for-japan' ),
 				),
@@ -828,7 +828,7 @@ class SmartButton implements SmartButtonInterface {
 				'error' => array(
 					'generic' => __(
 						'Something went wrong. Please try again or choose another payment source.',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					),
 				),
 			),

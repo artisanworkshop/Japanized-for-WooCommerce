@@ -140,7 +140,7 @@ class ChangeCartEndpoint implements EndpointInterface {
 					'name'    => '',
 					'message' => __(
 						'Necessary fields not defined. Action aborted.',
-						'woocommerce-for-payments'
+						'woocommerce-for-japan'
 					),
 					'code'    => 0,
 					'details' => array(),
