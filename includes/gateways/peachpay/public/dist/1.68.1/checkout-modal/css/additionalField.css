@@ -1,0 +1,164 @@
+#additional-fields-new, #additional-fields-existing {
+	padding : 1rem 0rem 0rem 0rem;
+	margin-bottom: 0;
+}
+
+.flex {
+	display: flex;
+}
+
+.flex-col {
+	display: flex;
+	flex-direction: column;
+}
+
+.new-field-text {
+	color: #828282;
+}
+
+h2.pp-additional-label {
+	margin: 0rem 0rem 0rem;
+}
+
+.pp-form-label-text {
+	font-size: 1em;
+	color: #828282;
+	display: block;
+	transform: translate3d(1rem, 1.5rem, 0rem);
+	transform-origin: 0 0;
+	transition: all 0.3s;
+	height: 0rem;
+	position: absolute;
+	font-size: 90%;
+}
+
+.pp-w30-label {
+	width: 115px;
+	height: 23.3px;
+	overflow: hidden;
+}
+
+.pp-form-label-select {
+	font-size: 90%;
+	color: #828282;
+	display: block;
+	transform: translate3d(0.9rem, 0.8rem, 0rem) scale(0.8);
+	transform-origin: 0 0;
+	height: 0rem;
+	position: absolute;
+}
+
+.pp-input-box-text {
+	transition: all 0.5s;
+	border-radius: 5px;
+	border: 0;
+	padding: 1.6rem 1rem 0.4rem;
+	font-size: 1em;
+	font-family: avenir;
+	margin: 8px 0px 0px;
+}
+
+.pp-new-field{
+	margin: 0px 8px 0px 0px;
+}
+
+.pp-new-field:last-child{
+	margin: 0px 0px 0px;
+}
+
+.pp-select-box {
+	padding: 1.5rem 1rem 0.5rem 1rem;
+	color: #43454b;
+	border: 0;
+	-webkit-appearance: none;
+	box-sizing: border-box;
+	font-weight: normal;
+	font-size: 14px;
+	background-image: url('../img/select-arrow.svg');
+	background-repeat: no-repeat;
+	background-size: 11px;
+	background-position: center;
+	background-position-x: 97%;
+	box-shadow: none;
+	border-radius: 5px;
+	margin: 8px 0px 0px;
+}
+
+.pp-input-box-text::placeholder {
+	color: transparent;
+}
+
+.pp-input-box-text:focus + .pp-form-label-text {
+	transform: translate3d(0.9rem, 1rem, 0rem) scale(0.8);
+}
+
+.pp-input-box-text:focus + .pp-form-label-text,
+.pp-input-box-text:not(:placeholder-shown) + .pp-form-label-text {
+	transform: translate3d(0.9rem, 1rem, 0rem) scale(0.8);
+}
+
+.pp-input-box-text:focus + .pp-w30-label{
+	transform: translate3d(0.9rem, 1rem, 0rem) scale(0.8);
+	width: 100px;
+	height: 23.3px;
+}
+
+.pp-input-box-text:focus + .pp-w30-label,
+.pp-input-box-text:not(:placeholder-shown) + .pp-w30-label {
+	transform: translate3d(0.9rem, 1rem, 0rem) scale(0.8);
+	width: 100px;
+	height: 23.3px;
+}
+
+@media only screen and (max-width: 900px) {
+	.input-box-text {
+		background-color: white;
+	}
+
+	.new-text {
+		background-color: #f2f2f2;
+		color: #43454b;
+	}
+
+	.pp-input-box-text {
+		margin: unset;
+	}
+
+	.pp-new-field{
+		margin: 5px 4px 0px 4px;
+	}
+	
+	.pp-new-field:last-child{
+		margin: 5px 0px 0px;
+	}
+
+	.pp-input-box-text::placeholder {
+		color: transparent;
+	}
+
+	.pp-form-label-text {
+		transform: translate3d(1.1rem, 1rem, 0rem);
+	}
+
+	.pp-input-box-text:focus + .pp-form-label-text {
+		transform: translate3d(1rem, 0.5rem, 0rem) scale(0.8);
+	}
+	
+	.pp-input-box-text:focus + .pp-form-label-text,
+	.pp-input-box-text:not(:placeholder-shown) + .pp-form-label-text {
+		transform: translate3d(1rem, 0.5rem, 0rem) scale(0.8);
+	}
+	
+	.pp-input-box-text:focus + .pp-w30-label{
+		transform: translate3d(1rem, 0.5rem, 0rem) scale(0.8);
+		width: 100px;
+		height: 23.3px;
+	}
+	
+	.pp-input-box-text:focus + .pp-w30-label,
+	.pp-input-box-text:not(:placeholder-shown) + .aprt-label {
+		transform: translate3d(1rem, 0.5rem, 0rem) scale(0.8);
+		width: 100px;
+		height: 23.3px;
+	}
+}

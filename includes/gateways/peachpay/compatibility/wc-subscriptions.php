@@ -36,7 +36,7 @@ function peachpay_wcs_scheduled_payment_peachpay( float $renewal_total, WC_Order
 	$endpoint = peachpay_api_url() . 'api/v1/subscription-renewal';
 
 	$body    = array(
-		'merchant-url'  => wp_parse_url( get_site_url() )['host'],
+		'merchant-url'  => wp_parse_url( get_home_url() )['host'],
 		'merchant-name' => get_bloginfo( 'name' ),
 		'amount'        => $renewal_total,
 		'payment'       => array(

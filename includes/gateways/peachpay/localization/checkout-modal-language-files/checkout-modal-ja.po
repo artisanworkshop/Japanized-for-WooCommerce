@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+
+
+msgid "(optional)"
+msgstr "（オプション）"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+クーポンコードを追加する"
+
+msgid "+ NEW CARD"
+msgstr "+新しいカード"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ギフトカード/ストアクレジットを利用する"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "支払いを選択すると、支払いを完了するためにリダイレクトされます。"
+
+msgid "Apartment"
+msgstr "アパート"
+
+msgid "Back to info"
+msgstr "情報に戻る"
+
+msgid "Billing"
+msgstr "請求する"
+
+msgid "By clicking the button above, you agree to"
+msgstr "上のボタンをクリックすると、同意したことになります"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Card"
+msgstr "カード"
+
+msgid "Cart is empty"
+msgstr "カートは空です"
+
+msgid "City"
+msgstr "街"
+
+msgid "Continue"
+msgstr "継続する"
+
+msgid "Country"
+msgstr "国"
+
+msgid "County"
+msgstr "郡"
+
+msgid "Coupon code"
+msgstr "クーポンコード"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "新しいパスワードを作成するか、すでにアカウントをお持ちの場合は既存のパスワードを使用してください"
+
+msgid "Currency"
+msgstr "通貨"
+
+msgid "Delivery date"
+msgstr "配送日"
+
+msgid "Edit"
+msgstr "編集"
+
+msgid "Email"
+msgstr "Eメール"
+
+msgid "Exit Checkout"
+msgstr "チェックアウトを終了します"
+
+msgid "First name"
+msgstr "ファーストネーム"
+
+msgid "First renewal"
+msgstr "最初の更新"
+
+msgid "Gift card number"
+msgstr "ギフトカード番号"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "私が入国した国が私が居住している国であることを確認します"
+
+msgid "Initial Shipment"
+msgstr "最初の出荷"
+
+msgid "Last name"
+msgstr "苗字"
+
+msgid "My order"
+msgstr "私の注文"
+
+msgid "Order notes (optional)"
+msgstr "注文メモ（オプション）"
+
+msgid "Order summary"
+msgstr "注文の概要"
+
+msgid "Password"
+msgstr "パスワード"
+
+msgid "Pay"
+msgstr "支払い"
+
+msgid "Payment"
+msgstr "支払い"
+
+msgid "Personal"
+msgstr "個人的"
+
+msgid "Phone number"
+msgstr "電話番号"
+
+msgid "Place order"
+msgstr "注文する"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "戻ってもう一度やり直してください。必須フィールドがありません"
+
+msgid "Postal code"
+msgstr "郵便番号"
+
+msgid "Processing"
+msgstr "処理"
+
+msgid "Province"
+msgstr "州"
+
+msgid "Ready to check out?"
+msgstr "チェックアウトする準備はできましたか？"
+
+msgid "Recurring total"
+msgstr "経常合計"
+
+msgid "Remove"
+msgstr "削除する"
+
+msgid "Secured by"
+msgstr "によって保護"
+
+msgid "Select a Province"
+msgstr "州を選択"
+
+msgid "Select a State"
+msgstr "州を選択"
+
+msgid "Select a country"
+msgstr "国を選択"
+
+msgid "Send to"
+msgstr "に送る"
+
+msgid "Shipping"
+msgstr "運送"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "申し訳ありませんが、問題が発生しました。ページを更新して、もう一度お試しください。"
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "申し訳ありませんが、このストアはお住まいの地域に発送されません。"
+
+msgid "State"
+msgstr "州"
+
+msgid "Street address"
+msgstr "住所"
+
+msgid "Subtotal"
+msgstr "小計"
+
+msgid "Tax"
+msgstr "税"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "テストモード：顧客はPeachPayを見ることができません"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "入力するパスワードは8文字以上である必要があります。"
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "この注文に利用できる適格または有効な支払い方法はありません。"
+
+msgid "Total"
+msgstr "合計"
+
+msgid "Unknown order error occurred"
+msgstr "不明な注文エラーが発生しました"
+
+msgid "VIEW SAVED CARDS"
+msgstr "保存されたカードを表示する"
+
+msgid "Verified"
+msgstr "確認済み"
+
+msgid "You entered an invalid coupon code"
+msgstr "無効なクーポンコードを入力しました"
+
+msgid "You entered an invalid gift card"
+msgstr "無効なギフトカードを入力しました"
+
+msgid "You might also like..."
+msgstr "あなたはおそらくそれも好きでしょう..."
+
+msgid "add"
+msgstr "追加"
+
+msgid "and"
+msgstr "と"
+
+msgid "coupon"
+msgstr "クーポン"
+
+msgid "privacy policy"
+msgstr "プライバシーポリシー"
+
+msgid "terms"
+msgstr "条項"
+
+msgid "terms and conditions"
+msgstr "規約と条件"
+
+msgid "the"
+msgstr "the"
+
+msgid "the store's"
+msgstr "店舗"
+

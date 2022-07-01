@@ -1,47 +1,51 @@
-=== PeachPay for WooCommerce | One-Click Checkout ===
+=== PeachPay Checkout for WooCommerce: Stripe, PayPal, and Klarna ===
 Contributors: peachpay
-Tags: woocommerce, checkout, payments
+Tags: woocommerce, checkout, payments, paypal, stripe, klarna, subscriptions
 Requires at least: 5.6
-Tested up to: 5.8
-Stable tag: 1.62.0
+Tested up to: 5.9
+Stable tag: 1.68.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-PeachPay is the fastest checkout for WooCommerce.
+PeachPay is supercharging the WooCommerce checkout and payments experience.
 
 == Description ==
 
 **The team behind PeachPay is officially backed and funded by WooCommerce.**
 
-Install PeachPay in minutes. Let your customers check out in seconds. See conversions rise and cart abandonment plummet in days.
+Worried about cart abandonment or failed payments? Then PeachPay is the plugin for you.
 
-The PeachPay extension delivers a frictionless checkout experience with one-click checkout.
-
-Frictional checkout processes are a leading cause of cart abandonment. Customers crave a quick and easy checkout experience—often missing from online stores.
+PeachPay is the most conversion-optimized, stable, and configurable checkout & payment experience available for WooCommerce.
 
 **What does PeachPay do?**
 
-PeachPay, a WooCommerce-backed company, allows customers who use PeachPay, to buy with one click. The best part? It doesn’t matter if that customer initially checked out with PeachPay on your site or any other site that accepts PeachPay as a payment method. They’ll have a one-click checkout experience the next time and will be more likely to buy from your store.
+PeachPay lets your customers check out straight from product pages, the cart page, and the mini/sidebar cart (and beyond, if you wish, with shortcodes). With the click of a button, these customers access a conversion-optimized and fully configurable checkout window, where you can enable all your favorite payment methods: Stripe, PayPal, Google Pay, Apple Pay, Klarna, Afterpay, and more! On top of that, returning users get access to one-click checkout.
 
 **[Try a live demo to see how fast your checkout can be](https://peachpay.app/)**
 
 **Features**
 
-* Adds a PeachPay Express Checkout button with no setup required to all product pages, cart page, checkout page, and mini/sidebar cart
-* Returning customers have access to one-click checkout
-* Customers with prior PeachPay purchases on other stores can purchase from your store with one click
-* Test mode allows you to try PeachPay on your live site before customers see it
-* Choose your button color, width, alignment, and more
-* 3D Secure with Strong Customer Authentication (SCA) support
-* Instant payouts and zero-fraud guarantee through Stripe & PayPal
-* Conveniently view orders in your existing store dashboard and payments in your existing Stripe & PayPal dashboards
+- Adds a fully customizable PeachPay checkout button to all product pages, cart page, checkout page, and mini/sidebar cart
+- Choose your PeachPay checkout button color, width, alignment, border radius, visibility by page, and more
+- Modify every aspect of the PeachPay checkout window, including fields, coupons/discount codes, product recommendations, and more
+- Shortcode support for placing PeachPay button on home page, shop page, etc.
+- Built-in currency switcher and multilanguage options
+- Collect payments with Stripe, PayPal, Google Pay, Apple Pay, Klarna, Afterpay, and more coming soon!
+- Instant payouts and zero-fraud guarantee through Stripe & PayPal
+- Conveniently view orders in your existing store dashboard and payments in your existing Stripe & PayPal dashboards
+- 3D Secure with Strong Customer Authentication (SCA) support
+- Returning customers have access to one-click checkout
+- Customers with prior PeachPay purchases on other stores can purchase from your store with one click
+- Test mode allows you to try PeachPay on your live site before customers see it
 
 **Benefits**
 
-By removing friction from the checkout process, PeachPay reduces cart abandonment. Merchants using PeachPay almost always report reduced cart abandonment, increased conversions, and rising average order value. By making it easier for your customers to purchase from your site, sales and customer satisfaction increase.
+By making the checkout & payment experience as frictionless & stable as possible, PeachPay lets merchants increase conversions, customer loyalty, and even average order value.
 
-If you have any questions, you can visit our [website](https://peachpay.app) or email us at [info@peachpay.app](mailto:info@peachpay.app)!
+Whether you plan to use PeachPay as a supplementary checkout option or as the only way to check out on your store, you can expect to benefit from PeachPay in no time. PeachPay is fully capable of powering your entire checkout & payment process, meaning your checkout page becomes obsolete (you can disable it with the click of a button using the PeachPay plugin settings).
+
+The best part about all this? PeachPay is completely free. No monthly/annual fees and no increase to your transaction fees. No fishy business either! PeachPay just takes a % from the payment providers its partners with instead of its merchants.
 
 == Installation ==
 
@@ -181,14 +185,291 @@ Yes! PeachPay is compatible with [WooCommerce Subscriptions](https://woocommerce
 
 == Screenshots ==
 
-1. The PeachPay button is automatically added to product pages and adapts to mobile devices.
-2. After clicking the PeachPay button, shoppers fill in their information.
-3. On the second page of the checkout, shoppers choose shipping options, if any, and enter their payment details.
-4. Returning customers can buy with one click!
-5. Both new and returning customers are redirected to your store's regular confirmation screen.
-6. PeachPay is also automatically added to the cart page.
+1. PeachPay adds a button to the product, cart, and checkout pages, no configuration needed!
+2. Let shoppers check out straight from the mini/sidebar cart!
+3. PeachPay supports many payment methods and gives shoppers a simplified checkout flow to increase conversions.
+4. Returning shoppers can buy with one click!
+5. All WooCommerce features are supported, like order notes, coupons, and upsells.
+6. Make it yours! Change the language, colors, fields, payment options, and more from the PeachPay settings.
 
 == Changelog ==
+
+### 1.68.1 (2022-06-05)
+
+#### Bug fixes
+- Single character coupon codes not being accepted
+- Having to tab or tap twice to get to the next form field
+
+### 1.68.0 (2022-06-02)
+
+#### New features
+- Add custom JavaScript to the checkout window from the Advanced settings!
+- Button preferences tab has been completely redesigned!
+- Bulgarian translation
+- A new mountain icon
+- Compatibility with Booster for WooCommerce shipping descriptions
+
+#### Improvements
+- Stripe fees are shown in the order details
+- Allow Stripe payment method to collect postal code
+- Simplify currency switcher settings
+- Show which currencies do not support certain payment methods
+- Improve display for 4+ payment methods in the checkout window
+- Changes to the one-click-upsell settings can now be previewed without having to save
+- Use quotes in custom field labels
+- Show custom shipping fields in the receipt page and order details
+- Improve handling of language variations by country (like Canadian French)
+- Allow the one-click-upsell to be used on the cart page
+- Make long product names in upsells less squished
+- Prevent placing orders with missing fields in older browsers
+- Keyboard accessibility
+
+#### Bug fixes
+- Sale price showing on variable products when currency switcher is turned on
+- WooCommerce checkout showing PeachPay (PayPal) when it shouldn't
+- Button disabled on bundle items with variations even after selecting variations
+- "View saved cards" showing breifly while processing payment
+- Button icon defaulting to on incorrectly
+- Missing translations on shipping field labels
+- Missing checkout window animation on non-product pages
+- Field editor shipping fields default values not showing
+- A few bugs with custom field editing
+- Broken address validation when Google Maps autocomplete misses the city
+- Incorrect related products heading placeholder
+- Extra space in returning shopper address
+- PHP error when Stripe is unlinked
+
+### 1.67.1 (2022-05-12)
+
+#### Bug fixes
+- Form validity being checked for new customers when it shouldn't
+- New field editor not being initialized, causing checkout fields to be missing if the settings were not visited
+- Rare case of PeachPay not opening if the site loads very fast
+
+### 1.67.0 (2022-05-11)
+
+#### New features
+- Move, add, edit, and remove any shipping field!
+- Ability to make certain shipping fields optional
+- Address autocomplete powered by Google Maps
+- Refunds through PayPal
+- "One click upsell" where you can display featured items during the checkout flow, across all products or specific ones
+- Shoppers can see what additional fields they entered on the receipt page
+- Button for shoppers to return to saved cards when adding a new card
+
+#### Improvements
+- Payment settings redesign
+- Formatting of the order summary to make it more readable with long text
+- Animation when opening and closing the checkout window
+- The two circles at the top of the checkout window that indicate progress can now be used to navigate between info and payment pages
+- Show a warning when leaving the PeachPay settings with unsaved changes
+- Currency switcher table formatting
+- Styling of related products slider in the checkout window
+- Better wording for product page button position setting
+
+#### Bug fixes
+- All items showing "on sale" when the currency switcher is turned on
+- Prevent zooming in on textboxes on mobile devices
+- White space showing when fade animation is on at certain screen sizes
+- Checkout window not opening for a specific store
+- JS console errors in the PeachPay settings pages
+- Certain Stripe refunds not working
+
+#### Removed
+- Button shine effect
+
+### 1.66.2 (2022-05-03)
+
+#### Bug fixes
+- Unable to turn off additional Stripe payment methods
+- Unsupported languages preventing the checkout window from opening if "Detect from page" setting is used
+
+### 1.66.1 (2022-04-30)
+
+#### New features
+- Custom button text color
+
+#### Improvements
+- Visual redesign of the General settings to make options easier to find
+- More intuitive user interface for currency switcher
+- Full translations for the currency switcher
+
+#### Changes
+- "Make PeachPay the only checkout" option moved to Payment Methods
+
+#### Bug fixes
+- Broken Italian translation causing PeachPay to not open when the checkout window is set to Italian
+
+### 1.66.0 (2022-04-28)
+
+#### New features
+- Custom CSS for those who want to get their hands dirty (find it in the new Advanced settings tab)
+- Shoppers can remove applied coupons
+- PeachPay supports free orders, where instead of showing the payment options, there is just a "place order" button
+- The checkout window message text can now include additional formatting with HTML
+- Full support for Japanized For WooCommerce by Artisan Workshop
+- Swedish translation
+
+#### Improvements
+- Show a banner in the plugin settings while in test mode
+- Updated payment method icons below the button to feature Klarna and Afterpay
+- Mini cart button is always 100% width which looks better on most themes
+- Better product page button placement
+
+#### Changes
+- The button effect defaults to "fade" rather than "shine"
+- The test mode option is now in the Payments tab of the settings since it only affects payments
+
+#### Bug fixes
+- Country Based Restrictions for WooCommerce compatibility
+- Floating button icon size
+- Fade effect causing some extra space in the button
+- Missing comma in returning customer address
+- Deactivation window text missing if the WordPress dashboard is in French
+- Don't try to register Apple Pay domain on localhost or staging sites
+- Undefined function on plugin load
+- PayPal errors
+- Field editor translations
+
+### 1.65.1 (2022-04-18)
+
+#### New features
+- Enable the various Stripe payment options from within the PeachPay settings
+
+#### Improvements
+- Display a notification if WordPress permalinks are set to "Plain" since PeachPay won't work
+- Add a shadow to indicate that the order summary can be scrolled when it contains many items
+- Allow shoppers to retry failed PayPal purchases
+- Enable test mode if "continue in test mode" is chosen from the onboarding screen
+- Record all card payment attempts in the order notes
+- Partial support for multiple "add to cart" buttons on a product page
+- Better compatibility with WooCommerce subtotal tax for both inclusive and exclusive tax settings
+
+#### Bug fixes
+- PayPal not opening if shipping tax is enabled
+- Prevent theme styles from affecting the button text and icon
+- Visual bug in related products at small screen sizes
+- Conflict with WooCommerce Payments
+- Prevent page content from shifting in the background when PeachPay is opened
+- Apple Pay bugs
+- PHP error about invalid arguments
+
+### 1.65.0 (2022-03-31)
+
+#### New features
+- Full support for Apple and Google Pay
+- Display a custom support or help message in the window to your shoppers
+- Option to not collect shipping addresses for digital items
+
+#### Improvements
+- Option to show related products below the checkout window
+- Mute the PeachPay button on product pages if the item is out of stock
+- Show a loading animation over the prices when loading
+- Show a message if PeachPay is activated without WooCommerce
+- Provide a hex code input next to the button color picker
+- Disable checkout fields when loading
+- Open payment method connect links in a new tab
+- Our logo is now used in the PeachPay settings header
+- Display store terms and conditions in the checkout window
+
+#### Bug fixes
+- Order notes showing up as "undefined"
+- Record failed card payments in order notes
+- Unable to press PayPal button in mobile Safari if the page is scrolled too far
+- Checkout window not being vertically centered
+- Conflict with Sellvia plugin
+- Returning customer "edit" button being separated from its icon
+- YITH gift cards being applied and causing the PeachPay button to disappear
+- WordPress banners messing with the PeachPay settings header
+- Bugs related to shipping address calculations
+
+### 1.64.0 (2022-03-23)
+
+#### New features
+- Support for more payment methods through Stripe, and a new look to the payment section of the checkout!
+- Connect Afterpay and Klarna in just a few minutes
+- Shoppers can add multiple credit cards and choose between them when returning
+- Shoppers can remove existing credit cards
+- Customize the text and look of the PeachPay button on the checkout page
+- A setting to make PeachPay the only checkout on your store
+- A setting to make the PeachPay button text styles match your store's theme
+
+#### Improvements
+- Payment method settings have been organized better
+- Paying with an alternate payment method no longer clears the previously used one
+
+#### Bug fixes
+- Returning customer order notes label could not be pressed to start typing
+- PeachPay button alignment affected by the presence of a PeachPay shortcode
+- Shortcode button not hidden from customers while in test mode
+- Saving additional fields after changing the order of them caused one to be removed
+
+### 1.63.2 (2022-03-07)
+
+#### Improvements
+- Improve the appearance of WordPress admin notices in the PeachPay settings
+- Make the currency settings wider for better usability
+- Notify the shopper right away on the first page of the checkout if your store doesn't ship to their location
+- Show the "Need Help" button in all tabs of the PeachPay settings
+- Link to the payment method settings from a PeachPay admin banner for faster navigation
+- Don't show the Stripe badge if Stripe is not enabled
+- The order summary for returning shoppers and shoppers on mobile devices can now be closed by tapping outside it
+- The order notes label now looks like all the rest of the labels (much sleeker!)
+
+#### Bug fixes
+- Removed a gap at the top of the checkout on some mobile screens
+- Prevent the mini cart button from disappearing after editing the cart
+- PayPal payment method icon not showing under the button
+- Broken floating button when mini cart button is hidden
+- Top part of the checkout window being cut off if it's too tall
+- PHP error message in order details
+- Button height being changed by some themes
+- Elementor widget not loading after recent Elementor update
+
+### 1.63.1 (2022-02-21)
+
+#### New features
+- The field editor has two new field types: select drop downs and radio buttons!
+- Notifications from WooCommerce are shown inside the PeachPay checkout window
+- A new button animation that you can use in place of the button shine!
+
+#### Improvements
+- The input fields are more consistent and aligned throughout PeachPay
+- Enable all payment methods automatically if turning on test mode right after installing PeachPay, before adding any live mode payment methods
+- Display information from additional fields next to the customer's address in the WooCommerce order view (previously it was way at the bottom!)
+- Better Chinese translations
+- Spacing around the payment method options in the checkout window to make things look more lined up
+- Prevent the floating button's appearance from being overridden by theme CSS
+- PeachPay now works for WordPress sites with all types of home URLs, whereas previously the site had to be hosted at the root domain
+
+#### Bug fixes
+- Apartment field text overflowing for some languages
+- Shortcodes not working in some cases
+- Compatibility with Woo Discount Rules
+- Conflict with Printful Integration for WooCommerce
+- PayPal button showing twice under certain conditions with the currency switcher
+- Currency switcher not working properly in some cases in Safari and Firefox
+- After connecting a Stripe account for the first time, the "needs permission" message would remain in the payment methods settings when it wasn't supposed to
+- Floating button visual glitch after adding an upsell item
+
+= 1.63.0 (2022-02-10) =
+* [New] Built-in currency switcher! By enabling this optional module, you can give shoppers the ability to switch the currency in the checkout window
+* [New] Option to hide the item quantity changers in the checkout window
+* [Improvement] When a PayPal payment fails, like the shopper's card in PayPal was declined, for example, we now update the WooCommerce order notes to describe why the order failed
+* [Improvement] The appearance of admin notices on the PeachPay settings page has been touched up to look much better!
+* [Improvement] Don't load the PeachPay settings styles and scripts on pages where they are not needed for better performance
+* [Improvement] Make it easier to click on responses in the deactivation feedback window
+* [Fix] A style bug causing the deactivation window to not be displayed correctly, and therefore making it difficult to deactivate PeachPay
+
+= 1.62.1 (2022-02-03) =
+* [Improvement] The tax and shipping totals in the order summary will update as soon as an address is entered
+* [Improvement] The settings page navigation tabs have a fresh look!
+* [Improvement] Scroll to the top of the page after the cart is emptied inside the PeachPay checkout window so that the shopper is not in the middle of a page upon closing the window
+* [Change] PeachPay will now read the WooCommerce coupon setting instead of having its own setting to hide and show the coupon field
+* [Change] Disable a few more PayPal funding sources that we don't currently support
+* [Change] New font in the checkout window! It's almost the same as the previous one, so it won't have any dramatic impact on how the checkout window looks, but it's more readable on smaller screens!
+* [Fix] Allow removed items to be readded right away on the product page
+* [Fix] Non-harmful JavaScript errors
 
 = 1.62.0 (2022-01-27) =
 * [New] Floating checkout button on the WooCommerce "shop" page that can be customized or hidden

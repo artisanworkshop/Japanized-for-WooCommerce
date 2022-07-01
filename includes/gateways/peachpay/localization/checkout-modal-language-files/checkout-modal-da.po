@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: da\n"
+
+
+msgid "(optional)"
+msgstr "(valgfri)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ TILFØJ EN KUPONKODE"
+
+msgid "+ NEW CARD"
+msgstr "+ NYT KORT"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ INDLØS GAVEKORT/BUTIKSKREDIT"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "Når du har valgt betaling, bliver du omdirigeret til at gennemføre din betaling."
+
+msgid "Apartment"
+msgstr "Lejlighed"
+
+msgid "Back to info"
+msgstr "Tilbage til info"
+
+msgid "Billing"
+msgstr "Fakturering"
+
+msgid "By clicking the button above, you agree to"
+msgstr "Ved at klikke på knappen ovenfor accepterer du"
+
+msgid "Cancel"
+msgstr "Afbestille"
+
+msgid "Card"
+msgstr "Kort"
+
+msgid "Cart is empty"
+msgstr "Kurven er tom"
+
+msgid "City"
+msgstr "By"
+
+msgid "Continue"
+msgstr "Blive ved"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "County"
+msgstr "Amt"
+
+msgid "Coupon code"
+msgstr "Kuponkode"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "Opret en ny adgangskode, eller brug en eksisterende, hvis du allerede har en konto til"
+
+msgid "Currency"
+msgstr "betalingsmiddel"
+
+msgid "Delivery date"
+msgstr "Leveringsdato"
+
+msgid "Edit"
+msgstr "Redigere"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Exit Checkout"
+msgstr "Afslut kassen"
+
+msgid "First name"
+msgstr "Fornavn"
+
+msgid "First renewal"
+msgstr "Første fornyelse"
+
+msgid "Gift card number"
+msgstr "Gavekort nummer"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "Jeg bekræfter, at det land, jeg har indtastet, er det, jeg bor i"
+
+msgid "Initial Shipment"
+msgstr "Indledende forsendelse"
+
+msgid "Last name"
+msgstr "Efternavn"
+
+msgid "My order"
+msgstr "Min bestilling"
+
+msgid "Order notes (optional)"
+msgstr "Ordrebemærkninger (valgfrit)"
+
+msgid "Order summary"
+msgstr "Ordreoversigt"
+
+msgid "Password"
+msgstr "Adgangskode"
+
+msgid "Pay"
+msgstr "Betale"
+
+msgid "Payment"
+msgstr "Betaling"
+
+msgid "Personal"
+msgstr "Personlig"
+
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+msgid "Place order"
+msgstr "Angiv bestilling"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "Gå venligst tilbage og prøv igen. Mangler obligatorisk felt"
+
+msgid "Postal code"
+msgstr "Postnummer"
+
+msgid "Processing"
+msgstr "Forarbejdning"
+
+msgid "Province"
+msgstr "Provins"
+
+msgid "Ready to check out?"
+msgstr "Klar til at tjekke ud?"
+
+msgid "Recurring total"
+msgstr "Tilbagevendende total"
+
+msgid "Remove"
+msgstr "Fjerne"
+
+msgid "Secured by"
+msgstr "Sikret af"
+
+msgid "Select a Province"
+msgstr "Vælg en provins"
+
+msgid "Select a State"
+msgstr "Vælg en stat"
+
+msgid "Select a country"
+msgstr "Vælg et land"
+
+msgid "Send to"
+msgstr "Send til"
+
+msgid "Shipping"
+msgstr "Forsendelse"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "Undskyld, noget gik galt. Opdater venligst siden og prøv igen."
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "Beklager, denne butik sender ikke til din placering."
+
+msgid "State"
+msgstr "Stat"
+
+msgid "Street address"
+msgstr "Vejnavn"
+
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "Tax"
+msgstr "Skat"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "Testtilstand: kunder kan ikke se PeachPay"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "Den indtastede adgangskode skal være på mindst 8 tegn."
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "Der er ingen kvalificerede eller aktive betalingsmetoder tilgængelige for denne ordre."
+
+msgid "Total"
+msgstr "i alt"
+
+msgid "Unknown order error occurred"
+msgstr "Ukendt ordrefejl opstod"
+
+msgid "VIEW SAVED CARDS"
+msgstr "SE GEMTE KORT"
+
+msgid "Verified"
+msgstr "Verificeret"
+
+msgid "You entered an invalid coupon code"
+msgstr "Du har indtastet en ugyldig kuponkode"
+
+msgid "You entered an invalid gift card"
+msgstr "Du har indtastet et ugyldigt gavekort"
+
+msgid "You might also like..."
+msgstr "Du kunne måske også lide..."
+
+msgid "add"
+msgstr "tilføje"
+
+msgid "and"
+msgstr "og"
+
+msgid "coupon"
+msgstr "kupon"
+
+msgid "privacy policy"
+msgstr "Fortrolighedspolitik"
+
+msgid "terms"
+msgstr "vilkår"
+
+msgid "terms and conditions"
+msgstr "vilkår og betingelser"
+
+msgid "the"
+msgstr "det"
+
+msgid "the store's"
+msgstr "butikkens"
+

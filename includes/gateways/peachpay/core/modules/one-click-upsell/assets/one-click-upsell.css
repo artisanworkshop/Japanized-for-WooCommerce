@@ -1,0 +1,113 @@
+.pp-one-click-upsell-container {
+	width: 600px;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	align-content: center;
+	gap: 16px;
+	padding: 16px;
+	border-radius: 5px;
+	box-shadow: 0px 0px 7px -1px rgb(0 0 0 / 50%);
+	position: relative;
+	line-height: normal;
+}
+
+.pp-one-click-upsell-headline {
+	font-size: 40px;
+	text-align: center;
+}
+
+.pp-one-click-upsell-contents {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
+}
+
+.pp-ocu-product-name {
+	font-size: 32px;
+	font-weight: bold;
+}
+
+.pp-ocu-accept-button {
+	min-width: 224px;
+	height: 72px;
+	color: white;
+	font-weight: bold;
+	background-color: var(--button-color);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 5px;
+	font-size: 24px;
+	cursor: pointer;
+	padding: 0 15px;
+}
+
+.pp-ocu-decline-button {
+	opacity: 55%;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.pp-ocu-product-description {
+	font-size: 16px;
+}
+
+.pp-ocu-product-price {
+	font-size: 40px;
+}
+
+.pp-ocu-product-price ins{
+	text-decoration: none;
+}
+
+.pp-ocu-product-price del {
+	color: #6d6d6d;
+	opacity: 0.5;
+}
+
+.pp-ocu-product-img {
+	width: 300px;
+	height: 300px;
+}
+
+.pp-ocu-close {
+	font-size: 24px;
+	position: absolute;
+	right: 10px;
+	top: 0px;
+}
+.pp-one-click-upsell-sub-headline {
+	font-size: 16px;
+	text-align: center;
+}
+
+@media only screen and (max-width: 900px) {
+	.pp-one-click-upsell-container {
+		width: 90%;
+	}
+
+	.pp-one-click-upsell-headline {
+		font-size: 30px;
+	}
+
+	.pp-ocu-product-price {
+		font-size: 30px;
+	}
+
+	.pp-ocu-product-name {
+		font-size: 24px;
+	}
+
+	.pp-ocu-accept-button {
+		height: 64px;
+		font-size: 20px;
+	}
+}
+
+.pp-mute {
+	opacity: 0.6;
+	pointer-events: none;
+}

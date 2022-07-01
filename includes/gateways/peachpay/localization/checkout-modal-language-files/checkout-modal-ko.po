@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
+
+
+msgid "(optional)"
+msgstr "(선택 과목)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ 쿠폰 코드 추가"
+
+msgid "+ NEW CARD"
+msgstr "+ 새 카드"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ 기프트 카드/매장 크레딧 사용"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "지불을 선택하면 지불을 완료하기 위해 리디렉션됩니다."
+
+msgid "Apartment"
+msgstr "아파트"
+
+msgid "Back to info"
+msgstr "정보로 돌아가기"
+
+msgid "Billing"
+msgstr "청구"
+
+msgid "By clicking the button above, you agree to"
+msgstr "위 버튼을 클릭하면 동의하는 것으로 간주됩니다."
+
+msgid "Cancel"
+msgstr "취소"
+
+msgid "Card"
+msgstr "카드"
+
+msgid "Cart is empty"
+msgstr "장바구니가 비어 있습니다."
+
+msgid "City"
+msgstr "도시"
+
+msgid "Continue"
+msgstr "계속하다"
+
+msgid "Country"
+msgstr "국가"
+
+msgid "County"
+msgstr "군"
+
+msgid "Coupon code"
+msgstr "쿠폰 코드"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "새 비밀번호를 생성하거나 이미 계정이 있는 경우 기존 비밀번호를 사용하십시오."
+
+msgid "Currency"
+msgstr "통화"
+
+msgid "Delivery date"
+msgstr "배송 날짜"
+
+msgid "Edit"
+msgstr "편집하다"
+
+msgid "Email"
+msgstr "이메일"
+
+msgid "Exit Checkout"
+msgstr "체크아웃 종료"
+
+msgid "First name"
+msgstr "이름"
+
+msgid "First renewal"
+msgstr "첫 번째 갱신"
+
+msgid "Gift card number"
+msgstr "기프트 카드 번호"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "내가 입력한 국가가 내가 거주하는 국가인지 확인합니다."
+
+msgid "Initial Shipment"
+msgstr "초기 선적"
+
+msgid "Last name"
+msgstr "성"
+
+msgid "My order"
+msgstr "내 주문"
+
+msgid "Order notes (optional)"
+msgstr "주문 메모(선택 사항)"
+
+msgid "Order summary"
+msgstr "주문 요약"
+
+msgid "Password"
+msgstr "비밀번호"
+
+msgid "Pay"
+msgstr "지불"
+
+msgid "Payment"
+msgstr "지불"
+
+msgid "Personal"
+msgstr "개인적인"
+
+msgid "Phone number"
+msgstr "전화 번호"
+
+msgid "Place order"
+msgstr "주문하기"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "돌아가서 다시 시도하십시오. 필수 항목 누락"
+
+msgid "Postal code"
+msgstr "우편 번호"
+
+msgid "Processing"
+msgstr "처리"
+
+msgid "Province"
+msgstr "주"
+
+msgid "Ready to check out?"
+msgstr "체크아웃할 준비가 되셨나요?"
+
+msgid "Recurring total"
+msgstr "반복 합계"
+
+msgid "Remove"
+msgstr "제거하다"
+
+msgid "Secured by"
+msgstr "보안"
+
+msgid "Select a Province"
+msgstr "주를 선택하십시오"
+
+msgid "Select a State"
+msgstr "주 선택"
+
+msgid "Select a country"
+msgstr "국가를 고르시 오"
+
+msgid "Send to"
+msgstr "보내기"
+
+msgid "Shipping"
+msgstr "배송"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "죄송합니다. 문제가 발생했습니다. 페이지를 새로고침하고 다시 시도하십시오."
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "죄송합니다. 이 상점은 귀하의 위치로 배송되지 않습니다."
+
+msgid "State"
+msgstr "상태"
+
+msgid "Street address"
+msgstr "주소"
+
+msgid "Subtotal"
+msgstr "소계"
+
+msgid "Tax"
+msgstr "세"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "테스트 모드: 고객이 PeachPay를 볼 수 없습니다."
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "입력한 비밀번호는 8자 이상이어야 합니다."
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "이 주문에 사용할 수 있는 적격 또는 활성 결제 방법이 없습니다."
+
+msgid "Total"
+msgstr "총"
+
+msgid "Unknown order error occurred"
+msgstr "알 수 없는 주문 오류가 발생했습니다"
+
+msgid "VIEW SAVED CARDS"
+msgstr "저장된 카드 보기"
+
+msgid "Verified"
+msgstr "확인됨"
+
+msgid "You entered an invalid coupon code"
+msgstr "잘못된 쿠폰 코드를 입력했습니다."
+
+msgid "You entered an invalid gift card"
+msgstr "잘못된 기프트 카드를 입력했습니다."
+
+msgid "You might also like..."
+msgstr "당신은 또한 좋아할 수도 있습니다 ..."
+
+msgid "add"
+msgstr "추가하다"
+
+msgid "and"
+msgstr "그리고"
+
+msgid "coupon"
+msgstr "쿠폰"
+
+msgid "privacy policy"
+msgstr "개인 정보 정책"
+
+msgid "terms"
+msgstr "자귀"
+
+msgid "terms and conditions"
+msgstr "이용약관"
+
+msgid "the"
+msgstr "그만큼"
+
+msgid "the store's"
+msgstr "상점들"
+

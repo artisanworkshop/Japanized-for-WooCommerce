@@ -16,7 +16,7 @@
     $title = apply_filters( 'wc4jp_admin_setting_title', $title );
 	?>
 <div class="wrap">
-	<h2><?php echo  $title[$_GET['tab']];?></h2>
+	<h2><?php echo $title[$_GET['tab']];?></h2>
 	<div class="jp4wc-settings metabox-holder">
 		<div class="jp4wc-sidebar">
 			<div class="jp4wc-credits">

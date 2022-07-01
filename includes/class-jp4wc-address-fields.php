@@ -44,11 +44,6 @@ class AddressField4jp{
 		add_filter( 'woocommerce_admin_billing_fields', array( $this, 'admin_billing_address_fields'));
 		add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_shipping_address_fields'));
 		add_filter( 'woocommerce_customer_meta_fields', array( $this, 'admin_customer_meta_fields'));
-        // Automatic address registration by postal code
-        add_action( 'woocommerce_after_checkout_billing_form', array( $this, 'auto_zip2address_billing'), 10 );
-        add_action( 'woocommerce_after_checkout_shipping_form', array( $this, 'auto_zip2address_shipping'), 10 );
-        add_action( 'woocommerce_after_edit_address_form_billing', array( $this, 'auto_zip2address_billing'), 10 );
-        add_action( 'woocommerce_after_edit_address_form_shipping', array( $this, 'auto_zip2address_shipping'), 10 );
 
         // Remove checkout fields for PayPal cart checkout
         add_filter( 'woocommerce_default_address_fields' , array( $this, 'remove_checkout_fields_for_paypal') );
@@ -63,7 +58,6 @@ class AddressField4jp{
      * @return array
      */
 	public function address_fields( $fields ) {
-
         $fields['last_name']['class'] = array( 'form-row-first' );
         $fields['last_name']['priority'] = 10;
         $fields['first_name']['class'] = array( 'form-row-last' );
@@ -112,9 +106,8 @@ class AddressField4jp{
      * @return array
      */
 	public function billing_address_fields( $fields ) {
-		$address_fields = $fields;
-		if(!get_option( 'wc4jp-company-name'))unset($address_fields['billing_company']);
-		return $address_fields;
+		if(!get_option( 'wc4jp-company-name'))unset($fields['billing_company']);
+		return $fields;
 	}
 
     /**
@@ -495,120 +488,6 @@ class AddressField4jp{
 		return $customer_meta_fields;
 	}
 
-	// Automatic input from postal code to Address for billing
-	public function auto_zip2address_billing(){
-		$this->auto_zip2address( 'billing' );
-	}
-
-	// Automatic input from postal code to Address for shipping
-	public function auto_zip2address_shipping(){
-		$this->auto_zip2address( 'shipping' );
-	}
-
-    /**
-     * Display JavaScript code for automatic registration of address by zip code.
-     *
-     * @param string $method 'billing' or 'shipping'
-     */
-    function auto_zip2address($method){
-	    if(version_compare( WC_VERSION, '3.6', '>=' )){
-            $jp4wc_countries = new WC_Countries;
-            $states = $jp4wc_countries->get_states();
-        }else{
-            global $states;
-        }
-		if(get_option( 'wc4jp-yahoo-app-id' )){
-			$yahoo_app_id = get_option( 'wc4jp-yahoo-app-id' );
-		}else{
-			$yahoo_app_id = 'dj0zaiZpPWZ3VWp4elJ2MXRYUSZzPWNvbnN1bWVyc2VjcmV0Jng9MmY-';
-		}
-		$state_id = 'select2-'.$method.'_state-container';
-		if(get_option( 'wc4jp-zip2address' )){
-			wp_enqueue_script( 'yahoo-app','https://map.yahooapis.jp/js/V1/jsapi?appid='.$yahoo_app_id,array('jquery'),JP4WC_VERSION);
-			?>
-<script type="text/javascript">
-// Search Japanese Postal number
-jQuery(function($) {
-    // Method to automatically insert hyphen in postal code
-    function insertStr(input){
-        return input.slice(0, 3) + '-' + input.slice(3,input.length);
-    }
-
-    $(document).ready(function(){
-        $("#<?php echo $method;?>_postcode").keyup(function(e){
-            let zip = $("#<?php echo $method;?>_postcode").val(),
-                zipCount = zip.length;
-
-            // Control the delete key so that the hyphen addition process does not work (8 is Backspace, 46 is Delete)
-            let key = e.keyCode || e.charCode;
-            if( key === 8 || key === 46 ){
-                return false;
-            }
-
-            if(zipCount === 3){
-                $("#<?php echo $method;?>_postcode").val(insertStr(zip));
-            }else if( zipCount > 7) {
-                const url = "https://map.yahooapis.jp/search/zip/V1/zipCodeSearch";
-                let param = {
-                    appid: "<?php echo $yahoo_app_id;?>",
-                    output: "json",
-                    query: $("#<?php echo $method;?>_postcode").val()
-                };
-                $.ajax({
-                    url: url,
-                    data: param,
-                    dataType: "jsonp",
-                    success: function(result) {
-                        var ydf = new Y.YDF(result);
-                        // Display Address from Zip
-                        dispZipToAddress<?php echo $method;?>(ydf);
-                    },
-                    error: function() {
-                        // Error handling
-                    }
-                });
-            }
-        });
-    });
-});
-// Display Address from Zipcode
-function dispZipToAddress<?php echo $method;?>(ydf) {
-	var address = ydf.features[0].property.Address;
-	var state = address.substr( 0, 3 );
-	var states = new Array();
-
-	<?php foreach((array)$states['JP'] as $key => $value){
-		$key = substr($key, 2);
-		if($key == '14' || $key == "30" || $key == "46"){
-			echo 'states['.$key.'] = "'.mb_substr($value, 0, 3).'";';
-		}else{
-			echo 'states['.$key.'] = "'.$value.'";';
-		}
-	}
-	?>
-
-	var state_id = jQuery.inArray(state, states);
-	jQuery("#<?php echo $method;?>_state").val(state_id);
-	var text_num = 3;
-	if(state_id == "14" || state_id == "30" || state_id == "46"){
-		text_num = 4;
-	}
-	var city = address.substr( text_num );
-	jQuery("#<?php echo $method;?>_city").val(city);
-	states[14] = "<?php echo $states['JP']['JP14'];?>";
-	states[30] = "<?php echo $states['JP']['JP30'];?>";
-	states[46] = "<?php echo $states['JP']['JP46'];?>";
-	if(state_id > 9){
-	document.getElementById("<?php echo $method;?>_state").value = "JP" + state_id;
-	}else{
-	document.getElementById("<?php echo $method;?>_state").value = "JP0" + state_id;
-	}
-	document.getElementById("<?php echo $state_id;?>").innerHTML = states[state_id];
-}
-</script>
-		<?php
-		}
-	}
     /**
      * Address correspondence in Japan
      *

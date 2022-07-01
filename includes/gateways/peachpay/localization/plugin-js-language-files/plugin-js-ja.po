@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+
+
+msgid "Please select the remaining product options before adding this bundle to your cart."
+msgstr "このバンドルをカートに追加する前に、残りの製品オプションを選択してください。"
+
+msgid "Please select the remaining product options before adding this product to your cart."
+msgstr "この製品をカートに追加する前に、残りの製品オプションを選択してください。"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "申し訳ありませんが、問題が発生しました。ページを更新して、もう一度お試しください。"
+
+msgid "Sorry, this product is out of stock."
+msgstr "申し訳ありませんが、この商品は在庫切れです。"
+
+msgid "This gift card has no money left."
+msgstr "このギフトカードにはお金が残っていません。"
+

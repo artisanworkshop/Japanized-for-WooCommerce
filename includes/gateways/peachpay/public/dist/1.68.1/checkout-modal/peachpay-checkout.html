@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/coupon.css">
+	<link rel="stylesheet" href="css/paypal.css">
+	<link rel="stylesheet" href="css/stripe.css">
+	<link rel="stylesheet" href="css/paymentSelector.css">
+	<link rel="stylesheet" href="css/additionalField.css">
+	<link rel="stylesheet" href="css/oneClickUpsell.css">
+	<link rel="stylesheet" href="css/relatedProducts.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta charset="UTF-8">
+</head>
+
+<body class="pp-container">
+	<div id="pp-ocu-container" class="pp-blowup hide" aria-expanded="false"></div>
+	<div id="pp-modal-content" class="pp-content">
+		<div class="test-mode-banner hide" data-i18n="Test mode: customers cannot see PeachPay"></div>
+		<span class="pp-close pp-disabled-processing" tabindex="0">&times;</span>
+		<div id="pp-new-customer-checkout" class="w-100 flex-container">
+			<div class="flex-left p-20">
+				<div class="center">
+					<div id="checkout-status">
+						<div id="pp-checkout-status-left" class="pp-checkout-status-col current pp-back-to-info-click">
+							<div id="pp-checkout-status-left-text" class="pp-checkout-status-circle">
+								1
+							</div>
+							<div class="pp-checkout-status-text">INFO</div>
+						</div>
+						<div class="pp-checkout-status-line"></div>
+						<button type="submit" form="pp-info-form" id="pp-checkout-status-right" class="pp-checkout-status-col">
+							<div class="pp-checkout-status-circle">
+								2
+							</div>
+							<div class="pp-checkout-status-text">PAYMENT</div>
+						</button>
+					</div>
+				</div>
+				<div style="min-height: 20px; margin: none; padding: none;" id="pp-notice-container-mobile" class="pp-notice-container hide">
+					<!-- New customer notice mobile-->
+				</div>
+				<div class="pp-order-summary-mobile">
+					<div id="pp-dropdown-new" role="button" class="pp-dropdown-new" aria-expanded="false" tabindex="0">
+						<img src="img/shopping-cart-solid.svg" class="cart-icon-new" />
+						<div id="pp-total-cost" class="inline-block total-mobile pp-summary-total">
+							<!-- Mobile customer Total -->
+						</div>
+						<img src="img/chevron-down-solid.svg" id="dropdown-down-new" class="dropdown-btn-new" />
+						<img src="img/chevron-up-solid.svg" id="dropdown-up-new" class="dropdown-btn-new hide" />
+					</div>
+					<div id="order-summary-contents-new" class="order-summary-contents-new">
+						<table class="pp-summary order-summary-table">
+							<tbody id="pp-summary-body-mobile" class="order-summary-list">
+								<!-- New Customer Cart Lines -->
+							</tbody>
+						</table>
+						<div id="pp-summary-lines-body-mobile" class="pp-summary">
+							<!-- New Customer Summary Lines -->
+						</div>
+					</div>
+				</div>
+				<section id="pp-info">
+					<!-- Customer info Form -->
+				</section>
+				<section id="pp-shipping-payment" class="hide m1-shipping">
+					<div>
+						<div id="shipping-options-container" class="mt-payment">
+							<p class="mb-1">
+								<span class="color-change-text" data-i18n="Email"></span>
+								<br />
+								<span class="email"></span>
+							</p>
+							<p id="shipping-options-container-address" class="mb-1">
+								<span class="hide-for-virtual-carts color-change-text" data-i18n="Send to"></span>
+								<span class="show-for-virtual-carts color-change-text hide" data-i18n="Billing"></span>
+								<br />
+								<span class="full-name"></span>
+								<br />
+								<img id="pp-location-marker" class="color-changing-location-marker"></img>
+								<span id="pp-address-line" class="bold pp-address"></span>
+							</p>
+							<div class="hide-for-virtual-carts">
+								<div id="pp-shipping-options">
+									<!--New Customer Shipping Method Container-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="invalid-order-message" class="hide center m-2 p-2 lightgrey rounded">
+					</div>
+					<div id="pp-pms-new-container" class="pp-hide-on-free-order">
+						<span class="color-change-text" data-i18n="Payment"></span>
+						<div id="pp-pms-new" class="pp-pms">
+							<div class="header">
+
+							</div>
+							<div class="body">
+
+							</div>
+						</div>
+					</div>
+					<div id="pp-account-password" class="hide pp-account-password">
+						<div class="pp-col">
+							<label id="pp-account-password-label">
+							</label>
+							<div class="pp-password-box">
+								<input id="account-password" type="password" name="account-password" placeholder=" " class="pp-input text-input pp-new-password-box" autocomplete="off">
+								<label for="account-password" data-i18n="Password" class="pp-password-label form-label"></label>
+							</div>
+							<div id="account-password-error" class="error" role="alert"></div>
+						</div>
+						<br>
+					</div>
+					<div class="pay-button-container">
+						<div id="pp-pay-btn" class="center pp-btn-desktop">
+							<!-- New Free order button-->
+							<div class="free-btn-container mt-3 hide">
+								<div class="pp-btn-spinner-container hide">
+									<img src="img/spinner-dark.svg" class="pp-btn-shipping-spinner">
+								</div>
+								<button class="btn free-btn free-btn-new">
+									<img src="img/spinner.svg" class="free-btn-spinner spinner hide">
+									<span class="button-text" data-i18n="Place order"></span>
+								</button>
+							</div>
+							<!-- New Customer Stripe Pay button-->
+							<div class="stripe-btn-container hide">
+								<div class="pp-btn-spinner-container hide">
+									<img src="img/spinner-dark.svg" class="pp-btn-shipping-spinner">
+								</div>
+								<button id="pp-pay" class="hide btn stripe-btn stripe-btn-new">
+									<img src="img/spinner.svg" class="stripe-btn-spinner spinner hide">
+									<span class="button-text">
+										<span data-i18n="Pay"></span>
+										<span class="currency-symbol"></span>
+										<span id="pp-pay-total-cost"></span>
+										<span class="currency-symbol-after"></span>
+									</span>
+								</button>
+							</div>
+							<!-- New Customer Paypal Pay button-->
+							<div>
+								<div id="paypal-btn-container" class="pp-paypal-btn-container hide">
+								</div>
+								<div class="pp-paypal-spinner-container hide">
+									<img class="pp-paypal-spinner spinner" src="img/spinner-dark.svg">
+								</div>
+							</div>
+						</div>
+						<div class="pp-hide-on-mobile">
+							<div class="pp-tc-section"></div>
+						</div>
+					</div>
+				</section>
+				<div class="center pp-btn-desktop">
+					<div class="pp-continue-order-error"></div>
+					<button type="submit" form="pp-info-form" id="pp-continue" class="btn">
+						<img src="img/spinner.svg" id="continue-spinner" class="spinner hide">
+						<span class="button-text"><span data-i18n="Continue"></span></span>
+					</button>
+					<div class="flex-center">
+						<div style="width: fit-content;">
+							<a href="#" role="button" class="pp-exit"><span class="cross-icon">&times; </span><span class="exit-back-btn" data-i18n="Exit Checkout"></span></a>
+							<a href="#" role="button" class="hide pp-back-to-info pp-back-to-info-click"><img class="back-icon" src="img/back-icon.svg"></img><span class="exit-back-btn" data-i18n="Back to info"></span></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="flex-right p-20">
+				<div class="pp-order-summary">
+					<h1 class="inline-block order-summary-heading"><span class="bold" data-i18n="Order summary"></span>
+					</h1>
+					<div style="min-height: 20px; margin: none; padding: none;" id="pp-notice-container-new" class="pp-notice-container hide">
+						<!-- New customer notices-->
+					</div>
+					<table class="pp-summary order-summary-table">
+						<tbody id="pp-summary-body" class="order-summary-list">
+							<!-- New Customer Cart Lines -->
+						</tbody>
+					</table>
+					<div id="pp-summary-lines-body" class="pp-summary">
+						<!--New Customer Summary Lines-->
+					</div>
+					<table class="pp-summary pp-subscription-summary hide">
+						<tbody id="pp-subscription-summary-body">
+							<tr class="bold">
+								<td colspan="2" class="text-left"><span data-i18n="Recurring total"></span></td>
+							</tr>
+							<tr id="subscription-subtotal-row" class="summary-text-format">
+								<td><span data-i18n="Subtotal"></span></td>
+								<td><span class="currency-symbol"></span><span id="pp-subscription-subtotal-cost">0.00</span><span class="currency-symbol-after"></span> / <span class="subscription-period"></span>
+								</td>
+							</tr>
+							<tr id="subscription-shipping-cost-row" class="hide summary-text-format">
+								<td><span id="subscription-shipping-cost-row-shipping-label" data-i18n="Shipping"></td>
+								<td><span class="currency-symbol"></span><span id="pp-subscription-shipping-cost">0.00</span><span class="currency-symbol-after"></span> / <span class="subscription-period"></span>
+								</td>
+							</tr>
+							<tr id="subscription-tax-cost-row" class="hide summary-text-format">
+								<td><span data-i18n="Tax"></td>
+								<td><span class="currency-symbol"></span><span id="pp-subscription-tax-cost">0.00</span><span class="currency-symbol-after"></span>
+									/ <span class="subscription-period"></span></td>
+							</tr>
+							<tr id="subscription-total-cost-row" class="bold total-row mt-half border-total">
+								<td><span data-i18n="Total"></td>
+								<td><span class="currency-symbol"></span><span id="pp-subscription-total-cost">0.00</span><span class="currency-symbol-after"></span> / <span class="subscription-period"></span>
+								</td>
+							</tr>
+							<tr id="subscription-first-renewal-row" class="muted">
+								<td></td>
+								<td><span data-i18n="First renewal"></span>: <span id="pp-subscription-first-renewal-date"></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div id="extra-fields-section">
+					<div class="hide-when-invalid">
+						<div id="coupon-code-section" class="option-mobile hide">
+							<div class="options-mbv">
+								<div class="add-coupon-code coupon-code-option options-margin options-mobile-new hide" tabindex="0">
+									<span data-i18n="+ ADD A COUPON CODE"></span>
+								</div>
+							</div>
+							<form class="wc-coupon-code coupon-code mb-half hide">
+								<button type="button" class="exit-button exit-button-coupon">&times;</button>
+								<input type="text" id="coupon-code-new" name="coupon_code" placeholder=" " class="wc-coupon-code-input coupon-code-input coupon-input" autocomplete="off" required>
+								<label for="coupon-code-new" data-i18n="Coupon code" class="form-label coupon-form-label"></label>
+								<img src="img/spinner-dark.svg" width="20" class="wc-coupon-spinner coupon-spinner">
+								<input type="submit" value="+" class="wc-coupon-code-apply coupon-code-apply">
+							</form>
+							<span class="wc-invalid-coupon invalid-coupon hide mb-half block" data-i18n="You entered an invalid coupon code"></span>
+						</div>
+						<div id="gift-card-section" class="option-mobile hide">
+							<div class="options-mbv">
+								<div class="add-gift-card gift-card-option options-margin options-mobile-new hide">
+									<span data-i18n="+ REDEEM GIFT CARD/STORE CREDIT"></span>
+								</div>
+							</div>
+							<form class="pw-wc-gift-card coupon-code mb-0 hide">
+								<button type="button" class="exit-button exit-button-gift">&times;</button>
+								<input type="text" id="card-number-new" name="card_number" placeholder=" " class="gift-card-input coupon-code-input coupon-input" autocomplete="off" required>
+								<label for="card-number-new" data-i18n="Gift card number" class="form-label coupon-form-label"> </label>
+								<img src="img/spinner-dark.svg" width="20" class="gift-card-spinner coupon-spinner hide">
+								<input type="submit" value="+" class="gift-card-apply coupon-code-apply">
+							</form>
+							<span class="invalid-gift-card invalid-coupon hide" data-i18n="You entered an invalid gift card"></span>
+						</div>
+						<form id="additional-fields-new" class="hide">
+							<!-- Here is the additional field-->
+						</form>
+						<div class="order-notes hide">
+							<textarea class="order-notes-new text-input" placeholder=" " id="order-notes" maxlength="250" rows="4" cols="35"></textarea>
+							<label for="order-notes" data-i18n="Order notes (optional)" class="form-label pp-order-notes-lable"></label>
+						</div>
+						<div class="pp-custom-order-message hide">
+							<p class="muted"></p>
+						</div>
+						<div id="linked-products-section" class="hide">
+							<div id="linked-products-header" class="mt-half center">
+								<span data-i18n="You might also like..."></span>
+							</div>
+							<div class="center">
+								<div id="pp-products-list"></div>
+							</div>
+							<div class="scroll-btn pp-prev-btn scroll-end hide" role="button"></div>
+							<div class="scroll-btn pp-next-btn hide" role="button"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="center pp-btn-mobile">
+
+				<div class="pp-continue-order-error"></div>
+				<button type="submit" form="pp-info-form" id="pp-continue-mobile" class="btn">
+					<img src="img/spinner.svg" id="continue-spinner-mobile" class="spinner hide">
+					<span class="button-text"><span data-i18n="Continue"></span></span>
+				</button>
+				<div class="pay-button-container pay-button-container-mobile">
+					<!-- Mobile Free order button-->
+					<div class="free-btn-container hide">
+						<div class="pp-btn-spinner-container hide">
+							<img src="img/spinner-dark.svg" class="pp-btn-shipping-spinner">
+						</div>
+						<button class="btn free-btn free-btn-mobile">
+							<img src="img/spinner.svg" class="free-btn-spinner spinner hide">
+							<span class="button-text" data-i18n="Place order"></span>
+						</button>
+					</div>
+
+					<!-- Mobile Stripe pay button -->
+					<div class="stripe-btn-container hide">
+						<div class="pp-stripe-btn-spinner-container hide">
+							<img src="img/spinner-dark.svg" class="pp-stripe-btn-shipping-spinner">
+						</div>
+						<button id="pp-pay-mobile" class="hide btn stripe-btn">
+							<img src="img/spinner.svg" class="stripe-btn-spinner spinner hide">
+							<span class="button-text">
+								<span data-i18n="Pay"></span>
+								<span class="currency-symbol"></span>
+								<span id="pp-pay-total-cost"></span>
+								<span class="currency-symbol-after"></span>
+							</span>
+						</button>
+					</div>
+					<!-- Mobile PayPal pay button -->
+					<div class="pay-button-container">
+						<div id="paypal-btn-container-mobile" class="pp-paypal-btn-container hide">
+						</div>
+						<div class="pp-paypal-spinner-container hide">
+							<img class="pp-paypal-spinner spinner" src="img/spinner-dark.svg">
+						</div>
+					</div>
+				</div>
+				<div class="pp-tc-section"></div>
+				<div class="mt">
+					<a href="#" role="button" class="hide pp-back-to-info pp-back-to-info-click"><img class="back-icon" src="img/back-icon.svg"></img><span class="exit-back-btn" data-i18n="Back to info"></span></a>
+				</div>
+			</div>
+			<div id="pp-related-products-section-mobile" class="hide">
+				<span class="related-products-title"></span>
+				<div class="pp-products-list-related-mobile">
+				</div>
+			</div>
+			<div class="logo-container-mobile-view">
+				<a href="https://peachpay.app/" class="peachpay-logo-link" target="_blank">
+					<div class="inline">
+						<span class="secured-by" data-i18n="Secured by"></span>
+						<img class="peachpay-white-logo" src="img/peachpay-logo-full-black.png"></img>
+					</div>
+				</a>
+				<img class="inline powered-by-stripe hide" src="img/stripe-black.png" />
+			</div>
+			<div class="logo-container">
+				<a href="https://peachpay.app/" class="peachpay-logo-link" target="_blank">
+					<div class="inline">
+						<span class="secured-by" data-i18n="Secured by"></span>
+						<img class="peachpay-white-logo" src="img/peachpay-full-white.png"></img>
+					</div>
+				</a>
+				<img class="inline powered-by-stripe hide" src="img/stripe-white.png" />
+			</div>
+		</div>
+		<div id="pp-existing-customer-checkout" class="hide">
+			<div class="existing-sections existing-section-info">
+				<div class="ready-to-checkout">
+					<span class="bold x-large" data-i18n="Ready to check out?"></span>
+					<a href="#" role="button" id="edit-info" class="pp-disabled-processing">
+						<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="pencil-alt" class="edit-pencil svg-inline--fa fa-pencil-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+							<path fill="currentColor" d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z">
+							</path>
+						</svg>
+						<span class="color-change-text" data-i18n="Edit"></span>
+					</a>
+				</div>
+				<div class="existing-checkout-section mb-2">
+					<div><span class="color-change-text" data-i18n="Email"></span></div>
+					<div id="existing-email"></div>
+				</div>
+				<div class="existing-checkout-section mb-2">
+					<div>
+						<span class="color-change-text hide-for-virtual-carts" data-i18n="Send to"></span>
+						<span class="color-change-text show-for-virtual-carts" data-i18n="Billing"></span>
+					</div>
+					<div>
+						<span id="existing-name_first"></span> <span id="existing-name_last"></span>
+						<br>
+						<!-- Avoid return as it's rendered as an additional space -->
+						<span id="existing-address1"></span><span id="existing-address2"></span>,
+						<span id="existing-city"></span>,
+						<span id="existing-state"></span>
+						<span id="existing-postal"></span>,
+						<span id="existing-country"></span>
+					</div>
+				</div>
+				<div id="existing-checkout-delivery" class="existing-checkout-section hide mb-2">
+					<form id="pp-shipping-options-existing" class="m-0">
+						<!-- Existing Customer Shipping Methods -->
+					</form>
+				</div>
+				<div id="pp-pms-existing-container" class="pp-hide-on-free-order">
+					<span class="color-change-text">Payment</span>
+					<div id="pp-selected-pm">
+						<!-- Selected payment method here -->
+					</div>
+					<div id="pp-pms-existing" class="pp-pms hide">
+						<hr>
+						<div class="header">
+
+						</div>
+						<div class="body">
+
+						</div>
+					</div>
+					<div id="pp-pm-expander">
+						<span>
+							<img class="pp-chevron" tabindex="0" role="button" src="img/chevron-down-solid.svg" draggable="false">
+						</span>
+					</div>
+				</div>
+				<div id="existing-checkout-delivery-date" class="existing-checkout-section hide">
+					<div><span class="color-change-text" data-i18n="Delivery date"></span></div>
+					<div>
+						<form style="margin-bottom: 0.5rem;"><input type="date" id="existing-delivery-date" name="delivery-date" value="" min=""></form>
+					</div>
+				</div>
+			</div>
+			<div class="pd-sides">
+				<div class="add-coupon-code coupon-code-option hide" tabindex="0">
+					<span data-i18n="+ ADD A COUPON CODE"></span>
+				</div>
+			</div>
+			<form class="wc-coupon-code coupon-code mb-half hide">
+				<button type="button" class="exit-button exit-button-coupon">&times;</button>
+				<input type="text" id="coupon-code-existing" name="coupon_code" placeholder=" " class="wc-coupon-code-input coupon-code-input coupon-input" autocomplete="off" required>
+				<label for="coupon-code-existing" data-i18n="Coupon code" class="form-label coupon-form-label"> </label>
+				<img src="img/spinner-dark.svg" width="20" class="wc-coupon-spinner coupon-spinner">
+				<input type="submit" value="+" class="wc-coupon-code-apply coupon-code-apply">
+			</form>
+			<span class="wc-invalid-coupon invalid-coupon mb-half hide block" data-i18n="You entered an invalid coupon code"></span>
+			<div class="pd-sides">
+				<div class="add-gift-card gift-card-option hide">
+					<span data-i18n="+ REDEEM GIFT CARD/STORE CREDIT"></span>
+				</div>
+			</div>
+			<form class="pw-wc-gift-card coupon-code mb-half hide">
+				<button type="button" class="exit-button exit-button-gift">&times;</button>
+				<input type="text" id="card-number-existing" name="card_number" placeholder=" " class="gift-card-input coupon-code-input coupon-input" autocomplete="off" required>
+				<label for="card-number-existing" data-i18n="Gift card number" class="form-label coupon-form-label">
+				</label>
+				<img src="img/spinner-dark.svg" width="20" class="gift-card-spinner coupon-spinner hide">
+				<input type="submit" value="+" class="gift-card-apply coupon-code-apply">
+			</form>
+			<span class="invalid-gift-card invalid-coupon hide block" data-i18n="You entered an invalid gift card"></span>
+			<form id="additional-fields-existing" class="hide">
+				<!-- Here is the additional field-->
+			</form>
+			<div class="order-notes hide" id="order-notes">
+				<div>
+					<textarea class="order-notes-existing text-input" placeholder=" " id="order-notes-existing" maxlength="250" rows="4" cols="35"></textarea>
+					<label for="order-notes-existing" data-i18n="Order notes (optional)" class="form-label pp-order-notes-lable"></label>
+				</div>
+			</div>
+			<div class="pp-custom-order-message hide">
+				<p class="muted"></p>
+			</div>
+			<div style="min-height: 20px; margin: none; padding: none;" id="pp-notice-container-existing" class="pp-notice-container-existing">
+				<!-- Existing customer notice -->
+			</div>
+			<div class="pp-order-summary-return">
+				<div id="pp-dropdown" role="button" class="pp-dropdown" aria-expanded="false" tabindex="0">
+					<img src="img/shopping-cart-solid.svg" class="cart-icon" />
+					<span class="bold larger" data-i18n="My order"></span>
+					<img src="img/chevron-down-solid.svg" class="dropdown-btn dropdown-down" />
+					<img src="img/chevron-up-solid.svg" class="dropdown-btn dropdown-up hide" />
+					<div id="pp-total-cost-existing" class="float-right larger pp-summary-total pp-recalculate-blur">
+						<!-- Existing Customer Cart summary Total-->
+					</div>
+				</div>
+				<div id="order-summary-contents" class="order-summary-contents">
+					<div class="order-summary-dropdown-exist">
+						<div class="pp-order-list">
+							<table class="pp-summary-return" id="pp-summary-return">
+								<tbody id="pp-summary-body-existing">
+								</tbody>
+							</table>
+						</div>
+						<div id="pp-summary-lines-body-existing" class="pp-summary-return">
+							<!-- Existing Customer Summary Lines-->
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="pp-account-password-existing" class="hide">
+				<div class="pp-col">
+					<label id="pp-account-password-label-existing">
+					</label>
+					<div class="pp-password-box">
+						<input id="account-password-existing" type="password" name="account-password-existing" placeholder=" " class="pp-input w-100 text-input" autocomplete="off">
+						<label for="account-password-existing" data-i18n="Password" class="pp-password-label form-label"></label>
+					</div>
+					<div id="account-password-error-existing" class="error" role="alert"></div>
+				</div>
+				<br>
+			</div>
+			<div id="invalid-order-message-existing" class="hide .mb-1 center p-2 lightgrey rounded">
+			</div>
+			<div class="center pay-existing-btn">
+				<div class="pay-button-container">
+					<!-- Existing Free order button-->
+					<div class="free-btn-container hide">
+						<div class="pp-btn-spinner-container hide">
+							<img src="img/spinner-dark.svg" class="pp-btn-shipping-spinner">
+						</div>
+						<button class="btn free-btn free-btn-existing">
+							<img src="img/spinner.svg" class="free-btn-spinner spinner hide">
+							<span class="button-text" data-i18n="Place order"></span>
+						</button>
+					</div>
+					<!-- Existing Stripe pay button-->
+					<div class="stripe-btn-container hide">
+						<div class="pp-btn-spinner-container hide">
+							<img src="img/spinner-dark.svg" class="pp-btn-shipping-spinner">
+						</div>
+						<button id="pp-pay-existing" class="btn stripe-btn stripe-btn-existing">
+							<img src="img/spinner.svg" class="stripe-btn-spinner spinner hide">
+							<span class="button-text">
+								<span data-i18n="Pay"></span>
+								<span class="currency-symbol"></span>
+								<span id="pp-pay-total-cost-existing"></span>
+								<span class="currency-symbol-after"></span>
+							</span>
+						</button>
+					</div>
+					<!-- Existing PayPal pay button-->
+					<div>
+						<div id="paypal-btn-container-existing" class="pp-paypal-btn-container hide">
+						</div>
+						<div class="pp-paypal-spinner-container hide">
+							<img class="pp-paypal-spinner spinner" src="img/spinner-dark.svg">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="pp-related-products-section-mobile-existing" class="hide">
+				<span class="related-products-title"></span>
+				<div class="pp-products-list-related-mobile-existing">
+				</div>
+			</div>
+			<div class="logo-container-mobile-view">
+				<a href="https://peachpay.app/" target="_blank">
+					<div class="inline">
+						<span class="secured-by" data-i18n="Secured by"></span>
+						<img class="peachpay-white-logo" src="img/peachpay-logo-full-black.png"></img>
+					</div>
+				</a>
+				<img class="inline powered-by-stripe hide" src="img/stripe-black.png" />
+			</div>
+			<div class="logo-container-existing-customer">
+				<a href="https://peachpay.app/" target="_blank">
+					<div class="inline">
+						<span class="secured-by" data-i18n="Secured by"></span>
+						<img class="peachpay-white-logo" src="img/peachpay-full-white.png"></img>
+					</div>
+				</a>
+				<img class="inline powered-by-stripe hide" src="img/stripe-white.png" />
+			</div>
+		</div>
+		<div id="loading" class="loading-screen hide flex-row">
+			<img src="img/spinner-dark.svg" width="50">
+		</div>
+	</div>
+	<div id="pp-related-products-section" class="hide">
+		<div id="pp-rp-dropdown-btn" role="button">
+			<img src="./img/rp-dropdown-down.svg" class="pp-rp-dropdown pp-rp-dropdown-down hide" />
+			<img src="./img/rp-dropdown-down.svg" class="pp-rp-dropdown pp-rp-dropdown-up" />
+		</div>
+		<div id="pp-related-products-container">
+			<div class="pp-prev-btn-related scroll-end" role="button">
+				<img src="./img/back-icon.svg" class="pp-rp-scroll-btn" />
+			</div>
+			<div id="pp-products-list-related">
+				<div id="pp-products-list-related-main">
+				</div>
+			</div>
+			<div class="pp-next-btn-related" role="button">
+				<img src="./img/back-icon.svg" class="pp-rp-scroll-btn" />
+			</div>
+		</div>
+	</div>
+	<script src="https://browser.sentry-cdn.com/6.19.1/bundle.min.js" integrity="sha384-GRagWAKYasaEEyhq5NqRz9Hs7zZOXt+DwzY/WGbWZBkpvt5+lZxITNyU3bD7SFk5" crossorigin="anonymous"></script>
+	<script src="https://js.stripe.com/v3/"></script>
+	<script src="js/bundle.js"></script>
+	<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAL_j0UvKJacQhZ3OedCj_bkcTbuO63MVU&libraries=places"></script>
+</body>
+
+</html>

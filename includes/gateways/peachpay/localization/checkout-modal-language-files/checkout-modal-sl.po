@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sl\n"
+
+
+msgid "(optional)"
+msgstr "(neobvezno)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ DODAJ KODO KUPON"
+
+msgid "+ NEW CARD"
+msgstr "+ NOVA KARTICA"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ IZKLJUČITE DARILNO KARTICO/KREDIT TRGOVINE"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "Po izbiri plačila boste preusmerjeni na dokončanje plačila."
+
+msgid "Apartment"
+msgstr "Apartma"
+
+msgid "Back to info"
+msgstr "Nazaj na informacije"
+
+msgid "Billing"
+msgstr "Zaračunavanje"
+
+msgid "By clicking the button above, you agree to"
+msgstr "S klikom na zgornji gumb se strinjate"
+
+msgid "Cancel"
+msgstr "Prekliči"
+
+msgid "Card"
+msgstr "Kartica"
+
+msgid "Cart is empty"
+msgstr "Košarica je prazna"
+
+msgid "City"
+msgstr "mesto"
+
+msgid "Continue"
+msgstr "Nadaljuj"
+
+msgid "Country"
+msgstr "Država"
+
+msgid "County"
+msgstr "okrožje"
+
+msgid "Coupon code"
+msgstr "Koda kupona"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "Ustvarite novo geslo ali uporabite obstoječega, če že imate račun za"
+
+msgid "Currency"
+msgstr "valuta"
+
+msgid "Delivery date"
+msgstr "Datum dostave"
+
+msgid "Edit"
+msgstr "Uredi"
+
+msgid "Email"
+msgstr "E-naslov"
+
+msgid "Exit Checkout"
+msgstr "Izhod iz blagajne"
+
+msgid "First name"
+msgstr "Ime"
+
+msgid "First renewal"
+msgstr "Prva obnova"
+
+msgid "Gift card number"
+msgstr "Številka darilne kartice"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "Potrjujem, da je država, v katero sem vstopil, tista, v kateri prebivam"
+
+msgid "Initial Shipment"
+msgstr "Začetna pošiljka"
+
+msgid "Last name"
+msgstr "Priimek"
+
+msgid "My order"
+msgstr "Moj ukaz"
+
+msgid "Order notes (optional)"
+msgstr "Opombe o naročilu (neobvezno)"
+
+msgid "Order summary"
+msgstr "Povzetek naročila"
+
+msgid "Password"
+msgstr "Geslo"
+
+msgid "Pay"
+msgstr "plačati"
+
+msgid "Payment"
+msgstr "Plačilo"
+
+msgid "Personal"
+msgstr "Osebno"
+
+msgid "Phone number"
+msgstr "Telefonska številka"
+
+msgid "Place order"
+msgstr "Naročiti"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "Prosimo, vrnite se in poskusite znova. Manjka obvezno polje"
+
+msgid "Postal code"
+msgstr "Poštna številka"
+
+msgid "Processing"
+msgstr "Obravnavati"
+
+msgid "Province"
+msgstr "provinca"
+
+msgid "Ready to check out?"
+msgstr "Ste pripravljeni na odjavo?"
+
+msgid "Recurring total"
+msgstr "Ponavljajoče se skupno"
+
+msgid "Remove"
+msgstr "Odstrani"
+
+msgid "Secured by"
+msgstr "Zavarovano z"
+
+msgid "Select a Province"
+msgstr "Izberite provinco"
+
+msgid "Select a State"
+msgstr "Izberite državo"
+
+msgid "Select a country"
+msgstr "Izberite državo"
+
+msgid "Send to"
+msgstr "Pošlji"
+
+msgid "Shipping"
+msgstr "Dostava"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "Oprostite, nekaj je šlo narobe. Osvežite stran in poskusite znova."
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "Žal ta trgovina ne pošilja na vašo lokacijo."
+
+msgid "State"
+msgstr "Država"
+
+msgid "Street address"
+msgstr "naslov ceste"
+
+msgid "Subtotal"
+msgstr "Vmesni seštevek"
+
+msgid "Tax"
+msgstr "davek"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "Testni način: stranke ne vidijo PeachPay"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "Vneseno geslo mora biti dolgo vsaj 8 znakov."
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "Za to naročilo ni na voljo nobenih ustreznih ali aktivnih plačilnih sredstev."
+
+msgid "Total"
+msgstr "Skupaj"
+
+msgid "Unknown order error occurred"
+msgstr "Prišlo je do neznane napake pri naročilu"
+
+msgid "VIEW SAVED CARDS"
+msgstr "OGLED SHRANJENIH KARTIC"
+
+msgid "Verified"
+msgstr "Preverjeno"
+
+msgid "You entered an invalid coupon code"
+msgstr "Vnesli ste neveljavno kodo kupona"
+
+msgid "You entered an invalid gift card"
+msgstr "Vnesli ste neveljavno darilno kartico"
+
+msgid "You might also like..."
+msgstr "Morda bi vam bilo všeč tudi..."
+
+msgid "add"
+msgstr "dodaj"
+
+msgid "and"
+msgstr "in"
+
+msgid "coupon"
+msgstr "kupon"
+
+msgid "privacy policy"
+msgstr "politika zasebnosti"
+
+msgid "terms"
+msgstr "pogojev"
+
+msgid "terms and conditions"
+msgstr "pogoji"
+
+msgid "the"
+msgstr "the"
+
+msgid "the store's"
+msgstr "v trgovini"
+

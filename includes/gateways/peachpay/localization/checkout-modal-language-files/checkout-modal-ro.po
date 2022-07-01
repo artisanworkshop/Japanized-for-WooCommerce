@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ro\n"
+
+
+msgid "(optional)"
+msgstr "(optional)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ ADĂUGAȚI UN COD CUPON"
+
+msgid "+ NEW CARD"
+msgstr "+ CARD NOU"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ RUTILIZAȚI CARDUL CADOU/CREDIT DE MAGAZIN"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "După ce ați selectat plata, veți fi redirecționat pentru a finaliza plata."
+
+msgid "Apartment"
+msgstr "Apartament"
+
+msgid "Back to info"
+msgstr "Înapoi la informații"
+
+msgid "Billing"
+msgstr "Facturare"
+
+msgid "By clicking the button above, you agree to"
+msgstr "Făcând clic pe butonul de mai sus, sunteți de acord"
+
+msgid "Cancel"
+msgstr "Anulare"
+
+msgid "Card"
+msgstr "Card"
+
+msgid "Cart is empty"
+msgstr "Coșul este gol"
+
+msgid "City"
+msgstr "Oraș"
+
+msgid "Continue"
+msgstr "Continua"
+
+msgid "Country"
+msgstr "Țară"
+
+msgid "County"
+msgstr "jud"
+
+msgid "Coupon code"
+msgstr "Cod cupon"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "Creați o nouă parolă sau utilizați una existentă dacă aveți deja un cont pentru"
+
+msgid "Currency"
+msgstr "Valută"
+
+msgid "Delivery date"
+msgstr "Data de livrare"
+
+msgid "Edit"
+msgstr "Editați | ×"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Exit Checkout"
+msgstr "Ieșiți din casă"
+
+msgid "First name"
+msgstr "Nume"
+
+msgid "First renewal"
+msgstr "Prima reînnoire"
+
+msgid "Gift card number"
+msgstr "Numărul cardului cadou"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "Verific că țara în care am intrat este cea în care locuiesc"
+
+msgid "Initial Shipment"
+msgstr "Livrare inițială"
+
+msgid "Last name"
+msgstr "Nume"
+
+msgid "My order"
+msgstr "Comanda mea"
+
+msgid "Order notes (optional)"
+msgstr "Note de comandă (opțional)"
+
+msgid "Order summary"
+msgstr "Comanda Rezumat"
+
+msgid "Password"
+msgstr "Parola"
+
+msgid "Pay"
+msgstr "A plati"
+
+msgid "Payment"
+msgstr "Plată"
+
+msgid "Personal"
+msgstr "Personal"
+
+msgid "Phone number"
+msgstr "Numar de telefon"
+
+msgid "Place order"
+msgstr "Plasați comanda"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "Vă rugăm să reveniți și să încercați din nou. Lipsește câmp obligatoriu"
+
+msgid "Postal code"
+msgstr "Cod poștal"
+
+msgid "Processing"
+msgstr "Prelucrare"
+
+msgid "Province"
+msgstr "Provincie"
+
+msgid "Ready to check out?"
+msgstr "Ești gata să verifici?"
+
+msgid "Recurring total"
+msgstr "Total recurent"
+
+msgid "Remove"
+msgstr "Elimina"
+
+msgid "Secured by"
+msgstr "Securizat de"
+
+msgid "Select a Province"
+msgstr "Selectați o provincie"
+
+msgid "Select a State"
+msgstr "Selecteaza un stat"
+
+msgid "Select a country"
+msgstr "Selecteaza o tara"
+
+msgid "Send to"
+msgstr "Trimite catre"
+
+msgid "Shipping"
+msgstr "livrare"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "Scuze, ceva a mers greșit. Vă rugăm să reîmprospătați pagina și să încercați din nou."
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "Ne pare rău, acest magazin nu se livrează în locația dvs."
+
+msgid "State"
+msgstr "Stat"
+
+msgid "Street address"
+msgstr "adresa străzii"
+
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "Tax"
+msgstr "Impozit"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "Mod de testare: clienții nu pot vedea PeachPay"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "Parola introdusă trebuie să aibă cel puțin 8 caractere."
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "Nu există metode de plată eligibile sau active disponibile pentru această comandă."
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Unknown order error occurred"
+msgstr "A apărut o eroare de comandă necunoscută"
+
+msgid "VIEW SAVED CARDS"
+msgstr "VEZI CARDURI SALVATE"
+
+msgid "Verified"
+msgstr "Verificat"
+
+msgid "You entered an invalid coupon code"
+msgstr "Ați introdus un cod de cupon nevalid"
+
+msgid "You entered an invalid gift card"
+msgstr "Ați introdus un card cadou nevalid"
+
+msgid "You might also like..."
+msgstr "S-ar putea sa-ti placa si..."
+
+msgid "add"
+msgstr "adăuga"
+
+msgid "and"
+msgstr "și"
+
+msgid "coupon"
+msgstr "cupon"
+
+msgid "privacy policy"
+msgstr "Politica de Confidențialitate"
+
+msgid "terms"
+msgstr "termeni"
+
+msgid "terms and conditions"
+msgstr "Termeni și condiții"
+
+msgid "the"
+msgstr "cel"
+
+msgid "the store's"
+msgstr "magazinele"
+

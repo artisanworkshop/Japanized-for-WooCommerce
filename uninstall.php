@@ -56,4 +56,8 @@ if ( is_array( $general_options ) && $general_options['data_retention'] ) {
 	delete_option( 'peachpay_valid_key' );
 	delete_option( 'peachpay_deny_add_to_cart_redirect' );
 	delete_option( 'peachpay_migrated_to_enable_stripe_checkbox' );
+	delete_option( 'peachpay_apple_pay_settings' );
+
+	// Modules.
+	delete_option( 'peachpay_currency_options' );
 }

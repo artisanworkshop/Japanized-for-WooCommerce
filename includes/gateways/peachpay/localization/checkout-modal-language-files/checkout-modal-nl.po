@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: nl\n"
+
+
+msgid "(optional)"
+msgstr "(optioneel)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ EEN COUPONCODE TOEVOEGEN"
+
+msgid "+ NEW CARD"
+msgstr "+ NIEUWE KAART"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ VERWISSEL CADEAUBON/STORE CREDIT"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "Na het selecteren van betalen wordt u doorgestuurd om uw betaling af te ronden."
+
+msgid "Apartment"
+msgstr "Appartement"
+
+msgid "Back to info"
+msgstr "Terug naar info"
+
+msgid "Billing"
+msgstr "Facturering"
+
+msgid "By clicking the button above, you agree to"
+msgstr "Door op de bovenstaande knop te klikken, gaat u akkoord met:"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Card"
+msgstr "Kaart"
+
+msgid "Cart is empty"
+msgstr "Winkelwagen is leeg"
+
+msgid "City"
+msgstr "Stad"
+
+msgid "Continue"
+msgstr "Doorgaan"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "County"
+msgstr "District"
+
+msgid "Coupon code"
+msgstr "Coupon code"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "Maak een nieuw wachtwoord aan, of gebruik een bestaand wachtwoord als je al een account hebt voor"
+
+msgid "Currency"
+msgstr "Munteenheid"
+
+msgid "Delivery date"
+msgstr "Bezorgdatum"
+
+msgid "Edit"
+msgstr "Bewerk"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Exit Checkout"
+msgstr "Afrekenen afsluiten"
+
+msgid "First name"
+msgstr "Voornaam"
+
+msgid "First renewal"
+msgstr "Eerste verlenging"
+
+msgid "Gift card number"
+msgstr "Cadeaukaartnummer"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "Ik verifieer dat het land dat ik heb ingevoerd het land is waarin ik woon"
+
+msgid "Initial Shipment"
+msgstr "Eerste zending:"
+
+msgid "Last name"
+msgstr "Achternaam"
+
+msgid "My order"
+msgstr "Mijn bestelling"
+
+msgid "Order notes (optional)"
+msgstr "Bestelnotities (optioneel)"
+
+msgid "Order summary"
+msgstr "Overzicht van de bestelling"
+
+msgid "Password"
+msgstr "Wachtwoord"
+
+msgid "Pay"
+msgstr "Betalen"
+
+msgid "Payment"
+msgstr "Betaling"
+
+msgid "Personal"
+msgstr "persoonlijk"
+
+msgid "Phone number"
+msgstr "Telefoonnummer"
+
+msgid "Place order"
+msgstr "Plaats bestelling"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "Ga terug en probeer het opnieuw. ontbrekende vereiste veld"
+
+msgid "Postal code"
+msgstr "Postcode"
+
+msgid "Processing"
+msgstr "Verwerken"
+
+msgid "Province"
+msgstr "Provincie"
+
+msgid "Ready to check out?"
+msgstr "Klaar om uit te checken?"
+
+msgid "Recurring total"
+msgstr "Terugkerend totaal"
+
+msgid "Remove"
+msgstr "Verwijderen"
+
+msgid "Secured by"
+msgstr "Beveiligd door"
+
+msgid "Select a Province"
+msgstr "Selecteer een provincie"
+
+msgid "Select a State"
+msgstr "Selecteer een staat"
+
+msgid "Select a country"
+msgstr "Selecteer een land"
+
+msgid "Send to"
+msgstr "Verzenden naar"
+
+msgid "Shipping"
+msgstr "Verzending"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "Sorry, er ging iets mis. Ververs de pagina en probeer het opnieuw."
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "Sorry, deze winkel verzendt niet naar jouw locatie."
+
+msgid "State"
+msgstr "Staat"
+
+msgid "Street address"
+msgstr "Adres"
+
+msgid "Subtotal"
+msgstr "Subtotaal"
+
+msgid "Tax"
+msgstr "Belasting"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "Testmodus: klanten kunnen PeachPay niet zien"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "Het ingevoerde wachtwoord moet minimaal 8 tekens lang zijn."
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "Er zijn geen geschikte of actieve betaalmethoden beschikbaar voor deze bestelling."
+
+msgid "Total"
+msgstr "Totaal"
+
+msgid "Unknown order error occurred"
+msgstr "Er is een onbekende bestellingsfout opgetreden"
+
+msgid "VIEW SAVED CARDS"
+msgstr "OPGESLAGEN KAARTEN BEKIJKEN"
+
+msgid "Verified"
+msgstr "Geverifieerd"
+
+msgid "You entered an invalid coupon code"
+msgstr "U heeft een ongeldige couponcode ingevoerd"
+
+msgid "You entered an invalid gift card"
+msgstr "Je hebt een ongeldige cadeaubon ingevoerd"
+
+msgid "You might also like..."
+msgstr "Misschien vind je het ook leuk..."
+
+msgid "add"
+msgstr "toevoegen"
+
+msgid "and"
+msgstr "en"
+
+msgid "coupon"
+msgstr "coupon"
+
+msgid "privacy policy"
+msgstr "privacybeleid"
+
+msgid "terms"
+msgstr "termen"
+
+msgid "terms and conditions"
+msgstr "voorwaarden"
+
+msgid "the"
+msgstr "de"
+
+msgid "the store's"
+msgstr "de winkels"
+

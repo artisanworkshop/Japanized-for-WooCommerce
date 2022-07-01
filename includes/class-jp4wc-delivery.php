@@ -305,15 +305,15 @@ class JP4WC_Delivery{
 			$html = "\n\n==========\n\n";
 
 			if( $show_title ) {
-				$html .= sprintf( "%s \n", strtoupper( apply_filters( 'wc4jp_delivery_details_text', __('Scheduled Delivery date and time', 'woocommerce-for-japan') ) ) );
+				$html .= sprintf( "%s \n", strtoupper( apply_filters( 'wc4jp_delivery_details_text', __('Scheduled Delivery date and time', 'woocommerce-for-japan'), $order ) ) );
 			}
 
 			if( $date_time['date'] ){
-				$html .= sprintf( "\n%s: %s", apply_filters( 'wc4jp_delivery_date_text', __('Scheduled Delivery Date', 'woocommerce-for-japan') ), $date_time['date'] );
+				$html .= sprintf( "\n%s: %s", apply_filters( 'wc4jp_delivery_date_text', __('Scheduled Delivery Date', 'woocommerce-for-japan'), $order ), $date_time['date'] );
 			}
 
 			if( $date_time['time'] ){
-				$html .= sprintf( "\n%s: %s", apply_filters( 'wc4jp_time_zone_text', __('Scheduled Time Zone', 'woocommerce-for-japan') ), $date_time['time'] );
+				$html .= sprintf( "\n%s: %s", apply_filters( 'wc4jp_time_zone_text', __('Scheduled Time Zone', 'woocommerce-for-japan'), $order ), $date_time['time'] );
 			}
 
 			$html .= "\n\n==========\n\n";
@@ -321,15 +321,15 @@ class JP4WC_Delivery{
 		} else {
 
 			if( $show_title ) {
-				$html .= sprintf( '<h2>%s</h2>', apply_filters( 'wc4jp_delivery_details_text', __('Scheduled Delivery date and time', 'woocommerce-for-japan') ) );
+				$html .= sprintf( '<h2>%s</h2>', apply_filters( 'wc4jp_delivery_details_text', __('Scheduled Delivery date and time', 'woocommerce-for-japan'), $order ) );
 			}
 
 			if( $date_time['date'] ){
-				$html .= sprintf( '<p class="jp4wc_date"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_delivery_date_text', __('Scheduled Delivery Date', 'woocommerce-for-japan') ), $date_time['date'] );
+				$html .= sprintf( '<p class="jp4wc_date"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_delivery_date_text', __('Scheduled Delivery Date', 'woocommerce-for-japan'), $order ), $date_time['date'] );
 			}
 
 			if( $date_time['time'] ){
-				$html .= sprintf( '<p class="jp4wc_time"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_time_zone_text', __('Scheduled Time Zone', 'woocommerce-for-japan') ), $date_time['time'] );
+				$html .= sprintf( '<p class="jp4wc_time"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_time_zone_text', __('Scheduled Time Zone', 'woocommerce-for-japan'), $order ), $date_time['time'] );
 			}
 		}
 		echo apply_filters( 'jp4wc_display_date_and_time_zone', $html, $date_time, $show_title );

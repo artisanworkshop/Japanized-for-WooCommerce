@@ -19,50 +19,12 @@ function peachpay_is_site( string $site ) {
 }
 
 /**
- * Gets the current checkout URL based on the current site context.
- */
-function peachpay_checkout_url() {
-	if ( peachpay_is_test_mode() ) {
-		switch ( get_site_url() ) {
-			case 'http://localhost':
-			case 'http://127.0.0.1':
-				return 'http://localhost:8080';
-			case 'https://store.local':
-			case 'https://woo.store.local':
-				return 'https://dev-connect.peachpay.local'; // Local HTTPS.
-			default:
-				return 'https://dev-connect.peachpaycheckout.com';
-		}
-	}
-
-	switch ( get_site_url() ) {
-		case 'http://localhost':
-		case 'http://127.0.0.1':
-			return 'http://localhost:8080';
-		case 'https://woo.peachpay.app':
-		case 'https://theme1.peachpay.app':
-		case 'https://theme2.peachpay.app':
-		case 'https://theme3.peachpay.app':
-		case 'https://theme4.peachpay.app':
-		case 'https://theme5.peachpay.app':
-		case 'https://qa.peachpay.app':
-		case 'https://demo.peachpay.app':
-			return 'https://dev-connect.peachpaycheckout.com';
-		case 'https://store.local':
-		case 'https://woo.store.local':
-			return 'https://connect.peachpay.local'; // Local HTTPS.
-		default:
-			return 'https://connect.peachpaycheckout.com';
-	}
-}
-
-/**
  * Determines which environment we are running in so we can call
  * the correct PeachPay API.
  */
 function peachpay_api_url() {
 	if ( peachpay_is_test_mode() ) {
-		switch ( get_site_url() ) {
+		switch ( get_home_url() ) {
 			case 'https://woo.store.local':
 			case 'https://store.local':
 				return 'https://dev.peachpay.local/';
@@ -70,7 +32,7 @@ function peachpay_api_url() {
 				return 'https://dev.peachpay.app/';
 		}
 	} else {
-		switch ( get_site_url() ) {
+		switch ( get_home_url() ) {
 			case 'https://woo.peachpay.app':
 			case 'https://theme1.peachpay.app':
 			case 'https://theme2.peachpay.app':

@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+
+
+msgid "(optional)"
+msgstr "(اختياري)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ أضف رمز القسيمة"
+
+msgid "+ NEW CARD"
+msgstr "+ بطاقة جديدة"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ استرداد بطاقة الهدايا / رصيد المتجر"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "بعد اختيار الدفع ، ستتم إعادة توجيهك لإكمال الدفع."
+
+msgid "Apartment"
+msgstr "شقة"
+
+msgid "Back to info"
+msgstr "رجوع إلى المعلومات"
+
+msgid "Billing"
+msgstr "الفواتير"
+
+msgid "By clicking the button above, you agree to"
+msgstr "بالنقر فوق الزر أعلاه ، فإنك توافق على"
+
+msgid "Cancel"
+msgstr "يلغي"
+
+msgid "Card"
+msgstr "بطاقة"
+
+msgid "Cart is empty"
+msgstr "البطاقه خاليه"
+
+msgid "City"
+msgstr "مدينة"
+
+msgid "Continue"
+msgstr "يكمل"
+
+msgid "Country"
+msgstr "دولة"
+
+msgid "County"
+msgstr "مقاطعة"
+
+msgid "Coupon code"
+msgstr "رمز الكوبون"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "أنشئ كلمة مرور جديدة ، أو استخدم كلمة مرور موجودة إذا كان لديك بالفعل حساب لـ"
+
+msgid "Currency"
+msgstr "عملة"
+
+msgid "Delivery date"
+msgstr "تاريخ التسليم او الوصول"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "Email"
+msgstr "بريد الالكتروني"
+
+msgid "Exit Checkout"
+msgstr "الخروج من الخروج"
+
+msgid "First name"
+msgstr "الاسم الأول"
+
+msgid "First renewal"
+msgstr "التجديد الأول"
+
+msgid "Gift card number"
+msgstr "رقم بطاقة الهدية"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "أتحقق من أن البلد الذي أدخلته هو البلد الذي أقيم فيه"
+
+msgid "Initial Shipment"
+msgstr "الشحنة الأولية"
+
+msgid "Last name"
+msgstr "الكنية"
+
+msgid "My order"
+msgstr "طلبي"
+
+msgid "Order notes (optional)"
+msgstr "ملاحظات الطلب (اختياري)"
+
+msgid "Order summary"
+msgstr "ملخص الطلب"
+
+msgid "Password"
+msgstr "كلمه السر"
+
+msgid "Pay"
+msgstr "دفع"
+
+msgid "Payment"
+msgstr "قسط"
+
+msgid "Personal"
+msgstr "الشخصية"
+
+msgid "Phone number"
+msgstr "رقم الهاتف"
+
+msgid "Place order"
+msgstr "مكان الامر"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "الرجاء العودة والمحاولة مجددا. حقل مطلوب مفقود"
+
+msgid "Postal code"
+msgstr "الرمز البريدي"
+
+msgid "Processing"
+msgstr "يعالج"
+
+msgid "Province"
+msgstr "المحافظة"
+
+msgid "Ready to check out?"
+msgstr "هل أنت جاهز للمغادرة؟"
+
+msgid "Recurring total"
+msgstr "المجموع المتكرر"
+
+msgid "Remove"
+msgstr "إزالة"
+
+msgid "Secured by"
+msgstr "بضمان"
+
+msgid "Select a Province"
+msgstr "اختر المحافظة"
+
+msgid "Select a State"
+msgstr "حدد ولاية"
+
+msgid "Select a country"
+msgstr "اختر دولة"
+
+msgid "Send to"
+msgstr "ارسل إلى"
+
+msgid "Shipping"
+msgstr "شحن"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "عذرا، هناك خطأ ما. يرجى تحديث الصفحة وحاول مرة أخرى."
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "عذرا ، هذا المتجر لا يشحن إلى موقعك."
+
+msgid "State"
+msgstr "حالة"
+
+msgid "Street address"
+msgstr ".عنوان الشارع"
+
+msgid "Subtotal"
+msgstr "المجموع الفرعي"
+
+msgid "Tax"
+msgstr "ضريبة"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "وضع الاختبار: لا يمكن للعملاء رؤية PeachPay"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "يجب أن تتكون كلمة المرور المدخلة من 8 أحرف على الأقل."
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "لا توجد طرق دفع مؤهلة أو نشطة متاحة لهذا الطلب."
+
+msgid "Total"
+msgstr "المجموع"
+
+msgid "Unknown order error occurred"
+msgstr "حدث خطأ طلب غير معروف"
+
+msgid "VIEW SAVED CARDS"
+msgstr "عرض البطاقات المحفوظة"
+
+msgid "Verified"
+msgstr "تم التحقق"
+
+msgid "You entered an invalid coupon code"
+msgstr "لقد أدخلت رمز قسيمة غير صالح"
+
+msgid "You entered an invalid gift card"
+msgstr "لقد أدخلت بطاقة هدية غير صالحة"
+
+msgid "You might also like..."
+msgstr "قد يعجبك ايضا..."
+
+msgid "add"
+msgstr "يضيف"
+
+msgid "and"
+msgstr "و"
+
+msgid "coupon"
+msgstr "قسيمة"
+
+msgid "privacy policy"
+msgstr "سياسة خاصة"
+
+msgid "terms"
+msgstr "مصلحات"
+
+msgid "terms and conditions"
+msgstr "الأحكام والشروط"
+
+msgid "the"
+msgstr "ال"
+
+msgid "the store's"
+msgstr "المتجر"
+

@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: hi\n"
+
+
+msgid "(optional)"
+msgstr "(वैकल्पिक)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ एक कूपन कोड जोड़ें"
+
+msgid "+ NEW CARD"
+msgstr "+ नया कार्ड"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ रिडीम गिफ्ट कार्ड/स्टोर क्रेडिट"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "वेतन का चयन करने के बाद आपको अपना भुगतान पूरा करने के लिए पुनर्निर्देशित किया जाएगा।"
+
+msgid "Apartment"
+msgstr "अपार्टमेंट"
+
+msgid "Back to info"
+msgstr "जानकारी पर वापस जाएं"
+
+msgid "Billing"
+msgstr "बिलिंग"
+
+msgid "By clicking the button above, you agree to"
+msgstr "ऊपर दिए गए बटन पर क्लिक करके, आप सहमत हैं"
+
+msgid "Cancel"
+msgstr "रद्द करना"
+
+msgid "Card"
+msgstr "कार्ड"
+
+msgid "Cart is empty"
+msgstr "कार्ट खाली है"
+
+msgid "City"
+msgstr "शहर"
+
+msgid "Continue"
+msgstr "जारी रखें"
+
+msgid "Country"
+msgstr "देश"
+
+msgid "County"
+msgstr "काउंटी"
+
+msgid "Coupon code"
+msgstr "कूपन कोड"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "एक नया पासवर्ड बनाएं, या किसी मौजूदा पासवर्ड का उपयोग करें यदि आपके पास पहले से ही एक खाता है"
+
+msgid "Currency"
+msgstr "मुद्रा"
+
+msgid "Delivery date"
+msgstr "डिलीवरी की तारीख"
+
+msgid "Edit"
+msgstr "संपादन करना"
+
+msgid "Email"
+msgstr "ईमेल"
+
+msgid "Exit Checkout"
+msgstr "चेकआउट से बाहर निकलें"
+
+msgid "First name"
+msgstr "संतोष"
+
+msgid "First renewal"
+msgstr "पहला नवीनीकरण"
+
+msgid "Gift card number"
+msgstr "गिफ्ट कार्ड नंबर"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "मैं सत्यापित करता/करती हूं कि जिस देश में मैंने प्रवेश किया है वह वही देश है जिसमें मैं रहता हूं"
+
+msgid "Initial Shipment"
+msgstr "प्रारंभिक शिपमेंट"
+
+msgid "Last name"
+msgstr "उपनाम"
+
+msgid "My order"
+msgstr "मेरे आदेश"
+
+msgid "Order notes (optional)"
+msgstr "आदेश नोट (वैकल्पिक)"
+
+msgid "Order summary"
+msgstr "आदेश सारांश"
+
+msgid "Password"
+msgstr "पासवर्ड"
+
+msgid "Pay"
+msgstr "भुगतान करना"
+
+msgid "Payment"
+msgstr "भुगतान"
+
+msgid "Personal"
+msgstr "निजी"
+
+msgid "Phone number"
+msgstr "फ़ोन नंबर"
+
+msgid "Place order"
+msgstr "आदेश देना"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "कृपया पीछे जाएं और दोबारा कोशिश करें। आवश्यक क्षेत्र उपलभ्ध नही है"
+
+msgid "Postal code"
+msgstr "डाक कोड"
+
+msgid "Processing"
+msgstr "प्रसंस्करण"
+
+msgid "Province"
+msgstr "प्रांत"
+
+msgid "Ready to check out?"
+msgstr "चेक आउट करने के लिए तैयार हैं?"
+
+msgid "Recurring total"
+msgstr "आवर्ती कुल"
+
+msgid "Remove"
+msgstr "हटाना"
+
+msgid "Secured by"
+msgstr "इसके जरिए सुरक्षित"
+
+msgid "Select a Province"
+msgstr "एक प्रांत का चयन करें"
+
+msgid "Select a State"
+msgstr "एक राज्य का चयन करें"
+
+msgid "Select a country"
+msgstr "एक देश चुनें"
+
+msgid "Send to"
+msgstr "भेजना"
+
+msgid "Shipping"
+msgstr "शिपिंग"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "क्षमा करें, कुछ गलत हो गया। पृष्ठ को रीफ्रेश करें और पुन: प्रयास करें।"
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "क्षमा करें, यह स्टोर आपके स्थान पर शिप नहीं करता है।"
+
+msgid "State"
+msgstr "राज्य"
+
+msgid "Street address"
+msgstr "गली का पता"
+
+msgid "Subtotal"
+msgstr "उप-योग"
+
+msgid "Tax"
+msgstr "कर"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "परीक्षण मोड: ग्राहक पीचपे नहीं देख सकते हैं"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "दर्ज किया गया पासवर्ड कम से कम 8 वर्ण लंबा होना चाहिए।"
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "इस आदेश के लिए कोई योग्य या सक्रिय भुगतान विधियां उपलब्ध नहीं हैं।"
+
+msgid "Total"
+msgstr "कुल"
+
+msgid "Unknown order error occurred"
+msgstr "अज्ञात आदेश त्रुटि हुई"
+
+msgid "VIEW SAVED CARDS"
+msgstr "सहेजे गए कार्ड देखें"
+
+msgid "Verified"
+msgstr "सत्यापित"
+
+msgid "You entered an invalid coupon code"
+msgstr "आपने एक अमान्य कूपन कोड दर्ज किया है"
+
+msgid "You entered an invalid gift card"
+msgstr "आपने एक अमान्य उपहार कार्ड दर्ज किया है"
+
+msgid "You might also like..."
+msgstr "शायद तुम्हे यह भी अच्छा लगे..."
+
+msgid "add"
+msgstr "जोड़ें"
+
+msgid "and"
+msgstr "और"
+
+msgid "coupon"
+msgstr "कूपन"
+
+msgid "privacy policy"
+msgstr "गोपनीयता नीति"
+
+msgid "terms"
+msgstr "शर्तें"
+
+msgid "terms and conditions"
+msgstr "नियम और शर्तें"
+
+msgid "the"
+msgstr ""
+
+msgid "the store's"
+msgstr "दुकानें"
+

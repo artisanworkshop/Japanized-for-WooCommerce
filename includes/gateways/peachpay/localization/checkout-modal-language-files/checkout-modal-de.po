@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+
+
+msgid "(optional)"
+msgstr "(Optional)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ GUTSCHEINCODE HINZUFÜGEN"
+
+msgid "+ NEW CARD"
+msgstr "+ NEUE KARTE"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ GESCHENKKARTE EINLÖSEN/GUTSCHRIFT AUFBEWAHREN"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "Nachdem Sie „Bezahlen“ ausgewählt haben, werden Sie weitergeleitet, um Ihre Zahlung abzuschließen."
+
+msgid "Apartment"
+msgstr "Wohnung"
+
+msgid "Back to info"
+msgstr "Zurück zu den Informationen"
+
+msgid "Billing"
+msgstr "Abrechnung"
+
+msgid "By clicking the button above, you agree to"
+msgstr "Indem Sie auf die Schaltfläche oben klicken, stimmen Sie zu"
+
+msgid "Cancel"
+msgstr "Absagen"
+
+msgid "Card"
+msgstr "Karte"
+
+msgid "Cart is empty"
+msgstr "Einkaufswagen ist leer"
+
+msgid "City"
+msgstr "Stadt"
+
+msgid "Continue"
+msgstr "Fortsetzen"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "County"
+msgstr "Bezirk"
+
+msgid "Coupon code"
+msgstr "Gutscheincode"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "Erstellen Sie ein neues Passwort oder verwenden Sie ein vorhandenes, wenn Sie bereits ein Konto für haben"
+
+msgid "Currency"
+msgstr "Währung"
+
+msgid "Delivery date"
+msgstr "Lieferdatum"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Exit Checkout"
+msgstr "Kasse verlassen"
+
+msgid "First name"
+msgstr "Vorname"
+
+msgid "First renewal"
+msgstr "Erste Erneuerung"
+
+msgid "Gift card number"
+msgstr "Geschenkkartennummer"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "Ich bestätige, dass das Land, in das ich eingereist bin, das Land ist, in dem ich wohne"
+
+msgid "Initial Shipment"
+msgstr "Erstversand"
+
+msgid "Last name"
+msgstr "Familienname, Nachname"
+
+msgid "My order"
+msgstr "Meine Bestellung"
+
+msgid "Order notes (optional)"
+msgstr "Bestellhinweise (optional)"
+
+msgid "Order summary"
+msgstr "Bestellübersicht"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Pay"
+msgstr "Zahlen"
+
+msgid "Payment"
+msgstr "Zahlung"
+
+msgid "Personal"
+msgstr "persönlich"
+
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+msgid "Place order"
+msgstr "Bestellung aufgeben"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "Bitte gehen Sie zurück und versuchen Sie es erneut. Pflichtfeld fehlt"
+
+msgid "Postal code"
+msgstr "Postleitzahl"
+
+msgid "Processing"
+msgstr "wird bearbeitet"
+
+msgid "Province"
+msgstr "Provinz"
+
+msgid "Ready to check out?"
+msgstr "Bereit zum Auschecken?"
+
+msgid "Recurring total"
+msgstr "Wiederkehrende Summe"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "Secured by"
+msgstr "Gesichert durch"
+
+msgid "Select a Province"
+msgstr "Wählen Sie eine Provinz"
+
+msgid "Select a State"
+msgstr "Wähle einen Staat"
+
+msgid "Select a country"
+msgstr "Wähle ein Land"
+
+msgid "Send to"
+msgstr "Senden an"
+
+msgid "Shipping"
+msgstr "Versand"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "Entschuldigung, etwas ist schief gelaufen. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut."
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "Entschuldigung, dieser Shop liefert nicht an Ihren Standort."
+
+msgid "State"
+msgstr "Bundesland"
+
+msgid "Street address"
+msgstr "Adresse"
+
+msgid "Subtotal"
+msgstr "Zwischensumme"
+
+msgid "Tax"
+msgstr "Steuer"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "Testmodus: Kunden können PeachPay nicht sehen"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "Das eingegebene Passwort muss mindestens 8 Zeichen lang sein."
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "Für diese Bestellung sind keine zulässigen oder aktiven Zahlungsmethoden verfügbar."
+
+msgid "Total"
+msgstr "Gesamt"
+
+msgid "Unknown order error occurred"
+msgstr "Unbekannter Bestellfehler aufgetreten"
+
+msgid "VIEW SAVED CARDS"
+msgstr "GESPEICHERTE KARTEN ANZEIGEN"
+
+msgid "Verified"
+msgstr "Verifiziert"
+
+msgid "You entered an invalid coupon code"
+msgstr "Sie haben einen ungültigen Gutscheincode eingegeben"
+
+msgid "You entered an invalid gift card"
+msgstr "Sie haben eine ungültige Geschenkkarte eingegeben"
+
+msgid "You might also like..."
+msgstr "Das könnte dir auch gefallen..."
+
+msgid "add"
+msgstr "hinzufügen"
+
+msgid "and"
+msgstr "und"
+
+msgid "coupon"
+msgstr "Coupon"
+
+msgid "privacy policy"
+msgstr "Datenschutz-Bestimmungen"
+
+msgid "terms"
+msgstr "Bedingungen"
+
+msgid "terms and conditions"
+msgstr "Geschäftsbedingungen"
+
+msgid "the"
+msgstr "das"
+
+msgid "the store's"
+msgstr "die Läden"
+

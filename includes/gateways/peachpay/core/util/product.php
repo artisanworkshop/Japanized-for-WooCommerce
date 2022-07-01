@@ -127,10 +127,9 @@ function peachpay_product_variation_name( $id ) {
  * or the option is turned off.
  */
 function peachpay_product_image( WC_Product $product ) {
-	if ( peachpay_get_settings_option( 'peachpay_general_options', 'hide_product_images' ) ) {
-		return false;
+	if ( peachpay_get_settings_option( 'peachpay_general_options', 'display_product_images' ) ) {
+		return wp_get_attachment_image_src( $product->get_image_id() );
 	}
-	return wp_get_attachment_image_src( $product->get_image_id() );
 }
 
 /**
@@ -141,9 +140,10 @@ function peachpay_product_image( WC_Product $product ) {
  * exist or the option is turned off.
  */
 function peachpay_upsell_items( WC_Product $product ) {
-	if ( peachpay_get_settings_option( 'peachpay_general_options', 'hide_woocommerce_products_upsell' ) ) {
+	if ( peachpay_get_settings_option( 'peachpay_related_products_options', 'hide_woocommerce_products_upsell' ) ) {
 		return false;
 	}
+
 	$upsell_ids = $product->get_upsell_ids();
 	if ( ! $upsell_ids ) {
 		return;
@@ -151,7 +151,11 @@ function peachpay_upsell_items( WC_Product $product ) {
 	$upsell_items = array();
 	foreach ( $upsell_ids as $upsell_id ) {
 		$upsell = wc_get_product( $upsell_id );
-		$item   = array(
+
+		if ( ! $upsell ) {
+			break;
+		}
+		$item = array(
 			'id'        => $upsell->get_id(),
 			'name'      => $upsell->get_name(),
 			'price'     => $upsell->get_price(),
@@ -173,7 +177,7 @@ function peachpay_upsell_items( WC_Product $product ) {
  * exist or the option is turned off.
  */
 function peachpay_cross_sell_items( WC_Product $product ) {
-	if ( peachpay_get_settings_option( 'peachpay_general_options', 'hide_woocommerce_products_cross_sell' ) ) {
+	if ( peachpay_get_settings_option( 'peachpay_related_products_options', 'hide_woocommerce_products_cross_sell' ) ) {
 		return false;
 	}
 	$cross_sell_ids = $product->get_cross_sell_ids();
@@ -183,7 +187,10 @@ function peachpay_cross_sell_items( WC_Product $product ) {
 	$cross_sell_items = array();
 	foreach ( $cross_sell_ids as $cross_sell_id ) {
 		$cross_sell = wc_get_product( $cross_sell_id );
-		$item       = array(
+		if ( ! $cross_sell ) {
+			break;
+		}
+		$item = array(
 			'id'        => $cross_sell->get_id(),
 			'name'      => $cross_sell->get_name(),
 			'price'     => $cross_sell->get_price(),

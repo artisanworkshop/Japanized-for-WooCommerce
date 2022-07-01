@@ -11,7 +11,7 @@ async function peachpay_changeQuantity(change) {
 	formData.append('quantity', change.amount);
 	formData.append('absolute', change.set);
 
-	const response = await fetch(`${peachpay_data.wp_site_url}/?wc-ajax=pp-cart-item-quantity`, {
+	const response = await fetch(`${peachpay_data.wp_home_url}/?wc-ajax=pp-cart-item-quantity`, {
 		method: 'POST',
 		body: formData,
 	});

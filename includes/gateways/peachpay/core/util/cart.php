@@ -123,11 +123,26 @@ function peachpay_cart_shipping_package_record( $cart_key, $calculated_shipping_
 function peachpay_shipping_package_name( $cart_key, $package_index, $package ) {
 
 	if ( '0' === $cart_key ) {
-		return apply_filters( 'woocommerce_shipping_package_name', __( 'Shipping', 'peachpay-for-woocommerce' ), $package_index, $package );
+		return apply_filters( 'woocommerce_shipping_package_name', __( 'Shipping', 'woocommerce-for-japan' ), $package_index, $package );
 	}
 
-	return __( 'Recurring Shipment', 'peachpay-for-woocommerce' );
+	return __( 'Recurring Shipment', 'woocommerce-for-japan' );
 }
+
+/**
+ * Get a WC cart subtotal.
+ *
+ * @param \WC_Cart $cart Instance of a WC cart to collect information for.
+ */
+function peachpay_cart_subtotal( $cart ) {
+	if ( 'incl' === get_option( 'woocommerce_tax_display_cart' ) ) {
+		return floatval( $cart->get_subtotal() ) + floatval( $cart->get_subtotal_tax() );
+	} elseif ( 'excl' === get_option( 'woocommerce_tax_display_cart' ) ) {
+		return floatval( $cart->get_subtotal() );
+	}
+
+}
+
 /**
  * Gathers subtotal, coupons, fees, shipping + options, and the total for a given cart.
  *
@@ -137,13 +152,13 @@ function peachpay_shipping_package_name( $cart_key, $package_index, $package ) {
 function peachpay_build_cart_response( $cart_key, $cart ) {
 	$result = array(
 		'package_record' => peachpay_cart_shipping_package_record( $cart_key, WC()->shipping->calculate_shipping( $cart->get_shipping_packages() ) ),
-		'cart'           => peachpay_make_cart_from_wc_cart( $cart->get_cart() ),
+		'cart'           => peachpay_get_cart(),
 		'summary'        => array(
 			'fees_record'      => peachpay_cart_applied_fee_record( $cart ),
 			'coupons_record'   => peachpay_cart_applied_coupon_record( $cart ),
 			'gift_card_record' => peachpay_cart_applied_gift_card_record( $cart ),
-			'subtotal'         => floatval( $cart->get_subtotal() ),
-			'total_shipping'   => floatval( $cart->get_shipping_total() ),
+			'subtotal'         => peachpay_cart_subtotal( $cart ),
+			'total_shipping'   => floatval( $cart->get_shipping_total() ) + ( get_option( 'woocommerce_tax_display_cart' ) === 'incl' ? floatval( $cart->get_shipping_tax() ) : 0 ),
 			'total_tax'        => floatval( $cart->get_total_tax() ),
 			'total'            => floatval( $cart->get_total( 'display' ) ),
 		),
@@ -151,7 +166,6 @@ function peachpay_build_cart_response( $cart_key, $cart ) {
 			'is_virtual' => ! $cart->needs_shipping(),
 		),
 	);
-
 	return $result;
 }
 

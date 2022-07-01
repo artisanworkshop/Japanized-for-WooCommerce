@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2022-05-20T13:09:32.637915\n"
+"X-Domain: peachpay-for-woocommerce\n"
+
+msgid "(optional)"
+msgstr ""
+
+msgid "+ ADD A COUPON CODE"
+msgstr ""
+
+msgid "+ NEW CARD"
+msgstr ""
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr ""
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr ""
+
+msgid "Apartment"
+msgstr ""
+
+msgid "Back to info"
+msgstr ""
+
+msgid "Billing"
+msgstr ""
+
+msgid "By clicking the button above, you agree to"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Card"
+msgstr ""
+
+msgid "Cart is empty"
+msgstr ""
+
+msgid "City"
+msgstr ""
+
+msgid "Continue"
+msgstr ""
+
+msgid "Country"
+msgstr ""
+
+msgid "County"
+msgstr ""
+
+msgid "Coupon code"
+msgstr ""
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr ""
+
+msgid "Currency"
+msgstr ""
+
+msgid "Delivery date"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Email"
+msgstr ""
+
+msgid "Exit Checkout"
+msgstr ""
+
+msgid "First name"
+msgstr ""
+
+msgid "First renewal"
+msgstr ""
+
+msgid "Gift card number"
+msgstr ""
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr ""
+
+msgid "Initial Shipment"
+msgstr ""
+
+msgid "Last name"
+msgstr ""
+
+msgid "My order"
+msgstr ""
+
+msgid "Order notes (optional)"
+msgstr ""
+
+msgid "Order summary"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Pay"
+msgstr ""
+
+msgid "Payment"
+msgstr ""
+
+msgid "Personal"
+msgstr ""
+
+msgid "Phone number"
+msgstr ""
+
+msgid "Place order"
+msgstr ""
+
+msgid "Please go back and try again. Missing required field"
+msgstr ""
+
+msgid "Postal code"
+msgstr ""
+
+msgid "Processing"
+msgstr ""
+
+msgid "Province"
+msgstr ""
+
+msgid "Ready to check out?"
+msgstr ""
+
+msgid "Recurring total"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "Secured by"
+msgstr ""
+
+msgid "Select a Province"
+msgstr ""
+
+msgid "Select a State"
+msgstr ""
+
+msgid "Select a country"
+msgstr ""
+
+msgid "Send to"
+msgstr ""
+
+msgid "Shipping"
+msgstr ""
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr ""
+
+msgid "Sorry, this store does not ship to your location."
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+msgid "Street address"
+msgstr ""
+
+msgid "Subtotal"
+msgstr ""
+
+msgid "Tax"
+msgstr ""
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr ""
+
+msgid "The password entered must be at least 8 characters long."
+msgstr ""
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr ""
+
+msgid "Total"
+msgstr ""
+
+msgid "Unknown order error occurred"
+msgstr ""
+
+msgid "VIEW SAVED CARDS"
+msgstr ""
+
+msgid "Verified"
+msgstr ""
+
+msgid "You entered an invalid coupon code"
+msgstr ""
+
+msgid "You entered an invalid gift card"
+msgstr ""
+
+msgid "You might also like..."
+msgstr ""
+
+msgid "add"
+msgstr ""
+
+msgid "and"
+msgstr ""
+
+msgid "coupon"
+msgstr ""
+
+msgid "privacy policy"
+msgstr ""
+
+msgid "terms"
+msgstr ""
+
+msgid "terms and conditions"
+msgstr ""
+
+msgid "the"
+msgstr ""
+
+msgid "the store's"
+msgstr ""
+

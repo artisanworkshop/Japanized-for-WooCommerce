@@ -27,20 +27,3 @@ function peachpay_wcmv_add_cart_page_item_meta( array $pp_cart_item, array $wc_l
 	return $pp_cart_item;
 }
 add_filter( 'peachpay_cart_page_line_item', 'peachpay_wcmv_add_cart_page_item_meta', 10, 2 );
-
-/**
- * Gets the list of vendors for the frontend to display.
- *
- * @param array $peachpay_data The frontend data object.
- */
-function peachpay_get_vendor_map( array $peachpay_data ) {
-	$vendors    = get_wcmp_vendors();
-	$vendor_map = array();
-	foreach ( $vendors as $vendor ) {
-		$vendor_map[ $vendor->id ] = $vendor->user_data->data->display_name;
-	}
-
-	$peachpay_data['plugin_dc_woocommerce_multi_vendor_name_lookup'] = $vendor_map;
-	return $peachpay_data;
-}
-add_filter( 'peachpay_script_data', 'peachpay_get_vendor_map', 10, 1 );

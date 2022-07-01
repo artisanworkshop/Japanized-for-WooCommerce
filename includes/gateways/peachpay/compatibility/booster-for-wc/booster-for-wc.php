@@ -15,17 +15,17 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  */
 const BOOSTER_DATA_KEY = 'wcj_data';
 
-// Module Keys.
-const BPA_MODULE = 'product_addons';
-
-
 /**
  * Initialize different active modules for peachpay compatibility.
  */
 function peachpay_booster_init() {
 
-	if ( WCJ()->modules[ BPA_MODULE ]->is_enabled() ) {
+	if ( WCJ()->modules['product_addons']->is_enabled() ) {
 		include_once PEACHPAY_ABSPATH . 'compatibility/booster-for-wc/booster-product-addons.php';
+	}
+
+	if ( WCJ()->modules['shipping_description']->is_enabled() ) {
+		include_once PEACHPAY_ABSPATH . 'compatibility/booster-for-wc/booster-shipping-description.php';
 	}
 
 	// Initialize module support.

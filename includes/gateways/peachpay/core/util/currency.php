@@ -14,8 +14,7 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  */
 function peachpay_get_currency_info() {
 	return array(
-		'code'                => peachpay_currency_default_code(),
-		'overridden_code'     => peachpay_currency_overridden_code(),
+		'code'                => peachpay_currency_code(),
 		'symbol'              => peachpay_currency_symbol(),
 		'position'            => peachpay_currency_position(),
 		'thousands_separator' => peachpay_currency_thousands_separator(),
@@ -28,15 +27,8 @@ function peachpay_get_currency_info() {
 /**
  * Gets the PeachPay default currency code for the site.
  */
-function peachpay_currency_default_code() {
-	return apply_filters( 'peachpay_currency_default_code', get_woocommerce_currency() );
-}
-
-/**
- * Gets the PeachPay overridden currency code for the site or defaults to the default sites currency.
- */
-function peachpay_currency_overridden_code() {
-	return apply_filters( 'peachpay_currency_overridden_code', get_woocommerce_currency() );
+function peachpay_currency_code() {
+	return apply_filters( 'peachpay_currency_code', get_woocommerce_currency() );
 }
 
 /**

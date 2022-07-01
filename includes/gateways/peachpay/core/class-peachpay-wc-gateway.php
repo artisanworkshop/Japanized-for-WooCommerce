@@ -14,92 +14,6 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 }
 
 /**
- * Logs in a user and/or creates an account first if an account already exist.
- */
-function peachpay_login_user() {
-	if ( ! isset( $_POST['account_password'] ) || ! isset( $_POST['billing_email'] ) ) { // If password is not set then nothing left to do here.
-		return false;
-	}
-	//phpcs:ignore
-	$email    = wp_unslash( $_POST['billing_email'] );
-	//phpcs:ignore
-	$password = wp_unslash( $_POST['account_password'] );
-
-	if ( is_user_logged_in() ) {
-		unset( $_POST['account_password'] ); // Causes issues if already logged in and the password is present. Shouldn't happen but lets make sure.
-		return false;
-	}
-
-	if ( email_exists( $email ) ) { // If the username/email already exist then lets log them in.
-
-		$info = array(
-			'user_login'    => $email,
-			'user_password' => $password,
-			'remember'      => true,
-		);
-
-		$user = wp_signon( $info, is_ssl() );
-
-		if ( ! is_wp_error( $user ) ) {
-			$id = $user->ID;
-
-			wc_set_customer_auth_cookie( $id );
-			WC()->session->set( 'reload_checkout', true );
-
-			do_action( 'wp_login', $user->user_login, $user );
-
-			$_REQUEST['_wpnonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
-		} else {
-			return wp_send_json_error( 'Login failed due to incorrect password' );
-		}
-
-		unset( $_POST['account_password'] );
-		return true;
-	}
-
-	// If it makes it here then that means a password is present and the email is not an existing account. The account will be created by order.
-}
-
-/**
- * PeachPay endpoint for creating an order.
- *
- * @throws Exception If the PeachPay checkout nonce is not valid.
- */
-function peachpay_ajax_create_order() {
-	//phpcs:ignore
-	if ( ! isset( $_REQUEST['peachpay_checkout_nonce'] )
-		// On the product page, because we add to cart without refreshing the page, the nonce
-		// is invalidated and the checkout always fails. However, this brings us all the way
-		// back to why we created our own checkout nonce in the first place. When we were using
-		// the WooCommerce process checkout nonce, we made sure to refresh it after adding to
-		// cart and send that value to the browser so that it would work, but it the checkout
-		// still was failing in cases that we could not reproduce. Since refreshing this nonce
-		// would just take us back to where we started, for now it's disabled until we have
-		// some time to really look into this interesting behavior.
-		//
-		// || ! wp_verify_nonce( $_REQUEST['peachpay_checkout_nonce'], 'peachpay_process_checkout' ).
-	) {
-		return wp_send_json_error( __( 'PeachPay was unable to process your order, please try again.', 'peachpay-for-woocommerce' ) );
-	}
-
-	peachpay_login_user();
-
-	if ( WC()->cart->is_empty() ) {
-		return wp_send_json_error( __( 'PeachPay was unable to process your order because the cart is empty.', 'peachpay-for-woocommerce' ) );
-	}
-
-	if ( ! defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
-		define( 'WOOCOMMERCE_CHECKOUT', true );
-	}
-
-	$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
-
-	WC()->checkout()->process_checkout();
-
-	wp_die();
-}
-
-/**
  * Adds the peachpay gateway class to wc.
  *
  * @param Array $gateways The gateway array.
@@ -113,6 +27,67 @@ function peachpay_add_gateway_class( $gateways ) {
 	return $gateways;
 }
 add_filter( 'woocommerce_payment_gateways', 'peachpay_add_gateway_class' );
+add_action( 'woocommerce_admin_order_totals_after_total', 'display_stripe_fee' );
+
+/**
+ * Displays the Stripe fee and net payout
+ *
+ * @param int $order_id ID for the order.
+ */
+function display_stripe_fee( $order_id ) {
+	if ( did_action( 'woocommerce_admin_order_totals_after_total' ) >= 2 ) {
+		return;
+	}
+
+	$order    = wc_get_order( $order_id );
+	$refunded = $order->get_total_refunded();
+
+	if ( 'peachpay_stripe' !== $order->get_payment_method() || ( ! ( $order->is_paid() ) && 0 === $refunded ) ) {
+		return;
+	}
+
+	if ( $refunded > 0 ) {
+		$fee   = $order->get_meta( '_stripe_fee' );
+		$total = $order->get_total();
+		$net   = $total - $refunded - $fee;
+	} else {
+		$fee = $order->get_meta( '_stripe_fee' );
+		$net = $order->get_meta( '_stripe_net' );
+	}
+
+	if ( null === $fee || null === $net ) {
+		return;
+	}
+
+	$currency = $order->get_currency();
+
+	if ( ! $fee || ! $currency ) {
+		return;
+	}
+
+	?>
+
+	<tr>
+		<td class="label stripe-fee">
+			<?php esc_html_e( 'Stripe Fee:', 'woocommerce-for-japan' ); ?>
+		</td>
+		<td width="1%"></td>
+		<td class="total">
+			-<?php echo wc_price( $fee, [ 'currency' => $currency ] ); // phpcs:ignore ?> 
+		</td>
+	</tr>
+	<tr>
+		<td class="label payout">
+			<?php esc_html_e( 'Net Payout:', 'woocommerce-for-japan' ); ?>
+		</td>
+		<td width="1%"></td>
+		<td class="total">
+			<?php echo wc_price( $net, [ 'currency' => $currency ] ); // phpcs:ignore ?>
+		</td>
+	</tr>
+
+	<?php
+}
 
 /**
  * This function is called via the add_action below it to initialize the
@@ -149,12 +124,6 @@ function peachpay_init_gateway_class() {
 		 */
 		public function process_payment( $order_id ) {
 			$order = wc_get_order( $order_id );
-
-			if ( ! should_place_order_before_payment() ) {
-				// Payment is processed first in older versions of the plugin,
-				// so by this point the payment must have completed successfully.
-				$order->payment_complete();
-			}
 
 			return $this->prepare_payment_result( $order );
 		}
@@ -268,13 +237,13 @@ function peachpay_init_gateway_class() {
 		 * @return boolean True or false based on success, or a WP_Error object.
 		 */
 		public function process_refund( $order_id, $amount = null, $reason = '' ) {
-			$url = peachpay_api_url() . 'api/v1/refund';
+			$url = peachpay_api_url() . 'api/v1/stripe/refund';
 
 			$data = array(
 				'order_id'     => $order_id,
 				'amount'       => $amount,
 				'reason'       => $reason,
-				'merchant_url' => get_site_url(),
+				'merchant_url' => get_home_url(),
 			);
 
 			$params = array(
@@ -312,7 +281,45 @@ function peachpay_init_gateway_class() {
 			$this->method_title = 'PeachPay (PayPal)';
 			$this->supports     = array(
 				'products',
+				'refunds',
 			);
+		}
+
+		/**
+		 * Process refund.
+		 *
+		 * If the gateway declares 'refunds' support, this will allow it to refund.
+		 * a passed in amount.
+		 *
+		 * @param  int        $order_id Order ID.
+		 * @param  float|null $amount Refund amount.
+		 * @param  string     $reason Refund reason.
+		 * @return boolean True or false based on success, or a WP_Error object.
+		 */
+		public function process_refund( $order_id, $amount = null, $reason = '' ) {
+			$url = peachpay_api_url() . 'api/v1/paypal/refund';
+
+			$data = array(
+				'order_id'     => $order_id,
+				'amount'       => $amount,
+				'reason'       => $reason,
+				'merchant_url' => get_site_url(),
+			);
+
+			$params = array(
+				'body'    => $data,
+				'timeout' => 60,
+			);
+
+			$status = wp_remote_post( $url, $params );
+
+			if ( is_wp_error( $status ) ) {
+				return false;
+			}
+
+			$response = wp_remote_retrieve_body( $status );
+
+			return ( filter_var( $response, FILTER_VALIDATE_BOOLEAN ) );
 		}
 	}
 
@@ -343,16 +350,7 @@ function peachpay_init_gateway_class() {
 		}
 	}
 }
-add_action( 'plugins_loaded', 'peachpay_init_gateway_class', 10 );
-
-/**
- * Compares versions to determine if orders should be placed before payment.
- *
- * @return boolean
- */
-function should_place_order_before_payment() {
-	return version_compare( PEACHPAY_VERSION, '1.41.0', '>=' );
-}
+add_action( 'plugins_loaded', 'peachpay_init_gateway_class', 11 );
 
 /**
  * Gets whether the PeachPay gateway is enabled.
@@ -369,3 +367,25 @@ function peachpay_gateway_enabled() {
 		return false;
 	}
 }
+
+/**
+ * Filters out the available gateways for on the checkout page.
+ *
+ * @param array $available_gateways The available gateways to filter.
+ */
+function hide_peachpay_gateways( $available_gateways ) {
+	if ( defined( 'WOOCOMMERCE_CHECKOUT' ) && ! defined( 'PEACHPAY_CHECKOUT' ) ) {
+		foreach ( $available_gateways as $key => $gateway ) {
+			if ( 'peachpay' === $gateway->id ) {
+				unset( $available_gateways[ $key ] );
+			} elseif ( 'peachpay_stripe' === $gateway->id ) {
+				unset( $available_gateways[ $key ] );
+			} elseif ( 'peachpay_paypal' === $gateway->id ) {
+				unset( $available_gateways[ $key ] );
+			}
+		}
+	}
+
+	return $available_gateways;
+}
+add_filter( 'woocommerce_available_payment_gateways', 'hide_peachpay_gateways', 10, 2 );

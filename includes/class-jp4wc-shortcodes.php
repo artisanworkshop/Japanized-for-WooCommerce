@@ -57,6 +57,7 @@ class JP4WC_Shortcodes{
             'law-cost',
             'law-return',
             'law-special',
+	        'law-tel',
         );
         $laws_array = array(
             __( 'Shop Name', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[0]),
@@ -64,6 +65,7 @@ class JP4WC_Shortcodes{
             __( 'Owner Name', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[2]),
             __( 'Location', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[3]),
             __( 'Contact', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[4]),
+            __( 'Telephone', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[12]),
             __( 'Selling price', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[5]),
             __( 'Payment method', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[6]),
             __( 'Product purchase method', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[7]),
@@ -82,12 +84,10 @@ class JP4WC_Shortcodes{
         );
         foreach($laws_array as $key => $value){
             if($value){
-                $content .= '        <tr><th>'.esc_attr( $key ).'</th><td>'.wp_kses( $value, $allowed_html ).'</td></tr>
-';
-            }elseif($key != __( 'Special conditions', 'woocommerce-for-japan' )){
+                $content .= '        <tr><th>'.esc_attr( $key ).'</th><td>'.wp_kses( $value, $allowed_html ).'</td></tr>'."\n";
+            }elseif($key != __( 'Special conditions', 'woocommerce-for-japan' ) && $key != __( 'Telephone', 'woocommerce-for-japan' )){
                 $no_content[] = $key;
             }
-
         }
         $content .= '    </tbody>
 </table>';

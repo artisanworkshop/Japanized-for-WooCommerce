@@ -1,5 +1,5 @@
 interface IButtonConfigurationOptions {
-	position: string | 'inherit';
+	alignment: string | 'inherit';
 	width: number;
 	borderRadius: number;
 

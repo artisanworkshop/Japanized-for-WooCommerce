@@ -65,7 +65,5 @@ function baseURL(merchantHostname, test_mode) {
 }
 
 function spinnerURL(test_mode) {
-	// Taken from button.js
-	const dark = location.hostname === 'www.blazecandles.co' ? '-dark' : '';
-	return `${peachpay_wordpress_settings.plugin_asset_url}}public/img/spinner${dark}.svg`;
+	return `${peachpay_wordpress_settings.plugin_asset_url}public/img/spinner.svg`;
 }

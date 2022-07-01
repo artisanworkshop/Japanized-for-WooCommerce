@@ -21,7 +21,7 @@ add_filter( 'peachpay_script_data', 'peachpay_hide_mini_cart_from_settings', 20,
  * @param boolean $bool if it is currently hidden or not.
  */
 function peachpay_hide_checkout_page_from_settings( $bool ) {
-	if ( peachpay_get_settings_option( 'peachpay_button_options', 'disabled_checkout_page' ) ) {
+	if ( ! peachpay_get_settings_option( 'peachpay_button_options', 'checkout_page_enabled' ) ) {
 		return true;
 	}
 
@@ -34,7 +34,7 @@ function peachpay_hide_checkout_page_from_settings( $bool ) {
  * @param boolean $bool if it is previously hidden or not.
  */
 function peachpay_hide_cart_page_from_settings( $bool ) {
-	if ( peachpay_get_settings_option( 'peachpay_button_options', 'disabled_cart_page' ) ) {
+	if ( ! peachpay_get_settings_option( 'peachpay_button_options', 'cart_page_enabled' ) ) {
 		return true;
 	}
 
@@ -47,7 +47,7 @@ function peachpay_hide_cart_page_from_settings( $bool ) {
  * @param array $data the data being sent to the browser.
  */
 function peachpay_hide_mini_cart_from_settings( $data ) {
-	if ( peachpay_get_settings_option( 'peachpay_button_options', 'disabled_mini_cart' ) ) {
+	if ( ! peachpay_get_settings_option( 'peachpay_button_options', 'mini_cart_enabled' ) ) {
 		$data['hide_mini_cart'] = true;
 	} else {
 		$data['hide_mini_cart'] = false;

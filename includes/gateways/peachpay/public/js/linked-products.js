@@ -11,7 +11,7 @@ async function peachpay_addLinkedProductToCart(event) {
 	formData.append('add-to-cart', productId);
 	formData.append('quantity', 1);
 
-	const response = await fetch(peachpay_data.wp_site_url + '?wc-ajax=add-to-cart', {
+	const response = await fetch(peachpay_data.wp_home_url + '/?wc-ajax=add-to-cart', {
 		method: 'POST',
 		headers: { Accept: 'application/json' },
 		body: formData,

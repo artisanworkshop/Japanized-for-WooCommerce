@@ -20,10 +20,6 @@ jQuery(window).on('elementor/frontend/init', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
 	if (peachpay_isElementor()) {
-		if (!document.querySelector('#pp-modal-overlay')) {
-			document.querySelector('body').insertAdjacentHTML('beforeend', pp_checkoutForm);
-		}
-
 		peachpay_initButton({ width: '350' });
 	}
 });

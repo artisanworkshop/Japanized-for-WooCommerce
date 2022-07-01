@@ -25,14 +25,32 @@ function run_pp_related_products() {
 function peachpay_related_products() {
 	add_settings_section(
 		'peachpay_related_products',
-		__( 'Related products settings page', 'peachpay-for-woocommerce' ),
-		null,
+		__( 'Related products', 'woocommerce-for-japan' ),
+		'peachpay_feedback_cb',
 		'peachpay'
 	);
 
 	add_settings_field(
+		'peachpay_field_upsell',
+		__( 'Upsell items', 'woocommerce-for-japan' ),
+		'peachpay_hide_upsell_cb',
+		'peachpay',
+		'peachpay_related_products',
+		array( 'label_for' => 'woocommerce_products_upsell' )
+	);
+
+	add_settings_field(
+		'peachpay_field_cross_sell',
+		__( 'Cross-sell items', 'woocommerce-for-japan' ),
+		'peachpay_hide_cross_sell_cb',
+		'peachpay',
+		'peachpay_related_products',
+		array( 'label_for' => 'woocommerce_products_cross_sell' )
+	);
+
+	add_settings_field(
 		'peachpay_related_products_toggle',
-		__( 'Enable Related Products', 'peachpay-for-woocommerce' ),
+		__( 'Enable Related Products', 'woocommerce-for-japan' ),
 		'peachpay_related_products_toggle_cb',
 		'peachpay',
 		'peachpay_related_products',
@@ -40,8 +58,17 @@ function peachpay_related_products() {
 	);
 
 	add_settings_field(
+		'peachpay_related_products_checkout_window_toggle',
+		__( 'Display related products in checkout window', 'woocommerce-for-japan' ),
+		'peachpay_related_products_checkout_window_toggle_cb',
+		'peachpay',
+		'peachpay_related_products',
+		array( 'label_for' => 'peachpay_related_products_checkout_window_toggle' )
+	);
+
+	add_settings_field(
 		'peachpay_related_products_title',
-		__( 'Heading text', 'peachpay-for-woocommerce' ),
+		__( 'Heading text', 'woocommerce-for-japan' ),
 		'peachpay_related_products_title_cb',
 		'peachpay',
 		'peachpay_related_products',
@@ -50,7 +77,7 @@ function peachpay_related_products() {
 
 	add_settings_field(
 		'peachpay_display_nproducts',
-		__( 'Number of products to display', 'peachpay-for-woocommerce' ),
+		__( 'Number of products to display', 'woocommerce-for-japan' ),
 		'peachpay_display_nproducts_cb',
 		'peachpay',
 		'peachpay_related_products',
@@ -59,7 +86,7 @@ function peachpay_related_products() {
 
 	add_settings_field(
 		'peachpay_product_relation',
-		__( 'Related by', 'peachpay-for-woocommerce' ),
+		__( 'Related by', 'woocommerce-for-japan' ),
 		'peachpay_product_relation_cb',
 		'peachpay',
 		'peachpay_related_products',
@@ -68,7 +95,7 @@ function peachpay_related_products() {
 
 	add_settings_field(
 		'peachpay_exclude_id',
-		__( 'Taxonomy IDs to exclude (comma separated)', 'peachpay-for-woocommerce' ),
+		__( 'Taxonomy IDs to exclude (comma separated)', 'woocommerce-for-japan' ),
 		'peachpay_exclude_id_cb',
 		'peachpay',
 		'peachpay_related_products',
@@ -77,12 +104,47 @@ function peachpay_related_products() {
 
 	add_settings_field(
 		'peachpay_enable_slider',
-		__( 'Slider', 'peachpay-for-woocommerce' ),
+		__( 'Slider', 'woocommerce-for-japan' ),
 		'peachpay_related_product_slider_cb',
 		'peachpay',
 		'peachpay_related_products',
 		array( 'label_for' => 'peachpay_related_product_slider' )
 	);
+}
+
+
+/**
+ * Callback for toggling upsell feature
+ */
+function peachpay_hide_upsell_cb() {
+	?>
+	<input
+		id="woocommerce_products_upsell"
+		name="peachpay_related_products_options[hide_woocommerce_products_upsell]"
+		type="checkbox"
+		value="1"
+		<?php checked( 1, peachpay_get_settings_option( 'peachpay_related_products_options', 'hide_woocommerce_products_upsell' ), true ); ?>
+	>
+	<label for='woocommerce_products_upsell'><?php esc_html_e( 'Hide upsell items', 'woocommerce-for-japan' ); ?></label>
+	<p class="description"><?php esc_html_e( 'Upsells on your products will not be displayed in the checkout window', 'woocommerce-for-japan' ); ?></p>
+	<?php
+}
+
+/**
+ * Callback for toggling cross-sell feature
+ */
+function peachpay_hide_cross_sell_cb() {
+	?>
+	<input
+		id="woocommerce_products_cross_sell"
+		name="peachpay_related_products_options[hide_woocommerce_products_cross_sell]"
+		type="checkbox"
+		value="1"
+		<?php checked( 1, peachpay_get_settings_option( 'peachpay_related_products_options', 'hide_woocommerce_products_cross_sell' ), true ); ?>
+	>
+	<label for='woocommerce_products_cross_sell'><?php esc_html_e( 'Hide cross-sell items', 'woocommerce-for-japan' ); ?></label>
+	<p class="description"><?php esc_html_e( 'Cross-sells on your products will not be displayed in the checkout window', 'woocommerce-for-japan' ); ?></p>
+	<?php
 }
 
 /**
@@ -97,8 +159,25 @@ function peachpay_related_products_toggle_cb() {
 		value="1"
 		<?php checked( 1, peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_enable' ), true ); ?>
 	>
-	<label for="peachpay_related_products_toggle"><b><?php esc_attr_e( 'Display related products in the product page', 'peachpay-for-woocommerce' ); ?></b></label>
-	<p class="description"><?php esc_attr_e( 'Display random related products in a slider based on product category, tag, or attribute on every product page.', 'peachpay-for-woocommerce' ); ?></p>
+	<label for="peachpay_related_products_toggle"><b><?php esc_attr_e( 'Display related products in the product page', 'woocommerce-for-japan' ); ?></b></label>
+	<p class="description"><?php esc_attr_e( 'Display random related products in a slider based on product category, tag, or attribute on every product page.', 'woocommerce-for-japan' ); ?></p>
+	<?php
+}
+
+/**
+ * Callback for toggling related product feature inside the checkout window
+ */
+function peachpay_related_products_checkout_window_toggle_cb() {
+	?>
+	<input
+		id="peachpay_related_products_checkout_window_toggle"
+		name="peachpay_related_products_options[peachpay_related_products_checkout_window_enable]"
+		type="checkbox"
+		value="1"
+		<?php checked( 1, peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_products_checkout_window_enable' ), true ); ?>
+	>
+	<label for="peachpay_related_products_checkout_window_toggle"><b><?php esc_attr_e( 'Display related products in the PeachPay Checkout Window', 'woocommerce-for-japan' ); ?></b></label>
+	<p class="description"><?php esc_attr_e( 'Display random related products based on product category, tag, or attribute in the checkout window.', 'woocommerce-for-japan' ); ?></p>
 	<?php
 }
 
@@ -112,7 +191,7 @@ function peachpay_related_products_title_cb() {
 		name="peachpay_related_products_options[peachpay_related_title]"
 		type="text"
 		style="width: 13rem"
-		placeholder="Related Products"
+		placeholder="<?php esc_html_e( 'Related Products', 'woocommerce-for-japan' ); ?>"
 		value="<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_title' ) ); ?>"
 	>
 	<?php
@@ -141,9 +220,9 @@ function peachpay_product_relation_cb() {
 	?>
 	<?php
 	$basedonarray = array(
-		'product_cat' => 'Product Category',
-		'product_tag' => 'Product TAG',
-		'attribute'   => 'Product Attributes',
+		'product_cat' => __( 'Product Category', 'woocommerce-for-japan' ),
+		'product_tag' => __( 'Product TAG', 'woocommerce-for-japan' ),
+		'attribute'   => __( 'Product Attributes', 'woocommerce-for-japan' ),
 	);
 	?>
 	<select name="peachpay_related_products_options[peachpay_product_relation]">
@@ -195,8 +274,8 @@ function peachpay_exclude_id_cb() {
  */
 function peachpay_related_product_slider_cb() {
 	$slider = array(
-		'Enabled'  => 'Enabled',
-		'Disabled' => 'Disabled',
+		'Enabled'  => __( 'Enabled', 'woocommerce-for-japan' ),
+		'Disabled' => __( 'Disabled', 'woocommerce-for-japan' ),
 	);
 	?>
 	<select name="peachpay_related_products_options[peachpay_related_slider]">
@@ -272,6 +351,7 @@ function peachpayrprr_wp_taxonomy( $basedonf, $atts ) {
 		return false;
 	}
 
+	$product_based_id = array();
 	foreach ( $terms as $term ) {
 		$product_based_id[] = $term->term_id;
 	}
@@ -490,6 +570,145 @@ function peachpayrprr_shortcode_display( $atts ) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	return $output;
+}
+
+add_filter( 'peachpay_register_feature', 'peachpay_related_products_feature_flag', 10, 1 );
+
+/**
+ * Function to add a filter to send available related products to checkout modal.
+ *
+ * @param array $data Peachpay data array.
+ */
+function peachpay_related_products_feature_flag( $data ) {
+	$data['related_products']['enabled'] = true;
+	$data['related_products']['version'] = 1;
+
+	$metadata = array(
+		'related_products'       => peachpay_related_products_in_checkout_window(),
+		'related_products_title' => peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_title' ),
+	);
+
+	$data['related_products']['metadata'] = $metadata;
+
+	return $data;
+}
+
+/**
+ * Sends related product data to the checkout window to be rendered.
+ */
+function peachpay_related_products_in_checkout_window() {
+	if ( ! peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_products_checkout_window_enable' ) || ! is_product() ) {
+		return false;
+	}
+
+	global $post;
+	$products_number = peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_nproducts' );
+	$exclude         = explode( ',', peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_exclude_id' ) );
+	$basedonf        = esc_attr( peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_product_relation' ) );
+	if ( 'category' === $basedonf ) {
+		$basedonf = 'product_cat';
+	} elseif ( 'tag' === $basedonf ) {
+		$basedonf = 'product_tag';
+	}
+
+	$args = array();
+	if ( 'product_cat' === $basedonf || 'product_tag' === $basedonf ) {
+		$product_based_id = array();
+		$terms            = get_the_terms( $post->ID, $basedonf );
+		foreach ( $terms as $term ) {
+			$product_based_id[] = $term->term_id;
+		}
+		$product_based_id = array_diff( $product_based_id, $exclude );
+
+		$args = get_posts(
+			array(
+				'post_type'      => 'product',
+				'post__not_in'   => array( $post->ID ),
+				'fields'         => 'ids',
+			//phpcs:ignore 
+			'tax_query'      => array(
+				array(
+					'taxonomy' => $basedonf,
+					'field'    => 'id',
+					'terms'    => $product_based_id,
+				),
+			),
+				'posts_per_page' => $products_number,
+				'orderby'        => 'rand',
+			//phpcs:ignore 
+			'meta_query'     => array(
+				array(
+					'key'   => '_stock_status',
+					'value' => 'instock',
+				),
+			),
+			)
+		);
+	} elseif ( 'attribute' === $basedonf ) {
+		$term_ids  = array();
+		$term_idsa = array();
+		$attr      = array();
+		$product   = wc_get_product( $post->ID );
+		$getatt    = $product->get_attributes( $product->get_id() );
+		if ( empty( $getatt ) ) {
+			return false;
+		}
+		foreach ( $getatt as $attribute ) {
+			$attr[] = $attribute['name'];
+		}
+		foreach ( $attr as $att ) {
+			$current_term = get_the_terms( $product->get_id(), $att );
+			if ( $current_term && ! is_wp_error( $current_term ) ) {
+				$term_ids = array();
+				foreach ( $current_term as $termid ) {
+					$term_ids[] = $termid->term_id;
+				}
+			}
+
+			$term_idsa[] = $term_ids;
+		}
+		$term_idsa       = call_user_func_array( 'array_merge', $term_idsa );
+		$products_number = peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_nproducts' );
+		$args            = get_posts(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => 'publish',
+				'post__not_in'   => array( $post->ID ),
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			//phpcs:ignore 
+			'tax_query'      => array( peachpayrprrdtaxo( $attr, $term_idsa ) ),
+				'posts_per_page' => $products_number,
+				'orderby'        => 'rand',
+			//phpcs:ignore 
+			'meta_query'     => array(
+				array(
+					'key'   => '_stock_status',
+					'value' => 'instock',
+				),
+			),
+			)
+		);
+	}
+
+	$related_products = array();
+	foreach ( $args as $product_id ) {
+		$related_product = wc_get_product( $product_id );
+		$item            = array(
+			'id'        => $related_product->get_id(),
+			'name'      => $related_product->get_name(),
+			'price'     => $related_product->get_price_html(),
+			'variable'  => $related_product->is_type( 'variable' ),
+			'bundle'    => $related_product->is_type( 'bundle' ),
+			'img_src'   => is_array( peachpay_product_image( $related_product ) ) ? peachpay_product_image( $related_product )[0] : wc_placeholder_img_src(),
+			'has_stock' => $related_product->get_stock_status() === 'instock',
+			'permalink' => get_permalink( $product_id ),
+			'sale'      => $related_product->is_on_sale(),
+		);
+		array_push( $related_products, $item );
+	}
+
+	return $related_products;
 }
 
 // Shortcode registration.

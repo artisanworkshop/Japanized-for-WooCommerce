@@ -68,7 +68,7 @@ function peachpay_upgrader_process_complete( $upgrader_object, $options ) {
 function peachpay_record_analytics( $active, string $version ) {
 	$body = wp_json_encode(
 		array(
-			'site_url'       => get_site_url(),
+			'site_url'       => get_home_url(),
 			'site_title'     => get_bloginfo( 'name' ),
 			'plugin_slug'    => 'peachpay-for-woocommerce',
 			'plugin_version' => $version,

@@ -1,0 +1,16 @@
+.pp-paypal-btn-container{
+	width: 15rem;
+	height: 3.5rem;
+	margin: 0 auto;
+}
+
+.pp-paypal-spinner {
+	width: 30px;
+	display: inline-block;
+	vertical-align: middle;
+}
+.pp-paypal-spinner-container{
+	height: 55px;
+	display: flex;
+	justify-content: center;
+}

@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sv\n"
+
+
+msgid "(optional)"
+msgstr "(frivillig)"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ LÄGG TILL EN KUPONGKOD"
+
+msgid "+ NEW CARD"
+msgstr "+ NYTT KORT"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ LÖS IN PRESENTKORT/BUTIKKREDIT"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "När du har valt betala kommer du att omdirigeras för att slutföra din betalning."
+
+msgid "Apartment"
+msgstr "Lägenhet"
+
+msgid "Back to info"
+msgstr "Tillbaka till info"
+
+msgid "Billing"
+msgstr "Fakturering"
+
+msgid "By clicking the button above, you agree to"
+msgstr "Genom att klicka på knappen ovan godkänner du"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Card"
+msgstr "Kort"
+
+msgid "Cart is empty"
+msgstr "Varukorgen är tom"
+
+msgid "City"
+msgstr "Stad"
+
+msgid "Continue"
+msgstr "Fortsätta"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "County"
+msgstr "Grevskap"
+
+msgid "Coupon code"
+msgstr "Kupongskod"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "Skapa ett nytt lösenord eller använd ett befintligt om du redan har ett konto för"
+
+msgid "Currency"
+msgstr "Valuta"
+
+msgid "Delivery date"
+msgstr "Leveransdatum"
+
+msgid "Edit"
+msgstr "Redigera"
+
+msgid "Email"
+msgstr "E-post"
+
+msgid "Exit Checkout"
+msgstr "Avsluta kassan"
+
+msgid "First name"
+msgstr "Förnamn"
+
+msgid "First renewal"
+msgstr "Första förnyelsen"
+
+msgid "Gift card number"
+msgstr "Presentkortsnummer"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "Jag verifierar att det land jag har angett är det jag bor i"
+
+msgid "Initial Shipment"
+msgstr "Första leverans"
+
+msgid "Last name"
+msgstr "Efternamn"
+
+msgid "My order"
+msgstr "Min order"
+
+msgid "Order notes (optional)"
+msgstr "Beställningsanteckningar (valfritt)"
+
+msgid "Order summary"
+msgstr "Ordersammanfattning"
+
+msgid "Password"
+msgstr "Lösenord"
+
+msgid "Pay"
+msgstr "Betala"
+
+msgid "Payment"
+msgstr "Betalning"
+
+msgid "Personal"
+msgstr "Personlig"
+
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+msgid "Place order"
+msgstr "Beställa"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "Gå tillbaka och försök igen. Ett nödvändigt fält saknas"
+
+msgid "Postal code"
+msgstr "Postnummer"
+
+msgid "Processing"
+msgstr "Bearbetning"
+
+msgid "Province"
+msgstr "Provins"
+
+msgid "Ready to check out?"
+msgstr "Redo att checka ut?"
+
+msgid "Recurring total"
+msgstr "Återkommande totalt"
+
+msgid "Remove"
+msgstr "Ta bort"
+
+msgid "Secured by"
+msgstr "Säkrad av"
+
+msgid "Select a Province"
+msgstr "Välj en provins"
+
+msgid "Select a State"
+msgstr "Välj en stat"
+
+msgid "Select a country"
+msgstr "Välj ett land"
+
+msgid "Send to"
+msgstr "Skicka till"
+
+msgid "Shipping"
+msgstr "Frakt"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "Förlåt, något gick fel. Uppdatera sidan och försök igen."
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "Tyvärr, denna butik skickar inte till din plats."
+
+msgid "State"
+msgstr "stat"
+
+msgid "Street address"
+msgstr "Gatuadress"
+
+msgid "Subtotal"
+msgstr "Delsumma"
+
+msgid "Tax"
+msgstr "Beskatta"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "Testläge: kunder kan inte se PeachPay"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "Lösenordet som anges måste vara minst 8 tecken långt."
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "Det finns inga kvalificerade eller aktiva betalningsmetoder tillgängliga för denna beställning."
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Unknown order error occurred"
+msgstr "Okänt beställningsfel uppstod"
+
+msgid "VIEW SAVED CARDS"
+msgstr "VISA SPARADE KORT"
+
+msgid "Verified"
+msgstr "Verifierad"
+
+msgid "You entered an invalid coupon code"
+msgstr "Du angav en ogiltig kupongkod"
+
+msgid "You entered an invalid gift card"
+msgstr "Du angav ett ogiltigt presentkort"
+
+msgid "You might also like..."
+msgstr "Du kanske också gillar..."
+
+msgid "add"
+msgstr "Lägg till"
+
+msgid "and"
+msgstr "och"
+
+msgid "coupon"
+msgstr "kupong"
+
+msgid "privacy policy"
+msgstr "integritetspolicy"
+
+msgid "terms"
+msgstr "villkor"
+
+msgid "terms and conditions"
+msgstr "Villkor"
+
+msgid "the"
+msgstr "de"
+
+msgid "the store's"
+msgstr "affärerna"
+
