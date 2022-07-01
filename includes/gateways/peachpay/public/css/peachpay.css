@@ -1,30 +1,32 @@
-/* Since PeachPay is a payment gateway, but we don't actually do anything on
-the checkout page yet, we need to hide the PeachPay selection so that people
-can't place an order without paying. */
-.wc_payment_method.payment_method_peachpay,
-.wc_payment_method.payment_method_peachpay_stripe,
-.wc_payment_method.payment_method_peachpay_paypal {
-	display: none !important;
-}
 .pp-button-container {
 	clear: both;
 	margin: 20px 0;
 }
+
 #pp-button-container-mini {
 	margin-bottom: 0;
 	margin-top: 0.5em;
 }
+
 @media screen and (max-width: 768px) {
 	.pp-button[style] {
 		width: 100% !important;
 	}
 }
+
+.pp-break {
+	flex-basis: 100% !important;
+	height: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
 .pp-button {
-	background-color: var(--button-color) !important;
+	background-color: var(--pp-button-background-color) !important;
 	border: none;
 	border-radius: 5px;
 	box-shadow: none;
-	color: white;
+	color: var(--pp-button-text-color)  !important;
 	overflow: hidden;
 	padding: 15px 1px;
 	position: relative;
@@ -33,18 +35,20 @@ can't place an order without paying. */
 	margin: 0;
 	height: auto;
 }
+
 .pp-button-default-font {
 	font-family: sans-serif !important;
 	font-size: 16px !important;
 	font-weight: bold !important;
 	text-transform: uppercase !important;
 }
+
 .pp-button-float {
-	background-color: var(--button-color) !important;
+	background-color: var(--pp-button-background-color) !important;
 	border: none;
 	border-radius: 100%;
 	box-shadow: rgb(0 0 0 / 25%) 0px 2px 8px 2px;
-	color: white;
+	color: var(--pp-button-text-color)  !important;
 	overflow: hidden;
 	padding: 5px;
 	position: relative;
@@ -52,64 +56,54 @@ can't place an order without paying. */
 	margin: 0;
 	outline: 0 !important;
 }
+
 #pp-button-mini {
 	border-radius: 0;
 	font-size: 0.875em !important;
 	padding: 10px;
 }
+
 .pp-button:hover {
-	background-color: var(--button-color);
+	background-color: var(--pp-button-background-color);
 	color: white;
 	cursor: pointer;
 	opacity: 0.75;
 }
+
 .pp-button:disabled {
 	opacity: 1 !important;
 }
+
 .pp-button-content {
 	text-align: center;
 }
+
 .pp-button-mute {
 	opacity: 0.6;
 	cursor: not-allowed;
 }
+
 .pp-button-mute:hover {
 	opacity: 0.6;
 	cursor: not-allowed;
 }
-/* Button shine */
-@keyframes pp-shine {
-	100% {
-		left: 200%;
-	}
-}
-.pp-button-shine:after,
-.pp-button-mini-shine:after {
-	animation: pp-shine 5s ease infinite;
-	background: linear-gradient(to right, rgba(255,255,255,0), rgba(255, 255, 255, 0.3), rgba(255,255,255,0));
-	content: '';
-	display: inherit;
-	height: 200%;
-	left: -200%;
-	position: absolute;
-	top: 0;
-	transform: skewX(-20deg);
-	width: 40%;
-}
-/* End button shine */
 .pp-logo-img {
 	display: inline;
 	vertical-align: middle;
 	margin-right: 5px;
+
 }
+
 .pp-spinner {
 	width: 20px;
 	display: inline;
 	vertical-align: middle;
 }
+
 .pp-spinner-iframe {
 	width: 50px;
 }
+
 .hide {
 	display: none !important;
 }
@@ -148,26 +142,34 @@ way of tapping on fields on small mobile devices. */
 .drift-frame-controller {
 	z-index: 2147483646 !important;
 }
+
 .button-container {
 	display: grid;
 	justify-items: center;
+	width: 100%;
 }
+
 .cc-logo {
 	max-width: 2rem !important;
 	max-height: 2rem !important;
 	margin: 0 2px;
-	width: 16% !important; /* This 16% comes from the 6 CC logos being displayed 
+	/* width: 16% !important;  */ /* Commented out for now because there are 4 static icons and 2 non-static icons (which may or may not appear)*/
+	/* This 16% comes from the 6 CC logos being displayed 
 	and should change if more icons are introduced */
 }
+
 .cc-logo-sidebar {
 	width: 1.5rem;
 	height: 1.5rem;
 	margin: 0 2px;
 }
+
 .cc-company-logos {
 	display: flex;
 	margin-top: 3px;
+	justify-content: center;
 }
+
 .button-container-preview {
 	display: flex;
 	width: fit-content;
@@ -175,34 +177,41 @@ way of tapping on fields on small mobile devices. */
 	flex-direction: column;
 	align-items: center;
 }
+
 .pp-btn-symbol {
 	display: inline;
-	width: 1rem;
-	height: 1rem;
+	width: 16px !important;
+	height: 16px !important;
 	vertical-align: middle;
 	margin: 0 !important;
 }
+
 .pp-btn-symbol-mini {
 	display: inline;
-	width: 0.8rem;
-	height: 0.8rem;
+	width: 13px !important;
+	height: 13px !important;
 	vertical-align: middle;
 }
+
 .skre-icon {
 	display: inline;
-	height: 12px;
+	height: 12px !important;
 }
+
 .skre-icon-mini {
 	display: inline;
-	height: 10px;
+	height: 10px !important;
 }
+
 @media screen and (max-width: 768px) {
 	.button-container {
 		display: block;
 	}
+
 	.cc-company-logos {
 		justify-content: center;
 	}
+
 	.button-container-preview {
 		width: 100%;
 	}
@@ -227,6 +236,31 @@ way of tapping on fields on small mobile devices. */
 	margin-right: 35px;
 	margin-left: 35px;
 	margin-bottom: 5px
+}
+
+.pp-test-notice-bar {
+	position: absolute;
+	width: 100%;
+	height: 3px;
+	background-color: #ff876c;
+}
+
+.pp-test-notice {
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+	width: 7em;
+	height: 1.6em;
+	border-radius: 0px 0px 5px 5px;
+	background-color: #ff876c;
+	color: white;
+	text-align: center;
+}
+
+.pp-test-notice p {
+	margin-top: 0em;
 }
 
 /* Some plugin or theme surrounds our loading spinner with a wrapper div
@@ -280,12 +314,19 @@ which adds extra styles. Prevent this. */
 .pp-overlay {
 	display: none;
 	position: fixed !important;
-	top: 0; right: 0; bottom: 0; left: 0;
-	background: rgba(40, 40, 40, 0.75);
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(40, 40, 40, 0);
 	z-index: 2147483647 !important;
 	justify-content: center;
 	width: 100% !important;
 	height: 100vh;
+	-webkit-transition: background 0.5s ease-in-out;
+	-moz-transition: background 0.5s ease-in-out;
+	-o-transition: background 0.5s ease-in-out;
+	transition: background 0.5s ease-in-out;
 }
 
 #peachpay-iframe {
@@ -296,15 +337,17 @@ which adds extra styles. Prevent this. */
 	border: none !important;
 	overflow-y: scroll !important;
 	-webkit-overflow-scrolling: touch;
+	opacity: 0;
+	top: 50%;
+	-webkit-transition: opacity 0.3s ease-in-out, top 0.3s ease-in-out;
+	-moz-transition: opacity 0.3s ease-in-out, top 0.3s ease-in-out;
+	-o-transition: opacity 0.3s ease-in-out, top 0.3s ease-in-out;
+	transition: opacity 0.3s ease-in-out, top 0.3s ease-in-out;
 }
 
 @media screen and (max-width: 768px) {
-	.pp-overlay {
-		background-color: white !important;
-	}
-
 	@supports (-webkit-touch-callout: none) {
-		#peachpay-iframe{
+		#peachpay-iframe {
 			height: calc(100vh - 44px) !important;
 		}
 	}

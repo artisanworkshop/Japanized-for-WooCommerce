@@ -27,6 +27,67 @@ function peachpay_add_gateway_class( $gateways ) {
 	return $gateways;
 }
 add_filter( 'woocommerce_payment_gateways', 'peachpay_add_gateway_class' );
+add_action( 'woocommerce_admin_order_totals_after_total', 'display_stripe_fee' );
+
+/**
+ * Displays the Stripe fee and net payout
+ *
+ * @param int $order_id ID for the order.
+ */
+function display_stripe_fee( $order_id ) {
+	if ( did_action( 'woocommerce_admin_order_totals_after_total' ) >= 2 ) {
+		return;
+	}
+
+	$order    = wc_get_order( $order_id );
+	$refunded = $order->get_total_refunded();
+
+	if ( 'peachpay_stripe' !== $order->get_payment_method() || ( ! ( $order->is_paid() ) && 0 === $refunded ) ) {
+		return;
+	}
+
+	if ( $refunded > 0 ) {
+		$fee   = $order->get_meta( '_stripe_fee' );
+		$total = $order->get_total();
+		$net   = $total - $refunded - $fee;
+	} else {
+		$fee = $order->get_meta( '_stripe_fee' );
+		$net = $order->get_meta( '_stripe_net' );
+	}
+
+	if ( null === $fee || null === $net ) {
+		return;
+	}
+
+	$currency = $order->get_currency();
+
+	if ( ! $fee || ! $currency ) {
+		return;
+	}
+
+	?>
+
+	<tr>
+		<td class="label stripe-fee">
+			<?php esc_html_e( 'Stripe Fee:', 'woocommerce-for-japan' ); ?>
+		</td>
+		<td width="1%"></td>
+		<td class="total">
+			-<?php echo wc_price( $fee, [ 'currency' => $currency ] ); // phpcs:ignore ?> 
+		</td>
+	</tr>
+	<tr>
+		<td class="label payout">
+			<?php esc_html_e( 'Net Payout:', 'woocommerce-for-japan' ); ?>
+		</td>
+		<td width="1%"></td>
+		<td class="total">
+			<?php echo wc_price( $net, [ 'currency' => $currency ] ); // phpcs:ignore ?>
+		</td>
+	</tr>
+
+	<?php
+}
 
 /**
  * This function is called via the add_action below it to initialize the
@@ -176,7 +237,7 @@ function peachpay_init_gateway_class() {
 		 * @return boolean True or false based on success, or a WP_Error object.
 		 */
 		public function process_refund( $order_id, $amount = null, $reason = '' ) {
-			$url = peachpay_api_url() . 'api/v1/refund';
+			$url = peachpay_api_url() . 'api/v1/stripe/refund';
 
 			$data = array(
 				'order_id'     => $order_id,
@@ -220,7 +281,45 @@ function peachpay_init_gateway_class() {
 			$this->method_title = 'PeachPay (PayPal)';
 			$this->supports     = array(
 				'products',
+				'refunds',
 			);
+		}
+
+		/**
+		 * Process refund.
+		 *
+		 * If the gateway declares 'refunds' support, this will allow it to refund.
+		 * a passed in amount.
+		 *
+		 * @param  int        $order_id Order ID.
+		 * @param  float|null $amount Refund amount.
+		 * @param  string     $reason Refund reason.
+		 * @return boolean True or false based on success, or a WP_Error object.
+		 */
+		public function process_refund( $order_id, $amount = null, $reason = '' ) {
+			$url = peachpay_api_url() . 'api/v1/paypal/refund';
+
+			$data = array(
+				'order_id'     => $order_id,
+				'amount'       => $amount,
+				'reason'       => $reason,
+				'merchant_url' => get_site_url(),
+			);
+
+			$params = array(
+				'body'    => $data,
+				'timeout' => 60,
+			);
+
+			$status = wp_remote_post( $url, $params );
+
+			if ( is_wp_error( $status ) ) {
+				return false;
+			}
+
+			$response = wp_remote_retrieve_body( $status );
+
+			return ( filter_var( $response, FILTER_VALIDATE_BOOLEAN ) );
 		}
 	}
 
@@ -268,3 +367,25 @@ function peachpay_gateway_enabled() {
 		return false;
 	}
 }
+
+/**
+ * Filters out the available gateways for on the checkout page.
+ *
+ * @param array $available_gateways The available gateways to filter.
+ */
+function hide_peachpay_gateways( $available_gateways ) {
+	if ( defined( 'WOOCOMMERCE_CHECKOUT' ) && ! defined( 'PEACHPAY_CHECKOUT' ) ) {
+		foreach ( $available_gateways as $key => $gateway ) {
+			if ( 'peachpay' === $gateway->id ) {
+				unset( $available_gateways[ $key ] );
+			} elseif ( 'peachpay_stripe' === $gateway->id ) {
+				unset( $available_gateways[ $key ] );
+			} elseif ( 'peachpay_paypal' === $gateway->id ) {
+				unset( $available_gateways[ $key ] );
+			}
+		}
+	}
+
+	return $available_gateways;
+}
+add_filter( 'woocommerce_available_payment_gateways', 'hide_peachpay_gateways', 10, 2 );

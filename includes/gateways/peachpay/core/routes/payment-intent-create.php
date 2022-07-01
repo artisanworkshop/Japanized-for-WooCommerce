@@ -51,6 +51,19 @@ function peachpay_wc_ajax_create_stripe_payment_intent() {
 	}
 	//phpcs:enable
 
+	$order = wc_get_order( $order_id );
+	if ( ! $order ) {
+		wp_send_json_error( 'Order not found', 404 );
+	}
+
+	// Make sure every attempt the order status is the default ("pending").
+	$default_status = apply_filters( 'woocommerce_default_order_status', 'pending' );
+	if ( $order->get_status() !== $default_status ) {
+		$order->set_status( $default_status );
+		$order->add_order_note( __( 'Customer attempting payment again.', 'woocommerce-for-japan' ) );
+		$order->save();
+	}
+
 	$cart_amount = WC()->cart->get_total( 'raw' );
 
 	$response = wp_remote_post(

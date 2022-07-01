@@ -62,7 +62,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 	}
 //phpcs:ignore
 	public function get_title() {
-		return __( 'PeachPay', 'peachpay-for-woocommerce' );
+		return __( 'PeachPay', 'woocommerce-for-japan' );
 	}
 //phpcs:ignore
 	public function get_icon() {
@@ -91,7 +91,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->start_controls_section(
 			'content_section',
 			array(
-				'label' => __( 'Content', 'peachpay-for-woocommerce' ),
+				'label' => __( 'Content', 'woocommerce-for-japan' ),
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			)
 		);
@@ -99,7 +99,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->add_control(
 			'text',
 			array(
-				'label'       => __( 'Button Text', 'peachpay-for-woocommerce' ),
+				'label'       => __( 'Button Text', 'woocommerce-for-japan' ),
 				'type'        => \Elementor\Controls_Manager::TEXT,
 				'placeholder' => '',
 			)
@@ -108,28 +108,16 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->add_control(
 			'color',
 			array(
-				'label'   => __( 'Color', 'peachpay-for-woocommerce' ),
+				'label'   => __( 'Color', 'woocommerce-for-japan' ),
 				'type'    => \Elementor\Controls_Manager::COLOR,
 				'default' => $options['button_color'],
 			)
 		);
 
 		$this->add_control(
-			'shine',
-			array(
-				'label'        => __( 'Turn off button shine', 'peachpay-for-woocommerce' ),
-				'type'         => \Elementor\Controls_Manager::SWITCHER,
-				'label_on'     => 'yes',
-				'label_off'    => 'no',
-				'default'      => 'no',
-				'return_value' => 'yes',
-			)
-		);
-
-		$this->add_control(
 			'fade',
 			array(
-				'label'        => __( 'Turn on button fade on hover', 'peachpay-for-woocommerce' ),
+				'label'        => __( 'Turn on button fade on hover', 'woocommerce-for-japan' ),
 				'type'         => \Elementor\Controls_Manager::SWITCHER,
 				'label_on'     => 'yes',
 				'label_off'    => 'no',
@@ -141,13 +129,13 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->add_control(
 			'alignment',
 			array(
-				'label'   => __( 'Alignment', 'peachpay-for-woocommerce' ),
+				'label'   => __( 'Alignment', 'woocommerce-for-japan' ),
 				'type'    => \Elementor\Controls_Manager::SELECT,
 				'options' => array(
-					'left'   => __( 'Left', 'peachpay-for-woocommerce' ),
-					'right'  => __( 'Right', 'peachpay-for-woocommerce' ),
-					'full'   => __( 'Full', 'peachpay-for-woocommerce' ),
-					'center' => __( 'Center', 'peachpay-for-woocommerce' ),
+					'left'   => __( 'Left', 'woocommerce-for-japan' ),
+					'right'  => __( 'Right', 'woocommerce-for-japan' ),
+					'full'   => __( 'Full', 'woocommerce-for-japan' ),
+					'center' => __( 'Center', 'woocommerce-for-japan' ),
 				),
 				'default' => $options['product_button_alignment'],
 			)
@@ -156,7 +144,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		$this->add_control(
 			'width',
 			array(
-				'label'   => __( 'Width', 'peachpay-for-woocommerce' ),
+				'label'   => __( 'Width', 'woocommerce-for-japan' ),
 				'type'    => \Elementor\Controls_Manager::NUMBER,
 				'min'     => 0,
 				'max'     => 400,
@@ -174,8 +162,7 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 	 * @param string $merchant_hostname Hostname.
 	 */
 	private function baseURL( $merchant_hostname ) {
-		$options   = get_option( 'peachpay_general_options' );
-		$test_mode = isset( $options['test_mode'] ) ? $options['test_mode'] : null;
+		$test_mode = peachpay_is_test_mode();
 		if ( $test_mode ) {
 			switch ( $merchant_hostname ) {
 				case 'localhost':
@@ -210,45 +197,12 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 	}
 
 	/**
-	 * Adds button shine HTML.
-	 *
-	 * @param array $settings Button settings.
-	 */
-	private function get_shine_html( $settings ) {
-		$shine      = $settings['shine'];
-		$shine_html = '';
-		if ( 'no' === $shine || '' === $shine ) {
-			$shine_html = "<style id = buttonShine >
-				@keyframes shine {
-					100% {
-						left: 200%;
-					}
-				}
-				.pp-button:after,
-				.pp-button-mini:after {
-					animation: shine 5s ease infinite;
-					background: linear-gradient(to right, rgba(255,255,255,0), rgba(255, 255, 255, 0.3), rgba(255,255,255,0));
-					content: '';
-					display: inherit;
-					height: 200%;
-					left: -200%;
-					position: absolute;
-					top: 0;
-					transform: skewX(-20deg);
-					width: 40%;
-				}
-				</style>";
-		}
-		return $shine_html;
-	}
-
-	/**
 	 * Render PeachPay widget output on the frontend.
 	 */
 	protected function render() {
 		$settings     = $this->get_settings_for_display();
 		$width        = 'width:' . $settings['width'] . 'px;';
-		$color        = '--button-color:' . $settings['color'] . ';';
+		$color        = '--pp-button-background-color:' . $settings['color'] . ';';
 		$style        = $width . $color;
 		$dark         = gethostname() === 'www.blazecandles.co' ? '-dark' : '';
 		$hostname_url = $this->baseURL( gethostname() );
@@ -265,7 +219,6 @@ class PeachPay_Elementor_Widget extends Widget_Base {
 		</div>
 		<div id = "pp-data" data-text= <?php echo esc_html( $button_text ); ?> data-color= <?php echo esc_html( $settings['color'] ); ?> ></div>
 		<?php
-		echo esc_html( $this->get_shine_html( $settings ) );
 	}
 }
 

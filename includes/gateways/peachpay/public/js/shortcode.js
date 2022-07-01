@@ -9,10 +9,6 @@ function peachpay_placeShortcode() {
 		return;
 	}
 
-	if (!document.querySelector('#pp-modal-overlay')) {
-		document.querySelector('body').insertAdjacentHTML('beforeend', pp_checkoutForm);
-	}
-
 	peachpay_initButton({
 		isShortcode: true,
 		shortcodeInfo: {

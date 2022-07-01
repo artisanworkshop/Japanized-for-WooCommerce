@@ -3,7 +3,8 @@
   "license": "GPL-2.0-or-later",
   "require": {
     "php": ">=8.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-curl": "*"
   },
   "require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7",

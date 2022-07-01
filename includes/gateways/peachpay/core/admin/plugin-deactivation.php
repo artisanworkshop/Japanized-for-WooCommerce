@@ -53,7 +53,7 @@ function peachpay_enqueue_deactivation_script( $hook ) {
 		'peachpay-deactivation-feedback',
 		'deactivation_peachpay_data',
 		array(
-			'test_mode' => isset( $options['test_mode'] ) ? $options['test_mode'] : null,
+			'test_mode' => peachpay_is_test_mode(),
 		)
 	);
 
@@ -65,7 +65,6 @@ function peachpay_enqueue_deactivation_script( $hook ) {
 		true
 	);
 
-	$options = get_option( 'peachpay_general_options' );
 }
 add_action( 'admin_enqueue_scripts', 'peachpay_enqueue_deactivation_script' );
 

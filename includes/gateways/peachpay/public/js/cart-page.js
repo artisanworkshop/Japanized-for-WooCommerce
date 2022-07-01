@@ -74,18 +74,6 @@ function pp_placeButtonCartPage() {
 	}
 }
 
-/**
- * Placed at custom www.infinitealoe.shop checkout page
- * wfacp_smart_button_wrap_st query from buildwoofunnels.com
- */
-// deno-lint-ignore camelcase,no-unused-vars
-function pp_placeButtonCustomCheckoutPage() {
-	const expressDiv = document.querySelector('.wfacp_smart_button_wrap_st');
-	if (expressDiv) {
-		insertPeachPayAt(expressDiv, 'beforeend');
-	}
-}
-
 function insertPeachPayAt(element, location) {
 	const full = peachpay_data.button_alignment_cart_page === 'full' || !peachpay_data.button_alignment_cart_page;
 	const width = full ? '100%' : ((peachpay_data.button_width_cart_page || '220') + 'px');
@@ -98,9 +86,6 @@ function insertPeachPayAt(element, location) {
 	// does it load, so we allow it to be visible for a split second before
 	// hiding it here.
 	peachpay_hideLoadingSpinner();
-	if (!document.querySelector('#pp-modal-overlay')) {
-		document.querySelector('body').insertAdjacentHTML('beforeend', pp_checkoutForm);
-	}
 
 	peachpay_initButton({
 		width,

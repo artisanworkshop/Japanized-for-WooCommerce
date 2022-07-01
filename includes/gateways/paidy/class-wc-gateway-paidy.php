@@ -317,20 +317,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         }else{
             global $states;
         }
-        //Set shipping address
-        if($order->get_shipping_postcode()){
-            $shipping_address['line1'] = $order->get_shipping_address_2();
-            $shipping_address['line2'] = $order->get_shipping_address_1();
-            $shipping_address['city'] = $order->get_shipping_city();
-            $shipping_address['state'] = $states['JP'][$order->get_shipping_state()];
-            $shipping_address['zip'] = $order->get_shipping_postcode();
-        }else{
-            $shipping_address['line1'] = $order->get_billing_address_2();
-            $shipping_address['line2'] = $order->get_billing_address_1();
-            $shipping_address['city'] = $order->get_billing_city();
-            $shipping_address['state'] = $states['JP'][$order->get_billing_state()];
-            $shipping_address['zip'] = $order->get_billing_postcode();
-        }
 
         //Get products and coupons information from order
         $order_items = apply_filters( 'jp4wc_paidy_order_items', $order->get_items(array('line_item','coupon')) );
@@ -387,7 +373,34 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             }
         }
 
-        // Get the latest order
+	    //Check the order only for virtual products
+	    $order_virtual = true;
+        foreach($order_items as $item){
+	        if(isset($item['product_id'])) {
+                $product = wc_get_product( $item['product_id'] );
+		        if ( ! $product->is_virtual() ) {
+			        $order_virtual = false;
+		        }
+	        }
+        }
+	    //Set shipping address
+        if($order_virtual){
+	        if($order->get_shipping_postcode()){
+		        $shipping_address['line1'] = $order->get_shipping_address_2();
+		        $shipping_address['line2'] = $order->get_shipping_address_1();
+		        $shipping_address['city'] = $order->get_shipping_city();
+		        $shipping_address['state'] = $states['JP'][$order->get_shipping_state()];
+		        $shipping_address['zip'] = $order->get_shipping_postcode();
+	        }else{
+		        $shipping_address['line1'] = $order->get_billing_address_2();
+		        $shipping_address['line2'] = $order->get_billing_address_1();
+		        $shipping_address['city'] = $order->get_billing_city();
+		        $shipping_address['state'] = $states['JP'][$order->get_billing_state()];
+		        $shipping_address['zip'] = $order->get_billing_postcode();
+	        }
+        }
+
+	    // Get the latest order
         $args = array(
             'customer_id' => $user_id,
             'status' => 'completed',
@@ -487,9 +500,10 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 
                             ],
                             "order_ref": "<?php echo $paidy_order_ref; ?>",
-                            "shipping": <?php echo $order->get_shipping_total();?>,
+                            <?php if($order_virtual === false)echo '"shipping": '.$order->get_shipping_total().','; ?>
                             "tax": <?php echo $tax;?>
                         },
+                        <?php if($order_virtual === false){ ?>
                         "shipping_address": {
                             "line1": "<?php echo $shipping_address['line1'];?>",
                             "line2": "<?php echo $shipping_address['line2'];?>",
@@ -497,6 +511,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                             "state": "<?php echo $shipping_address['state'];?>",
                             "zip": "<?php echo $shipping_address['zip'];?>"
                         },
+                        <?php } ?>
                         "description": "<?php echo wc_clean($this->store_name);?>"
                     };
                     paidyHandler.launch(payload);

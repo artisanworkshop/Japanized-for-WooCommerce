@@ -9,6 +9,10 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 	exit;
 }
 
+require PEACHPAY_ABSPATH . '/core/modules/currency-switcher/util/peachpay-currency-arrays.php';
+require PEACHPAY_ABSPATH . '/core/modules/currency-switcher/util/currency-uninstall.php';
+require PEACHPAY_ABSPATH . '/core/modules/currency-switcher/util/currency-geo.php';
+
 add_action( 'peachpay_setup_module', 'peachpay_setup_currency_module' );
 
 /**
@@ -17,31 +21,36 @@ add_action( 'peachpay_setup_module', 'peachpay_setup_currency_module' );
 function peachpay_setup_currency_module() {
 
 	if ( ! peachpay_get_settings_option( 'peachpay_currency_options', 'enabled' ) ) {
-		add_filter( 'update_option_peachpay_currency_options', 'peachpay_post_currency_changes', 10, 2 );
+		add_filter( 'update_option_peachpay_currency_options', 'peachpay_post_currency_changes', 1, 2 );
 		return;
 	}
+	// Add custom peachpay cron schedules.
+	add_filter( 'cron_schedules', 'peachpay_add_cron_schedules', 1, 1 );
+
 	add_action( 'init', 'peachpay_init_currency_module' );
 
 	add_filter( 'peachpay_register_feature', 'peachpay_currencies_to_modal', 10, 1 );
-	add_action( 'peachpay_update_currency', 'peachpay_update_currency_schedule', 10, 1 );
+	add_action( 'peachpay_update_currency', 'peachpay_force_update_currencies', 10, 1 );
 
 	/**
 	 * Price filters
 	 */
 	add_filter( 'woocommerce_product_get_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
-	add_filter( 'woocommerce_product_get_sale_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
 	add_filter( 'woocommerce_product_get_regular_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
-	add_filter( 'woocommerce_product_variation_get_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
-	add_filter( 'woocommerce_product_variation_get_regular_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
-	add_filter( 'woocommerce_product_variation_get_sale_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
-	add_filter( 'woocommerce_variation_prices_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
-	add_filter( 'woocommerce_variation_prices_regular_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
-	add_filter( 'woocommerce_variation_prices_sale_price', 'peachpay_update_currency_per_product_item', 10000, 2 );
+	add_filter( 'woocommerce_product_get_sale_price', 'peachpay_update_product_sale_price', 10000, 2 );
+
+	add_filter( 'woocommerce_product_variation_get_price', 'peachpay_update_price_variable_product', 1, 2 );
+	add_filter( 'woocommerce_product_variation_get_regular_price', 'peachpay_update_price_variable_product', 1000, 2 );
+	add_filter( 'woocommerce_product_variation_get_sale_price', 'peachpay_update_sale_price_variable_product', 1000, 2 );
+
+	add_filter( 'woocommerce_variation_prices_price', 'peachpay_update_price_variable_product', 10000, 2 );
+	add_filter( 'woocommerce_variation_prices_regular_price', 'peachpay_update_price_variable_product', 10000, 2 );
+	add_filter( 'woocommerce_variation_prices_sale_price', 'peachpay_update_price_variable_product', 10000, 2 );
 
 	/**
 	 * Hooks for changing decimals
 	 */
-	add_filter( 'wc_get_price_decimals', 'peachpay_change_decimals', 10, 1 );
+	add_filter( 'wc_get_price_decimals', 'peachpay_change_decimals', 100, 1 );
 
 	/**
 	 * Shipping filter
@@ -52,18 +61,17 @@ function peachpay_setup_currency_module() {
 	/**
 	 * Currency filters
 	 */
-	add_filter( 'woocommerce_currency', 'peachpay_change_currency' );
+	add_filter( 'woocommerce_currency', 'peachpay_change_currency', 100 );
 
-	register_deactivation_hook( __FILE__, 'peachpay_unschedule_all' );
+	// Deactivation hooks.
+	register_deactivation_hook( __FILE__, 'peachpay_unschedule_all_currency' );
+	register_deactivation_hook( __FILE__, 'peachpay_remove_currency_cookie' );
 
 	// Add the currency conversion widget action.
 	// add_action( 'widgets_init' , 'add_pp_currency_widget',1 ).
 
-	// Add custom peachpay cron schedules.
-	add_filter( 'cron_schedules', 'peachpay_add_cron_schedules', 1, 1 );
-
 	// Post currency switch settings changes that must be fired off are fired off by this hook.
-	add_filter( 'update_option_peachpay_currency_options', 'peachpay_post_currency_changes', 10, 2 );
+	add_filter( 'update_option_peachpay_currency_options', 'peachpay_post_currency_changes', 1, 2 );
 }
 
 /**
@@ -83,18 +91,18 @@ function peachpay_force_update_currencies() {
 	if ( null !== ( $currency_options ) ) {
 		$currencies_selected = $currency_options['selected_currencies'];
 		foreach ( $currencies_selected as $key => $currency ) {
-			if ( $currency && array_key_exists( 'type', $currency ) && 'custom' !== $currency['type'] ) {
+			if ( $currency && array_key_exists( 'auto_update', $currency ) && '1' === $currency['auto_update'] ) {
 				$currencies_selected[ $key ]['rate'] = peachpay_update_currency_rates( $currency['name'] );
 			}
 		}
 		$currency_options['selected_currencies'] = $currencies_selected;
 		update_option( 'peachpay_currency_options', $currency_options, true );
-		peachpay_currency_cron();
 	}
 }
 
 /**
  * Function used to update the rate of a currency, right now only one source of conversion available but hopefully more will be added soon.
+ * Conversions provided by https://www.currencyconverterapi.com/ :D.
  *
  * @param string $currency Currency code passed to the function.
  */
@@ -123,22 +131,19 @@ function peachpay_update_currency_rates( $currency ) {
  * This function will setup what events need to be handled and removed if there are no currencies with these settings then we don't have to schedule the event.
  */
 function peachpay_currency_cron() {
-	$currency_options    = get_option( 'peachpay_currency_options' );
-	$currencies_selected = $currency_options['selected_currencies'];
+	$currency_options = get_option( 'peachpay_currency_options' );
+	$update_time      = $currency_options['update_frequency'];
 	// Unschedule all prior events and then reschedule them so if a user won't get wasted resources when an event fires off for no reason.
 	Peachpay_unschedule_all_currency();
-	if ( isset( $currencies_selected ) ) {
-		foreach ( $currencies_selected as $currency ) {
-			if ( ! wp_next_scheduled( 'peachpay_update_currency', array( $currency['type'] ) ) ) {
-				wp_schedule_event( time(), $currency['type'], 'peachpay_update_currency', array( $currency['type'] ) );
-			}
-		}
-	}
+
+	wp_schedule_event( time(), $update_time, 'peachpay_update_currency' );
+
 }
 
 /**
  * Used by WordPress cron to update a currency conversion rate to base store currency.
  *
+ * @deprecated
  * @param string $time The time period specified.
  */
 function peachpay_update_currency_schedule( $time ) {
@@ -168,6 +173,10 @@ function peachpay_update_raw_price_per_product( $price, $to_convert = null ) {
 	}
 	if ( isset( $_COOKIE ) && isset( $_COOKIE['pp_active_currency'] ) ) {
 		$to_convert = sanitize_text_field( wp_unslash( $_COOKIE['pp_active_currency'] ) );
+	} else {
+		// Even if the cookie is not set we still want to make sure we get the right currency if possible so set the cookie for the next run around.
+		$_COOKIE['pp_active_currency'] = peachpay_best_currency( peachpay_get_client_country() );
+		$to_convert                    = peachpay_best_currency( peachpay_get_client_country() );
 	}
 	$currency_options    = get_option( 'peachpay_currency_options' );
 	$currencies_selected = $currency_options['selected_currencies'];
@@ -179,7 +188,7 @@ function peachpay_update_raw_price_per_product( $price, $to_convert = null ) {
 			$rate     = floatval( $currency['rate'] );
 			$decimals = $currency['decimals'];
 			$round    = $currency['round'];
-
+			break;
 		}
 	}
 	if ( 'up' === $round ) {
@@ -192,6 +201,46 @@ function peachpay_update_raw_price_per_product( $price, $to_convert = null ) {
 	$decimals = intval( $decimals );
 	$price    = round( $price * $rate, $decimals, $round );
 	return $price;
+}
+
+/**
+ * Takes in a price and a variable product and according to the set cookie will update the products price without changing actual product.
+ * This version is specifically for variable products as they seem to cache their price so we have to clear that cached price before we display a new one.
+ *
+ * @param string|float $price the cost of the item in woocommerce.
+ * @param object       $product the woocommerce object for the product.
+ */
+function peachpay_update_price_variable_product( $price, $product ) {
+	wc_delete_product_transients( $product->get_id() );
+	$new_price = peachpay_update_raw_price_per_product( $price );
+	return $new_price;
+}
+
+/**
+ * Takes in a sale price of a variable product and according to the set cookie will update the products sale price, if it exists.
+ * This version is specifically for variable products as they seem to cache their price so we have to clear that cached price before we display a new one.
+ *
+ * @param string|float $price the cost of the item in woocommerce.
+ * @param object       $product the woocommerce object for the product.
+ */
+function peachpay_update_sale_price_variable_product( $price, $product ) {
+	wc_delete_product_transients( $product->get_id() );
+	if ( $price ) {
+		$new_price = peachpay_update_raw_price_per_product( $price );
+		return $new_price;
+	}
+}
+
+/**
+ * Check if a product is on sale before updating the price with get_sale_price
+ *
+ * @param string|float $price the cost of the item in woocommerce.
+ * @param object       $product the woocommerce product object.
+ */
+function peachpay_update_product_sale_price( $price, $product ) {
+	if ( $price ) {
+		return peachpay_update_raw_price_per_product( $price );
+	}
 }
 
 /**
@@ -212,7 +261,7 @@ function peachpay_update_currency_per_product_cart( $wctotal, $wcitem, $itemkey 
  * Takes in a price and a product and according to the set cookie will update the products price without changing actual product.
  *
  * @param string|float $price the cost of the item in woocommerce.
- * @param array        $product the woocommerce object for the product.
+ * @param object       $product the woocommerce object for the product.
  */
 function peachpay_update_currency_per_product_item( $price, $product ) {
 	$new_price = peachpay_update_raw_price_per_product( $price );
@@ -276,7 +325,7 @@ function peachpay_change_decimals( $base ) {
  * @param array $data Peachpay data array.
  */
 function peachpay_currencies_to_modal( $data ) {
-	$currencies = get_option( 'peachpay_currency_options' )['selected_currencies'];
+	$currencies = peachpay_currencies_by_iso( peachpay_get_client_country() );
 
 	if ( count( $currencies ) < 2 ) {
 		$data['currency_switcher_input']['enabled'] = false;
@@ -290,15 +339,14 @@ function peachpay_currencies_to_modal( $data ) {
 	$currency_info                              = array();
 	foreach ( $currencies as $currency ) {
 		if ( $currency && array_key_exists( 'name', $currency ) ) {
-			$currency_names[ $currency['name'] ] = $currency['name'];
-
+			$currency_info[ $currency['name'] ] ['name']                = PEACHPAY_SUPPORTED_CURRENCIES[ $currency['name'] ];
 			$currency_info[ $currency['name'] ] ['code']                = $currency['name'];
 			$currency_info[ $currency['name'] ] ['overridden_code']     = $currency['name'];
 			$currency_info[ $currency['name'] ] ['symbol']              = get_woocommerce_currency_symbol( $currency['name'] );
 			$currency_info[ $currency['name'] ] ['position']            = peachpay_currency_position();
 			$currency_info[ $currency['name'] ] ['thousands_separator'] = peachpay_currency_thousands_separator();
 			$currency_info[ $currency['name'] ] ['decimal_separator']   = peachpay_currency_decimal_separator();
-			$currency_info[ $currency['name'] ] ['number_of_decimals']  = $currency['decimals'];
+			$currency_info[ $currency['name'] ] ['number_of_decimals']  = intval( $currency['decimals'] );
 			$currency_info[ $currency['name'] ] ['rounding']            = $currency['round'];
 		}
 	}
@@ -310,10 +358,12 @@ function peachpay_currencies_to_modal( $data ) {
 }
 
 /**
- * Changes the model currency.
+ * Changes the model currency deprecated since the modal uses WC functions now.
  *
  * @param float  $amount the price of the items in the cart.
  * @param string $code the currency code to convert to.
+ *
+ * @deprecated
  */
 function peachpay_update_cur_from_modal( $amount, $code ) {
 	return peachpay_update_raw_price_per_product( $amount, $code );
@@ -328,11 +378,61 @@ function peachpay_update_cur_from_modal( $amount, $code ) {
 function peachpay_post_currency_changes( $old, $new ) {
 	if ( $old['num_currencies'] < $new['num_currencies'] ) {
 		for ( $i = 0; $i < ( $new['num_currencies'] - $old['num_currencies'] ); $i++ ) {
-			array_push( $new['selected_currencies'], $old['selected_currencies']['base'] );
+			array_push( $new['selected_currencies'], $new['selected_currencies']['base'] );
 		}
 	}
+	peachpay_currency_cron();
 	update_option( 'peachpay_currency_options', $new );
 	peachpay_force_update_currencies();
+	return $new;
+}
+
+/**
+ * Initialize a cookie for the currency on visit from a customer.
+ */
+function peachpay_make_currency_cookie() {
+	if ( empty( $_COOKIE ) ) {
+		return;
+	}
+
+	$cookie             = peachpay_get_base_currency();
+	$location           = peachpay_get_client_country();
+	$allowed_currencies = peachpay_currencies_by_iso( $location );
+
+	if ( isset( $_COOKIE['pp_active_currency'] ) ) {
+		$prev = sanitize_text_field( wp_unslash( $_COOKIE['pp_active_currency'] ) );
+		foreach ( $allowed_currencies as $currency ) {
+			if ( array_search( $prev, $currency, true ) ) {
+				setcookie( 'pp_active_currency', $prev, time() + 60 * 60 * 24 * 30, '/' );
+				return;
+			}
+		}
+	}
+
+	setcookie( 'pp_active_currency', peachpay_best_currency( $location ), time() + 60 * 60 * 24 * 30, '/' );
+}
+
+/**
+ * Get the base currency since get_woocommerce_currency returns the active currency.
+ */
+function peachpay_get_base_currency() {
+	$currencies = peachpay_get_settings_option( 'peachpay_currency_options', 'selected_currencies', null );
+
+	return $currencies ? $currencies['base']['name'] : get_woocommerce_currency();
+}
+
+/**
+ * Check if a currency is actually enabled by the currency Switcher
+ *
+ * @param string $currency_code the currency we wish to see if is enabled.
+ */
+function peachpay_check_enabled_currency( $currency_code ) {
+	if ( ! $currency_code ) {
+		return false;
+	}
+	$currencies = peachpay_get_settings_option( 'peachpay_currency_options', 'selected_currencies' );
+
+	return array_key_exists( $currency_code, $currencies );
 }
 
 /**
@@ -343,19 +443,19 @@ function peachpay_post_currency_changes( $old, $new ) {
 function peachpay_add_cron_schedules( $schedules ) {
 	$schedules['15minute'] = array(
 		'interval' => 900,
-		'display'  => esc_html__( 'Every 15 minutes' ),
+		'display'  => esc_html__( 'Every 15 minutes', 'woocommerce-for-japan' ),
 	);
 	$schedules['30minute'] = array(
 		'interval' => 1800,
-		'display'  => esc_html__( 'Every 30 minutes' ),
+		'display'  => esc_html__( 'Every 30 minutes', 'woocommerce-for-japan' ),
 	);
 	$schedules['hourly']   = array(
 		'interval' => 3600,
-		'display'  => esc_html__( 'Every hour' ),
+		'display'  => esc_html__( 'Every hour', 'woocommerce-for-japan' ),
 	);
 	$schedules['6hour']    = array(
 		'interval' => 21600,
-		'display'  => esc_html__( 'Every 6 hours' ),
+		'display'  => esc_html__( 'Every 6 hours', 'woocommerce-for-japan' ),
 	);
 	$schedules['12hour']   = array(
 		'interval' => 43200,
@@ -380,53 +480,3 @@ function peachpay_add_cron_schedules( $schedules ) {
 
 	return $schedules;
 }
-
-/**
- * Initialize a cookie for the currency on visit from a customer.
- */
-function peachpay_make_currency_cookie() {
-	if ( empty( $_COOKIE ) || isset( $_COOKIE['pp_active_currency'] ) && ! peachpay_get_settings_option( 'peachpay_currency_options', 'geo_locate' ) ) {
-		return;
-	}
-	setcookie( 'pp_active_currency', get_woocommerce_currency(), time() + ( 60 * 60 * 24 * 30 ), '/' );
-}
-
-register_deactivation_hook( __FILE__, 'peachpay_unschedule_all' );
-/**
- * Unschedule all pp cron events on deactivation.
- */
-function peachpay_unschedule_all_currency() {
-	$times = array(
-		'15minute',
-		'30minute',
-		'hourly',
-		'2hour',
-		'6hour',
-		'12hour',
-		'day',
-		'2day',
-		'weekly',
-		'biweekly',
-		'monthly',
-	);
-
-	foreach ( $times as $time ) {
-		if ( wp_next_scheduled( 'peachpay_update_currency', array( $time ) ) ) {
-			$timestamp = wp_next_scheduled( 'peachpay_update_currency', array( $time ) );
-			wp_unschedule_event( $timestamp, 'peachpay_active_currency', array( $time ) );
-		}
-	}
-}
-
-// Hook for removing the cookie on plugin deactivation.
-register_deactivation_hook( __FILE__, 'peachpay_remove_currency_cookie' );
-
-/**
- * On plugin deactivation remove the currency cookie.
- */
-function peachpay_remove_currency_cookie() {
-	if ( $_COOKIE && ! empty( $_COOKIE['pp_active_currency'] ) ) {
-		unset( $_COOKIE['pp_active_currency'] );
-	}
-}
-

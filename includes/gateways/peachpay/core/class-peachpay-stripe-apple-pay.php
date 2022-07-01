@@ -16,6 +16,7 @@ class PeachPay_Stripe_Apple_Pay {
 
 	const DOMAIN_ASSOCIATION_FILE_NAME = 'apple-developer-merchantid-domain-association';
 	const DOMAIN_ASSOCIATION_FILE_DIR  = '.well-known';
+	const SETTINGS_KEY                 = 'peachpay_apple_pay_settings_v2';
 
 	/**
 	 * Array containing information about
@@ -50,8 +51,8 @@ class PeachPay_Stripe_Apple_Pay {
 		add_filter( 'query_vars', [$this, 'whitelist_domain_association_query_param'], 10, 1 ); // phpcs:ignore
 		add_action( 'parse_request', [$this, 'parse_domain_association_request'], 10, 1 ); // phpcs:ignore
 
-		$this->apple_pay_settings   = get_option( 'peachpay_apple_pay_settings', [] ); // phpcs:ignore
-		$this->domain_name          = str_replace( [ 'https://', 'http://' ], '', get_site_url() ); // phpcs:ignore
+		$this->apple_pay_settings   = get_option( self::SETTINGS_KEY, array() );
+		$this->domain_name          = str_replace( array( 'https://', 'http://' ), '', get_site_url() );
 		$this->apple_pay_domain_set = 'yes' === $this->get_option( 'apple_pay_domain_set', 'no' );
 
 	}
@@ -118,7 +119,7 @@ class PeachPay_Stripe_Apple_Pay {
 	 * Sends Apple Pay registration if a domain name change is detected.
 	 */
 	public function check_domain_on_domain_change() {
-		if ( strcmp( $this->domain_name, $this->get_option( 'apple_pay_verified_domain' ) ) !== 0 ) {
+		if ( strcmp( $this->domain_name, $this->get_option( 'apple_pay_verified_domain' ) ) !== 0 || ! $this->apple_pay_domain_set ) {
 			$this->verify_domain_if_configured();
 		}
 	}
@@ -206,7 +207,7 @@ class PeachPay_Stripe_Apple_Pay {
 			$this->apple_pay_settings['apple_pay_domain_set']      = 'yes';
 			$this->apple_pay_domain_set                            = true;
 
-			update_option( 'peachpay_apple_pay_settings', $this->apple_pay_settings );
+			update_option( self::SETTINGS_KEY, $this->apple_pay_settings );
 
 			return true;
 
@@ -215,7 +216,7 @@ class PeachPay_Stripe_Apple_Pay {
 			$this->apple_pay_settings['apple_pay_domain_set']      = 'no';
 			$this->apple_pay_domain_set                            = false;
 
-			update_option( 'peachpay_apple_pay_settings', $this->apple_pay_settings );
+			update_option( self::SETTINGS_KEY, $this->apple_pay_settings );
 
 			return false;
 		}
@@ -238,7 +239,6 @@ class PeachPay_Stripe_Apple_Pay {
 					'connect_id' => get_option( 'peachpay_connected_stripe_account', array( 'id' => '' ) )['id'],
 				),
 			),
-
 		);
 
 		$response = wp_remote_post(
@@ -250,9 +250,32 @@ class PeachPay_Stripe_Apple_Pay {
 		);
 
 		if ( ! peachpay_response_ok( $response ) ) {
+			throw new Exception( 'Non 200 response while attempting to register domain for Apple Pay' );
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		if ( is_wp_error( $body ) ) {
+			throw new Exception( 'Failed to retrieve the response body for registering Apple Pay domain' );
+		}
+
+		$data = json_decode( $body, true );
+		if ( ! $data['success'] ) {
 			throw new Exception( 'Unable to register domain' );
 		}
 	}
 }
 
-new PeachPay_Stripe_Apple_Pay();
+/**
+ * Version 1 of the apple pay settings are sometimes broken so we will register everyone again.
+ */
+if ( get_option( 'peachpay_apple_pay_settings' ) ) {
+	delete_option( 'peachpay_apple_pay_settings' );
+}
+
+/**
+ * Apple Pay registration should only be attempted if the merchant has connected a stripe account.
+ */
+$peachpay_connected_stripe_account = get_option( 'peachpay_connected_stripe_account', array( 'id' => '' ) );
+if ( is_array( $peachpay_connected_stripe_account ) && '' !== $peachpay_connected_stripe_account && '' !== $peachpay_connected_stripe_account['id'] && peachpay_stripe_supported_applepay_url() ) {
+	new PeachPay_Stripe_Apple_Pay();
+}

@@ -61,11 +61,6 @@ function pp_placeButtonCheckoutPage() {
 	// hiding it here.
 	peachpay_hideLoadingSpinner();
 
-	// Add the checkout window iframe to the page
-	if (!document.querySelector('#pp-modal-overlay')) {
-		document.querySelector('body').insertAdjacentHTML('beforeend', pp_checkoutForm);
-	}
-
 	const full = peachpay_data.button_alignment_checkout_page === 'full';
 	const width = full ? '100%' : ((peachpay_data.button_width_checkout_page || '320') + 'px');
 
@@ -75,7 +70,7 @@ function pp_placeButtonCheckoutPage() {
 		borderRadius: peachpay_data.button_border_radius,
 	});
 
-	if (!peachpay_isElementor() && peachpay_data.checkout_outline_disabled) {
+	if (!peachpay_isElementor() && !peachpay_data.display_checkout_outline) {
 		checkoutBorderRemoval();
 	}
 }

@@ -9,13 +9,15 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 	exit;
 }
 
+require_once PEACHPAY_ABSPATH . '/core/modules/currency-switcher/util/peachpay-currency-arrays.php';
+
 /**
  * New settings for our built in peachpay currency switcher allows admins to view and set settings for our currency switcher itself.
  */
 function peachpay_settings_currency_switch() {
 	add_settings_section(
 		'peachpay_section_currency_switch',
-		__( 'Currency switcher', 'peachpay' ),
+		__( 'Currency switcher', 'woocommerce-for-japan' ),
 		'peachpay_feedback_cb',
 		'peachpay',
 		'peachpay_section_currency',
@@ -23,23 +25,23 @@ function peachpay_settings_currency_switch() {
 
 	add_settings_field(
 		'peachpay_field_enabled_currency_switch',
-		__( 'Enabled', 'peachpay' ),
+		__( 'Enabled', 'woocommerce-for-japan' ),
 		'peachpay_enabled_currency_cb',
 		'peachpay',
 		'peachpay_section_currency_switch',
 	);
 
 	add_settings_field(
-		'peachpay_field_num_currencies',
-		__( 'Number of currencies', 'peachpay' ),
-		'peachpay_num_currencies_cb',
+		'peachpay_field_currency_update_time',
+		__( 'Frequency of auto-update', 'peachpay' ),
+		'peachpay_update_frequency_cb',
 		'peachpay',
 		'peachpay_section_currency_switch',
 	);
 
 	add_settings_field(
 		'peachpay_field_currencies',
-		__( 'Currencies', 'peachpay' ),
+		__( 'Currencies', 'woocommerce-for-japan' ),
 		'peachpay_currencies_cb',
 		'peachpay',
 		'peachpay_section_currency_switch',
@@ -48,10 +50,9 @@ function peachpay_settings_currency_switch() {
 }
 
 /**
- * If currency switch is enabled or not
+ * If currency switch is enabled or not.
  */
 function peachpay_enabled_currency_cb() {
-	$enabled = peachpay_get_settings_option( 'peachpay_currency_options', 'enabled' );
 	?>
 	<input type="checkbox"
 	name="peachpay_currency_options[enabled]"
@@ -60,31 +61,8 @@ function peachpay_enabled_currency_cb() {
 	<?php checked( 1, peachpay_get_settings_option( 'peachpay_currency_options', 'enabled' ), true ); ?>
 	>
 	<label for="enable_peachpay_currency_switch">
-		<?php esc_html_e( 'Enable the currency switcher' ); ?> 
+		<?php esc_html_e( 'Enable the currency switcher', 'woocommerce-for-japan' ); ?>
 	</label>
-	<?php
-}
-
-/**
- * Callback for selecting number of currencies you wish peachpay currency switcher to support
- */
-function peachpay_num_currencies_cb() {
-	$option         = get_option( 'peachpay_currency_options' );
-	$num_currencies = $option ? $option['num_currencies'] : 0;
-	?>
-	<select
-	id = "peachpay_convert_type"
-	name = "peachpay_currency_options[num_currencies]" 
-	>
-	<?php
-	for ( $j = 0; $j < 10; $j++ ) {
-		?>
-	<option value = "<?php echo esc_html( $j ); ?> "
-		<?php echo ( ( intval( $num_currencies ) === $j ) ? 'selected' : '' ); ?>  > 
-		<?php echo esc_html( $j ); ?>
-	</option>
-	<?php } ?>
-	</select>
 	<?php
 }
 
@@ -102,156 +80,7 @@ function peachpay_currencies_cb() {
 		$active_currencies = array();
 	}
 
-	$num_set = count( $active_currencies ) - 1;
-
-	$supported_currencies = array(
-		'United Arab Emirates Dirham'         => 'AED',
-		'Afghan Afghani'                      => 'AFN',
-		'Albanian Lek'                        => 'ALL',
-		'Armenian Dram'                       => 'AMD',
-		'Netherlands Antillean Guilder'       => 'ANG',
-		'Angolan Kwanza'                      => 'AOA',
-		'Argentine Peso'                      => 'ARS',
-		'Aruban Florin'                       => 'AWG',
-		'Azerbaijani Manat'                   => 'AZN',
-		'Australian dollar'                   => 'AUD',
-		'Bosnia-Herzegovina Convertible Mark' => 'BAM',
-		'Bajan dollar'                        => 'BBD',
-		'Bangladeshi Taka'                    => 'BDT',
-		'Bulgarian Lev'                       => 'BGN',
-		'Burundian Franc'                     => 'BIF',
-		'Bermudan Dollar'                     => 'BMD',
-		'Brunei Dollar'                       => 'BND',
-		'Bolivian Boliviano'                  => 'BOB',
-		'Brazilian Real'                      => 'BRL',
-		'Bahamian Dollar'                     => 'BSD',
-		'Botswanan Pula'                      => 'BWP',
-		'Belarusian Ruble'                    => 'BYN',
-		'Belize Dollar'                       => 'BZD',
-		'Canadian dollar'                     => 'CAD',
-		'Congolese Franc'                     => 'CDF',
-		'Chilean Peso'                        => 'CLP',
-		'Chinese Renmenbi'                    => 'CNY',
-		'Colombian Peso'                      => 'COP',
-		'Costa Rican Colón'                   => 'CRC',
-		'Cape Verdean Escudo'                 => 'CVE',
-		'Djiboutian Franc'                    => 'DJF',
-		'Danish Krone'                        => 'DKK',
-		'Dominican Peso'                      => 'DOP',
-		'Algerian Dinar'                      => 'DZD',
-		'Czech koruna'                        => 'CZK',
-		'Danish krone'                        => 'DKK',
-		'Egyptian Pound'                      => 'EGP',
-		'Ethiopian Birr'                      => 'ETB',
-		'Euro'                                => 'EUR',
-		'Fijian Dollar'                       => 'FJD',
-		'Falkland Islands pound'              => 'FKP',
-		'Great British Pound'                 => 'GBP',
-		'Georgian Lari'                       => 'GEL',
-		'Gibraltar pound'                     => 'GIP',
-		'Gambian dalasi'                      => 'GMD',
-		'Guinean Franc'                       => 'GNF',
-		'Quetzal'                             => 'GTQ',
-		'Guyanese dollar'                     => 'GYD',
-		'Hong Kong dollar'                    => 'HKD',
-		'Honduran Lempira'                    => 'HNL',
-		'Croatian Kuna'                       => 'HRK',
-		'Haitian Gourde'                      => 'HTG',
-		'Hungarian forint'                    => 'HUF',
-		'Indonesian rupiah'                   => 'IDR',
-		'Israeli new shekel'                  => 'ILS',
-		'Icelandic Króna'                     => 'ISK',
-		'Jamaican Dollar'                     => 'JMD',
-		'Japanese yen'                        => 'JPY',
-		'Kenyan Shilling'                     => 'KES',
-		'Kyrgystani Som'                      => 'KGS',
-		'Cambodian riel'                      => 'KHR',
-		'Comorian franc'                      => 'KMF',
-		'Korean Won'                          => 'KRW',
-		'Cayman Islands Dollar'               => 'KYD',
-		'Kazakhstani Tenge'                   => 'KZT',
-		'Laotian Kip'                         => 'LAK',
-		'Lebanese pound'                      => 'LBP',
-		'Sri Lankan Rupee'                    => 'LKR',
-		'Liberian Dollar'                     => 'LRD',
-		'Lesotho loti'                        => 'LSL',
-		'Moroccan Dirham'                     => 'MAD',
-		'Moldovan Leu'                        => 'MDL',
-		'Malagasy Ariary'                     => 'MGA',
-		'Macedonian Denar'                    => 'MKD',
-		'Myanmar Kyat'                        => 'MMK',
-		'Tugrik'                              => 'MNT',
-		'Macanese Pataca'                     => 'MOP',
-		'Mauritanian Ouguiya'                 => 'MRO',
-		'Mauritian Rupee'                     => 'MUR',
-		'Maldivian Rufiyaa'                   => 'MVR',
-		'Malawian Kwacha'                     => 'MWK',
-		'Mexican peso'                        => 'MXN',
-		'Malaysian Ringgit'                   => 'MYR',
-		'Mozambican metical'                  => 'MZN',
-		'Namibian dollar'                     => 'NAD',
-		'Nigerian Naira'                      => 'NGN',
-		'Nicaraguan Córdoba'                  => 'NIO',
-		'Nepalese Rupee'                      => 'NPR',
-		'Panamanian Balboa'                   => 'PAB',
-		'Sol'                                 => 'PEN',
-		'Papua New Guinean Kina'              => 'PGK',
-		'Pakistani Rupee'                     => 'PKR',
-		'Poland złoty'                        => 'PLN',
-		'Paraguayan Guarani'                  => 'PYG',
-		'Qatari Rial'                         => 'QAR',
-		'Romanian Leu'                        => 'RON',
-		'Serbian Dinar'                       => 'RSD',
-		'Rwandan franc'                       => 'RWF',
-		'Saudi Riyal'                         => 'SAR',
-		'Solomon Islands Dollar'              => 'SBD',
-		'Seychellois Rupee'                   => 'SCR',
-		'Sierra Leonean'                      => 'SLL',
-		'Somali Shilling'                     => 'SOS',
-		'Surinamese Dollar'                   => 'SRD',
-		'Swazi Lilangeni'                     => 'SZL',
-		'Thai Baht'                           => 'THB',
-		'Tajikistani Somoni'                  => 'TJS',
-		'Turkish lira'                        => 'TRY',
-		'Trinidad & Tobago Dollar'            => 'TTD',
-		'Tanzanian Shilling'                  => 'TZS',
-		'Ukrainian hryvnia'                   => 'UAH',
-		'Ugandan Shilling'                    => 'UGX',
-		'Uruguayan Peso'                      => 'UYU',
-		'Uzbekistani Som'                     => 'UZS',
-		'Vietnamese dong'                     => 'VND',
-		'Central African CFA franc'           => 'XAF',
-		'East Caribbean Dollar'               => 'XCD',
-		'West African CFA franc'              => 'XOF',
-		'CFP Franc'                           => 'XPF',
-		'Yemeni Rial'                         => 'YER',
-		'South African Rand'                  => 'ZAR',
-		'Zambian Kwacha'                      => 'ZMW',
-		'New Taiwan dollar'                   => 'TWD',
-		'New Zealand dollar'                  => 'NZD',
-		'Norwegian krone'                     => 'NOK',
-		'Philippine peso'                     => 'PHP',
-		'Polish złoty'                        => 'PLN',
-		'Russian ruble'                       => 'RUB',
-		'Singapore dollar'                    => 'SGD',
-		'Swedish krona'                       => 'SEK',
-		'Swiss franc'                         => 'CHF',
-		'United States dollar'                => 'USD',
-	);
-
-	$types = array(
-		'15minute' => 'Update every 15 minutes',
-		'30minute' => 'Update every 30 minutes',
-		'hourly'   => 'Update every hour',
-		'6hour'    => 'Update every 6 hours',
-		'12hour'   => 'Update every 12 hours',
-		'daily'    => 'Update every day',
-		'2day'     => 'Update every 2 days',
-		'weekly'   => 'Update once a week',
-		'biweekly' => 'Update every 2 weeks',
-		'monthly'  => 'Update every month',
-		'custom'   => 'Value in input box',
-	);
+	$active_payment_methods = peachpay_get_active_payment_methods();
 
 	$round_values = array(
 		'up',
@@ -261,108 +90,234 @@ function peachpay_currencies_cb() {
 	);
 
 	?>
-	<table id = "active_currencies">
-	<tr> <td> </td> <th> Currency</th> <th> Conversion rate </th>  <th> Conversion Type </th> <th> # of decimals </th> </tr>
-	<tr> <td> </td> <td> Currency converted to from base</td> <td> Rate at which the currency will be exchanged </td>  <td> If auto update how often the rate will be updated </td>
-	<td> Number of decimals the currency will support </td> </tr> </th>
-	<tr class = table-header-footer> <td> Base currency </td> <td>
-	<?php
-	echo esc_html( $base_currency );
-	?>
-	</td> <td> 1 </td>  <td> base currency </td> <td></td></tr>
-	<?php
-	for ( $i = 0; $i < $num_currencies; $i++ ) {
+	<div id='pp-currency-table-div'>
+	<table id = "pp-active-currencies">
+	<tr class = table-header-footer >
+		<td> </td>
+		<th class= "pp-tooltip"><?php esc_html_e( ' Currency', 'woocommerce-for-japan' ); ?>
+			<span>
+				<img  class='pp-tooltip-qm' src=<?php echo esc_url( peachpay_url( '/core/modules/currency-switcher/admin/assets/Property_1help_isFilledTrue.svg' ) ); ?> >
+			</span>
+			<span class ="pp-tooltipHidden"> <?php esc_html_e( 'Currency converted to from base', 'woocommerce-for-japan' ); ?> </span>
+		</th>
+
+		<th class="pp-tooltip"><?php esc_html_e( ' Auto update ', 'woocommerce-for-japan' ); ?>
+			<span>
+				<img class='pp-tooltip-qm' src=<?php echo esc_url( peachpay_url( '/core/modules/currency-switcher/admin/assets/Property_1help_isFilledTrue.svg' ) ); ?> >
+			</span>
+			<span class ="pp-tooltipHidden"> <?php esc_html_e( 'Update the rate automatically?', 'woocommerce-for-japan' ); ?></span>
+		</th>
+
+		<th class="pp-tooltip"><?php esc_html_e( ' Conversion rate ', 'woocommerce-for-japan' ); ?>
+			<span>
+				<img class='pp-tooltip-qm' src=<?php echo esc_url( peachpay_url( '/core/modules/currency-switcher/admin/assets/Property_1help_isFilledTrue.svg' ) ); ?> >
+			</span>
+			<span class ="pp-tooltipHidden"> <?php esc_html_e( 'Rate at which the currency will be exchanged', 'woocommerce-for-japan' ); ?></span>
+		</th>
+
+		<th class="pp-tooltip"><?php esc_html_e( ' Decimals ', 'woocommerce-for-japan' ); ?>
+		<span>
+			<img class='pp-tooltip-qm' src=<?php echo esc_url( peachpay_url( '/core/modules/currency-switcher/admin/assets/Property_1help_isFilledTrue.svg' ) ); ?> >
+		</span>
+		<span class ="pp-tooltipHidden"><?php esc_html_e( 'Number of decimals the currency will support', 'woocommerce-for-japan' ); ?></span></th>
+
+		<th class="pp-tooltip"><?php esc_html_e( 'Rounding', 'woocommerce-for-japan' ); ?>
+		<span>
+			<img class='pp-tooltip-qm' src=<?php echo esc_url( peachpay_url( '/core/modules/currency-switcher/admin/assets/Property_1help_isFilledTrue.svg' ) ); ?> >
+		</span>
+		<span class ="pp-tooltipHidden"><?php esc_html_e( 'How to round when the there are more decimals than the currency supports', 'woocommerce-for-japan' ); ?> </span></th>
+
+		<th class="pp-tooltip"> <?php esc_html_e( 'Used in these countries', 'woocommerce-for-japan' ); ?>
+		<span>
+			<img class='pp-tooltip-qm' src=<?php echo esc_url( peachpay_url( '/core/modules/currency-switcher/admin/assets/Property_1help_isFilledTrue.svg' ) ); ?> >
+		</span>
+		<span class ="pp-tooltipHidden"><?php esc_html_e( 'If WooCommerce geolocation is on, what countries the currency will be restricted to', 'woocommerce-for-japan' ); ?></span></th>
+	</tr>
+
+	<tr class="pp-base-currency">
+		<td> <?php esc_html_e( 'Base currency', 'woocommerce-for-japan' ); ?></td>
+		<td class=pp-tooltip>
+
+		<?php
+		$not_supported = array_diff( $active_payment_methods, PEACHPAY_CURRENCIES_METHOD_ARRAY[ $base_currency ] );
+		if ( ! empty( $not_supported ) ) {
+			echo esc_html( '<span class="pp-tooltipHidden">' );
+			esc_html_e( 'Not supported by the following providers ' );
+			echo esc_html( implode( ' ', $not_supported ) );
+			echo esc_html( '</span>' );
+		}
+		echo esc_html( $base_currency );
+		if ( ! empty( $not_supported ) ) {
+			esc_html( '<span>' );
+			esc_html( '<img width=10px height=10px src =' );
+			echo esc_url( peachpay_url( 'core/modules/currency-switcher/admin/assets/warning-sign.svg' ) );
+			esc_html( '> </span>' );
+		}
 		?>
-		<td></td>
+
+		</td>
+		<td> N/A </td>
+		<td>1</td>
+		<td><?php echo esc_html( get_option( 'woocommerce_price_num_decimals' ) ); ?></td>
+		<td>N/A</td>
 		<td>
+		<select class="chosen-select" data-placeholder="Allowed in all non-restrcited countries" multiple id="pp_countries_base">
+			<?php
+			foreach ( ISO_TO_COUNTRY as $iso => $country ) {
+				?>
+					<option value =
+					<?php
+					echo esc_html( $iso );
+					?>
+					<?php
+					$selected = peachpay_get_settings_option( 'peachpay_currency_options', 'selected_currencies', null );
+					$selected = explode( ',', $selected['base']['countries'], 100000 );
+					echo ( in_array( $iso, $selected, true ) ? esc_html( 'selected' ) : '' );
+					?>
+					>
+					<?php echo esc_html( $country ); ?>
+					</option>
+					<?php
+			}
+			?>
+			<script>
+				window.addEventListener('load', () => {
+					document.querySelector('#submit').addEventListener('click', (event) => {
+					let select = document.querySelector('#pp_countries_base');
+					let hiddenInput = document.querySelector( '#hiddenCountriesBase');
+					let chosen = select.selectedOptions;
+					for(let i = 0; i < chosen.length; i++) {
+						if(!hiddenInput.value.includes(chosen[i].value)) {
+							hiddenInput.value += ',' + chosen[i].value;
+						}
+					}
+				});
+			});
+			</script>
+		</td>
+	</tr>
+	<?php
+	$i = 0;
+	foreach ( $active_currencies as $key => $currency ) {
+		if ( 'base' === $key ) {
+			continue;
+		}
+		?>
+		<tr id = <?php echo esc_html( 'removerow' . $i ); ?> class="currencyRow" >
+		<td style="vertical-align:5px;">
+			<input type = "button" value="Remove" class = "pp-removeButton">
+		</td>
+
+		<td class="pp-currency-name">
 			<select
 			id="peachpay_new_currency_code"
 			name="peachpay_currency_options[selected_currencies][<?php echo esc_html( $i ); ?>][name]"
-			value = 
+			value =
 			<?php
-				echo array_key_exists( $i, $active_currencies ) ? esc_html( $active_currencies[ $i ]['name'] ) : esc_html( $base_currency );
+				echo array_key_exists( 'name', $currency ) ? esc_html( $currency['name'] ) : esc_html( $base_currency );
 			?>
+			class = 'currencyName'
 			>
-			<?php foreach ( $supported_currencies as $currency => $value ) { ?>
+			<?php foreach ( PEACHPAY_SUPPORTED_CURRENCIES as $code => $name ) { ?>
 				<option
-					value="<?php echo esc_attr( $value ); ?>" 
+					value="<?php echo esc_attr( $code ); ?>"
 					<?php
-					if ( array_key_exists( $i, $active_currencies ) ) {
-						echo ( ( $active_currencies[ $i ]['name'] === $value ) ? 'selected' : ' ' );
+					if ( array_key_exists( 'name', $currency ) ) {
+						echo ( ( $currency['name'] === $code ) ? 'selected' : ' ' );
 					}
 					?>
 				>
-					<?php echo esc_html( $currency ); ?>
+					<?php echo esc_html( $name ); ?>
 				</option>
 				<?php
 			}
 			?>
-		</select> 
+		</select>
+		<?php
+		$not_supported = array_diff( $active_payment_methods, PEACHPAY_CURRENCIES_METHOD_ARRAY[ $currency['name'] ] );
+		?>
+			<div class="pp-method-warning pp-tooltip <?php echo empty( $not_supported ) ? esc_html( 'hide' ) : ''; ?>">
+			<img style='vertical-align:-2px' width=15px height=15px src =
+			<?php
+			echo esc_url( peachpay_url( 'core/modules/currency-switcher/admin/assets/warning-sign.svg' ) );
+			?>
+			>
+			<span class="pp-tooltipHidden pp-currency-warning-table"> 
+			<?php
+			esc_html_e( 'Not supported by the following providers: ' );
+			echo esc_html( implode( ' ', $not_supported ) );
+			?>
+			</div> 
+		</span>
 		</td>
 
-		<td> 
+		<td>
+		<input
+			id = "peachpay_new_currency_auto_update"
+			name = "peachpay_currency_options[selected_currencies][<?php echo esc_html( $i ); ?>][auto_update]"
+			value ="1"
+			<?php
+			if ( array_key_exists( 'auto_update', $currency ) ) {
+				echo( checked( '1', $currency['auto_update'] ) );
+			}
+			?>
+			type="checkbox"
+			class="currencyAutoUpdate">
+		</td>
+
+		<td>
 			<input
 			id = "peachpay_new_currency_rate"
 			name = "peachpay_currency_options[selected_currencies][<?php echo esc_html( $i ); ?>][rate]"
-			value = 
+			value =
 			<?php
-			if ( array_key_exists( $i, $active_currencies ) && $active_currencies[ $i ]['rate'] ) {
-				echo( esc_html( $active_currencies[ $i ]['rate'] ) );
+			if ( array_key_exists( 'rate', $currency ) ) {
+				echo( esc_html( $currency['rate'] ) );
 			} else {
 				echo( 1 );
 			}
 			?>
-			type="text" >
-		</input>
-		</td>	
-		<td>
-			<select
-			id = "peachpay_convert_type"
-			name = "peachpay_currency_options[selected_currencies][<?php echo esc_html( $i ); ?>][type]" >
+			type="text"
+			class="currencyRate"
 			<?php
-			foreach ( $types as $type => $type_value ) {
-				?>
-				<option
-					value="<?php echo esc_attr( $type ); ?>" 
-					<?php
-					if ( array_key_exists( $i, $active_currencies ) ) {
-						echo ( $active_currencies[ $i ]['type'] === $type ? 'selected' : ' ' );
-					}
-					?>
-					>
-					<?php echo esc_html( $type_value ); ?>
-				</option>
-			<?php } ?>
-			</select>
+			if ( array_key_exists( 'auto_update', $currency ) ) {
+				echo( 'readonly' );
+			}
+			?>
+			>
+		</input>
 		</td>
 
-		<td> 
+		<td>
 			<input
 			id = "peachpay_new_currency_decimals"
 			name = "peachpay_currency_options[selected_currencies][<?php echo esc_html( $i ); ?>][decimals]"
 			value =
 			<?php
 			if ( array_key_exists( $i, $active_currencies ) ) {
-				echo esc_html( $active_currencies[ $i ]['decimals'] );
+				echo esc_html( $currency['decimals'] );
 			} else {
 				echo 2;
 			}
 			?>
 			type="number"
-			min=0 
-			max=3>
+			min=0
+			max=2
+			class="currencyDecimals">
 		</td>
 
 		<td>
 			<select
 			id = "peachpay_convert_rounding"
-			name = "peachpay_currency_options[selected_currencies][<?php echo esc_html( $i ); ?>][round]" 
-			hidden>
+			name = "peachpay_currency_options[selected_currencies][<?php echo esc_html( $i ); ?>][round]"
+			class = "currencyRound"
+			>
 			<?php
 			foreach ( $round_values as $round ) {
 				?>
 				<option
-					value= <?php echo 'disabled'; ?>
+					value= <?php echo esc_html( $round ); ?>
+					<?php array_key_exists( 'round', $currency ) && $currency['round'] === $round ? esc_html( 'selected' ) : ''; ?>
 					>
 					<?php echo esc_html( $round ); ?>
 				</option>
@@ -370,9 +325,50 @@ function peachpay_currencies_cb() {
 			</select>
 		</td>
 
+		<td>
+
+		<select class="chosen-select currencyCountries" data-placeholder="Allowed everywhere" multiple id="pp_countries<?php echo esc_html( $i ); ?>">
+			<?php
+			foreach ( ISO_TO_COUNTRY as $iso => $country ) {
+				?>
+				<option value =
+				<?php
+				echo esc_html( $iso );
+				?>
+				<?php
+				$selected = explode( ',', $currency['countries'], 100000 );
+				echo ( in_array( $iso, $selected, true ) ? esc_html( 'selected' ) : '' );
+				?>
+				>
+				<?php echo esc_html( $country ); ?>
+				</option>
+				<?php
+			}
+
+			?>
+		</select>
+
+
+		<input type='text' name="peachpay_currency_options[selected_currencies][<?php echo esc_html( $i ); ?>][countries]" id="hiddenCountries<?php echo esc_html( $i ); ?>" hidden>
+		<script>
+			window.addEventListener('load', () => {
+				document.querySelector('#submit').addEventListener('click', (event) => {
+				let select = document.querySelector('#pp_countries<?php echo esc_html( $i ); ?>');
+				let hiddenInput = document.querySelector( '#hiddenCountries<?php echo esc_html( $i ); ?>');
+				let chosen = select.selectedOptions;
+				for(let i = 0; i < chosen.length; i++) {
+					if(!hiddenInput.value.includes(chosen[i].value)) {
+						hiddenInput.value += ',' + chosen[i].value;
+					}
+				}
+			});
+			});
+		</script>
+		</td>
 	</tr>
 	<tr>
 		<?php
+		$i++;
 	}
 	?>
 	<tr>
@@ -395,8 +391,8 @@ function peachpay_currencies_cb() {
 <td>
 	<input
 		type = "hidden"
-		name = "peachpay_currency_options[selected_currencies][base][type]"
-		value = "base"
+		name = "peachpay_currency_options[selected_currencies][base][auto_update]"
+		value = "1"
 	>
 	</input>
 </td>
@@ -417,6 +413,153 @@ function peachpay_currencies_cb() {
 	>
 	</input>
 </td>
+
+	<td>
+		<input
+			type = "hidden"
+			name = "peachpay_currency_options[selected_currencies][base][decimals]"
+			value = <?php echo esc_html( get_option( 'woocommerce_price_num_decimals' ) ); ?>
+		>
+		</input>
+	</td>
+
+	<td>
+		<input
+			type = "hidden"
+			name = "peachpay_currency_options[selected_currencies][base][countries]"
+			id ="hiddenCountriesBase"
+			value =""
+		>
+		</input>
+	</td>
+
+	<td>
+	<input
+			type = "hidden"
+			name = "peachpay_currency_options[num_currencies]"
+			id = "hiddenCurrencyNumber";
+			value = <?php echo esc_html( $num_currencies ); ?>
+		>
+		</input>
+	</td>
+
+<tr>
+<td>
+	<input type="button" value ="Add new currency" id = "updateCurrency">
+	<script>
+
+
+	</script>
+</td>
+</tr>
+</table>
+</div>
+
+	<script>
+			jQuery(".chosen-select").chosen({
+				no_results_text: "No matching country found"
+			})
+
+	</script>
+
 	<?php
 	echo ( ' </tr> </table>' );
+}
+
+/**
+ * Callback for rendering currency auto update time.
+ */
+function peachpay_update_frequency_cb() {
+	$types = array(
+		'15minute' => 'Update every 15 minutes',
+		'30minute' => 'Update every 30 minutes',
+		'hourly'   => 'Update every hour',
+		'6hour'    => 'Update every 6 hours',
+		'12hour'   => 'Update every 12 hours',
+		'daily'    => 'Update every day',
+		'2day'     => 'Update every 2 days',
+		'weekly'   => 'Update once a week',
+		'biweekly' => 'Update every 2 weeks',
+		'monthly'  => 'Update every month',
+	);
+	?>
+	<select
+	id = "peachpay_convert_type"
+	name = "peachpay_currency_options[update_frequency]"
+	class="currencyType">
+	<?php
+	foreach ( $types as $type => $type_value ) {
+		?>
+		<option
+			value="<?php echo esc_attr( $type ); ?>"
+			<?php
+				echo ( peachpay_get_settings_option( 'peachpay_currency_options', 'update_frequency' ) === $type ? 'selected' : ' ' );
+			?>
+			>
+			<?php echo esc_html( $type_value ); ?>
+		</option>
+	<?php } ?>
+	</select>
+	<?php
+}
+
+add_action( 'admin_enqueue_scripts', 'peachpay_enqueue_currency_admin_dropdown_scripts' );
+
+/**
+ * Enque scripts so our dropdown displays
+ *
+ * @param string $hook the top level page.
+ */
+function peachpay_enqueue_currency_admin_dropdown_scripts( $hook ) {
+	if ( 'toplevel_page_peachpay' !== $hook ) {
+		return;
+	}
+	wp_enqueue_script( 'pp_dropdown_code', 'https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js', array(), '1.8.7', false );
+	wp_enqueue_style( 'pp_dropdown_style', 'https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css', array(), '1.8.7', 'all' );
+}
+
+add_action( 'admin_enqueue_scripts', 'peachpay_enqueue_currency_admin_scripts' );
+/**
+ * Enque our script that allows currency addition and removal
+ *
+ * @param string $hook the top level page.
+ */
+function peachpay_enqueue_currency_admin_scripts( $hook ) {
+	if ( 'toplevel_page_peachpay' !== $hook ) {
+		return;
+	}
+	wp_enqueue_script(
+		'pp_currency',
+		peachpay_url( 'core/modules/currency-switcher/admin/js/remove-row.js' ),
+		array(),
+		peachpay_file_version( 'core/modules/currency-switcher/admin/js/remove-row.js' ),
+		true
+	);
+
+	wp_localize_script(
+		'pp_currency',
+		'pp_currency_data',
+		array(
+			'method_supports'  => PEACHPAY_CURRENCIES_METHOD_ARRAY,
+			'active_providers' => peachpay_get_active_payment_methods(),
+		)
+	);
+}
+
+/**
+ * Get active payment methods.
+ */
+function peachpay_get_active_payment_methods() {
+	$active   = array();
+	$stripe   = peachpay_get_settings_option( 'peachpay_payment_options', 'enable_stripe' );
+	$klarna   = peachpay_get_settings_option( 'peachpay_payment_options', 'klarna_payments' );
+	$afterpay = peachpay_get_settings_option( 'peachpay_payment_options', 'afterpay_clearpay_payments' );
+	$paypal   = peachpay_get_settings_option( 'peachpay_payment_options', 'paypal' );
+
+	$stripe ? array_push( $active, 'Stripe' ) : '';
+	$klarna ? array_push( $active, 'Klarna' ) : '';
+	$afterpay ? array_push( $active, 'Afterpay/Clearpay' ) : '';
+	$paypal ? array_push( $active, 'PayPal' ) : '';
+
+	return $active;
 }

@@ -52,16 +52,25 @@ function peachpay_set_selected_shipping_methods( $selected_shipping_methods_reco
  */
 function peachpay_package_shipping_options( $calculated_shipping_package ) {
 	$shipping_options = array();
-	foreach ( $calculated_shipping_package['rates'] as $full_method_id => $shipping_rate ) {
-
+	foreach ( $calculated_shipping_package['rates'] as $full_method_id => $shipping_method ) {
 		// we use full_method_id and not $shipping_method->method_id because the former
 		// includes a "sub" ID which is necessary if there is more than one flat_rate
 		// shipping, for example.
 		$shipping_options[ $full_method_id ] = array(
-			'title' => $shipping_rate->get_label(),
-			'total' => floatval( $shipping_rate->get_cost() ),
+			'title'       => $shipping_method->get_label(),
+			'total'       => floatval( $shipping_method->get_cost() ) + ( get_option( 'woocommerce_tax_display_cart' ) === 'incl' ? floatval( $shipping_method->get_shipping_tax() ) : 0 ),
+			'description' => peachpay_shipping_method_description( $shipping_method ),
 		);
 	}
 
 	return $shipping_options;
+}
+
+/**
+ * Gets the shipping method description if one exists.
+ *
+ * @param array $shipping_method Type of shipping method.
+ */
+function peachpay_shipping_method_description( $shipping_method ) {
+	return apply_filters( 'peachpay_shipping_method_description', '', $shipping_method );
 }

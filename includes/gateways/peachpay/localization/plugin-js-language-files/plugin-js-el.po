@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: el\n"
+
+
+msgid "Please select the remaining product options before adding this bundle to your cart."
+msgstr "Επιλέξτε τις υπόλοιπες επιλογές προϊόντων προτού προσθέσετε αυτό το πακέτο στο καλάθι σας."
+
+msgid "Please select the remaining product options before adding this product to your cart."
+msgstr "Επιλέξτε τις υπόλοιπες επιλογές προϊόντων πριν προσθέσετε αυτό το προϊόν στο καλάθι σας."
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "Συγνώμη, κάτι πήγε στραβά. Ανανεώστε τη σελίδα και δοκιμάστε ξανά."
+
+msgid "Sorry, this product is out of stock."
+msgstr "Λυπούμαστε, αυτό το προϊόν έχει εξαντληθεί."
+
+msgid "This gift card has no money left."
+msgstr "Αυτή η δωροκάρτα δεν έχει χρήματα."
+

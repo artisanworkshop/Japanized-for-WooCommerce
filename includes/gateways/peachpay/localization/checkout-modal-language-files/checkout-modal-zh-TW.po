@@ -1,0 +1,233 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh-TW\n"
+
+
+msgid "(optional)"
+msgstr "（選修的）"
+
+msgid "+ ADD A COUPON CODE"
+msgstr "+ 添加優惠券代碼"
+
+msgid "+ NEW CARD"
+msgstr "+ 新卡"
+
+msgid "+ REDEEM GIFT CARD/STORE CREDIT"
+msgstr "+ 兌換禮品卡/商店信用卡"
+
+msgid "After selecting pay you will be redirected to complete your payment."
+msgstr "選擇付款後，您將被重定向以完成付款。"
+
+msgid "Apartment"
+msgstr "公寓"
+
+msgid "Back to info"
+msgstr "返回信息"
+
+msgid "Billing"
+msgstr "計費"
+
+msgid "By clicking the button above, you agree to"
+msgstr "點擊上方按鈕，即表示您同意"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Card"
+msgstr "卡片"
+
+msgid "Cart is empty"
+msgstr "購物車是空的"
+
+msgid "City"
+msgstr "城市"
+
+msgid "Continue"
+msgstr "繼續"
+
+msgid "Country"
+msgstr "國家"
+
+msgid "County"
+msgstr "縣"
+
+msgid "Coupon code"
+msgstr "優惠券代碼"
+
+msgid "Create a new password, or use an existing one if you already have an account for"
+msgstr "創建一個新密碼，如果您已經有一個帳戶，則使用現有密碼"
+
+msgid "Currency"
+msgstr "貨幣"
+
+msgid "Delivery date"
+msgstr "郵寄日期"
+
+msgid "Edit"
+msgstr "編輯"
+
+msgid "Email"
+msgstr "電子郵件"
+
+msgid "Exit Checkout"
+msgstr "退出結帳"
+
+msgid "First name"
+msgstr "名"
+
+msgid "First renewal"
+msgstr "第一次更新"
+
+msgid "Gift card number"
+msgstr "禮品卡號"
+
+msgid "I verify that the country I have entered is the one I reside in"
+msgstr "我確認我輸入的國家是我居住的國家"
+
+msgid "Initial Shipment"
+msgstr "初始裝運"
+
+msgid "Last name"
+msgstr "姓"
+
+msgid "My order"
+msgstr "我的訂單"
+
+msgid "Order notes (optional)"
+msgstr "訂單備註（可選）"
+
+msgid "Order summary"
+msgstr "訂單摘要"
+
+msgid "Password"
+msgstr "密碼"
+
+msgid "Pay"
+msgstr "支付"
+
+msgid "Payment"
+msgstr "支付"
+
+msgid "Personal"
+msgstr "個人的"
+
+msgid "Phone number"
+msgstr "電話號碼"
+
+msgid "Place order"
+msgstr "下訂單"
+
+msgid "Please go back and try again. Missing required field"
+msgstr "請返回重試。缺少必填字段"
+
+msgid "Postal code"
+msgstr "郵政編碼"
+
+msgid "Processing"
+msgstr "加工"
+
+msgid "Province"
+msgstr "省"
+
+msgid "Ready to check out?"
+msgstr "準備好退房了嗎？"
+
+msgid "Recurring total"
+msgstr "經常性總計"
+
+msgid "Remove"
+msgstr "消除"
+
+msgid "Secured by"
+msgstr "擔保人"
+
+msgid "Select a Province"
+msgstr "選擇一個省份"
+
+msgid "Select a State"
+msgstr "選擇一個州"
+
+msgid "Select a country"
+msgstr "選擇一個國家"
+
+msgid "Send to"
+msgstr "發送至"
+
+msgid "Shipping"
+msgstr "船運"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "抱歉，出了一些問題。請刷新頁面並重試。"
+
+msgid "Sorry, this store does not ship to your location."
+msgstr "對不起，這家商店不送貨到您的位置。"
+
+msgid "State"
+msgstr "狀態"
+
+msgid "Street address"
+msgstr "街道地址"
+
+msgid "Subtotal"
+msgstr "小計"
+
+msgid "Tax"
+msgstr "稅"
+
+msgid "Test mode: customers cannot see PeachPay"
+msgstr "測試模式：客戶看不到PeachPay"
+
+msgid "The password entered must be at least 8 characters long."
+msgstr "輸入的密碼長度必須至少為 8 個字符。"
+
+msgid "There are no eligible or active payment methods available for this order."
+msgstr "此訂單沒有可用的合格或有效付款方式。"
+
+msgid "Total"
+msgstr "全部的"
+
+msgid "Unknown order error occurred"
+msgstr "發生未知訂單錯誤"
+
+msgid "VIEW SAVED CARDS"
+msgstr "查看保存的卡片"
+
+msgid "Verified"
+msgstr "已驗證"
+
+msgid "You entered an invalid coupon code"
+msgstr "您輸入的優惠券代碼無效"
+
+msgid "You entered an invalid gift card"
+msgstr "您輸入的禮品卡無效"
+
+msgid "You might also like..."
+msgstr "你可能還喜歡..."
+
+msgid "add"
+msgstr "添加"
+
+msgid "and"
+msgstr "和"
+
+msgid "coupon"
+msgstr "優惠券"
+
+msgid "privacy policy"
+msgstr "隱私政策"
+
+msgid "terms"
+msgstr "條款"
+
+msgid "terms and conditions"
+msgstr "條款和條件"
+
+msgid "the"
+msgstr "這"
+
+msgid "the store's"
+msgstr "商店的"
+

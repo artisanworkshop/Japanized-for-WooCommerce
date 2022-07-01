@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh-TW\n"
+
+
+msgid "Please select the remaining product options before adding this bundle to your cart."
+msgstr "在將此捆綁包添加到您的購物車之前，請選擇剩餘的產品選項。"
+
+msgid "Please select the remaining product options before adding this product to your cart."
+msgstr "在將此產品添加到您的購物車之前，請選擇剩餘的產品選項。"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "抱歉，出了一些問題。請刷新頁面並重試。"
+
+msgid "Sorry, this product is out of stock."
+msgstr "抱歉，此產品缺貨。"
+
+msgid "This gift card has no money left."
+msgstr "這張禮品卡沒有錢了。"
+

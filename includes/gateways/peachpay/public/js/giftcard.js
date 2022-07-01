@@ -77,7 +77,7 @@ function sendGiftCardAppliedMessage(success, giftCard) {
 
 	if (giftCard && Number.parseFloat(giftCard.balance).toFixed(2) === '0.00') {
 		success = false;
-		message = pp_i18n['gift-card-zero-balance'][getLanguage()];
+		message = getPluginLocaleText('This gift card has no money left.');
 	}
 
 	document.querySelector('#peachpay-iframe').contentWindow.postMessage({

@@ -21,10 +21,10 @@ function peachpay_post_connect_stripe( $old, $new ) {
 	if ( false === $new ) {
 		return $new;
 	}
-	if ( ( array_key_exists( 'email', $old ) && array_key_exists( 'email', $new ) ) && $old['email'] === $new['email'] ) {
+	if ( is_array( $old ) && is_array( $new ) && ( array_key_exists( 'email', $old ) && array_key_exists( 'email', $new ) ) && $old['email'] === $new['email'] ) {
 		return $new;
 	}
-	if ( array_key_exists( 'email', $new ) ) {
+	if ( is_array( $new ) && array_key_exists( 'email', $new ) ) {
 		peachpay_email_stripe_welcome( $new['email'] );
 	}
 

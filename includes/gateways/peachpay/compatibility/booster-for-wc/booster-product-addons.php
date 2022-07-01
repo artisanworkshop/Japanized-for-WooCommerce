@@ -36,7 +36,7 @@ function peachpay_booster_pa_cart_page_line_item( $pp_line_item, $wc_line_item )
 		$pp_line_item['display_price'] = peachpay_product_display_price( $wc_product );
 		$pp_line_item['price']         = peachpay_product_price( $wc_product );
 
-		$addons = WCJ()->modules[ BPA_MODULE ]->get_product_addons( peachpay_product_parent_id( $wc_product->get_id() ) );
+		$addons = WCJ()->modules['product_addons']->get_product_addons( peachpay_product_parent_id( $wc_product->get_id() ) );
 		foreach ( $addons as $addon ) {
 			if ( $wc_line_item[ $addon['price_key'] ] ) {
 				array_push(

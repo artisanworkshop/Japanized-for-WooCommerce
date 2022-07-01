@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ro\n"
+
+
+msgid "Please select the remaining product options before adding this bundle to your cart."
+msgstr "Vă rugăm să selectați opțiunile de produs rămase înainte de a adăuga acest pachet în coș."
+
+msgid "Please select the remaining product options before adding this product to your cart."
+msgstr "Vă rugăm să selectați opțiunile de produs rămase înainte de a adăuga acest produs în coș."
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "Scuze, ceva a mers greșit. Vă rugăm să reîmprospătați pagina și să încercați din nou."
+
+msgid "Sorry, this product is out of stock."
+msgstr "Ne pare rău, acest produs este epuizat."
+
+msgid "This gift card has no money left."
+msgstr "Acest card cadou nu mai are bani."
+

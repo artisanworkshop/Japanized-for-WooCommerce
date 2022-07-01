@@ -8,7 +8,7 @@
 document.addEventListener('DOMContentLoaded', deactivationPopup);
 
 /**
- * Loads the deactivation modal and submits the POST reques to the server.
+ * Loads the deactivation modal and submits the POST request to the server.
  */
 function deactivationPopup() {
 	const deactivationButton = document.querySelector('#deactivate-peachpay-for-woocommerce');
@@ -35,12 +35,12 @@ function deactivationPopup() {
 			<div id = "modal-content" class = "modal-content">
 				<div id = "modal-header" class = "modal-header">
 					<i class="dashicon-shopping-cart" aria-hidden="true"></i>
-					<span id = "deactivation-header" class = "deactivation-header"> ${window.pp_i18n['Feedback'][getLanguage()]} </span>
+					<span id = "deactivation-header" class = "deactivation-header"> ${getPluginLocaleText('Feedback', isAdminPageText=true)} </span>
 				</div>
 				<div id = "modal-message" class = "modal-message">
 					<form id = "peachpay-deactivate-feedback-form" method = "post" enctype = "multipart/form-data" >
 						<div id = "peachpay-deactivate-feedback-form-caption" class = "peachpay-deactivate-feedback-form-caption">
-						${window.pp_i18n['Please help us understand why you don\'t intend to use PeachPay.'][getLanguage()]}
+						${getPluginLocaleText("Please help us understand why you don't intend to use PeachPay.", isAdminPageText=true)}
 						</div>
 						<div id = "peachpay-deactivate-feedback-form-wrapper" class = "peachpay-deactivate-feedback-form-wrapper">
 							<div id = "peachpay-deactivate-feedback-input-wrapper" class = "feedback-input">
@@ -49,7 +49,7 @@ function deactivationPopup() {
 								type = "radio" name = "deactivation_answer"
 								value = "no-longer-needed" >
 								<label for = "peachpay-deactivate-feedback-no-longer-needed" class = "peachpay-deactivate-feedback-label">
-								${window.pp_i18n['I no longer need the plugin'][getLanguage()]}</label>
+								${getPluginLocaleText('I no longer need the plugin', isAdminPageText=true)}</label>
 							</div>
 							<div id = "peachpay-deactivate-feedback-input-wrapper" class = "feedback-input">
 								<input id = "peachpay-deactivate-feedback-better-plugin"
@@ -57,9 +57,9 @@ function deactivationPopup() {
 								type = "radio" name = "deactivation_answer"
 								value = "better-plugin" >
 								<label for = "peachpay-deactivate-feedback-better-plugin" class = "peachpay-deactivate-feedback-label">
-								${window.pp_i18n['I found a better plugin'][getLanguage()]}</label>
+								${getPluginLocaleText('I found a better plugin', isAdminPageText=true)}</label>
 								<input type="text" id = "better_plugin" name = "better_plugin" class = "reason_dropdown_input"
-								placeholder = "${window.pp_i18n['Please share which plugin'][getLanguage()]}">
+								placeholder = "${getPluginLocaleText('Please share which plugin', isAdminPageText=true)}">
 							</div>
 							<div id = "peachpay-deactivate-feedback-input-wrapper" class = "feedback-input">
 								<input id = "peachpay-deactivate-feedback-couldnt-get-to-work"
@@ -67,12 +67,12 @@ function deactivationPopup() {
 								type = "radio" name = "deactivation_answer"
 								value = "couldnt-get-to-work" >
 								<label for = "peachpay-deactivate-feedback-couldnt-get-to-work" class = "peachpay-deactivate-feedback-label">
-								${window.pp_i18n['I couldn\'t get the plugin to work'][getLanguage()]}</label>
+								${getPluginLocaleText("I couldn't get the plugin to work", isAdminPageText=true)}</label>
 								<div type="text" id = "was_support_contacted" class = "reason_dropdown_input">
 								<img src = "https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_info_outline_48px-512.png"
 								height = "20" width = "20">
-								<span class = "customer-support-ask"> ${window.pp_i18n['Did you try contacting support via email or the'][getLanguage()]}</span>
-								<a href = "${supportLink}" class = "customer-support-ask">${window.pp_i18n['customer support feature'][getLanguage()]}</a>
+								<span class = "customer-support-ask"> ${getPluginLocaleText('Did you try contacting support via email or the', isAdminPageText=true)}</span>
+								<a href = "${supportLink}" class = "customer-support-ask">${getPluginLocaleText('customer support feature', isAdminPageText=true)}</a>
 								<span style="padding-top: 5px;" >?</span>
 								</div>
 							</div>
@@ -82,7 +82,7 @@ function deactivationPopup() {
 								type = "radio" name = "deactivation_answer"
 								value = "temporary-deactivation">
 								<label for = "peachpay-deactivate-feedback-temporary-deactivation" class = "peachpay-deactivate-feedback-label">
-								${window.pp_i18n['It\'s a temporary deactivation'][getLanguage()]}</label>
+								${getPluginLocaleText('customer support feature', isAdminPageText=true)}</label>
 							</div>
 							<div id = "peachpay-deactivate-feedback-input-wrapper" class = "feedback-input">
 								<input id = "peachpay-deactivate-feedback-other"
@@ -90,9 +90,9 @@ function deactivationPopup() {
 								type = "radio" name = "deactivation_answer"
 								value = "other" >
 								<label for = "peachpay-deactivate-feedback-other" class = "peachpay-deactivate-feedback-label">
-								${window.pp_i18n['Other'][getLanguage()]}</label>
+								${getPluginLocaleText('Other', isAdminPageText=true)}</label>
 								<input type="text" id = "other_reason" name = "other_reason" class = "reason_dropdown_input"
-								placeholder = "${window.pp_i18n['Please share your reason'][getLanguage()]}">
+								placeholder = "${getPluginLocaleText('Please share your reason', isAdminPageText=true)}">
 							</div>
 						</div>
 					</form>
@@ -107,9 +107,9 @@ function deactivationPopup() {
 						width="20"
 						class = "pp-spinner hide">
 						</object>
-						<div id = "pp-deactivate-content"> ${window.pp_i18n['Submit & Deactivate'][getLanguage()]} </div>
+						<div id = "pp-deactivate-content"> ${getPluginLocaleText('Submit & Deactivate', isAdminPageText=true)} </div>
 					</button>
-					<a href = ${deactivationLink} class="feedback-button-skip"> ${window.pp_i18n['Skip & Deactivate'][getLanguage()]} </a>
+					<a href = ${deactivationLink} class="feedback-button-skip"> ${getPluginLocaleText('Skip & Deactivate', isAdminPageText=true)} </a>
 				</div>
 			</div>`;
 		$modal.insertAdjacentHTML('afterbegin', $modalContent);

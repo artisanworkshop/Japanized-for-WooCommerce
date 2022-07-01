@@ -28,13 +28,31 @@ function peachpay_rest_api_order_payment_status( $request ) {
 			wp_send_json_error( 'Order not found', 404 );
 		}
 
+		peachpay_add_partner_meta( $order );
+
 		if ( 'success' === $status ) {
 
 			$transaction_id     = $request['transaction_id'];
 			$stripe_customer_id = $request['stripe_customer_id'];
+			$stripe_details     = isset( $request['stripe'] ) && is_array( $request['stripe'] ) ? $request['stripe'] : null;
 
 			if ( ! $transaction_id ) {
 				wp_send_json_error( 'Missing required parameters for order success', 400 );
+			}
+
+			if ( null !== $stripe_details ) {
+				$charge_fee = $stripe_details['charge_fee'];
+				$charge_net = $stripe_details['charge_net'];
+
+				if ( ! $charge_fee || ! $charge_net ) {
+					wp_send_json_error( 'Missing required parameters for order success', 400 );
+				}
+
+				$charge_fee /= 100;
+				$charge_net /= 100;
+
+				$order->update_meta_data( '_stripe_fee', $charge_fee );
+				$order->update_meta_data( '_stripe_net', $charge_net );
 			}
 
 			$order->set_transaction_id( $transaction_id );
@@ -55,7 +73,17 @@ function peachpay_rest_api_order_payment_status( $request ) {
 			$order->set_status( 'failed' );
 			$order->save();
 
-			$order->add_order_note( 'Payment failed. Reason: ' . $order_failure_message );
+			$order->add_order_note( 'Payment failed. Reason: "' . $order_failure_message . '"' );
+		} elseif ( 'cancelled' === $status ) {
+			$order_failure_message = $request['status_message'];
+
+			if ( ! $order_failure_message ) {
+				wp_send_json_error( 'Missing required parameters for order cancellation', 400 );
+			}
+			$order->set_status( 'cancelled' );
+			$order->save();
+
+			$order->add_order_note( 'Payment cancelled. Reason: "' . $order_failure_message . '"' );
 		}
 	} catch ( Exception $error ) {
 		wp_send_json_error( $error->getMessage(), 500 );
@@ -101,4 +129,20 @@ function peachpay_wc_ajax_order_payment_status() {
 		'status_message'     => $status_message,
 	);
 	peachpay_rest_api_order_payment_status( $request_data );
+}
+
+/**
+ * Right now we have a partnership with Japanized for WooCommerce where our
+ * plugin code is literally inside their plugin. To know which orders come from
+ * our plugin that is within their plugin, we need metadata on the order.
+ *
+ * This function can later be expanded if we have similar partnerships.
+ *
+ * @param WC_Order $order The order for which to add metadata.
+ * @return void
+ */
+function peachpay_add_partner_meta( $order ) {
+	if ( get_option( 'wc4jp_peachpay' ) ) {
+		$order->add_meta_data( 'peachpay_partner', 'wc4jp' );
+	}
 }

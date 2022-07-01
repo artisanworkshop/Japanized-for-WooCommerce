@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e
+
+if [ "$CI" = "true" ]; then
+    exit 0
+fi
+
+if ! pyenv --version >/dev/null 2>&1 ; then
+    echo "error, please install pyenv (https://github.com/pyenv/pyenv)"
+    exit 1
+fi
+
+if ! poetry --version >/dev/null 2>&1 ; then
+    echo "error, please install poetry (https://github.com/python-poetry/poetry)"
+    exit 1
+fi
+
+PYTHON_VERSION="3.10.0"
+
+if ! pyenv versions | grep --silent "$PYTHON_VERSION"; then
+    echo "installing python version ${PYTHON_VERSION}"
+    echo
+    pyenv install "$PYTHON_VERSION"
+fi
+
+pyenv local "$PYTHON_VERSION"
+eval "$(pyenv init --path)"
+poetry env use python
+
+poetry install
+
+poetry run python localize.py "$1"

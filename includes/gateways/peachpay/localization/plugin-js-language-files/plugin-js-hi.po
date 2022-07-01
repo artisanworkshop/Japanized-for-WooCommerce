@@ -1,0 +1,23 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: hi\n"
+
+
+msgid "Please select the remaining product options before adding this bundle to your cart."
+msgstr "इस बंडल को अपनी कार्ट में जोड़ने से पहले कृपया शेष उत्पाद विकल्पों का चयन करें।"
+
+msgid "Please select the remaining product options before adding this product to your cart."
+msgstr "इस उत्पाद को अपनी कार्ट में जोड़ने से पहले कृपया शेष उत्पाद विकल्पों का चयन करें।"
+
+msgid "Sorry, something went wrong. Please refresh the page and try again."
+msgstr "क्षमा करें, कुछ गलत हो गया। पृष्ठ को रीफ्रेश करें और पुन: प्रयास करें।"
+
+msgid "Sorry, this product is out of stock."
+msgstr "माफ़ कीजिये, यह माल स्टॉक में नहीं है।"
+
+msgid "This gift card has no money left."
+msgstr "इस गिफ्ट कार्ड में कोई पैसा नहीं बचा है।"
+

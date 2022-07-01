@@ -3,13 +3,13 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.4.1
+ * Version: 2.5.0
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 5.0
  * Tested up to: 6.0.0
  * WC requires at least: 5.0
- * WC tested up to: 6.5.1
+ * WC tested up to: 6.6.1
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
@@ -33,7 +33,7 @@ class JP4WC{
 	 *
 	 * @var string
 	 */
-	public $version = '2.4.1';
+	public $version = '2.5.0';
 
     /**
      * Japanized for WooCommerce Framework version.
@@ -154,6 +154,8 @@ class JP4WC{
         require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-addons-gateway-cod.php';
 		// Address Setting
         require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-address-fields.php';
+		// Automatic address entry from zip code using Yahoo API
+		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-address-yahoo-auto-entry.php';
 		// Delivery Setting
         require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-delivery.php';
 		// ADD COD Fee
@@ -200,6 +202,8 @@ class JP4WC{
         require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-affiliate.php';
 		// Add Subscriptions setting
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-subscriptions.php';
+		// Add Virtual setting
+		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-virtual.php';
 	}
 
     /**

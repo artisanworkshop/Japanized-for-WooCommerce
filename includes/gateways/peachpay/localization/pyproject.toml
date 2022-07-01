@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "translations"
+version = "0.1.0"
+description = ""
+authors = ["sryeturu <sandeep@peachpay.app>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.27.1"
+python-dotenv = "^0.19.2"
+polib = "^1.1.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -151,6 +151,20 @@ class JP4WC_Admin_Screen {
 			'jp4wc_general'
 		);
 
+		// virtual products Setting
+		add_settings_section(
+			'jp4wc_virtual', __( 'Virtual order Setting', 'woocommerce-for-japan' ),
+			'',
+			'jp4wc_setting'
+		);
+		add_settings_field(
+			'jp4wc_options_download',
+			__( 'Hide address input', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_virtual_order_billing_setting' ),
+			'jp4wc_setting',
+			'jp4wc_virtual'
+		);
+
 		// Delivery date designation
 		add_settings_section(
 			'jp4wc_delivery_date',
@@ -315,7 +329,7 @@ class JP4WC_Admin_Screen {
 			'jp4wc_payments'
 		);
 
-        // Display of Specified Commercial Transaction Law
+		// Display of Specified Commercial Transaction Law
         add_settings_section(
             'jp4wc_laws',
             __( 'Specified Commercial Transaction Law', 'woocommerce-for-japan' ),
@@ -492,7 +506,13 @@ class JP4WC_Admin_Screen {
 					'yahoo-app-id',
 					'no-ja',
 					'free-shipping',
-					'custom-email-customer-name'
+					'custom-email-customer-name',
+					'billing_postcode',//from virtual order
+					'billing_state',
+					'billing_city',
+					'billing_address_1',
+					'billing_address_2',
+					'billing_phone',
 				);
 				$this->jp4wc_save_methods( $add_methods );
 				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
@@ -704,7 +724,33 @@ class JP4WC_Admin_Screen {
 	}
 
 	/**
-	 * Free Shipping Display option.
+	 * Email customize Customer name option.
+	 */
+	public function jp4wc_virtual_order_billing_setting() {
+        $virtual_billing_setting = array(
+            'postcode' => __( 'Postcode / ZIP', 'woocommerce-for-japan' ),
+            'state' => __( 'Prefecture', 'woocommerce-for-japan' ),
+            'city' => __( 'Town / City', 'woocommerce-for-japan' ),
+            'address_1' => __( 'Street address', 'woocommerce-for-japan' ),
+            'address_2' => __( 'Apartment, suite, unit, etc. (optional)', 'woocommerce-for-japan' ),
+            'phone' => __( 'Phone', 'woocommerce-for-japan' )
+        );
+        foreach ($virtual_billing_setting as $slug => $label){
+		    $jp4wc_virtual_billing_setting = $this->jp4wc_plugin->jp4wc_option_setting( 'billing_'.$slug, $this->prefix );
+        ?>
+        <label for="woocommerce_input_postcode">
+		<input type="checkbox" id="woocommerce_input_virtula_billing_<?php echo $slug;?>" name="billing_<?php echo $slug;?>" value="1" <?php checked( $jp4wc_virtual_billing_setting, 1 ); ?>>
+            <?php echo $label;?>
+        </label>
+        <?php
+        }
+        echo '<p>';
+        _e( 'Check the address input field to hide in the virtual order.', 'woocommerce-for-japan' );
+		echo '</p>';
+	}
+
+	/**
+	 * Automatic zip code entry option.
 	 */
 	public function jp4wc_options_zip2address() {
 		$title = __( 'Automatic zip code entry', 'woocommerce-for-japan' );

@@ -63,5 +63,3 @@ function peachpay_wc_ajax_cart_calculation() {
 
 	wp_die();
 }
-
-

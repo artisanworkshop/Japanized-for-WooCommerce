@@ -28,18 +28,22 @@ function peachpay_wc_ajax_create_order() {
 		//
 		// || ! wp_verify_nonce( $_REQUEST['peachpay_checkout_nonce'], 'peachpay_process_checkout' ).
 	) {
-		return wp_send_json_error( __( 'PeachPay was unable to process your order, please try again.', 'peachpay-for-woocommerce' ) );
+		return wp_send_json_error( __( 'PeachPay was unable to process your order, please try again.', 'woocommerce-for-japan' ) );
 	}
 
 	peachpay_login_user();
 
 	if ( WC()->cart->is_empty() ) {
-		return wp_send_json_error( __( 'PeachPay was unable to process your order because the cart is empty.', 'peachpay-for-woocommerce' ) );
+		return wp_send_json_error( __( 'PeachPay was unable to process your order because the cart is empty.', 'woocommerce-for-japan' ) );
 	}
 
 	if ( ! defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
 		define( 'WOOCOMMERCE_CHECKOUT', true );
 	}
+
+	// This constant is to ensure PeachPay is not excluded from available
+	// gateways while within the ?wc-ajax=order-create endpoint.
+	define( 'PEACHPAY_CHECKOUT', 1 );
 
 	$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
 

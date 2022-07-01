@@ -130,26 +130,55 @@
                 return;
             }
 
-            stripe.retrievePaymentIntent(clientSecret).then((result) => {
+            stripe.retrievePaymentIntent(clientSecret).then(function (result) {
                 if (result.paymentIntent) {
                     var paymentIntent = result.paymentIntent;
+                    //https://stripe.com/docs/payments/intents#intent-statuses
                     switch (paymentIntent.status) {
                         case "succeeded":
                         case "processing":
                             revealManualRedirect(state.successURL, state.color);
                             return;
-                        case "requires_payment_method":
                         default:
-                            revealManualRedirect(state.failureURL, state.color);
+                            cancelPaymentIntent(state, paymentIntent.id, function () {
+                                revealManualRedirect(state.failureURL, state.color);
+                            })
                             return;
                     }
                 }
-            }).catch(() => {
+            }).catch(function () {
                 revealManualRedirect(state.failureURL, state.color);
                 return;
             });
 
-            return true;
+            return;
+        }
+
+        function cancelPaymentIntent(state, paymentIntentId, callback) {
+            try {
+                fetch(state.intentCancelURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session: {
+                            id: state.sessionId,
+                            merchant_url: location.hostname,
+                            stripe: {
+                                connect_id: state.connectId,
+                                payment_intent_id: paymentIntentId,
+                                cancellation_reason: 'requested_by_customer'
+                            },
+                        },
+                    }),
+                }).then(function () {
+                    callback();
+                }).catch(function () {
+
+                    callback();
+                });
+            } catch (error) {
+                callback();
+            }
         }
 
         function clearSession() {
