@@ -5,7 +5,7 @@
  * The Yahoo API to use is as follows
  * https://developer.yahoo.co.jp/webapi/map/openlocalplatform/v1/zipcodesearch.html
  *
- * @version     2.5.0
+ * @version     2.5.1
  * @category    Automatic address entry from zip code using Yahoo API
  * @author      Artisan Workshop
  */
@@ -90,7 +90,7 @@ class YahooAutoPostcode4jp{
                 }else if( zipCount > 7) {
                     const url = "<?php echo $endpoint_url;?>";
                     let param = {
-                        <?php if(isset($yahoo_app_id)) echo 'appid: '.$yahoo_app_id.','; ?>
+                        <?php if(isset($yahoo_app_id)) echo 'appid: "'.$yahoo_app_id.'",'; ?>
                         post_code: $("#<?php echo $method;?>_postcode").val()
                     };
                     $.ajax({

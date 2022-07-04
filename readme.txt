@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 5.8.2
-Stable tag: 2.3.7
+Stable tag: 2.5.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -59,189 +59,22 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
-= 2.3.8 - 2021-12-07 =
-* Dev - Add felmat Affiliate Setting.
-* Fixed - auto postal code input.
-* Dev - Add PeachPay payment.
+= 2.5.1 - 2022-07-04 =
+* Fixed - Automatic address entry from zip code using Yahoo! API bug.
 
-= 2.3.7 - 2021-12-03 =
-* Fixed - Admin notice's bug.
+= 2.5.0 - 2022-07-01 =
+* Fixed - Replaced the old Yahoo! API with the new Yahoo! API mechanism.
+* Dev - For download products, a function to reduce input items
 
-= 2.3.6 - 2021-11-16 =
-* Fixed - Admin notice's bug.
+= 2.4.1 - 2022-06-03 =
+* Fixed - The PayPal Payments bug.
+* Fixed - Some localize text-domains.
+* Dev - Add argument $order for following filter hooks, wc4jp_delivery_details_text, wc4jp_delivery_date_text, wc4jp_time_zone_text
 
-= 2.3.4 & 2.3.5 - 2021-11-12 =
-* Add - Admin notice for our PR.
-* Fixed - Some codes are cleared.
-
-= 2.3.1 & 2.3.2 & 2.3.3 - 2021-10-27 =
-* Fixed - A8.net affiliate tracking tag.
-
-= 2.3.0 - 2021-10-25 =
-* Dev - Add Affiliate Setting.
-
-= 2.2.21 - 2021-09-07 =
-* Fixed - Some bugs at LINE Pay payment
-* Add - Add jp4wc_bank_details as filter hook at Japan Bank Payment
-* Add - Add jp4wc_display_date_and_time_zone as filter hook at Delivery date
-* Fixed - Shipping Phone for Compatibility fixes for WooCommerce 5.6
-* Update - JP4WC Framework to v2.0.12
-
-= 2.2.20 - 2021-08-23 =
-* Fixed - Some bugs at LINE Pay payment
-* Fixed - Some bugs at Paidy payment
-
-= 2.2.19 - 2021-08-19 =
-* Dev - Add Payment icon for some Japanese payments.
-* Dev - Change first name to full name in e-mail.
-
-= 2.2.18 - 2021-07-29 =
-* Fixed - PayPal Payment class conflict.
-
-= 2.2.17 - 2021-07-27 =
-* Fixed - Paidy logo renewal
-* Update - PayPal Express checkout payment to v2.1.2
-* Update - JP4WC Framework to v2.0.11
-* Dev - News for admin dashboard
-* Fixed - delivery class bug fixed
-* Enhancement - some css files change to scss
-
-= 2.2.16 - 2021-06-14 =
-* Fixed - Support for product names that include double quotes at Paidy
-* Fixed - Last name and first name reversal at LINE PAY
-
-= 2.2.15 - 2021-05-17 =
-* Fixed - save Shipping time bug.
-
-= 2.2.14 - 2021-04-25 =
-* Fixed - Shipping address display problem.
-* Fixed - Address display for PayPal payments.
-* Fixed - Save and view shipping date.
-
-= 2.2.13 - 2021-04-15 =
-* Update - JP4WC Framework 2.0.9
-* Fixed - LINE PAY error display for hiragana input.
-* Fixed - Display shipping phone data at e-mail.
-* Fixed - Hide date and time zone specifications for virtual products.
-* Fixed - Label ID missing
-
-= 2.2.12 - 2021-01-13 =
-* Fixed - Fixed holiday settings for estimated delivery dates
-* Fixed - read css and js file at admin  
-
-= 2.2.10 & 11 - 2020-12-15 =
-* Fixed - PHP7.3 Supports PHP 7.3 and below.
-
-= 2.2.9 - 2020-12-14 =
-* Dev - Change the Subscription product Price string.
-
-= 2.2.8 - 2020-12-01 =
-* Fix - remove PayPal BN code.
-
-= 2.2.7 - 2020-11-02 =
-* Dev - add check required Katakana 
-* Fix - some bug fix at PayPal Checkout.
-
-= 2.2.6 - 2020-08-20 =
-* Enhancement - Compatibility fixes for WordPress 5.5
-* Fix - some bug fix at admin.
-
-= 2.2.5 - 2020-07-02 =
-* Fix - post code automation and linepay bug.
-
-= 2.2.4 - 2020-06-12 =
-* Fix - honorific suffix bug.
-
-= 2.2.3 - 2020-06-11 =
-* Update - Paidy payment gateway 1.1.5
-
-= 2.2.2 - 2020-05-11 =
-* Dev - Supports Paidy and LINE Pay  for virtual products
-* Dev - Enabled to display the day of the week on the scheduled delivery date.
-* Fix - Corrected the Japanese display of the name.
-* Update - JP4WC Framework 2.0.4
-
-= 2.2.1 - 2020-01-24 =
-* Fix - LINE Pay bugs and update.
-
-= 2.2.0 - 2020-01-16 =
-* Add - LINE Pay Checkout gateway.
-* Fix - Paidy payment bugs and update.
-
-= 2.1.16 - 2019-12-30 =
-* Fix - Paidy payment webhook reaction's bug.
-
-= 2.1.15 - 2019-12-27 =
-* Tweat - Paidy payment webhook reaction.
-
-= 2.1.14 - 2019-12-19 =
-* Fix - Payment display setting.
-* Fix - Paidy payment bugs fixed.
-
-= 2.1.12 &2.1.13 - 2019-12-17 =
-* Fix - Paidy payment bugs at terms fixed.
-
-= 2.1.11 - 2019-12-10 =
-* Fix - Shop owner admin display setting.
-
-= 2.1.10 - 2019-11-25 =
-* Update - JP4WC Framework 2.0.3
-* Fix - Post and Bank payment discription bug fixed
-
-= 2.1.8 & 2.1.9 - 2019-11-19 =
-* Fix - Paidy payment bugs at terms fixed.
-
-= 2.1.7 - 2019-11-13 =
-* Fix - Paidy payment bugs at terms fixed.
-
-= 2.1.6 - 2019-10-19 =
-* Fixed - Paidy bug fixed.
-
-= 2.1.5 - 2019-09-27 =
-* Fixed - COD double display message thanks page fixed.
-* Fixed - Paidy bug fixed.
-
-= 2.1.4 - 2019-09-26 =
-* Fixed - Paidy bug fixed.
-
-= 2.1.3 - 2019-09-21 =
-* Fixed - Bug fixed.
-
-= 2.1.2 - 2019-09-19 =
-* Fixed - Supports WPML for addresses, etc.
-
-= 2.1.1 - 2019-09-18 =
-* Fixed - yomigana not require bug for Paidy Payment.
-
-= 2.1.0 - 2019-09-09 =
-* Add - Paidy payment gateway.
-* Fixed - Paidy payment gateway bug for other payment plugins.
-
-= 2.0.7 - 2019-09-07 =
-* Stop - Paidy payment gateway. fatal error happened.
-
-= 2.0.6 - 2019-09-06 =
-* Add - Paidy payment gateway.
-
-= 2.0.5 - 2019-09-04 =
-* Fix - COD warnig error escape.
-
-= 2.0.4 - 2019-09-02 =
-* Fix - But some text fixed and add explanation.
-
-= 2.0.3 - 2019-08-20 =
-* Fix - download order address bug and some fixed.
-
-= 2.0.2 - 2019-08-15 =
-* Fix - COD culculation error.
-
-= 2.0.1 - 2019-08-14 =
-* Fix - file pass error.
-
-= 2.0.0 - 2019-08-14 =
-* Dev - Notation based on Specified Commercial Transaction Law  
-* Dev - Add Japanized for PayPal Checkout method.
-* Fix - Significant coding review and correction.
+= 2.4.0 - 2022-06-01 =
+* Dev - Add New PayPal Checkout Payments.
+* Dev - Add telephone setting at law page.
+* Update - PeachPay 1.65.0.
 
 [more older](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
