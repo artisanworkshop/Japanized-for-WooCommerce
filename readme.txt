@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, shohei.tanaka, mt8biz
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 5.8.2
-Stable tag: 2.5.1
+Tested up to: 6.0.0
+Stable tag: 2.5.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,9 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.5.2 - 2022-07-05 =
+* Fixed - Paidy Payments bug.
 
 = 2.5.1 - 2022-07-04 =
 * Fixed - Automatic address entry from zip code using Yahoo! API bug.
