@@ -59,7 +59,7 @@ function yahoo_api_postcode( $request ){
 	    $set_prefecture_code = 0;
 	    $set_prefecture_name = 0;
 		foreach($states['JP'] as $key => $value){
-			if(substr($value, 0, 3) === substr( $postcode_address, 0, 3)){
+			if(mb_substr($value, 0, 3) === mb_substr( $postcode_address, 0, 3)){
 				$set_prefecture_code = $key;
 				$set_prefecture_name = $value;
 			}

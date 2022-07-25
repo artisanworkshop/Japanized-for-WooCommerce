@@ -59,6 +59,9 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
+= 2.5.3 - 2022-07-25 =
+* Fixed - Automatic address entry from zip code using Yahoo! API bug.
+
 = 2.5.2 - 2022-07-05 =
 * Fixed - Paidy Payments bug.
 

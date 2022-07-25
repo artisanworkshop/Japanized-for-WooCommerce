@@ -3,13 +3,13 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.5.2
+ * Version: 2.5.3
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 5.0
- * Tested up to: 6.0.0
+ * Tested up to: 6.0.1
  * WC requires at least: 5.0
- * WC tested up to: 6.6.1
+ * WC tested up to: 6.7.0
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
