@@ -237,7 +237,7 @@ if (!class_exists('\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\JP4
             $jp4wc_options_setting = $this->jp4wc_option_setting($slug, $prefix, $array_name);
             $size_text ='';
             foreach( $size_array as $key => $value ){
-                $size_text .= $key.'="'.$value.'" ';
+                $size_text .= $key.'='.$value.' ';
             }
             if($jp4wc_options_setting)$default_value = $jp4wc_options_setting;
             ?>

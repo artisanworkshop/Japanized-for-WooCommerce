@@ -48,8 +48,10 @@ class JP4WC_Shortcodes{
             'law-shop-name',
             'law-company-name',
             'law-owner-name',
+	        'law-manager-name',
             'law-location',
             'law-contact',
+	        'law-tel',
             'law-price',
             'law-payment',
             'law-purchase',
@@ -57,24 +59,24 @@ class JP4WC_Shortcodes{
             'law-cost',
             'law-return',
             'law-special',
-	        'law-tel',
         );
         $laws_array = array(
             __( 'Shop Name', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[0]),
             __( 'Sales company name (company name)', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[1]),
             __( 'Owner Name', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[2]),
-            __( 'Location', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[3]),
-            __( 'Contact', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[4]),
-            __( 'Telephone', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[12]),
-            __( 'Selling price', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[5]),
-            __( 'Payment method', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[6]),
-            __( 'Product purchase method', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[7]),
-            __( 'Product delivery time', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[8]),
-            __( 'Costs other than product charges', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[9]),
-            __( 'Returns / Cancellations', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[10]),
-            __( 'Special conditions', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[11]),
+            __( 'Manager Name', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[3]),
+            __( 'Location', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[4]),
+            __( 'Contact', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[5]),
+            __( 'Telephone', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[6]),
+            __( 'Selling price', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[7]),
+            __( 'Payment method', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[8]),
+            __( 'Product purchase method', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[9]),
+            __( 'Product delivery time', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[10]),
+            __( 'Costs other than product charges', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[11]),
+            __( 'Returns / Cancellations', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[12]),
+            __( 'Special conditions', 'woocommerce-for-japan' ) => get_option($prefix.$law_options[13]),
         );
-        $content = '<table class="wp-block-table is-style-stripes">
+        $content = '<div class="jp4wc-law"><table class="wp-block-table is-style-stripes">
     <tbody>';
         $allowed_html = array(
             'a' => array( 'href' => array (), 'target' => array(), ),
@@ -90,7 +92,7 @@ class JP4WC_Shortcodes{
             }
         }
         $content .= '    </tbody>
-</table>';
+</table></div>';
         if( isset( $no_content ) ){
             $count = count($no_content);
             $i = 0;
