@@ -64,19 +64,19 @@ class DeactivateNote {
 		$note->set_type( Note::E_WC_ADMIN_NOTE_INFORMATIONAL );
 		$note->set_source( 'woocommerce-paypal-payments' );
 		$note->set_title(
-			__( 'Action Required: Deactivate PayPal Checkout', 'woocommerce-paypal-payments' )
+			__( 'Action Required: Deactivate PayPal Checkout', 'woocommerce-for-japan' )
 		);
 		$note->set_content( $msg );
 		$note->add_action(
 			'deactivate-paypal-checkout-plugin',
-			__( 'Deactivate PayPal Checkout', 'woocommerce-paypal-payments' ),
+			__( 'Deactivate PayPal Checkout', 'woocommerce-for-japan' ),
 			admin_url( 'plugins.php?action=deactivate&plugin=' . rawurlencode( PPECHelper::PPEC_PLUGIN_FILE ) . '&plugin_status=all&paged=1&_wpnonce=' . wp_create_nonce( 'deactivate-plugin_' . PPECHelper::PPEC_PLUGIN_FILE ) ),
 			Note::E_WC_ADMIN_NOTE_UNACTIONED,
 			true
 		);
 		$note->add_action(
 			'learn-more',
-			__( 'Learn More', 'woocommerce-paypal-payments' ),
+			__( 'Learn More', 'woocommerce-for-japan' ),
 			'https://docs.woocommerce.com/document/woocommerce-paypal-payments/paypal-payments-upgrade-guide/',
 			Note::E_WC_ADMIN_NOTE_UNACTIONED
 		);

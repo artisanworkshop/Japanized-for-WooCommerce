@@ -542,12 +542,14 @@ class JP4WC_Admin_Screen {
 							$woocommerce_settings['enabled'] = 'yes';
 							update_option( 'woocommerce_'.$payment_method.'_settings', $woocommerce_settings);
 						}
+                        do_action( 'jp4wc_save_methods_activation', $payment_method );
 					}else{
 						update_option( $this->prefix.$payment_method, '');
 						if(isset($woocommerce_settings)){
 							$woocommerce_settings['enabled'] = 'no';
 							update_option( 'woocommerce_'.$payment_method.'_settings', $woocommerce_settings);
 						}
+                        do_action( 'jp4wc_save_methods_deactivation', $payment_method );
 					}
 				}
 				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );

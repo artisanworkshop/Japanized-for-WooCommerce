@@ -34,8 +34,8 @@ class FeesRenderer {
 		$fee = $breakdown['paypal_fee'] ?? null;
 		if ( is_array( $fee ) ) {
 			$html .= $this->render_money_row(
-				__( 'PayPal Fee:', 'woocommerce-paypal-payments' ),
-				__( 'The fee PayPal collects for the transaction.', 'woocommerce-paypal-payments' ),
+				__( 'PayPal Fee:', 'woocommerce-for-japan' ),
+				__( 'The fee PayPal collects for the transaction.', 'woocommerce-for-japan' ),
 				$fee['value'],
 				$fee['currency_code'],
 				true
@@ -45,8 +45,8 @@ class FeesRenderer {
 		$net = $breakdown['net_amount'] ?? null;
 		if ( is_array( $net ) ) {
 			$html .= $this->render_money_row(
-				__( 'PayPal Payout:', 'woocommerce-paypal-payments' ),
-				__( 'The net total that will be credited to your PayPal account.', 'woocommerce-paypal-payments' ),
+				__( 'PayPal Payout:', 'woocommerce-for-japan' ),
+				__( 'The net total that will be credited to your PayPal account.', 'woocommerce-for-japan' ),
 				$net['value'],
 				$net['currency_code']
 			);

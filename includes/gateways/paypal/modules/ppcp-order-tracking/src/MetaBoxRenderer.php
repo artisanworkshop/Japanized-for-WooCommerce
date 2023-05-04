@@ -92,13 +92,13 @@ class MetaBoxRenderer {
 		$action = ! $tracking_info ? 'create' : 'update';
 		?>
 		<p>
-			<label for="<?php echo esc_attr( self::NAME_PREFIX ); ?>-transaction_id"><?php echo esc_html__( 'Transaction ID', 'woocommerce-paypal-payments' ); ?></label>
+			<label for="<?php echo esc_attr( self::NAME_PREFIX ); ?>-transaction_id"><?php echo esc_html__( 'Transaction ID', 'woocommerce-for-japan' ); ?></label>
 			<input type="text" disabled class="<?php echo esc_attr( self::NAME_PREFIX ); ?>-transaction_id" id="<?php echo esc_attr( self::NAME_PREFIX ); ?>-transaction_id" name="<?php echo esc_attr( self::NAME_PREFIX ); ?>[transaction_id]" value="<?php echo esc_html( $transaction_id ); ?>"/></p>
 		<p>
-			<label for="<?php echo esc_attr( self::NAME_PREFIX ); ?>-tracking_number"><?php echo esc_html__( 'Tracking Number', 'woocommerce-paypal-payments' ); ?></label>
+			<label for="<?php echo esc_attr( self::NAME_PREFIX ); ?>-tracking_number"><?php echo esc_html__( 'Tracking Number', 'woocommerce-for-japan' ); ?></label>
 			<input type="text" class="<?php echo esc_attr( self::NAME_PREFIX ); ?>-tracking_number" id="<?php echo esc_attr( self::NAME_PREFIX ); ?>-tracking_number" name="<?php echo esc_attr( self::NAME_PREFIX ); ?>[tracking_number]" value="<?php echo esc_html( $tracking_number ); ?>"/></p>
 		<p>
-			<label for="<?php echo esc_attr( self::NAME_PREFIX ); ?>-status"><?php echo esc_html__( 'Status', 'woocommerce-paypal-payments' ); ?></label>
+			<label for="<?php echo esc_attr( self::NAME_PREFIX ); ?>-status"><?php echo esc_html__( 'Status', 'woocommerce-for-japan' ); ?></label>
 			<select class="<?php echo esc_attr( self::NAME_PREFIX ); ?>-status" id="<?php echo esc_attr( self::NAME_PREFIX ); ?>-status" name="<?php echo esc_attr( self::NAME_PREFIX ); ?>[status]">
 				<?php foreach ( $statuses as $key => $status ) : ?>
 					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $status_value, $key ); ?>><?php echo esc_html( $status ); ?></option>
@@ -106,9 +106,9 @@ class MetaBoxRenderer {
 			</select>
 		</p>
 		<p>
-			<label for="ppcp-tracking-carrier"><?php echo esc_html__( 'Carrier', 'woocommerce-paypal-payments' ); ?></label>
+			<label for="ppcp-tracking-carrier"><?php echo esc_html__( 'Carrier', 'woocommerce-for-japan' ); ?></label>
 			<select class="ppcp-tracking-carrier" id="ppcp-tracking-carrier" name="ppcp-tracking[carrier]">
-				<option value=""><?php echo esc_html__( 'Select Carrier', 'woocommerce-paypal-payments' ); ?></option>
+				<option value=""><?php echo esc_html__( 'Select Carrier', 'woocommerce-for-japan' ); ?></option>
 				<?php
 				foreach ( $carriers as $carrier ) :
 					$country       = $carrier['name'] ?? '';

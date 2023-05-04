@@ -54,14 +54,14 @@ return array(
 				'nonce'               => wp_create_nonce( $container->get( 'uninstall.clear-db-endpoint' ) ),
 				'button'              => '.ppcp-clear_db_now',
 				'messageSelector'     => '.clear-db-info-message',
-				'confirmationMessage' => __( 'Are you sure? the operation will remove all plugin data.', 'woocommerce-paypal-payments' ),
+				'confirmationMessage' => __( 'Are you sure? the operation will remove all plugin data.', 'woocommerce-for-japan' ),
 				'successMessage'      => sprintf(
 					'<div class="updated clear-db-info-message"><p><strong>%1$s</strong></p></div>',
-					esc_html__( 'The plugin data is successfully cleared.', 'woocommerce-paypal-payments' )
+					esc_html__( 'The plugin data is successfully cleared.', 'woocommerce-for-japan' )
 				),
 				'failureMessage'      => sprintf(
 					'<div class="error clear-db-info-message"><p><strong>%1$s</strong></p></div>',
-					esc_html__( 'Operation failed. Check WooCommerce logs for more details.', 'woocommerce-paypal-payments' )
+					esc_html__( 'Operation failed. Check WooCommerce logs for more details.', 'woocommerce-for-japan' )
 				),
 				'redirectUrl'         => admin_url( 'admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway' ),
 			),

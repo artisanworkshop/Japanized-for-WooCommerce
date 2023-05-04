@@ -40,7 +40,7 @@ trait TransactionIdHandlingTrait {
 			$wc_order->add_order_note(
 				sprintf(
 					/* translators: %s is the PayPal transaction ID */
-					__( 'PayPal transaction ID: %s', 'woocommerce-paypal-payments' ),
+					__( 'PayPal transaction ID: %s', 'woocommerce-for-japan' ),
 					$transaction_id
 				)
 			);

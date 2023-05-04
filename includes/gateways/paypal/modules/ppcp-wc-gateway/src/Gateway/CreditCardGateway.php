@@ -255,7 +255,7 @@ class CreditCardGateway extends \WC_Payment_Gateway_CC {
 			return $translation;
 		}
 
-		return __( 'CVV', 'woocommerce-paypal-payments' );
+		return __( 'CVV', 'woocommerce-for-japan' );
 	}
 
 	/**

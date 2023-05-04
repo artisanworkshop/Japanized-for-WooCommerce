@@ -101,11 +101,11 @@ class OXXOGateway extends WC_Payment_Gateway {
 	) {
 		$this->id = self::ID;
 
-		$this->method_title       = __( 'OXXO', 'woocommerce-paypal-payments' );
-		$this->method_description = __( 'OXXO is a Mexican chain of convenience stores.<br />*Get PayPal account permission to use OXXO payment functionality by contacting us at (+52) 800-925-0304', 'woocommerce-paypal-payments' );
+		$this->method_title       = __( 'OXXO', 'woocommerce-for-japan' );
+		$this->method_description = __( 'OXXO is a Mexican chain of convenience stores.<br />*Get PayPal account permission to use OXXO payment functionality by contacting us at (+52) 800-925-0304', 'woocommerce-for-japan' );
 
 		$this->title       = $this->get_option( 'title', $this->method_title );
-		$this->description = $this->get_option( 'description', __( 'OXXO allows you to pay bills and online purchases in-store with cash.', 'woocommerce-paypal-payments' ) );
+		$this->description = $this->get_option( 'description', __( 'OXXO allows you to pay bills and online purchases in-store with cash.', 'woocommerce-for-japan' ) );
 
 		$this->init_form_fields();
 		$this->init_settings();
@@ -135,26 +135,26 @@ class OXXOGateway extends WC_Payment_Gateway {
 	public function init_form_fields() {
 		$this->form_fields = array(
 			'enabled'     => array(
-				'title'       => __( 'Enable/Disable', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Enable/Disable', 'woocommerce-for-japan' ),
 				'type'        => 'checkbox',
-				'label'       => __( 'OXXO', 'woocommerce-paypal-payments' ),
+				'label'       => __( 'OXXO', 'woocommerce-for-japan' ),
 				'default'     => 'no',
 				'desc_tip'    => true,
-				'description' => __( 'Enable/Disable OXXO payment gateway.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'Enable/Disable OXXO payment gateway.', 'woocommerce-for-japan' ),
 			),
 			'title'       => array(
-				'title'       => __( 'Title', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Title', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'default'     => $this->title,
 				'desc_tip'    => true,
-				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-for-japan' ),
 			),
 			'description' => array(
-				'title'       => __( 'Description', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Description', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'default'     => $this->description,
 				'desc_tip'    => true,
-				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-for-japan' ),
 			),
 		);
 	}

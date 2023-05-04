@@ -96,7 +96,7 @@ class PaymentCaptureRefunded implements RequestHandler {
 		if ( ! is_a( $wc_order, \WC_Order::class ) ) {
 			$message = sprintf(
 			// translators: %s is the PayPal refund Id.
-				__( 'Order for PayPal refund %s not found.', 'woocommerce-paypal-payments' ),
+				__( 'Order for PayPal refund %s not found.', 'woocommerce-for-japan' ),
 				$refund_id
 			);
 			$this->logger->log(
@@ -132,7 +132,7 @@ class PaymentCaptureRefunded implements RequestHandler {
 				'warning',
 				sprintf(
 					// translators: %s is the order id.
-					__( 'Order %s could not be refunded', 'woocommerce-paypal-payments' ),
+					__( 'Order %s could not be refunded', 'woocommerce-for-japan' ),
 					(string) $wc_order->get_id()
 				),
 				array(

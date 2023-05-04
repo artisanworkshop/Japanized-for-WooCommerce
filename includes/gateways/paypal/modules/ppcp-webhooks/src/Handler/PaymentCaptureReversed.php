@@ -98,7 +98,7 @@ class PaymentCaptureReversed implements RequestHandler {
 		if ( ! is_a( $wc_order, \WC_Order::class ) ) {
 			$message = sprintf(
 			// translators: %s is the PayPal refund Id.
-				__( 'Order for PayPal refund %s not found.', 'woocommerce-paypal-payments' ),
+				__( 'Order for PayPal refund %s not found.', 'woocommerce-for-japan' ),
 				isset( $request['resource']['id'] ) ? $request['resource']['id'] : ''
 			);
 			$this->logger->log(
@@ -133,7 +133,7 @@ class PaymentCaptureReversed implements RequestHandler {
 			(string) $wc_order->get_id()
 		) : sprintf(
 			// translators: %1$s is the order id.
-			__( 'Failed to cancel order %1$s through PayPal', 'woocommerce-paypal-payments' ),
+			__( 'Failed to cancel order %1$s through PayPal', 'woocommerce-for-japan' ),
 			(string) $wc_order->get_id()
 		);
 		$this->logger->log(

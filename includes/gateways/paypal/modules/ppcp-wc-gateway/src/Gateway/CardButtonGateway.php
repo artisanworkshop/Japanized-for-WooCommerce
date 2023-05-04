@@ -196,9 +196,9 @@ class CardButtonGateway extends \WC_Payment_Gateway {
 			);
 		}
 
-		$this->method_title       = __( 'Standard Card Button', 'woocommerce-paypal-payments' );
-		$this->method_description = __( 'The separate payment gateway with the card button. If disabled, the button is included in the PayPal gateway.', 'woocommerce-paypal-payments' );
-		$this->title              = $this->get_option( 'title', __( 'Debit & Credit Cards', 'woocommerce-paypal-payments' ) );
+		$this->method_title       = __( 'Standard Card Button', 'woocommerce-for-japan' );
+		$this->method_description = __( 'The separate payment gateway with the card button. If disabled, the button is included in the PayPal gateway.', 'woocommerce-for-japan' );
+		$this->title              = $this->get_option( 'title', __( 'Debit & Credit Cards', 'woocommerce-for-japan' ) );
 		$this->description        = $this->get_option( 'description', '' );
 
 		$this->init_form_fields();
@@ -228,26 +228,26 @@ class CardButtonGateway extends \WC_Payment_Gateway {
 	public function init_form_fields() {
 		$this->form_fields = array(
 			'enabled'     => array(
-				'title'       => __( 'Enable/Disable', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Enable/Disable', 'woocommerce-for-japan' ),
 				'type'        => 'checkbox',
-				'label'       => __( 'Enable Standard Card Button gateway', 'woocommerce-paypal-payments' ),
+				'label'       => __( 'Enable Standard Card Button gateway', 'woocommerce-for-japan' ),
 				'default'     => $this->default_enabled ? 'yes' : 'no',
 				'desc_tip'    => true,
-				'description' => __( 'Enable/Disable the separate payment gateway with the card button.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'Enable/Disable the separate payment gateway with the card button.', 'woocommerce-for-japan' ),
 			),
 			'title'       => array(
-				'title'       => __( 'Title', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Title', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'default'     => $this->title,
 				'desc_tip'    => true,
-				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-for-japan' ),
 			),
 			'description' => array(
-				'title'       => __( 'Description', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Description', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'default'     => $this->description,
 				'desc_tip'    => true,
-				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-for-japan' ),
 			),
 			'ppcp'        => array(
 				'type' => 'ppcp',

@@ -103,9 +103,9 @@ class WCGatewayModule implements ModuleInterface {
 				$fraud = $capture->fraud_processor_response();
 				if ( $fraud ) {
 					$fraud_responses               = $fraud->to_array();
-					$avs_response_order_note_title = __( 'Address Verification Result', 'woocommerce-paypal-payments' );
+					$avs_response_order_note_title = __( 'Address Verification Result', 'woocommerce-for-japan' );
 					/* translators: %1$s is AVS order note title, %2$s is AVS order note result markup */
-					$avs_response_order_note_format        = __( '%1$s %2$s', 'woocommerce-paypal-payments' );
+					$avs_response_order_note_format        = __( '%1$s %2$s', 'woocommerce-for-japan' );
 					$avs_response_order_note_result_format = '<ul class="ppcp_avs_result">
                                                                 <li>%1$s</li>
                                                                 <ul class="ppcp_avs_result_inner">
@@ -116,11 +116,11 @@ class WCGatewayModule implements ModuleInterface {
 					$avs_response_order_note_result        = sprintf(
 						$avs_response_order_note_result_format,
 						/* translators: %s is fraud AVS code */
-						sprintf( __( 'AVS: %s', 'woocommerce-paypal-payments' ), esc_html( $fraud_responses['avs_code'] ) ),
+						sprintf( __( 'AVS: %s', 'woocommerce-for-japan' ), esc_html( $fraud_responses['avs_code'] ) ),
 						/* translators: %s is fraud AVS address match */
-						sprintf( __( 'Address Match: %s', 'woocommerce-paypal-payments' ), esc_html( $fraud_responses['address_match'] ) ),
+						sprintf( __( 'Address Match: %s', 'woocommerce-for-japan' ), esc_html( $fraud_responses['address_match'] ) ),
 						/* translators: %s is fraud AVS postal match */
-						sprintf( __( 'Postal Match: %s', 'woocommerce-paypal-payments' ), esc_html( $fraud_responses['postal_match'] ) )
+						sprintf( __( 'Postal Match: %s', 'woocommerce-for-japan' ), esc_html( $fraud_responses['postal_match'] ) )
 					);
 					$avs_response_order_note = sprintf(
 						$avs_response_order_note_format,
@@ -133,7 +133,7 @@ class WCGatewayModule implements ModuleInterface {
 					$cvv_response_order_note        = sprintf(
 						$cvv_response_order_note_format,
 						/* translators: %s is fraud CVV match */
-						sprintf( __( 'CVV2 Match: %s', 'woocommerce-paypal-payments' ), esc_html( $fraud_responses['cvv_match'] ) )
+						sprintf( __( 'CVV2 Match: %s', 'woocommerce-for-japan' ), esc_html( $fraud_responses['cvv_match'] ) )
 					);
 					$wc_order->add_order_note( $cvv_response_order_note );
 				}
@@ -374,7 +374,7 @@ class WCGatewayModule implements ModuleInterface {
 
 				$wc_order->update_status(
 					'failed',
-					__( 'Could not capture the payment.', 'woocommerce-paypal-payments' )
+					__( 'Could not capture the payment.', 'woocommerce-for-japan' )
 				);
 			},
 			10,
@@ -486,7 +486,7 @@ class WCGatewayModule implements ModuleInterface {
 						function () use ( $exception ) {
 							printf(
 								'<div class="notice notice-error"><p>%1$s</p><p>%2$s</p></div>',
-								esc_html__( 'Authentication with PayPal failed: ', 'woocommerce-paypal-payments' ) . esc_attr( $exception->getMessage() ),
+								esc_html__( 'Authentication with PayPal failed: ', 'woocommerce-for-japan' ) . esc_attr( $exception->getMessage() ),
 								wp_kses_post(
 									__(
 										'Please verify your API Credentials and try again to connect your PayPal business account. Visit the <a href="https://docs.woocommerce.com/document/woocommerce-paypal-payments/" target="_blank">plugin documentation</a> for more information about the setup.',

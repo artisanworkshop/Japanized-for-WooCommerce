@@ -131,12 +131,12 @@ class PayUponInvoiceGateway extends WC_Payment_Gateway {
 	) {
 		$this->id = self::ID;
 
-		$this->method_title       = __( 'Pay upon Invoice', 'woocommerce-paypal-payments' );
-		$this->method_description = __( 'Pay upon Invoice is an invoice payment method in Germany. It is a local buy now, pay later payment method that allows the buyer to place an order, receive the goods, try them, verify they are in good order, and then pay the invoice within 30 days.', 'woocommerce-paypal-payments' );
+		$this->method_title       = __( 'Pay upon Invoice', 'woocommerce-for-japan' );
+		$this->method_description = __( 'Pay upon Invoice is an invoice payment method in Germany. It is a local buy now, pay later payment method that allows the buyer to place an order, receive the goods, try them, verify they are in good order, and then pay the invoice within 30 days.', 'woocommerce-for-japan' );
 
 		$gateway_settings  = get_option( 'woocommerce_ppcp-pay-upon-invoice-gateway_settings' );
 		$this->title       = $gateway_settings['title'] ?? $this->method_title;
-		$this->description = $gateway_settings['description'] ?? __( 'Once you place an order, pay within 30 days. Our payment partner Ratepay will send you payment instructions.', 'woocommerce-paypal-payments' );
+		$this->description = $gateway_settings['description'] ?? __( 'Once you place an order, pay within 30 days. Our payment partner Ratepay will send you payment instructions.', 'woocommerce-for-japan' );
 
 		$this->init_form_fields();
 		$this->init_settings();
@@ -171,52 +171,52 @@ class PayUponInvoiceGateway extends WC_Payment_Gateway {
 	public function init_form_fields() {
 		$this->form_fields = array(
 			'enabled'                       => array(
-				'title'       => __( 'Enable/Disable', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Enable/Disable', 'woocommerce-for-japan' ),
 				'type'        => 'checkbox',
-				'label'       => __( 'Pay upon Invoice', 'woocommerce-paypal-payments' ),
+				'label'       => __( 'Pay upon Invoice', 'woocommerce-for-japan' ),
 				'default'     => 'no',
 				'desc_tip'    => true,
-				'description' => __( 'Enable/Disable Pay upon Invoice payment gateway.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'Enable/Disable Pay upon Invoice payment gateway.', 'woocommerce-for-japan' ),
 			),
 			'title'                         => array(
-				'title'       => __( 'Title', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Title', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'default'     => $this->title,
 				'desc_tip'    => true,
-				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-for-japan' ),
 			),
 			'description'                   => array(
-				'title'       => __( 'Description', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Description', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'default'     => $this->description,
 				'desc_tip'    => true,
-				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-for-japan' ),
 			),
 			'experience_context'            => array(
-				'title'       => __( 'Experience Context', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Experience Context', 'woocommerce-for-japan' ),
 				'type'        => 'title',
 				'description' => __( "Specify brand name, logo and customer service instructions to be presented on Ratepay's payment instructions.", 'woocommerce-paypal-payments' ),
 			),
 			'brand_name'                    => array(
-				'title'       => __( 'Brand name', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Brand name', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'default'     => get_bloginfo( 'name' ) ?? '',
 				'desc_tip'    => true,
-				'description' => __( 'Merchant name displayed in Ratepay\'s payment instructions.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'Merchant name displayed in Ratepay\'s payment instructions.', 'woocommerce-for-japan' ),
 			),
 			'logo_url'                      => array(
-				'title'       => __( 'Logo URL', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Logo URL', 'woocommerce-for-japan' ),
 				'type'        => 'url',
 				'default'     => '',
 				'desc_tip'    => true,
-				'description' => __( 'Logo to be presented on Ratepay\'s payment instructions.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'Logo to be presented on Ratepay\'s payment instructions.', 'woocommerce-for-japan' ),
 			),
 			'customer_service_instructions' => array(
-				'title'       => __( 'Customer service instructions', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Customer service instructions', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'default'     => '',
 				'desc_tip'    => true,
-				'description' => __( 'Customer service instructions to be presented on Ratepay\'s payment instructions.', 'woocommerce-paypal-payments' ),
+				'description' => __( 'Customer service instructions to be presented on Ratepay\'s payment instructions.', 'woocommerce-for-japan' ),
 			),
 		);
 	}
@@ -255,7 +255,7 @@ class PayUponInvoiceGateway extends WC_Payment_Gateway {
 		try {
 			$order = $this->order_endpoint->create( array( $purchase_unit ), $payment_source, $wc_order );
 			$this->add_paypal_meta( $wc_order, $order, $this->environment );
-			$wc_order->update_status( 'on-hold', __( 'Awaiting Pay upon Invoice payment.', 'woocommerce-paypal-payments' ) );
+			$wc_order->update_status( 'on-hold', __( 'Awaiting Pay upon Invoice payment.', 'woocommerce-for-japan' ) );
 
 			as_schedule_single_action(
 				time() + ( 5 * MINUTE_IN_SECONDS ),

@@ -23,9 +23,9 @@ namespace WooCommerce\PayPalCommerce;
 
 use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
 
-define( 'PAYPAL_API_URL', 'https://api.paypal.com' );
-define( 'PAYPAL_SANDBOX_API_URL', 'https://api.sandbox.paypal.com' );
-define( 'PAYPAL_INTEGRATION_DATE', '2023-03-20' );
+! defined( 'PAYPAL_API_URL' ) && define( 'PAYPAL_API_URL', 'https://api.paypal.com' );
+! defined( 'PAYPAL_SANDBOX_API_URL' ) && define( 'PAYPAL_SANDBOX_API_URL', 'https://api.sandbox.paypal.com' );
+! defined( 'PAYPAL_INTEGRATION_DATE' ) && define( 'PAYPAL_INTEGRATION_DATE', '2023-03-20' );
 
 define( 'PPCP_FLAG_SUBSCRIPTION', true );
 
@@ -36,7 +36,7 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 ! defined( 'CONNECT_WOO_URL' ) && define( 'CONNECT_WOO_URL', 'https://connect.woocommerce.com/ppc' );
 ! defined( 'CONNECT_WOO_SANDBOX_URL' ) && define( 'CONNECT_WOO_SANDBOX_URL', 'https://connect.woocommerce.com/ppcsandbox' );
 
-( function () {
+//( function () {// delete by Shohei Tanaka at 2023/05/04
 	$autoload_filepath = __DIR__ . '/vendor/autoload.php';
 	if ( file_exists( $autoload_filepath ) && ! class_exists( '\WooCommerce\PayPalCommerce\PluginModule' ) ) {
 		require $autoload_filepath;
@@ -53,7 +53,7 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 				'admin_notices',
 				function() {
 					/* translators: 1. URL link. */
-					echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'WooCommerce PayPal Payments requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-paypal-payments' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
+					echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'WooCommerce PayPal Payments requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-for-japan' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
 				}
 			);
 
@@ -63,7 +63,7 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 			add_action(
 				'admin_notices',
 				function() {
-					echo '<div class="error"><p>' . esc_html__( 'WooCommerce PayPal Payments requires PHP 7.1 or above.', 'woocommerce-paypal-payments' ), '</p></div>';
+					echo '<div class="error"><p>' . esc_html__( 'WooCommerce PayPal Payments requires PHP 7.1 or above.', 'woocommerce-for-japan' ), '</p></div>';
 				}
 			);
 
@@ -85,6 +85,10 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 			do_action( 'woocommerce_paypal_payments_built_container', $app_container );
 		}
 	}
+    if( get_option('wc4jp-jp4wc-paypal') && ! is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' )){
+		init();// Add by Shohei Tanaka at 2023/05/04
+	}
+
 
 	add_action(
 		'plugins_loaded',
@@ -118,13 +122,13 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 			}
 		}
 	);
-	register_activation_hook(
+/*	register_activation_hook(// Delete by Shohei Tanaka at 2023/05/04
 		__FILE__,
 		function () {
 			init();
 			/**
 			 * The hook fired in register_activation_hook.
-			 */
+			 /
 			do_action( 'woocommerce_paypal_payments_gateway_activate' );
 		}
 	);
@@ -134,8 +138,33 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 			init();
 			/**
 			 * The hook fired in register_deactivation_hook.
-			 */
+			 /
 			do_action( 'woocommerce_paypal_payments_gateway_deactivate' );
+		}
+	);*/
+	add_action(
+		'jp4wc_save_methods_activation',
+		function ( $add_method ){
+			if( $add_method == 'jp4wc-paypal' ){
+				init();
+				/**
+				 * The hook fired in register_activation_hook.
+				 */
+				do_action( 'woocommerce_paypal_payments_gateway_activate' );
+			}
+		}
+	);
+
+	add_action(
+		'jp4wc_save_methods_deactivation',
+		function ( $add_method ){
+			if( $add_method == 'jp4wc-paypal' ){
+				init();
+				/**
+				 * The hook fired in register_deactivation_hook.
+				 */
+				do_action( 'woocommerce_paypal_payments_gateway_deactivation' );
+			}
 		}
 	);
 
@@ -157,7 +186,7 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 				sprintf(
 					'<a href="%1$s">%2$s</a>',
 					admin_url( 'admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway&ppcp-tab=' . Settings::CONNECTION_TAB_ID ),
-					__( 'Settings', 'woocommerce-paypal-payments' )
+					__( 'Settings', 'woocommerce-for-japan' )
 				)
 			);
 
@@ -185,22 +214,22 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 					sprintf(
 						'<a target="_blank" href="%1$s">%2$s</a>',
 						'https://woocommerce.com/document/woocommerce-paypal-payments/',
-						__( 'Documentation', 'woocommerce-paypal-payments' )
+						__( 'Documentation', 'woocommerce-for-japan' )
 					),
 					sprintf(
 						'<a target="_blank" href="%1$s">%2$s</a>',
 						'https://woocommerce.com/document/woocommerce-paypal-payments/#get-help',
-						__( 'Get help', 'woocommerce-paypal-payments' )
+						__( 'Get help', 'woocommerce-for-japan' )
 					),
 					sprintf(
 						'<a target="_blank" href="%1$s">%2$s</a>',
 						'https://woocommerce.com/feature-requests/woocommerce-paypal-payments/',
-						__( 'Request a feature', 'woocommerce-paypal-payments' )
+						__( 'Request a feature', 'woocommerce-for-japan' )
 					),
 					sprintf(
 						'<a target="_blank" href="%1$s">%2$s</a>',
 						'https://github.com/woocommerce/woocommerce-paypal-payments/issues/new?assignees=&labels=type%3A+bug&template=bug_report.md',
-						__( 'Submit a bug', 'woocommerce-paypal-payments' )
+						__( 'Submit a bug', 'woocommerce-for-japan' )
 					),
 				)
 			);
@@ -232,4 +261,4 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 		return class_exists( 'woocommerce' );
 	}
 
-} )();
+//} )();// Delete by Shohei Tanaka at 2023/05/04

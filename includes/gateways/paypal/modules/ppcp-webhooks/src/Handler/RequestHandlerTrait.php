@@ -71,7 +71,7 @@ trait RequestHandlerTrait {
 	protected function no_custom_ids_from_request( WP_REST_Request $request, array $response ): WP_REST_Response {
 		$message = sprintf(
 		// translators: %s is the PayPal webhook Id.
-			__( 'No order for webhook event %s was found.', 'woocommerce-paypal-payments' ),
+			__( 'No order for webhook event %s was found.', 'woocommerce-for-japan' ),
 			$request['id'] !== null && isset( $request['id'] ) ? $request['id'] : ''
 		);
 
@@ -88,7 +88,7 @@ trait RequestHandlerTrait {
 	protected function no_wc_orders_from_custom_ids( WP_REST_Request $request, array $response ): WP_REST_Response {
 		$message = sprintf(
 		// translators: %s is the PayPal order Id.
-			__( 'WC order for PayPal order %s not found.', 'woocommerce-paypal-payments' ),
+			__( 'WC order for PayPal order %s not found.', 'woocommerce-for-japan' ),
 			$request['resource'] !== null && isset( $request['resource']['id'] ) ? $request['resource']['id'] : ''
 		);
 

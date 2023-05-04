@@ -117,7 +117,7 @@ return array(
 	},
 
 	'webhook.status.registered-webhooks-data' => function( ContainerInterface $container ) : array {
-		$empty_placeholder = __( 'No webhooks found.', 'woocommerce-paypal-payments' );
+		$empty_placeholder = __( 'No webhooks found.', 'woocommerce-for-japan' );
 
 		$webhooks = array();
 		try {
@@ -125,14 +125,14 @@ return array(
 		} catch ( Exception $exception ) {
 			$empty_placeholder = sprintf(
 				'<span class="error">%s</span>',
-				__( 'Failed to load webhooks.', 'woocommerce-paypal-payments' )
+				__( 'Failed to load webhooks.', 'woocommerce-for-japan' )
 			);
 		}
 
 		return array(
 			'headers'           => array(
-				__( 'URL', 'woocommerce-paypal-payments' ),
-				__( 'Tracked events', 'woocommerce-paypal-payments' ),
+				__( 'URL', 'woocommerce-for-japan' ),
+				__( 'Tracked events', 'woocommerce-for-japan' ),
 			),
 			'data'              => array_map(
 				function ( Webhook $webhook ): array {

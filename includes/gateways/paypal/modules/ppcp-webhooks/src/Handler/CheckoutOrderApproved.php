@@ -175,7 +175,7 @@ class CheckoutOrderApproved implements RequestHandler {
 		if ( ! $wc_orders ) {
 			$message = sprintf(
 			// translators: %s is the PayPal order Id.
-				__( 'Order for PayPal order %s not found.', 'woocommerce-paypal-payments' ),
+				__( 'Order for PayPal order %s not found.', 'woocommerce-for-japan' ),
 				isset( $request['resource']['id'] ) ? $request['resource']['id'] : ''
 			);
 			$this->logger->log(
@@ -202,7 +202,7 @@ class CheckoutOrderApproved implements RequestHandler {
 			} else {
 				$wc_order->update_status(
 					'on-hold',
-					__( 'Payment can be captured.', 'woocommerce-paypal-payments' )
+					__( 'Payment can be captured.', 'woocommerce-for-japan' )
 				);
 			}
 			$this->logger->log(

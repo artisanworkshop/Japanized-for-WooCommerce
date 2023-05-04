@@ -170,7 +170,7 @@ class JP4WC{
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-payments.php';
 		// Add PayPal Checkout(New from 2023/06 )
 //		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-//        if(get_option('wc4jp-jp4wc-paypal') && ! is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' )){
+//        if( get_option('wc4jp-jp4wc-paypal') && ! is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' )){
 	        require_once JP4WC_INCLUDES_PATH . 'gateways/paypal/woocommerce-paypal-payments.php';
 //        }
 

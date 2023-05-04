@@ -72,7 +72,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'credentials_production_heading'                => array(
-			'heading'      => __( 'API Credentials', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'API Credentials', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-heading',
 			'screens'      => array(
 				State::STATE_ONBOARDED,
@@ -82,7 +82,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'credentials_sandbox_heading'                   => array(
-			'heading'      => __( 'Sandbox API Credentials', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'Sandbox API Credentials', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-heading',
 			'screens'      => array(
 				State::STATE_ONBOARDED,
@@ -90,7 +90,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'state_from'   => Environment::SANDBOX,
 			'requirements' => array(),
 			'gateway'      => Settings::CONNECTION_TAB_ID,
-			'description'  => __( 'Your account is connected to sandbox, no real charging takes place. To accept live payments, turn off sandbox mode and connect your live PayPal account.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'Your account is connected to sandbox, no real charging takes place. To accept live payments, turn off sandbox mode and connect your live PayPal account.', 'woocommerce-for-japan' ),
 		),
 
 		'ppcp_onboarading_options'                      => array(
@@ -144,7 +144,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'products'     => array( 'PPCP' ),
 			'requirements' => array(),
 			'gateway'      => Settings::CONNECTION_TAB_ID,
-			'description'  => __( 'Prior to accepting live payments, you can test payments on your WooCommerce platform in a safe PayPal sandbox environment.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'Prior to accepting live payments, you can test payments on your WooCommerce platform in a safe PayPal sandbox environment.', 'woocommerce-for-japan' ),
 		),
 		'ppcp_onboarding_sandbox_express'               => array(
 			'type'         => 'ppcp_onboarding',
@@ -157,16 +157,16 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'products'     => array( 'EXPRESS_CHECKOUT' ),
 			'requirements' => array(),
 			'gateway'      => Settings::CONNECTION_TAB_ID,
-			'description'  => __( 'Prior to accepting live payments, you can test payments on your WooCommerce platform in a safe PayPal sandbox environment.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'Prior to accepting live payments, you can test payments on your WooCommerce platform in a safe PayPal sandbox environment.', 'woocommerce-for-japan' ),
 		),
 
 		'ppcp_disconnect_production'                    => array(
-			'title'        => __( 'Disconnect from PayPal', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Disconnect from PayPal', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-text',
 			'text'         => sprintf(
 				'<p>%1$s <span class="dashicons dashicons-yes"></span></p><p><button type="button" class="button ppcp-disconnect production">%2$s</button></p>',
-				esc_html__( 'Status: Connected', 'woocommerce-paypal-payments' ),
-				esc_html__( 'Disconnect Account', 'woocommerce-paypal-payments' )
+				esc_html__( 'Status: Connected', 'woocommerce-for-japan' ),
+				esc_html__( 'Disconnect Account', 'woocommerce-for-japan' )
 			),
 			'screens'      => array(
 				State::STATE_ONBOARDED,
@@ -175,15 +175,15 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'env'          => Environment::PRODUCTION,
 			'requirements' => array(),
 			'gateway'      => Settings::CONNECTION_TAB_ID,
-			'description'  => __( 'Click to reset current credentials and use another account.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'Click to reset current credentials and use another account.', 'woocommerce-for-japan' ),
 		),
 		'ppcp_disconnect_sandbox'                       => array(
-			'title'        => __( 'Disconnect from PayPal Sandbox', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Disconnect from PayPal Sandbox', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-text',
 			'text'         => sprintf(
 				'<p>%1$s <span class="dashicons dashicons-yes"></span></p><p><button type="button" class="button ppcp-disconnect sandbox">%2$s</button></p>',
-				esc_html__( 'Status: Connected', 'woocommerce-paypal-payments' ),
-				esc_html__( 'Disconnect Account', 'woocommerce-paypal-payments' )
+				esc_html__( 'Status: Connected', 'woocommerce-for-japan' ),
+				esc_html__( 'Disconnect Account', 'woocommerce-for-japan' )
 			),
 			'screens'      => array(
 				State::STATE_ONBOARDED,
@@ -192,11 +192,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'env'          => Environment::SANDBOX,
 			'requirements' => array(),
 			'gateway'      => Settings::CONNECTION_TAB_ID,
-			'description'  => __( 'Click to reset current credentials and use another account.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'Click to reset current credentials and use another account.', 'woocommerce-for-japan' ),
 		),
 		'toggle_manual_input'                           => array(
 			'type'         => 'ppcp-text',
-			'text'         => '<button type="button" id="ppcp[toggle_manual_input]">' . __( 'Toggle to manual credential input', 'woocommerce-paypal-payments' ) . '</button>',
+			'text'         => '<button type="button" id="ppcp[toggle_manual_input]">' . __( 'Toggle to manual credential input', 'woocommerce-for-japan' ) . '</button>',
 			'classes'      => array( 'ppcp-onboarding-element' ),
 			'screens'      => array(
 				State::STATE_START,
@@ -217,10 +217,10 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'sandbox_on'                                    => array(
-			'title'        => __( 'Sandbox', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Sandbox', 'woocommerce-for-japan' ),
 			'classes'      => array( 'ppcp-onboarding-element', 'ppcp-always-shown-element' ),
 			'type'         => 'checkbox',
-			'label'        => __( 'To test your WooCommerce installation, you can use the sandbox mode.', 'woocommerce-paypal-payments' ),
+			'label'        => __( 'To test your WooCommerce installation, you can use the sandbox mode.', 'woocommerce-for-japan' ),
 			'default'      => 0,
 			'screens'      => array(
 				State::STATE_START,
@@ -230,12 +230,12 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'merchant_email_production'                     => array(
-			'title'        => __( 'Live Email address', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Live Email address', 'woocommerce-for-japan' ),
 			'classes'      => array( State::STATE_ONBOARDED === $state->production_state() ? 'onboarded' : '', 'ppcp-always-shown-element' ),
 			'type'         => 'text',
 			'required'     => true,
 			'desc_tip'     => true,
-			'description'  => __( 'The email address of your PayPal account.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'The email address of your PayPal account.', 'woocommerce-for-japan' ),
 			'default'      => '',
 			'screens'      => array(
 				State::STATE_START,
@@ -245,11 +245,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'merchant_id_production'                        => array(
-			'title'        => __( 'Live Merchant Id', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Live Merchant Id', 'woocommerce-for-japan' ),
 			'classes'      => array( State::STATE_ONBOARDED === $state->production_state() ? 'onboarded' : '', 'ppcp-always-shown-element' ),
 			'type'         => 'ppcp-text-input',
 			'desc_tip'     => true,
-			'description'  => __( 'The merchant id of your account ', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'The merchant id of your account ', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_START,
@@ -259,11 +259,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'client_id_production'                          => array(
-			'title'        => __( 'Live Client Id', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Live Client Id', 'woocommerce-for-japan' ),
 			'classes'      => array( State::STATE_ONBOARDED === $state->production_state() ? 'onboarded' : '', 'ppcp-always-shown-element' ),
 			'type'         => 'ppcp-text-input',
 			'desc_tip'     => true,
-			'description'  => __( 'The client id of your api ', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'The client id of your api ', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_START,
@@ -273,11 +273,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'client_secret_production'                      => array(
-			'title'        => __( 'Live Secret Key', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Live Secret Key', 'woocommerce-for-japan' ),
 			'classes'      => array( State::STATE_ONBOARDED === $state->production_state() ? 'onboarded' : '', 'ppcp-always-shown-element' ),
 			'type'         => 'ppcp-password',
 			'desc_tip'     => true,
-			'description'  => __( 'The secret key of your api', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'The secret key of your api', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_START,
@@ -288,12 +288,12 @@ return function ( ContainerInterface $container, array $fields ): array {
 		),
 
 		'merchant_email_sandbox'                        => array(
-			'title'        => __( 'Sandbox Email address', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Sandbox Email address', 'woocommerce-for-japan' ),
 			'classes'      => array( State::STATE_ONBOARDED === $state->sandbox_state() ? 'onboarded' : '', 'ppcp-always-shown-element' ),
 			'type'         => 'text',
 			'required'     => true,
 			'desc_tip'     => true,
-			'description'  => __( 'The email address of your PayPal account.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'The email address of your PayPal account.', 'woocommerce-for-japan' ),
 			'default'      => '',
 			'screens'      => array(
 				State::STATE_START,
@@ -303,11 +303,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'merchant_id_sandbox'                           => array(
-			'title'        => __( 'Sandbox Merchant Id', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Sandbox Merchant Id', 'woocommerce-for-japan' ),
 			'classes'      => array( State::STATE_ONBOARDED === $state->sandbox_state() ? 'onboarded' : '', 'ppcp-always-shown-element' ),
 			'type'         => 'ppcp-text-input',
 			'desc_tip'     => true,
-			'description'  => __( 'The merchant id of your account ', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'The merchant id of your account ', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_START,
@@ -317,11 +317,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'client_id_sandbox'                             => array(
-			'title'        => __( 'Sandbox Client Id', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Sandbox Client Id', 'woocommerce-for-japan' ),
 			'classes'      => array( State::STATE_ONBOARDED === $state->sandbox_state() ? 'onboarded' : '', 'ppcp-always-shown-element' ),
 			'type'         => 'ppcp-text-input',
 			'desc_tip'     => true,
-			'description'  => __( 'The client id of your api ', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'The client id of your api ', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_START,
@@ -331,11 +331,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'client_secret_sandbox'                         => array(
-			'title'        => __( 'Sandbox Secret Key', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Sandbox Secret Key', 'woocommerce-for-japan' ),
 			'classes'      => array( State::STATE_ONBOARDED === $state->sandbox_state() ? 'onboarded' : '', 'ppcp-always-shown-element' ),
 			'type'         => 'ppcp-password',
 			'desc_tip'     => true,
-			'description'  => __( 'The secret key of your api', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'The secret key of your api', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_START,
@@ -346,7 +346,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 		),
 
 		'credentials_feature_onboarding_heading'        => array(
-			'heading'      => __( 'Advanced feature availability & sign-up', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'Advanced feature availability & sign-up', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-heading',
 			'screens'      => array(
 				State::STATE_ONBOARDED,
@@ -355,13 +355,13 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 			'description'  => sprintf(
 				// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-				__( 'Displays whether available advanced features are enabled for the connected PayPal account. More information about advanced features is available in the %1$sFeature sign-up documentation%2$s.', 'woocommerce-paypal-payments' ),
+				__( 'Displays whether available advanced features are enabled for the connected PayPal account. More information about advanced features is available in the %1$sFeature sign-up documentation%2$s.', 'woocommerce-for-japan' ),
 				'<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#feature-signup" target="_blank">',
 				'</a>'
 			),
 		),
 		'ppcp_dcc_status'                               => array(
-			'title'        => __( 'Advanced Credit and Debit Card Payments', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Advanced Credit and Debit Card Payments', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-text',
 			'text'         => $container->get( 'wcgateway.settings.connection.dcc-status-text' ),
 			'screens'      => array(
@@ -371,7 +371,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'ppcp_pui_status'                               => array(
-			'title'        => __( 'Pay upon Invoice', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Pay upon Invoice', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-text',
 			'text'         => $container->get( 'wcgateway.settings.connection.pui-status-text' ),
 			'screens'      => array(
@@ -381,11 +381,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 		),
 		'tracking_enabled'                              => array(
-			'title'        => __( 'Shipment Tracking', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Shipment Tracking', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
 			'desc_tip'     => true,
 			'label'        => $container->get( 'wcgateway.settings.tracking-label' ),
-			'description'  => __( 'Allows to send shipment tracking numbers to PayPal for PayPal transactions.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'Allows to send shipment tracking numbers to PayPal for PayPal transactions.', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_ONBOARDED,
@@ -395,11 +395,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'input_class'  => $container->get( 'wcgateway.settings.should-disable-tracking-checkbox' ) ? array( 'ppcp-disabled-checkbox' ) : array(),
 		),
 		'fraudnet_enabled'                              => array(
-			'title'        => __( 'FraudNet', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'FraudNet', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
 			'desc_tip'     => true,
 			'label'        => $container->get( 'wcgateway.settings.fraudnet-label' ),
-			'description'  => __( 'FraudNet is a JavaScript library developed by PayPal and embedded into a merchant’s web page to collect browser-based data to help reduce fraud.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'FraudNet is a JavaScript library developed by PayPal and embedded into a merchant’s web page to collect browser-based data to help reduce fraud.', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_ONBOARDED,
@@ -410,7 +410,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 		),
 
 		'credentials_integration_configuration_heading' => array(
-			'heading'      => __( 'General integration configuration', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'General integration configuration', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-heading',
 			'screens'      => array(
 				State::STATE_ONBOARDED,
@@ -419,16 +419,16 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => Settings::CONNECTION_TAB_ID,
 			'description'  => sprintf(
 			// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-				__( 'Configure integration specific settings such as a unique invoice prefix, or logging for potential %1$stroubleshooting%2$s.', 'woocommerce-paypal-payments' ),
+				__( 'Configure integration specific settings such as a unique invoice prefix, or logging for potential %1$stroubleshooting%2$s.', 'woocommerce-for-japan' ),
 				'<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#troubleshooting" target="_blank">',
 				'</a>'
 			),
 		),
 		'prefix'                                        => array(
-			'title'             => __( 'Invoice prefix', 'woocommerce-paypal-payments' ),
+			'title'             => __( 'Invoice prefix', 'woocommerce-for-japan' ),
 			'type'              => 'text',
 			'desc_tip'          => true,
-			'description'       => __( 'If you use your PayPal account with more than one installation, please use a distinct prefix to separate those installations. Please use only English letters and "-", "_" characters.', 'woocommerce-paypal-payments' ),
+			'description'       => __( 'If you use your PayPal account with more than one installation, please use a distinct prefix to separate those installations. Please use only English letters and "-", "_" characters.', 'woocommerce-for-japan' ),
 			'maxlength'         => 15,
 			'custom_attributes' => array(
 				'pattern' => '[a-zA-Z_-]+',
@@ -448,12 +448,12 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'           => Settings::CONNECTION_TAB_ID,
 		),
 		'logging_enabled'                               => array(
-			'title'        => __( 'Logging', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Logging', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
 			'desc_tip'     => true,
-			'label'        => __( 'Enable logging. ', 'woocommerce-paypal-payments' ) .
-				' <a href="' . admin_url( 'admin.php?page=wc-status&tab=logs' ) . '">' . __( 'View logs', 'woocommerce-paypal-payments' ) . '</a>',
-			'description'  => __( 'Enable logging of unexpected behavior. This can also log private data and should only be enabled in a development or stage environment.', 'woocommerce-paypal-payments' ),
+			'label'        => __( 'Enable logging. ', 'woocommerce-for-japan' ) .
+				' <a href="' . admin_url( 'admin.php?page=wc-status&tab=logs' ) . '">' . __( 'View logs', 'woocommerce-for-japan' ) . '</a>',
+			'description'  => __( 'Enable logging of unexpected behavior. This can also log private data and should only be enabled in a development or stage environment.', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'screens'      => array(
 				State::STATE_START,

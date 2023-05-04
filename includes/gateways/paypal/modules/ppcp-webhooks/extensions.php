@@ -16,7 +16,7 @@ return array(
 	'wcgateway.settings.fields' => static function ( $container, array $fields ): array {
 		$status_page_fields = array(
 			'webhook_status_heading' => array(
-				'heading'      => __( 'Webhook Status', 'woocommerce-paypal-payments' ),
+				'heading'      => __( 'Webhook Status', 'woocommerce-for-japan' ),
 				'type'         => 'ppcp-heading',
 				'screens'      => array(
 					State::STATE_ONBOARDED,
@@ -25,13 +25,13 @@ return array(
 				'gateway'      => Settings::CONNECTION_TAB_ID,
 				'description'  => sprintf(
 				// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-					__( 'Status of the webhooks subscription. More information about the webhooks is available in the %1$sWebhook Status documentation%2$s.', 'woocommerce-paypal-payments' ),
+					__( 'Status of the webhooks subscription. More information about the webhooks is available in the %1$sWebhook Status documentation%2$s.', 'woocommerce-for-japan' ),
 					'<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#webhook-status" target="_blank">',
 					'</a>'
 				),
 			),
 			'webhooks_list'          => array(
-				'title'        => __( 'Subscribed webhooks', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Subscribed webhooks', 'woocommerce-for-japan' ),
 				'type'         => 'ppcp-table',
 				'screens'      => array(
 					State::STATE_ONBOARDED,
@@ -44,15 +44,15 @@ return array(
 				},
 			),
 			'webhooks_resubscribe'   => array(
-				'title'        => __( 'Resubscribe webhooks', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Resubscribe webhooks', 'woocommerce-for-japan' ),
 				'type'         => 'ppcp-text',
-				'text'         => '<button type="button" class="button ppcp-webhooks-resubscribe">' . esc_html__( 'Resubscribe', 'woocommerce-paypal-payments' ) . '</button>',
+				'text'         => '<button type="button" class="button ppcp-webhooks-resubscribe">' . esc_html__( 'Resubscribe', 'woocommerce-for-japan' ) . '</button>',
 				'screens'      => array(
 					State::STATE_ONBOARDED,
 				),
 				'requirements' => array(),
 				'gateway'      => Settings::CONNECTION_TAB_ID,
-				'description'  => __( 'Click to remove the current webhook subscription and subscribe again, for example, if the website domain or URL structure changed.', 'woocommerce-paypal-payments' ),
+				'description'  => __( 'Click to remove the current webhook subscription and subscribe again, for example, if the website domain or URL structure changed.', 'woocommerce-for-japan' ),
 			),
 		);
 
@@ -62,15 +62,15 @@ return array(
 				$status_page_fields,
 				array(
 					'webhooks_simulate' => array(
-						'title'        => __( 'Webhook simulation', 'woocommerce-paypal-payments' ),
+						'title'        => __( 'Webhook simulation', 'woocommerce-for-japan' ),
 						'type'         => 'ppcp-text',
-						'text'         => '<button type="button" class="button ppcp-webhooks-simulate">' . esc_html__( 'Simulate', 'woocommerce-paypal-payments' ) . '</button>',
+						'text'         => '<button type="button" class="button ppcp-webhooks-simulate">' . esc_html__( 'Simulate', 'woocommerce-for-japan' ) . '</button>',
 						'screens'      => array(
 							State::STATE_ONBOARDED,
 						),
 						'requirements' => array(),
 						'gateway'      => Settings::CONNECTION_TAB_ID,
-						'description'  => __( 'Click to request a sample webhook payload from PayPal, allowing to check that your server can successfully receive webhooks.', 'woocommerce-paypal-payments' ),
+						'description'  => __( 'Click to request a sample webhook payload from PayPal, allowing to check that your server can successfully receive webhooks.', 'woocommerce-for-japan' ),
 					),
 				)
 			);

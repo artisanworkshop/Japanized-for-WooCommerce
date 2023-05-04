@@ -49,7 +49,7 @@ class PayPalApiException extends RuntimeException {
 			);
 		}
 		if ( ! isset( $response->name ) ) {
-			$response->name = __( 'Error', 'woocommerce-paypal-payments' );
+			$response->name = __( 'Error', 'woocommerce-for-japan' );
 		}
 		if ( ! isset( $response->details ) ) {
 			$response->details = array();

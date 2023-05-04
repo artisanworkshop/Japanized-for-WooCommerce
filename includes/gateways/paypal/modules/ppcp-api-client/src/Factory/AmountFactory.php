@@ -219,7 +219,7 @@ class AmountFactory {
 				throw new RuntimeException(
 					sprintf(
 					// translators: %s is the current breakdown key.
-						__( 'No value given for breakdown %s', 'woocommerce-paypal-payments' ),
+						__( 'No value given for breakdown %s', 'woocommerce-for-japan' ),
 						$key
 					)
 				);
@@ -228,7 +228,7 @@ class AmountFactory {
 				throw new RuntimeException(
 					sprintf(
 					// translators: %s is the current breakdown key.
-						__( 'No currency given for breakdown %s', 'woocommerce-paypal-payments' ),
+						__( 'No currency given for breakdown %s', 'woocommerce-for-japan' ),
 						$key
 					)
 				);

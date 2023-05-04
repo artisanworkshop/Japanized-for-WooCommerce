@@ -41,12 +41,12 @@ class WebhookEventFactory {
 	public function from_paypal_response( $data ): WebhookEvent {
 		if ( ! isset( $data->id ) ) {
 			throw new RuntimeException(
-				__( 'ID for webhook event not found.', 'woocommerce-paypal-payments' )
+				__( 'ID for webhook event not found.', 'woocommerce-for-japan' )
 			);
 		}
 		if ( ! isset( $data->event_type ) ) {
 			throw new RuntimeException(
-				__( 'Event type for webhook event not found.', 'woocommerce-paypal-payments' )
+				__( 'Event type for webhook event not found.', 'woocommerce-for-japan' )
 			);
 		}
 

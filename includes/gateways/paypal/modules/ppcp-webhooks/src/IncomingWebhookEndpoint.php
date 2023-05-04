@@ -205,7 +205,7 @@ class IncomingWebhookEndpoint {
 					'info',
 					sprintf(
 						// translators: %s is the event type.
-						__( 'Webhook has been handled by %s', 'woocommerce-paypal-payments' ),
+						__( 'Webhook has been handled by %s', 'woocommerce-for-japan' ),
 						( $handler->event_types() ) ? current( $handler->event_types() ) : ''
 					),
 					array(
@@ -219,7 +219,7 @@ class IncomingWebhookEndpoint {
 
 		$message = sprintf(
 			// translators: %s is the request type.
-			__( 'Could not find handler for request type %s', 'woocommerce-paypal-payments' ),
+			__( 'Could not find handler for request type %s', 'woocommerce-for-japan' ),
 			$request['event_type']
 		);
 		$this->logger->log(

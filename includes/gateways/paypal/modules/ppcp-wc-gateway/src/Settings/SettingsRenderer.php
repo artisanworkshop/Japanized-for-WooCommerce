@@ -496,7 +496,7 @@ $data_rows_html
 	private function render_dcc_not_active_yet() {
 		?>
 		<tr>
-			<th><?php esc_html_e( 'Onboarding', 'woocommerce-paypal-payments' ); ?></th>
+			<th><?php esc_html_e( 'Onboarding', 'woocommerce-for-japan' ); ?></th>
 			<td class="notice notice-error">
 				<p>
 					<?php
@@ -517,7 +517,7 @@ $data_rows_html
 	private function render_dcc_onboarding_info(): void {
 		?>
 <tr>
-	<th><?php esc_html_e( 'Onboarding', 'woocommerce-paypal-payments' ); ?></th>
+	<th><?php esc_html_e( 'Onboarding', 'woocommerce-for-japan' ); ?></th>
 <td class="notice notice-error">
 	<p>
 		<?php
@@ -530,7 +530,7 @@ $data_rows_html
 		<a
 			href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway' ) ); ?>"
 			>
-			<?php esc_html_e( 'Click here to complete your onboarding.', 'woocommerce-paypal-payments' ); ?>
+			<?php esc_html_e( 'Click here to complete your onboarding.', 'woocommerce-for-japan' ); ?>
 		</a>
 	</p>
 </td>
@@ -544,7 +544,7 @@ $data_rows_html
 	private function render_dcc_does_not_apply_info() {
 		?>
 		<tr>
-			<th><?php esc_html_e( 'Card Processing not available', 'woocommerce-paypal-payments' ); ?></th>
+			<th><?php esc_html_e( 'Card Processing not available', 'woocommerce-for-japan' ); ?></th>
 			<td class="notice notice-error">
 				<p>
 					<?php

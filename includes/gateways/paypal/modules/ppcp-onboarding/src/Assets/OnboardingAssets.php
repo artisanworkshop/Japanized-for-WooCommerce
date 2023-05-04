@@ -116,7 +116,7 @@ class OnboardingAssets {
 			array(
 				'empty_smart_button_location_message' => sprintf(
 					'<p class="description ppcp-empty-smart-button-location">%1$s</p>',
-					__( 'Note: If no button location is selected, the PayPal gateway will not be available.', 'woocommerce-paypal-payments' )
+					__( 'Note: If no button location is selected, the PayPal gateway will not be available.', 'woocommerce-for-japan' )
 				),
 			)
 		);
@@ -153,7 +153,7 @@ class OnboardingAssets {
 			'current_state'    => State::get_state_name( $this->state->current_state() ),
 			'current_env'      => $this->environment->current_environment(),
 			'error_messages'   => array(
-				'no_credentials' => __( 'API credentials must be entered to save the settings.', 'woocommerce-paypal-payments' ),
+				'no_credentials' => __( 'API credentials must be entered to save the settings.', 'woocommerce-for-japan' ),
 			),
 			'pui_endpoint'     => \WC_AJAX::get_endpoint( 'ppc-pui' ),
 			'pui_nonce'        => wp_create_nonce( 'ppc-pui' ),

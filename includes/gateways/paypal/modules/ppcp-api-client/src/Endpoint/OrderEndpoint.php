@@ -243,7 +243,7 @@ class OrderEndpoint {
 		$response = $this->request( $url, $args );
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not create order.', 'woocommerce-paypal-payments' )
+				__( 'Could not create order.', 'woocommerce-for-japan' )
 			);
 			$this->logger->log(
 				'warning',
@@ -308,7 +308,7 @@ class OrderEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not capture order.', 'woocommerce-paypal-payments' )
+				__( 'Could not capture order.', 'woocommerce-for-japan' )
 			);
 			$this->logger->log(
 				'warning',
@@ -350,7 +350,7 @@ class OrderEndpoint {
 
 		$capture_status = $order->purchase_units()[0]->payments()->captures()[0]->status() ?? null;
 		if ( $capture_status && $capture_status->is( CaptureStatus::DECLINED ) ) {
-			throw new RuntimeException( __( 'Payment provider declined the payment, please use a different payment method.', 'woocommerce-paypal-payments' ) );
+			throw new RuntimeException( __( 'Payment provider declined the payment, please use a different payment method.', 'woocommerce-for-japan' ) );
 		}
 
 		return $order;
@@ -424,7 +424,7 @@ class OrderEndpoint {
 
 		$authorization_status = $order->purchase_units()[0]->payments()->authorizations()[0]->status() ?? null;
 		if ( $authorization_status && $authorization_status->is( AuthorizationStatus::DENIED ) ) {
-			throw new RuntimeException( __( 'Payment provider declined the payment, please use a different payment method.', 'woocommerce-paypal-payments' ) );
+			throw new RuntimeException( __( 'Payment provider declined the payment, please use a different payment method.', 'woocommerce-for-japan' ) );
 		}
 
 		return $order;
@@ -453,7 +453,7 @@ class OrderEndpoint {
 		$response = $this->request( $url, $args );
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not retrieve order.', 'woocommerce-paypal-payments' )
+				__( 'Could not retrieve order.', 'woocommerce-for-japan' )
 			);
 			$this->logger->warning( $error->getMessage() );
 
@@ -463,7 +463,7 @@ class OrderEndpoint {
 		$status_code = (int) wp_remote_retrieve_response_code( $response );
 		if ( 404 === $status_code || empty( $response['body'] ) ) {
 			$error = new RuntimeException(
-				__( 'Could not retrieve order.', 'woocommerce-paypal-payments' ),
+				__( 'Could not retrieve order.', 'woocommerce-for-japan' ),
 				404
 			);
 			$this->logger->log(
@@ -541,7 +541,7 @@ class OrderEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not retrieve order.', 'woocommerce-paypal-payments' )
+				__( 'Could not retrieve order.', 'woocommerce-for-japan' )
 			);
 			$this->logger->log(
 				'warning',
