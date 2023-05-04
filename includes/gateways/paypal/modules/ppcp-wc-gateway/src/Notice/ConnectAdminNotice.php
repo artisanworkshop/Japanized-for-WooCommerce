@@ -12,7 +12,7 @@ namespace WooCommerce\PayPalCommerce\WcGateway\Notice;
 use WooCommerce\PayPalCommerce\AdminNotices\Entity\Message;
 use WooCommerce\PayPalCommerce\Onboarding\State;
 use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 
 /**
  * Class ConnectAdminNotice
@@ -58,9 +58,9 @@ class ConnectAdminNotice {
 			/* translators: %1$s the gateway name. */
 			__(
 				'PayPal Payments is almost ready. To get started, <a href="%1$s">connect your account</a>.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
-			admin_url( 'admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway' )
+			admin_url( 'admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway&ppcp-tab=' . Settings::CONNECTION_TAB_ID )
 		);
 		return new Message( $message, 'warning' );
 	}

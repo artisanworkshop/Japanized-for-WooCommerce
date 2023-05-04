@@ -1,62 +1,88 @@
 class ErrorHandler {
 
-    constructor(genericErrorText)
+    /**
+     * @param {String} genericErrorText
+     * @param {Element} wrapper
+     */
+    constructor(genericErrorText, wrapper)
     {
         this.genericErrorText = genericErrorText;
-        this.wrapper = document.querySelector('.woocommerce-notices-wrapper');
-        this.messagesList = document.querySelector('ul.woocommerce-error');
+        this.wrapper = wrapper;
     }
 
     genericError() {
-        if (this.wrapper.classList.contains('ppcp-persist')) {
-            return;
-        }
         this.clear();
         this.message(this.genericErrorText)
     }
 
     appendPreparedErrorMessageElement(errorMessageElement)
     {
-        if(this.messagesList === null) {
-            this.prepareMessagesList();
-        }
-
-        this.messagesList.replaceWith(errorMessageElement);
+        this._getMessageContainer().replaceWith(errorMessageElement);
     }
 
-    message(text, persist = false)
+    /**
+     * @param {String} text
+     */
+    message(text)
     {
-        if(! typeof String || text.length === 0){
+        this._addMessage(text);
+
+        this._scrollToMessages();
+    }
+
+    /**
+     * @param {Array} texts
+     */
+    messages(texts)
+    {
+        texts.forEach(t => this._addMessage(t));
+
+        this._scrollToMessages();
+    }
+
+    /**
+     * @private
+     * @param {String} text
+     */
+    _addMessage(text)
+    {
+        if(! typeof String || text.length === 0) {
             throw new Error('A new message text must be a non-empty string.');
         }
 
-        if(this.messagesList === null){
-            this.prepareMessagesList();
-        }
+        const messageContainer = this._getMessageContainer();
 
-        if (persist) {
-            this.wrapper.classList.add('ppcp-persist');
-        } else {
-            this.wrapper.classList.remove('ppcp-persist');
-        }
-
-        let messageNode = this.prepareMessagesListItem(text);
-        this.messagesList.appendChild(messageNode);
-
-        jQuery.scroll_to_notices(jQuery('.woocommerce-notices-wrapper'))
+        let messageNode = this._prepareMessageElement(text);
+        messageContainer.appendChild(messageNode);
     }
 
-    prepareMessagesList()
+    /**
+     * @private
+     */
+    _scrollToMessages()
     {
-        if(this.messagesList === null){
-            this.messagesList = document.createElement('ul');
-            this.messagesList.setAttribute('class', 'woocommerce-error');
-            this.messagesList.setAttribute('role', 'alert');
-            this.wrapper.appendChild(this.messagesList);
-        }
+        jQuery.scroll_to_notices(jQuery('.woocommerce-error'));
     }
 
-    prepareMessagesListItem(message)
+    /**
+     * @private
+     */
+    _getMessageContainer()
+    {
+        let messageContainer = document.querySelector('ul.woocommerce-error');
+        if (messageContainer === null) {
+            messageContainer = document.createElement('ul');
+            messageContainer.setAttribute('class', 'woocommerce-error');
+            messageContainer.setAttribute('role', 'alert');
+            jQuery(this.wrapper).prepend(messageContainer);
+        }
+        return messageContainer;
+    }
+
+    /**
+     * @private
+     */
+    _prepareMessageElement(message)
     {
         const li = document.createElement('li');
         li.innerHTML = message;
@@ -64,20 +90,9 @@ class ErrorHandler {
         return li;
     }
 
-    sanitize(text)
-    {
-        const textarea = document.createElement('textarea');
-        textarea.innerHTML = text;
-        return textarea.value.replace('Error: ', '');
-    }
-
     clear()
     {
-        if (this.messagesList === null) {
-            return;
-        }
-
-        this.messagesList.innerHTML = '';
+        jQuery( '.woocommerce-error, .woocommerce-message' ).remove();
     }
 }
 

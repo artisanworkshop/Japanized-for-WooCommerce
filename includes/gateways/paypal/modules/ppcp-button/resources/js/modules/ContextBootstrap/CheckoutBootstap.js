@@ -1,6 +1,5 @@
-import ErrorHandler from '../ErrorHandler';
 import CheckoutActionHandler from '../ActionHandler/CheckoutActionHandler';
-import { setVisible } from '../Helper/Hiding';
+import {setVisible, setVisibleByClass} from '../Helper/Hiding';
 import {
     getCurrentPaymentMethod,
     isSavedCardSelected, ORDER_BUTTON_SELECTOR,
@@ -8,17 +7,14 @@ import {
 } from "../Helper/CheckoutMethodState";
 
 class CheckoutBootstap {
-    constructor(gateway, renderer, messages, spinner) {
+    constructor(gateway, renderer, messages, spinner, errorHandler) {
         this.gateway = gateway;
         this.renderer = renderer;
         this.messages = messages;
         this.spinner = spinner;
+        this.errorHandler = errorHandler;
 
         this.standardOrderButtonSelector = ORDER_BUTTON_SELECTOR;
-
-        this.buttonChangeObserver = new MutationObserver((el) => {
-            this.updateUi();
-        });
     }
 
     init() {
@@ -64,19 +60,12 @@ class CheckoutBootstap {
         }
         const actionHandler = new CheckoutActionHandler(
             PayPalCommerceGateway,
-            new ErrorHandler(this.gateway.labels.error.generic),
+            this.errorHandler,
             this.spinner
         );
 
         this.renderer.render(
-            this.gateway.button.wrapper,
-            this.gateway.hosted_fields.wrapper,
-            actionHandler.configuration(),
-        );
-
-        this.buttonChangeObserver.observe(
-            document.querySelector(this.standardOrderButtonSelector),
-            {attributes: true}
+            actionHandler.configuration()
         );
     }
 
@@ -84,16 +73,27 @@ class CheckoutBootstap {
         const currentPaymentMethod = getCurrentPaymentMethod();
         const isPaypal = currentPaymentMethod === PaymentMethods.PAYPAL;
         const isCard = currentPaymentMethod === PaymentMethods.CARDS;
+        const isSeparateButtonGateway = [PaymentMethods.CARD_BUTTON].includes(currentPaymentMethod);
         const isSavedCard = isCard && isSavedCardSelected();
-        const isNotOurGateway = !isPaypal && !isCard;
+        const isNotOurGateway = !isPaypal && !isCard && !isSeparateButtonGateway;
         const isFreeTrial = PayPalCommerceGateway.is_free_trial_cart;
         const hasVaultedPaypal = PayPalCommerceGateway.vaulted_paypal_email !== '';
 
-        setVisible(this.standardOrderButtonSelector,  (isPaypal && isFreeTrial && hasVaultedPaypal) || isNotOurGateway || isSavedCard, true);
+        const paypalButtonWrappers = {
+            ...Object.entries(PayPalCommerceGateway.separate_buttons)
+                .reduce((result, [k, data]) => {
+                    return {...result, [data.id]: data.wrapper}
+                }, {}),
+        };
+
+        setVisibleByClass(this.standardOrderButtonSelector, (isPaypal && isFreeTrial && hasVaultedPaypal) || isNotOurGateway || isSavedCard, 'ppcp-hidden');
         setVisible('.ppcp-vaulted-paypal-details', isPaypal);
         setVisible(this.gateway.button.wrapper, isPaypal && !(isFreeTrial && hasVaultedPaypal));
         setVisible(this.gateway.messages.wrapper, isPaypal && !isFreeTrial);
         setVisible(this.gateway.hosted_fields.wrapper, isCard && !isSavedCard);
+        for (const [gatewayId, wrapper] of Object.entries(paypalButtonWrappers)) {
+            setVisible(wrapper, gatewayId === currentPaymentMethod);
+        }
 
         if (isPaypal && !isFreeTrial) {
             this.messages.render();

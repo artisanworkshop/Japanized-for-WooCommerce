@@ -113,7 +113,7 @@ class WebhookEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			throw new RuntimeException(
-				__( 'Not able to create a webhook.', 'woocommerce-for-japan' )
+				__( 'Not able to create a webhook.', 'woocommerce-paypal-payments' )
 			);
 		}
 
@@ -151,7 +151,7 @@ class WebhookEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			throw new RuntimeException(
-				__( 'Not able to load webhooks list.', 'woocommerce-for-japan' )
+				__( 'Not able to load webhooks list.', 'woocommerce-paypal-payments' )
 			);
 		}
 
@@ -175,12 +175,12 @@ class WebhookEndpoint {
 	 *
 	 * @param Webhook $hook The webhook to delete.
 	 *
-	 * @return bool
 	 * @throws RuntimeException If the request fails.
+	 * @throws PayPalApiException If the request fails.
 	 */
-	public function delete( Webhook $hook ): bool {
+	public function delete( Webhook $hook ): void {
 		if ( ! $hook->id() ) {
-			return false;
+			return;
 		}
 
 		$bearer   = $this->bearer->bearer();
@@ -195,10 +195,21 @@ class WebhookEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			throw new RuntimeException(
-				__( 'Not able to delete the webhook.', 'woocommerce-for-japan' )
+				__( 'Not able to delete the webhook.', 'woocommerce-paypal-payments' )
 			);
 		}
-		return wp_remote_retrieve_response_code( $response ) === 204;
+
+		$status_code = (int) wp_remote_retrieve_response_code( $response );
+		if ( 204 !== $status_code ) {
+			$json = null;
+			if ( is_array( $response ) ) {
+				$json = json_decode( $response['body'] );
+			}
+			throw new PayPalApiException(
+				$json,
+				$status_code
+			);
+		}
 	}
 
 	/**
@@ -234,7 +245,7 @@ class WebhookEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			throw new RuntimeException(
-				__( 'Not able to simulate webhook.', 'woocommerce-for-japan' )
+				__( 'Not able to simulate webhook.', 'woocommerce-paypal-payments' )
 			);
 		}
 		$json        = json_decode( $response['body'] );
@@ -296,7 +307,7 @@ class WebhookEndpoint {
 		$response = $this->request( $url, $args );
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Not able to verify webhook event.', 'woocommerce-for-japan' )
+				__( 'Not able to verify webhook event.', 'woocommerce-paypal-payments' )
 			);
 			$this->logger->log(
 				'warning',
@@ -324,7 +335,7 @@ class WebhookEndpoint {
 
 		if ( ! $webhook->id() ) {
 			$error = new RuntimeException(
-				__( 'Not a valid webhook to verify.', 'woocommerce-for-japan' )
+				__( 'Not a valid webhook to verify.', 'woocommerce-paypal-payments' )
 			);
 			$this->logger->log( 'warning', $error->getMessage(), array( 'webhook' => $webhook ) );
 			throw $error;
@@ -355,7 +366,7 @@ class WebhookEndpoint {
 					// translators: %s is the headers key.
 					__(
 						'Not a valid webhook event. Header %s is missing',
-						'woocommerce-for-japan'
+						'woocommerce-paypal-payments'
 					),
 					$key
 				)

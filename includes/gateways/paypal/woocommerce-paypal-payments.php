@@ -3,17 +3,17 @@
  * Plugin Name: WooCommerce PayPal Payments
  * Plugin URI:  https://woocommerce.com/products/woocommerce-paypal-payments/
  * Description: PayPal's latest complete payments processing solution. Accept PayPal, Pay Later, credit/debit cards, alternative digital wallets local payment types and bank accounts. Turn on only PayPal options or process a full suite of payment methods. Enable global transaction with extensive currency and country coverage.
- * Version:     1.8.0
+ * Version:     2.0.4
  * Author:      WooCommerce
  * Author URI:  https://woocommerce.com/
  * License:     GPL-2.0
- * Requires PHP: 7.1
+ * Requires PHP: 7.2
  * WC requires at least: 3.9
- * WC tested up to: 6.4
+ * WC tested up to: 7.5
  * Text Domain: woocommerce-paypal-payments
  *
  * Fixed module/ppcp-api-client/src/Factory/AddressFactory.php by Shohei Tanaka for Japanese situation.(2022/05/30)
- * Fixed module/ppcp-api-client/services.php by Shohei Tanaka for Japanese situation.(2022/06/01)
+ * Fixed module/ppcp-api-client/services.php by Shohei Tanaka for Japanese situation.(2023/05/04)
  * @package WooCommerce\PayPalCommerce
  */
 
@@ -21,9 +21,11 @@ declare( strict_types = 1 );
 
 namespace WooCommerce\PayPalCommerce;
 
+use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
+
 define( 'PAYPAL_API_URL', 'https://api.paypal.com' );
 define( 'PAYPAL_SANDBOX_API_URL', 'https://api.sandbox.paypal.com' );
-define( 'PAYPAL_INTEGRATION_DATE', '2022-04-13' );
+define( 'PAYPAL_INTEGRATION_DATE', '2023-03-20' );
 
 define( 'PPCP_FLAG_SUBSCRIPTION', true );
 
@@ -35,12 +37,15 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 ! defined( 'CONNECT_WOO_SANDBOX_URL' ) && define( 'CONNECT_WOO_SANDBOX_URL', 'https://connect.woocommerce.com/ppcsandbox' );
 
 ( function () {
-	include __DIR__ . '/vendor/autoload.php';
+	$autoload_filepath = __DIR__ . '/vendor/autoload.php';
+	if ( file_exists( $autoload_filepath ) && ! class_exists( '\WooCommerce\PayPalCommerce\PluginModule' ) ) {
+		require $autoload_filepath;
+	}
 
 	/**
 	 * Initialize the plugin and its modules.
 	 */
-	function init() {
+	function init(): void {
 		$root_dir = __DIR__;
 
 		if ( ! is_woocommerce_activated() ) {
@@ -48,17 +53,17 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 				'admin_notices',
 				function() {
 					/* translators: 1. URL link. */
-					echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'WooCommerce PayPal Payments requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-for-japan' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
+					echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'WooCommerce PayPal Payments requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-paypal-payments' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
 				}
 			);
 
 			return;
 		}
-		if ( version_compare( PHP_VERSION, '7.1', '<' ) ) {
+		if ( version_compare( PHP_VERSION, '7.2', '<' ) ) {
 			add_action(
 				'admin_notices',
 				function() {
-					echo '<div class="error"><p>' . esc_html__( 'WooCommerce PayPal Payments requires PHP 7.1 or above.', 'woocommerce-for-japan' ), '</p></div>';
+					echo '<div class="error"><p>' . esc_html__( 'WooCommerce PayPal Payments requires PHP 7.1 or above.', 'woocommerce-paypal-payments' ), '</p></div>';
 				}
 			);
 
@@ -70,6 +75,8 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 			$bootstrap = require "$root_dir/bootstrap.php";
 
 			$app_container = $bootstrap( $root_dir );
+
+			PPCP::init( $app_container );
 
 			$initialized = true;
 			/**
@@ -85,15 +92,28 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 			init();
 
 			if ( ! function_exists( 'get_plugin_data' ) ) {
+				/**
+				 * Skip check for WP files.
+				 *
+				 * @psalm-suppress MissingFile
+				 */
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
-			$plugin_data    = get_plugin_data( __DIR__ . '/woocommerce-paypal-payments.php' );
-			$plugin_version = $plugin_data['Version'] ?? null;
-			if ( get_option( 'woocommerce-ppcp-version' ) !== $plugin_version ) {
+			$plugin_data              = get_plugin_data( __DIR__ . '/woocommerce-paypal-payments.php' );
+			$plugin_version           = $plugin_data['Version'] ?? null;
+			$installed_plugin_version = get_option( 'woocommerce-ppcp-version' );
+			if ( $installed_plugin_version !== $plugin_version ) {
 				/**
 				 * The hook fired when the plugin is installed or updated.
 				 */
 				do_action( 'woocommerce_paypal_payments_gateway_migrate' );
+
+				if ( $installed_plugin_version ) {
+					/**
+					 * The hook fired when the plugin is updated.
+					 */
+					do_action( 'woocommerce_paypal_payments_gateway_migrate_on_update' );
+				}
 				update_option( 'woocommerce-ppcp-version', $plugin_version );
 			}
 		}
@@ -119,9 +139,14 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 		}
 	);
 
-	// Add "Settings" link to Plugins screen.
 	add_filter(
 		'plugin_action_links_' . plugin_basename( __FILE__ ),
+		/**
+		 * Add "Settings" link to Plugins screen.
+		 *
+		 * @param array $links
+		 * @retun array
+		 */
 		function( $links ) {
 			if ( ! is_woocommerce_activated() ) {
 				return $links;
@@ -131,12 +156,70 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 				$links,
 				sprintf(
 					'<a href="%1$s">%2$s</a>',
-					admin_url( 'admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway' ),
-					__( 'Settings', 'woocommerce-for-japan' )
+					admin_url( 'admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway&ppcp-tab=' . Settings::CONNECTION_TAB_ID ),
+					__( 'Settings', 'woocommerce-paypal-payments' )
 				)
 			);
 
 			return $links;
+		}
+	);
+
+	add_filter(
+		'plugin_row_meta',
+		/**
+		 * Add links below the description on the Plugins page.
+		 *
+		 * @param array $links
+		 * @param string $file
+		 * @retun array
+		 */
+		function( $links, $file ) {
+			if ( plugin_basename( __FILE__ ) !== $file ) {
+				return $links;
+			}
+
+			return array_merge(
+				$links,
+				array(
+					sprintf(
+						'<a target="_blank" href="%1$s">%2$s</a>',
+						'https://woocommerce.com/document/woocommerce-paypal-payments/',
+						__( 'Documentation', 'woocommerce-paypal-payments' )
+					),
+					sprintf(
+						'<a target="_blank" href="%1$s">%2$s</a>',
+						'https://woocommerce.com/document/woocommerce-paypal-payments/#get-help',
+						__( 'Get help', 'woocommerce-paypal-payments' )
+					),
+					sprintf(
+						'<a target="_blank" href="%1$s">%2$s</a>',
+						'https://woocommerce.com/feature-requests/woocommerce-paypal-payments/',
+						__( 'Request a feature', 'woocommerce-paypal-payments' )
+					),
+					sprintf(
+						'<a target="_blank" href="%1$s">%2$s</a>',
+						'https://github.com/woocommerce/woocommerce-paypal-payments/issues/new?assignees=&labels=type%3A+bug&template=bug_report.md',
+						__( 'Submit a bug', 'woocommerce-paypal-payments' )
+					),
+				)
+			);
+		},
+		10,
+		2
+	);
+
+	add_action(
+		'before_woocommerce_init',
+		function() {
+			if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+				/**
+				 * Skip WC class check.
+				 *
+				 * @psalm-suppress UndefinedClass
+				 */
+				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+			}
 		}
 	);
 
@@ -150,5 +233,3 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 	}
 
 } )();
-
-init();

@@ -59,8 +59,19 @@ class CancelController {
 		) { // Input var ok.
 			$this->session_handler->destroy_session_data();
 		}
-		if ( ! $this->session_handler->order() ) {
+
+		$order = $this->session_handler->order();
+		if ( ! $order ) {
 			return;
+		}
+
+		$source = $order->payment_source();
+		if ( $source && $source->card() ) {
+			return; // Ignore for DCC.
+		}
+
+		if ( 'card' === $this->session_handler->funding_source() ) {
+			return; // Ignore for card buttons.
 		}
 
 		$url = add_query_arg( array( $param_name => wp_create_nonce( $nonce ) ), wc_get_checkout_url() );

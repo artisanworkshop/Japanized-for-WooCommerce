@@ -15,6 +15,7 @@ use WooCommerce\PayPalCommerce\ApiClient\Entity\Item;
 use WooCommerce\PayPalCommerce\ApiClient\Entity\Money;
 use WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException;
 use WooCommerce\PayPalCommerce\Subscription\FreeTrialHandlerTrait;
+use WooCommerce\PayPalCommerce\WcGateway\Gateway\CardButtonGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\CreditCardGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
 
@@ -69,30 +70,22 @@ class AmountFactory {
 	public function from_wc_cart( \WC_Cart $cart ): Amount {
 		$total = new Money( (float) $cart->get_total( 'numeric' ), $this->currency );
 
-		$total_fees_amount = 0;
-		$fees              = WC()->session->get( 'ppcp_fees' );
-		if ( $fees ) {
-			foreach ( WC()->session->get( 'ppcp_fees' ) as $fee ) {
-				$total_fees_amount += (float) $fee->amount;
-			}
-		}
-
-		$item_total = $cart->get_cart_contents_total() + $cart->get_discount_total() + $total_fees_amount;
-		$item_total = new Money( (float) $item_total, $this->currency );
+		$item_total = (float) $cart->get_subtotal() + (float) $cart->get_fee_total();
+		$item_total = new Money( $item_total, $this->currency );
 		$shipping   = new Money(
-			(float) $cart->get_shipping_total() + $cart->get_shipping_tax(),
+			(float) $cart->get_shipping_total(),
 			$this->currency
 		);
 
 		$taxes = new Money(
-			$cart->get_subtotal_tax(),
+			(float) $cart->get_total_tax(),
 			$this->currency
 		);
 
 		$discount = null;
 		if ( $cart->get_discount_total() ) {
 			$discount = new Money(
-				(float) $cart->get_discount_total() + $cart->get_discount_tax(),
+				(float) $cart->get_discount_total(),
 				$this->currency
 			);
 		}
@@ -124,10 +117,24 @@ class AmountFactory {
 		$currency = $order->get_currency();
 		$items    = $this->item_factory->from_wc_order( $order );
 
+		$discount_value = array_sum(
+			array(
+				(float) $order->get_total_discount(), // Only coupons.
+				$this->discounts_from_items( $items ),
+			)
+		);
+		$discount       = null;
+		if ( $discount_value ) {
+			$discount = new Money(
+				(float) $discount_value,
+				$currency
+			);
+		}
+
 		$total_value = (float) $order->get_total();
 		if ( (
-			CreditCardGateway::ID === $order->get_payment_method()
-				|| ( PayPalGateway::ID === $order->get_payment_method() && 'card' === $order->get_meta( PayPalGateway::ORDER_PAYMENT_SOURCE ) )
+				in_array( $order->get_payment_method(), array( CreditCardGateway::ID, CardButtonGateway::ID ), true )
+				|| ( PayPalGateway::ID === $order->get_payment_method() && 'card' === $order->get_meta( PayPalGateway::ORDER_PAYMENT_SOURCE_META_KEY ) )
 			)
 			&& $this->is_free_trial_order( $order )
 		) {
@@ -136,37 +143,17 @@ class AmountFactory {
 		$total = new Money( $total_value, $currency );
 
 		$item_total = new Money(
-			(float) array_reduce(
-				$items,
-				static function ( float $total, Item $item ): float {
-					return $total + $item->quantity() * $item->unit_amount()->value();
-				},
-				0
-			),
+			(float) $order->get_subtotal() + (float) $order->get_total_fees(),
 			$currency
 		);
 		$shipping   = new Money(
-			(float) $order->get_shipping_total() + (float) $order->get_shipping_tax(),
+			(float) $order->get_shipping_total(),
 			$currency
 		);
 		$taxes      = new Money(
-			(float) array_reduce(
-				$items,
-				static function ( float $total, Item $item ): float {
-					return $total + $item->quantity() * $item->tax()->value();
-				},
-				0
-			),
+			(float) $order->get_total_tax(),
 			$currency
 		);
-
-		$discount = null;
-		if ( (float) $order->get_total_discount( false ) ) {
-			$discount = new Money(
-				(float) $order->get_total_discount( false ),
-				$currency
-			);
-		}
 
 		$breakdown = new AmountBreakdown(
 			$item_total,
@@ -232,7 +219,7 @@ class AmountFactory {
 				throw new RuntimeException(
 					sprintf(
 					// translators: %s is the current breakdown key.
-						__( 'No value given for breakdown %s', 'woocommerce-for-japan' ),
+						__( 'No value given for breakdown %s', 'woocommerce-paypal-payments' ),
 						$key
 					)
 				);
@@ -241,7 +228,7 @@ class AmountFactory {
 				throw new RuntimeException(
 					sprintf(
 					// translators: %s is the current breakdown key.
-						__( 'No currency given for breakdown %s', 'woocommerce-for-japan' ),
+						__( 'No currency given for breakdown %s', 'woocommerce-paypal-payments' ),
 						$key
 					)
 				);
@@ -250,5 +237,30 @@ class AmountFactory {
 		}
 
 		return new AmountBreakdown( ...$money );
+	}
+
+	/**
+	 * Returns the sum of items with negative amount;
+	 *
+	 * @param Item[] $items PayPal order items.
+	 * @return float
+	 */
+	private function discounts_from_items( array $items ): float {
+		$discounts = array_filter(
+			$items,
+			function ( Item $item ): bool {
+				return $item->unit_amount()->value() < 0;
+			}
+		);
+		return abs(
+			array_sum(
+				array_map(
+					function ( Item $item ): float {
+						return (float) $item->quantity() * $item->unit_amount()->value();
+					},
+					$discounts
+				)
+			)
+		);
 	}
 }

@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WooCommerce\PayPalCommerce\WcGateway\Processor;
 
 use Exception;
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use WC_Order;
 use WooCommerce\PayPalCommerce\ApiClient\Endpoint\OrderEndpoint;
@@ -31,7 +31,7 @@ use WooCommerce\PayPalCommerce\WcGateway\Notice\AuthorizeOrderActionNotice;
  */
 class AuthorizedPaymentsProcessor {
 
-	use PaymentsStatusHandlingTrait;
+	use PaymentsStatusHandlingTrait, TransactionIdHandlingTrait;
 
 	const SUCCESSFUL        = 'SUCCESSFUL';
 	const ALREADY_CAPTURED  = 'ALREADY_CAPTURED';
@@ -131,6 +131,7 @@ class AuthorizedPaymentsProcessor {
 		try {
 			$order = $this->paypal_order_from_wc_order( $wc_order );
 		} catch ( Exception $exception ) {
+			$this->logger->error( 'Could not get PayPal order from WC order: ' . $exception->getMessage() );
 			if ( $exception->getCode() === 404 ) {
 				return self::NOT_FOUND;
 			}
@@ -180,7 +181,7 @@ class AuthorizedPaymentsProcessor {
 		if ( self::ALREADY_CAPTURED === $result_status ) {
 			if ( $wc_order->get_status() === 'on-hold' ) {
 				$wc_order->add_order_note(
-					__( 'Payment successfully captured.', 'woocommerce-for-japan' )
+					__( 'Payment successfully captured.', 'woocommerce-paypal-payments' )
 				);
 			}
 
@@ -199,10 +200,13 @@ class AuthorizedPaymentsProcessor {
 
 		$this->handle_capture_status( $capture, $wc_order );
 
+		$transaction_id = $capture->id();
+		$this->update_transaction_id( $transaction_id, $wc_order );
+
 		if ( self::SUCCESSFUL === $result_status ) {
 			if ( $capture->status()->is( CaptureStatus::COMPLETED ) ) {
 				$wc_order->add_order_note(
-					__( 'Payment successfully captured.', 'woocommerce-for-japan' )
+					__( 'Payment successfully captured.', 'woocommerce-paypal-payments' )
 				);
 			}
 			$wc_order->update_meta_data( self::CAPTURED_META_KEY, 'true' );

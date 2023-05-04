@@ -11,8 +11,11 @@ namespace WooCommerce\PayPalCommerce\Button\Endpoint;
 
 use Exception;
 use Psr\Log\LoggerInterface;
+use stdClass;
+use Throwable;
 use WooCommerce\PayPalCommerce\ApiClient\Endpoint\OrderEndpoint;
 use WooCommerce\PayPalCommerce\ApiClient\Entity\Amount;
+use WooCommerce\PayPalCommerce\ApiClient\Entity\ApplicationContext;
 use WooCommerce\PayPalCommerce\ApiClient\Entity\Money;
 use WooCommerce\PayPalCommerce\ApiClient\Entity\Order;
 use WooCommerce\PayPalCommerce\ApiClient\Entity\Payer;
@@ -22,11 +25,15 @@ use WooCommerce\PayPalCommerce\ApiClient\Exception\PayPalApiException;
 use WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\PayerFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\PurchaseUnitFactory;
-use WooCommerce\PayPalCommerce\ApiClient\Repository\CartRepository;
+use WooCommerce\PayPalCommerce\ApiClient\Factory\ShippingPreferenceFactory;
+use WooCommerce\PayPalCommerce\Button\Exception\ValidationException;
+use WooCommerce\PayPalCommerce\Button\Validation\CheckoutFormValidator;
 use WooCommerce\PayPalCommerce\Button\Helper\EarlyOrderHandler;
 use WooCommerce\PayPalCommerce\Session\SessionHandler;
 use WooCommerce\PayPalCommerce\Subscription\FreeTrialHandlerTrait;
+use WooCommerce\PayPalCommerce\WcGateway\CardBillingMode;
 use WooCommerce\PayPalCommerce\WcGateway\Exception\NotFoundException;
+use WooCommerce\PayPalCommerce\WcGateway\Gateway\CardButtonGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\CreditCardGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
@@ -48,18 +55,18 @@ class CreateOrderEndpoint implements EndpointInterface {
 	private $request_data;
 
 	/**
-	 * The cart repository.
-	 *
-	 * @var CartRepository
-	 */
-	private $cart_repository;
-
-	/**
 	 * The PurchaseUnit factory.
 	 *
 	 * @var PurchaseUnitFactory
 	 */
 	private $purchase_unit_factory;
+
+	/**
+	 * The shipping_preference factory.
+	 *
+	 * @var ShippingPreferenceFactory
+	 */
+	private $shipping_preference_factory;
 
 	/**
 	 * The order endpoint.
@@ -104,11 +111,11 @@ class CreateOrderEndpoint implements EndpointInterface {
 	private $parsed_request_data;
 
 	/**
-	 * The array of purchase units for order.
+	 * The purchase unit for order.
 	 *
-	 * @var PurchaseUnit[]
+	 * @var PurchaseUnit|null
 	 */
-	private $purchase_units;
+	private $purchase_unit;
 
 	/**
 	 * Whether a new user must be registered during checkout.
@@ -116,6 +123,20 @@ class CreateOrderEndpoint implements EndpointInterface {
 	 * @var bool
 	 */
 	private $registration_needed;
+
+	/**
+	 * The value of card_billing_data_mode from the settings.
+	 *
+	 * @var string
+	 */
+	protected $card_billing_data_mode;
+
+	/**
+	 * Whether to execute WC validation of the checkout form.
+	 *
+	 * @var bool
+	 */
+	protected $early_validation_enabled;
 
 	/**
 	 * The logger.
@@ -127,40 +148,46 @@ class CreateOrderEndpoint implements EndpointInterface {
 	/**
 	 * CreateOrderEndpoint constructor.
 	 *
-	 * @param RequestData         $request_data The RequestData object.
-	 * @param CartRepository      $cart_repository The CartRepository object.
-	 * @param PurchaseUnitFactory $purchase_unit_factory The Purchaseunit factory.
-	 * @param OrderEndpoint       $order_endpoint The OrderEndpoint object.
-	 * @param PayerFactory        $payer_factory The PayerFactory object.
-	 * @param SessionHandler      $session_handler The SessionHandler object.
-	 * @param Settings            $settings The Settings object.
-	 * @param EarlyOrderHandler   $early_order_handler The EarlyOrderHandler object.
-	 * @param bool                $registration_needed  Whether a new user must be registered during checkout.
-	 * @param LoggerInterface     $logger The logger.
+	 * @param RequestData               $request_data The RequestData object.
+	 * @param PurchaseUnitFactory       $purchase_unit_factory The PurchaseUnit factory.
+	 * @param ShippingPreferenceFactory $shipping_preference_factory The shipping_preference factory.
+	 * @param OrderEndpoint             $order_endpoint The OrderEndpoint object.
+	 * @param PayerFactory              $payer_factory The PayerFactory object.
+	 * @param SessionHandler            $session_handler The SessionHandler object.
+	 * @param Settings                  $settings The Settings object.
+	 * @param EarlyOrderHandler         $early_order_handler The EarlyOrderHandler object.
+	 * @param bool                      $registration_needed  Whether a new user must be registered during checkout.
+	 * @param string                    $card_billing_data_mode The value of card_billing_data_mode from the settings.
+	 * @param bool                      $early_validation_enabled Whether to execute WC validation of the checkout form.
+	 * @param LoggerInterface           $logger The logger.
 	 */
 	public function __construct(
 		RequestData $request_data,
-		CartRepository $cart_repository,
 		PurchaseUnitFactory $purchase_unit_factory,
+		ShippingPreferenceFactory $shipping_preference_factory,
 		OrderEndpoint $order_endpoint,
 		PayerFactory $payer_factory,
 		SessionHandler $session_handler,
 		Settings $settings,
 		EarlyOrderHandler $early_order_handler,
 		bool $registration_needed,
+		string $card_billing_data_mode,
+		bool $early_validation_enabled,
 		LoggerInterface $logger
 	) {
 
-		$this->request_data          = $request_data;
-		$this->cart_repository       = $cart_repository;
-		$this->purchase_unit_factory = $purchase_unit_factory;
-		$this->api_endpoint          = $order_endpoint;
-		$this->payer_factory         = $payer_factory;
-		$this->session_handler       = $session_handler;
-		$this->settings              = $settings;
-		$this->early_order_handler   = $early_order_handler;
-		$this->registration_needed   = $registration_needed;
-		$this->logger                = $logger;
+		$this->request_data                = $request_data;
+		$this->purchase_unit_factory       = $purchase_unit_factory;
+		$this->shipping_preference_factory = $shipping_preference_factory;
+		$this->api_endpoint                = $order_endpoint;
+		$this->payer_factory               = $payer_factory;
+		$this->session_handler             = $session_handler;
+		$this->settings                    = $settings;
+		$this->early_order_handler         = $early_order_handler;
+		$this->registration_needed         = $registration_needed;
+		$this->card_billing_data_mode      = $card_billing_data_mode;
+		$this->early_validation_enabled    = $early_validation_enabled;
+		$this->logger                      = $logger;
 	}
 
 	/**
@@ -191,27 +218,27 @@ class CreateOrderEndpoint implements EndpointInterface {
 					wp_send_json_error(
 						array(
 							'name'    => 'order-not-found',
-							'message' => __( 'Order not found', 'woocommerce-for-japan' ),
+							'message' => __( 'Order not found', 'woocommerce-paypal-payments' ),
 							'code'    => 0,
 							'details' => array(),
 						)
 					);
 				}
-				$this->purchase_units = array( $this->purchase_unit_factory->from_wc_order( $wc_order ) );
+				$this->purchase_unit = $this->purchase_unit_factory->from_wc_order( $wc_order );
 			} else {
-				$this->purchase_units = $this->cart_repository->all();
+				$this->purchase_unit = $this->purchase_unit_factory->from_wc_cart();
 
 				// The cart does not have any info about payment method, so we must handle free trial here.
 				if ( (
-					CreditCardGateway::ID === $payment_method
+					in_array( $payment_method, array( CreditCardGateway::ID, CardButtonGateway::ID ), true )
 						|| ( PayPalGateway::ID === $payment_method && 'card' === $funding_source )
 					)
 					&& $this->is_free_trial_cart()
 				) {
-					$this->purchase_units[0]->set_amount(
+					$this->purchase_unit->set_amount(
 						new Amount(
-							new Money( 1.0, $this->purchase_units[0]->amount()->currency_code() ),
-							$this->purchase_units[0]->amount()->breakdown()
+							new Money( 1.0, $this->purchase_unit->amount()->currency_code() ),
+							$this->purchase_unit->amount()->breakdown()
 						)
 					);
 				}
@@ -219,14 +246,28 @@ class CreateOrderEndpoint implements EndpointInterface {
 
 			$this->set_bn_code( $data );
 
-			if ( 'checkout' === $data['context'] ) {
-				try {
-					$order = $this->create_paypal_order( $wc_order );
-				} catch ( Exception $exception ) {
-					$this->logger->error( 'Order creation failed: ' . $exception->getMessage() );
-					throw $exception;
-				}
+			$form_fields = $data['form'] ?? null;
 
+			if ( $this->early_validation_enabled
+				&& is_array( $form_fields )
+				&& 'checkout' === $data['context']
+				&& in_array( $payment_method, array( PayPalGateway::ID, CardButtonGateway::ID ), true )
+			) {
+				$this->validate_form( $form_fields );
+			}
+
+			if ( 'pay-now' === $data['context'] && is_array( $form_fields ) && get_option( 'woocommerce_terms_page_id', '' ) !== '' ) {
+				$this->validate_paynow_form( $form_fields );
+			}
+
+			try {
+				$order = $this->create_paypal_order( $wc_order );
+			} catch ( Exception $exception ) {
+				$this->logger->error( 'Order creation failed: ' . $exception->getMessage() );
+				throw $exception;
+			}
+
+			if ( 'checkout' === $data['context'] ) {
 				if (
 					! $this->early_order_handler->should_create_early_order()
 					|| $this->registration_needed
@@ -237,14 +278,22 @@ class CreateOrderEndpoint implements EndpointInterface {
 				$this->early_order_handler->register_for_order( $order );
 			}
 
-			if ( 'pay-now' === $data['context'] && get_option( 'woocommerce_terms_page_id', '' ) !== '' ) {
-				$this->validate_paynow_form( $data['form'] );
+			if ( 'pay-now' === $data['context'] && is_a( $wc_order, \WC_Order::class ) ) {
+				$wc_order->update_meta_data( PayPalGateway::ORDER_ID_META_KEY, $order->id() );
+				$wc_order->update_meta_data( PayPalGateway::INTENT_META_KEY, $order->intent() );
+				$wc_order->save_meta_data();
 			}
 
-			$order = $this->create_paypal_order( $wc_order );
 			wp_send_json_success( $order->to_array() );
 			return true;
 
+		} catch ( ValidationException $error ) {
+			wp_send_json_error(
+				array(
+					'message' => $error->getMessage(),
+					'errors'  => $error->errors(),
+				)
+			);
 		} catch ( \RuntimeException $error ) {
 			$this->logger->error( 'Order creation failed: ' . $error->getMessage() );
 
@@ -317,19 +366,75 @@ class CreateOrderEndpoint implements EndpointInterface {
 	 * @return Order Created PayPal order.
 	 *
 	 * @throws RuntimeException If create order request fails.
+	 * @throws PayPalApiException If create order request fails.
+	 * phpcs:disable Squiz.Commenting.FunctionCommentThrowTag.WrongNumber
 	 */
 	private function create_paypal_order( \WC_Order $wc_order = null ): Order {
-		$needs_shipping          = WC()->cart instanceof \WC_Cart && WC()->cart->needs_shipping();
-		$shipping_address_is_fix = $needs_shipping && 'checkout' === $this->parsed_request_data['context'];
+		assert( $this->purchase_unit instanceof PurchaseUnit );
 
-		return $this->api_endpoint->create(
-			$this->purchase_units,
-			$this->payer( $this->parsed_request_data, $wc_order ),
-			null,
-			$this->payment_method(),
-			'',
-			$shipping_address_is_fix
+		$funding_source = $this->parsed_request_data['funding_source'] ?? '';
+		$payer          = $this->payer( $this->parsed_request_data, $wc_order );
+
+		$shipping_preference = $this->shipping_preference_factory->from_state(
+			$this->purchase_unit,
+			$this->parsed_request_data['context'],
+			WC()->cart,
+			$funding_source
 		);
+
+		if ( 'card' === $funding_source ) {
+			if ( CardBillingMode::MINIMAL_INPUT === $this->card_billing_data_mode ) {
+				if ( ApplicationContext::SHIPPING_PREFERENCE_SET_PROVIDED_ADDRESS === $shipping_preference ) {
+					if ( $payer ) {
+						$payer->set_address( null );
+					}
+				}
+				if ( ApplicationContext::SHIPPING_PREFERENCE_NO_SHIPPING === $shipping_preference ) {
+					if ( $payer ) {
+						$payer->set_name( null );
+					}
+				}
+			}
+
+			if ( CardBillingMode::NO_WC === $this->card_billing_data_mode ) {
+				$payer = null;
+			}
+		}
+
+		try {
+			return $this->api_endpoint->create(
+				array( $this->purchase_unit ),
+				$shipping_preference,
+				$payer,
+				null,
+				$this->payment_method()
+			);
+		} catch ( PayPalApiException $exception ) {
+			// Looks like currently there is no proper way to validate the shipping address for PayPal,
+			// so we cannot make some invalid addresses null in PurchaseUnitFactory,
+			// which causes failure e.g. for guests using the button on products pages when the country does not have postal codes.
+			if ( 422 === $exception->status_code()
+				&& array_filter(
+					$exception->details(),
+					function ( stdClass $detail ): bool {
+						return isset( $detail->field ) && str_contains( (string) $detail->field, 'shipping/address' );
+					}
+				) ) {
+				$this->logger->info( 'Invalid shipping address for order creation, retrying without it.' );
+
+				$this->purchase_unit->set_shipping( null );
+
+				return $this->api_endpoint->create(
+					array( $this->purchase_unit ),
+					$shipping_preference,
+					$payer,
+					null,
+					$this->payment_method()
+				);
+			}
+
+			throw $exception;
+		}
 	}
 
 	/**
@@ -363,9 +468,9 @@ class CreateOrderEndpoint implements EndpointInterface {
 		}
 
 		if ( ! $payer && isset( $data['form'] ) ) {
-			parse_str( $data['form'], $form_fields );
+			$form_fields = $data['form'];
 
-			if ( isset( $form_fields['billing_email'] ) && '' !== $form_fields['billing_email'] ) {
+			if ( is_array( $form_fields ) && isset( $form_fields['billing_email'] ) && '' !== $form_fields['billing_email'] ) {
 				return $this->payer_factory->from_checkout_form( $form_fields );
 			}
 		}
@@ -407,16 +512,32 @@ class CreateOrderEndpoint implements EndpointInterface {
 	}
 
 	/**
+	 * Checks whether the form fields are valid.
+	 *
+	 * @param array $form_fields The form fields.
+	 * @throws ValidationException When fields are not valid.
+	 */
+	private function validate_form( array $form_fields ): void {
+		try {
+			$v = new CheckoutFormValidator();
+			$v->validate( $form_fields );
+		} catch ( ValidationException $exception ) {
+			throw $exception;
+		} catch ( Throwable $exception ) {
+			$this->logger->error( "Form validation execution failed. {$exception->getMessage()} {$exception->getFile()}:{$exception->getLine()}" );
+		}
+	}
+
+	/**
 	 * Checks whether the terms input field is checked.
 	 *
-	 * @param string $form_values The form values.
-	 * @throws \RuntimeException When field is not checked.
+	 * @param array $form_fields The form fields.
+	 * @throws ValidationException When field is not checked.
 	 */
-	private function validate_paynow_form( string $form_values ) {
-		$parsed_values = wp_parse_args( $form_values );
-		if ( isset( $parsed_values['terms-field'] ) && ! isset( $parsed_values['terms'] ) ) {
-			throw new \RuntimeException(
-				__( 'Please read and accept the terms and conditions to proceed with your order.', 'woocommerce-for-japan' )
+	private function validate_paynow_form( array $form_fields ): void {
+		if ( isset( $form_fields['terms-field'] ) && ! isset( $form_fields['terms'] ) ) {
+			throw new ValidationException(
+				array( __( 'Please read and accept the terms and conditions to proceed with your order.', 'woocommerce-paypal-payments' ) )
 			);
 		}
 	}

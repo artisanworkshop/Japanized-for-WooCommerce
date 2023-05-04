@@ -43,13 +43,13 @@ class PayPalApiException extends RuntimeException {
 				/* translators: %1$d - HTTP status code number (404, 500, ...) */
 				__(
 					'Unknown error while connecting to PayPal. Status code: %1$d.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				),
 				$this->status_code
 			);
 		}
 		if ( ! isset( $response->name ) ) {
-			$response->name = __( 'Error', 'woocommerce-for-japan' );
+			$response->name = __( 'Error', 'woocommerce-paypal-payments' );
 		}
 		if ( ! isset( $response->details ) ) {
 			$response->details = array();
@@ -112,11 +112,33 @@ class PayPalApiException extends RuntimeException {
 	}
 
 	/**
-	 * Returns response issues.
+	 * The HTTP status code.
 	 *
-	 * @return array
+	 * @return int
 	 */
-	public function issues(): array {
-		return $this->response->issues ?? array();
+	public function status_code(): int {
+		return $this->status_code;
+	}
+
+	/**
+	 * Return exception details if exists.
+	 *
+	 * @param string $error The error to return in case no details found.
+	 * @return string
+	 */
+	public function get_details( string $error ): string {
+		if ( empty( $this->details() ) ) {
+			return $error;
+		}
+
+		$details = '';
+		foreach ( $this->details() as $detail ) {
+			$issue       = $detail->issue ?? '';
+			$field       = $detail->field ?? '';
+			$description = $detail->description ?? '';
+			$details    .= $issue . ' ' . $field . ' ' . $description . '<br>';
+		}
+
+		return $details;
 	}
 }

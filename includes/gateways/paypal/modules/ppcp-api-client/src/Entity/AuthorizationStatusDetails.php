@@ -63,7 +63,7 @@ class AuthorizationStatusDetails {
 	public function text(): string {
 		switch ( $this->reason ) {
 			case self::PENDING_REVIEW:
-				return __( 'Authorization is pending manual review.', 'woocommerce-for-japan' );
+				return __( 'Authorization is pending manual review.', 'woocommerce-paypal-payments' );
 			default:
 				return $this->reason;
 		}

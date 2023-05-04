@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace WooCommerce\PayPalCommerce\Session\Cancellation;
 
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use WooCommerce\PayPalCommerce\WcGateway\FundingSource\FundingSourceRenderer;
 
 /**
@@ -58,13 +58,13 @@ class CancelView {
 			<?php
 			$name = $funding_source ?
 				$this->funding_source_renderer->render_name( $funding_source )
-				: ( $this->settings->has( 'title' ) ? $this->settings->get( 'title' ) : __( 'PayPal', 'woocommerce-for-japan' ) );
+				: ( $this->settings->has( 'title' ) ? $this->settings->get( 'title' ) : __( 'PayPal', 'woocommerce-paypal-payments' ) );
 			printf(
 					// translators: %3$ is funding source like "PayPal" or "Venmo", other placeholders are html tags for a link.
 				esc_html__(
 					'You are currently paying with %3$s. If you want to cancel
                             this process, please click %1$shere%2$s.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				),
 				'<a href="' . esc_url( $url ) . '">',
 				'</a>',

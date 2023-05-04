@@ -113,7 +113,7 @@ class PartnersEndpoint {
 			$error = new RuntimeException(
 				__(
 					'Could not fetch sellers status.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				)
 			);
 

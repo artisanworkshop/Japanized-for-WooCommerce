@@ -1,10 +1,11 @@
 import CartActionHandler from '../ActionHandler/CartActionHandler';
-import ErrorHandler from '../ErrorHandler';
+import {setVisible} from "../Helper/Hiding";
 
 class CartBootstrap {
-    constructor(gateway, renderer) {
+    constructor(gateway, renderer, errorHandler) {
         this.gateway = gateway;
         this.renderer = renderer;
+        this.errorHandler = errorHandler;
     }
 
     init() {
@@ -16,25 +17,41 @@ class CartBootstrap {
 
         jQuery(document.body).on('updated_cart_totals updated_checkout', () => {
             this.render();
+
+            fetch(
+                this.gateway.ajax.cart_script_params.endpoint,
+                {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                }
+            )
+            .then(result => result.json())
+            .then(result => {
+                if (! result.success) {
+                    return;
+                }
+
+                const newParams = result.data;
+                const reloadRequired = this.gateway.url_params.intent !== newParams.intent;
+
+                // TODO: should reload the script instead
+                setVisible(this.gateway.button.wrapper, !reloadRequired)
+            });
         });
     }
 
     shouldRender() {
-        return document.querySelector(this.gateway.button.wrapper) !==
-            null || document.querySelector(this.gateway.hosted_fields.wrapper) !==
-            null;
+        return document.querySelector(this.gateway.button.wrapper) !== null;
     }
 
     render() {
         const actionHandler = new CartActionHandler(
             PayPalCommerceGateway,
-            new ErrorHandler(this.gateway.labels.error.generic),
+            this.errorHandler,
         );
 
         this.renderer.render(
-            this.gateway.button.wrapper,
-            this.gateway.hosted_fields.wrapper,
-            actionHandler.configuration(),
+            actionHandler.configuration()
         );
     }
 }

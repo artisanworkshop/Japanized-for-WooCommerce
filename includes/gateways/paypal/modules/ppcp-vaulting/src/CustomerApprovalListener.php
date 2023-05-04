@@ -53,12 +53,14 @@ class CustomerApprovalListener {
 	 * @return void
 	 */
 	public function listen(): void {
-		$token = filter_input( INPUT_GET, 'approval_token_id', FILTER_SANITIZE_STRING );
-		if ( ! is_string( $token ) ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$token = wc_clean( wp_unslash( $_GET['approval_token_id'] ?? '' ) );
+		if ( ! $token || is_array( $token ) ) {
 			return;
 		}
 
-		$url = (string) filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$url = (string) filter_var( $_SERVER['REQUEST_URI'] ?? '', FILTER_SANITIZE_URL );
 
 		$query = wp_parse_url( $url, PHP_URL_QUERY );
 		if ( $query && str_contains( $query, 'ppcp_vault=cancel' ) ) {
@@ -75,7 +77,7 @@ class CustomerApprovalListener {
 			$this->add_wc_error_notice(
 				__(
 					'This PayPal account is already saved on this site. Please check that you are logged in correctly.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				)
 			);
 		} catch ( Exception $exception ) {
@@ -93,7 +95,9 @@ class CustomerApprovalListener {
 		add_action(
 			'woocommerce_init',
 			function () use ( $message ): void {
-				wc_add_notice( $message, 'error' );
+				if ( function_exists( 'wc_add_notice' ) ) {
+					wc_add_notice( $message, 'error' );
+				}
 			}
 		);
 	}
