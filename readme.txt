@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.1.1
-Stable tag: 2.5.7
+Stable tag: 2.5.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -62,6 +62,7 @@ The manual installation method involves downloading our plugin and uploading it 
 = 2.5.8 - 2023-05-04 =
 * Update - PayPal Payment 2.0.4.
 * Fixed - Law Page setting.
+* Fixed - Reflected Cross-Site Scripting.
 
 = 2.5.7 - 2023-05-02 =
 * Update - PeachPay 1.91.5.
