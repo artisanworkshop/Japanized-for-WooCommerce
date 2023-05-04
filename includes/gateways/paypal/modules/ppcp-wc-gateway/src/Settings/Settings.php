@@ -10,14 +10,16 @@ declare(strict_types=1);
 namespace WooCommerce\PayPalCommerce\WcGateway\Settings;
 
 use WooCommerce\PayPalCommerce\WcGateway\Exception\NotFoundException;
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 
 /**
  * Class Settings
  */
 class Settings implements ContainerInterface {
 
-	const KEY = 'woocommerce-ppcp-settings';
+	const KEY               = 'woocommerce-ppcp-settings';
+	const CONNECTION_TAB_ID = 'ppcp-connection';
+	const PAY_LATER_TAB_ID  = 'ppcp-pay-later';
 
 	/**
 	 * The settings.
@@ -25,6 +27,22 @@ class Settings implements ContainerInterface {
 	 * @var array
 	 */
 	private $settings = array();
+
+	/**
+	 * The list of selected default button locations.
+	 *
+	 * @var string[]
+	 */
+	protected $default_button_locations;
+
+	/**
+	 * Settings constructor.
+	 *
+	 * @param string[] $default_button_locations The list of selected default button locations.
+	 */
+	public function __construct( array $default_button_locations ) {
+		$this->default_button_locations = $default_button_locations;
+	}
 
 	/**
 	 * Returns the value for an id.
@@ -86,19 +104,22 @@ class Settings implements ContainerInterface {
 		$this->settings = get_option( self::KEY, array() );
 
 		$defaults = array(
-			'title'                         => __( 'PayPal', 'woocommerce-for-japan' ),
-			'description'                   => __(
+			'title'                                    => __( 'PayPal', 'woocommerce-paypal-payments' ),
+			'description'                              => __(
 				'Pay via PayPal.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
-			'button_single_product_enabled' => true,
-			'button_mini-cart_enabled'      => true,
-			'button_cart_enabled'           => true,
-			'brand_name'                    => get_bloginfo( 'name' ),
-			'dcc_gateway_title'             => __( 'Credit Cards', 'woocommerce-for-japan' ),
-			'dcc_gateway_description'       => __(
+			'smart_button_locations'                   => $this->default_button_locations,
+			'smart_button_enable_styling_per_location' => true,
+			'pay_later_messaging_enabled'              => true,
+			'pay_later_button_enabled'                 => true,
+			'pay_later_button_locations'               => $this->default_button_locations,
+			'pay_later_messaging_locations'            => $this->default_button_locations,
+			'brand_name'                               => get_bloginfo( 'name' ),
+			'dcc_gateway_title'                        => __( 'Credit Cards', 'woocommerce-paypal-payments' ),
+			'dcc_gateway_description'                  => __(
 				'Pay with your credit card.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
 		);
 		foreach ( $defaults as $key => $value ) {

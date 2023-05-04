@@ -58,10 +58,9 @@ class FilePathPluginFactory implements FilePathPluginFactoryInterface {
 
 		if ( ! function_exists( 'get_plugin_data' ) ) {
 			/**
-			 * Skip check for WP files and constants.
+			 * Skip check for WP files.
 			 *
-			 * @psalm-suppress UnresolvableInclude
-			 * @psalm-suppress UndefinedConstant
+			 * @psalm-suppress MissingFile
 			 */
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
@@ -84,7 +83,7 @@ class FilePathPluginFactory implements FilePathPluginFactoryInterface {
 				'Description' => '',
 				'TextDomain'  => '',
 				'RequiresWP'  => '5.0',
-				'RequiresPHP' => '7.1',
+				'RequiresPHP' => '7.2',
 			),
 			$plugin_data
 		);

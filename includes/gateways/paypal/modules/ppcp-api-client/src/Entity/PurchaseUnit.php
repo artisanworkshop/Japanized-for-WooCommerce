@@ -176,6 +176,15 @@ class PurchaseUnit {
 	}
 
 	/**
+	 * Sets shipping info.
+	 *
+	 * @param Shipping|null $shipping The value to set.
+	 */
+	public function set_shipping( ?Shipping $shipping ): void {
+		$this->shipping = $shipping;
+	}
+
+	/**
 	 * Returns the reference id.
 	 *
 	 * @return string
@@ -259,9 +268,11 @@ class PurchaseUnit {
 	/**
 	 * Returns the object as array.
 	 *
+	 * @param bool $ditch_items_when_mismatch Whether ditch items when mismatch or not.
+	 *
 	 * @return array
 	 */
-	public function to_array(): array {
+	public function to_array( bool $ditch_items_when_mismatch = true ): array {
 		$purchase_unit = array(
 			'reference_id' => $this->reference_id(),
 			'amount'       => $this->amount()->to_array(),
@@ -273,7 +284,14 @@ class PurchaseUnit {
 				$this->items()
 			),
 		);
-		if ( $this->ditch_items_when_mismatch( $this->amount(), ...$this->items() ) ) {
+
+		$ditch = $ditch_items_when_mismatch && $this->ditch_items_when_mismatch( $this->amount(), ...$this->items() );
+		/**
+		 * The filter can be used to control when the items and totals breakdown are removed from PayPal order info.
+		 */
+		$ditch = apply_filters( 'ppcp_ditch_items_breakdown', $ditch, $this );
+
+		if ( $ditch ) {
 			unset( $purchase_unit['items'] );
 			unset( $purchase_unit['amount']['breakdown'] );
 		}
@@ -322,9 +340,9 @@ class PurchaseUnit {
 			$remaining_item_total = array_reduce(
 				$items,
 				function ( float $total, Item $item ): float {
-					return $total - $item->unit_amount()->value() * (float) $item->quantity();
+					return $total - (float) $item->unit_amount()->value_str() * (float) $item->quantity();
 				},
-				$item_total->value()
+				(float) $item_total->value_str()
 			);
 
 			$remaining_item_total = round( $remaining_item_total, 2 );
@@ -334,18 +352,24 @@ class PurchaseUnit {
 			}
 		}
 
-		$tax_total = $breakdown->tax_total();
-		if ( $tax_total ) {
+		$tax_total      = $breakdown->tax_total();
+		$items_with_tax = array_filter(
+			$this->items,
+			function ( Item $item ): bool {
+				return null !== $item->tax();
+			}
+		);
+		if ( $tax_total && ! empty( $items_with_tax ) ) {
 			$remaining_tax_total = array_reduce(
 				$items,
 				function ( float $total, Item $item ): float {
 					$tax = $item->tax();
 					if ( $tax ) {
-						$total -= $tax->value() * (float) $item->quantity();
+						$total -= (float) $tax->value_str() * (float) $item->quantity();
 					}
 					return $total;
 				},
-				$tax_total->value()
+				(float) $tax_total->value_str()
 			);
 
 			$remaining_tax_total = round( $remaining_tax_total, 2 );
@@ -363,29 +387,30 @@ class PurchaseUnit {
 
 		$amount_total = 0.0;
 		if ( $shipping ) {
-			$amount_total += $shipping->value();
+			$amount_total += (float) $shipping->value_str();
 		}
 		if ( $item_total ) {
-			$amount_total += $item_total->value();
+			$amount_total += (float) $item_total->value_str();
 		}
 		if ( $discount ) {
-			$amount_total -= $discount->value();
+			$amount_total -= (float) $discount->value_str();
 		}
 		if ( $tax_total ) {
-			$amount_total += $tax_total->value();
+			$amount_total += (float) $tax_total->value_str();
 		}
 		if ( $shipping_discount ) {
-			$amount_total -= $shipping_discount->value();
+			$amount_total -= (float) $shipping_discount->value_str();
 		}
 		if ( $handling ) {
-			$amount_total += $handling->value();
+			$amount_total += (float) $handling->value_str();
 		}
 		if ( $insurance ) {
-			$amount_total += $insurance->value();
+			$amount_total += (float) $insurance->value_str();
 		}
 
-		$amount_value   = $amount->value();
-		$needs_to_ditch = (string) $amount_total !== (string) $amount_value;
+		$amount_str       = $amount->value_str();
+		$amount_total_str = ( new Money( $amount_total, $amount->currency_code() ) )->value_str();
+		$needs_to_ditch   = $amount_str !== $amount_total_str;
 		return $needs_to_ditch;
 	}
 }

@@ -49,42 +49,42 @@ class AuthorizeOrderActionNotice {
 		$messages[ self::NO_INFO ]           = array(
 			'message' => __(
 				'Could not retrieve information. Try again later.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
 			'type'    => 'error',
 		);
 		$messages[ self::ALREADY_CAPTURED ]  = array(
 			'message' => __(
 				'Payment already captured.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
 			'type'    => 'error',
 		);
 		$messages[ self::FAILED ]            = array(
 			'message' => __(
 				'Failed to capture. Try again later or checks the logs.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
 			'type'    => 'error',
 		);
 		$messages[ self::BAD_AUTHORIZATION ] = array(
 			'message' => __(
 				'Cannot capture, no valid payment authorization.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
 			'type'    => 'error',
 		);
 		$messages[ self::NOT_FOUND ]         = array(
 			'message' => __(
 				'Could not find payment to process.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
 			'type'    => 'error',
 		);
 		$messages[ self::SUCCESS ]           = array(
 			'message' => __(
 				'Payment successfully captured.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
 			'type'    => 'success',
 		);

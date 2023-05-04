@@ -114,9 +114,9 @@ class JP4WC{
      * Define Constants.
      */
     protected function define_constants() {
-        $this->define( 'JP4WC_ABSPATH', dirname( __FILE__ ) . '/' );
+        define( 'JP4WC_ABSPATH', dirname( __FILE__ ) . '/' );
+        define( 'JP4WC_INCLUDES_PATH', JP4WC_ABSPATH . 'includes/' );
         $this->define( 'JP4WC_URL_PATH', plugins_url( '/', __FILE__ ) );
-        $this->define( 'JP4WC_INCLUDES_PATH', JP4WC_ABSPATH . 'includes/' );
         $this->define( 'JP4WC_PLUGIN_FILE', __FILE__ );
         $this->define( 'JP4WC_VERSION', $this->version );
         $this->define( 'JP4WC_FRAMEWORK_VERSION', $this->framework_version );
@@ -168,18 +168,13 @@ class JP4WC{
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-custom-email.php';
 		// Add Payments setting
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-payments.php';
-        // Add PayPal Checkout(OLD)
-        $paypal_setting = get_option( 'woocommerce_ppec_paypal_settings' );
-        if( isset($paypal_setting['enabled']) && $paypal_setting['enabled'] == 'yes' ){
-	        require_once JP4WC_INCLUDES_PATH . 'paypal-checkout/woocommerce-gateway-paypal-express-checkout.php';
-        }
-		// Add PayPal Checkout(New from 2022/05 )
-        if(get_option('wc4jp-jp4wc-paypal', false) && !is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' )){
+		// Add PayPal Checkout(New from 2023/06 )
+//		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+//        if(get_option('wc4jp-jp4wc-paypal') && ! is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' )){
 	        require_once JP4WC_INCLUDES_PATH . 'gateways/paypal/woocommerce-paypal-payments.php';
-        }
+//        }
 
         // Add PeachPay Checkout
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		if ( ! is_plugin_active( 'peachpay-for-woocommerce/peachpay.php' ) && get_option('wc4jp-peachpay') ) {
 			require_once JP4WC_INCLUDES_PATH . 'gateways/peachpay/peachpay.php';
 		}

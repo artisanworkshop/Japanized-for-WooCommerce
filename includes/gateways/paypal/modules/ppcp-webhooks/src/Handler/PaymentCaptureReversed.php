@@ -79,7 +79,7 @@ class PaymentCaptureReversed implements RequestHandler {
 				// translators: %s is the PayPal webhook Id.
 				__(
 					'No order for webhook event %s was found.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				),
 				isset( $request['id'] ) ? $request['id'] : ''
 			);
@@ -98,7 +98,7 @@ class PaymentCaptureReversed implements RequestHandler {
 		if ( ! is_a( $wc_order, \WC_Order::class ) ) {
 			$message = sprintf(
 			// translators: %s is the PayPal refund Id.
-				__( 'Order for PayPal refund %s not found.', 'woocommerce-for-japan' ),
+				__( 'Order for PayPal refund %s not found.', 'woocommerce-paypal-payments' ),
 				isset( $request['resource']['id'] ) ? $request['resource']['id'] : ''
 			);
 			$this->logger->log(
@@ -113,22 +113,27 @@ class PaymentCaptureReversed implements RequestHandler {
 		}
 
 		/**
+		 * Allows adding an update status note.
+		 */
+		$note = apply_filters( 'ppcp_payment_capture_reversed_webhook_update_status_note', '', $wc_order, $request['event_type'] );
+
+		/**
 		 * The WooCommerce order.
 		 *
 		 * @var \WC_Order $wc_order
 		 */
-		$response['success'] = (bool) $wc_order->update_status( 'cancelled' );
+		$response['success'] = (bool) $wc_order->update_status( 'cancelled', $note );
 
 		$message = $response['success'] ? sprintf(
 			// translators: %1$s is the order id.
 			__(
 				'Order %1$s has been cancelled through PayPal',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			),
 			(string) $wc_order->get_id()
 		) : sprintf(
 			// translators: %1$s is the order id.
-			__( 'Failed to cancel order %1$s through PayPal', 'woocommerce-for-japan' ),
+			__( 'Failed to cancel order %1$s through PayPal', 'woocommerce-paypal-payments' ),
 			(string) $wc_order->get_id()
 		);
 		$this->logger->log(

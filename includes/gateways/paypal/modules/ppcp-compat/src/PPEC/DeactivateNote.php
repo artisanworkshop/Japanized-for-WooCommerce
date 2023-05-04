@@ -50,12 +50,12 @@ class DeactivateNote {
 		if ( PPECHelper::site_has_ppec_subscriptions() ) {
 			$msg = __(
 				'As of 1 Sept 2021, PayPal Checkout will be officially retired from WooCommerce.com, and support for this product will end as of 1 March 2022. PayPal Payments can now handle all your subscription renewals even if they were first created using PayPal Checkout. To fully switch over, all you need to do is deactivate and/or remove the PayPal Checkout plugin from your store.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			);
 		} else {
 			$msg = __(
 				'As of 1 Sept 2021, PayPal Checkout will be officially retired from WooCommerce.com, and support for this product will end as of 1 March 2022. To fully switch over, all you need to do is deactivate and/or remove the PayPal Checkout plugin from your store.',
-				'woocommerce-for-japan'
+				'woocommerce-paypal-payments'
 			);
 		}
 
@@ -64,19 +64,19 @@ class DeactivateNote {
 		$note->set_type( Note::E_WC_ADMIN_NOTE_INFORMATIONAL );
 		$note->set_source( 'woocommerce-paypal-payments' );
 		$note->set_title(
-			__( 'Action Required: Deactivate PayPal Checkout', 'woocommerce-for-japan' )
+			__( 'Action Required: Deactivate PayPal Checkout', 'woocommerce-paypal-payments' )
 		);
 		$note->set_content( $msg );
 		$note->add_action(
 			'deactivate-paypal-checkout-plugin',
-			__( 'Deactivate PayPal Checkout', 'woocommerce-for-japan' ),
+			__( 'Deactivate PayPal Checkout', 'woocommerce-paypal-payments' ),
 			admin_url( 'plugins.php?action=deactivate&plugin=' . rawurlencode( PPECHelper::PPEC_PLUGIN_FILE ) . '&plugin_status=all&paged=1&_wpnonce=' . wp_create_nonce( 'deactivate-plugin_' . PPECHelper::PPEC_PLUGIN_FILE ) ),
 			Note::E_WC_ADMIN_NOTE_UNACTIONED,
 			true
 		);
 		$note->add_action(
 			'learn-more',
-			__( 'Learn More', 'woocommerce-for-japan' ),
+			__( 'Learn More', 'woocommerce-paypal-payments' ),
 			'https://docs.woocommerce.com/document/woocommerce-paypal-payments/paypal-payments-upgrade-guide/',
 			Note::E_WC_ADMIN_NOTE_UNACTIONED
 		);

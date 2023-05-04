@@ -19,10 +19,13 @@ use WooCommerce\PayPalCommerce\Webhooks\Endpoint\SimulateEndpoint;
 use WooCommerce\PayPalCommerce\Webhooks\Endpoint\SimulationStateEndpoint;
 use WooCommerce\PayPalCommerce\Webhooks\Handler\CheckoutOrderApproved;
 use WooCommerce\PayPalCommerce\Webhooks\Handler\CheckoutOrderCompleted;
+use WooCommerce\PayPalCommerce\Webhooks\Handler\CheckoutPaymentApprovalReversed;
 use WooCommerce\PayPalCommerce\Webhooks\Handler\PaymentCaptureCompleted;
+use WooCommerce\PayPalCommerce\Webhooks\Handler\PaymentCaptureDenied;
+use WooCommerce\PayPalCommerce\Webhooks\Handler\PaymentCapturePending;
 use WooCommerce\PayPalCommerce\Webhooks\Handler\PaymentCaptureRefunded;
 use WooCommerce\PayPalCommerce\Webhooks\Handler\PaymentCaptureReversed;
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use WooCommerce\PayPalCommerce\Webhooks\Handler\VaultCreditCardCreated;
 use WooCommerce\PayPalCommerce\Webhooks\Handler\VaultPaymentTokenCreated;
 use WooCommerce\PayPalCommerce\Webhooks\Status\Assets\WebhooksStatusPageAssets;
@@ -73,11 +76,13 @@ return array(
 		return array(
 			new CheckoutOrderApproved( $logger, $prefix, $order_endpoint ),
 			new CheckoutOrderCompleted( $logger, $prefix ),
+			new CheckoutPaymentApprovalReversed( $logger ),
 			new PaymentCaptureRefunded( $logger, $prefix ),
 			new PaymentCaptureReversed( $logger, $prefix ),
 			new PaymentCaptureCompleted( $logger, $prefix, $order_endpoint ),
 			new VaultPaymentTokenCreated( $logger, $prefix, $authorized_payments_processor ),
 			new VaultCreditCardCreated( $logger, $prefix ),
+			new PaymentCapturePending( $logger ),
 		);
 	},
 
@@ -112,7 +117,7 @@ return array(
 	},
 
 	'webhook.status.registered-webhooks-data' => function( ContainerInterface $container ) : array {
-		$empty_placeholder = __( 'No webhooks found.', 'woocommerce-for-japan' );
+		$empty_placeholder = __( 'No webhooks found.', 'woocommerce-paypal-payments' );
 
 		$webhooks = array();
 		try {
@@ -120,14 +125,14 @@ return array(
 		} catch ( Exception $exception ) {
 			$empty_placeholder = sprintf(
 				'<span class="error">%s</span>',
-				__( 'Failed to load webhooks.', 'woocommerce-for-japan' )
+				__( 'Failed to load webhooks.', 'woocommerce-paypal-payments' )
 			);
 		}
 
 		return array(
 			'headers'           => array(
-				__( 'URL', 'woocommerce-for-japan' ),
-				__( 'Tracked events', 'woocommerce-for-japan' ),
+				__( 'URL', 'woocommerce-paypal-payments' ),
+				__( 'Tracked events', 'woocommerce-paypal-payments' ),
 			),
 			'data'              => array_map(
 				function ( Webhook $webhook ): array {
@@ -162,7 +167,8 @@ return array(
 	'webhook.status.assets'                   => function( ContainerInterface $container ) : WebhooksStatusPageAssets {
 		return new WebhooksStatusPageAssets(
 			$container->get( 'webhook.module-url' ),
-			$container->get( 'ppcp.asset-version' )
+			$container->get( 'ppcp.asset-version' ),
+			$container->get( 'onboarding.environment' )
 		);
 	},
 
@@ -193,8 +199,8 @@ return array(
 		);
 	},
 
-	'webhook.last-webhook-storage'            => static function ( ContainerInterface $container ): WebhookInfoStorage {
-		return new WebhookInfoStorage( $container->get( 'webhook.last-webhook-storage.key' ) );
+	'webhook.last-webhook-storage'            => static function ( ContainerInterface $container ): WebhookEventStorage {
+		return new WebhookEventStorage( $container->get( 'webhook.last-webhook-storage.key' ) );
 	},
 	'webhook.last-webhook-storage.key'        => static function ( ContainerInterface $container ): string {
 		return 'ppcp-last-webhook';

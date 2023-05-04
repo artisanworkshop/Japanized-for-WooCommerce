@@ -5,23 +5,33 @@
  * @package WooCommerce\PayPalCommerce
  */
 
-use Dhii\Container\CachingContainer;
-use Dhii\Container\CompositeCachingServiceProvider;
-use Dhii\Container\CompositeContainer;
-use Dhii\Container\DelegatingContainer;
-use Dhii\Container\ProxyContainer;
-use Dhii\Modular\Module\ModuleInterface;
-use Interop\Container\ServiceProviderInterface;
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Container\CachingContainer;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Container\CompositeCachingServiceProvider;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Container\CompositeContainer;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Container\DelegatingContainer;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Container\ProxyContainer;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Modular\Module\ModuleInterface;
+use WooCommerce\PayPalCommerce\Vendor\Interop\Container\ServiceProviderInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 
 return function (
 	string $root_dir,
-	ContainerInterface ...$additional_containers
+	array $additional_containers = array(),
+	array $additional_modules = array()
 ): ContainerInterface {
+	/**
+	 * Skip path check.
+	 *
+	 * @psalm-suppress UnresolvableInclude
+	 */
 	$modules = ( require "$root_dir/modules.php" )( $root_dir );
 
-	// Use this filter to add custom module or remove some of existing ones.
-	// Modules able to access container, add services and modify existing ones.
+	$modules = array_merge( $modules, $additional_modules );
+
+	/**
+	 * Use this filter to add custom module or remove some of existing ones.
+	 * Modules able to access container, add services and modify existing ones.
+	 */
 	$modules = apply_filters( 'woocommerce_paypal_payments_modules', $modules );
 
 	$providers = array_map(
@@ -36,7 +46,12 @@ return function (
 	// TODO: caching does not work currently,
 	// may want to consider fixing it later (pass proxy as parent to DelegatingContainer)
 	// for now not fixed since we were using this behavior for long time and fixing it now may break things.
-	$container     = new DelegatingContainer( $provider );
+	$container = new DelegatingContainer( $provider );
+	/**
+	 * Skip iterable vs array check.
+	 *
+	 * @psalm-suppress PossiblyInvalidArgument
+	 */
 	$app_container = new CachingContainer(
 		new CompositeContainer(
 			array_merge(

@@ -1,5 +1,6 @@
 import dccInputFactory from "../Helper/DccInputFactory";
 import {show} from "../Helper/Hiding";
+import Product from "../Entity/Product";
 
 class CreditCardRenderer {
 
@@ -13,7 +14,6 @@ class CreditCardRenderer {
     }
 
     render(wrapper, contextConfig) {
-
         if (
             (
                 this.defaultConfig.context !== 'checkout'
@@ -42,6 +42,9 @@ class CreditCardRenderer {
         }
 
         const gateWayBox = document.querySelector('.payment_box.payment_method_ppcp-credit-card-gateway');
+        if(! gateWayBox) {
+            return
+        }
         const oldDisplayStyle = gateWayBox.style.display;
         gateWayBox.style.display = 'block';
 
@@ -115,11 +118,23 @@ class CreditCardRenderer {
                 }
                 const validCards = this.defaultConfig.hosted_fields.valid_cards;
                 this.cardValid = validCards.indexOf(event.cards[0].type) !== -1;
+
+                const className = this._cardNumberFiledCLassNameByCardType(event.cards[0].type);
+                this._recreateElementClassAttribute(cardNumber, cardNumberField.className);
+                if (event.fields.number.isValid) {
+                    cardNumber.classList.add(className);
+                }
             })
             hostedFields.on('validityChange', (event) => {
                 const formValid = Object.keys(event.fields).every(function (key) {
                     return event.fields[key].isValid;
                 });
+
+                const className = this._cardNumberFiledCLassNameByCardType(event.cards[0].type);
+                event.fields.number.isValid
+                    ? cardNumber.classList.add(className)
+                    : this._recreateElementClassAttribute(cardNumber, cardNumberField.className);
+
                this.formValid = formValid;
 
             });
@@ -207,12 +222,6 @@ class CreditCardRenderer {
                 const firstName = document.getElementById('billing_first_name') ? document.getElementById('billing_first_name').value : '';
                 const lastName = document.getElementById('billing_last_name') ? document.getElementById('billing_last_name').value : '';
 
-                if (!firstName || !lastName) {
-                    this.spinner.unblock();
-                    this.errorHandler.message(this.defaultConfig.hosted_fields.labels.cardholder_name_required);
-                    return;
-                }
-
                 hostedFieldsData.cardholderName = firstName + ' ' + lastName;
             }
 
@@ -224,8 +233,18 @@ class CreditCardRenderer {
                 this.spinner.unblock();
                 this.errorHandler.clear();
 
-                if (err.details) {
-                    this.errorHandler.message(err.details.map(d => `${d.issue} ${d.description}`).join('<br/>'), true);
+                if (err.data?.details?.length) {
+                    this.errorHandler.message(err.data.details.map(d => `${d.issue} ${d.description}`).join('<br/>'));
+                } else if (err.details?.length) {
+                    this.errorHandler.message(err.details.map(d => `${d.issue} ${d.description}`).join('<br/>'));
+                } else if (err.data?.errors?.length > 0) {
+                    this.errorHandler.messages(err.data.errors);
+                } else if (err.data?.message) {
+                    this.errorHandler.message(err.data.message);
+                } else if (err.message) {
+                    this.errorHandler.message(err.message);
+                } else {
+                    this.errorHandler.genericError();
                 }
             });
         } else {
@@ -233,6 +252,15 @@ class CreditCardRenderer {
             const message = ! this.cardValid ? this.defaultConfig.hosted_fields.labels.card_not_supported : this.defaultConfig.hosted_fields.labels.fields_not_valid;
             this.errorHandler.message(message);
         }
+    }
+
+    _cardNumberFiledCLassNameByCardType(cardType) {
+        return cardType === 'american-express' ? 'amex' : cardType.replace('-', '');
+    }
+
+    _recreateElementClassAttribute(element, newClassName) {
+        element.removeAttribute('class')
+        element.setAttribute('class', newClassName);
     }
 }
 export default CreditCardRenderer;

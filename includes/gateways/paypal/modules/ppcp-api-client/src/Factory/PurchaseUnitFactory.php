@@ -107,7 +107,12 @@ class PurchaseUnitFactory {
 	 */
 	public function from_wc_order( \WC_Order $order ): PurchaseUnit {
 		$amount   = $this->amount_factory->from_wc_order( $order );
-		$items    = $this->item_factory->from_wc_order( $order );
+		$items    = array_filter(
+			$this->item_factory->from_wc_order( $order ),
+			function ( Item $item ): bool {
+				return $item->unit_amount()->value() > 0;
+			}
+		);
 		$shipping = $this->shipping_factory->from_wc_order( $order );
 		if (
 			! $this->shipping_needed( ... array_values( $items ) ) ||
@@ -147,13 +152,22 @@ class PurchaseUnitFactory {
 	/**
 	 * Creates a PurchaseUnit based off a WooCommerce cart.
 	 *
-	 * @param \WC_Cart $cart The cart.
+	 * @param \WC_Cart|null $cart The cart.
 	 *
 	 * @return PurchaseUnit
 	 */
-	public function from_wc_cart( \WC_Cart $cart ): PurchaseUnit {
+	public function from_wc_cart( ?\WC_Cart $cart = null ): PurchaseUnit {
+		if ( ! $cart ) {
+			$cart = WC()->cart ?? new \WC_Cart();
+		}
+
 		$amount = $this->amount_factory->from_wc_cart( $cart );
-		$items  = $this->item_factory->from_wc_cart( $cart );
+		$items  = array_filter(
+			$this->item_factory->from_wc_cart( $cart ),
+			function ( Item $item ): bool {
+				return $item->unit_amount()->value() > 0;
+			}
+		);
 
 		$shipping = null;
 		$customer = \WC()->customer;
@@ -201,7 +215,7 @@ class PurchaseUnitFactory {
 	public function from_paypal_response( \stdClass $data ): PurchaseUnit {
 		if ( ! isset( $data->reference_id ) || ! is_string( $data->reference_id ) ) {
 			throw new RuntimeException(
-				__( 'No reference ID given.', 'woocommerce-for-japan' )
+				__( 'No reference ID given.', 'woocommerce-paypal-payments' )
 			);
 		}
 

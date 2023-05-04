@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace WooCommerce\PayPalCommerce\StatusReport;
 
-use Dhii\Container\ServiceProvider;
-use Dhii\Modular\Module\ModuleInterface;
-use Interop\Container\ServiceProviderInterface;
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Container\ServiceProvider;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Modular\Module\ModuleInterface;
+use WooCommerce\PayPalCommerce\Vendor\Interop\Container\ServiceProviderInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use WooCommerce\PayPalCommerce\ApiClient\Authentication\Bearer;
 use WooCommerce\PayPalCommerce\ApiClient\Endpoint\BillingAgreementsEndpoint;
 use WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException;
@@ -20,7 +20,7 @@ use WooCommerce\PayPalCommerce\ApiClient\Helper\DccApplies;
 use WooCommerce\PayPalCommerce\Button\Helper\MessagesApply;
 use WooCommerce\PayPalCommerce\Compat\PPEC\PPECHelper;
 use WooCommerce\PayPalCommerce\Onboarding\State;
-use WooCommerce\PayPalCommerce\Webhooks\WebhookInfoStorage;
+use WooCommerce\PayPalCommerce\Webhooks\WebhookEventStorage;
 
 /**
  * Class StatusReportModule
@@ -62,7 +62,7 @@ class StatusReportModule implements ModuleInterface {
 				$messages_apply = $c->get( 'button.helper.messages-apply' );
 
 				$last_webhook_storage = $c->get( 'webhook.last-webhook-storage' );
-				assert( $last_webhook_storage instanceof WebhookInfoStorage );
+				assert( $last_webhook_storage instanceof WebhookEventStorage );
 
 				$billing_agreements_endpoint = $c->get( 'api.endpoint.billing-agreements' );
 				assert( $billing_agreements_endpoint instanceof BillingAgreementsEndpoint );
@@ -72,88 +72,96 @@ class StatusReportModule implements ModuleInterface {
 
 				$had_ppec_plugin = PPECHelper::is_plugin_configured();
 
+				$is_tracking_available = $c->get( 'order-tracking.is-tracking-available' );
+
 				$items = array(
 					array(
-						'label'          => esc_html__( 'Onboarded', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Onboarded', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'Onboarded',
-						'description'    => esc_html__( 'Whether PayPal account is correctly configured or not.', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Whether PayPal account is correctly configured or not.', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html(
 							$this->onboarded( $bearer, $state )
 						),
 					),
 					array(
-						'label'          => esc_html__( 'Shop country code', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Shop country code', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'Shop country code',
-						'description'    => esc_html__( 'Country / State value on Settings / General / Store Address.', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Country / State value on Settings / General / Store Address.', 'woocommerce-paypal-payments' ),
 						'value'          => $c->get( 'api.shop.country' ),
 					),
 					array(
-						'label'          => esc_html__( 'WooCommerce currency supported', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'WooCommerce currency supported', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'WooCommerce currency supported',
-						'description'    => esc_html__( 'Whether PayPal supports the default store currency or not.', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Whether PayPal supports the default store currency or not.', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html(
 							$c->get( 'api.shop.is-currency-supported' )
 						),
 					),
 					array(
-						'label'          => esc_html__( 'PayPal card processing available in country', 'woocommerce-for-japan' ),
-						'exported_label' => 'PayPal card processing available in country',
-						'description'    => esc_html__( 'Whether PayPal card processing is available in country or not.', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Advanced Card Processing available in country', 'woocommerce-paypal-payments' ),
+						'exported_label' => 'Advanced Card Processing available in country',
+						'description'    => esc_html__( 'Whether Advanced Card Processing is available in country or not.', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html(
 							$dcc_applies->for_country_currency()
 						),
 					),
 					array(
-						'label'          => esc_html__( 'Pay Later messaging available in country', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Pay Later messaging available in country', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'Pay Later messaging available in country',
-						'description'    => esc_html__( 'Whether Pay Later is available in country or not.', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Whether Pay Later is available in country or not.', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html(
 							$messages_apply->for_country()
 						),
 					),
 					array(
-						'label'          => esc_html__( 'Webhook status', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Webhook status', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'Webhook status',
-						'description'    => esc_html__( 'Whether we received webhooks successfully.', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Whether we received webhooks successfully.', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html( ! $last_webhook_storage->is_empty() ),
 					),
 					array(
-						'label'          => esc_html__( 'Vault enabled', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Vault enabled', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'Vault enabled',
-						'description'    => esc_html__( 'Whether vaulting is enabled on PayPal account or not.', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Whether vaulting is enabled on PayPal account or not.', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html(
 							$this->vault_enabled( $bearer )
 						),
 					),
 					array(
-						'label'          => esc_html__( 'Logging enabled', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Logging enabled', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'Logging enabled',
-						'description'    => esc_html__( 'Whether logging of plugin events and errors is enabled.', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Whether logging of plugin events and errors is enabled.', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html(
 							$settings->has( 'logging_enabled' ) && $settings->get( 'logging_enabled' )
 						),
 					),
 					array(
-						'label'          => esc_html__( 'Reference Transactions', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Reference Transactions', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'Reference Transactions',
-						'description'    => esc_html__( 'Whether Reference Transactions are enabled for the connected account', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Whether Reference Transactions are enabled for the connected account', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html(
 							$this->reference_transaction_enabled( $billing_agreements_endpoint )
 						),
 					),
 					array(
-						'label'          => esc_html__( 'Used PayPal Checkout plugin', 'woocommerce-for-japan' ),
+						'label'          => esc_html__( 'Used PayPal Checkout plugin', 'woocommerce-paypal-payments' ),
 						'exported_label' => 'Used PayPal Checkout plugin',
-						'description'    => esc_html__( 'Whether the PayPal Checkout Gateway plugin was configured previously or not', 'woocommerce-for-japan' ),
+						'description'    => esc_html__( 'Whether the PayPal Checkout Gateway plugin was configured previously or not', 'woocommerce-paypal-payments' ),
 						'value'          => $this->bool_to_html(
 							$had_ppec_plugin
 						),
+					),
+					array(
+						'label'          => esc_html__( 'Tracking enabled', 'woocommerce-paypal-payments' ),
+						'exported_label' => 'Tracking enabled',
+						'description'    => esc_html__( 'Whether tracking is enabled on PayPal account or not.', 'woocommerce-paypal-payments' ),
+						'value'          => $this->bool_to_html( $is_tracking_available ),
 					),
 				);
 
 				echo wp_kses_post(
 					$renderer->render(
-						esc_html__( 'WooCommerce PayPal Payments', 'woocommerce-for-japan' ),
+						esc_html__( 'WooCommerce PayPal Payments', 'woocommerce-paypal-payments' ),
 						$items
 					)
 				);

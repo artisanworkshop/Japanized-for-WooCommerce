@@ -112,12 +112,19 @@ class PaymentCaptureCompleted implements RequestHandler {
 			return new WP_REST_Response( $response );
 		}
 
+		$order_id = $resource['supplementary_data']['related_ids']['order_id'] ?? null;
+
+		/**
+		 * Allow access to the webhook logic before updating the WC order.
+		 */
+		do_action( 'ppcp_payment_capture_completed_webhook_handler', $wc_order, $order_id );
+
 		if ( $wc_order->get_status() !== 'on-hold' ) {
 			$response['success'] = true;
 			return new WP_REST_Response( $response );
 		}
 		$wc_order->add_order_note(
-			__( 'Payment successfully captured.', 'woocommerce-for-japan' )
+			__( 'Payment successfully captured.', 'woocommerce-paypal-payments' )
 		);
 
 		$wc_order->payment_complete();
@@ -129,7 +136,7 @@ class PaymentCaptureCompleted implements RequestHandler {
 			// translators: %s is the order ID.
 				__(
 					'Order %s has been updated through PayPal',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				),
 				(string) $wc_order->get_id()
 			),
@@ -138,8 +145,6 @@ class PaymentCaptureCompleted implements RequestHandler {
 				'order'   => $wc_order,
 			)
 		);
-
-		$order_id = $resource['supplementary_data']['related_ids']['order_id'] ?? null;
 
 		if ( $order_id ) {
 			try {

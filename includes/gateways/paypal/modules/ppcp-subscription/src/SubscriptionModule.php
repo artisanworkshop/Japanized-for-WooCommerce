@@ -9,16 +9,18 @@ declare(strict_types=1);
 
 namespace WooCommerce\PayPalCommerce\Subscription;
 
-use Dhii\Container\ServiceProvider;
-use Dhii\Modular\Module\ModuleInterface;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Container\ServiceProvider;
+use WooCommerce\PayPalCommerce\Vendor\Dhii\Modular\Module\ModuleInterface;
 use Psr\Log\LoggerInterface;
+use WC_Order;
+use WC_Subscription;
 use WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException;
 use WooCommerce\PayPalCommerce\Subscription\Helper\SubscriptionHelper;
 use WooCommerce\PayPalCommerce\Vaulting\PaymentTokenRepository;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\CreditCardGateway;
-use Interop\Container\ServiceProviderInterface;
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Interop\Container\ServiceProviderInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
 use WooCommerce\PayPalCommerce\WcGateway\Exception\NotFoundException;
 
@@ -94,6 +96,45 @@ class SubscriptionModule implements ModuleInterface {
 			20,
 			2
 		);
+
+		add_filter(
+			'ppcp_create_order_request_body_data',
+			function( array $data ) use ( $c ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing
+				$wc_order_action = wc_clean( wp_unslash( $_POST['wc_order_action'] ?? '' ) );
+				if (
+					$wc_order_action === 'wcs_process_renewal'
+					&& isset( $data['payment_source']['token'] ) && $data['payment_source']['token']['type'] === 'PAYMENT_METHOD_TOKEN'
+					&& isset( $data['payment_source']['token']['source']->card )
+				) {
+					$renewal_order_id     = absint( $data['purchase_units'][0]['custom_id'] );
+					$subscriptions        = wcs_get_subscriptions_for_renewal_order( $renewal_order_id );
+					$subscriptions_values = array_values( $subscriptions );
+					$latest_subscription  = array_shift( $subscriptions_values );
+					if ( is_a( $latest_subscription, WC_Subscription::class ) ) {
+						$related_renewal_orders           = $latest_subscription->get_related_orders( 'ids', 'renewal' );
+						$latest_order_id_with_transaction = array_slice( $related_renewal_orders, 1, 1, false );
+						$order_id                         = ! empty( $latest_order_id_with_transaction ) ? $latest_order_id_with_transaction[0] : 0;
+						if ( count( $related_renewal_orders ) === 1 ) {
+							$order_id = $latest_subscription->get_parent_id();
+						}
+
+						$wc_order = wc_get_order( $order_id );
+						if ( is_a( $wc_order, WC_Order::class ) ) {
+							$transaction_id                                       = $wc_order->get_transaction_id();
+							$data['application_context']['stored_payment_source'] = array(
+								'payment_initiator' => 'MERCHANT',
+								'payment_type'      => 'RECURRING',
+								'usage'             => 'SUBSEQUENT',
+								'previous_transaction_reference' => $transaction_id,
+							);
+						}
+					}
+				}
+
+				return $data;
+			}
+		);
 	}
 
 	/**
@@ -135,16 +176,16 @@ class SubscriptionModule implements ModuleInterface {
 		try {
 			$tokens = $payment_token_repository->all_for_user_id( $subscription->get_customer_id() );
 			if ( $tokens ) {
-				$subscription_id = $subscription->get_id();
 				$latest_token_id = end( $tokens )->id() ? end( $tokens )->id() : '';
-				update_post_meta( $subscription_id, 'payment_token_id', $latest_token_id, true );
+				$subscription->update_meta_data( 'payment_token_id', $latest_token_id );
+				$subscription->save();
 			}
 		} catch ( RuntimeException $error ) {
 			$message = sprintf(
 				// translators: %1$s is the payment token Id, %2$s is the error message.
 				__(
 					'Could not add token Id to subscription %1$s: %2$s',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				),
 				$subscription->get_id(),
 				$error->getMessage()
@@ -176,18 +217,18 @@ class SubscriptionModule implements ModuleInterface {
 			&& PayPalGateway::ID === $id
 			&& $subscription_helper->is_subscription_change_payment()
 		) {
-				$tokens = $payment_token_repository->all_for_user_id( get_current_user_id() );
+			$tokens = $payment_token_repository->all_for_user_id( get_current_user_id() );
 			if ( ! $tokens || ! $payment_token_repository->tokens_contains_paypal( $tokens ) ) {
 				return esc_html__(
 					'No PayPal payments saved, in order to use a saved payment you first need to create it through a purchase.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				);
 			}
 
-				$output = sprintf(
-					'<p class="form-row form-row-wide"><label>%1$s</label><select id="saved-paypal-payment" name="saved_paypal_payment">',
-					esc_html__( 'Select a saved PayPal payment', 'woocommerce-for-japan' )
-				);
+			$output = sprintf(
+				'<p class="form-row form-row-wide"><label>%1$s</label><select id="saved-paypal-payment" name="saved_paypal_payment">',
+				esc_html__( 'Select a saved PayPal payment', 'woocommerce-paypal-payments' )
+			);
 			foreach ( $tokens as $token ) {
 				if ( isset( $token->source()->paypal ) ) {
 					$output .= sprintf(
@@ -234,14 +275,14 @@ class SubscriptionModule implements ModuleInterface {
 				$default_fields                      = array();
 				$default_fields['saved-credit-card'] = esc_html__(
 					'No Credit Card saved, in order to use a saved Credit Card you first need to create it through a purchase.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				);
 				return $default_fields;
 			}
 
 			$output = sprintf(
 				'<p class="form-row form-row-wide"><label>%1$s</label><select id="saved-credit-card" name="saved_credit_card">',
-				esc_html__( 'Select a saved Credit Card payment', 'woocommerce-for-japan' )
+				esc_html__( 'Select a saved Credit Card payment', 'woocommerce-paypal-payments' )
 			);
 			foreach ( $tokens as $token ) {
 				if ( isset( $token->source()->card ) ) {

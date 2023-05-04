@@ -48,7 +48,7 @@ class RequestData {
 		) {
 			remove_filter( 'nonce_user_logged_out', array( $this, 'nonce_fix' ), 100 );
 			throw new RuntimeException(
-				__( 'Could not validate nonce.', 'woocommerce-for-japan' )
+				__( 'Could not validate nonce.', 'woocommerce-paypal-payments' )
 			);
 		}
 		$this->dequeue_nonce_fix();
@@ -81,15 +81,9 @@ class RequestData {
 		$data = array();
 		foreach ( (array) $assoc_array as $raw_key => $raw_value ) {
 			if ( ! is_array( $raw_value ) ) {
-				/**
-				 * The 'form' key is preserved for url encoded data and needs different
-				 * sanitization.
-				 */
-				if ( 'form' !== $raw_key ) {
-					$data[ sanitize_text_field( (string) $raw_key ) ] = sanitize_text_field( (string) $raw_value );
-				} else {
-					$data[ sanitize_text_field( (string) $raw_key ) ] = sanitize_text_field( urldecode( (string) $raw_value ) );
-				}
+				// Not sure if it is a good idea to sanitize everything at this level,
+				// but should be fine for now since we do not send any HTML or multi-line texts via ajax.
+				$data[ sanitize_text_field( (string) $raw_key ) ] = sanitize_text_field( (string) $raw_value );
 				continue;
 			}
 			$data[ sanitize_text_field( (string) $raw_key ) ] = $this->sanitize( $raw_value );

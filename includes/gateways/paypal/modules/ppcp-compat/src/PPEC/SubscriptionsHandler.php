@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace WooCommerce\PayPalCommerce\Compat\PPEC;
 
+use stdClass;
 use WooCommerce\PayPalCommerce\Subscription\RenewalHandler;
 use WooCommerce\PayPalCommerce\ApiClient\Entity\PaymentToken;
 
@@ -125,7 +126,7 @@ class SubscriptionsHandler {
 			$billing_agreement_id = $order->get_meta( '_ppec_billing_agreement_id', true );
 
 			if ( $billing_agreement_id ) {
-				$token = new PaymentToken( $billing_agreement_id, 'BILLING_AGREEMENT', new \stdClass() );
+				$token = new PaymentToken( $billing_agreement_id, new stdClass(), 'BILLING_AGREEMENT' );
 			}
 		}
 
@@ -182,18 +183,19 @@ class SubscriptionsHandler {
 			return true;
 		}
 
-		if ( function_exists( 'get_current_screen' ) && get_current_screen() ) {
-			// Are we on the WC > Subscriptions screen?
-			if ( 'edit-shop_subscription' === get_current_screen()->id ) {
-				return true;
-			}
+		// Are we on the WC > Subscriptions screen?
+		// phpcs:ignore WordPress.Security.NonceVerification
+		$post_type = wc_clean( wp_unslash( $_GET['post_type'] ?? $_POST['post_type'] ?? '' ) );
+		if ( $post_type === 'shop_subscription' ) {
+			return true;
+		}
 
-			// Are we editing an order or subscription tied to PPEC?
-			if ( in_array( get_current_screen()->id, array( 'shop_subscription', 'shop_order' ), true ) ) {
-				$order = wc_get_order( $GLOBALS['post']->ID );
-
-				return ( $order && PPECHelper::PPEC_GATEWAY_ID === $order->get_payment_method() );
-			}
+		// Are we editing an order or subscription tied to PPEC?
+		// phpcs:ignore WordPress.Security.NonceVerification
+		$order_id = wc_clean( wp_unslash( $_GET['post'] ?? $_POST['post_ID'] ?? '' ) );
+		if ( $order_id ) {
+			$order = wc_get_order( $order_id );
+			return ( $order && PPECHelper::PPEC_GATEWAY_ID === $order->get_payment_method() );
 		}
 
 		return false;

@@ -24,6 +24,8 @@ return function ( string $root_dir ): iterable {
 		( require "$modules_dir/ppcp-wc-gateway/module.php" )(),
 		( require "$modules_dir/ppcp-webhooks/module.php" )(),
 		( require "$modules_dir/ppcp-vaulting/module.php" )(),
+		( require "$modules_dir/ppcp-order-tracking/module.php" )(),
+		( require "$modules_dir/ppcp-uninstall/module.php" )(),
 	);
 
 	return $modules;

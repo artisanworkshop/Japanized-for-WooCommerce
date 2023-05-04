@@ -19,7 +19,7 @@ class Token {
 	/**
 	 * The Token data.
 	 *
-	 * @var \stdClass
+	 * @var object
 	 */
 	private $json;
 
@@ -33,10 +33,10 @@ class Token {
 	/**
 	 * Token constructor.
 	 *
-	 * @param \stdClass $json The JSON object.
+	 * @param object $json The JSON object.
 	 * @throws RuntimeException When The JSON object is not valid.
 	 */
-	public function __construct( \stdClass $json ) {
+	public function __construct( $json ) {
 		if ( ! isset( $json->created ) ) {
 			$json->created = time();
 		}
@@ -122,11 +122,11 @@ class Token {
 	/**
 	 * Validates whether a JSON object can be transformed to a Token object.
 	 *
-	 * @param \stdClass $json The JSON object.
+	 * @param object $json The JSON object.
 	 *
 	 * @return bool
 	 */
-	private function validate( \stdClass $json ): bool {
+	private function validate( $json ): bool {
 		$property_map = array(
 			'created'    => 'is_int',
 			'expires_in' => 'is_int',
@@ -139,5 +139,25 @@ class Token {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Checks if tracking is available in access token scope.
+	 *
+	 * @return bool Whether tracking features are enabled or not.
+	 */
+	public function is_tracking_available(): bool {
+		if ( ! isset( $this->json->scope ) ) {
+			return false;
+		}
+
+		if ( strpos(
+			$this->json->scope,
+			'https://uri.paypal.com/services/shipping/trackers/readwrite'
+		) !== false ) {
+			return true;
+		}
+
+		return false;
 	}
 }

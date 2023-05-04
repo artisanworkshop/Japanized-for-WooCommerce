@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace WooCommerce\PayPalCommerce\Onboarding;
 
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\CreditCardGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
+use WooCommerce\PayPalCommerce\Webhooks\WebhookRegistrar;
 
 /**
  * Exposes and handles REST routes related to onboarding.
@@ -173,7 +174,7 @@ class OnboardingRESTController {
 				'woocommerce_paypal_payments_invalid_environment',
 				sprintf(
 					/* translators: placeholder is an arbitrary string. */
-					__( 'Environment "%s" is invalid. Use "sandbox" or "production".', 'woocommerce-for-japan' ),
+					__( 'Environment "%s" is invalid. Use "sandbox" or "production".', 'woocommerce-paypal-payments' ),
 					isset( $params['environment'] ) ? $params['environment'] : ''
 				),
 				array( 'status' => 400 )
@@ -187,7 +188,7 @@ class OnboardingRESTController {
 				'woocommerce_paypal_payments_credentials_incomplete',
 				sprintf(
 					/* translators: placeholder is a comma-separated list of fields. */
-					__( 'Credentials are incomplete. Missing fields: %s.', 'woocommerce-for-japan' ),
+					__( 'Credentials are incomplete. Missing fields: %s.', 'woocommerce-paypal-payments' ),
 					implode( ', ', $missing_keys )
 				),
 				array(
@@ -236,11 +237,12 @@ class OnboardingRESTController {
 		}
 
 		$settings->set( 'products_dcc_enabled', null );
+		$settings->set( 'products_pui_enabled', null );
 
 		if ( ! $settings->persist() ) {
 			return new \WP_Error(
 				'woocommerce_paypal_payments_credentials_not_saved',
-				__( 'An error occurred while saving the credentials.', 'woocommerce-for-japan' ),
+				__( 'An error occurred while saving the credentials.', 'woocommerce-paypal-payments' ),
 				array(
 					'status' => 500,
 				)
@@ -248,7 +250,7 @@ class OnboardingRESTController {
 		}
 
 		$webhook_registrar = $this->container->get( 'webhook.registrar' );
-		$webhook_registrar->unregister();
+		assert( $webhook_registrar instanceof WebhookRegistrar );
 		$webhook_registrar->register();
 
 		return array();

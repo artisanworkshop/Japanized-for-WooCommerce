@@ -12,6 +12,8 @@ namespace WooCommerce\PayPalCommerce\Webhooks\Handler;
 use WooCommerce\PayPalCommerce\ApiClient\Endpoint\OrderEndpoint;
 use WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException;
 use Psr\Log\LoggerInterface;
+use WooCommerce\PayPalCommerce\WcGateway\Gateway\OXXO\OXXOGateway;
+use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayUponInvoice\PayUponInvoiceGateway;
 
 /**
  * Class CheckoutOrderApproved
@@ -97,7 +99,7 @@ class CheckoutOrderApproved implements RequestHandler {
 			// translators: %s is the PayPal webhook Id.
 				__(
 					'No order for webhook event %s was found.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				),
 				isset( $request['id'] ) ? $request['id'] : ''
 			);
@@ -120,7 +122,7 @@ class CheckoutOrderApproved implements RequestHandler {
 				// translators: %s is the PayPal webhook Id.
 					__(
 						'No paypal payment for webhook event %s was found.',
-						'woocommerce-for-japan'
+						'woocommerce-paypal-payments'
 					),
 					isset( $request['id'] ) ? $request['id'] : ''
 				);
@@ -143,7 +145,7 @@ class CheckoutOrderApproved implements RequestHandler {
 			// translators: %s is the PayPal webhook Id.
 				__(
 					'Could not capture payment for webhook event %s.',
-					'woocommerce-for-japan'
+					'woocommerce-paypal-payments'
 				),
 				isset( $request['id'] ) ? $request['id'] : ''
 			);
@@ -173,7 +175,7 @@ class CheckoutOrderApproved implements RequestHandler {
 		if ( ! $wc_orders ) {
 			$message = sprintf(
 			// translators: %s is the PayPal order Id.
-				__( 'Order for PayPal order %s not found.', 'woocommerce-for-japan' ),
+				__( 'Order for PayPal order %s not found.', 'woocommerce-paypal-payments' ),
 				isset( $request['resource']['id'] ) ? $request['resource']['id'] : ''
 			);
 			$this->logger->log(
@@ -188,6 +190,10 @@ class CheckoutOrderApproved implements RequestHandler {
 		}
 
 		foreach ( $wc_orders as $wc_order ) {
+			if ( PayUponInvoiceGateway::ID === $wc_order->get_payment_method() || OXXOGateway::ID === $wc_order->get_payment_method() ) {
+				continue;
+			}
+
 			if ( ! in_array( $wc_order->get_status(), array( 'pending', 'on-hold' ), true ) ) {
 				continue;
 			}
@@ -196,7 +202,7 @@ class CheckoutOrderApproved implements RequestHandler {
 			} else {
 				$wc_order->update_status(
 					'on-hold',
-					__( 'Payment can be captured.', 'woocommerce-for-japan' )
+					__( 'Payment can be captured.', 'woocommerce-paypal-payments' )
 				);
 			}
 			$this->logger->log(
@@ -205,7 +211,7 @@ class CheckoutOrderApproved implements RequestHandler {
 				// translators: %s is the order ID.
 					__(
 						'Order %s has been updated through PayPal',
-						'woocommerce-for-japan'
+						'woocommerce-paypal-payments'
 					),
 					(string) $wc_order->get_id()
 				),

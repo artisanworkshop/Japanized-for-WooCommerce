@@ -10,10 +10,13 @@ declare(strict_types=1);
 namespace WooCommerce\PayPalCommerce\WcGateway\Processor;
 
 use Psr\Log\LoggerInterface;
+use WC_Order;
 use WooCommerce\PayPalCommerce\ApiClient\Endpoint\OrderEndpoint;
 use WooCommerce\PayPalCommerce\ApiClient\Entity\Order;
 use WooCommerce\PayPalCommerce\ApiClient\Entity\OrderStatus;
+use WooCommerce\PayPalCommerce\ApiClient\Exception\RuntimeException;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\OrderFactory;
+use WooCommerce\PayPalCommerce\ApiClient\Helper\OrderHelper;
 use WooCommerce\PayPalCommerce\Button\Helper\ThreeDSecure;
 use WooCommerce\PayPalCommerce\Onboarding\Environment;
 use WooCommerce\PayPalCommerce\Session\SessionHandler;
@@ -107,6 +110,13 @@ class OrderProcessor {
 	private $subscription_helper;
 
 	/**
+	 * The order helper.
+	 *
+	 * @var OrderHelper
+	 */
+	private $order_helper;
+
+	/**
 	 * OrderProcessor constructor.
 	 *
 	 * @param SessionHandler              $session_handler The Session Handler.
@@ -118,6 +128,7 @@ class OrderProcessor {
 	 * @param LoggerInterface             $logger A logger service.
 	 * @param Environment                 $environment The environment.
 	 * @param SubscriptionHelper          $subscription_helper The subscription helper.
+	 * @param OrderHelper                 $order_helper The order helper.
 	 */
 	public function __construct(
 		SessionHandler $session_handler,
@@ -128,7 +139,8 @@ class OrderProcessor {
 		Settings $settings,
 		LoggerInterface $logger,
 		Environment $environment,
-		SubscriptionHelper $subscription_helper
+		SubscriptionHelper $subscription_helper,
+		OrderHelper $order_helper
 	) {
 
 		$this->session_handler               = $session_handler;
@@ -140,6 +152,7 @@ class OrderProcessor {
 		$this->environment                   = $environment;
 		$this->logger                        = $logger;
 		$this->subscription_helper           = $subscription_helper;
+		$this->order_helper                  = $order_helper;
 	}
 
 	/**
@@ -149,26 +162,42 @@ class OrderProcessor {
 	 *
 	 * @return bool
 	 */
-	public function process( \WC_Order $wc_order ): bool {
+	public function process( WC_Order $wc_order ): bool {
 		$order = $this->session_handler->order();
 		if ( ! $order ) {
-			$this->last_error = __( 'No PayPal order found in the current WooCommerce session.', 'woocommerce-for-japan' );
-			return false;
+			$order_id = $wc_order->get_meta( PayPalGateway::ORDER_ID_META_KEY );
+			if ( ! $order_id ) {
+				$this->logger->warning(
+					sprintf(
+						'No PayPal order ID found in order #%d meta.',
+						$wc_order->get_id()
+					)
+				);
+				$this->last_error = __( 'Could not retrieve order. This browser may not be supported. Please try again with a different browser.', 'woocommerce-paypal-payments' );
+				return false;
+			}
+
+			try {
+				$order = $this->order_endpoint->order( $order_id );
+			} catch ( RuntimeException $exception ) {
+				$this->last_error = __( 'Could not retrieve PayPal order.', 'woocommerce-paypal-payments' );
+				return false;
+			}
 		}
 
 		$this->add_paypal_meta( $wc_order, $order, $this->environment );
 
 		$error_message = null;
-		if ( ! $this->order_is_approved( $order ) ) {
+		if ( $this->order_helper->contains_physical_goods( $order ) && ! $this->order_is_ready_for_process( $order ) ) {
 			$error_message = __(
-				'The payment has not been approved yet.',
-				'woocommerce-for-japan'
+				'The payment is not ready for processing yet.',
+				'woocommerce-paypal-payments'
 			);
 		}
 		if ( $error_message ) {
 			$this->last_error = sprintf(
 				// translators: %s is the message of the error.
-				__( 'Payment error: %s', 'woocommerce-for-japan' ),
+				__( 'Payment error: %s', 'woocommerce-paypal-payments' ),
 				$error_message
 			);
 			return false;
@@ -198,12 +227,8 @@ class OrderProcessor {
 
 		$this->handle_new_order_status( $order, $wc_order );
 
-		if ( $this->capture_authorized_downloads( $order ) && AuthorizedPaymentsProcessor::SUCCESSFUL === $this->authorized_payments_processor->process( $wc_order ) ) {
-			$wc_order->add_order_note(
-				__( 'Payment successfully captured.', 'woocommerce-for-japan' )
-			);
-			$wc_order->update_meta_data( AuthorizedPaymentsProcessor::CAPTURED_META_KEY, 'true' );
-			$wc_order->update_status( 'processing' );
+		if ( $this->capture_authorized_downloads( $order ) ) {
+			$this->authorized_payments_processor->capture_authorized_payment( $wc_order );
 		}
 		$this->last_error = '';
 		return true;
@@ -268,15 +293,15 @@ class OrderProcessor {
 	}
 
 	/**
-	 * Whether a given order is approved.
+	 * Whether a given order is ready for processing.
 	 *
 	 * @param Order $order The order.
 	 *
 	 * @return bool
 	 */
-	private function order_is_approved( Order $order ): bool {
+	private function order_is_ready_for_process( Order $order ): bool {
 
-		if ( $order->status()->is( OrderStatus::APPROVED ) ) {
+		if ( $order->status()->is( OrderStatus::APPROVED ) || $order->status()->is( OrderStatus::CREATED ) ) {
 			return true;
 		}
 
@@ -284,7 +309,7 @@ class OrderProcessor {
 			return false;
 		}
 
-		$is_approved = in_array(
+		return in_array(
 			$this->threed_secure->proceed_with_order( $order ),
 			array(
 				ThreeDSecure::NO_DECISION,
@@ -292,6 +317,5 @@ class OrderProcessor {
 			),
 			true
 		);
-		return $is_approved;
 	}
 }

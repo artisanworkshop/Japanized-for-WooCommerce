@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace WooCommerce\PayPalCommerce\ApiClient;
 
-use Psr\Container\ContainerInterface;
+use WooCommerce\PayPalCommerce\Session\SessionHandler;
+use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use WooCommerce\PayPalCommerce\ApiClient\Authentication\Bearer;
 use WooCommerce\PayPalCommerce\ApiClient\Authentication\PayPalBearer;
 use WooCommerce\PayPalCommerce\ApiClient\Endpoint\BillingAgreementsEndpoint;
@@ -27,6 +28,7 @@ use WooCommerce\PayPalCommerce\ApiClient\Factory\ApplicationContextFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\AuthorizationFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\CaptureFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\ExchangeRateFactory;
+use WooCommerce\PayPalCommerce\ApiClient\Factory\FraudProcessorResponseFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\ItemFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\MoneyFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\OrderFactory;
@@ -42,17 +44,17 @@ use WooCommerce\PayPalCommerce\ApiClient\Factory\PurchaseUnitFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\SellerReceivableBreakdownFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\SellerStatusFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\ShippingFactory;
+use WooCommerce\PayPalCommerce\ApiClient\Factory\ShippingPreferenceFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\WebhookEventFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\WebhookFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Helper\Cache;
 use WooCommerce\PayPalCommerce\ApiClient\Helper\DccApplies;
+use WooCommerce\PayPalCommerce\ApiClient\Helper\OrderHelper;
 use WooCommerce\PayPalCommerce\ApiClient\Repository\ApplicationContextRepository;
-use WooCommerce\PayPalCommerce\ApiClient\Repository\CartRepository;
 use WooCommerce\PayPalCommerce\ApiClient\Repository\CustomerRepository;
 use WooCommerce\PayPalCommerce\ApiClient\Repository\OrderRepository;
 use WooCommerce\PayPalCommerce\ApiClient\Repository\PartnerReferralsData;
 use WooCommerce\PayPalCommerce\ApiClient\Repository\PayeeRepository;
-use WooCommerce\PayPalCommerce\ApiClient\Repository\PayPalRequestIdRepository;
 use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
 
 return array(
@@ -116,8 +118,7 @@ return array(
 			$container->get( 'api.factory.payment-token' ),
 			$container->get( 'api.factory.payment-token-action-links' ),
 			$container->get( 'woocommerce.logger.woocommerce' ),
-			$container->get( 'api.repository.customer' ),
-			$container->get( 'api.repository.paypal-request-id' )
+			$container->get( 'api.repository.customer' )
 		);
 	},
 	'api.endpoint.webhook'                      => static function ( ContainerInterface $container ) : WebhookEndpoint {
@@ -177,15 +178,15 @@ return array(
 		$patch_collection_factory = $container->get( 'api.factory.patch-collection-factory' );
 		$logger                   = $container->get( 'woocommerce.logger.woocommerce' );
 
-		/**
-		 * The settings.
-		 *
-		 * @var Settings $settings
-		 */
-		$settings                       = $container->get( 'wcgateway.settings' );
+		$session_handler = $container->get( 'session.handler' );
+		assert( $session_handler instanceof SessionHandler );
+		$bn_code         = $session_handler->bn_code();
+
+		$settings = $container->get( 'wcgateway.settings' );
+		assert( $settings instanceof Settings );
+
 		$intent                         = $settings->has( 'intent' ) && strtoupper( (string) $settings->get( 'intent' ) ) === 'AUTHORIZE' ? 'AUTHORIZE' : 'CAPTURE';
 		$application_context_repository = $container->get( 'api.repository.application-context' );
-		$paypal_request_id              = $container->get( 'api.repository.paypal-request-id' );
 		$subscription_helper = $container->get( 'subscription.helper' );
 		return new OrderEndpoint(
 			$container->get( 'api.host' ),
@@ -195,8 +196,10 @@ return array(
 			$intent,
 			$logger,
 			$application_context_repository,
-			$paypal_request_id,
-			$subscription_helper
+			$subscription_helper,
+			$container->get( 'wcgateway.is-fraudnet-enabled' ),
+			$container->get( 'wcgateway.fraudnet' ),
+			$bn_code
 		);
 	},
 	'api.endpoint.billing-agreements'           => static function ( ContainerInterface $container ): BillingAgreementsEndpoint {
@@ -205,9 +208,6 @@ return array(
 			$container->get( 'api.bearer' ),
 			$container->get( 'woocommerce.logger.woocommerce' )
 		);
-	},
-	'api.repository.paypal-request-id'          => static function( ContainerInterface $container ) : PayPalRequestIdRepository {
-		return new PayPalRequestIdRepository();
 	},
 	'api.repository.application-context'        => static function( ContainerInterface $container ) : ApplicationContextRepository {
 
@@ -218,10 +218,6 @@ return array(
 
 		$dcc_applies    = $container->get( 'api.helpers.dccapplies' );
 		return new PartnerReferralsData( $dcc_applies );
-	},
-	'api.repository.cart'                       => static function ( ContainerInterface $container ): CartRepository {
-		$factory = $container->get( 'api.factory.purchase-unit' );
-		return new CartRepository( $factory );
 	},
 	'api.repository.payee'                      => static function ( ContainerInterface $container ): PayeeRepository {
 		$merchant_email = $container->get( 'api.merchant_email' );
@@ -257,7 +253,8 @@ return array(
 		$amount_factory   = $container->get( 'api.factory.amount' );
 		return new CaptureFactory(
 			$amount_factory,
-			$container->get( 'api.factory.seller-receivable-breakdown' )
+			$container->get( 'api.factory.seller-receivable-breakdown' ),
+			$container->get( 'api.factory.fraud-processor-response' )
 		);
 	},
 	'api.factory.purchase-unit'                 => static function ( ContainerInterface $container ): PurchaseUnitFactory {
@@ -294,6 +291,9 @@ return array(
 	'api.factory.shipping'                      => static function ( ContainerInterface $container ): ShippingFactory {
 		$address_factory = $container->get( 'api.factory.address' );
 		return new ShippingFactory( $address_factory );
+	},
+	'api.factory.shipping-preference'           => static function ( ContainerInterface $container ): ShippingPreferenceFactory {
+		return new ShippingPreferenceFactory();
 	},
 	'api.factory.amount'                        => static function ( ContainerInterface $container ): AmountFactory {
 		$item_factory = $container->get( 'api.factory.item' );
@@ -354,6 +354,9 @@ return array(
 			$container->get( 'api.factory.platform-fee' )
 		);
 	},
+	'api.factory.fraud-processor-response'      => static function ( ContainerInterface $container ): FraudProcessorResponseFactory {
+		return new FraudProcessorResponseFactory();
+	},
 	'api.helpers.dccapplies'                    => static function ( ContainerInterface $container ) : DccApplies {
 		return new DccApplies(
 			$container->get( 'api.dcc-supported-country-currency-matrix' ),
@@ -391,6 +394,60 @@ return array(
 		return in_array(
 			$container->get( 'api.shop.currency' ),
 			$container->get( 'api.supported-currencies' ),
+			true
+		);
+	},
+
+
+	'api.shop.is-latin-america'                 => static function ( ContainerInterface $container ): bool {
+		return in_array(
+			$container->get( 'api.shop.country' ),
+			array(
+				'AI',
+				'AG',
+				'AR',
+				'AW',
+				'BS',
+				'BB',
+				'BZ',
+				'BM',
+				'BO',
+				'BR',
+				'VG',
+				'KY',
+				'CL',
+				'CO',
+				'CR',
+				'DM',
+				'DO',
+				'EC',
+				'SV',
+				'FK',
+				'GF',
+				'GD',
+				'GP',
+				'GT',
+				'GY',
+				'HN',
+				'JM',
+				'MQ',
+				'MX',
+				'MS',
+				'AN',
+				'NI',
+				'PA',
+				'PY',
+				'PE',
+				'KN',
+				'LC',
+				'PM',
+				'VC',
+				'SR',
+				'TT',
+				'TC',
+				'UY',
+				'VE',
+			),
 			true
 		);
 	},
@@ -574,7 +631,7 @@ return array(
 					'SGD',
 					'USD',
 				),
-				'JP' => array(// Edit by Shohei Tanaka 2022/06/01
+				'JP' => array(// Edit by Shohei Tanaka 2023/05/04
 					'JPY',
 				),
 			)
@@ -668,5 +725,8 @@ return array(
 			'ES',
 			'SE',
 		);
+	},
+	'api.order-helper'                          => static function( ContainerInterface $container ): OrderHelper {
+		return new OrderHelper();
 	},
 );
