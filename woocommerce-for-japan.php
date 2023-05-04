@@ -3,7 +3,7 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.5.7
+ * Version: 2.5.8
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 5.0
@@ -33,7 +33,7 @@ class JP4WC{
 	 *
 	 * @var string
 	 */
-	public $version = '2.5.7';
+	public $version = '2.5.8';
 
     /**
      * Japanized for WooCommerce Framework version.
@@ -116,10 +116,10 @@ class JP4WC{
     protected function define_constants() {
         define( 'JP4WC_ABSPATH', dirname( __FILE__ ) . '/' );
         define( 'JP4WC_INCLUDES_PATH', JP4WC_ABSPATH . 'includes/' );
-        $this->define( 'JP4WC_URL_PATH', plugins_url( '/', __FILE__ ) );
-        $this->define( 'JP4WC_PLUGIN_FILE', __FILE__ );
-        $this->define( 'JP4WC_VERSION', $this->version );
-        $this->define( 'JP4WC_FRAMEWORK_VERSION', $this->framework_version );
+        define( 'JP4WC_URL_PATH', plugins_url( '/', __FILE__ ) );
+        define( 'JP4WC_PLUGIN_FILE', __FILE__ );
+        define( 'JP4WC_VERSION', $this->version );
+        define( 'JP4WC_FRAMEWORK_VERSION', $this->framework_version );
     }
 
     /**
@@ -280,18 +280,6 @@ class JP4WC{
 		update_option( 'wc4jp_admin_footer_text_rated', 1 );
 		die();
 	}
-
-    /**
-     * Define constant if not already set.
-     *
-     * @param string      $name  Constant name.
-     * @param string|bool $value Constant value.
-     */
-    protected function define( $name, $value ) {
-        if ( ! defined( $name ) ) {
-            define( $name, $value );
-        }
-    }
 }
 
 endif;

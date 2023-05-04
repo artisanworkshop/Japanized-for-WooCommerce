@@ -42,7 +42,7 @@ trait RequestTrait {
 		 */
 		$args = apply_filters( 'ppcp_request_args', $args, $url );
 		if ( ! isset( $args['headers']['PayPal-Partner-Attribution-Id'] ) ) {
-			$args['headers']['PayPal-Partner-Attribution-Id'] = 'Woo_PPCP';
+			$args['headers']['PayPal-Partner-Attribution-Id'] = 'WooCommerce_Cart_ACDC_JP';// Edit by Shohei Tanaka at 2023/05/04
 		}
 
 		$response = wp_remote_get( $url, $args );
