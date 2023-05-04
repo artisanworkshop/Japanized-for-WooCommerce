@@ -358,6 +358,13 @@ class JP4WC_Admin_Screen {
             'jp4wc_laws'
         );
         add_settings_field(
+            'jp4wc_law_manager_name',
+            __( 'Manager Name', 'woocommerce-for-japan' ),
+            array( $this, 'jp4wc_law_manager_name' ),
+            'jp4wc_law',
+            'jp4wc_laws'
+        );
+        add_settings_field(
             'jp4wc_law_location',
             __( 'Location', 'woocommerce-for-japan' ),
             array( $this, 'jp4wc_law_location' ),
@@ -596,8 +603,10 @@ class JP4WC_Admin_Screen {
                     'law-shop-name',
                     'law-company-name',
                     'law-owner-name',
+	                'law-manager-name',
                     'law-location',
                     'law-contact',
+	                'law-tel',
                     'law-price',
                     'law-payment',
                     'law-purchase',
@@ -605,7 +614,6 @@ class JP4WC_Admin_Screen {
                     'law-cost',
                     'law-return',
                     'law-special',
-	                'law-tel',
                 );
                 $this->jp4wc_save_methods( $add_methods );
                 self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
@@ -1004,7 +1012,7 @@ class JP4WC_Admin_Screen {
      */
     public function jp4wc_law_shop_name() {
         $description = __( 'Please enter the shop name.', 'woocommerce-for-japan' );
-        $this->jp4wc_plugin->jp4wc_input_text('law-shop-name', $description, 60, get_bloginfo('name'), $this->prefix);
+        $this->jp4wc_plugin->jp4wc_input_text('law-shop-name', $description, 30, get_bloginfo('name'), $this->prefix);
     }
 
     /**
@@ -1012,7 +1020,7 @@ class JP4WC_Admin_Screen {
      */
     public function jp4wc_law_company_name() {
         $description = __( 'Please enter the company name.', 'woocommerce-for-japan' );
-        $this->jp4wc_plugin->jp4wc_input_text('law-company-name', $description, 60, '', $this->prefix);
+        $this->jp4wc_plugin->jp4wc_input_text('law-company-name', $description, 30, '', $this->prefix);
     }
 
     /**
@@ -1020,7 +1028,15 @@ class JP4WC_Admin_Screen {
      */
     public function jp4wc_law_owner_name() {
         $description = __( 'Please enter the owner name.', 'woocommerce-for-japan' );
-        $this->jp4wc_plugin->jp4wc_input_text('law-owner-name', $description, 60, '', $this->prefix);
+        $this->jp4wc_plugin->jp4wc_input_text('law-owner-name', $description, 30, '', $this->prefix);
+    }
+
+    /**
+     * Manager Name option.
+     */
+    public function jp4wc_law_manager_name() {
+        $description = __( 'Please enter the Manager name.', 'woocommerce-for-japan' );
+        $this->jp4wc_plugin->jp4wc_input_text('law-manager-name', $description, 30, '', $this->prefix);
     }
 
     /**
@@ -1047,7 +1063,7 @@ class JP4WC_Admin_Screen {
     public function jp4wc_law_contact() {
         $description = __( 'Please enter the contact rule.', 'woocommerce-for-japan' );
         $default_value = __( 'Please contact us from the inquiry form.', 'woocommerce-for-japan' );
-        $this->jp4wc_plugin->jp4wc_input_textarea('law-contact', $description, $default_value, $this->prefix);
+        $this->jp4wc_plugin->jp4wc_input_textarea('law-contact', $description, $default_value, $this->prefix, array( 'cols' => 60, 'rows' => 4));
     }
 
 	/**
@@ -1055,8 +1071,7 @@ class JP4WC_Admin_Screen {
 	 */
 	public function jp4wc_law_tel() {
 		$description = __( 'Please enter the telephone number.', 'woocommerce-for-japan' );
-		$default_value = '';
-		$this->jp4wc_plugin->jp4wc_input_textarea('law-tel', $description, $default_value, $this->prefix);
+		$this->jp4wc_plugin->jp4wc_input_text('law-tel', $description, 30, '', $this->prefix);
 	}
 
 	/**
