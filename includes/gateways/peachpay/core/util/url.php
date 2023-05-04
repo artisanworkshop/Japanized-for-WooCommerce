@@ -21,9 +21,11 @@ function peachpay_is_site( string $site ) {
 /**
  * Determines which environment we are running in so we can call
  * the correct PeachPay API.
+ *
+ * @param string $mode a parameter used in conjunction with testing if it's test mode if true, will use test mode routes.
  */
-function peachpay_api_url() {
-	if ( peachpay_is_test_mode() ) {
+function peachpay_api_url( $mode = 'detect' ) {
+	if ( ( peachpay_is_test_mode() && 'detect' === $mode ) || 'test' === $mode ) {
 		switch ( get_home_url() ) {
 			case 'https://woo.store.local':
 			case 'https://store.local':
@@ -40,7 +42,11 @@ function peachpay_api_url() {
 			case 'https://theme4.peachpay.app':
 			case 'https://theme5.peachpay.app':
 			case 'https://qa.peachpay.app':
+			case 'https://qa-david.peachpay.app':
+			case 'https://qa-vikrant.peachpay.app':
+			case 'https://demo-plum.peachpay.app':
 			case 'https://demo.peachpay.app':
+			case 'https://ui-test.peachpay.app':
 			case 'http://localhost:8000':
 				return 'https://dev.peachpay.app/';
 			case 'https://woo.store.local':
@@ -83,4 +89,14 @@ function peachpay_file_version( $file ) {
 function peachpay_url( $file ) {
 	// "." is to include the current directory.
 	return plugin_dir_url( PEACHPAY_ABSPATH . '.' ) . $file;
+}
+
+/**
+ * Gets only the URL base from the current domain
+ *
+ * @param bool $scheme Determines whether to return with the scheme included.
+ */
+function peachpay_get_site_url( $scheme = true ) {
+	$parsed_url = wp_parse_url( get_site_url() );
+	return true === $scheme ? $parsed_url['scheme'] . '://' . $parsed_url['host'] : $parsed_url['host'];
 }

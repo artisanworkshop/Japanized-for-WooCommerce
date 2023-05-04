@@ -11,30 +11,18 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 
 /**
  * PeachPay endpoint for creating an order.
- *
- * @throws Exception If the PeachPay checkout nonce is not valid.
  */
 function peachpay_wc_ajax_create_order() {
 	//phpcs:ignore
-	if ( ! isset( $_REQUEST['peachpay_checkout_nonce'] )
-		// On the product page, because we add to cart without refreshing the page, the nonce
-		// is invalidated and the checkout always fails. However, this brings us all the way
-		// back to why we created our own checkout nonce in the first place. When we were using
-		// the WooCommerce process checkout nonce, we made sure to refresh it after adding to
-		// cart and send that value to the browser so that it would work, but it the checkout
-		// still was failing in cases that we could not reproduce. Since refreshing this nonce
-		// would just take us back to where we started, for now it's disabled until we have
-		// some time to really look into this interesting behavior.
-		//
-		// || ! wp_verify_nonce( $_REQUEST['peachpay_checkout_nonce'], 'peachpay_process_checkout' ).
-	) {
-		return wp_send_json_error( __( 'PeachPay was unable to process your order, please try again.', 'woocommerce-for-japan' ) );
-	}
-
 	peachpay_login_user();
 
 	if ( WC()->cart->is_empty() ) {
-		return wp_send_json_error( __( 'PeachPay was unable to process your order because the cart is empty.', 'woocommerce-for-japan' ) );
+		return wp_send_json(
+			array(
+				'result'   => 'failure',
+				'messages' => __( 'PeachPay was unable to process your order because the cart is empty.', 'peachpay-for-woocommerce' ),
+			)
+		);
 	}
 
 	if ( ! defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
@@ -45,9 +33,48 @@ function peachpay_wc_ajax_create_order() {
 	// gateways while within the ?wc-ajax=order-create endpoint.
 	define( 'PEACHPAY_CHECKOUT', 1 );
 
+	add_action( 'woocommerce_checkout_update_order_meta', 'peachpay_append_test_mode', 10 );
+	add_filter( 'woocommerce_checkout_update_order_meta', 'peachpay_append_payment_method', 1 );
+	add_filter( 'woocommerce_checkout_update_order_meta', 'peachpay_append_subscription_data', 1 );
+
 	$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
 
 	WC()->checkout()->process_checkout();
 
 	wp_die();
+}
+
+/**
+ * Append meta data to the order for the payment method.
+ *
+ * @param int $order_id the order we want to update.
+ */
+function peachpay_append_payment_method( $order_id ) {
+	//phpcs:ignore
+	if ( ! empty( $_POST['payment_method_variation'] ) ) {
+		//phpcs:ignore
+		update_post_meta( $order_id, 'payment_method_variation', wc_sanitize_term_text_based( wp_unslash( $_POST['payment_method_variation'] ) ) );
+	}
+}
+
+/**
+ * If it's a test mode order append that data.
+ *
+ * @param int $order_id updates the order id with some meta for if peachpay test mode.
+ */
+function peachpay_append_test_mode( $order_id ) {
+    //phpcs:ignore
+	if ( isset( $_REQUEST['peachpay_is_test_mode'] ) ) {
+		update_post_meta( $order_id, 'peachpay_is_test_mode', true );
+	}
+}
+
+/**
+ * If order contains a subscription, it will append this has_subscription to true
+ *
+ * @param int $order_id the order we want to update.
+ */
+function peachpay_append_subscription_data( $order_id ) {
+	$has_subscription = ( is_array( WC()->cart->recurring_carts ) || is_object( WC()->cart->recurring_carts ) ) && 0 < count( WC()->cart->recurring_carts );
+	update_post_meta( $order_id, 'has_subscription', $has_subscription );
 }

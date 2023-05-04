@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class that represents admin notices.
  *
  * @since 1.1.0
+ * @version 1.2.0
  */
 class WC_Paidy_Admin_Notices {
 	/**

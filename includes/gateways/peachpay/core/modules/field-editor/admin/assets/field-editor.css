@@ -61,6 +61,7 @@ select.p-1 {
 	bottom: 0;
 	left: 0;
 	background-color: rgba(0, 0, 0, .8);
+	z-index: 10000;
 }
 
 .dragable-icon {
@@ -69,7 +70,7 @@ select.p-1 {
 	font-size: 20px;
 	font-style: normal;
 	font-variant: normal;
-	line-height: 1;
+	line-height: 1.4em;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	cursor: move;
@@ -93,43 +94,27 @@ select.p-1 {
 	position: absolute;
 	box-shadow: 2px 8px 20px 3px rgb(0 0 0 / 20%);
 	margin: auto;
-	border-radius: 5px;
-	width: 30rem;
+	border-radius: 6px;
+	width: 31rem;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	overflow-y: auto;
 }
 
 .new-field-modal-header {
-	padding: 18px 15px;
+	padding: 24px 16px;
 	-webkit-box-shadow: 0 0 8px rgb(0 0 0 / 10%);
 	box-shadow: 0 0 8px rgb(0 0 0 / 10%);
-	text-align: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
 }
 
 .new-field-header {
-	font-size: 1.5rem;
+	font-size: 28px;
 	font-weight: 700;
-	text-transform: uppercase;
-	display: inline-block;
-	padding-bottom: 3.5px;
-}
-
-.dashicon-close {
-	font-family: dashicons;
-	font-size: 18px;
-	font-style: normal;
-	font-variant: normal;
-	line-height: 1;
-	float: right;
-	position: relative;
-	bottom: 0.5rem;
-	cursor: pointer;
-}
-
-.dashicon-close:before {
-	content: '\f158';
 }
 
 .pp-modal-add-field {
@@ -141,9 +126,14 @@ select.p-1 {
 	padding: 20px;
 }
 
-.field-button-submit {
-	width: 9rem;
-	height: 3rem;
+.pp-form-label {
+	font-size: 1rem;
+	display: block;
+	transform: translate3d(1rem, 1.5rem, 0rem);
+	color: #aaa;
+	position: absolute;
+	pointer-events: none;
+	transition: all .3s;
 }
 
 .pp-select-label {
@@ -160,13 +150,15 @@ select.p-1 {
 }
 
 .submit-field {
-	text-align: center;
 	padding: 0.5rem;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-end;
+	gap: 12px;
+	background-color: #E5E5E5;
+	border-radius: 6px;
 }
 
-.form-label {
+.pp- {
 	font-size: 1rem;
 	color: #aaa;
 	position: absolute;
@@ -174,6 +166,7 @@ select.p-1 {
 	transform: translate3d(1rem, 1.3rem, 0rem);
 	transform-origin: 0 0;
 	transition: all 0.3s;
+	pointer-events: none;
 }
 
 .input-box {
@@ -203,13 +196,31 @@ input.input-box {
 	outline: none;
 }
 
-.input-box:focus+.form-label {
-	transform: translate3d(1rem, 0.85rem, 0rem) scale(0.7);
+.input-box:focus+.pp-form-label {
+	transform: translate3d(0.45rem, 0.85rem, 0rem) scale(0.7);
 }
 
-.input-box:focus+.form-label,
-.input-box:not(:placeholder-shown)+.form-label {
-	transform: translate3d(1rem, 0.85rem, 0rem) scale(0.7);
+.input-box:focus+.pp-form-label,
+.input-box:not(:placeholder-shown)+.pp-form-label {
+	transform: translate3d(0.45rem, 0.85rem, 0rem) scale(0.7);
+}
+
+.input-box:focus+.pp-name-label {
+	transform: translate3d(-0.6rem, 0.85rem, 0rem) scale(0.7);
+}
+
+.input-box:focus+.pp-name-label,
+.input-box:not(:placeholder-shown)+.pp-name-label {
+	transform: translate3d(-0.6rem, 0.85rem, 0rem) scale(0.7);
+}
+
+.input-box:focus+.pp-default-label {
+	transform: translate3d(0.1rem, 0.85rem, 0rem) scale(0.7);
+}
+
+.input-box:focus+.pp-default-label,
+.input-box:not(:placeholder-shown)+.pp-default-label {
+	transform: translate3d(0.1rem, 0.85rem, 0rem) scale(0.7);
 }
 
 .input-checkboxes {
@@ -226,10 +237,16 @@ input.input-box {
 	border: 0;
 }
 
+@media screen and (max-width: 782px) {
+	input[type='checkbox'], input[type='radio'] {
+		width: 1rem !important;
+		height: 1rem !important;
+	}
+}
+
 .table-form {
 	overflow: hidden;
 	border-radius: 5px;
-	border: 1px solid #c3c4c7;
 }
 
 table#field-table {
@@ -244,8 +261,17 @@ tr.table-header-footer {
 table#field-table th,
 table#field-table td {
 	padding: 1rem;
-	margin: none;
+	margin: 0;
 	text-align: center;
+	overflow-wrap: break-word;
+}
+
+@media screen and (max-width: 782px) {
+	table#field-table th,
+	table#field-table td {
+		padding: 0.8rem 0.5rem;
+		font-size: 12px;
+	}
 }
 
 .row-disabled {
@@ -297,6 +323,18 @@ tr.row-removed td {
 	content: '\f158';
 }
 
+.pp-remove-option {
+	border: 0px !important;
+	background-color: transparent;
+	font-size: 24px;
+	padding: 0px;
+	cursor: pointer;
+}
+
+.pp-remove-option:hover {
+	color: red;
+}
+
 #pp-option-list-dropdown {
 	background-color: #f2f2f2;
 	position: relative;
@@ -314,8 +352,8 @@ tr.row-removed td {
 	visibility: hidden;
 	opacity: 0;
 	position: absolute;
-	bottom: 23%;
-	width: 80%;
+	bottom: 16%;
+	width: 93%;
 	box-shadow: 0 2px 8px 0 rgb(24 24 32 / 24%);
 	border-radius: 0.5rem;
 	background-color: white;
@@ -354,13 +392,13 @@ input.pp-option-input-box {
 	outline: none;
 }
 
-.pp-option-input-box:focus+.form-label {
-	transform: translate3d(1rem, 0.3rem, 0rem) scale(0.8);
+.pp-option-input-box:focus+.pp-form-label {
+	transform: translate3d(0.5rem, 0.3rem, 0rem) scale(0.8);
 }
 
-.pp-option-input-box:focus+.form-label,
-.pp-option-input-box:not(:placeholder-shown)+.form-label {
-	transform: translate3d(1rem, 0.3rem, 0rem) scale(0.8);
+.pp-option-input-box:focus+.pp-form-label,
+.pp-option-input-box:not(:placeholder-shown)+.pp-form-label {
+	transform: translate3d(0.5rem, 0.3rem, 0rem) scale(0.8);
 }
 
 .pp-field-section-active {
@@ -441,4 +479,71 @@ input.pp-option-input-box {
 	width: 100%;
 	transform: translateY(-50%);
 	text-shadow: 0 0 4px #7e401b;
+}
+
+.pp-edit-field {
+	background-color: transparent !important;
+	border: 0px !important;
+}
+
+.pp-edit-field-icon {
+	width: 16px;
+	height: 16px;
+	fill: #9E9E9E;
+	vertical-align: -4px;
+}
+
+.pp-edit-field-icon:active {
+	pointer-events: none;
+}
+
+.pp-edit-field-icon:hover {
+	fill: #757575;
+}
+
+.pp-field-save-button p {
+	margin: 0px;
+	padding: 0px;
+}
+
+.pp-delete-field {
+	background-color: transparent;
+	border: 0px;
+	font-size: 20px !important;
+	color: #9E9E9E !important;
+	cursor: pointer;
+}
+
+.pp-delete-field:hover {
+	color: red !important;
+}
+
+.pp-tooltip-field-editors {
+	vertical-align: middle;
+}
+
+/* Tooltip container */
+.tooltip {
+	position: relative;
+	padding: 1rem 0.1rem 1rem 0.5rem;
+	display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+	visibility: hidden;
+	width: 150px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	padding: 0.5rem;
+	border-radius: 6px;
+	/* Position the tooltip text - see examples below! */
+	position: absolute;
+	z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+	visibility: visible;
 }

@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.4.2
+ * @version     2.5.4
  * @package 	Virtual Order
  * @author 		ArtisanWorkshop
  */
@@ -27,10 +27,13 @@ class JP4WC_Virtual_Order{
 	 */
 	public function jp4wc_virtual_order_checkout_fields($fields){
 		$only_virtual = true;
-
-		foreach( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-			// Check if there are non-virtual products
-			if ( ! $cart_item['data']->is_virtual() ) $only_virtual = false;
+		if ( ! is_null( WC()->cart ) ) {
+			foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				// Check if there are non-virtual products
+				if ( ! $cart_item['data']->is_virtual() ) {
+					$only_virtual = false;
+				}
+			}
 		}
 		if( $only_virtual ){
 			if( get_option( 'wc4jp-billing_postcode' ) )unset( $fields['billing']['billing_postcode'] );

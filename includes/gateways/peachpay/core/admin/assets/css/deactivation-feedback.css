@@ -70,7 +70,7 @@
 
 .feedback-button-submit {
 	background: none;
-	background-color: #ff876c;
+	background-color: #21105D;
 	border: none;
 	border-radius: 3px;
 	color: #fff;
@@ -143,7 +143,7 @@
 	text-rendering: auto;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	color: #ff876c;
+	color: #21105D;
 	margin-top: 5px;
 }
 

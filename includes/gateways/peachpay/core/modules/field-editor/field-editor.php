@@ -10,6 +10,7 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 }
 
 require_once PEACHPAY_ABSPATH . 'core/modules/field-editor/admin/settings-field-editor.php';
+require_once PEACHPAY_ABSPATH . 'core/modules/field-editor/pp-field-editor-functions.php';
 
 peachpay_setup_field_editor();
 
@@ -19,17 +20,18 @@ peachpay_setup_field_editor();
 function peachpay_setup_field_editor() {
 
 	peachpay_initialize_fields( 'shipping' );
+	peachpay_initialize_fields( 'billing' );
 
 	add_filter( 'woocommerce_checkout_fields', 'peachpay_virtual_product_fields_preset', 9999 );
 	add_filter( 'peachpay_register_feature', 'peachpay_filter_register_field_editor_support', 10, 1 );
 	add_filter( 'peachpay_script_data', 'peachpay_filter_field_editor_script_data', 10, 1 );
 
-	// Adding the billing fields accoring to the data.
+	// Adding the billing fields according to the data.
 	add_filter( 'woocommerce_checkout_fields', 'peachpay_billing_fields', 10, 1 );
-	// Adding the shipping fields accoring to the data.
+	// Adding the shipping fields according to the data.
 
 	// Need to remove this for future use.
-	// Need this add_filter( 'woocommerce_checkout_fields', 'peachpay_shipping_fields', 10, 1 );.
+	add_filter( 'woocommerce_checkout_fields', 'peachpay_shipping_fields', 10, 1 );
 
 	// Adding new fields for the checkout page.
 	add_action( 'woocommerce_before_order_notes', 'peachpay_additional_fields' );
@@ -53,25 +55,6 @@ function peachpay_initialize_fields( $section ) {
 }
 
 /**
- * Generates the preset fields for virtual products.
- *
- * @param object $fields The list of existing billing fields.
- */
-function peachpay_virtual_product_fields_preset( $fields ) {
-	if ( ! WC()->cart->needs_shipping_address() && peachpay_get_settings_option( 'peachpay_general_options', 'enable_virtual_product_fields' ) ) {
-		unset( $fields['billing']['billing_company'] );
-		unset( $fields['billing']['billing_phone'] );
-		unset( $fields['billing']['billing_address_1'] );
-		unset( $fields['billing']['billing_address_2'] );
-		unset( $fields['billing']['billing_city'] );
-		unset( $fields['billing']['billing_postcode'] );
-		unset( $fields['billing']['billing_country'] );
-		unset( $fields['billing']['billing_state'] );
-	}
-	return $fields;
-}
-
-/**
  * Registers field editor support.
  *
  * @param array $base_features The existing registered features.
@@ -79,7 +62,7 @@ function peachpay_virtual_product_fields_preset( $fields ) {
 function peachpay_filter_register_field_editor_support( $base_features ) {
 
 	$base_features['enable_virtual_product_fields'] = array(
-		'enabled' => peachpay_get_settings_option( 'peachpay_general_options', 'enable_virtual_product_fields' ),
+		'enabled' => peachpay_get_settings_option( 'peachpay_express_checkout_window', 'enable_virtual_product_fields' ),
 		'version' => 1,
 	);
 
@@ -133,33 +116,18 @@ function peachpay_shipping_fields( $fields ) {
  * @param array $section the target field section that is to be adjust.
  */
 function field_adjustments( $fields, $section ) {
-	// temp_section is only for our end since we swtich the fields shipping and billing the other way around.
-	// So we need to target the shipping option section for woocommerce billing section.
-	$temp_section = 'billing' === $section ? 'shipping' : 'billing';
-	$field_option = get_option( 'peachpay_field_editor_' . $temp_section );
+	$field_option = get_option( 'peachpay_field_editor_' . $section );
 	$priority     = 10;
 
 	$field_name_keys = array();
-	foreach ( $field_option[ $temp_section . '_order' ] as $order ) {
-		if ( 'header' === $field_option[ $temp_section ][ $order ]['type_list'] ) {
+	foreach ( $field_option[ $section . '_order' ] as $order ) {
+		if ( 'header' === $field_option[ $section ][ $order ]['type_list'] ) {
 			continue;
 		}
-		if ( ! isset( $field_option[ $temp_section ][ $order ]['field_enable'] ) || 'yes' !== $field_option[ $temp_section ][ $order ]['field_enable'] ) {
+		if ( ! isset( $field_option[ $section ][ $order ]['field_enable'] ) || 'yes' !== $field_option[ $section ][ $order ]['field_enable'] ) {
 			continue;
 		}
-		// If it is the default field we need to replace the shipping name to match it with woocomerce field name as they are keys in woocommerce.
-		if ( peachpay_is_default_field( $temp_section, $field_option[ $temp_section ][ $order ]['field_name'] ) ) {
-			if ( 'billing' === $section ) {
-				$temp_name = str_ireplace( 'shipping_', 'billing_', $field_option['shipping'][ $order ]['field_name'] );
-				array_push( $field_name_keys, $temp_name );
-				continue;
-			} else {
-				$temp_name = str_ireplace( 'billing_', 'shipping_', $field_option['billing'][ $order ]['field_name'] );
-				array_push( $field_name_keys, $temp_name );
-				continue;
-			}
-		}
-		array_push( $field_name_keys, $field_option[ $temp_section ][ $order ]['field_name'] );
+		array_push( $field_name_keys, $field_option[ $section ][ $order ]['field_name'] );
 	}
 
 	foreach ( $fields[ $section ] as $key => $field ) {
@@ -168,33 +136,30 @@ function field_adjustments( $fields, $section ) {
 		}
 	}
 
-	foreach ( $field_option[ $temp_section ] as $key => $value ) {
+	foreach ( $field_option[ $section ] as $key => $value ) {
 		if ( 'header' === $value['type_list'] ) {
 			continue;
 		}
 		if ( ! isset( $value['field_enable'] ) || 'yes' !== $value['field_enable'] ) {
 			continue;
 		}
-		$temp_name = $value['field_name'];
-		// If it is the default field we need to replace the shipping name to match it with woocomerce field name as they are keys in woocommerce.
-		if ( peachpay_is_default_field( $temp_section, $temp_name ) ) {
-			if ( 'shipping' === $temp_section ) {
-				$temp_name = str_ireplace( 'shipping_', 'billing_', $temp_name );
-			} else {
-				$temp_name = str_ireplace( 'billing_', 'shipping_', $temp_name );
+		if ( is_array( $fields[ $section ] ) && array_key_exists( $value['field_name'], $fields[ $section ] ) ) {
+			$fields[ $section ][ $value['field_name'] ]['priority'] = $priority;
+			if ( ! isset( $value['field_required'] ) || '' === $value['field_required'] ) {
+				$fields[ $section ][ $value['field_name'] ]['required'] = '';
 			}
-		}
-		if ( array_key_exists( $temp_name, $fields[ $section ] ) ) {
-			$fields[ $section ][ $temp_name ]['priority'] = $priority;
-			$fields[ $section ][ $temp_name ]['required'] = isset( $value['field_required'] ) && 'yes' === $value['field_required'] ? 1 : '';
-			$priority                                    += 10;
+			$priority += 10;
 		} else {
-			$fields[ $section ][ $temp_name ] = array(
-				'type'     => $value['type_list'],
-				'label'    => $value['field_label'],
-				'required' => isset( $value['field_required'] ) && 'yes' === $value['field_required'] ? 1 : '',
-				'priority' => $priority,
+			$fields[ $section ][ $value['field_name'] ] = array(
+				'type'        => $value['type_list'],
+				'label'       => $value['field_label'],
+				'label_class' => 'peachpay-radio-label',
+				'required'    => isset( $value['field_required'] ) && 'yes' === $value['field_required'] ? 1 : '',
+				'priority'    => $priority,
+				'options'     => isset( $value['option'] ) && ! empty( $value['option'] ) ? $value['option'] : '',
+				'default'     => $value['field_default'],
 			);
+			$priority                                  += 10;
 		}
 	}
 	return $fields;
@@ -227,13 +192,16 @@ function peachpay_additional_fields( $checkout ) {
 				$checkout->get_value( $field_option['additional'][ $order_number ]['field_name'] )
 			);
 		} elseif ( 'select' === $field_option['additional'][ $order_number ]['type_list'] || 'radio' === $field_option['additional'][ $order_number ]['type_list'] ) {
+			$input_type = $field_option['additional'][ $order_number ]['type_list'];
 			woocommerce_form_field(
 				$field_option['additional'][ $order_number ]['field_name'],
 				array(
-					'type'     => $field_option['additional'][ $order_number ]['type_list'],
-					'required' => isset( $field_option['additional'][ $order_number ]['field_required'] ) && 'yes' === $field_option['additional'][ $order_number ]['field_required'],
-					'label'    => $field_option['additional'][ $order_number ]['field_label'],
-					'options'  => peachpay_set_options_list( $field_option['additional'][ $order_number ]['option'] ),
+					'type'        => $field_option['additional'][ $order_number ]['type_list'],
+					'required'    => isset( $field_option['additional'][ $order_number ]['field_required'] ) && 'yes' === $field_option['additional'][ $order_number ]['field_required'],
+					'label'       => $field_option['additional'][ $order_number ]['field_label'],
+					'label_class' => 'peachpay-radio-label',
+					'default'     => $field_option['additional'][ $order_number ]['field_default'],
+					'options'     => 'select' === $input_type ? peachpay_set_options_list( $field_option['additional'][ $order_number ]['option'] ) : $field_option['additional'][ $order_number ]['option'],
 				),
 				$checkout->get_value( $field_option['additional'][ $order_number ]['field_name'] )
 			);
@@ -271,6 +239,8 @@ function peachpay_save_new_fields_data( $order_id ) {
 	save_what_we_added( $order_id, 'billing' );
 	save_what_we_added( $order_id, 'shipping' );
 	save_what_we_added( $order_id, 'additional' );
+
+	save_klaviyo_options();
 }
 
 /**
@@ -280,33 +250,100 @@ function peachpay_save_new_fields_data( $order_id ) {
  * @param string $section the section that is targeted.
  */
 function save_what_we_added( $order_id, $section ) {
-	// temp_section is only for our end since we swtich the fields shipping and billing the other way around.
-	// So we need to target the shipping option section for woocommerce billing section.
-	$temp_section = 'billing' === $section ? 'shipping' : 'billing';
-	if ( 'additional' === $section ) {
-		$temp_section = $section;
-	}
-	$field_option = get_option( 'peachpay_field_editor_' . $temp_section );
-	if ( ! isset( $field_option[ $temp_section . '_order' ] ) || empty( $field_option[ $temp_section . '_order' ] ) ) {
+	// phpcs:disable
+	if ( 'shipping' === $section && ( empty( $_POST['ship_to_different_address'] ) || ! isset( $_POST['ship_to_different_address'] ) ) ) {
 		return;
 	}
-	foreach ( $field_option[ $temp_section . '_order' ] as $order_number ) {
-		if ( peachpay_is_default_field( $temp_section, $field_option[ $temp_section ][ $order_number ]['field_name'] ) || 'header' === $field_option[ $temp_section ][ $order_number ]['type_list'] ) {
+	// phpcs:enable
+	$field_option = get_option( 'peachpay_field_editor_' . $section );
+	if ( ! isset( $field_option[ $section . '_order' ] ) || empty( $field_option[ $section . '_order' ] ) ) {
+		return;
+	}
+	foreach ( $field_option[ $section . '_order' ] as $order_number ) {
+		if ( peachpay_is_default_field( $section, $field_option[ $section ][ $order_number ]['field_name'] ) || 'header' === $field_option[ $section ][ $order_number ]['type_list'] ) {
 			continue;
 		}
-		if ( ! isset( $field_option[ $temp_section ][ $order_number ]['field_enable'] ) || 'yes' !== $field_option[ $temp_section ][ $order_number ]['field_enable'] ) {
+		if ( ! isset( $field_option[ $section ][ $order_number ]['field_enable'] ) || 'yes' !== $field_option[ $section ][ $order_number ]['field_enable'] ) {
 			continue;
 		}
 		// phpcs:disable
-		if ( ! empty( $_POST[ $field_option[ $temp_section ][ $order_number ]['field_name'] ] ) ) {
+		if ( ! empty( $_POST[ $field_option[ $section ][ $order_number ]['field_name'] ] ) ) {
 			add_post_meta(
 				$order_id,
-				$field_option[ $temp_section ][ $order_number ]['field_name'],
-				$_POST[ $field_option[ $temp_section ][ $order_number ]['field_name'] ]
+				$field_option[ $section ][ $order_number ]['field_name'],
+				$_POST[ $field_option[ $section ][ $order_number ]['field_name'] ]
 			);
 		}
 		// phpcs:enable
 	}
+}
+
+/**
+ * Klaviyo integration-- due to a different submission structure, we need to
+ * submit these here rather than integrated into our form save.
+ */
+function save_klaviyo_options() {
+	if ( ! is_plugin_active( 'klaviyo/klaviyo.php' ) ) {
+		return;
+	}
+	$klaviyo_settings = get_option( 'klaviyo_settings' );
+	// phpcs:disable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+	$email   = isset( $_POST['billing_email'] ) ? esc_html( wp_unslash( $_POST['billing_email'] ) ) : null;
+	$phone   = isset( $_POST['billing_phone'] ) ? esc_html( wp_unslash( $_POST['billing_phone'] ) ) : null;
+	$country = isset( $_POST['billing_country'] ) ? esc_html( wp_unslash( $_POST['billing_country'] ) ) : null;
+	$url     = 'https://a.klaviyo.com/api/webhook/integration/woocommerce?c=' . $klaviyo_settings['klaviyo_public_api_key'];
+	$body    = array(
+		'data' => array(),
+	);
+
+	if ( isset( $_POST['kl_sms_consent_checkbox'] ) && $_POST['kl_sms_consent_checkbox'] ) {
+		array_push(
+			$body['data'],
+			array(
+				'customer'     => array(
+					'email'   => $email,
+					'country' => $country,
+					'phone'   => $phone,
+				),
+				'consent'      => true,
+				'updated_at'   => gmdate( DATE_ATOM, date_timestamp_get( date_create() ) ),
+				'consent_type' => 'sms',
+				'group_id'     => $klaviyo_settings['klaviyo_sms_list_id'],
+			)
+		);
+	}
+
+	if ( isset( $_POST['kl_newsletter_checkbox'] ) && esc_html( wp_unslash( $_POST['kl_newsletter_checkbox'] ) ) ) {
+		array_push(
+			$body['data'],
+			array(
+				'customer'     => array(
+					'email' => $email,
+					'phone' => $phone,
+				),
+				'consent'      => true,
+				'updated_at'   => gmdate( DATE_ATOM, date_timestamp_get( date_create() ) ),
+				'consent_type' => 'email',
+				'group_id'     => $klaviyo_settings['klaviyo_newsletter_list_id'],
+			)
+		);
+	}
+	// phpcs:enable WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+
+	wp_remote_post(
+		$url,
+		array(
+			'method'      => 'POST',
+			'httpversion' => '1.0',
+			'blocking'    => false,
+			'headers'     => array(
+				'X-WC-Webhook-Topic' => 'custom/consent',
+				'Content-Type'       => 'application/json',
+			),
+			'body'        => wp_json_encode( $body ),
+			'data_format' => 'body',
+		)
+	);
 }
 
 /**
@@ -345,28 +382,392 @@ function check_if_required( $section ) {
  * @param bool   $ignore_defaults when true, default values will not be included in result.
  */
 function peachpay_enabled_field_list( $section, $ignore_defaults = false ) {
-	$field_option = get_option( 'peachpay_field_editor_' . $section );
+	$field_option      = get_option( 'peachpay_field_editor_' . $section );
+	$result            = array();
+	$next_order_number = 0;
 
-	if ( ! isset( $field_option[ $section . '_order' ] ) ) {
-		return;
-	}
-	$result = array();
-	foreach ( $field_option[ $section . '_order' ] as $order_number ) {
-		$field_name = $field_option[ $section ][ $order_number ]['field_name'];
-		$add_field  = ! $ignore_defaults || ! ( peachpay_is_default_field( $section, $field_name ) || peachpay_is_default_header( $section, $field_name ) );
+	if ( isset( $field_option[ $section . '_order' ] ) ) {
+		foreach ( $field_option[ $section . '_order' ] as $order_number ) {
+			$field_name = $field_option[ $section ][ $order_number ]['field_name'];
+			$add_field  = ! $ignore_defaults || ! peachpay_is_default_field( $section, $field_name );
 
-		if ( $add_field && isset( $field_option[ $section ][ $order_number ]['field_enable'] ) && 'yes' === $field_option[ $section ][ $order_number ]['field_enable'] ) {
-			$result[ $order_number ] = $field_option[ $section ][ $order_number ];
-			if ( isset( $field_option[ $section ][ $order_number ]['option'] ) ) {
-				$result[ $order_number ]['option_order'] = array();
-				foreach ( $field_option[ $section ][ $order_number ]['option'] as $value => $name ) {
-					$result[ $order_number ]['option_order'][] = array( $value, $name );
+			if ( $add_field && isset( $field_option[ $section ][ $order_number ]['field_enable'] ) && 'yes' === $field_option[ $section ][ $order_number ]['field_enable'] ) {
+				$result[ $order_number ] = $field_option[ $section ][ $order_number ];
+				if ( isset( $field_option[ $section ][ $order_number ]['option'] ) ) {
+					$result[ $order_number ]['option_order'] = array();
+					foreach ( $field_option[ $section ][ $order_number ]['option'] as $value => $name ) {
+						$result[ $order_number ]['option_order'][] = array( $value, $name );
+					}
 				}
 			}
+			$next_order_number = $order_number;
+		}
+		$next_order_number++;
+	}
+
+	// Support for third party field editors
+	$extra_results = array();
+
+	// Flexible Checkout Fields for WooCommerce
+	$fcfw_fields = peachpay_import_fcfw_fields( $section );
+	if ( $fcfw_fields ) {
+		$extra_results = array_merge( $extra_results, $fcfw_fields );
+	}
+
+	// Checkout Field Editor for WooCommerce
+	$cfew_fields = peachpay_import_cfew_fields( $section );
+	if ( $cfew_fields ) {
+		$extra_results = array_merge( $extra_results, $cfew_fields );
+	}
+
+	// Checkout Field Manager for WooCommerce
+	$cfm_fields = peachpay_import_cfm_fields( $section );
+	if ( $cfm_fields ) {
+		$extra_results = array_merge( $extra_results, $cfm_fields );
+	}
+
+	// Klaviyo integration
+	$klaviyo_fields = peachpay_import_klaviyo_checkbox( $section );
+	if ( $klaviyo_fields ) {
+		$extra_results = array_merge( $extra_results, $klaviyo_fields );
+	}
+
+	if ( 0 === count( $result ) ) {
+		$next_order_number = 1;
+	}
+	if ( $extra_results ) {
+		foreach ( $extra_results as $extra ) {
+			$result[ $next_order_number ] = $extra;
+			$next_order_number++;
 		}
 	}
 
 	return $result;
+}
+
+/**
+ * Returns a list of enabled field data from the Flexible Checkout Fields for WooCommerce formatted for use in the PeachPay modal.
+ *
+ * @param string $section the section that is targeted.
+ */
+function peachpay_import_fcfw_fields( $section ) {
+	if ( ! is_plugin_active( 'flexible-checkout-fields/flexible-checkout-fields.php' ) ) {
+		return array();
+	}
+
+	$fcfw_option = get_option( 'inspire_checkout_fields_settings' );
+	if ( 'shipping' === $section ) {
+		$fcfw_option = $fcfw_option['shipping'];
+	} elseif ( 'billing' === $section ) {
+		$fcfw_option = $fcfw_option['billing'];
+	} else {
+		$fcfw_option = $fcfw_option['order'];
+	}
+
+	if ( ! $fcfw_option ) {
+		return array();
+	}
+
+	$result        = array();
+	$result_number = 1;
+	foreach ( $fcfw_option as $option ) {
+		// Strip out woocommerce defaults
+		if ( isset( $option['external_field'] ) || ( isset( $option['type'] ) && peachpay_starts_with( $option['type'], 'inspire' ) ) ) {
+			// Convert to PeachPay standard
+			if ( '1' === $option['visible'] ) {
+				// This feels backwards, but yes, '0' is on and '1' is off.
+				continue;
+			}
+			// Only enable fields our field editor is currently able to support.
+			if ( peachpay_is_valid_import_field( 'fcfw', $option['type'] ) ) {
+				$result[ $result_number ]['field_enable'] = 'yes';
+			} else {
+				continue;
+			}
+			$result[ $result_number ]['field_default']  = isset( $option['default'] ) ? $option['default'] : '';
+			$result[ $result_number ]['field_label']    = $option['label'];
+			$result[ $result_number ]['field_name']     = $option['name'];
+			$result[ $result_number ]['field_required'] = '1' === $option['required'] ? 'yes' : 'no';
+			// Some type_list types need to be converted.
+			switch ( $option['type'] ) {
+				case 'textarea':
+				case 'number':
+				case 'url':
+					$result[ $result_number ]['type_list'] = 'text';
+					break;
+				case 'phone':
+					$result[ $result_number ]['type_list'] = 'tel';
+					break;
+				case 'inspirecheckbox':
+					$result[ $result_number ]['type_list'] = 'checkbox';
+					break;
+				default: // text, email
+					$result[ $result_number ]['type_list'] = $option['type'];
+			}
+			$result[ $result_number ]['width'] = '100'; // FCFW has no setting for this; default to 100% width
+
+			$result_number++;
+		}
+	}
+
+	return $result;
+}
+
+/**
+ * Returns a list of enabled field data from the Checkout Field Editor for WooCommerce formatted for use in the PeachPay modal.
+ *
+ * @param string $section the section that is targeted.
+ */
+function peachpay_import_cfew_fields( $section ) {
+	// Support for Flexible Checkout Fields for WooCommerce
+	if ( ! is_plugin_active( 'woo-checkout-field-editor-pro/checkout-form-designer.php' ) ) {
+		return array();
+	}
+
+	$fce_option = null;
+	if ( 'shipping' === $section ) {
+		$fce_option = get_option( 'wc_fields_shipping' );
+	} elseif ( 'billing' === $section ) {
+		$fce_option = get_option( 'wc_fields_billing' );
+	} else {
+		$fce_option = get_option( 'wc_fields_additional' );
+	}
+
+	if ( ! $fce_option ) {
+		return array();
+	}
+
+	$result        = array();
+	$result_number = 1;
+	foreach ( $fce_option as $option ) {
+		// Strip out WooCommerce default fields
+		if ( isset( $option['type'] ) && isset( $option['name'] ) ) {
+			// Convert to PeachPay standard
+			if ( ! $option['enabled'] ) {
+				continue;
+			}
+			// Only enable fields our field editor is currently able to support.
+			if ( peachpay_is_valid_import_field( 'cfew', $option['type'] ) ) {
+				$result[ $result_number ]['field_enable'] = 'yes';
+			} else {
+				continue;
+			}
+			$result[ $result_number ]['field_default']  = isset( $option['default'] ) ? $option['default'] : '';
+			$result[ $result_number ]['field_label']    = $option['label'];
+			$result[ $result_number ]['field_name']     = $option['name'];
+			$result[ $result_number ]['field_required'] = '1' === $option['required'] ? 'yes' : 'no';
+			// Some type_list types need to be converted.
+			switch ( $option['type'] ) {
+				case 'textarea':
+				case 'number':
+				case 'url':
+					$result[ $result_number ]['type_list'] = 'text';
+					break;
+				case 'phone':
+					$result[ $result_number ]['type_list'] = 'tel';
+					break;
+				case 'radio':
+					$result[ $result_number ]['type_list'] = 'radio';
+					$numoptions                            = count( $option['options'] );
+					for ( $i = 0; $i < $numoptions; $i++ ) {
+						$n                                        = $i + 1;
+						$result[ $result_number ]['option'][ $n ] = $option['options'][ $n ];
+						$result[ $result_number ]['option_order'][ $i ] = array( $n, strval( $n ) );
+					}
+					break;
+				default: // text, email
+					$result[ $result_number ]['type_list'] = $option['type'];
+			}
+			$result[ $result_number ]['width'] = '100'; // CFEW has no setting for this; default to 100% width
+
+			$result_number++;
+		}
+	}
+
+	return $result;
+}
+
+/**
+ * Returns a list of enabled field data from Klaviyo formatted for use in the PeachPay modal.
+ *
+ * @param string $section the section that is targeted.
+ */
+function peachpay_import_klaviyo_checkbox( $section ) {
+	// Support for Klaviyo
+	if ( ! is_plugin_active( 'klaviyo/klaviyo.php' ) || 'billing' !== $section ) {
+		return array();
+	}
+	$klaviyo_settings = get_option( 'klaviyo_settings' );
+	if ( ! $klaviyo_settings || ! $klaviyo_settings['klaviyo_subscribe_checkbox'] ) {
+		return array();
+	}
+	// At least 1 of the newsletter and sms checkbox are active!
+	$result = array();
+	$i      = 0;
+
+	// Newsletter.
+	if ( $klaviyo_settings['klaviyo_subscribe_checkbox'] ) {
+		$result[ $i ]['field_default']  = 1;
+		$result[ $i ]['field_enable']   = 'yes';
+		$result[ $i ]['field_label']    = $klaviyo_settings['klaviyo_newsletter_text'];
+		$result[ $i ]['field_name']     = 'kl_newsletter_checkbox';
+		$result[ $i ]['field_required'] = 'no';
+		$result[ $i ]['type_list']      = 'checkbox';
+		$result[ $i ]['width']          = '100'; // default to 100% width
+		$i++;
+	}
+
+	// SMS.
+	if ( $klaviyo_settings['klaviyo_sms_subscribe_checkbox'] ) {
+		$result[ $i ]['field_default']  = 1;
+		$result[ $i ]['field_enable']   = 'yes';
+		$result[ $i ]['field_label']    = $klaviyo_settings['klaviyo_sms_consent_text'];
+		$result[ $i ]['field_name']     = 'kl_sms_consent_checkbox';
+		$result[ $i ]['field_required'] = 'no';
+		$result[ $i ]['type_list']      = 'checkbox';
+		$result[ $i ]['width']          = '100'; // default to 100% width
+		$i++;
+	}
+
+	return $result;
+}
+
+/**
+ * Returns a list of enabled field data from the Checkout Field Manager for WooCommerce formatted for use in the PeachPay modal.
+ *
+ * @param string $section the section that is targeted.
+ */
+function peachpay_import_cfm_fields( $section ) {
+	// Support for Checkout Field Manager for WooCommerce
+	if ( ! is_plugin_active( 'woocommerce-checkout-manager/woocommerce-checkout-manager.php' ) ) {
+		return array();
+	}
+
+	$cfm_option = null;
+	if ( 'shipping' === $section ) {
+		$cfm_option = get_option( 'wooccm_shipping' );
+	} elseif ( 'billing' === $section ) {
+		$cfm_option = get_option( 'wooccm_billing' );
+	} else {
+		$cfm_option = get_option( 'wooccm_additional' );
+	}
+
+	if ( ! $cfm_option ) {
+		return array();
+	}
+
+	$result        = array();
+	$result_number = 1;
+	foreach ( $cfm_option as $option ) {
+		// Strip out WooCommerce default fields
+		if ( str_contains( $option['key'], 'wooccm' ) ) {
+			// Convert to PeachPay standard
+			if ( $option['disabled'] ) {
+				continue;
+			}
+			// Only enable fields our field editor is currently able to support.
+			if ( peachpay_is_valid_import_field( 'cfm', $option['type'] ) ) {
+				$result[ $result_number ]['field_enable'] = 'yes';
+			} else {
+				continue;
+			}
+			$result[ $result_number ]['field_default']  = isset( $option['default'] ) ? $option['default'] : '';
+			$result[ $result_number ]['field_label']    = $option['label'];
+			$result[ $result_number ]['field_name']     = $option['key'];
+			$result[ $result_number ]['field_required'] = true === $option['required'] ? 'yes' : 'no';
+			// Some type_list types need to be converted.
+			switch ( $option['type'] ) {
+				case 'textarea':
+				case 'number':
+					$result[ $result_number ]['type_list'] = 'text';
+					break;
+				case 'heading':
+					$result[ $result_number ]['type_list'] = 'header';
+					break;
+				case 'radio':
+					$result[ $result_number ]['type_list'] = 'radio';
+					$numoptions                            = count( $option['options'] );
+					for ( $i = 0; $i < $numoptions; $i++ ) {
+						$n                                        = $i + 1;
+						$label                                    = $option['options'][ $i ]['label'];
+						$result[ $result_number ]['option'][ $n ] = $label;
+						$result[ $result_number ]['option_order'][ $i ] = array( $label, $label );
+					}
+					break;
+				case 'select':
+					$result[ $result_number ]['type_list'] = 'select';
+					$numoptions                            = count( $option['options'] );
+					for ( $i = 0; $i < $numoptions; $i++ ) {
+						$n                                        = $i + 1;
+						$label                                    = $option['options'][ $i ]['label'];
+						$result[ $result_number ]['option'][ $n ] = $label;
+						$result[ $result_number ]['option_order'][ $i ] = array( $label, $label );
+					}
+					break;
+				default: // text, email, tel, checkbox
+					$result[ $result_number ]['type_list'] = $option['type'];
+			}
+			$result[ $result_number ]['width'] = '100'; // default to 100% width
+
+			$result_number++;
+		}
+	}
+
+	return $result;
+}
+
+/**
+ * A helper method to determine whether a checkout field in a supported integration is usable by the PeachPay modal or not.
+ *
+ * @param string $plugin the plugin the field being checked is from.
+ * @param string $type the field type being checked.
+ */
+function peachpay_is_valid_import_field( $plugin, $type ) {
+	if ( 'fcfw' === $plugin ) {
+		switch ( $type ) {
+			case 'header':
+			case 'textarea':
+			case 'number':
+			case 'url':
+			case 'phone':
+			case 'inspirecheckbox':
+			case 'text':
+			case 'email':
+				return true;
+			default:
+				return false;
+		}
+	} elseif ( 'cfew' === $plugin ) {
+		switch ( $type ) {
+			case 'header':
+			case 'textarea':
+			case 'number':
+			case 'url':
+			case 'phone':
+			case 'radio':
+			case 'text':
+			case 'email':
+				return true;
+			default:
+				return false;
+		}
+	} elseif ( 'cfm' === $plugin ) {
+		switch ( $type ) {
+			case 'heading':
+			case 'textarea':
+			case 'number':
+			case 'tel':
+			case 'radio':
+			case 'checkbox':
+			case 'text':
+			case 'email':
+			case 'select':
+				return true;
+			default:
+				return false;
+		}
+	}
+	return false;
 }
 
 /**
@@ -393,23 +794,6 @@ function peachpay_is_default_field( $section, $target ) {
 		$section . '_city',
 		$section . '_state',
 		$section . '_country',
-	);
-	return in_array( $target, $default_field_name_keys, true );
-}
-
-/**
- * A helper method that check if the header is a default header or not.
- * return true if it is default and false if it is not.
- *
- * @param string $section the target section string.
- * @param string $target the string to check.
- */
-function peachpay_is_default_header( $section, $target ) {
-	if ( 'additional' === $section ) {
-		return false;
-	}
-
-	$default_field_name_keys = array(
 		$section . '_personal_header',
 		$section . '_address_header',
 	);
@@ -424,14 +808,53 @@ function peachpay_is_default_header( $section, $target ) {
 function peachpay_enabled_field_list_order( $section ) {
 	$field_option = get_option( 'peachpay_field_editor_' . $section );
 	$result       = array();
-	if ( ! isset( $field_option[ $section . '_order' ] ) ) {
-		return;
-	}
-	foreach ( $field_option[ $section . '_order' ] as $order_number ) {
-		if ( isset( $field_option[ $section ][ $order_number ]['field_enable'] ) && 'yes' === $field_option[ $section ][ $order_number ]['field_enable'] ) {
-			$result[] = $order_number;
+	if ( isset( $field_option[ $section . '_order' ] ) ) {
+		foreach ( $field_option[ $section . '_order' ] as $order_number ) {
+			if ( isset( $field_option[ $section ][ $order_number ]['field_enable'] ) && 'yes' === $field_option[ $section ][ $order_number ]['field_enable'] ) {
+				$result[] = $order_number;
+			}
 		}
 	}
+
+	// Support for third party field editors
+	$extra_results = array();
+
+	// Flexible Checkout Fields for WooCommerce
+	$fcfw_fields = peachpay_import_fcfw_fields( $section );
+	if ( $fcfw_fields ) {
+		$extra_results = array_merge( $extra_results, $fcfw_fields );
+	}
+
+	// Checkout Field Editor for WooCommerce
+	$cfew_fields = peachpay_import_cfew_fields( $section );
+	if ( $cfew_fields ) {
+		$extra_results = array_merge( $extra_results, $cfew_fields );
+	}
+
+	// Checkout Field Manager for WooCommerce
+	$cfm_fields = peachpay_import_cfm_fields( $section );
+	if ( $cfm_fields ) {
+		$extra_results = array_merge( $extra_results, $cfm_fields );
+	}
+
+	// Klaviyo
+	$klaviyo_fields = peachpay_import_klaviyo_checkbox( $section );
+	if ( $klaviyo_fields ) {
+		$extra_results = array_merge( $extra_results, $klaviyo_fields );
+	}
+
+	if ( $extra_results ) {
+		$num_fields        = count( $result );
+		$num_new_fields    = count( $extra_results );
+		$next_order_number = 0 === $num_fields ? 0 : $result[ $num_fields - 1 ];
+		$next_order_number++;
+		for ( $i = 0; $i < $num_new_fields; $i++ ) {
+			$result[ $num_fields ] = $next_order_number;
+			$num_fields++;
+			$next_order_number++;
+		}
+	}
+
 	return $result;
 }
 
@@ -478,7 +901,7 @@ add_action( 'woocommerce_admin_order_data_after_shipping_address', 'peachpay_dis
  * @param WC_Order $order Order object.
  */
 function peachpay_display_additional_fields_in_admin( $order ) {
-	$all_additional_fields = peachpay_all_additional_enabled_field_list();  // get list of enabled peaypach additional fields.
+	$all_additional_fields = peachpay_all_additional_enabled_field_list();  // get list of enabled peachpay additional fields.
 	$order_meta            = get_array_intersection( $order->get_meta_data(), $all_additional_fields );  // get order meta data. Contains the additional field key<->value pairs for this order.
 
 	if ( empty( $order_meta ) || empty( $all_additional_fields ) ) {
@@ -487,7 +910,7 @@ function peachpay_display_additional_fields_in_admin( $order ) {
 
 	?>
 	<div class="address">
-		<h3><?php esc_html_e( 'Additional Fields' ); ?></h3>
+		<h3><?php esc_html_e( 'Additional information', 'peachpay-for-woocommerce' ); ?></h3>
 		<p>
 			<?php
 			foreach ( $all_additional_fields as $array ) {
@@ -542,6 +965,10 @@ function get_array_intersection( $meta_data, $fields_list ) {
 		$fields_list
 	);
 
+	if ( empty( $fields_extracted ) ) {
+		return array();
+	}
+
 	$fields_extracted_keyed = array_merge( ...$fields_extracted );
 	return array_intersect_key( $meta_extracted_keyed, $fields_extracted_keyed );
 }
@@ -564,7 +991,7 @@ function peachpay_render_additional_fields_receipt( $param ) {
 	?>
 	<table id='pp-receipt_additional_fields' style='table-layout: fixed;'>
 	<tr>
-		<th> <?php esc_html_e( 'Additional Fields', 'woocommerce-for-japan' ); ?> </th>
+		<th> <?php esc_html_e( 'Additional information', 'peachpay-for-woocommerce' ); ?> </th>
 		<th></th>
 	</tr>
 	<?php
@@ -588,3 +1015,45 @@ function peachpay_render_additional_fields_receipt( $param ) {
 	</table>
 	<?php
 }
+
+/**
+ * Adds enabled field data to the order emails.
+ *
+ * @param Array    $fields to be added to.
+ * @param Boolean  $sent_to_admin flag.
+ * @param WC_Order $order in question.
+ */
+function peachpay_add_fields_to_emails( $fields, $sent_to_admin, $order ) {
+	$custom_field_sections = array();
+
+	$billing_fields = get_option( 'peachpay_field_editor_billing', array( 'billing' => array() ) );
+	if ( is_array( $billing_fields ) && isset( $billing_fields['billing'] ) ) {
+		$custom_field_sections['billing'] = $billing_fields['billing'];
+	}
+
+	$shipping_fields = get_option( 'peachpay_field_editor_shipping', array( 'shipping' => array() ) );
+	if ( is_array( $shipping_fields ) && isset( $shipping_fields['shipping'] ) ) {
+		$custom_field_sections['shipping'] = $shipping_fields['shipping'];
+	}
+
+	$additional_fields = get_option( 'peachpay_field_editor_additional', array( 'additional' => array() ) );
+	if ( is_array( $additional_fields ) && isset( $additional_fields['additional'] ) ) {
+		$custom_field_sections['additional'] = $additional_fields['additional'];
+	}
+
+	foreach ( $custom_field_sections as $section => $custom_fields ) {
+		foreach ( $custom_fields as $custom_field ) {
+			if ( ! peachpay_is_default_field( $section, $custom_field['field_name'] ) && 'yes' === $custom_field['field_enable'] ) {
+				$field_value = get_post_meta( $order->get_id(), $custom_field['field_name'], true );
+
+				$fields[ $custom_field['field_name'] ] = array(
+					'label' => $custom_field['field_label'],
+					'value' => $field_value,
+				);
+			}
+		}
+	}
+
+	return $fields;
+}
+add_filter( 'woocommerce_email_order_meta_fields', 'peachpay_add_fields_to_emails', 10, 3 );

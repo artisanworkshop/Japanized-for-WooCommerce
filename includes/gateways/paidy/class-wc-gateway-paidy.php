@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_Paidy
  * @extends		WC_Payment_Gateway
- * @version		1.1.10
+ * @version		1.2.0
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -66,7 +66,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
      */
     public function __construct() {
 		$this->id                 = 'paidy';
-		$this->icon               = apply_filters('woocommerce_paidy_icon', JP4WC_URL_PATH . '/assets/images/paidy_logo_tagline_100.png');
+		$this->icon               = apply_filters('woocommerce_paidy_icon', JP4WC_URL_PATH . '/assets/images/paidy_logo_100_2023.png');
 		$this->has_fields         = false;
         $this->order_button_text = sprintf(__( 'Proceed to %s', 'woocommerce-for-japan' ), __('Paidy', 'woocommerce-for-japan' ));
 
@@ -229,7 +229,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         ?>
         <br />
         <a href="https://paidy.com/consumer" target="_blank" class="jp4wc-paidy-icon">
-            <img src="<?php echo JP4WC_URL_PATH;?>assets/images/2021Checkout_320x100.png" alt="Paidy 翌月まとめてお支払い" style="max-height: none; float: none;">
+            <img src="<?php echo JP4WC_URL_PATH;?>assets/images/paidy_checkout_2023_320x100.png" alt="Paidy 翌月まとめてお支払い" style="max-height: none; float: none;">
         </a>
         <br />
         <p class="jp4wc-paidy-description"><?php echo $this->description; ?></p>
@@ -259,11 +259,15 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         $explain_html = '
         <div class="jp4wc-paidy-explanation">
         <ul>
-            <li style="list-style: disc !important;">口座振替(支払手数料:無料)</li>
-            <li style="list-style: disc !important;">コンビニ(支払手数料:356円税込)</li>
-            <li style="list-style: disc !important;">銀行振込(支払手数料:金融機関により異なります)</li>
+            <li style="list-style: disc !important;">クレジットカード、事前登録不要。</li>
+            <li style="list-style: disc !important;">メールアドレスと携帯番号だけで、今すぐお買い物。</li>
+            <li style="list-style: disc !important;">1か月に何度お買い物しても、お支払いは翌月まとめて1回でOK。</li>
+            <li style="list-style: disc !important;">お支払いは翌月10日までに、コンビニ払い・銀行振込・口座振替で。</li>
         </ul>
-        Paidyについて詳しくは<a href="https://paidy.com/whatspaidy" target="_blank">こちら</a>。
+        さらにペイディアプリから本人確認をすると、分割手数料無料*の３回あと払い**や、使い過ぎを防止する予算設定など、便利な機能をご利用いただけます。<br />
+*銀行振込・口座振替のみ無料<br />
+**1回のご利用金額が3,000円以上の場合のみ利用可能<br />
+        Paidyについて詳しくは<a href="https://paidy.com/payments/" target="_blank">こちら</a>。
         </div>
         ';
         return apply_filters( 'jp4wc_paidy_explanation', $explain_html );
@@ -509,7 +513,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                             "zip": "<?php echo $shipping_address['zip'];?>"
                         },
                         <?php } ?>
-                        "description": "<?php echo wc_clean($this->store_name);?>"
+                        "description": "<?php echo wc_clean($this->store_name);?>",
+                        "metadata" : {"Platform" : "WooCommerce"}
                     };
                     paidyHandler.launch(payload);
                 }
@@ -728,7 +733,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             $send_url = 'https://api.paidy.com/payments/'.$transaction_id.'/captures';
             $args = array(
                 'method' => 'POST',
-                'body' => '{}',
+                'body' => '{"metadata": {"Platform": "WooCommerce"}}',
                 'headers' => array(
                     'Content-Type' => 'application/json',
                     'Paidy-Version' => '2018-04-10',
@@ -785,7 +790,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         $capture_id = get_post_meta( $order_id, 'paidy_capture_id', true );
         if( $order_payment_method == $this->id ) {
             $transaction_id = $order->get_transaction_id();
-            $post_data = '{"capture_id":"' . $capture_id . '","amount":"' . $amount . '"}';
+            $post_data = '{"capture_id":"' . $capture_id . '","amount":"' . $amount . '","metadata" : {"Platform" : "WooCommerce"}}';
             $send_url = 'https://api.paidy.com/payments/' . $transaction_id . '/refunds';
             $args = array(
                 'method' => 'POST',

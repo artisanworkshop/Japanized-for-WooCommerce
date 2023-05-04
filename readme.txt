@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, shohei.tanaka, mt8biz
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 6.0.0
-Stable tag: 2.5.2
+Tested up to: 6.1.1
+Stable tag: 2.5.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,19 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.5.7 - 2023-05-02 =
+* Update - PeachPay 1.91.5.
+* Update - Fixed Reflected Cross-Site Scripting.
+
+= 2.5.6 - 2023-02-28 =
+* Update - Paidy Payments system Update to 1.2.
+
+= 2.5.5 - 2023-02-21 =
+* Fixed - Fixed Reflected Cross-Site Scripting.
+
+= 2.5.4 - 2023-02-10 =
+* Fixed - Fixed a bug in handling virtual goods.
 
 = 2.5.3 - 2022-07-25 =
 * Fixed - Automatic address entry from zip code using Yahoo! API bug.

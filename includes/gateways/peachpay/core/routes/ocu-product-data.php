@@ -34,10 +34,9 @@ function peachpay_wc_ajax_ocu_product_data() {
 		$response = array(
 			'success' => true,
 			'data'    => array(
-				'ocu_product_img'         => wp_get_attachment_image_url( $ocu_product->get_image_id(), 'full' ),
-				'ocu_product_name'        => $ocu_product->get_name(),
-				'ocu_product_description' => $ocu_product->get_description(),
-				'ocu_product_price'       => $ocu_product->get_price_html(),
+				'ocu_product_img'   => wp_get_attachment_image_url( $ocu_product->get_image_id(), 'full' ),
+				'ocu_product_name'  => $ocu_product->get_name(),
+				'ocu_product_price' => $ocu_product->get_price_html(),
 			),
 		);
 

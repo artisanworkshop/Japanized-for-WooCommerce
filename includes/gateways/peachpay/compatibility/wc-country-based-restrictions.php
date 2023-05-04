@@ -20,10 +20,12 @@ function peachpay_cbr_init() {
 }
 add_action( 'peachpay_init_compatibility', 'peachpay_cbr_init' );
 
+/**
+ * @param $request an array of key value pairs representing the POST body
+ */
 function peachpay_update_cbr_country( $request ) {
-	$request_data = $request->get_body_params();
 	// set this cookie no matter what as if cbr is active this cookie is used over other forms of verification :)
-	if( array_key_exists( 'billing_country', $request_data ) && !get_option( 'wpcbr_force_geo_location' ) ) {
-		setcookie( 'country', $request_data['billing_country'] , 0, '/' );
+	if( array_key_exists( 'billing_country', $request ) && !get_option( 'wpcbr_force_geo_location' ) ) {
+		setcookie( 'country', $request['billing_country'] , 0, '/' );
 	}
 }

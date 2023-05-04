@@ -66,7 +66,7 @@ function peachpay_add_new_field_modal() {
 function peachpay_field_editor() {
 	add_settings_section(
 		'peachpay_checkout_field_editor_table',
-		__( 'Field editor', 'woocommerce-for-japan' ),
+		'',
 		'peachpay_generate_table_cb',
 		'peachpay'
 	);
@@ -127,12 +127,12 @@ function peachpay_generate_table_cb() {
 			}
 		}
 
-		if( isset( $_POST['option'] ) ) { 
+		if( isset( $_POST['option'] ) ) {
 			$temp_option_name = array();
 			foreach ( $_POST['option']['name'] as $name ) {
 				$temp_option_name[] = $name;
 			}
-			$temp_option_value = array();	
+			$temp_option_value = array();
 			foreach ( $_POST['option']['value'] as $value ) {
 				$temp_option_value[] = $value;
 			}
@@ -162,27 +162,24 @@ function peachpay_generate_table_cb() {
 	}
 	//phpcs:enable
 	?>
-	<div class="pp-field-section">
+	<div class="pp-section-nav-container">
 	<a
-		class="<?php echo 'shipping' === $section ? 'pp-field-section-active' : ''; ?>"
-		href="<?php echo esc_url( add_query_arg( 'section', 'shipping' ) ); ?>"
-		style="text-decoration:none;"
-	> <?php esc_html_e( 'Shipping Fields', 'woocommerce-for-japan' ); ?>
-	</a>
-	<!-- | Future uses -->
-	<!-- |
-	<a
-		class="<?php echo 'billing' === $section ? 'pp-field-section-active' : ''; ?>"
+		class="<?php echo 'billing' === $section ? 'pp-sub-nav-link-active' : 'pp-sub-nav-link-inactive'; ?>"
 		href="<?php echo esc_url( add_query_arg( 'section', 'billing' ) ); ?>"
 		style="text-decoration:none;"
-	> <?php esc_html_e( 'Billing Fields', 'woocommerce-for-japan' ); ?>
-	</a> -->
-	|
+	> <?php esc_html_e( 'Billing', 'peachpay-for-woocommerce' ); ?>
+	</a>
 	<a
-		class="<?php echo 'additional' === $section ? 'pp-field-section-active' : ''; ?>"
+		class="<?php echo 'shipping' === $section ? 'pp-sub-nav-link-active' : 'pp-sub-nav-link-inactive'; ?>"
+		href="<?php echo esc_url( add_query_arg( 'section', 'shipping' ) ); ?>"
+		style="text-decoration:none;"
+	> <?php esc_html_e( 'Shipping', 'peachpay-for-woocommerce' ); ?>
+	</a>
+	<a
+		class="<?php echo 'additional' === $section ? 'pp-sub-nav-link-active' : 'pp-sub-nav-link-inactive'; ?>"
 		href="<?php echo esc_url( add_query_arg( 'section', 'additional' ) ); ?>"
 		style="text-decoration:none;"
-	> <?php esc_html_e( 'Additional Fields', 'woocommerce-for-japan' ); ?>
+	> <?php esc_html_e( 'Additional', 'peachpay-for-woocommerce' ); ?>
 	</a>
 	</div>
 	<?php
@@ -199,26 +196,28 @@ function peachpay_generate_table_cb() {
  */
 function peachpay_generate_additional_field_table( $new_field_key, $section ) {
 	?>
-	<div class="table-form">
-		<table id="field-table">
-			<thead>
-				<?php
-					peachpay_generate_buttons_headers_footer();
-					peachpay_generate_table_headers_footer();
-				?>
-			</thead>
-			<tfoot>
-				<?php
-					peachpay_generate_table_headers_footer();
-					peachpay_generate_buttons_headers_footer();
-				?>
-			</tfoot>
-			<tbody>
-				<?php
-					peachpay_generate_body( $new_field_key, $section );
-				?>
-			</tbody>
-		</table>
+	<div class="peachpay-setting-section" style="padding: 0px 16px;">
+		<div class="table-form" style="overflow-x: scroll;">
+			<table id="field-table">
+				<thead>
+					<?php
+						peachpay_generate_buttons_headers_footer();
+						peachpay_generate_table_headers_footer();
+					?>
+				</thead>
+				<tfoot>
+					<?php
+						peachpay_generate_table_headers_footer();
+						peachpay_generate_buttons_headers_footer();
+					?>
+				</tfoot>
+				<tbody>
+					<?php
+						peachpay_generate_body( $new_field_key, $section );
+					?>
+				</tbody>
+			</table>
+		</div>
 	</div>
 	<?php
 }
@@ -229,17 +228,17 @@ function peachpay_generate_additional_field_table( $new_field_key, $section ) {
 function peachpay_generate_buttons_headers_footer() {
 	?>
 		<tr id="table-buttons-header-footer">
-			<td colspan="9" style="text-align: left;">
-				<button class="button button-primary field-button" type="button" id="add-new-field">+ <?php esc_html_e( 'Add new field', 'woocommerce-for-japan' ); ?></button>
-				<button class="button button-secondary remove-button" type="submit" id="remove-field"><?php esc_html_e( 'Remove', 'woocommerce-for-japan' ); ?></button>
-				<button class="button button-secondary enable-button" type="submit" id="enable-field"><?php esc_html_e( 'Enable', 'woocommerce-for-japan' ); ?></button>
-				<button class="button button-secondary disable-button" type="submit" id="disable-field"><?php esc_html_e( 'Disable', 'woocommerce-for-japan' ); ?></button>
+			<td colspan="6" style="text-align: left; padding: 16px 0px;">
+				<button class="button pp-button-primary field-button" type="button" id="add-new-field">+ <?php esc_html_e( 'Add new field', 'peachpay-for-woocommerce' ); ?></button>
+				<button class="button pp-button-secondary remove-button" type="submit" id="remove-field"><?php esc_html_e( 'Remove', 'peachpay-for-woocommerce' ); ?></button>
+				<button class="button pp-button-secondary enable-button" type="submit" id="enable-field"><?php esc_html_e( 'Enable', 'peachpay-for-woocommerce' ); ?></button>
+				<button class="button pp-button-secondary disable-button" type="submit" id="disable-field"><?php esc_html_e( 'Disable', 'peachpay-for-woocommerce' ); ?></button>
 			</td>
-			<td colspan="1">
+			<td colspan="6" style="padding: 16px 0px; text-align: right;">
 				<a
-				class="button button-secondary"
+				class="button pp-button-secondary"
 				onclick="return confirm('Are you sure would you like to reset all your changes made to the PeachPay cart fields?')"
-				type="button" id="reset-fields" style="float: right;"
+				type="button" id="reset-fields"
 				href="
 		<?php
 		//phpcs:ignore
@@ -247,7 +246,10 @@ function peachpay_generate_buttons_headers_footer() {
 		peachpay_reset_default_fields();
 		?>
 				"
-				><?php esc_html_e( 'Reset fields', 'woocommerce-for-japan' ); ?></a>
+				><?php esc_html_e( 'Reset fields', 'peachpay-for-woocommerce' ); ?></a>
+				<div class="pp-field-save-button" style="display: inline-block;">
+					<?php submit_button( 'Save changes', 'pp-button-primary' ); ?>
+				</div>
 			</td>
 		</tr>
 			<?php
@@ -259,18 +261,19 @@ function peachpay_generate_buttons_headers_footer() {
 function peachpay_generate_table_headers_footer() {
 	?>
 		<tr class="table-header-footer">
-			<th class="sort"></th>
+			<th style="border-bottom-left-radius: 5px; border-top-left-radius: 5px;" class="sort"></th>
 			<th class="select-all-collum">
 				<input type="checkbox" class="select-all">
 			</th>
-			<th><?php esc_html_e( 'Name', 'woocommerce-for-japan' ); ?></th>
-			<th><?php esc_html_e( 'Type', 'woocommerce-for-japan' ); ?></th>
-			<th><?php esc_html_e( 'Label', 'woocommerce-for-japan' ); ?></th>
-			<th><?php esc_html_e( 'Default value', 'woocommerce-for-japan' ); ?></th>
-			<th><?php esc_html_e( 'Width' ); ?></th>
-			<th><?php esc_html_e( 'Required', 'woocommerce-for-japan' ); ?></th>
-			<th><?php esc_html_e( 'Enable', 'woocommerce-for-japan' ); ?></th>
-			<th><?php esc_html_e( 'Edit', 'woocommerce-for-japan' ); ?></th>
+			<th><?php esc_html_e( 'Name', 'peachpay-for-woocommerce' ); ?></th>
+			<th><?php esc_html_e( 'Type', 'peachpay-for-woocommerce' ); ?></th>
+			<th><?php esc_html_e( 'Label', 'peachpay-for-woocommerce' ); ?></th>
+			<th><?php esc_html_e( 'Default value', 'peachpay-for-woocommerce' ); ?></th>
+			<th><?php esc_html_e( 'Width', 'peachpay-for-woocommerce' ); ?></th>
+			<th><?php esc_html_e( 'Required', 'peachpay-for-woocommerce' ); ?></th>
+			<th><?php esc_html_e( 'Enabled', 'peachpay-for-woocommerce' ); ?></th>
+			<th><?php esc_html_e( 'Delete', 'peachpay-for-woocommerce' ); ?></th>
+			<th style="border-bottom-right-radius: 5px; border-top-right-radius: 5px;"><?php esc_html_e( 'Edit', 'peachpay-for-woocommerce' ); ?></th>
 		</tr>
 		<?php
 }
@@ -319,7 +322,7 @@ function peachpay_generate_body( array $field_keys, $section ) {
 				?>
 					<input type="hidden" class="field_<?php echo esc_html( $order_number ); ?>" name="peachpay_field_editor_<?php echo esc_html( $section ); ?>[<?php echo esc_html( $section ); ?>_order][]" value="<?php echo esc_html( $order_number ); ?>" id ="order<?php echo esc_html( $order_number ); ?>" >
 					<input type="hidden" class="field_<?php echo esc_html( $order_number ); ?>" name="peachpay_field_editor_<?php echo esc_html( $section ); ?>[next_index]" value="<?php echo esc_html( $field_option['next_index'] ); ?>" id ="next_index<?php echo esc_html( $order_number ); ?>" />
-					<input type="hidden" class="field-data" id="field-data_<?php echo esc_html( $order_number ); ?>" value="<?php echo esc_html( htmlspecialchars( peachpay_generate_field_data_json( $field_keys, $order_number, $section ) ) ); ?>" />
+					<input type="hidden" class="field-data" id="field-data_<?php echo esc_html( $order_number ); ?>" value="<?php echo esc_html( htmlspecialchars( peachpay_generate_field_data_json( $field_keys, $order_number, $section ), ENT_COMPAT ) ); ?>" />
 				</td>
 				<td>
 					<input class="checkbox" type="checkbox" name="select_field" value="<?php echo esc_html( $order_number ); ?>" id="<?php echo esc_html( $order_number ); ?>">
@@ -332,7 +335,14 @@ function peachpay_generate_body( array $field_keys, $section ) {
 				<td> <?php echo ( isset( $field_option[ $section ][ $order_number ]['field_required'] ) && 'yes' === $field_option[ $section ][ $order_number ]['field_required'] ) ? '&#10003;' : '-'; ?> </td>
 				<td class="th_field_enable" id ="field_<?php echo esc_html( $order_number ); ?>"> <?php echo ( isset( $field_option[ $section ][ $order_number ]['field_enable'] ) && 'yes' === $field_option[ $section ][ $order_number ]['field_enable'] ) ? '&#10003;' : '-'; ?> </td>
 				<td>
-					<button class="button button-secondary edit-field" type="button" id="edit-field<?php echo esc_html( $order_number ); ?>" value="field-data_<?php echo esc_html( $order_number ); ?>" ><?php esc_html_e( 'Edit', 'woocommerce-for-japan' ); ?></button>
+					<button class="pp-delete-field" type="submit" name="select_field" value="<?php echo esc_html( $order_number ); ?>" id="<?php echo esc_html( $order_number ); ?>">&times;</button>
+				</td>
+				<td>
+					<button class="button pp-edit-field" type="button" id="edit-field<?php echo esc_html( $order_number ); ?>" value="field-data_<?php echo esc_html( $order_number ); ?>" >
+						<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="pencil-alt" class="pp-edit-field-icon svg-inline--fa fa-pencil-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+							<path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"></path>
+						</svg>
+					</button>
 				</td>
 			</tr>
 				<?php
@@ -458,13 +468,11 @@ function peachpay_reset_region_presets_default_fields( $section ) {
 	}
 
 	$default_field_name_keys = array(
-		'personal_header',
 		'email',
 		'phone',
 		'first_name',
 		'last_name',
 		'company',
-		'address_header',
 		'address_1',
 		'address_2',
 		'postcode',
@@ -474,13 +482,11 @@ function peachpay_reset_region_presets_default_fields( $section ) {
 	);
 
 	$default_field_label = array(
-		'Personal',
 		'Email',
 		'Phone number',
 		'First name',
 		'Last name',
 		'Company name',
-		ucfirst( $section ),
 		'Street address',
 		'Apartment',
 		'Postal code',
@@ -490,13 +496,11 @@ function peachpay_reset_region_presets_default_fields( $section ) {
 	);
 
 	$japanese_field_name_keys = array(
-		'personal_header',
 		'email',
 		'phone',
 		'last_name',
 		'first_name',
 		'company',
-		'address_header',
 		'country',
 		'postal',
 		'state',
@@ -506,33 +510,20 @@ function peachpay_reset_region_presets_default_fields( $section ) {
 	);
 
 	$japanese_field_label = array(
-		'Personal',
 		'Email',
 		'Phone number',
 		'Last name',
 		'First name',
 		'Company name',
-		ucfirst( $section ),
+		'Country',
+		'Postal code',
+		'State/Province',
+		'City',
 		'Street address',
 		'Apartment',
-		'Postal code',
-		'City',
-		'State/Province',
-		'Country',
 	);
 
-	update_option( 'peachpay_field_editor_' . $section, null );
-
-	if ( empty( get_option( 'peachpay_field_editor_' . $section )[ $section ] ) ) {
-		$field_preset                        = get_option( 'peachpay_field_editor_' . $section );
-		$field_preset                        = array();
-		$field_preset[ $section ]            = array();
-		$field_preset[ $section . '_order' ] = array();
-		$field_preset['next_index']          = 1;
-		update_option( 'peachpay_field_editor_' . $section, $field_preset );
-	}
-
-	$region = peachpay_get_settings_option( 'peachpay_general_options', 'language' );
+	$region = peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'language' );
 	if ( 'ja' !== $region ) {
 		peachpay_reset_presets_default_fields( $section, $default_field_name_keys, $default_field_label );
 	} else {
@@ -548,17 +539,20 @@ function peachpay_reset_region_presets_default_fields( $section ) {
  * @param array  $label the label for the fields.
  */
 function peachpay_reset_presets_default_fields( $section, array $keys, array $label ) {
-	$min          = min( count( $keys ), count( $label ) );
-	$field_preset = get_option( 'peachpay_field_editor_' . $section );
+	$min = min( count( $keys ), count( $label ) );
+	if ( empty( get_option( 'peachpay_field_editor_' . $section ) ) ) {
+		$field_preset                        = get_option( 'peachpay_field_editor_' . $section );
+		$field_preset                        = array();
+		$field_preset[ $section ]            = array();
+		$field_preset[ $section . '_order' ] = array();
+		$field_preset['next_index']          = 1;
+		update_option( 'peachpay_field_editor_' . $section, $field_preset );
+	}
 	for ( $i = 0; $i < $min; $i++ ) {
-		if ( 'billing' === $section && ( 'email' === $keys[ $i ] || 'phone' === $keys[ $i ] ) ) {
-			continue;
-		}
 		$next_index = $field_preset['next_index'];
 		$field      = array();
 		if ( 'state' !== $keys[ $i ] && 'country' !== $keys[ $i ]
-		&& 'email' !== $keys[ $i ] && 'phone' !== $keys[ $i ]
-		&& 'personal_header' !== $keys[ $i ] && 'address_header' !== $keys[ $i ] ) {
+		&& 'email' !== $keys[ $i ] && 'phone' !== $keys[ $i ] ) {
 			$field['type_list'] = 'text';
 		} else {
 			if ( 'state' === $keys[ $i ] ) {
@@ -573,16 +567,11 @@ function peachpay_reset_presets_default_fields( $section, array $keys, array $la
 			if ( 'phone' === $keys[ $i ] ) {
 				$field['type_list'] = 'tel';
 			}
-			if ( 'personal_header' === $keys[ $i ] || 'address_header' === $keys[ $i ] ) {
-				$field['type_list'] = 'header';
-			}
 		}
 		$field['field_name']    = $section . '_' . $keys[ $i ];
 		$field['field_label']   = $label[ $i ];
 		$field['field_default'] = '';
 		if ( 'company' === $keys[ $i ]
-		|| 'personal_header' === $keys[ $i ]
-		|| 'address_header' === $keys[ $i ]
 		|| 'address_2' === $keys[ $i ] ) {
 			$field['field_required'] = '';
 		} else {
@@ -593,8 +582,7 @@ function peachpay_reset_presets_default_fields( $section, array $keys, array $la
 		} else {
 			$field['field_enable'] = 'yes';
 		}
-		if ( 'address_1' !== $keys[ $i ] || 'address_2' !== $keys[ $i ]
-		&& 'personal_header' !== $keys[ $i ] && 'address_header' !== $keys[ $i ] && 'company' !== $keys[ $i ] ) {
+		if ( 'address_1' !== $keys[ $i ] || 'address_2' !== $keys[ $i ] && 'company' !== $keys[ $i ] ) {
 			$field['width'] = 50;
 		}
 		if ( 'company' === $keys[ $i ] ) {
@@ -605,12 +593,6 @@ function peachpay_reset_presets_default_fields( $section, array $keys, array $la
 		}
 		if ( 'address_2' === $keys[ $i ] ) {
 			$field['width'] = 30;
-		}
-		if ( 'personal_header' === $keys[ $i ] ) {
-			$field['width'] = '-';
-		}
-		if ( 'address_header' === $keys[ $i ] ) {
-			$field['width'] = '-';
 		}
 		$field_preset[ $section ][ $next_index ] = $field;
 		$field_preset[ $section . '_order' ][]   = $next_index;

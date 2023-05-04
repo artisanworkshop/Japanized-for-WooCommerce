@@ -14,58 +14,11 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  * Intilizes WC Subscription support.
  */
 function peachpay_wcs_init() {
-	add_action( 'woocommerce_scheduled_subscription_payment_peachpay', 'peachpay_wcs_scheduled_payment_peachpay', 10, 2 );
+	add_action( 'woocommerce_checkout_create_order_line_item', 'peachpay_wcs_add_checkout_order_line_item_data', 10, 1 );
 	add_filter( 'peachpay_cart_page_line_item', 'peachpay_wcs_add_cart_item_meta', 10, 2 );
 	add_filter( 'peachpay_calculate_carts', 'peachpay_wcs_calculate_recurring_carts', 10, 1 );
 }
 add_action( 'peachpay_init_compatibility', 'peachpay_wcs_init' );
-
-
-/**
- * This is fired for every renewal that was initially paid for with peachpay.
- *
- * @since 1.44.0
- * @param float    $renewal_total The order total.
- * @param WC_Order $renewal_order The order to pay for.
- * @return void
- */
-function peachpay_wcs_scheduled_payment_peachpay( float $renewal_total, WC_Order $renewal_order ) {
-	$subscriptions = wcs_get_subscriptions_for_renewal_order( $renewal_order );
-	$subscription  = array_pop( $subscriptions );
-
-	$endpoint = peachpay_api_url() . 'api/v1/subscription-renewal';
-
-	$body    = array(
-		'merchant-url'  => wp_parse_url( get_home_url() )['host'],
-		'merchant-name' => get_bloginfo( 'name' ),
-		'amount'        => $renewal_total,
-		'payment'       => array(
-			'method' => 'stripe',
-			'id'     => peachpay_get_stripe_order_payment_meta( $subscription->get_parent_id() ),
-		),
-		'wc-order'      => $renewal_order->get_data(),
-	);
-	$options = array(
-		'headers' => array(
-			'Content-Type' => 'application/json',
-		),
-		'body'    => wp_json_encode( $body ),
-	);
-
-	$response = wp_remote_post( $endpoint, $options );
-
-	if ( is_wp_error( $response ) ) {
-		$renewal_order->update_status( 'failed', 'Peachpay scheduled renewal payment: ' . $response->get_error_message() );
-	} else {
-
-		if ( wp_remote_retrieve_body( $response ) === 'Success' ) {
-			$renewal_order->payment_complete();
-		} else {
-			$renewal_order->update_status( 'failed', 'Peachpay scheduled renewal payment: ' . wp_remote_retrieve_body( $response ) );
-		}
-	}
-}
-
 
 /**
  * Adds any needed meta data to a cart item if it is a subscription
@@ -90,11 +43,15 @@ function peachpay_wcs_add_cart_item_meta( array $pp_cart_item, array $wc_line_it
  * @param array $calculated_carts Carts calculated to be shown in the peachpay modal.
  */
 function peachpay_wcs_calculate_recurring_carts( $calculated_carts ) {
-	WC_Subscriptions_Cart::calculate_subscription_totals( WC()->cart->get_total(), WC()->cart );
+	WC_Subscriptions_Cart::calculate_subscription_totals( WC()->cart->total, WC()->cart );
+	$recurring_carts_packages = WC_Subscriptions_Cart::get_recurring_shipping_packages();
 
 	if ( is_array( WC()->cart->recurring_carts ) || is_object( WC()->cart->recurring_carts ) ) {
 		foreach ( WC()->cart->recurring_carts as $key => $cart ) {
-			$calculated_carts[ $key ] = peachpay_build_cart_response( $key, $cart );
+			// Recurring shipping options are handled separately and needed to be added for renewing physical products.
+			$calculated_carts[ $key ]                   = peachpay_build_cart_response( $key, $cart );
+			$recurring_cart_package_record              = peachpay_cart_shipping_package_record( $key, WC()->shipping->calculate_shipping( $recurring_carts_packages[ $key ] ) );
+			$calculated_carts[ $key ]['package_record'] = $recurring_cart_package_record;
 
 			$subscription_product                                  = peachpay_wcs_get_subscription_in_cart( $cart );
 			$calculated_carts[ $key ]['cart_meta']['subscription'] = array(
@@ -123,4 +80,60 @@ function peachpay_wcs_get_subscription_in_cart( $cart ) {
 			return $wc_line_item['data'];
 		}
 	}
+}
+
+/**
+ * Adds WCS subscription meta data to subscription product line items.
+ * Primarily used to add useful subscription order meta when processing checkout.
+ *
+ * @param WC_Order_Item_Product $item line item object.
+ */
+function peachpay_wcs_add_checkout_order_line_item_data( $item ) {
+	if ( $item->get_product()->get_type() === 'subscription' ) {
+		$item->add_meta_data(
+			'subscription',
+			array(
+				'length'          => WC_Subscriptions_Product::get_length( $item->get_product() ),
+				'period'          => WC_Subscriptions_Product::get_period( $item->get_product() ),
+				'period_interval' => WC_Subscriptions_Product::get_interval( $item->get_product() ),
+				'first_renewal'   => WC_Subscriptions_Product::get_first_renewal_payment_date( $item->get_product() ),
+			)
+		);
+		$item->add_meta_data(
+			'trial',
+			array(
+				'trial_length'     => WC_Subscriptions_Product::get_trial_length( $item->get_product() ),
+				'trial_period'     => WC_Subscriptions_Product::get_trial_period( $item->get_product() ),
+				'trial_expiration' => WC_Subscriptions_Product::get_trial_expiration_date( $item->get_product() ),
+			)
+		);
+	}
+}
+
+/**
+ * Checks whether the order has a subscription
+ *
+ * @param WC_Order $order .
+ */
+function peachpay_wcs_order_has_subscription( $order ) {
+	if ( ! $order instanceof WC_Order ) {
+		return false;
+	}
+
+	$items = $order->get_items();
+	if ( $items ) {
+		foreach ( $items as $item ) {
+			$product_id = $item->get_data()['product_id'];
+
+			if ( $product_id ) {
+				$product = new WC_Product( $product_id );
+				$length  = $product->get_meta( '_subscription_price' );
+				if ( $length ) {
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }

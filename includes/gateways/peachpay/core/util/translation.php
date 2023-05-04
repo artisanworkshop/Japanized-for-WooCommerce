@@ -1,9 +1,109 @@
 <?php
 /**
- * Peachpay multi language support
+ * PeachPay multi language support
  *
  * @package PeachPay
  */
+
+// importing array of translated modal strings
+require_once PEACHPAY_ABSPATH . 'core/util/checkout-modal-translations.php';
+
+/**
+ * Returns a multi-array of translated terms for all supported languages.
+ *
+ * @return array translated terms all all languages array.
+ */
+function peachpay_get_translated_modal_terms_all_languages() {
+	return $GLOBALS['PEACHPAY_TRANSLATED_MODAL_TERMS'];
+}
+
+/**
+ * Returns either an array of translated terms for the selected language or 'null' if the selected language is 'English' or 'detect-from-page'.
+ *
+ * @param string $language_code wp locale.
+ * @return array|null translated terms array
+ */
+function peachpay_get_translated_modal_terms( $language_code ) {
+	$translated_modal_terms = $GLOBALS['PEACHPAY_TRANSLATED_MODAL_TERMS'];
+
+	if ( array_key_exists( $language_code, $translated_modal_terms ) ) {
+		return $translated_modal_terms[ $language_code ];
+	} else {
+		return null;
+	}
+}
+
+/**
+ * Always returns what we use as the key in our translation files.
+ *
+ * There is a duplicate of this in peachpay.php
+ *
+ * @param string $language_code_or_locale Raw language locale.
+ */
+function peachpay_to_our_language_key( $language_code_or_locale ) {
+	// This is mostly for places like Germany, for example. Although they may
+	// choose three different versions of German in WordPress, we only support
+	// one. It can also be used generally.
+	switch ( $language_code_or_locale ) {
+		case 'cs':
+			return 'cs-CZ';
+		case 'da':
+			return 'da-DK';
+		case 'de':
+		case 'de-AT':
+		case 'de-DE':
+		case 'de-CH':
+			return 'de-DE';
+		case 'en':
+			return 'en-US';
+		case 'es':
+		case 'es-MX':
+		case 'es-AR':
+		case 'es-CL':
+		case 'es-PE':
+		case 'es-PR':
+		case 'es-GT':
+		case 'es-CO':
+		case 'es-EC':
+		case 'es-VE':
+		case 'es-UY':
+		case 'es-CR':
+			return 'es-ES';
+		case 'fr':
+		case 'fr-BE':
+		case 'fr-CA':
+		case 'fr-FR':
+			return 'fr-FR';
+		case 'hi':
+			return 'hi-IN';
+		case 'it-IT':
+			return 'it';
+		case 'ko':
+			return 'ko-KR';
+		case 'lb':
+			return 'lb-LU';
+		case 'nl':
+		case 'nl-BE':
+		case 'nl-NL':
+			return 'nl-NL';
+		case 'pt':
+		case 'pt-AO':
+		case 'pt-BR':
+		case 'pt-PT-ao90':
+		case 'pt-PT':
+			return 'pt-PT';
+		case 'ro':
+			return 'ro-RO';
+		case 'ru':
+			return 'ru-RU';
+		case 'sl':
+			return 'sl-SI';
+		case 'sv':
+			return 'sv-SE';
+		default:
+			return $language_code_or_locale;
+	}
+}
 
 /**
  * Gets the translated text linked to the supplied translation key
@@ -21,11 +121,11 @@ function peachpay_get_translated_text( $text ) {
 		$target = CHECKOUT_PAGE_SUBTEXT_TRANSLATION;
 	}
 
-	if ( ! peachpay_get_settings_option( 'peachpay_general_options', 'language' ) ) {
+	if ( ! peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'language' ) ) {
 		return $target['en-US'];
 	}
 
-	if ( 'detect-from-page' === peachpay_get_settings_option( 'peachpay_general_options', 'language' ) ) {
+	if ( 'detect-from-page' === peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'language' ) ) {
 		if ( ! isset( $target[ $page_language ] ) ) {
 			return $target['en-US'];
 		}
@@ -33,7 +133,7 @@ function peachpay_get_translated_text( $text ) {
 		return $target[ $page_language ];
 	}
 
-	return $target[ peachpay_get_settings_option( 'peachpay_general_options', 'language' ) ];
+	return $target[ peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'language' ) ];
 }
 
 define(
@@ -41,6 +141,7 @@ define(
 	array(
 		'ar'    => 'الخروج السريع',
 		'bg-BG' => 'експресно плащане',
+		'bs-BA' => 'ekspresno plaćanje',
 		'ca'    => 'Pagament exprés',
 		'cs-CZ' => 'Expresní pokladna',
 		'da-DK' => 'Hurtig betaling',
@@ -72,6 +173,7 @@ define(
 	array(
 		'ar'    => 'تحقق مع PeachPay',
 		'bg-BG' => 'Проверете с PeachPay',
+		'bs-BA' => 'Plaćanje uz PeachPay',
 		'ca'    => 'Fes una ullada amb PeachPay',
 		'cs-CZ' => 'Podívejte se na PeachPay',
 		'da-DK' => 'Tjek ud med PeachPay',
@@ -103,6 +205,7 @@ define(
 	array(
 		'ar'    => 'في المرة التالية التي تعود فيها ، سيكون لديك تسجيل الخروج بنقرة واحدة ولن تضطر إلى إضاعة الوقت في ملء الحقول أدناه.',
 		'bg-BG' => 'Следващият път, когато се върнете, ще имате плащане с едно щракване и няма да се налага да губите време за попълване на полетата по-долу.',
+		'bs-BA' => 'Sljedeći put kada se vratite, imat ćete naplatu jednim klikom i nećete morati gubiti vrijeme ispunjavajući polja ispod.',
 		'ca'    => 'La propera vegada que tornis, tindreu la compra amb un sol clic i no haureu de perdre temps omplint els camps següents.',
 		'cs-CZ' => 'Až se příště vrátíte, budete mít pokladnu na jedno kliknutí a nebudete muset ztrácet čas vyplňováním níže uvedených polí.',
 		'da-DK' => 'Næste gang du kommer tilbage, har du et-klik til betaling og behøver ikke spilde tid på at udfylde felterne nedenfor.',

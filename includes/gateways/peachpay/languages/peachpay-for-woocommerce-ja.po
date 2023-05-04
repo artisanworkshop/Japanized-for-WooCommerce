@@ -5,6 +5,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ja\n"
 
+msgid " (Base currency)"
+msgstr " （基本通貨）"
 
 msgid " Auto update "
 msgstr " 自動更新 "
@@ -18,26 +20,155 @@ msgstr " 通貨"
 msgid " Decimals "
 msgstr " 小数 "
 
+msgid " and automatically converted the prices!"
+msgstr " 価格を自動換算！"
+
+msgid "$9.99 monthly"
+msgstr "月額 $9.99"
+
+msgid "$99 annually"
+msgstr "年間99ドル"
+
+msgid "%1$s payment failed: %2$s"
+msgstr "%1$s の支払いに失敗しました: %2$s"
+
+msgid "%1$s payment is complete. (Capture Id: %2$s)"
+msgstr "%1$s の支払いが完了しました。 (キャプチャ ID: %2$s)"
+
+msgid "%1$s payment refunded %2$s (Refund Id: %3$s)"
+msgstr "%1$s の支払いが %2$s に払い戻されました (払い戻し ID: %3$s)"
+
+msgid "%1$s payment was approved. Awaiting capture. (PayPal Order Id: %2$s)"
+msgstr "%1$s の支払いが承認されました。捕獲待ち。 (PayPal 注文 ID: %2$s)"
+
+msgid "%1$s payment was created. Awaiting customer confirmation. (PayPal Order Id: %2$s)"
+msgstr "%1$s 支払いが作成されました。お客様の確認待ちです。 (PayPal 注文 ID: %2$s)"
+
+msgid "%1$s payment was voided. (PayPal Order Id: %2$s)"
+msgstr "%1$s の支払いは無効になりました。 (PayPal 注文 ID: %2$s)"
+
+msgid "%s selected for checkout."
+msgstr "%s がチェックアウト用に選択されました。"
+
+msgid "%s via Authorize.net (PeachPay)"
+msgstr "%s Authorize.net (PeachPay) 経由"
+
+msgid "%s via GoDaddy Poynt (PeachPay)"
+msgstr "%s GoDaddy Point (PeachPay) 経由"
+
+msgid "%s via Square (PeachPay)"
+msgstr "%s Square (PeachPay) 経由"
+
+msgid "%s via Stripe (PeachPay)"
+msgstr "%s Stripe (PeachPay) 経由"
+
+msgid "*  For Stripe currency conversions, a 1% fee is assessed."
+msgstr "※Stripeの通貨換算には1%の手数料がかかります。"
+
+msgid "** For PayPal currency conversions to USD or CAD, a 4% fee is assessed. For other PayPal currency conversions, a 4.5% fee is assessed."
+msgstr "** USD または CAD への PayPal の通貨換算には、4% の手数料がかかります。その他の PayPal 通貨換算には、4.5% の手数料がかかります。"
+
+msgid "+ fees"
+msgstr "+手数料"
+
+msgid "14-day trial then"
+msgstr "その後、14日間のトライアル"
+
+msgid "ACH: %1$s ending in %2$s"
+msgstr "ACH: %2$s で終わる %1$s"
+
+msgid "Abandoned carts"
+msgstr "放棄されたカート"
+
+msgid "Accept %s payments through Authorize.net"
+msgstr "Authorize.net を通じて %s の支払いを受け入れる"
+
+msgid "Accept %s payments through GoDaddy Poynt"
+msgstr "GoDaddy Point を通じて %s の支払いを受け入れる"
+
+msgid "Accept %s payments through Square"
+msgstr "Square で %s の支払いを受け入れる"
+
+msgid "Accept %s payments through Stripe"
+msgstr "Stripe で %s の支払いを受け入れる"
+
 msgid "Accept button text"
 msgstr "ボタンのテキストを受け入れる"
 
-msgid "Action required:"
-msgstr "必要なアクション："
+msgid "Accept purchase order payments through PeachPay"
+msgstr "PeachPay による注文書の支払いを受け入れる"
+
+msgid "Action needed"
+msgstr "必要なアクション"
+
+msgid "Action required"
+msgstr "必要なアクション"
+
+msgid "Activate"
+msgstr "活性化"
+
+msgid "Active"
+msgstr "アクティブ"
+
+msgid "Active products"
+msgstr "アクティブな製品"
+
+msgid "Add a custom product description."
+msgstr "カスタム製品の説明を追加します。"
 
 msgid "Add a secondary header."
 msgstr "セカンダリヘッダーを追加します。"
 
+msgid "Add currency conversion fees"
+msgstr "通貨換算手数料を追加する"
+
+msgid "Add new"
+msgstr "新しく追加する"
+
 msgid "Add new field"
 msgstr "新しいフィールドを追加"
 
-msgid "Additional Fields"
-msgstr "追加フィールド"
+msgid "Add payment method"
+msgstr "お支払い方法を追加"
+
+msgid "Add products"
+msgstr "商品を追加"
+
+msgid "Add products to your Product links (variable products must have variations configured for it to work properly)"
+msgstr "製品リンクに製品を追加します (可変製品が正しく機能するには、バリエーションが構成されている必要があります)。"
+
+msgid "Add recommended products"
+msgstr "おすすめ商品を追加"
+
+msgid "Add to order"
+msgstr "注文に追加"
+
+msgid "Add your logo at the top of the checkout window. We recommend an image of at least 512⨉512."
+msgstr "チェックアウト ウィンドウの上部にロゴを追加します。 512⨉512 以上の画像をお勧めします。"
+
+msgid "Add-ons"
+msgstr "アドオン"
+
+msgid "Additional"
+msgstr "追加"
+
+msgid "Additional information"
+msgstr "追加情報"
 
 msgid "Additional text"
 msgstr "追加テキスト"
 
+msgid "Adds a dynamic suffix to the transaction statement descriptor. The complete statement descriptor cannot exceed 22 characters and will be truncated if exceeded."
+msgstr "トランザクション ステートメント記述子に動的サフィックスを追加します。完全なステートメント記述子は 22 文字を超えることはできず、超えた場合は切り捨てられます。"
+
 msgid "Advanced"
 msgstr "高度"
+
+msgid "Advanced Details"
+msgstr "高度な詳細"
+
+msgid "Advanced settings"
+msgstr "高度な設定"
 
 msgid "Afghan Afghani 🇦🇫"
 msgstr "アフガニアフガニ🇦🇫"
@@ -51,8 +182,17 @@ msgstr "情報ページの後、支払いページの前"
 msgid "After payment"
 msgstr "お支払い後"
 
-msgid "Afterpay (also known as Clearpay in the UK) offers customers more payment flexibility with no credit checks, no upfront fees, and no interest for on-time payments. Afterpay has more than 13M global customers and works with 75,000 brands and retailers."
-msgstr "アフターペイ（英国ではClearpayとも呼ばれます）は、クレジットチェック、前払い手数料、および期限内の支払いに対する利息なしで、顧客により多くの支払いの柔軟性を提供します。 Afterpayには1300万を超える世界中の顧客がおり、75,000のブランドや小売業者と協力しています。"
+msgid "After selecting %s a prompt will appear to complete your payment."
+msgstr "%s を選択すると、支払いを完了するためのプロンプトが表示されます。"
+
+msgid "After selecting %s you will be prompted to complete your payment."
+msgstr "%s を選択すると、支払いを完了するよう求められます。"
+
+msgid "After selecting %s you will be redirected to complete your payment."
+msgstr "%s を選択すると、支払いを完了するためにリダイレクトされます。"
+
+msgid "Afterpay"
+msgstr "後払い"
 
 msgid "Albanian Lek 🇦🇱"
 msgstr "アルバニア語レク🇦🇱"
@@ -63,26 +203,62 @@ msgstr "アルジェリアディナール🇩🇿"
 msgid "Alignment"
 msgstr "アラインメント"
 
-msgid "Allow customers to enter order notes inside the checkout window"
-msgstr "顧客がチェックアウトウィンドウ内に注文メモを入力できるようにする"
+msgid "All supported billing countries"
+msgstr "サポートされているすべての請求対象国"
 
-msgid "An error occurred while looking up your PayPal account."
-msgstr "PayPalアカウントの検索中にエラーが発生しました。"
+msgid "All supported currencies"
+msgstr "サポートされているすべての通貨"
+
+msgid "Allow customers to enter order notes inside the checkout window."
+msgstr "顧客がチェックアウト ウィンドウ内に注文メモを入力できるようにします。"
+
+msgid "Allow specific billing countries"
+msgstr "特定の請求国を許可する"
+
+msgid "Allow specific currencies"
+msgstr "特定の通貨を許可する"
+
+msgid "Allowed in all non-restricted countries"
+msgstr "制限されていないすべての国で許可されています"
+
+msgid "Amazon Pay"
+msgstr "アマゾンペイ"
+
+msgid "Amazon Pay is not currently supported in your region"
+msgstr "Amazon Pay は現在、お住まいの地域ではサポートされていません"
+
+msgid "Amount"
+msgstr "額"
+
+msgid "An error occurred while unlinking your Amazon Pay account."
+msgstr "Amazon Pay アカウントのリンク解除中にエラーが発生しました。"
+
+msgid "An error occurred while unlinking your Square account."
+msgstr "Square アカウントのリンク解除中にエラーが発生しました。"
+
+msgid "An error was encountered while trying to link your Amazon account. If this error persists reach out to PeachPay support!"
+msgstr "Amazon アカウントをリンクしようとしたときにエラーが発生しました。このエラーが続く場合は、PeachPay サポートにお問い合わせください。"
+
+msgid "Analytics"
+msgstr "分析"
 
 msgid "Angolan Kwanza 🇦🇴"
 msgstr "アンゴラクワンザ🇦🇴"
 
+msgid "Any time a customer pays with a currency different from the store's base currency, Stripe* and PayPal** apply a conversion fee. With this option enabled, you can pass that cost off to the customer."
+msgstr "顧客がストアの基本通貨とは異なる通貨で支払う場合、Stripe* と PayPal** は両替手数料を適用します。このオプションを有効にすると、そのコストを顧客に転嫁できます。"
+
 msgid "Appearance"
 msgstr "外観"
 
-msgid "Apple Pay domain registration failed. Apple Pay will not be shown to customers but Google Pay will continue to work."
-msgstr "ApplePayドメインの登録に失敗しました。 Apple Payはお客様に表示されませんが、GooglePayは引き続き機能します。"
+msgid "Apple Pay requires your domain to be registered in order to work. Automatic registration has failed. Click \"Register domain\" to attempt registration again."
+msgstr "Apple Pay を使用するには、ドメインを登録する必要があります。自動登録に失敗しました。 [ドメインの登録] をクリックして、登録を再試行してください。"
 
-msgid "Apple Pay is a wallet that allows customers to pay using payment details stored on their iPhone, iPad, or Apple Watch. Google Pay allows customers to pay with any payment method saved to their Google account."
-msgstr "Apple Payは、顧客がiPhone、iPad、またはAppleWatchに保存されている支払いの詳細を使用して支払うことができるウォレットです。 Google Payを使用すると、顧客はGoogleアカウントに保存されている任意の支払い方法で支払うことができます。"
+msgid "Apple Pay requires your domain to be registered with Apple. If you are encountering issues with Apple Pay or recently changed your domain, resetting the domain registration might fix the problem."
+msgstr "Apple Pay では、ドメインを Apple に登録する必要があります。 Apple Pay で問題が発生した場合や、最近ドメインを変更した場合は、ドメイン登録をリセットすると問題が解決する場合があります。"
 
-msgid "Apple Pay is not supported on localhost sites. Google Pay will continue to work normally."
-msgstr "ApplePayはローカルホストサイトではサポートされていません。 GooglePayは引き続き正常に機能します。"
+msgid "Application Id:"
+msgstr "アプリケーションID："
 
 msgid "Argentine Peso 🇦🇷"
 msgstr "アルゼンチンペソ🇦🇷"
@@ -99,6 +275,87 @@ msgstr "アルバ・フロリン🇦🇼"
 msgid "Australian dollar 🇦🇺"
 msgstr "オーストラリアドル🇦🇺"
 
+msgid "Authenticated bank debit"
+msgstr "認証済み銀行引き落とし"
+
+msgid "Authenticated bank-debit"
+msgstr "認証済み銀行デビット"
+
+msgid "Authorize"
+msgstr "承認する"
+
+msgid "Authorize.net"
+msgstr "Authorize.net"
+
+msgid "Authorize.net %1$s payment authorized but held pending review. Manage the payment in the Authorize.net MINT dashboard. (Transaction Id: %2$s)"
+msgstr "Authorize.net %1$s の支払いは承認されましたが、審査が保留されています。 Authorize.net MINT ダッシュボードで支払いを管理します。 (トランザクション ID: %2$s)"
+
+msgid "Authorize.net %1$s payment authorized for %2$s. (Transaction Id: %3$s)"
+msgstr "Authorize.net %1$s の支払いが %2$s に対して承認されました。 (トランザクション ID: %3$s)"
+
+msgid "Authorize.net %1$s payment held pending review. Manage the payment in the Authorize.net MINT dashboard. (Transaction Id: %2$s)"
+msgstr "Authorize.net %1$s の支払いは審査保留中です。 Authorize.net MINT ダッシュボードで支払いを管理します。 (トランザクション ID: %2$s)"
+
+msgid "Authorize.net %1$s payment is complete for %2$s. (Transaction Id: %3$s)"
+msgstr "%2$s の Authorize.net %1$s 支払いが完了しました。 (トランザクション ID: %3$s)"
+
+msgid "Authorize.net %1$s payment partially refunded %2$s (Transaction Id: %3$s)"
+msgstr "Authorize.net %1$s 支払いの一部が %2$s に払い戻されました (トランザクション ID: %3$s)"
+
+msgid "Authorize.net %1$s payment refunded %2$s (Transaction Id: %3$s)"
+msgstr "Authorize.net %1$s の支払いが %2$s に払い戻されました (トランザクション ID: %3$s)"
+
+msgid "Authorize.net %1$s payment refunded/voided %2$s because order was cancelled. (Transaction Id: %3$s)"
+msgstr "Authorize.net %1$s の支払いは、注文がキャンセルされたため、%2$s を払い戻し/無効にしました。 (トランザクション ID: %3$s)"
+
+msgid "Authorize.net %1$s payment was declined (Transaction Id: %2$s)."
+msgstr "Authorize.net %1$s の支払いが拒否されました (トランザクション ID: %2$s)。"
+
+msgid "Authorize.net %1$s payment was declined (Transaction Id: %2$s). Reason: %3$s"
+msgstr "Authorize.net %1$s の支払いが拒否されました (トランザクション ID: %2$s)。理由: %3$s"
+
+msgid "Authorize.net %1$s payment was voided. (Transaction Id: %2$s)"
+msgstr "Authorize.net %1$s の支払いが無効になりました。 (トランザクション ID: %2$s)"
+
+msgid "Authorize.net advanced settings"
+msgstr "Authorize.net の詳細設定"
+
+msgid "Authorize.net is a credit card processor. Not sure if this one is right for you, or looking to switch? Authorize.net offers competitive transaction rates for stores selling more than $500K USD per year. For more information, visit the Authorize.net website."
+msgstr "Authorize.net はクレジット カード プロセッサです。これがあなたに適しているかどうかわからない、または切り替えを検討していますか? Authorize.net は、年間 50 万ドル以上を販売する店舗に対して、競争力のある取引レートを提供します。詳細については、Authorize.net Web サイトを参照してください。"
+
+msgid "Authorized amount"
+msgstr "承認額"
+
+msgid "Authorized amount: "
+msgstr "承認金額:"
+
+msgid "Auto update"
+msgstr "自動更新"
+
+msgid "Automatic attempt has already occured. Use force=true to force a registration attempt."
+msgstr "自動試行は既に発生しています。強制的に登録を試みるには、force=true を使用します。"
+
+msgid "Automatic recommendations"
+msgstr "自動推奨"
+
+msgid "Automatically capture authorized payments when the order status is changed to complete."
+msgstr "注文ステータスが完了に変更されたときに、承認された支払いを自動的にキャプチャします。"
+
+msgid "Automatically email receipts to customers after the order is made."
+msgstr "注文が行われた後、顧客に領収書を自動的に電子メールで送信します。"
+
+msgid "Automatically refund the payment when the order status is changed to canceled."
+msgstr "注文ステータスがキャンセルに変更されたときに、自動的に支払いを返金します。"
+
+msgid "Automatically refund the payment when the order status is changed to cancelled."
+msgstr "注文ステータスがキャンセルに変更されたときに、自動的に支払いを返金します。"
+
+msgid "Awaiting Purchase Order (%s) completion."
+msgstr "注文書 (%s) の完了を待っています。"
+
+msgid "Awaiting response from Amazon"
+msgstr "アマゾンからの返信待ち"
+
 msgid "Azerbaijani Manat 🇦🇿"
 msgstr "アゼルバイジャンマナト🇦🇿"
 
@@ -114,8 +371,8 @@ msgstr "バジャンドル🇧🇧"
 msgid "Bangladeshi Taka 🇧🇩"
 msgstr "バングラデシュタカ🇧🇩"
 
-msgid "Base currency"
-msgstr "基本通貨"
+msgid "Bank debit"
+msgstr "銀行引き落とし"
 
 msgid "Baseball"
 msgstr "野球"
@@ -132,14 +389,32 @@ msgstr "ベリーズドル🇧🇿"
 msgid "Bermudan Dollar 🇧🇲"
 msgstr "バミューダドル🇧🇲"
 
-msgid "Billing Fields"
-msgstr "請求フィールド"
+msgid "Billing"
+msgstr "請求する"
+
+msgid "Biweekly"
+msgstr "隔週"
+
+msgid "Black"
+msgstr "黒"
+
+msgid "Block specific billing countries"
+msgstr "特定の請求国をブロックする"
+
+msgid "Block specific currencies"
+msgstr "特定の通貨をブロックする"
+
+msgid "Blue"
+msgstr "青い"
 
 msgid "Bolivian Boliviano 🇧🇴"
 msgstr "ボリビアボリビアーノ🇧🇴"
 
 msgid "Bosnia-Herzegovina Convertible Mark 🇧🇦"
 msgstr "ボスニア・ヘルツェゴビナ兌換マルク🇧🇦"
+
+msgid "Both checkout page and Express Checkout"
+msgstr "チェックアウト ページとエクスプレス チェックアウトの両方"
 
 msgid "Botswanan Pula 🇧🇼"
 msgstr "ボツワナプラ🇧🇼"
@@ -153,8 +428,14 @@ msgstr "左下の"
 msgid "Bottom right"
 msgstr "右下"
 
+msgid "Branding"
+msgstr "ブランディング"
+
 msgid "Brazilian Real 🇧🇷"
 msgstr "ブラジリアンレアル🇧🇷"
+
+msgid "Browser breakdown"
+msgstr "ブラウザの内訳"
 
 msgid "Brunei Dollar 🇧🇳"
 msgstr "ブルネイドル🇧🇳"
@@ -165,8 +446,23 @@ msgstr "ブルガリアレフ🇧🇬"
 msgid "Burundian Franc 🇧🇮"
 msgstr "ブルンジフラン🇧🇮"
 
+msgid "Business Id:"
+msgstr "ビジネス ID:"
+
 msgid "Button CSS"
 msgstr "ボタンCSS"
+
+msgid "Button Color"
+msgstr "ボタンの色"
+
+msgid "Button Height"
+msgstr "ボタンの高さ"
+
+msgid "Button Label"
+msgstr "ボタンのラベル"
+
+msgid "Button Shape"
+msgstr "ボタン形状"
 
 msgid "Button Text"
 msgstr "ボタンテキスト"
@@ -180,8 +476,14 @@ msgstr "ボタンの色"
 msgid "Button display by pages"
 msgstr "ページごとのボタン表示"
 
-msgid "Button preferences"
-msgstr "ボタンの設定"
+msgid "Button location"
+msgstr "ボタンの位置"
+
+msgid "Button settings"
+msgstr "ボタン設定"
+
+msgid "Button shadow"
+msgstr "ボタンの影"
 
 msgid "Button size"
 msgstr "ボタンのサイズ"
@@ -192,6 +494,18 @@ msgstr "ボタンのテキスト"
 msgid "Button text color"
 msgstr "ボタンのテキストの色"
 
+msgid "Buy Now"
+msgstr "今すぐ購入"
+
+msgid "Buy Now, Pay Later"
+msgstr "今すぐ購入、後で支払う"
+
+msgid "Buy now, Pay later"
+msgstr "今すぐ購入、後で支払う"
+
+msgid "By default, PeachPay will follow the WooCommerce rules for when to show postal codes, province fields, etc."
+msgstr "デフォルトでは、PeachPay はいつ郵便番号や州フィールドなどを表示するかについて、WooCommerce ルールに従います。"
+
 msgid "CFP Franc"
 msgstr "CFPフラン"
 
@@ -201,11 +515,44 @@ msgstr "カンボジアのリエル🇰🇭"
 msgid "Canadian dollar 🇨🇦"
 msgstr "カナダドル🇨🇦"
 
+msgid "Cancel"
+msgstr "キャンセル"
+
 msgid "Cape Verdean Escudo 🇨🇻"
 msgstr "カーボベルデエスクード🇨🇻"
 
+msgid "Capture"
+msgstr "捕獲"
+
+msgid "Capture Payment"
+msgstr "支払いの回収"
+
+msgid "Capture Summary"
+msgstr "キャプチャの概要"
+
+msgid "Capture on complete"
+msgstr "キャプチャー完了"
+
+msgid "Card"
+msgstr "カード"
+
+msgid "Card Brand"
+msgstr "カードブランド"
+
+msgid "Cards"
+msgstr "カード"
+
+msgid "Cart display"
+msgstr "カート表示"
+
 msgid "Cart page"
 msgstr "カートページ"
+
+msgid "Carts breakdown"
+msgstr "カート内訳"
+
+msgid "Cash App"
+msgstr "現金アプリ"
 
 msgid "Cayman Islands Dollar 🇰🇾"
 msgstr "ケイマン諸島ドル🇰🇾"
@@ -222,26 +569,56 @@ msgstr "承認ボタンのテキストを変更します。空白のままにす
 msgid "Change the decline button text. Leaving it blank defaults it to \"No thanks\" in your chosen language."
 msgstr "辞退ボタンのテキストを変更します。空白のままにすると、選択した言語でデフォルトで「いいえ」になります。"
 
-msgid "Change the primary header text. Leaving it blank defaults it to \"You may also like &#8230;\" in your chosen language."
-msgstr "プライマリヘッダーテキストを変更します。空白のままにすると、デフォルトで「あなたも＆＃8230;が好きかもしれません」になります。選択した言語で。"
+msgid "Change the primary header text. Leaving it blank defaults it to \"Recommended for you\" in your chosen language."
+msgstr "プライマリ ヘッダー テキストを変更します。空白のままにすると、デフォルトで選択した言語の「おすすめ」になります。"
 
 msgid "Change this setting here"
 msgstr "ここでこの設定を変更します"
 
+msgid "Changes were saved!"
+msgstr "変更が保存されました。"
+
+msgid "Charge"
+msgstr "充電"
+
+msgid "Charge Type"
+msgstr "チャージタイプ"
+
+msgid "Charge type"
+msgstr "充電タイプ"
+
+msgid "Checkout"
+msgstr "チェックアウト"
+
 msgid "Checkout JS"
 msgstr "チェックアウトJS"
 
-msgid "Checkout fields"
-msgstr "チェックアウトフィールド"
+msgid "Checkout button"
+msgstr "チェックアウトボタン"
 
 msgid "Checkout page"
 msgstr "チェックアウトページ"
 
+msgid "Checkout page only"
+msgstr "チェックアウトページのみ"
+
+msgid "Checkout window"
+msgstr "チェックアウト ウィンドウ"
+
 msgid "Chilean Peso 🇨🇱"
 msgstr "チリペソ🇨🇱"
 
-msgid "Chinese Renmenbi 🇨🇳"
-msgstr "中国のレンメンビ🇨🇳"
+msgid "Chinese Yuan 🇨🇳"
+msgstr "人民元🇨🇳"
+
+msgid "Choose a product that will be added to the shopper's cart before the checkout window opens."
+msgstr "チェックアウト ウィンドウが開く前に買い物客のカートに追加される製品を選択します。"
+
+msgid "Choose from Stripe, PayPal, Square, Authorize.net, and Amazon Pay"
+msgstr "Stripe、PayPal、Square、Authorize.net、Amazon Pay から選択"
+
+msgid "Choose image"
+msgstr "画像を選択"
 
 msgid "Choose one of the icons or none to be displayed inside your button."
 msgstr "ボタン内に表示するアイコンの1つを選択するか、アイコンを選択しないでください。"
@@ -252,26 +629,92 @@ msgstr "ホバーのボタンに表示する効果を選択します。オプシ
 msgid "Choose whether the PeachPay button appears above or below the \"add to cart\" button on the product page."
 msgstr "PeachPayボタンを商品ページの[カートに追加]ボタンの上に表示するか下に表示するかを選択します。"
 
+msgid "Choose whether the PeachPay button appears as a fixed \"sticky\" button on mobile devices."
+msgstr "モバイル デバイスで PeachPay ボタンを固定の「スティッキー」ボタンとして表示するかどうかを選択します。"
+
 msgid "Choose which product(s) to display the upsell on"
 msgstr "アップセルを表示する製品を選択してください"
+
+msgid "Clearpay"
+msgstr "クリアペイ"
+
+msgid "Cloning is forbidden"
+msgstr "クローンは禁止"
+
+msgid "Close"
+msgstr "近い"
 
 msgid "Colombian Peso 🇨🇴"
 msgstr "コロンビアペソ🇨🇴"
 
-msgid "Color"
+msgid "Colors"
 msgstr "色"
 
 msgid "Comorian franc 🇰🇲"
 msgstr "コモロフラン🇰🇲"
 
+msgid "Configure additional options for Authorize.net through PeachPay."
+msgstr "PeachPay を介して Authorize.net の追加オプションを構成します。"
+
+msgid "Configure additional options for GoDaddy Poynt through PeachPay."
+msgstr "PeachPay を介して GoDaddy Point の追加オプションを構成します。"
+
+msgid "Configure additional options for PayPal through PeachPay."
+msgstr "PeachPay を介して PayPal の追加オプションを構成します。"
+
+msgid "Configure rates, fees, and restrictions"
+msgstr "レート、料金、および制限を構成する"
+
 msgid "Congolese Franc 🇨🇩"
 msgstr "コンゴフラン🇨🇩"
+
+msgid "Connect Authorize.net"
+msgstr "Authorize.netに接続"
+
+msgid "Connect Authorize.net (sandbox)"
+msgstr "Authorize.net (サンドボックス) に接続する"
+
+msgid "Connect GoDaddy Poynt"
+msgstr "GoDaddy Point を接続する"
+
+msgid "Connect Id:"
+msgstr "接続 ID:"
+
+msgid "Connect PayPal"
+msgstr "PayPalに接続"
+
+msgid "Connect Square"
+msgstr "コネクトスクエア"
+
+msgid "Connect Stripe"
+msgstr "ストライプを接続"
+
+msgid "Connect a payment method"
+msgstr "支払い方法を接続する"
+
+msgid "Connect an existing Poynt account or create a new one. You'll be redirected to the GoDaddy Poynt website to complete the onboarding."
+msgstr "既存の Point アカウントを接続するか、新しいアカウントを作成します。オンボーディングを完了するために、GoDaddy Point Web サイトにリダイレクトされます。"
 
 msgid "Connect with"
 msgstr "と接続する"
 
-msgid "Connect your PayPal business account to start accepting payments through PayPal"
-msgstr "PayPalビジネスアカウントを接続して、PayPalを介した支払いの受け入れを開始します"
+msgid "Connect your Authorize.net account."
+msgstr "Authorize.net アカウントを接続します。"
+
+msgid "Connect your Authorize.net sandbox account."
+msgstr "Authorize.net サンドボックス アカウントを接続します。"
+
+msgid "Connect your GoDaddy Poynt account."
+msgstr "GoDaddy Point アカウントを接続します。"
+
+msgid "Connect your PayPal business account."
+msgstr "PayPal ビジネス アカウントを接続します。"
+
+msgid "Connect your Square account to PeachPay."
+msgstr "Square アカウントを PeachPay に接続します。"
+
+msgid "Connect your Stripe account to PeachPay."
+msgstr "Stripe アカウントを PeachPay に接続します。"
 
 msgid "Content"
 msgstr "コンテンツ"
@@ -279,20 +722,20 @@ msgstr "コンテンツ"
 msgid "Costa Rican Colón 🇨🇷"
 msgstr "コスタリカコロン🇨🇷"
 
-msgid "Credit and debit cards (Visa, Mastercard, American Express, Discover and Diners, China UnionPay, JCB, Cartes Bancaires, Interac) are a dominant payment method globally, accounting for 41% of online payments."
-msgstr "クレジットカードとデビットカード（Visa、Mastercard、American Express、Discover and Diners、China UnionPay、JCB、Cartes Bancaires、Interac）は、オンライン支払いの41％を占める、世界的に主要な支払い方法です。"
+msgid "Could not detect WC_geolocation class, all geolocation functions for the currency switcher will not function."
+msgstr "WC_geolocationクラスを検出できませんでした。通貨スイッチャーのすべてのジオロケーション機能が機能しません。"
 
-msgid "Credit card / Debit card"
-msgstr "クレジットカード/デビットカード"
+msgid "Countries restricted to"
+msgstr "に制限されている国"
+
+msgid "Country availability"
+msgstr "利用可能な国"
+
+msgid "Credit/Debit card"
+msgstr "クレジット/デビットカード"
 
 msgid "Croatian Kuna 🇭🇷"
 msgstr "クロアチアのクナ🇭🇷"
-
-msgid "Cross-sell items"
-msgstr "クロスセルアイテム"
-
-msgid "Cross-sells on your products will not be displayed in the checkout window"
-msgstr "製品のクロスセルはチェックアウトウィンドウに表示されません"
 
 msgid "Currencies"
 msgstr "通貨"
@@ -300,11 +743,14 @@ msgstr "通貨"
 msgid "Currency"
 msgstr "通貨"
 
-msgid "Currency converted to from base"
-msgstr "ベースから変換された通貨"
+msgid "Currency Conversion"
+msgstr "通貨換算"
 
-msgid "Currency switcher"
-msgstr "通貨スイッチャー"
+msgid "Currency availability"
+msgstr "利用可能な通貨"
+
+msgid "Currency based on"
+msgstr "に基づく通貨"
 
 msgid "Custom CSS"
 msgstr "カスタムCSS"
@@ -312,11 +758,44 @@ msgstr "カスタムCSS"
 msgid "Custom JS"
 msgstr "カスタムJS"
 
+msgid "Custom interval"
+msgstr "カスタム間隔"
+
+msgid "Custom intervals"
+msgstr "カスタム間隔"
+
+msgid "Custom product description"
+msgstr "カスタム製品の説明"
+
+msgid "Customer"
+msgstr "お客様"
+
 msgid "Customer attempting payment again."
 msgstr "顧客が再度支払いを試みています。"
 
-msgid "Customize the button corner radius. Leaving it blank defaults it to 5 px."
-msgstr "ボタンの角の半径をカスタマイズします。空白のままにすると、デフォルトで5ピクセルになります。"
+msgid "Customer billing country"
+msgstr "お客様の請求先の国"
+
+msgid "Customer geolocation"
+msgstr "お客様の位置情報"
+
+msgid "Customers cannot see this payment method."
+msgstr "このお支払い方法はお客様には表示されません。"
+
+msgid "Customize a description to be displayed under the Purchase Order payment option. This will be left blank by default."
+msgstr "注文書の支払いオプションの下に表示される説明をカスタマイズします。これはデフォルトでは空白のままになります。"
+
+msgid "Customize the button corner radius. Leaving it blank defaults it to 5px."
+msgstr "ボタンの角の半径をカスタマイズします。空白のままにすると、デフォルトで 5px になります。"
+
+msgid "Customize the field name for Purchase Order. Leaving it blank defaults it to \"Purchase Order\" in your chosen language."
+msgstr "注文書のフィールド名をカスタマイズします。空白のままにすると、デフォルトで、選択した言語の「発注書」になります。"
+
+msgid "Customize the header text for the mini slider. Leaving it blank defaults it to “Recommended for you” in your chosen language."
+msgstr "ミニ スライダーのヘッダー テキストをカスタマイズします。空白のままにすると、デフォルトで、選択した言語で「あなたへのおすすめ」になります。"
+
+msgid "Customize the headline text. Leaving it blank defaults it to “Related products” in your chosen language."
+msgstr "見出しテキストをカスタマイズします。空白のままにすると、デフォルトで選択した言語の「関連製品」になります。"
 
 msgid "Customize the text above the PeachPay button on the checkout page. Leaving it blank defaults it to \"Check out with PeachPay\" in your chosen language."
 msgstr "チェックアウトページのPeachPayボタンの上にあるテキストをカスタマイズします。空白のままにすると、デフォルトで、選択した言語の「PeachPayでチェックアウト」になります。"
@@ -327,11 +806,11 @@ msgstr "チェックアウトページのPeachPayボタンの下のテキスト�
 msgid "Customize the text of the PeachPay button. Leaving it blank defaults it to \"Express checkout\" in your chosen language."
 msgstr "PeachPayボタンのテキストをカスタマイズします。空白のままにすると、デフォルトで、選択した言語の「エクスプレスチェックアウト」になります。"
 
-msgid "Customize the width of the button. Leaving it blank defaults it to 220px"
-msgstr "ボタンの幅をカスタマイズします。空白のままにすると、デフォルトで220pxになります"
+msgid "Customize the width of the button. Leaving it blank defaults it to 220px."
+msgstr "ボタンの幅をカスタマイズします。空白のままにすると、デフォルトで 220px になります。"
 
-msgid "Customize the width of the button. Leaving it blank defaults it to 320px"
-msgstr "ボタンの幅をカスタマイズします。空白のままにすると、デフォルトで320pxになります"
+msgid "Customize the width of the button. Leaving it blank defaults it to 320px."
+msgstr "ボタンの幅をカスタマイズします。空白のままにすると、デフォルトで 320px になります。"
 
 msgid "Czech koruna 🇨🇿"
 msgstr "チェココルナ🇨🇿"
@@ -342,26 +821,65 @@ msgstr "デンマーククローネ🇩🇰"
 msgid "Danish krone 🇩🇰"
 msgstr "デンマーククローネ🇩🇰"
 
+msgid "Dashboard"
+msgstr "ダッシュボード"
+
+msgid "Deactivate"
+msgstr "無効にする"
+
 msgid "Decline button text"
 msgstr "ボタンのテキストを拒否する"
+
+msgid "Default"
+msgstr "デフォルト"
+
+msgid "Default currency"
+msgstr "デフォルトの通貨"
 
 msgid "Default value"
 msgstr "デフォルト値"
 
+msgid "Delete"
+msgstr "消去"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Deserializing instances of this class is forbidden"
+msgstr "このクラスのインスタンスのデシリアライズは禁止されています"
+
 msgid "Detect from page"
 msgstr "ページから検出"
+
+msgid "Device breakdown"
+msgstr "デバイスの内訳"
+
+msgid "Digital Wallet"
+msgstr "デジタルウォレット"
+
+msgid "Digital wallet"
+msgstr "デジタルウォレット"
 
 msgid "Disable"
 msgstr "無効にする"
 
-msgid "Disabled"
-msgstr "無効"
+msgid "Disable auto update to change value"
+msgstr "自動更新を無効にして値を変更する"
 
-msgid "Display a support message within the PeachPay checkout window for customers"
-msgstr "顧客のPeachPayチェックアウトウィンドウ内にサポートメッセージを表示します"
+msgid "Discount"
+msgstr "割引"
+
+msgid "Discounts"
+msgstr "割引"
+
+msgid "Display"
+msgstr "画面"
 
 msgid "Display outline around the PeachPay button on the checkout page"
 msgstr "チェックアウトページのPeachPayボタンの周りにアウトラインを表示します"
+
+msgid "Display payment method icons below"
+msgstr "下に支払い方法のアイコンを表示します"
 
 msgid "Display payment method icons below the PeachPay button"
 msgstr "PeachPayボタンの下に支払い方法のアイコンを表示します"
@@ -369,35 +887,47 @@ msgstr "PeachPayボタンの下に支払い方法のアイコンを表示しま�
 msgid "Display product images"
 msgstr "商品画像を表示する"
 
-msgid "Display product images in the checkout window"
-msgstr "チェックアウトウィンドウに商品画像を表示する"
-
-msgid "Display random related products based on product category, tag, or attribute in the checkout window."
-msgstr "チェックアウトウィンドウに、商品カテゴリ、タグ、または属性に基づいてランダムに関連する商品を表示します。"
+msgid "Display product images in the checkout window."
+msgstr "チェックアウト ウィンドウに商品画像を表示します。"
 
 msgid "Display random related products in a slider based on product category, tag, or attribute on every product page."
 msgstr "すべての商品ページの商品カテゴリ、タグ、または属性に基づいて、ランダムに関連する商品をスライダーに表示します。"
 
-msgid "Display related products in checkout window"
-msgstr "チェックアウトウィンドウに関連商品を表示する"
-
-msgid "Display related products in the PeachPay Checkout Window"
-msgstr "PeachPayチェックアウトウィンドウに関連製品を表示する"
+msgid "Display recommended products as a mini slider"
+msgstr "おすすめ商品をミニスライダーで表示"
 
 msgid "Display related products in the product page"
 msgstr "商品ページに関連商品を表示する"
 
-msgid "Display the quantity changer next to items in the checkout window order summary"
-msgstr "チェックアウトウィンドウの注文概要の項目の横に数量チェンジャーを表示します"
+msgid "Display the quantity changer next to items in the checkout window order summary."
+msgstr "チェックアウト ウィンドウの注文概要で、商品の横に数量変更機能を表示します。"
 
 msgid "Display upsell for all products"
 msgstr "すべての製品のアップセルを表示する"
 
+msgid "Displays the support message"
+msgstr "サポートメッセージを表示します"
+
 msgid "Djiboutian Franc 🇩🇯"
 msgstr "ジブチフラン🇩🇯"
 
+msgid "Docs"
+msgstr "ドキュメント"
+
+msgid "Domain is already registered or the automatic attempt has already occured. Use force=true to force a registration attempt."
+msgstr "ドメインがすでに登録されているか、自動試行がすでに発生しています。強制的に登録を試みるには、force=true を使用します。"
+
+msgid "Domain is already registered."
+msgstr "ドメインはすでに登録されています。"
+
 msgid "Dominican Peso 🇩🇴"
 msgstr "ドミニカペソ🇩🇴"
+
+msgid "Don\'t show this again"
+msgstr "今後表示しない"
+
+msgid "EPS Bank"
+msgstr "EPSバンク"
 
 msgid "East Caribbean Dollar"
 msgstr "東カリブドル"
@@ -405,11 +935,23 @@ msgstr "東カリブドル"
 msgid "Edit"
 msgstr "編集"
 
+msgid "Edit billing and shipping fields or add new ones"
+msgstr "請求と配送のフィールドを編集するか、新しいフィールドを追加します"
+
+msgid "Edit checkout fields"
+msgstr "チェックアウト フィールドの編集"
+
 msgid "Egyptian Pound 🇪🇬"
 msgstr "エジプトポンド🇪🇬"
 
+msgid "Email receipts"
+msgstr "メールの領収書"
+
 msgid "Enable"
 msgstr "有効"
+
+msgid "Enable %s"
+msgstr "%s を有効にする"
 
 msgid "Enable PeachPay in the mini and/or sidebar cart"
 msgstr "ミニカートやサイドバーカートでPeachPayを有効にする"
@@ -423,8 +965,32 @@ msgstr "カートページでPeachPayを有効にする"
 msgid "Enable PeachPay on the checkout page"
 msgstr "チェックアウトページでPeachPayを有効にする"
 
-msgid "Enable Related Products"
-msgstr "関連製品を有効にする"
+msgid "Enable Specific Product"
+msgstr "特定の製品を有効にする"
+
+msgid "Enable auto-slider"
+msgstr "自動スライダーを有効にする"
+
+msgid "Enable auto-slider (only available for product page)"
+msgstr "自動スライダーを有効にする（製品ページでのみ使用可能）"
+
+msgid "Enable country locale rules"
+msgstr "国のロケール ルールを有効にする"
+
+msgid "Enable currency switcher"
+msgstr "通貨スイッチャーを有効にする"
+
+msgid "Enable custom intervals to be selected for currencies."
+msgstr "通貨に対してカスタム間隔を選択できるようにします。"
+
+msgid "Enable express checkout"
+msgstr "エクスプレス チェックアウトを有効にする"
+
+msgid "Enable extra fees"
+msgstr "追加料金を有効にする"
+
+msgid "Enable one-click upsells"
+msgstr "ワンクリックアップセルを有効にする"
 
 msgid "Enable order notes"
 msgstr "注文メモを有効にする"
@@ -432,17 +998,26 @@ msgstr "注文メモを有効にする"
 msgid "Enable quantity changer"
 msgstr "数量チェンジャーを有効にする"
 
+msgid "Enable support message"
+msgstr "サポートメッセージを有効にする"
+
 msgid "Enable test mode"
 msgstr "テストモードを有効にする"
 
-msgid "Enable the currency switcher"
-msgstr "通貨スイッチャーを有効にする"
+msgid "Enable the floating PeachPay button on all pages"
+msgstr "すべてのページでフローティング PeachPay ボタンを有効にする"
 
-msgid "Enable the floating PeachPay button on the shop page"
-msgstr "ショップページでフローティングPeachPayボタンを有効にする"
+msgid "Enable/Disable"
+msgstr "有効化/無効化"
 
 msgid "Enabled"
 msgstr "有効"
+
+msgid "Ensure the following link is reachable: "
+msgstr "次のリンクにアクセスできることを確認します。"
+
+msgid "Error: "
+msgstr "エラー："
 
 msgid "Ethiopian Birr 🇪🇹"
 msgstr "エチオピアブル🇪🇹"
@@ -450,8 +1025,14 @@ msgstr "エチオピアブル🇪🇹"
 msgid "Euro 🇪🇺"
 msgstr "ユーロ🇪🇺"
 
+msgid "Every 12 hours"
+msgstr "12時間ごと"
+
 msgid "Every 15 minutes"
 msgstr "15分ごと"
+
+msgid "Every 2 days"
+msgstr "2日ごと"
 
 msgid "Every 30 minutes"
 msgstr "30分ごと"
@@ -462,29 +1043,110 @@ msgstr "6時間ごと"
 msgid "Every hour"
 msgstr "毎時"
 
+msgid "Every month"
+msgstr "毎月"
+
+msgid "Expiry date"
+msgstr "有効期限"
+
+msgid "Export to CSV"
+msgstr "CSVにエクスポート"
+
+msgid "Express Checkout only"
+msgstr "エクスプレス チェックアウトのみ"
+
 msgid "Express checkout"
 msgstr "エクスプレスチェックアウト"
 
 msgid "Fade"
 msgstr "フェード"
 
+msgid "Fade effect on hover"
+msgstr "ホバーに対するフェード効果"
+
+msgid "Failed to connect your Authorize.net account. Please try again."
+msgstr "Authorize.net アカウントの接続に失敗しました。もう一度やり直してください。"
+
+msgid "Failed to connect your GoDaddy Poynt account. Please try again."
+msgstr "GoDaddy Point アカウントを接続できませんでした。もう一度やり直してください。"
+
+msgid "Failed to register domain."
+msgstr "ドメインの登録に失敗しました。"
+
+msgid "Failed to retrieve the response body."
+msgstr "応答本文を取得できませんでした。"
+
 msgid "Falkland Islands pound 🇫🇰"
 msgstr "フォークランド諸島ポンド🇫🇰"
+
+msgid "Fee"
+msgstr "手数料"
+
+msgid "Fee amount"
+msgstr "手数料の金額"
+
+msgid "Fee label"
+msgstr "手数料ラベル"
+
+msgid "Fee maximum threshold"
+msgstr "手数料の上限額"
+
+msgid "Fee minimum threshold"
+msgstr "手数料の最低額"
+
+msgid "Fee type"
+msgstr "料金タイプ"
+
+msgid "Feedback"
+msgstr "フィードバック"
+
+msgid "Fees"
+msgstr "手数料"
+
+msgid "Fees will be applied to the total when a customer chooses to checkout with this currency."
+msgstr "顧客がこの通貨でチェックアウトすることを選択すると、手数料が合計に適用されます。"
 
 msgid "Field editor"
 msgstr "フィールドエディタ"
 
+msgid "Field name"
+msgstr "フィールド名"
+
 msgid "Fijian Dollar 🇫🇯"
 msgstr "フィジードル🇫🇯"
+
+msgid "Fill table with all currencies"
+msgstr "テーブルにすべての通貨を入力します"
+
+msgid "Fixed"
+msgstr "修理済み"
+
+msgid "Fixed at bottom"
+msgstr "下に固定"
 
 msgid "Floating button"
 msgstr "フローティングボタン"
 
+msgid "Font style match the theme font"
+msgstr "フォントスタイルがテーマフォントと一致する"
+
 msgid "For PayPal, see"
 msgstr "PayPalについては、を参照してください"
 
-msgid "For Stripe, use card number:"
-msgstr "Stripeの場合、カード番号を使用します。"
+msgid "For Stripe, use card number"
+msgstr "Stripe の場合、カード番号を使用"
+
+msgid "For currencies with decimals, you can change the number of decimals"
+msgstr "小数点のある通貨の場合、小数点以下の桁数を変更できます"
+
+msgid "For each page, you can enter a CSS selector where the button should appear. If empty, it will appear in a default location."
+msgstr "ページごとに、ボタンを表示する場所に CSS セレクターを入力できます。空の場合、デフォルトの場所に表示されます。"
+
+msgid "Force 3D Secure"
+msgstr "3Dセキュアを強制する"
+
+msgid "Frequency of auto-update"
+msgstr "自動更新の頻度"
 
 msgid "Full"
 msgstr "満杯"
@@ -500,6 +1162,39 @@ msgstr "グルジアのラリ🇬🇪"
 
 msgid "Gibraltar pound 🇬🇮"
 msgstr "ジブラルタルポンド🇬🇮"
+
+msgid "GoDaddy Poynt"
+msgstr "GoDaddy ポイント"
+
+msgid "GoDaddy Poynt %1$s payment captured for %2$s. (Capture Id: %3$s)"
+msgstr "GoDaddy Point %1$s の支払いが %2$s でキャプチャされました。 (キャプチャ ID: %3$s)"
+
+msgid "GoDaddy Poynt %1$s payment failed: %2$s"
+msgstr "GoDaddy Point %1$s の支払いに失敗しました: %2$s"
+
+msgid "GoDaddy Poynt %1$s payment is authorized for %2$s. (Authorization Id: %3$s)"
+msgstr "GoDaddy Point %1$s の支払いは %2$s に対して承認されています。 (承認 ID: %3$s)"
+
+msgid "GoDaddy Poynt %1$s payment partially refunded %2$s (Refund Id: %3$s)"
+msgstr "GoDaddy Point %1$s の支払いは %2$s に一部返金されました (返金 ID: %3$s)"
+
+msgid "GoDaddy Poynt %1$s payment refunded %2$s (Refund Id: %3$s)"
+msgstr "GoDaddy Point %1$s の支払いが %2$s に返金されました (返金 ID: %3$s)"
+
+msgid "GoDaddy Poynt %1$s payment setup for future use."
+msgstr "今後使用する GoDaddy Point %1$s の支払い設定。"
+
+msgid "GoDaddy Poynt %1$s payment was voided. (Authorization Id: %2$s)"
+msgstr "GoDaddy Point %1$s の支払いが無効になりました。 (承認 ID: %2$s)"
+
+msgid "GoDaddy Poynt advanced settings"
+msgstr "GoDaddy Point の詳細設定"
+
+msgid "GoDaddy Poynt sandbox account connected"
+msgstr "GoDaddy Point サンドボックス アカウントが接続されました"
+
+msgid "Gold"
+msgstr "金"
 
 msgid "Google Maps address autocomplete"
 msgstr "Googleマップのアドレスオートコンプリート"
@@ -522,17 +1217,17 @@ msgstr "ヘッダーテキスト"
 msgid "Heading text"
 msgstr "見出しテキスト"
 
-msgid "Hide WooCommerce native checkout buttons (not available in test mode)"
-msgstr "WooCommerceネイティブチェックアウトボタンを非表示にします（テストモードでは使用できません）"
+msgid "Here are some tips to make the most out of PeachPay"
+msgstr "PeachPay を最大限に活用するためのヒントをいくつかご紹介します。"
 
-msgid "Hide cross-sell items"
-msgstr "クロスセルアイテムを非表示にする"
+msgid "Hide the \"Proceed to checkout\" buttons on the WooCommerce cart page to make PeachPay the only checkout method (does not disable cart page and won\'t take effect in test mode)."
+msgstr "WooCommerce カート ページの [チェックアウトに進む] ボタンを非表示にして、PeachPay を唯一のチェックアウト方法にします (カート ページを無効にせず、テスト モードでは有効になりません)。"
 
 msgid "Hide the shipping/billing fields for virtual products"
 msgstr "仮想製品の配送/請求フィールドを非表示にする"
 
-msgid "Hide upsell items"
-msgstr "アップセルアイテムを非表示にする"
+msgid "Home"
+msgstr "家"
 
 msgid "Honduran Lempira 🇭🇳"
 msgstr "ホンジュラスレンピラ🇭🇳"
@@ -543,32 +1238,89 @@ msgstr "香港ドル🇭🇰"
 msgid "Hover effect"
 msgstr "ホバー効果"
 
-msgid "How to round when the there are more decimals than the currency supports"
-msgstr "通貨がサポートするよりも多くの小数がある場合の丸め方法"
-
 msgid "Hungarian forint 🇭🇺"
 msgstr "ハンガリーフォリント🇭🇺"
+
+msgid "I couldn't get the plugin to work"
+msgstr "プラグインを動作させることができませんでした"
+
+msgid "I found a better plugin"
+msgstr "もっと良いプラグインを見つけた"
+
+msgid "I no longer need the plugin"
+msgstr "プラグインが不要になりました"
 
 msgid "Icelandic Króna 🇮🇸"
 msgstr "アイスランドクローナ🇮🇸"
 
+msgid "Icon"
+msgstr "アイコン"
+
 msgid "Icon size"
 msgstr "アイコンサイズ"
 
-msgid "Icons"
-msgstr "アイコン"
+msgid "Id"
+msgstr "ID"
 
-msgid "If WooCommerce geolocation is on, what countries the currency will be restricted to"
-msgstr "WooCommerceジオロケーションがオンになっている場合、通貨が制限される国"
+msgid "If a chosen currency is not supported by PayPal, switch to this currency instead of hiding PayPal. The currency switcher must be enabled for this option to work and will override country restrictions."
+msgstr "選択した通貨がPayPalでサポートされていない場合は、PayPalを非表示にするのではなく、この通貨に切り替えてください。このオプションを機能させるには、通貨スイッチャーを有効にする必要があり、国の制限を無効にします。"
+
+msgid "If a currency has countries associated with it, the currency will only be available in those countries"
+msgstr "通貨に国が関連付けられている場合、その通貨はそれらの国でのみ使用できます。"
+
+msgid "If clicked, the table below will be populated with the 135+ currencies PeachPay supports. PeachPay will select the best currency for a shopper based on their location."
+msgstr "クリックすると、下の表に PeachPay がサポートする 135 以上の通貨が表示されます。 PeachPay は、買い物客の所在地に基づいて、買い物客に最適な通貨を選択します。"
+
+msgid "If registration still fails:"
+msgstr "それでも登録に失敗する場合:"
 
 msgid "If the cart only consists of virtual products, don\'t show the shipping/billing address fields."
 msgstr "カートが仮想商品のみで構成されている場合は、配送先/請求先住所フィールドを表示しないでください。"
 
+msgid "If the cart total is less than this amount, this payment method will not show. The minimum cannot be less than %s"
+msgstr "カートの合計がこの金額未満の場合、この支払い方法は表示されません。最小値は %s 未満にすることはできません"
+
+msgid "If the cart total is more than this amount, this payment method will not show."
+msgstr "カートの合計がこの金額を超える場合、この支払い方法は表示されません。"
+
+msgid "If the cart total is more than this amount, this payment method will not show. The maximum cannot be more than %s"
+msgstr "カートの合計がこの金額を超える場合、この支払い方法は表示されません。最大値は %s を超えることはできません"
+
+msgid "If you have a regular PayPal account, you’ll be asked to upgrade to a business account. Not using PayPal yet? PayPal is accepted in over 200 countries and allows shoppers from almost anywhere to buy from you."
+msgstr "通常の PayPal アカウントをお持ちの場合は、ビジネス アカウントにアップグレードするよう求められます。まだ PayPal を使用していませんか? PayPal は 200 か国以上で受け入れられており、ほぼどこからでも買い物客があなたから購入することができます。"
+
+msgid "If you have an Amazon account, you are ready to start using Amazon Pay wherever you see the Amazon Pay button. Simply click the button when checking out to use the information already stored in your Amazon account."
+msgstr "Amazon アカウントをお持ちの場合は、Amazon Pay ボタンが表示されている場所ならどこでも Amazon Pay を使用する準備ができています。チェックアウト時にボタンをクリックするだけで、Amazon アカウントに既に保存されている情報を使用できます。"
+
+msgid "Inactive"
+msgstr "非活性"
+
+msgid "Include itemized order in Authorize.net payment transaction request"
+msgstr "Authorize.net 支払いトランザクション リクエストに項目別注文を含める"
+
+msgid "Include upsell and cross-sell items that you have already configured"
+msgstr "構成済みのアップセルおよびクロスセル アイテムを含める"
+
+msgid "Indian Rupee 🇮🇳"
+msgstr "インドルピー🇮🇳"
+
 msgid "Indonesian rupiah 🇮🇩"
 msgstr "インドネシアルピア🇮🇩"
 
+msgid "Input fields"
+msgstr "入力フィールド"
+
+msgid "Invalid field \"%s\". Token does not belong to the logged in user."
+msgstr "フィールド「%s」が無効です。トークンはログインしているユーザーのものではありません。"
+
+msgid "Is Single Product Template?"
+msgstr "単一の製品テンプレートですか?"
+
 msgid "Israeli new shekel 🇮🇱"
 msgstr "イスラエルの新シェケル🇮🇱"
+
+msgid "Itemized order information"
+msgstr "注文明細"
 
 msgid "Jamaican Dollar 🇯🇲"
 msgstr "ジャマイカドル🇯🇲"
@@ -581,9 +1333,6 @@ msgstr "カザフスタンテンゲ🇰🇿"
 
 msgid "Kenyan Shilling 🇰🇪"
 msgstr "ケニアシリング🇰🇪"
-
-msgid "Klarna offers flexible payment options that give customers more freedom to choose when and how to pay for a purchase. Klarna provides payment solutions for 90 million consumers and over 200,000 businesses across 19 markets."
-msgstr "Klarnaは柔軟な支払いオプションを提供し、顧客が購入の支払い時期と支払い方法をより自由に選択できるようにします。 Klarnaは、19の市場で9千万人の消費者と20万を超える企業に決済ソリューションを提供しています。"
 
 msgid "Korean Won 🇰🇷"
 msgstr "大韓民国ウォン🇰🇷"
@@ -600,6 +1349,9 @@ msgstr "言語"
 msgid "Laotian Kip 🇱🇦"
 msgstr "ラオスのキップ🇱🇦"
 
+msgid "Last 4 digits"
+msgstr "下4桁"
+
 msgid "Learn more about"
 msgstr "詳細については"
 
@@ -612,11 +1364,41 @@ msgstr "左"
 msgid "Lesotho loti 🇱🇸"
 msgstr "レソトロチ🇱🇸"
 
+msgid "Let shoppers buy from anywhere"
+msgstr "買い物客がどこからでも購入できるようにする"
+
 msgid "Liberian Dollar 🇱🇷"
 msgstr "リベリアドル🇱🇷"
 
+msgid "Loan"
+msgstr "ローン"
+
+msgid "Location Id:"
+msgstr "ロケーション ID:"
+
 msgid "Lock"
 msgstr "ロック"
+
+msgid "Log in"
+msgstr "ログイン"
+
+msgid "Log in (sandbox)"
+msgstr "ログイン (サンドボックス)"
+
+msgid "Login Id:"
+msgstr "ログインID："
+
+msgid "Login failed: Email or Username does not exist."
+msgstr "ログインに失敗しました：Eメールまたはユーザー名が存在しません。"
+
+msgid "Login failed: incorrect password."
+msgstr "ログインに失敗しました：パスワードが正しくありません。"
+
+msgid "Logo"
+msgstr "ロゴ"
+
+msgid "Looks like you're using a third party plugin to handle additional checkout fields for your store. PeachPay now has its own field editor built in! While we will do our best to convert any third party fields, it is recommended to make the switch to our native editor for the best experience. Unsupported fields may cause issues with completing orders. Check out our field editor "
+msgstr "サードパーティのプラグインを使用して、ストアの追加のチェックアウト フィールドを処理しているようです。 PeachPay に独自のフィールド エディターが組み込まれました。サードパーティのフィールドを変換するために最善を尽くしますが、最高のエクスペリエンスを得るために、ネイティブ エディターに切り替えることをお勧めします。サポートされていないフィールドは、注文の完了に問題を引き起こす可能性があります。フィールドエディターをチェックしてください"
 
 msgid "Macanese Pataca 🇲🇴"
 msgstr "マカオパタカ🇲🇴"
@@ -626,6 +1408,9 @@ msgstr "マケドニアデナール🇲🇰"
 
 msgid "Make PeachPay the only checkout method"
 msgstr "PeachPayを唯一のチェックアウト方法にする"
+
+msgid "Make sandbox payments following"
+msgstr "次のサンドボックス支払いを行います"
 
 msgid "Make test payments with or without a connected payment method."
 msgstr "接続された支払い方法の有無にかかわらず、テスト支払いを行います。"
@@ -645,17 +1430,65 @@ msgstr "マレーシアリンギット🇲🇾"
 msgid "Maldivian Rufiyaa 🇲🇻"
 msgstr "モルディブのルフィヤ🇲🇻"
 
+msgid "Manage"
+msgstr "管理"
+
+msgid "Manage a payment method"
+msgstr "お支払い方法の管理"
+
+msgid "Manual recommendations"
+msgstr "手動推奨事項"
+
 msgid "Mauritanian Ouguiya 🇲🇷"
 msgstr "モーリタニアのウギア🇲🇷"
 
 msgid "Mauritian Rupee 🇲🇺"
 msgstr "モーリシャスルピー🇲🇺"
 
+msgid "Maximum charge"
+msgstr "最大料金"
+
+msgid "Merchant Id:"
+msgstr "販売者ID："
+
 msgid "Mexican peso 🇲🇽"
 msgstr "メキシコペソ🇲🇽"
 
 msgid "Mini/sidebar cart"
 msgstr "ミニ/サイドバーカート"
+
+msgid "Minimum charge"
+msgstr "最低料金"
+
+msgid "Missing required field \"peachpay_authnet_data_descriptor\""
+msgstr "必須フィールド「peachpay_authnet_data_descriptor」がありません"
+
+msgid "Missing required field \"peachpay_authnet_data_value\""
+msgstr "必須フィールド「peachpay_authnet_data_value」がありません"
+
+msgid "Missing required field \"peachpay_poynt_nonce\""
+msgstr "必須フィールド「peachpay_point_nonce」がありません"
+
+msgid "Missing required field \"peachpay_session_id\""
+msgstr "必須フィールド「peachpay_session_id」がありません"
+
+msgid "Missing required field \"peachpay_square_source_id\""
+msgstr "必須フィールド「peachpay_square_source_id」がありません"
+
+msgid "Missing required field \"peachpay_square_verification_id\""
+msgstr "必須フィールド「peachpay_square_verification_id」がありません"
+
+msgid "Missing required field \"peachpay_stripe_payment_method_id\""
+msgstr "必須フィールド「peachpay_stripe_payment_method_id」がありません"
+
+msgid "Missing required field \"peachpay_transaction_id\""
+msgstr "必須フィールド「peachpay_transaction_id」がありません"
+
+msgid "Missing required field \"purchase_order_number\""
+msgstr "必須フィールド「purchase_order_number」がありません"
+
+msgid "Mode"
+msgstr "モード"
 
 msgid "Moldovan Leu 🇲🇩"
 msgstr "モルドバ・レウ🇲🇩"
@@ -681,8 +1514,8 @@ msgstr "ナミビアドル🇳🇦"
 msgid "Nepalese Rupee 🇳🇵"
 msgstr "ネパールルピー🇳🇵"
 
-msgid "Net Payout:"
-msgstr "ネットペイアウト："
+msgid "Net"
+msgstr "ネット"
 
 msgid "Netherlands Antillean Guilder 🇳🇱"
 msgstr "オランダ領アンティルギルダー🇳🇱"
@@ -693,11 +1526,38 @@ msgstr "ニュー台湾ドル🇹🇼"
 msgid "New Zealand dollar 🇳🇿"
 msgstr "ニュージーランドドル🇳🇿"
 
+msgid "New features have been added to Square which require your action to enable. Please navigate to Square settings under the Payment tab for more details."
+msgstr "Square に新しい機能が追加されました。これらの機能を有効にするには、ユーザーの操作が必要です。詳細については、[支払い] タブの [Square 設定] に移動してください。"
+
+msgid "New title"
+msgstr "新しいタイトル"
+
+msgid "New user"
+msgstr "新しいユーザー"
+
+msgid "Next time you load a PeachPay page, we\'ll remove this"
+msgstr "次回 PeachPay ページを読み込むと、これは削除されます"
+
 msgid "Nicaraguan Córdoba 🇳🇮"
 msgstr "ニカラグアコルドバ🇳🇮"
 
 msgid "Nigerian Naira 🇳🇬"
 msgstr "ナイジェリアナイラ🇳🇬"
+
+msgid "No"
+msgstr "いいえ"
+
+msgid "No custom interval"
+msgstr "カスタム間隔なし"
+
+msgid "No supported countries"
+msgstr "サポートされている国はありません"
+
+msgid "No supported currencies"
+msgstr "サポートされている通貨はありません"
+
+msgid "No thanks"
+msgstr "結構です"
 
 msgid "None"
 msgstr "なし"
@@ -705,17 +1565,44 @@ msgstr "なし"
 msgid "Norwegian krone 🇳🇴"
 msgstr "ノルウェークローネ🇳🇴"
 
-msgid "Number of decimals the currency will support"
-msgstr "通貨がサポートする小数点以下の桁数"
+msgid "Not available"
+msgstr "利用不可"
 
-msgid "Number of products to display"
-msgstr "表示する商品の数"
+msgid "Not restricted"
+msgstr "制限なし"
 
-msgid "One-Click-Upsell"
-msgstr "ワンクリックアップセル"
+msgid "Not supported by the following providers: "
+msgstr "次のプロバイダではサポートされていません:"
 
-msgid "Order summary"
-msgstr "注文の概要"
+msgid "Not sure if Square is right for you? Square is good for merchants who sell online and in a physical store. It’s also good if you sell items that are usually risky for other payment processors."
+msgstr "Square があなたに適しているかどうかわかりませんか? Square は、オンラインおよび実店舗で販売するマーチャントに適しています。通常、他の支払い処理業者にとって危険なアイテムを販売する場合にも適しています."
+
+msgid "Number of orders"
+msgstr "注文数"
+
+msgid "Number of orders | Last 52 weeks"
+msgstr "注文数|過去52週間"
+
+msgid "Number of products to display for mini slider and full page"
+msgstr "ミニスライダーとフルページで表示する商品数"
+
+msgid "Number of products to display for product detail page"
+msgstr "商品詳細ページに表示する商品数"
+
+msgid "OpenSSL extension is not available in your server."
+msgstr "サーバーで OpenSSL 拡張機能を使用できません。"
+
+msgid "Operating system breakdown"
+msgstr "オペレーティング システムの内訳"
+
+msgid "Order details (experimental)"
+msgstr "注文の詳細 (実験的)"
+
+msgid "Other"
+msgstr "他の"
+
+msgid "Other payment methods"
+msgstr "その他のお支払い方法"
 
 msgid "Pakistani Rupee 🇵🇰"
 msgstr "パキスタンルピー🇵🇰"
@@ -729,14 +1616,44 @@ msgstr "パプアニューギニアキナ🇵🇬"
 msgid "Paraguayan Guarani 🇵🇾"
 msgstr "パラグアイグアラニー🇵🇾"
 
+msgid "Pay"
+msgstr "支払い"
+
+msgid "Pay securely using your credit or debit card."
+msgstr "クレジットカードまたはデビットカードを使用して安全にお支払いください。"
+
 msgid "PayPal"
 msgstr "PayPal"
 
-msgid "PayPal is in"
-msgstr "PayPalは"
+msgid "PayPal Fee:"
+msgstr "ペイパル手数料:"
+
+msgid "PayPal Net Payout:"
+msgstr "PayPal ネットペイアウト:"
+
+msgid "PayPal Order"
+msgstr "PayPal注文"
+
+msgid "PayPal advanced settings"
+msgstr "PayPal の詳細設定"
 
 msgid "Payment"
 msgstr "支払い"
+
+msgid "Payment Intent"
+msgstr "支払いの意図"
+
+msgid "Payment Method"
+msgstr "支払方法"
+
+msgid "Payment error: "
+msgstr "支払いエラー:"
+
+msgid "Payment error: Square failed to process the transaction."
+msgstr "支払いエラー: スクエアは取引を処理できませんでした。"
+
+msgid "Payment family"
+msgstr "支払いファミリー"
 
 msgid "Payment methods"
 msgstr "お支払い方法"
@@ -747,8 +1664,26 @@ msgstr "支払い"
 msgid "PeachPay"
 msgstr "PeachPay"
 
+msgid "PeachPay Currency Switcher"
+msgstr "PeachPay通貨スイッチャー"
+
+msgid "PeachPay Premium free trial available!"
+msgstr "PeachPayプレミアム無料体験受付中！"
+
+msgid "PeachPay does not support the current currency set by woocommerce and all orders will fail"
+msgstr "PeachPayはwoocommerceによって設定された現在の通貨をサポートしておらず、すべての注文は失敗します"
+
 msgid "PeachPay for WooCommerce"
 msgstr "WooCommerceのPeachPay"
+
+msgid "PeachPay has added new features to its Square integration. These features require additional permissions from your Square account."
+msgstr "PeachPay は、Square 統合に新しい機能を追加しました。これらの機能には、Square アカウントからの追加の権限が必要です。"
+
+msgid "PeachPay is a WooCommerce extension. Please %3$sactivate WooCommerce%4$s to use PeachPay."
+msgstr "PeachPay は WooCommerce の拡張機能です。 PeachPay を使用するには %3$sWooCommerce%4$s をアクティベートしてください。"
+
+msgid "PeachPay is a WooCommerce extension. Please %3$sinstall and activate WooCommerce%4$s to use PeachPay."
+msgstr "PeachPay は WooCommerce の拡張機能です。 PeachPay を使用するには、%3$sWooCommerce%4$s をインストールしてアクティブ化してください。"
 
 msgid "PeachPay requires the WooCommerce plugin to be installed and active."
 msgstr "PeachPayでは、WooCommerceプラグインがインストールされてアクティブになっている必要があります。"
@@ -756,26 +1691,59 @@ msgstr "PeachPayでは、WooCommerceプラグインがインストールされ�
 msgid "PeachPay requires the WordPress permalink structure to be set to anything other than \"Plain\". "
 msgstr "PeachPayでは、WordPressのパーマリンク構造を「Plain」以外に設定する必要があります。"
 
-msgid "PeachPay settings and data will be removed if the plugin is uninstalled"
-msgstr "プラグインがアンインストールされると、PeachPayの設定とデータは削除されます"
+msgid "PeachPay settings and data will be removed if the plugin is uninstalled."
+msgstr "プラグインをアンインストールすると、PeachPay の設定とデータが削除されます。"
 
 msgid "PeachPay was unable to process your order because the cart is empty."
 msgstr "カートが空であるため、PeachPayは注文を処理できませんでした。"
 
-msgid "PeachPay was unable to process your order, please try again."
-msgstr "PeachPayは注文を処理できませんでした。もう一度お試しください。"
+msgid "PeachPay will show the currency according to "
+msgstr "PeachPay は通貨に従って表示します。"
+
+msgid "Pending transfer from customer's bank account. This typically takes 3-5 business days."
+msgstr "お客様の銀行口座からの送金が保留中です。通常、これには 3 ～ 5 営業日かかります。"
+
+msgid "Percentage"
+msgstr "パーセンテージ"
 
 msgid "Philippine peso 🇵🇭"
 msgstr "フィリピンペソ🇵🇭"
 
+msgid "Pill"
+msgstr "ピル"
+
+msgid "Place order"
+msgstr "注文する"
+
+msgid "Please help us understand why PeachPay didn't work for you"
+msgstr "PeachPay が機能しなかった理由をご理解ください。"
+
 msgid "Please select only one simple, non-variable product"
 msgstr "シンプルで変動のない商品を1つだけ選択してください"
+
+msgid "Please share which plugin"
+msgstr "どのプラグインか教えてください"
+
+msgid "Please share your reason"
+msgstr "理由を教えてください"
 
 msgid "Poland złoty 🇵🇱"
 msgstr "ポーランドズウォティ🇵🇱"
 
-msgid "Position"
-msgstr "ポジション"
+msgid "Poynt supports card and in-person payments if you have the Poynt POS (Point of Sale) system."
+msgstr "Poynt POS (Point of Sale) システムを使用している場合、Poynt はカードと対面での支払いをサポートします。"
+
+msgid "Premium Feature"
+msgstr "プレミアム機能"
+
+msgid "Premium Portal"
+msgstr "プレミアムポータル"
+
+msgid "Premium Trial (%d days left)"
+msgstr "プレミアム トライアル (残り %d 日)"
+
+msgid "Press the Cash App Pay button above to link your account."
+msgstr "上の [Cash App Pay] ボタンを押して、アカウントをリンクします。"
 
 msgid "Preview"
 msgstr "プレビュー"
@@ -792,6 +1760,9 @@ msgstr "製品カテゴリ"
 msgid "Product TAG"
 msgstr "製品タグ"
 
+msgid "Product links URL"
+msgstr "商品リンクURL"
+
 msgid "Product page"
 msgstr "製品ページ"
 
@@ -801,8 +1772,20 @@ msgstr "製品の推奨事項"
 msgid "Product to upsell"
 msgstr "アップセルする製品"
 
-msgid "Product(s) to display upsell on"
-msgstr "アップセルを表示する商品"
+msgid "Przelewy24 Bank"
+msgstr "Przelewy24 銀行"
+
+msgid "Public Client Key:"
+msgstr "パブリック クライアント キー:"
+
+msgid "Purchase Order"
+msgstr "注文書"
+
+msgid "Purchase Order (PeachPay)"
+msgstr "注文書（PeachPay）"
+
+msgid "Purchase order"
+msgstr "注文書"
 
 msgid "Qatari Rial 🇶🇦"
 msgstr "カタールリアル🇶🇦"
@@ -810,11 +1793,56 @@ msgstr "カタールリアル🇶🇦"
 msgid "Quetzal 🇬🇹"
 msgstr "Quetzal🇬🇹"
 
-msgid "Rate at which the currency will be exchanged"
-msgstr "通貨が交換されるレート"
+msgid "Rate will not change until settings are saved"
+msgstr "設定が保存されるまでレートは変更されません"
+
+msgid "Read only:"
+msgstr "読み取り専用:"
+
+msgid "Recommended for you"
+msgstr "あなたへのおすすめ"
+
+msgid "Recommended products"
+msgstr "おすすめ商品"
+
+msgid "Recoverable carts"
+msgstr "回収可能なカート"
+
+msgid "Rectangle"
+msgstr "矩形"
 
 msgid "Recurring Shipment"
 msgstr "定期的な出荷"
+
+msgid "Recurring payments"
+msgstr "定期支払い"
+
+msgid "Refund amount must be greater then 0"
+msgstr "返金額は 0 より大きくなければなりません"
+
+msgid "Refund error: "
+msgstr "払い戻しエラー:"
+
+msgid "Refund error: Amount must be greater then 0"
+msgstr "払い戻しエラー: 金額は 0 より大きくなければなりません"
+
+msgid "Refund error: Invalid Transaction ID"
+msgstr "払い戻しエラー: 取引 ID が無効です"
+
+msgid "Refund error: The order_id %s did not match any orders."
+msgstr "払い戻しエラー: order_id %s はどの注文とも一致しませんでした。"
+
+msgid "Refund on cancel"
+msgstr "キャンセル時の返金"
+
+msgid "Refunds"
+msgstr "払い戻し"
+
+msgid "Register"
+msgstr "登録"
+
+msgid "Register domain"
+msgstr "ドメイン登録"
 
 msgid "Related Products"
 msgstr "関連製品"
@@ -834,17 +1862,32 @@ msgstr "アンインストール時にデータを削除する"
 msgid "Required"
 msgstr "必須"
 
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Reset domain registration"
+msgstr "ドメイン登録のリセット"
+
 msgid "Reset fields"
 msgstr "フィールドをリセット"
 
 msgid "Reset preferences"
 msgstr "設定をリセット"
 
+msgid "Returning user"
+msgstr "リピーター"
+
+msgid "Revolving line of credit similar to a credit card"
+msgstr "クレジット カードに似たリボルビング クレジット枠"
+
 msgid "Right"
 msgstr "右"
 
 msgid "Romanian Leu 🇷🇴"
 msgstr "ルーマニアレウ🇷🇴"
+
+msgid "Rounded Corners"
+msgstr "丸い角"
 
 msgid "Rounded corners"
 msgstr "丸い角"
@@ -861,38 +1904,59 @@ msgstr "ルワンダフラン🇷🇼"
 msgid "Saudi Riyal 🇸🇦"
 msgstr "サウジアラビアリヤル🇸🇦"
 
-msgid "Save settings"
-msgstr "設定を保存する"
+msgid "Save changes"
+msgstr "変更内容を保存"
 
 msgid "Secondary header"
 msgstr "二次ヘッダー"
 
+msgid "Select all"
+msgstr "すべて選択"
+
+msgid "Select none"
+msgstr "選択しない"
+
 msgid "Serbian Dinar 🇷🇸"
 msgstr "セルビアディナール🇷🇸"
 
-msgid "Set the alignment of the PeachPay button on the cart page"
-msgstr "カートページのPeachPayボタンの配置を設定します"
+msgid "Set minimum/maximum charges and fees, restrict countries, and change the appearance"
+msgstr "最低/最高の料金と手数料の設定、国の制限、および外観の変更"
 
-msgid "Set the alignment of the PeachPay button on the product page"
-msgstr "製品ページのPeachPayボタンの配置を設定します"
+msgid "Set the alignment of the PeachPay button on the cart page."
+msgstr "カートページのPeachPayボタンの配置を設定します。"
+
+msgid "Set the alignment of the PeachPay button on the product page."
+msgstr "商品ページのPeachPayボタンの配置を設定します。"
 
 msgid "Set the alignment of the floating PeachPay button on the shop page"
 msgstr "ショップページのフローティングPeachPayボタンの配置を設定します"
 
-msgid "Set the bottom gap between the button and the bottom of the page. Leaving it blank defaults it to 45 px."
-msgstr "ボタンとページの下部の間に下部のギャップを設定します。空白のままにすると、デフォルトで45ピクセルになります。"
+msgid "Set the bottom gap between the button and the bottom of the page. Leaving it blank defaults it to 27px."
+msgstr "ボタンとページの下部の間の下部ギャップを設定します。空白のままにすると、デフォルトで 27px になります。"
 
-msgid "Set the right gap between the button and the right side of the page. Leaving it blank defaults it to 45 px."
-msgstr "ボタンとページの右側の間に適切なギャップを設定します。空白のままにすると、デフォルトで45ピクセルになります。"
+msgid "Set the right gap between the button and the right side of the page. Leaving it blank defaults it to 45px."
+msgstr "ボタンとページの右側との間の右側のギャップを設定します。空白のままにすると、デフォルトで 45px になります。"
 
-msgid "Set the size of the button. Leaving it blank defaults it to 70px"
-msgstr "ボタンのサイズを設定します。空白のままにすると、デフォルトで70pxになります"
+msgid "Set the size of the button. Leaving it blank defaults it to 70px."
+msgstr "ボタンのサイズを設定します。空白のままにすると、デフォルトで 70px になります。"
 
-msgid "Set the size of the icon. Leaving it blank defaults it to 35px"
-msgstr "アイコンのサイズを設定します。空白のままにすると、デフォルトで35pxになります"
+msgid "Set the size of the icon. Leaving it blank defaults it to 35px."
+msgstr "アイコンのサイズを設定します。空白のままにすると、デフォルトで 35px になります。"
 
-msgid "Setup failure:"
-msgstr "セットアップの失敗："
+msgid "Set this to \"No custom interval\" to follow the default interval schedule"
+msgstr "デフォルトの間隔スケジュールに従うには、これを「カスタム間隔なし」に設定します"
+
+msgid "Set up"
+msgstr "設定"
+
+msgid "Set up currencies"
+msgstr "通貨の設定"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Settlement amount"
+msgstr "決済金額"
 
 msgid "Seychellois Rupee 🇸🇨"
 msgstr "セイシェル・ルピー🇸🇨"
@@ -900,17 +1964,35 @@ msgstr "セイシェル・ルピー🇸🇨"
 msgid "Shipping"
 msgstr "運送"
 
-msgid "Shipping Fields"
-msgstr "配送フィールド"
+msgid "Shoppers paying with %s will be charged an extra fee."
+msgstr "%s で支払う買い物客には追加料金が請求されます。"
+
+msgid "Shopping Cart"
+msgstr "ショッピングカート"
 
 msgid "Shopping cart"
 msgstr "ショッピングカート"
 
-msgid "Show PayPal in the checkout window"
-msgstr "チェックアウトウィンドウにPayPalを表示する"
+msgid "Show Amazon Pay in the checkout window"
+msgstr "チェックアウト ウィンドウに Amazon Pay を表示する"
 
-msgid "Show Stripe in the checkout window"
-msgstr "チェックアウトウィンドウにStripeを表示する"
+msgid "Show a shadow around buttons inside the checkout window."
+msgstr "チェックアウト ウィンドウ内のボタンの周りに影を表示します。"
+
+msgid "Show customers a custom message on the checkout payment page."
+msgstr "チェックアウト支払いページで顧客にカスタムメッセージを表示します。"
+
+msgid "Show itemized order details in the PayPal window"
+msgstr "PayPal ウィンドウに項目別の注文の詳細を表示する"
+
+msgid "Show itemized order information in the Transaction Detail page"
+msgstr "トランザクションの詳細ページに項目別の注文情報を表示する"
+
+msgid "Show line items in the PayPal window. This setting is not compatible with the WooCommerce tax setting \"Prices entered with tax: Yes, I will enter prices inclusive of tax\"."
+msgstr "PayPal ウィンドウに項目を表示します。この設定は、WooCommerce の税設定「税込み価格: はい、税込み価格を入力します」とは互換性がありません。"
+
+msgid "Show shoppers related products while shopping"
+msgstr "ショッピング中に買い物客に関連商品を表示する"
 
 msgid "Side gap"
 msgstr "サイドギャップ"
@@ -918,11 +2000,20 @@ msgstr "サイドギャップ"
 msgid "Sierra Leonean 🇸🇱"
 msgstr "シエラレオネ🇸🇱"
 
+msgid "Sign up"
+msgstr "サインアップ"
+
+msgid "Sign up (sandbox)"
+msgstr "サインアップ (サンドボックス)"
+
+msgid "Silver"
+msgstr "銀"
+
 msgid "Singapore dollar 🇸🇬"
 msgstr "シンガポールドル🇸🇬"
 
-msgid "Slider"
-msgstr "スライダー"
+msgid "Skip & deactivate"
+msgstr "スキップして非アクティブ化"
 
 msgid "Sol 🇵🇪"
 msgstr "ソル🇵🇪"
@@ -933,26 +2024,122 @@ msgstr "ソロモン諸島ドル🇸🇧"
 msgid "Somali Shilling 🇸🇴"
 msgstr "ソマリアシリング🇸🇴"
 
-msgid "Something went wrong while trying to validate your plugin activation status."
-msgstr "プラグインのアクティブ化ステータスを検証しようとしたときに問題が発生しました。"
+msgid "Some services such as Cloudflare will block access to this route and an exception will need to be made manually on those services."
+msgstr "Cloudflare などの一部のサービスは、このルートへのアクセスをブロックするため、これらのサービスに対して手動で例外を作成する必要があります。"
 
 msgid "South African Rand 🇿🇦"
 msgstr "南アフリカランド🇿🇦"
 
+msgid "Specific Product"
+msgstr "特定の製品"
+
+msgid "Specify reason (optional)"
+msgstr "理由を指定してください (オプション)"
+
+msgid "Square"
+msgstr "四角"
+
+msgid "Square %1$s payment failed: %2$s"
+msgstr "Square %1$s の支払いに失敗しました: %2$s"
+
+msgid "Square is not connected."
+msgstr "スクエアが接続されていません。"
+
+msgid "Square reusable payment method details missing from subscription order."
+msgstr "定期購入の注文に Square の再利用可能な支払い方法の詳細がありません。"
+
+msgid "Square was not connected."
+msgstr "スクエアが接続されていませんでした。"
+
 msgid "Sri Lankan Rupee 🇱🇰"
 msgstr "スリランカルピー🇱🇰"
 
+msgid "Standard"
+msgstr "標準"
+
+msgid "Start PeachPay"
+msgstr "PeachPayを始める"
+
+msgid "Start your trial of PeachPay"
+msgstr "PeachPay のトライアルを開始する"
+
+msgid "Statement descriptor suffix"
+msgstr "ステートメント記述子のサフィックス"
+
+msgid "Status"
+msgstr "状態"
+
+msgid "Store details"
+msgstr "店舗詳細"
+
+msgid "Store identifier"
+msgstr "店舗識別子"
+
+msgid "Store key"
+msgstr "鍵を保管する"
+
+msgid "Store name"
+msgstr "店舗名"
+
 msgid "Stripe"
-msgstr "縞"
+msgstr "ストライプ"
+
+msgid "Stripe %1$s payment authorized for %2$s (Charge Id: %3$s)"
+msgstr "%2$s のストライプ %1$s 支払いが承認されました (請求 ID: %3$s)"
+
+msgid "Stripe %1$s payment captured. Payment is now complete (Charge Id: %2$s)"
+msgstr "Stripe %1$s の支払いがキャプチャされました。お支払いが完了しました (請求 ID: %2$s)"
+
+msgid "Stripe %1$s payment complete (Charge Id: %2$s)"
+msgstr "Stripe %1$s の支払いが完了しました (請求 ID: %2$s)"
+
+msgid "Stripe %1$s payment failed. Reason: %2$s"
+msgstr "Stripe %1$s の支払いに失敗しました。理由: %2$s"
+
+msgid "Stripe %1$s payment failed: %2$s"
+msgstr "Stripe %1$s の支払いに失敗しました: %2$s"
+
+msgid "Stripe %1$s payment is processing (Charge Id: %2$s)"
+msgstr "Stripe %1$s の支払いが処理されています (請求 ID: %2$s)"
+
+msgid "Stripe %1$s payment partially refunded %2$s (Refund Id: %3$s)"
+msgstr "Stripe %1$s の支払いの一部が %2$s に払い戻されました (払い戻し ID: %3$s)"
+
+msgid "Stripe %1$s payment refunded %2$s (Refund Id: %3$s)"
+msgstr "Stripe %1$s の支払いは %2$s に返金されました (返金 ID: %3$s)"
+
+msgid "Stripe %1$s payment setup for future use (Payment Method Id: %2$s)"
+msgstr "将来の使用のための Stripe %1$s 支払い設定 (支払い方法 ID: %2$s)"
+
+msgid "Stripe %1$s payment was canceled. %2$s"
+msgstr "Stripe %1$s の支払いはキャンセルされました。 %2$s"
 
 msgid "Stripe Fee:"
 msgstr "ストライプ料金："
 
-msgid "Stripe is in test mode. You can use credit card number 4242 4242 4242 4242 with expiration 04/24 and CVC 444."
-msgstr "Stripeはテストモードです。クレジットカード番号424242424242 4242（有効期限04/24およびCVC 444）を使用できます。"
+msgid "Stripe Net Payout:"
+msgstr "ストライプネットペイアウト:"
 
-msgid "Success! Your settings have been saved."
-msgstr "成功！設定が保存されています。"
+msgid "Stripe is a good choice if you want the biggest selection of global payment methods and “buy now pay later” options."
+msgstr "グローバルな支払い方法の最大の選択肢と「今すぐ購入して後で支払う」オプションが必要な場合は、Stripe が適しています。"
+
+msgid "Stripe is not connected."
+msgstr "ストライプが接続されていません。"
+
+msgid "Stripe normally determines when 3D Secure should be shown automatically. If \"Force 3D Secure\" is enabled, 3D Secure will be shown for all card transactions. In test mode, 3D Secure is only shown for 3DS test cards regardless of the setting."
+msgstr "Stripeは通常、3Dセキュアを自動的に表示するタイミングを決定します。 「3Dセキュアを強制する」が有効になっている場合、すべてのカード取引で3Dセキュアが表示されます。テストモードでは、設定に関係なく、3Dセキュアは3DSテストカードに対してのみ表示されます。"
+
+msgid "Stripe setup intent session data is missing or not defined."
+msgstr "ストライプ セットアップ インテント セッション データが見つからないか、定義されていません。"
+
+msgid "Submit & deactivate"
+msgstr "送信して無効にする"
+
+msgid "Subtotal"
+msgstr "小計"
+
+msgid "Support"
+msgstr "サポート"
 
 msgid "Support message"
 msgstr "サポートメッセージ"
@@ -969,6 +2156,9 @@ msgstr "スウェーデンクローナ🇸🇪"
 msgid "Swiss franc 🇨🇭"
 msgstr "スイスフラン🇨🇭"
 
+msgid "Switcher widget"
+msgstr "スイッチャー ウィジェット"
+
 msgid "TEST MODE"
 msgstr "テストモード"
 
@@ -978,17 +2168,74 @@ msgstr "タジキスタンソモニ🇹🇯"
 msgid "Tanzanian Shilling 🇹🇿"
 msgstr "タンザニアシリング🇹🇿"
 
+msgid "Tax"
+msgstr "税"
+
 msgid "Taxonomy IDs to exclude (comma separated)"
 msgstr "除外する分類ID（コンマ区切り）"
+
+msgid "Temporary deactivation"
+msgstr "一時的な無効化"
+
+msgid "Test mode enabled."
+msgstr "テストモード有効。"
+
+msgid "Text Color"
+msgstr "テキストの色"
 
 msgid "Thai Baht 🇹🇭"
 msgstr "タイバーツ🇹🇭"
 
-msgid "These settings are provided for advanced customization by developers or merchants. Support is not guaranteed and it is expected that you know what your are doing by editing the below settings."
+msgid "The amount you would like to charge"
+msgstr "請求したい金額"
+
+msgid "The extra fee will only be applied if the cart total is above this amount."
+msgstr "追加料金は、カートの合計がこの金額を超える場合にのみ適用されます。"
+
+msgid "The extra fee will only be applied if the cart total is below this amount. This must be less than or equal to this payment gateway\'s maximum charge."
+msgstr "追加料金は、カートの合計がこの金額を下回る場合にのみ適用されます。これは、この支払いゲートウェイの最大料金以下でなければなりません。"
+
+msgid "The name of the store displayed in the PayPal window."
+msgstr "PayPal ウィンドウに表示されるストアの名前。"
+
+msgid "The payment method titles in the legends can be toggled to specify which to show in the graph."
+msgstr "凡例の支払い方法のタイトルを切り替えて、グラフに表示するものを指定できます。"
+
+msgid "The product will be added to the cart before the checkout window opens. If this option is enabled outside a Single Product Template, the button may not work correctly. The Single Product Template must have an Add To Cart widget."
+msgstr "商品は、チェックアウト ウィンドウが開く前にカートに追加されます。このオプションが単一製品テンプレートの外部で有効になっている場合、ボタンが正しく機能しない場合があります。単一製品テンプレートには、カートに追加ウィジェットが必要です。"
+
+msgid "The toggle view buttons change the graphs between side by side and stacked modes."
+msgstr "トグルビューボタンは、グラフをサイドバイサイドモードとスタックモードの間で変更します。"
+
+msgid "These related products appear near the bottom of the product page, not inside the PeachPay checkout window"
+msgstr "これらの関連商品は、PeachPay チェックアウト ウィンドウ内ではなく、商品ページの下部近くに表示されます。"
+
+msgid "These settings are provided for advanced customization by developers or merchants. Support is not guaranteed and it is expected that you know what you are doing by editing the below settings."
 msgstr "これらの設定は、開発者または販売者による高度なカスタマイズのために提供されています。サポートは保証されておらず、以下の設定を編集することで、自分が何をしているかを理解していることが期待されます。"
 
-msgid "This payment method must be activated in your"
-msgstr "この支払い方法は、"
+msgid "This additional messaging will be shown on the checkout payment page. Only a, br, h1, h2, h3, h4, h5, p, div, li, ul, ol, span, and img HTML tags are permitted."
+msgstr "この追加のメッセージは、チェックアウト支払いページに表示されます。 a、br、h1、h2、h3、h4、h5、p、div、li、ul、ol、span、および img HTML タグのみが許可されます。"
+
+msgid "This determines how to round when there are more decimals than the currency supports"
+msgstr "これは、通貨がサポートするよりも多くの小数がある場合の丸め方法を決定します"
+
+msgid "This is a Premium feature. Upgrade to unlock it!"
+msgstr "これはプレミアム機能です。アップグレードしてロックを解除してください！"
+
+msgid "This is the rate at which the currency will be converted"
+msgstr "これは、通貨が換算されるレートです"
+
+msgid "This option determines if the customers funds are captured immediately or only authorized for capture at a later time."
+msgstr "このオプションは、顧客の資金がすぐに回収されるか、後で回収が承認されるかを決定します。"
+
+msgid "This option determines if the customers funds are captured immediately or only authorized for capture at a later time. Authorized payments expire and cannot be captured after 30 days."
+msgstr "このオプションは、顧客の資金がすぐに回収されるか、後で回収が承認されるかを決定します。承認された支払いは期限切れになり、30 日後に回収できなくなります。"
+
+msgid "This option determines if the customers funds are captured immediately or only authorized for capture at a later time. Authorized payments expire and cannot be captured after 7 days."
+msgstr "このオプションは、顧客の資金をすぐに取得するか、後で取得することのみを許可するかを決定します。承認された支払いは期限切れになり、7日後に受け取ることはできません。"
+
+msgid "This payment method must be activated in your %1\$s Stripe dashboard %2\$s settings to be used in the PeachPay checkout"
+msgstr "PeachPay チェックアウトで使用するには、この支払い方法を %1\$s Stripe ダッシュボードの %2\$s 設定で有効にする必要があります"
 
 msgid "This setting allows styling of the PeachPay button through additional CSS."
 msgstr "この設定により、追加のCSSを介してPeachPayボタンのスタイルを設定できます。"
@@ -999,17 +2246,65 @@ msgstr "この設定により、CSSクラスがPeachPayボタンに追加され�
 msgid "This setting will append any provided elements to the PeachPay checkout window."
 msgstr "この設定により、提供された要素がPeachPayチェックアウトウィンドウに追加されます。"
 
+msgid "This transaction cannot be partially refunded until it has been captured and settled. Please capture the order or use the full order total to void the transaction."
+msgstr "このトランザクションは、キャプチャされて決済されるまで、部分的に返金することはできません。注文をキャプチャするか、注文合計を使用して取引を無効にしてください。"
+
+msgid "This transaction cannot be partially refunded until it has settled. You can either wait for settlement to process or use the full order total to void the transaction."
+msgstr "この取引は、決済が完了するまで部分的に返金することはできません。決済が処理されるのを待つか、注文合計を使用して取引を無効にすることができます。"
+
 msgid "This will change the language on the button and in the checkout flow. Use the option"
 msgstr "これにより、ボタンとチェックアウトフローの言語が変更されます。オプションを使用する"
 
 msgid "This will disable the PeachPay button font style rules (font-family, font-size, font-weight, and transform-text) and use the styles from the website theme."
 msgstr "これにより、PeachPayボタンのフォントスタイルルール（font-family、font-size、font-weight、およびtransform-text）が無効になり、Webサイトテーマのスタイルが使用されます。"
 
+msgid "This will set the colors in the checkout window and for the checkout buttons."
+msgstr "これにより、チェックアウト ウィンドウとチェックアウト ボタンの色が設定されます。"
+
+msgid "This will set the text color on buttons for the checkout window."
+msgstr "これにより、チェックアウト ウィンドウのボタンのテキストの色が設定されます。"
+
+msgid "Title"
+msgstr "タイトル"
+
+msgid "Title or reason for the extra fee"
+msgstr "タイトルまたは追加料金の理由"
+
+msgid "Title:"
+msgstr "タイトル："
+
+msgid "To build your Product links, please enter a short identifier that will be used in the URL of the Product links. Don’t use capital letters or spaces."
+msgstr "製品リンクを作成するには、製品リンクの URL で使用される短い識別子を入力してください。大文字やスペースは使用しないでください。"
+
 msgid "To continue setting up PeachPay, please"
 msgstr "PeachPayの設定を続行するには、"
 
+msgid "Toggle view"
+msgstr "ビューを切り替えます"
+
+msgid "Total"
+msgstr "合計"
+
+msgid "Total carts"
+msgstr "合計カート"
+
+msgid "Transaction"
+msgstr "取引"
+
+msgid "Transaction details"
+msgstr "取引明細"
+
+msgid "Transaction volume"
+msgstr "取引量"
+
+msgid "Transaction volume | Last 12 months"
+msgstr "取引量|過去12か月"
+
 msgid "Trinidad & Tobago Dollar 🇹🇹"
 msgstr "トリニダード・トバゴドル🇹🇹"
+
+msgid "Try Premium"
+msgstr "プレミアムを試す"
 
 msgid "Tugrik 🇲🇳"
 msgstr "トゥグルグ🇲🇳"
@@ -1017,8 +2312,8 @@ msgstr "トゥグルグ🇲🇳"
 msgid "Turkish lira 🇹🇷"
 msgstr "トルコリラ🇹🇷"
 
-msgid "Turn on button fade on hover"
-msgstr "ホバー時にボタンフェードをオンにします"
+msgid "Twitter"
+msgstr "ツイッター"
 
 msgid "Type"
 msgstr "タイプ"
@@ -1032,8 +2327,14 @@ msgstr "ウクライナグリブナ🇺🇦"
 msgid "Unable to unlink PayPal account. Please try again or contact us if you need help."
 msgstr "PayPalアカウントのリンクを解除できません。もう一度お試しいただくか、サポートが必要な場合はお問い合わせください。"
 
+msgid "Unable to unlink Poynt account. Please try again or contact us if you need help."
+msgstr "ポイント アカウントのリンクを解除できません。もう一度お試しいただくか、サポートが必要な場合はお問い合わせください。"
+
 msgid "Unable to unlink Stripe account. Please try again or contact us if you need help."
 msgstr "Stripeアカウントのリンクを解除できません。もう一度お試しいただくか、サポートが必要な場合はお問い合わせください。"
+
+msgid "Understand payment method usage and track abandoned carts"
+msgstr "支払い方法の使用状況を理解し、放棄されたカートを追跡する"
 
 msgid "United Arab Emirates Dirham 🇦🇪"
 msgstr "アラブ首長国連邦ディルハム🇦🇪"
@@ -1041,14 +2342,71 @@ msgstr "アラブ首長国連邦ディルハム🇦🇪"
 msgid "United States dollar 🇺🇸"
 msgstr "米ドル🇺🇸"
 
+msgid "Unknown skipped currency volumes"
+msgstr "不明なスキップされた通貨のボリューム"
+
+msgid "Unlink Amazon Pay"
+msgstr "Amazon Pay のリンクを解除する"
+
+msgid "Unlink Authorize.net"
+msgstr "Authorize.net のリンクを解除する"
+
+msgid "Unlink Authorize.net (sandbox)"
+msgstr "Authorize.net (サンドボックス) のリンクを解除する"
+
+msgid "Unlink GoDaddy Poynt"
+msgstr "GoDaddy Point のリンクを解除"
+
 msgid "Unlink PayPal"
 msgstr "PayPalのリンクを解除する"
+
+msgid "Unlink Square"
+msgstr "スクエアのリンクを解除"
 
 msgid "Unlink Stripe"
 msgstr "ストライプのリンクを解除する"
 
-msgid "Update the rate automatically?"
-msgstr "レートを自動的に更新しますか？"
+msgid "Unsupported Currency"
+msgstr "サポートされていない通貨"
+
+msgid "Update every 12 hours"
+msgstr "12時間ごとに更新"
+
+msgid "Update every 15 minutes"
+msgstr "15分ごとに更新"
+
+msgid "Update every 2 days"
+msgstr "2日ごとに更新"
+
+msgid "Update every 2 weeks"
+msgstr "2週間ごとに更新"
+
+msgid "Update every 30 minutes"
+msgstr "30分ごとに更新"
+
+msgid "Update every 6 hours"
+msgstr "6時間ごとに更新"
+
+msgid "Update every day"
+msgstr "毎日更新"
+
+msgid "Update every hour"
+msgstr "1時間ごとに更新"
+
+msgid "Update every month"
+msgstr "毎月更新"
+
+msgid "Update once a week"
+msgstr "週に1回更新"
+
+msgid "Update permissions"
+msgstr "権限の更新"
+
+msgid "Update the currency exchange rate based on the frequency you set."
+msgstr "設定した頻度に基づいて為替レートを更新します。"
+
+msgid "Upgrade"
+msgstr "アップグレード"
 
 msgid "Upon clicking the PeachPay button"
 msgstr "PeachPayボタンをクリックすると"
@@ -1056,17 +2414,8 @@ msgstr "PeachPayボタンをクリックすると"
 msgid "Upsell a product during the checkout flow (in a separate pop-up)"
 msgstr "チェックアウトフロー中に商品をアップセルします（別のポップアップで）"
 
-msgid "Upsell items"
-msgstr "アップセルアイテム"
-
-msgid "Upsells on your products will not be displayed in the checkout window"
-msgstr "商品のアップセルはチェックアウトウィンドウに表示されません"
-
 msgid "Uruguayan Peso 🇺🇾"
 msgstr "ウルグアイペソ🇺🇾"
-
-msgid "Used in these countries"
-msgstr "これらの国で使用されます"
 
 msgid "Uzbekistani Som 🇺🇿"
 msgstr "ウズベキスタンソム🇺🇿"
@@ -1074,8 +2423,32 @@ msgstr "ウズベキスタンソム🇺🇿"
 msgid "Vietnamese dong 🇻🇳"
 msgstr "ベトナムドン🇻🇳"
 
-msgid "View Stripe fees"
-msgstr "ストライプ料金を表示"
+msgid "View"
+msgstr "意見"
+
+msgid "View Amazon fees"
+msgstr "アマゾンの手数料を見る"
+
+msgid "View checkout analytics"
+msgstr "チェックアウト分析を表示する"
+
+msgid "Void"
+msgstr "空所"
+
+msgid "Watch tutorial"
+msgstr "チュートリアルを見る"
+
+msgid "We detected the best currency for you would be "
+msgstr "あなたに最適な通貨は"
+
+msgid "Webhook Status:"
+msgstr "Webhook ステータス:"
+
+msgid "Welcome to PeachPay"
+msgstr "PeachPay へようこそ"
+
+msgid "Welcome to payment method analytics!"
+msgstr "お支払い方法分析へようこそ！"
 
 msgid "West African CFA franc"
 msgstr "西アフリカCFAフラン"
@@ -1083,53 +2456,149 @@ msgstr "西アフリカCFAフラン"
 msgid "When"
 msgstr "いつ"
 
-msgid "When a shopper starts typing the street address, they will get autocomplete suggestions"
-msgstr "買い物客が住所を入力し始めると、オートコンプリートの候補が表示されます"
+msgid "When a shopper starts typing the street address, they will get autocomplete suggestions."
+msgstr "買い物客が住所の入力を開始すると、オートコンプリートの候補が表示されます。"
+
+msgid "When checked, the rate will update automatically on the schedule set in “Frequency of auto-update” in the settings above"
+msgstr "チェックすると、上記の設定の「自動更新の頻度」で設定したスケジュールでレートが自動的に更新されます"
+
+msgid "When enabled, the PeachPay currency switcher will provide a currency selection on the payment page of the checkout window. The default currency will be set according to the table below, but shoppers can also select a currency when checking out. This currency switcher affects all prices on your store, not just the ones shown in the checkout window."
+msgstr "有効にすると、PeachPay通貨スイッチャーは、チェックアウトウィンドウの支払いページで通貨の選択を提供します。デフォルトの通貨は下の表に従って設定されますが、買い物客はチェックアウト時に通貨を選択することもできます。この通貨スイッチャーは、チェックアウトウィンドウに表示される価格だけでなく、ストアのすべての価格に影響します。"
+
+msgid "When the billing country matches one of these values, the payment method will be shown on the checkout page."
+msgstr "請求先の国がこれらの値のいずれかと一致すると、支払い方法がチェックアウト ページに表示されます。"
+
+msgid "When the billing country matches one of these values, the payment method will not be shown on the checkout page."
+msgstr "請求先の国がこれらの値のいずれかに一致する場合、支払い方法はチェックアウト ページに表示されません。"
+
+msgid "When the currency matches one of these values, the payment method will be shown on the checkout page."
+msgstr "通貨がこれらの値のいずれかと一致すると、支払い方法がチェックアウト ページに表示されます。"
+
+msgid "When the currency matches one of these values, the payment method will not be shown on the checkout page."
+msgstr "通貨がこれらの値のいずれかに一致する場合、支払い方法はチェックアウト ページに表示されません。"
+
+msgid "When you add a new currency, it will appear below the base currency listed on the first line"
+msgstr "新しい通貨を追加すると、最初の行に記載されている基本通貨の下に表示されます"
+
+msgid "White"
+msgstr "白"
 
 msgid "Width"
 msgstr "幅"
 
+msgid "WooCommerce methods"
+msgstr "WooCommerce メソッド"
+
+msgid "WooCommerce upsell and cross-sell"
+msgstr "WooCommerce のアップセルとクロスセル"
+
 msgid "Yemeni Rial 🇾🇪"
 msgstr "イエメンリアル🇾🇪"
+
+msgid "Yes"
+msgstr "はい"
+
+msgid "You can contact support@peachpay.app or use the"
+msgstr "support@peachpay.app に連絡するか、"
 
 msgid "You can enable test mode below and can finish setting up payment methods for PeachPay from the \"Payment methods\" tab."
 msgstr "以下のテストモードを有効にして、[お支払い方法]タブからPeachPayのお支払い方法の設定を完了することができます。"
 
-msgid "You can use the guest checkout option to pay with PayPal in test mode."
-msgstr "ゲストチェックアウトオプションを使用して、テストモードでPayPalで支払うことができます。"
-
 msgid "You have disabled all PeachPay payment methods. The PeachPay checkout window will appear, but customers will have no way to pay. Please "
 msgstr "すべてのPeachPay支払い方法を無効にしました。 PeachPayチェックアウトウィンドウが表示されますが、顧客は支払う方法がありません。お願いします"
+
+msgid "You have initiated an Apple Pay domain registration attempt. Please allow 5-10 seconds before refreshing to see if it succeeds."
+msgstr "ApplePayドメイン登録の試行を開始しました。更新が成功するかどうかを確認するために、更新する前に5〜10秒待ってください。"
+
+msgid "You have successfully connected your Authorize.net account. You may set up other payment methods in the \"Payments\" tab."
+msgstr "Authorize.net アカウントが正常に接続されました。 「支払い」タブで他の支払い方法を設定できます。"
+
+msgid "You have successfully connected your GoDaddy Poynt account. You may set up other payment methods in the \"Payments\" tab."
+msgstr "GoDaddy Point アカウントが正常に接続されました。 「支払い」タブで他の支払い方法を設定できます。"
 
 msgid "You have successfully connected your PayPal account. You may set up other payment methods in the \"Payment methods\" tab."
 msgstr "PayPalアカウントに正常に接続しました。 「お支払い方法」タブで他のお支払い方法を設定することができます。"
 
+msgid "You have successfully connected your Square account. You may set up other payment methods in the \"Payment methods\" tab."
+msgstr "Square アカウントが正常に接続されました。 「お支払い方法」タブで他のお支払い方法を設定できます。"
+
 msgid "You have successfully connected your Stripe account. You may set up other payment methods in the \"Payment methods\" tab."
 msgstr "Stripeアカウントに正常に接続しました。 「お支払い方法」タブで他のお支払い方法を設定することができます。"
+
+msgid "You have successfully made PeachPay the only checkout method. You can undo this in the \"Payment\" tab."
+msgstr "PeachPay を唯一のチェックアウト方法にすることに成功しました。これは「支払い」タブで取り消すことができます。"
+
+msgid "You have successfully unlinked your Amazon Pay account."
+msgstr "Amazon Pay アカウントのリンクが正常に解除されました。"
+
+msgid "You have successfully unlinked your GoDaddy Poynt account."
+msgstr "GoDaddy Point アカウントのリンクが正常に解除されました。"
 
 msgid "You have successfully unlinked your PayPal account. Please revoke the API permissions in your PayPal account settings as well."
 msgstr "PayPalアカウントのリンクが正常に解除されました。 PayPalアカウント設定でもAPI権限を取り消してください。"
 
+msgid "You have successfully unlinked your Square account."
+msgstr "Square アカウントのリンクが正常に解除されました。"
+
 msgid "You have successfully unlinked your Stripe account."
 msgstr "Stripeアカウントのリンクが正常に解除されました。"
 
-msgid "You've successfully connected the Stripe account"
-msgstr "Stripeアカウントに正常に接続しました"
+msgid "You've successfully connected your Amazon Pay account with Merchant ID"
+msgstr "Amazon Pay アカウントをマーチャント ID に正常に接続しました"
 
-msgid "You've successfully connected your PayPal account with Merchant ID"
-msgstr "PayPalアカウントをマーチャントIDに正常に接続しました"
+msgid "You've successfully connected your Authorize.net account"
+msgstr "Authorize.net アカウントが正常に接続されました"
+
+msgid "You've successfully connected your Authorize.net sandbox account"
+msgstr "Authorize.net サンドボックス アカウントが正常に接続されました"
+
+msgid "You've successfully connected your GoDaddy Poynt account"
+msgstr "GoDaddy Point アカウントが正常に接続されました"
+
+msgid "You've successfully connected your PayPal account"
+msgstr "PayPal アカウントが正常に接続されました"
+
+msgid "You've successfully connected your Square account"
+msgstr "Square アカウントが正常に接続されました"
+
+msgid "You've successfully connected your Stripe account"
+msgstr "Stripe アカウントが正常に接続されました"
+
+msgid "You\'re all set with PeachPay"
+msgstr "PeachPay の設定が完了しました"
+
+msgid "You\'re good to go with PeachPay"
+msgstr "PeachPay をご利用いただきありがとうございます"
+
+msgid "Your Amazon account has successfully been linked with PeachPay! Please refresh page or save changes."
+msgstr "あなたのAmazonアカウントがPeachPayと連携しました！ページを更新するか、変更を保存してください。"
+
+msgid "Your free trial ends in %1$d day(s) on %2$s. Add a payment method to keep using PeachPay\'s premium features uninterrupted."
+msgstr "無料トライアルは %2$s に %1$d 日後に終了します。お支払い方法を追加して、PeachPay のプレミアム機能を引き続きご利用ください。"
 
 msgid "Zambian Kwacha 🇿🇲"
 msgstr "ザンビアクワチャ🇿🇲"
 
-msgid "and CVC:"
-msgstr "およびCVC："
+msgid "and CVC"
+msgstr "とCVC"
+
+msgid "browsers"
+msgstr "ブラウザ"
+
+msgid "button in the PeachPay checkout."
+msgstr "PeachPayチェックアウトのボタン。"
+
+msgid "card"
+msgstr "カード"
 
 msgid "choose \"Approve\" on the permission screen"
 msgstr "許可画面で「承認」を選択します"
 
-msgid "dashboard"
-msgstr "ダッシュボード"
+msgid "eCheck Type"
+msgstr "eチェックタイプ"
+
+msgid "echeck"
+msgstr "チェック"
 
 msgid "enable at least one payment method"
 msgstr "少なくとも1つの支払い方法を有効にする"
@@ -1137,8 +2606,35 @@ msgstr "少なくとも1つの支払い方法を有効にする"
 msgid "fees"
 msgstr "料金"
 
+msgid "here."
+msgstr "ここ。"
+
+msgid "hover/tap"
+msgstr "ホバー/タップ"
+
+msgid "iDEAL Bank"
+msgstr "理想の銀行"
+
+msgid "ie 12,45,32"
+msgstr "すなわち12,45,32"
+
+msgid "ie 99"
+msgstr "すなわち99"
+
 msgid "if you are using a language switcher plugin."
 msgstr "言語スイッチャープラグインを使用している場合。"
+
+msgid "inline"
+msgstr "列をなして"
+
+msgid "operating systems"
+msgstr "オペレーティングシステム"
+
+msgid "or as a"
+msgstr "またはとして"
+
+msgid "orders"
+msgstr "注文"
 
 msgid "payment methods"
 msgstr "お支払い方法"
@@ -1146,15 +2642,20 @@ msgstr "お支払い方法"
 msgid "powered by Stripe and any associated"
 msgstr "Stripeおよび関連するものを搭載"
 
-msgid "settings to be used in the PeachPay checkout."
-msgstr "PeachPayチェックアウトで使用される設定。"
+msgid "refresh"
+msgstr "リフレッシュ"
 
-msgid "test mode"
-msgstr "テストモード"
+msgid "support chat"
+msgstr "サポートチャット"
 
-msgid "these instructions."
-msgstr "これらの指示。"
+msgid "these instructions"
+msgstr "これらの指示"
 
-msgid "with expiration:"
-msgstr "有効期限付き："
+msgid "total volume"
+msgstr "全容積"
 
+msgid "weekly"
+msgstr "毎週"
+
+msgid "with expiration"
+msgstr "有効期限付き"

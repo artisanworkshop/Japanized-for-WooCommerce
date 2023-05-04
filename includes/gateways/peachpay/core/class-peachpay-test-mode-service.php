@@ -31,11 +31,10 @@ class PeachPay_Test_Mode_Service {
 
 		if ( peachpay_is_test_mode() && 'toplevel_page_peachpay' === $screen_name ) {
 			?>
-				<div class='pp-test-notice-bar'></div>
-				<div class='pp-test-notice'>
-					<p>
-						<b><?php echo esc_html_e( 'TEST MODE', 'woocommerce-for-japan' ); ?></b>
-					</p>
+				<div class='pp-test-notice-wrapper'>
+					<div class='pp-test-notice'>
+						<?php echo esc_html_e( 'TEST MODE', 'peachpay-for-woocommerce' ); ?>
+					</div>
 				</div>
 			<?php
 		}

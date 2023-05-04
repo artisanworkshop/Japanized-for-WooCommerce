@@ -46,7 +46,7 @@ function peachpay_wcsatt_filter_add_cart_item_meta( $pp_cart_item, $wc_line_item
  * @param array $calculated_carts Carts calculated to be shown in the peachpay modal.
  */
 function peachpay_wcsatt_calculate_recurring_carts( $calculated_carts ) {
-	WC_Subscriptions_Cart::calculate_subscription_totals( WC()->cart->get_total(), WC()->cart );
+	WC_Subscriptions_Cart::calculate_subscription_totals( WC()->cart->total, WC()->cart );
 
 	if ( is_array( WC()->cart->recurring_carts ) || is_object( WC()->cart->recurring_carts ) ) {
 		foreach ( WC()->cart->recurring_carts as $key => $cart ) {

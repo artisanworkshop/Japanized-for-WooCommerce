@@ -48,4 +48,9 @@ function peachpay_migrate_general_settings_option() {
 		peachpay_set_settings_option( 'peachpay_general_options', 'address_autocomplete', 1 );
 		update_option( 'peachpay_migrated_address_autocomplete', 1 );
 	}
+
+	if ( ! get_option( 'peachpay_migrated_wc_country_locale' ) ) {
+		peachpay_set_settings_option( 'peachpay_general_options', 'use_wc_country_locale', 1 );
+		update_option( 'peachpay_migrated_wc_country_locale', 1 );
+	}
 }

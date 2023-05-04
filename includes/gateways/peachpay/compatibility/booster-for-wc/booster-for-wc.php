@@ -20,11 +20,11 @@ const BOOSTER_DATA_KEY = 'wcj_data';
  */
 function peachpay_booster_init() {
 
-	if ( WCJ()->modules['product_addons']->is_enabled() ) {
+	if ( isset( WCJ()->modules['product_addons'] ) && WCJ()->modules['product_addons']->is_enabled() ) {
 		include_once PEACHPAY_ABSPATH . 'compatibility/booster-for-wc/booster-product-addons.php';
 	}
 
-	if ( WCJ()->modules['shipping_description']->is_enabled() ) {
+	if ( isset( WCJ()->modules['shipping_description'] ) && WCJ()->modules['shipping_description']->is_enabled() ) {
 		include_once PEACHPAY_ABSPATH . 'compatibility/booster-for-wc/booster-shipping-description.php';
 	}
 

@@ -15,7 +15,7 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  * @param WP_REST_Request $request The current http request.
  */
 function peachpay_coupon_rest( WP_REST_Request $request ) {
-	$code    = $request['code'];
+	$code    = urldecode( $request['code'] );
 	$args    = array(
 		'posts_per_page' => -1,
 		'orderby'        => 'ID',

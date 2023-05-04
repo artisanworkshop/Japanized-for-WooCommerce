@@ -1,4 +1,9 @@
 <?php
+/**
+ * Paidy endpoint.
+ *
+ * @package WooCommerce\Gateways
+ */
 use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
 
 add_action( 'rest_api_init', function () {

@@ -127,79 +127,66 @@ function peachpay_product_variation_name( $id ) {
  * or the option is turned off.
  */
 function peachpay_product_image( WC_Product $product ) {
-	if ( peachpay_get_settings_option( 'peachpay_general_options', 'display_product_images' ) ) {
-		return wp_get_attachment_image_src( $product->get_image_id() );
-	}
+	return wp_get_attachment_image_src( $product->get_image_id() );
 }
 
 /**
- * Retrieve the given product's upsell item data for use in the checkout window.
+ * Check if bundle product contains variation product
  *
- * @param WC_Product $product The product to get upsell item's data for.
- * @return array|false Upsell item data for the product, or false it it doesn't
- * exist or the option is turned off.
+ * @param WC_Product_Bundle $bundle The bundle product to get product data from.
  */
-function peachpay_upsell_items( WC_Product $product ) {
-	if ( peachpay_get_settings_option( 'peachpay_related_products_options', 'hide_woocommerce_products_upsell' ) ) {
-		return false;
-	}
-
-	$upsell_ids = $product->get_upsell_ids();
-	if ( ! $upsell_ids ) {
-		return;
-	}
-	$upsell_items = array();
-	foreach ( $upsell_ids as $upsell_id ) {
-		$upsell = wc_get_product( $upsell_id );
-
-		if ( ! $upsell ) {
-			break;
+function peachpay_is_variation_bundle( WC_Product_Bundle $bundle ) {
+	$bundle_products = $bundle->get_bundled_items();
+	foreach ( $bundle_products as $bundle_product ) {
+		$product = $bundle_product->get_product();
+		if ( $product->is_type( 'variable' ) ) {
+			return true;
 		}
-		$item = array(
-			'id'        => $upsell->get_id(),
-			'name'      => $upsell->get_name(),
-			'price'     => $upsell->get_price(),
-			'variable'  => $upsell->is_type( 'variable' ),
-			'bundle'    => $upsell->is_type( 'bundle' ),
-			'img_src'   => is_array( peachpay_product_image( $upsell ) ) ? peachpay_product_image( $upsell )[0] : '',
-			'has_stock' => $upsell->get_stock_status() === 'instock',
-		);
-		array_push( $upsell_items, $item );
 	}
-	return $upsell_items;
+	return false;
 }
 
 /**
- * Retrieve the given product's cross-sell item data for use in the checkout window.
+ * Get variable product's attribute data.
  *
- * @param WC_Product $product The product to get cross-sell item's data for.
- * @return array|false Cross-sell item data for the product, or false it it doesn't
- * exist or the option is turned off.
+ * @param WP_Product $product Variation product.
  */
-function peachpay_cross_sell_items( WC_Product $product ) {
-	if ( peachpay_get_settings_option( 'peachpay_related_products_options', 'hide_woocommerce_products_cross_sell' ) ) {
-		return false;
-	}
-	$cross_sell_ids = $product->get_cross_sell_ids();
-	if ( ! $cross_sell_ids ) {
-		return;
-	}
-	$cross_sell_items = array();
-	foreach ( $cross_sell_ids as $cross_sell_id ) {
-		$cross_sell = wc_get_product( $cross_sell_id );
-		if ( ! $cross_sell ) {
-			break;
-		}
-		$item = array(
-			'id'        => $cross_sell->get_id(),
-			'name'      => $cross_sell->get_name(),
-			'price'     => $cross_sell->get_price(),
-			'variable'  => $cross_sell->is_type( 'variable' ),
-			'bundle'    => $cross_sell->is_type( 'bundle' ),
-			'img_src'   => is_array( peachpay_product_image( $cross_sell ) ) ? peachpay_product_image( $cross_sell )[0] : '',
-			'has_stock' => $cross_sell->get_stock_status() === 'instock',
+function peachpay_get_attribute_data( $product ) {
+	$attributes = $product->get_attributes();
+	$attr_data  = array();
+	foreach ( $attributes as $attr ) {
+		$data = array(
+			'label'   => wc_attribute_label( $attr['name'] ),
+			'name'    => sanitize_title( $attr['name'] ),
+			'options' => $attr->get_slugs(),
 		);
-		array_push( $cross_sell_items, $item );
+
+		array_push( $attr_data, $data );
 	}
-	return $cross_sell_items;
+	return $attr_data;
+}
+
+/**
+ * Get Woocommerce product's default price html.
+ *
+ * @param WP_Product $product Woocommerce product.
+ */
+function peachpay_get_product_price_html( $product ) {
+	$price = '';
+	if ( '' === $product->get_price() ) {
+		$price = apply_filters( 'woocommerce_empty_price_html', '', $product );
+	} elseif ( $product->is_on_sale() ) {
+		$price = wc_format_sale_price( wc_get_price_to_display( $product, array( 'price' => $product->get_regular_price() ) ), wc_get_price_to_display( $product ) ) . $product->get_price_suffix();
+	} else {
+		$price = wc_price( wc_get_price_to_display( $product ) ) . $product->get_price_suffix();
+	}
+
+	if ( $product->is_type( 'variable' ) ) {
+		$min_price = $product->get_variation_price( 'min', true );
+		$max_price = $product->get_variation_price( 'max', true );
+		$min_price !== $max_price ?
+		$price     = wc_format_price_range( $min_price, $max_price ) : '';
+	}
+
+	return $price;
 }

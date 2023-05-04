@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta charset="UTF-8">
+	<meta name="robots" content="noindex">
+	<meta name="googlebot" content="noindex">
+</head>
+
+<body>
+	<div id="amazonPay" style="display: none;"></div>
+	<div style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+		<div style="text-align: center;">
+			<svg id="loading-spinner" style="display: none;" onload="document.getElementById('loading-spinner').style.display = '';" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" viewBox="0 0 128 128" xml:space="preserve" class="pp-spinner"><g><circle cx="16" cy="64" r="16" fill-opacity="1"></circle><circle cx="16" cy="64" r="16" fill-opacity="0.67" transform="rotate(45,64,64)"></circle><circle cx="16" cy="64" r="16" fill-opacity="0.42" transform="rotate(90,64,64)"></circle><circle cx="16" cy="64" r="16" fill-opacity="0.2" transform="rotate(135,64,64)"></circle><circle cx="16" cy="64" r="16" fill-opacity="0.12" transform="rotate(180,64,64)"></circle><circle cx="16" cy="64" r="16" fill-opacity="0.12" transform="rotate(225,64,64)"></circle><circle cx="16" cy="64" r="16" fill-opacity="0.12" transform="rotate(270,64,64)"></circle><circle cx="16" cy="64" r="16" fill-opacity="0.12" transform="rotate(315,64,64)"></circle><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="800ms" repeatCount="indefinite"></animateTransform></g></svg>
+			<h3 style="font-weight: 400; font-size: 1.5em;">Please wait...</h3>
+		</div>
+	</div>
+	<style>
+		.pp-spinner {
+			width: 10vw;
+			display: inline;
+			vertical-align: middle;
+			color: #21105d;
+			fill: #21105d;
+		}
+	</style>
+	<script>
+		const params = (new URL(document.location)).searchParams;
+		const amazonCheckoutSessionId = params.get("amazonCheckoutSessionId");
+
+		// This conditional logic occurs when the amazon pay checkout redirects back to this .html file
+		if (amazonCheckoutSessionId !== null) {
+			window.opener.postMessage({ event: 'pp-amazon-checkout-complete', sessionId: amazonCheckoutSessionId }, '*');
+			window.close();
+		}
+
+		window.onclose = () => {
+			window.opener.postMessage({ event: 'pp-amazon-popup-closed'});
+		}
+
+		const amazonData = JSON.parse(atob(params.get("amazon_data")));
+
+		const amazonScript = document.createElement('script');
+		amazonScript.setAttribute('src', amazonData.scriptLink);
+		document.head.appendChild(amazonScript);
+		amazonScript.onload = () => {
+			// Prevent Amazon Pay from opening another popup within our popup and just change our popup location
+			window.open = function (url, windowName, windowFeatures) {
+				window.location.href = url;
+			};
+			
+			try {
+				const { buttonData, initCheckoutData } = amazonData;
+
+				// Needed to simulate a "fake" amazon pay button click
+				const amazonPayButton = amazon.Pay.renderButton('#amazonPay', buttonData);
+				amazonPayButton.initCheckout(initCheckoutData);
+			} catch (e) {
+				window.close();
+				window.opener.postMessage({event: 'pp-amazon-checkout-failed', message: e.toString().replace('AmazonPay:\n', '')})
+			}
+		}
+
+	</script>
+</body>
+
+</html>

@@ -17,7 +17,7 @@ add_filter( 'peachpay_script_data', 'peachpay_button_before_after_cart', 20, 1 )
  * @param array $data The script data.
  */
 function peachpay_button_before_after_cart( $data ) {
-	$data['product_page_button_before_after'] = peachpay_get_settings_option( 'peachpay_button_options', 'product_button_position', 'beforebegin' );
+	$data['product_page_button_before_after'] = peachpay_get_settings_option( 'peachpay_express_checkout_button', 'product_button_position', 'beforebegin' );
 
 	return $data;
 }

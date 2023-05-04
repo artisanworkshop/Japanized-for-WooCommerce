@@ -101,20 +101,20 @@ class PeachPay_Dependency_Service {
 		if ( $this->woocommerce_missing ) {
 			?>
 			<div class="notice peachpay-notice <?php echo esc_attr( 'notice-error' ); ?>">
-				<p><b><?php echo esc_html_e( 'PeachPay for WooCommerce', 'woocommerce-for-japan' ); ?></b></p>
-				<p><?php echo esc_html_e( 'PeachPay requires the WooCommerce plugin to be installed and active.', 'woocommerce-for-japan' ); ?></p>
+				<p><b><?php echo esc_html_e( 'PeachPay for WooCommerce', 'peachpay-for-woocommerce' ); ?></b></p>
+				<p><?php echo esc_html_e( 'PeachPay requires the WooCommerce plugin to be installed and active.', 'peachpay-for-woocommerce' ); ?></p>
 			</div>
 			<?php
 		}
 		if ( $this->permalink_plain ) {
 			?>
 			<div class="notice peachpay-notice <?php echo esc_attr( 'notice-error' ); ?>">
-				<p><b><?php echo esc_html_e( 'PeachPay for WooCommerce', 'woocommerce-for-japan' ); ?></b></p>
+				<p><b><?php echo esc_html_e( 'PeachPay for WooCommerce', 'peachpay-for-woocommerce' ); ?></b></p>
 				<p>
 				<?php
-				echo esc_html_e( 'PeachPay requires the WordPress permalink structure to be set to anything other than "Plain". ', 'woocommerce-for-japan' );
-					echo '<a href="/wp-admin/options-permalink.php">';
-					echo esc_html_e( 'Change this setting here', 'woocommerce-for-japan' );
+				echo esc_html_e( 'PeachPay requires the WordPress permalink structure to be set to anything other than "Plain". ', 'peachpay-for-woocommerce' );
+					echo '<a href="' . esc_url_raw( site_url( '/wp-admin/options-permalink.php' ) ) . '">';
+					echo esc_html_e( 'Change this setting here', 'peachpay-for-woocommerce' );
 					echo '</a>';
 				?>
 					</p>

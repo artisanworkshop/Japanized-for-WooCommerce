@@ -17,27 +17,7 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  */
 function peachpay_migrate_button_settings_option() {
 	$button_options = get_option( 'peachpay_button_options', array() );
-	// Set default values for flipped button settings.
-	if ( ! get_option( 'peachpay_set_default_button_settings' ) ) {
-		// Flipped settings.
-		$button_options['button_display_payment_method_icons'] = 1;
-		$button_options['display_checkout_outline']            = 1;
-		$button_options['display_on_product_page']             = 1;
-		$button_options['cart_page_enabled']                   = 1;
-		$button_options['checkout_page_enabled']               = 1;
-		$button_options['mini_cart_enabled']                   = 1;
-		$button_options['floating_button_enabled']             = 1;
-		$button_options['floating_button_icon']                = 'shopping_cart';
 
-		// Alignment settings.
-		! isset( $button_options['product_button_alignment'] ) ? $button_options['product_button_alignment']   = 'left' : '';
-		! isset( $button_options['product_button_position'] ) ? $button_options['product_button_position']     = 'beforebegin' : '';
-		! isset( $button_options['cart_button_alignment'] ) ? $button_options['cart_button_alignment']         = 'full' : '';
-		! isset( $button_options['checkout_button_alignment'] ) ? $button_options['checkout_button_alignment'] = 'center' : '';
-		! isset( $button_options['floating_button_alignment'] ) ? $button_options['floating_button_alignment'] = 'right' : '';
-
-		update_option( 'peachpay_set_default_button_settings', 1 );
-	}
 	// Migrate settings options if any existed.
 	if ( isset( $button_options['button_hide_payment_method_icons'] ) ) {
 		$button_options['button_display_payment_method_icons'] = ! $button_options['button_hide_payment_method_icons'];

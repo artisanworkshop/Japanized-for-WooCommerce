@@ -18,6 +18,10 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 function peachpay_starts_with( $haystack, $needle ) {
 	$length = strlen( $needle );
 
+	if ( 0 === $length ) {
+		return false;
+	}
+
 	return ( substr( $haystack, 0, $length ) === $needle );
 }
 
@@ -32,4 +36,14 @@ function peachpay_ends_with( $haystack, $needle ) {
 	$start  = $length * - 1;
 
 	return ( substr( $haystack, $start ) === $needle );
+}
+
+/**
+ * Truncates a string to a given length. If the length is already less then the given length then the original string is returned.
+ *
+ * @param string $string The string to truncate.
+ * @param int    $length The length to truncate the string to.
+ */
+function peachpay_truncate_str( $string, $length ) {
+	return ( strlen( $string ) > $length ) ? substr( $string, 0, $length ) : $string;
 }

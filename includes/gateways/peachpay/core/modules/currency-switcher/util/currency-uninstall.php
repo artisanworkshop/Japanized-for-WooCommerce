@@ -14,23 +14,28 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  */
 function peachpay_unschedule_all_currency() {
 	$times = array(
+		'none',
 		'15minute',
 		'30minute',
 		'hourly',
-		'2hour',
 		'6hour',
 		'12hour',
-		'day',
+		'daily',
 		'2day',
 		'weekly',
 		'biweekly',
 		'monthly',
+		'custom',
 	);
 
+	while ( wp_next_scheduled( 'peachpay_update_currency' ) ) {
+		$timestamp = wp_next_scheduled( 'peachpay_update_currency' );
+		wp_unschedule_event( $timestamp, 'peachpay_update_currency' );
+	}
 	foreach ( $times as $time ) {
-		if ( wp_next_scheduled( 'peachpay_update_currency', array( $time ) ) ) {
+		while ( wp_next_scheduled( 'peachpay_update_currency', array( $time ) ) ) {
 			$timestamp = wp_next_scheduled( 'peachpay_update_currency', array( $time ) );
-			wp_unschedule_event( $timestamp, 'peachpay_active_currency', array( $time ) );
+			wp_unschedule_event( $timestamp, 'peachpay_update_currency', array( $time ) );
 		}
 	}
 }

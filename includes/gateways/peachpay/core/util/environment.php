@@ -13,8 +13,8 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  * Gets the current URL.
  */
 function peachpay_get_current_url() {
-	// PHPCS:ignore
-	return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	// phpcs:ignore
+	return home_url( $_SERVER['REQUEST_URI'] );
 }
 
 /**
@@ -90,7 +90,11 @@ function peachpay_is_staging_site() {
 		case 'https://theme4.peachpay.app':
 		case 'https://theme5.peachpay.app':
 		case 'https://qa.peachpay.app':
+		case 'https://qa-david.peachpay.app':
+		case 'https://qa-vikrant.peachpay.app':
+		case 'https://demo-plum.peachpay.app':
 		case 'https://demo.peachpay.app':
+		case 'https://ui-test.peachpay.app':
 			return true;
 		default:
 			return false;

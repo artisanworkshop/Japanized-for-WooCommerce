@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Japanized for WooCommerce
  * Framework Name: Artisan Workshop FrameWork for WooCommerce
- * Framework Version : 2.0.11
+ * Framework Version : 2.0.12
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Text Domain: woocommerce-for-japan
@@ -36,6 +36,6 @@ return apply_filters(
         'community_info_04' => __('Join Us!', 'woocommerce-for-japan' ),
         'author_info_01' => __( 'Created by', 'woocommerce-for-japan' ),
         'author_info_02' => __( 'WooCommerce Doc in Japanese', 'woocommerce-for-japan' ),
-        'framework_version' => JP4WC_FRAMEWORK_VERSION,
+        'framework_version' => '2.0.12',
     )
 );

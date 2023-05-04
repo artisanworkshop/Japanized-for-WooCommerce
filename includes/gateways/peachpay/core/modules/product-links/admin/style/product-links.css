@@ -1,0 +1,39 @@
+
+#active_product_container{
+	display: flex;
+	overflow-x: overlay;
+	max-width: 900px;
+}
+
+.peachpay-product-links-product{
+	text-align: center;
+	margin: 5px;
+}
+
+.pp-product-links-remove-container {
+	display: flex;
+	justify-content: right;
+}
+
+.pp-product-links-remove:hover{
+	cursor: pointer;
+	color:red;
+}
+
+input:invalid {
+	border-color: red;
+}
+
+.peachpay-setting-section.product-links{
+	gap: 0px;
+}
+
+.peachpay-setting-section.product-links h3{
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
+
+
+.peachpay-setting-section.product-links p{
+	margin-top: 0px
+}

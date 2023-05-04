@@ -74,24 +74,7 @@
     </div>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        // JS in this file needs to be able to support as many browsers 
-        // as we can manage. That means no use of newer JS features will
-        // be used(async/await,const,let,... etc).
-
-        let PEACHPAY_SESSION_KEY = 'PP_SESSION_KEY';
-
-        function buildStripeOptions(state) {
-            if (state.connectId) {
-                return {
-                    locale: 'auto',
-                    stripeAccount: state.connectId,
-                };
-            } else {
-                return {
-                    locale: 'auto',
-                };
-            }
-        }
+        const PEACHPAY_SESSION_KEY = 'PP_SESSION_KEY';
 
         function retrieveState() {
             var rawState = new URLSearchParams(window.location.search).get(
@@ -102,11 +85,10 @@
                 return null;
             }
 
-            return JSON.parse(atob(rawState));
+            return JSON.parse(atob(decodeURIComponent(rawState)));
         }
 
         function revealManualRedirect(url, color) {
-            clearSession();
             window.top.location.href = url;
 
             var $a = document.querySelector("#pp-manual-redirect");
@@ -126,7 +108,7 @@
             );
 
             if (!clientSecret) {
-                revealManualRedirect(state.failureURL, state.color);
+                revealManualRedirect(state.failure_url, state.color);
                 return;
             }
 
@@ -137,48 +119,22 @@
                     switch (paymentIntent.status) {
                         case "succeeded":
                         case "processing":
-                            revealManualRedirect(state.successURL, state.color);
+                        case "requires_capture":
+                            clearSession();
+                            revealManualRedirect(state.success_url, state.color);
                             return;
+                        case "requires_payment_method":
                         default:
-                            cancelPaymentIntent(state, paymentIntent.id, function () {
-                                revealManualRedirect(state.failureURL, state.color);
-                            })
+                            revealManualRedirect(state.failure_url, state.color);
                             return;
                     }
                 }
             }).catch(function () {
-                revealManualRedirect(state.failureURL, state.color);
+                revealManualRedirect(state.failure_url, state.color);
                 return;
             });
 
             return;
-        }
-
-        function cancelPaymentIntent(state, paymentIntentId, callback) {
-            try {
-                fetch(state.intentCancelURL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session: {
-                            id: state.sessionId,
-                            merchant_url: location.hostname,
-                            stripe: {
-                                connect_id: state.connectId,
-                                payment_intent_id: paymentIntentId,
-                                cancellation_reason: 'requested_by_customer'
-                            },
-                        },
-                    }),
-                }).then(function () {
-                    callback();
-                }).catch(function () {
-
-                    callback();
-                });
-            } catch (error) {
-                callback();
-            }
         }
 
         function clearSession() {
@@ -189,21 +145,22 @@
             }
         }
 
-
         (function main() {
             var state = retrieveState();
             if (!state) {
                 // if the state is not defined we do not know where to redirect too. Best 
-                // thing to do is just get them off our page so they can continue. Perhaps
-                // this should only be a manual redirect with a message of "something went
-                // wrong".
+                // thing to do is just get them off our page so they can continue.
                 window.top.location.pathname = "";
                 return;
             }
 
-            var stripe = Stripe(state.key, buildStripeOptions(state));
+            var stripe = Stripe(state.public_key, {
+                locale: 'auto',
+                stripeAccount: state.connect_id,
+            });
+
             if (!stripe) {
-                revealManualRedirect(state.failureURL, state.color);
+                revealManualRedirect(state.failure_url, state.color);
                 return;
             }
 
