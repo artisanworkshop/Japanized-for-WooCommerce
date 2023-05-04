@@ -59,6 +59,10 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
+= 2.5.8 - 2023-05-04 =
+* Update - PayPal Payment 2.0.4.
+* Fixed - Law Page setting.
+
 = 2.5.7 - 2023-05-02 =
 * Update - PeachPay 1.91.5.
 * Update - Fixed Reflected Cross-Site Scripting.

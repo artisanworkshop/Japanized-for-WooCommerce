@@ -12,8 +12,9 @@
  * WC tested up to: 7.5
  * Text Domain: woocommerce-paypal-payments
  *
- * Fixed module/ppcp-api-client/src/Factory/AddressFactory.php by Shohei Tanaka for Japanese situation.(2022/05/30)
+ * Fixed module/ppcp-api-client/src/Factory/AddressFactory.php by Shohei Tanaka for Japanese situation.(2023/05/04)
  * Fixed module/ppcp-api-client/services.php by Shohei Tanaka for Japanese situation.(2023/05/04)
+ * Fixed module/ppcp-api-client/src/Endpoint/RequestTrait.php by Shohei Tanaka for Japanese situation.(2023/05/04)
  * @package WooCommerce\PayPalCommerce
  */
 
