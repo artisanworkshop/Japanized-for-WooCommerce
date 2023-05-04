@@ -118,7 +118,7 @@ class PaymentTokenEndpoint {
 		$response = $this->request( $url, $args );
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not fetch payment token.', 'woocommerce-paypal-payments' )
+				__( 'Could not fetch payment token.', 'woocommerce-for-japan' )
 			);
 			$this->logger->log(
 				'warning',
@@ -181,7 +181,7 @@ class PaymentTokenEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not delete payment token.', 'woocommerce-paypal-payments' )
+				__( 'Could not delete payment token.', 'woocommerce-for-japan' )
 			);
 			$this->logger->log(
 				'warning',

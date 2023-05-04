@@ -21,7 +21,7 @@ class Messages {
 	public static function generic_payment_error_message(): string {
 		return apply_filters(
 			'woocommerce_paypal_payments_generic_payment_error_message',
-			__( 'Failed to process the payment. Please try again or contact the shop admin.', 'woocommerce-paypal-payments' )
+			__( 'Failed to process the payment. Please try again or contact the shop admin.', 'woocommerce-for-japan' )
 		);
 	}
 }

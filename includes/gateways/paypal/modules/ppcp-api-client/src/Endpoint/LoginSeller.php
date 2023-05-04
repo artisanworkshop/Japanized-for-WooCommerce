@@ -89,7 +89,7 @@ class LoginSeller {
 		$response = $this->request( $url, $args );
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not fetch credentials.', 'woocommerce-paypal-payments' )
+				__( 'Could not fetch credentials.', 'woocommerce-for-japan' )
 			);
 			$this->logger->log(
 				'warning',
@@ -109,7 +109,7 @@ class LoginSeller {
 					$json,
 					$status_code
 				) : new RuntimeException(
-					__( 'Credentials not found.', 'woocommerce-paypal-payments' )
+					__( 'Credentials not found.', 'woocommerce-for-japan' )
 				);
 			$this->logger->log(
 				'warning',
@@ -158,7 +158,7 @@ class LoginSeller {
 
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not create token.', 'woocommerce-paypal-payments' )
+				__( 'Could not create token.', 'woocommerce-for-japan' )
 			);
 			$this->logger->log(
 				'warning',
@@ -179,7 +179,7 @@ class LoginSeller {
 					$json,
 					$status_code
 				) : new RuntimeException(
-					__( 'No token found.', 'woocommerce-paypal-payments' )
+					__( 'No token found.', 'woocommerce-for-japan' )
 				);
 			$this->logger->log(
 				'warning',

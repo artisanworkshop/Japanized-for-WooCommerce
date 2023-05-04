@@ -28,7 +28,7 @@ class PaymentTokensRenderer {
 		<table class="shop_table shop_table_responsive">
 			<thead>
 			<tr>
-				<th><?php echo esc_html__( 'Payment sources', 'woocommerce-paypal-payments' ); ?></th>
+				<th><?php echo esc_html__( 'Payment sources', 'woocommerce-for-japan' ); ?></th>
 				<th></th>
 			</tr>
 			</thead>
@@ -41,7 +41,7 @@ class PaymentTokensRenderer {
 						<tr>
 							<td><?php echo esc_attr( $source->card->brand ) . ' ...' . esc_attr( $source->card->last_digits ); ?></td>
 							<td>
-								<a class="ppcp-delete-payment-button" id="<?php echo esc_attr( $token->id() ); ?>" href=""><?php echo esc_html__( 'Delete', 'woocommerce-paypal-payments' ); ?></a>
+								<a class="ppcp-delete-payment-button" id="<?php echo esc_attr( $token->id() ); ?>" href=""><?php echo esc_html__( 'Delete', 'woocommerce-for-japan' ); ?></a>
 							</td>
 						</tr>
 					<?php
@@ -51,7 +51,7 @@ class PaymentTokensRenderer {
 						<tr>
 							<td><?php echo esc_attr( $source->paypal->payer->email_address ); ?></td>
 							<td>
-								<a class="ppcp-delete-payment-button" id="<?php echo esc_attr( $token->id() ); ?>" href=""><?php echo esc_html__( 'Delete', 'woocommerce-paypal-payments' ); ?></a>
+								<a class="ppcp-delete-payment-button" id="<?php echo esc_attr( $token->id() ); ?>" href=""><?php echo esc_html__( 'Delete', 'woocommerce-for-japan' ); ?></a>
 							</td>
 						</tr>
 					<?php
@@ -75,7 +75,7 @@ class PaymentTokensRenderer {
 		ob_start();
 		?>
 		<div class="woocommerce-Message woocommerce-Message--info woocommerce-info">
-			<?php echo esc_html__( 'No payments available yet.', 'woocommerce-paypal-payments' ); ?>
+			<?php echo esc_html__( 'No payments available yet.', 'woocommerce-for-japan' ); ?>
 		</div>
 		<?php
 		return ob_get_clean();

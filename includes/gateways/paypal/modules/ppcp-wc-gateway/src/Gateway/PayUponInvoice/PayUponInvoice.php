@@ -390,24 +390,24 @@ class PayUponInvoice {
 				}
 
 				if ( 'DE' !== $fields['billing_country'] ) {
-					$errors->add( 'validation', __( 'Billing country not available.', 'woocommerce-paypal-payments' ) );
+					$errors->add( 'validation', __( 'Billing country not available.', 'woocommerce-for-japan' ) );
 				}
 
 				// phpcs:ignore WordPress.Security.NonceVerification.Missing
 				$birth_date = wc_clean( wp_unslash( $_POST['billing_birth_date'] ?? '' ) );
 				if ( ( $birth_date && is_string( $birth_date ) && ! $this->checkout_helper->validate_birth_date( $birth_date ) ) || $birth_date === '' ) {
-					$errors->add( 'validation', __( 'Invalid birth date.', 'woocommerce-paypal-payments' ) );
+					$errors->add( 'validation', __( 'Invalid birth date.', 'woocommerce-for-japan' ) );
 				}
 
 				// phpcs:ignore WordPress.Security.NonceVerification.Missing
 				$national_number = wc_clean( wp_unslash( $_POST['billing_phone'] ?? '' ) );
 				if ( ! $national_number ) {
-					$errors->add( 'validation', __( 'Phone field cannot be empty.', 'woocommerce-paypal-payments' ) );
+					$errors->add( 'validation', __( 'Phone field cannot be empty.', 'woocommerce-for-japan' ) );
 				}
 				if ( $national_number ) {
 					$numeric_phone_number = preg_replace( '/[^0-9]/', '', $national_number );
 					if ( $numeric_phone_number && ! preg_match( '/^[0-9]{1,14}?$/', $numeric_phone_number ) ) {
-						$errors->add( 'validation', __( 'Phone number size must be between 1 and 14', 'woocommerce-paypal-payments' ) );
+						$errors->add( 'validation', __( 'Phone number size must be between 1 and 14', 'woocommerce-for-japan' ) );
 					}
 				}
 			},
@@ -470,13 +470,13 @@ class PayUponInvoice {
 					$error_messages = array();
 					$pui_gateway    = WC()->payment_gateways->payment_gateways()[ PayUponInvoiceGateway::ID ];
 					if ( $pui_gateway->get_option( 'brand_name' ) === '' ) {
-						$error_messages[] = esc_html__( 'Could not enable gateway because "Brand name" field is empty.', 'woocommerce-paypal-payments' );
+						$error_messages[] = esc_html__( 'Could not enable gateway because "Brand name" field is empty.', 'woocommerce-for-japan' );
 					}
 					if ( $pui_gateway->get_option( 'logo_url' ) === '' ) {
-						$error_messages[] = esc_html__( 'Could not enable gateway because "Logo URL" field is empty.', 'woocommerce-paypal-payments' );
+						$error_messages[] = esc_html__( 'Could not enable gateway because "Logo URL" field is empty.', 'woocommerce-for-japan' );
 					}
 					if ( $pui_gateway->get_option( 'customer_service_instructions' ) === '' ) {
-						$error_messages[] = esc_html__( 'Could not enable gateway because "Customer service instructions" field is empty.', 'woocommerce-paypal-payments' );
+						$error_messages[] = esc_html__( 'Could not enable gateway because "Customer service instructions" field is empty.', 'woocommerce-for-japan' );
 					}
 					if ( count( $error_messages ) > 0 ) {
 						$pui_gateway->update_option( 'enabled', 'no' );
@@ -505,7 +505,7 @@ class PayUponInvoice {
 
 					printf(
 						'<div class="notice notice-error"><p>%1$s</p></div>',
-						esc_html__( 'Could not enable gateway because the connected PayPal account is not activated for Pay upon Invoice. Reconnect your account while Onboard with Pay upon Invoice is selected to try again.', 'woocommerce-paypal-payments' )
+						esc_html__( 'Could not enable gateway because the connected PayPal account is not activated for Pay upon Invoice. Reconnect your account while Onboard with Pay upon Invoice is selected to try again.', 'woocommerce-for-japan' )
 					);
 				}
 			}
@@ -523,7 +523,7 @@ class PayUponInvoice {
 						if ( $instructions ) {
 							add_meta_box(
 								'ppcp_pui_ratepay_payment_instructions',
-								__( 'RatePay payment instructions', 'woocommerce-paypal-payments' ),
+								__( 'RatePay payment instructions', 'woocommerce-for-japan' ),
 								function() use ( $instructions ) {
 									$payment_reference   = $instructions[0] ?? '';
 									$bic                 = $instructions[1]->bic ?? '';

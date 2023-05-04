@@ -73,14 +73,14 @@ trait PaymentsStatusHandlingTrait {
 			case CaptureStatus::DECLINED:
 				$wc_order->update_status(
 					'failed',
-					__( 'Could not capture the payment.', 'woocommerce-paypal-payments' )
+					__( 'Could not capture the payment.', 'woocommerce-for-japan' )
 				);
-				throw new RuntimeException( __( 'Payment provider declined the payment, please use a different payment method.', 'woocommerce-paypal-payments' ) );
+				throw new RuntimeException( __( 'Payment provider declined the payment, please use a different payment method.', 'woocommerce-for-japan' ) );
 			case CaptureStatus::PENDING:
 			case CaptureStatus::FAILED:
 				$wc_order->update_status(
 					'on-hold',
-					__( 'Awaiting payment.', 'woocommerce-paypal-payments' )
+					__( 'Awaiting payment.', 'woocommerce-for-japan' )
 				);
 				break;
 		}
@@ -110,15 +110,15 @@ trait PaymentsStatusHandlingTrait {
 			case AuthorizationStatus::PENDING:
 				$wc_order->update_status(
 					'on-hold',
-					__( 'Awaiting payment.', 'woocommerce-paypal-payments' )
+					__( 'Awaiting payment.', 'woocommerce-for-japan' )
 				);
 				break;
 			case AuthorizationStatus::DENIED:
 				$wc_order->update_status(
 					'failed',
-					__( 'Could not get the payment authorization.', 'woocommerce-paypal-payments' )
+					__( 'Could not get the payment authorization.', 'woocommerce-for-japan' )
 				);
-				throw new RuntimeException( __( 'Payment provider declined the payment, please use a different payment method.', 'woocommerce-paypal-payments' ) );
+				throw new RuntimeException( __( 'Payment provider declined the payment, please use a different payment method.', 'woocommerce-for-japan' ) );
 		}
 	}
 
@@ -137,7 +137,7 @@ trait PaymentsStatusHandlingTrait {
 		$wc_order->add_order_note(
 			sprintf(
 				/* translators: %1$s - PENDING, DENIED, ... %2$s - text explaining the reason, ... */
-				__( 'PayPal order payment is set to %1$s status, details: %2$s', 'woocommerce-paypal-payments' ),
+				__( 'PayPal order payment is set to %1$s status, details: %2$s', 'woocommerce-for-japan' ),
 				$status,
 				$reason
 			)

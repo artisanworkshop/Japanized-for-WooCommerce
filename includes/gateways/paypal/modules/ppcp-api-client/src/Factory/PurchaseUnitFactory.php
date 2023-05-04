@@ -215,7 +215,7 @@ class PurchaseUnitFactory {
 	public function from_paypal_response( \stdClass $data ): PurchaseUnit {
 		if ( ! isset( $data->reference_id ) || ! is_string( $data->reference_id ) ) {
 			throw new RuntimeException(
-				__( 'No reference ID given.', 'woocommerce-paypal-payments' )
+				__( 'No reference ID given.', 'woocommerce-for-japan' )
 			);
 		}
 

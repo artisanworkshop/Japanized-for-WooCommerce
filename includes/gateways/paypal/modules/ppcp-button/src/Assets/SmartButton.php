@@ -287,7 +287,7 @@ class SmartButton implements SmartButtonInterface {
 
 						$default_fields['card-vault'] = sprintf(
 							'<p class="form-row form-row-wide"><label for="ppcp-credit-card-vault"><input class="ppcp-credit-card-vault" type="checkbox" id="ppcp-credit-card-vault" name="vault">%s</label></p>',
-							esc_html__( 'Save your Credit Card', 'woocommerce-paypal-payments' )
+							esc_html__( 'Save your Credit Card', 'woocommerce-for-japan' )
 						);
 						if ( $subscription_helper->cart_contains_subscription() || $subscription_helper->order_pay_contains_subscription() ) {
 							$default_fields['card-vault'] = '';
@@ -297,8 +297,8 @@ class SmartButton implements SmartButtonInterface {
 						if ( $tokens && $this->payment_token_repository->tokens_contains_card( $tokens ) ) {
 							$output = sprintf(
 								'<p class="form-row form-row-wide"><label>%1$s</label><select id="saved-credit-card" name="saved_credit_card"><option value="">%2$s</option>',
-								esc_html__( 'Or select a saved Credit Card payment', 'woocommerce-paypal-payments' ),
-								esc_html__( 'Choose a saved payment', 'woocommerce-paypal-payments' )
+								esc_html__( 'Or select a saved Credit Card payment', 'woocommerce-for-japan' ),
+								esc_html__( 'Choose a saved payment', 'woocommerce-for-japan' )
 							);
 							foreach ( $tokens as $token ) {
 								if ( isset( $token->source()->card ) ) {
@@ -856,7 +856,7 @@ class SmartButton implements SmartButtonInterface {
 				'labels'      => array(
 					'credit_card_number'       => '',
 					'cvv'                      => '',
-					'mm_yy'                    => __( 'MM/YY', 'woocommerce-paypal-payments' ),
+					'mm_yy'                    => __( 'MM/YY', 'woocommerce-for-japan' ),
 					'fields_not_valid'         => __(
 						'Unfortunately, your credit card details are not valid.',
 						'woocommerce-paypal-payments'
@@ -865,7 +865,7 @@ class SmartButton implements SmartButtonInterface {
 						'Unfortunately, we do not support your credit card.',
 						'woocommerce-paypal-payments'
 					),
-					'cardholder_name_required' => __( 'Cardholder\'s first and last name are required, please fill the checkout form required fields.', 'woocommerce-paypal-payments' ),
+					'cardholder_name_required' => __( 'Cardholder\'s first and last name are required, please fill the checkout form required fields.', 'woocommerce-for-japan' ),
 				),
 				'valid_cards' => $this->dcc_applies->valid_cards(),
 				'contingency' => $this->get_3ds_contingency(),

@@ -31,14 +31,14 @@ return function ( ContainerInterface $container, array $fields ): array {
 	$render_preview_element = function ( string $id ): string {
 		return '
 <div class="ppcp-preview ppcp-button-preview">
-	<h4>' . __( 'Preview', 'woocommerce-paypal-payments' ) . '</h4>
+	<h4>' . __( 'Preview', 'woocommerce-for-japan' ) . '</h4>
 	<div id="' . $id . '" class="ppcp-button-preview-inner"></div>
 </div>';
 	};
 
 	$smart_button_fields = array(
 		'button_style_heading'                     => array(
-			'heading'      => __( 'PayPal Smart Buttons', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'PayPal Smart Buttons', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-heading',
 			'screens'      => array(
 				State::STATE_START,
@@ -61,20 +61,20 @@ return function ( ContainerInterface $container, array $fields ): array {
 			),
 		),
 		'smart_button_locations'                   => array(
-			'title'        => __( 'Smart Button Locations', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Smart Button Locations', 'woocommerce-for-japan' ),
 			'type'         => 'ppcp-multiselect',
 			'input_class'  => array( 'wc-enhanced-select' ),
 			'default'      => $container->get( 'wcgateway.button.default-locations' ),
-			'description'  => __( 'Select where the PayPal smart buttons should be displayed.', 'woocommerce-paypal-payments' ),
+			'description'  => __( 'Select where the PayPal smart buttons should be displayed.', 'woocommerce-for-japan' ),
 			'options'      => $container->get( 'wcgateway.button.locations' ),
 			'screens'      => array( State::STATE_START, State::STATE_ONBOARDED ),
 			'requirements' => array(),
 			'gateway'      => 'paypal',
 		),
 		'smart_button_enable_styling_per_location' => array(
-			'title'        => __( 'Customize Smart Buttons Per Location', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Customize Smart Buttons Per Location', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
-			'label'        => __( 'Customize smart button style per location', 'woocommerce-paypal-payments' ),
+			'label'        => __( 'Customize smart button style per location', 'woocommerce-for-japan' ),
 			'default'      => true,
 			'screens'      => array( State::STATE_START, State::STATE_ONBOARDED ),
 			'requirements' => array(),
@@ -82,7 +82,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 		),
 		// General button styles.
 		'button_general_layout'                    => array(
-			'title'        => __( 'Button Layout', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Layout', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'classes'      => $has_enabled_separate_button_gateways ? array( 'hide' ) : array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -93,8 +93,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'vertical'   => __( 'Vertical', 'woocommerce-paypal-payments' ),
-				'horizontal' => __( 'Horizontal', 'woocommerce-paypal-payments' ),
+				'vertical'   => __( 'Vertical', 'woocommerce-for-japan' ),
+				'horizontal' => __( 'Horizontal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -104,10 +104,10 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_general_tagline'                   => array(
-			'title'        => __( 'Tagline', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Tagline', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
 			'default'      => false,
-			'label'        => __( 'Enable tagline', 'woocommerce-paypal-payments' ),
+			'label'        => __( 'Enable tagline', 'woocommerce-for-japan' ),
 			'desc_tip'     => true,
 			'description'  => __(
 				'Add the tagline. This line will only show up, if you select a horizontal layout.',
@@ -121,7 +121,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_general_label'                     => array(
-			'title'        => __( 'Button Label', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Label', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -135,10 +135,10 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'paypal'   => __( 'PayPal', 'woocommerce-paypal-payments' ),
-				'checkout' => __( 'Checkout', 'woocommerce-paypal-payments' ),
-				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-paypal-payments' ),
-				'pay'      => __( 'Pay with PayPal', 'woocommerce-paypal-payments' ),
+				'paypal'   => __( 'PayPal', 'woocommerce-for-japan' ),
+				'checkout' => __( 'Checkout', 'woocommerce-for-japan' ),
+				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-for-japan' ),
+				'pay'      => __( 'Pay with PayPal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -148,7 +148,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_general_color'                     => array(
-			'title'        => __( 'Color', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Color', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -159,11 +159,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'gold'   => __( 'Gold (Recommended)', 'woocommerce-paypal-payments' ),
-				'blue'   => __( 'Blue', 'woocommerce-paypal-payments' ),
-				'silver' => __( 'Silver', 'woocommerce-paypal-payments' ),
-				'black'  => __( 'Black', 'woocommerce-paypal-payments' ),
-				'white'  => __( 'White', 'woocommerce-paypal-payments' ),
+				'gold'   => __( 'Gold (Recommended)', 'woocommerce-for-japan' ),
+				'blue'   => __( 'Blue', 'woocommerce-for-japan' ),
+				'silver' => __( 'Silver', 'woocommerce-for-japan' ),
+				'black'  => __( 'Black', 'woocommerce-for-japan' ),
+				'white'  => __( 'White', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -173,7 +173,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_general_shape'                     => array(
-			'title'        => __( 'Shape', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Shape', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -184,8 +184,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'pill' => __( 'Pill', 'woocommerce-paypal-payments' ),
-				'rect' => __( 'Rectangle', 'woocommerce-paypal-payments' ),
+				'pill' => __( 'Pill', 'woocommerce-for-japan' ),
+				'rect' => __( 'Rectangle', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -206,7 +206,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 
 		// Checkout page.
 		'button_checkout_heading'                  => array(
-			'heading'      => __( 'Checkout Buttons', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'Checkout Buttons', 'woocommerce-for-japan' ),
 			'description'  => sprintf(
 			// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 				__(
@@ -228,7 +228,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_layout'                            => array(
-			'title'        => __( 'Button Layout', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Layout', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'classes'      => $has_enabled_separate_button_gateways ? array( 'hide' ) : array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -239,8 +239,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'vertical'   => __( 'Vertical', 'woocommerce-paypal-payments' ),
-				'horizontal' => __( 'Horizontal', 'woocommerce-paypal-payments' ),
+				'vertical'   => __( 'Vertical', 'woocommerce-for-japan' ),
+				'horizontal' => __( 'Horizontal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -250,10 +250,10 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_tagline'                           => array(
-			'title'        => __( 'Tagline', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Tagline', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
 			'default'      => false,
-			'label'        => __( 'Enable tagline', 'woocommerce-paypal-payments' ),
+			'label'        => __( 'Enable tagline', 'woocommerce-for-japan' ),
 			'desc_tip'     => true,
 			'description'  => __(
 				'Add the tagline. This line will only show up, if you select a horizontal layout.',
@@ -267,7 +267,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_label'                             => array(
-			'title'        => __( 'Button Label', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Label', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -281,10 +281,10 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'paypal'   => __( 'PayPal', 'woocommerce-paypal-payments' ),
-				'checkout' => __( 'Checkout', 'woocommerce-paypal-payments' ),
-				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-paypal-payments' ),
-				'pay'      => __( 'Pay with PayPal', 'woocommerce-paypal-payments' ),
+				'paypal'   => __( 'PayPal', 'woocommerce-for-japan' ),
+				'checkout' => __( 'Checkout', 'woocommerce-for-japan' ),
+				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-for-japan' ),
+				'pay'      => __( 'Pay with PayPal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -294,7 +294,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_color'                             => array(
-			'title'        => __( 'Color', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Color', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -305,11 +305,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'gold'   => __( 'Gold (Recommended)', 'woocommerce-paypal-payments' ),
-				'blue'   => __( 'Blue', 'woocommerce-paypal-payments' ),
-				'silver' => __( 'Silver', 'woocommerce-paypal-payments' ),
-				'black'  => __( 'Black', 'woocommerce-paypal-payments' ),
-				'white'  => __( 'White', 'woocommerce-paypal-payments' ),
+				'gold'   => __( 'Gold (Recommended)', 'woocommerce-for-japan' ),
+				'blue'   => __( 'Blue', 'woocommerce-for-japan' ),
+				'silver' => __( 'Silver', 'woocommerce-for-japan' ),
+				'black'  => __( 'Black', 'woocommerce-for-japan' ),
+				'white'  => __( 'White', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -319,7 +319,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_shape'                             => array(
-			'title'        => __( 'Shape', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Shape', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -330,8 +330,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'pill' => __( 'Pill', 'woocommerce-paypal-payments' ),
-				'rect' => __( 'Rectangle', 'woocommerce-paypal-payments' ),
+				'pill' => __( 'Pill', 'woocommerce-for-japan' ),
+				'rect' => __( 'Rectangle', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -352,7 +352,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 
 		// Single product page.
 		'button_product_heading'                   => array(
-			'heading'      => __( 'Single Product Page Buttons', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'Single Product Page Buttons', 'woocommerce-for-japan' ),
 			'description'  => sprintf(
 			// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 				__(
@@ -368,7 +368,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_product_layout'                    => array(
-			'title'        => __( 'Button Layout', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Layout', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -379,8 +379,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'vertical'   => __( 'Vertical', 'woocommerce-paypal-payments' ),
-				'horizontal' => __( 'Horizontal', 'woocommerce-paypal-payments' ),
+				'vertical'   => __( 'Vertical', 'woocommerce-for-japan' ),
+				'horizontal' => __( 'Horizontal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -390,9 +390,9 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_product_tagline'                   => array(
-			'title'        => __( 'Tagline', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Tagline', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
-			'label'        => __( 'Enable tagline', 'woocommerce-paypal-payments' ),
+			'label'        => __( 'Enable tagline', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'desc_tip'     => true,
 			'description'  => __(
@@ -407,7 +407,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_product_label'                     => array(
-			'title'        => __( 'Button Label', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Label', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -421,10 +421,10 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'paypal'   => __( 'PayPal', 'woocommerce-paypal-payments' ),
-				'checkout' => __( 'Checkout', 'woocommerce-paypal-payments' ),
-				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-paypal-payments' ),
-				'pay'      => __( 'Pay with PayPal', 'woocommerce-paypal-payments' ),
+				'paypal'   => __( 'PayPal', 'woocommerce-for-japan' ),
+				'checkout' => __( 'Checkout', 'woocommerce-for-japan' ),
+				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-for-japan' ),
+				'pay'      => __( 'Pay with PayPal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -434,7 +434,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_product_color'                     => array(
-			'title'        => __( 'Color', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Color', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -445,11 +445,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'gold'   => __( 'Gold (Recommended)', 'woocommerce-paypal-payments' ),
-				'blue'   => __( 'Blue', 'woocommerce-paypal-payments' ),
-				'silver' => __( 'Silver', 'woocommerce-paypal-payments' ),
-				'black'  => __( 'Black', 'woocommerce-paypal-payments' ),
-				'white'  => __( 'White', 'woocommerce-paypal-payments' ),
+				'gold'   => __( 'Gold (Recommended)', 'woocommerce-for-japan' ),
+				'blue'   => __( 'Blue', 'woocommerce-for-japan' ),
+				'silver' => __( 'Silver', 'woocommerce-for-japan' ),
+				'black'  => __( 'Black', 'woocommerce-for-japan' ),
+				'white'  => __( 'White', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -459,7 +459,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_product_shape'                     => array(
-			'title'        => __( 'Shape', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Shape', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -470,8 +470,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'pill' => __( 'Pill', 'woocommerce-paypal-payments' ),
-				'rect' => __( 'Rectangle', 'woocommerce-paypal-payments' ),
+				'pill' => __( 'Pill', 'woocommerce-for-japan' ),
+				'rect' => __( 'Rectangle', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -492,7 +492,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 
 		// Cart settings.
 		'button_cart_heading'                      => array(
-			'heading'      => __( 'Cart Buttons', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'Cart Buttons', 'woocommerce-for-japan' ),
 			'description'  => sprintf(
 			// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 				__(
@@ -508,7 +508,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_cart_layout'                       => array(
-			'title'        => __( 'Button Layout', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Layout', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -519,8 +519,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'vertical'   => __( 'Vertical', 'woocommerce-paypal-payments' ),
-				'horizontal' => __( 'Horizontal', 'woocommerce-paypal-payments' ),
+				'vertical'   => __( 'Vertical', 'woocommerce-for-japan' ),
+				'horizontal' => __( 'Horizontal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -530,9 +530,9 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_cart_tagline'                      => array(
-			'title'        => __( 'Tagline', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Tagline', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
-			'label'        => __( 'Enable tagline', 'woocommerce-paypal-payments' ),
+			'label'        => __( 'Enable tagline', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'desc_tip'     => true,
 			'description'  => __(
@@ -547,7 +547,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_cart_label'                        => array(
-			'title'        => __( 'Button Label', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Label', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -561,10 +561,10 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'paypal'   => __( 'PayPal', 'woocommerce-paypal-payments' ),
-				'checkout' => __( 'Checkout', 'woocommerce-paypal-payments' ),
-				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-paypal-payments' ),
-				'pay'      => __( 'Pay with PayPal', 'woocommerce-paypal-payments' ),
+				'paypal'   => __( 'PayPal', 'woocommerce-for-japan' ),
+				'checkout' => __( 'Checkout', 'woocommerce-for-japan' ),
+				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-for-japan' ),
+				'pay'      => __( 'Pay with PayPal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -574,7 +574,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_cart_color'                        => array(
-			'title'        => __( 'Color', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Color', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -585,11 +585,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'gold'   => __( 'Gold (Recommended)', 'woocommerce-paypal-payments' ),
-				'blue'   => __( 'Blue', 'woocommerce-paypal-payments' ),
-				'silver' => __( 'Silver', 'woocommerce-paypal-payments' ),
-				'black'  => __( 'Black', 'woocommerce-paypal-payments' ),
-				'white'  => __( 'White', 'woocommerce-paypal-payments' ),
+				'gold'   => __( 'Gold (Recommended)', 'woocommerce-for-japan' ),
+				'blue'   => __( 'Blue', 'woocommerce-for-japan' ),
+				'silver' => __( 'Silver', 'woocommerce-for-japan' ),
+				'black'  => __( 'Black', 'woocommerce-for-japan' ),
+				'white'  => __( 'White', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -599,7 +599,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_cart_shape'                        => array(
-			'title'        => __( 'Shape', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Shape', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -610,8 +610,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'pill' => __( 'Pill', 'woocommerce-paypal-payments' ),
-				'rect' => __( 'Rectangle', 'woocommerce-paypal-payments' ),
+				'pill' => __( 'Pill', 'woocommerce-for-japan' ),
+				'rect' => __( 'Rectangle', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -632,7 +632,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 
 		// Mini cart settings.
 		'button_mini-cart_heading'                 => array(
-			'heading'      => __( 'Mini Cart Buttons', 'woocommerce-paypal-payments' ),
+			'heading'      => __( 'Mini Cart Buttons', 'woocommerce-for-japan' ),
 			'description'  => sprintf(
 			// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 				__(
@@ -648,7 +648,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_mini-cart_layout'                  => array(
-			'title'        => __( 'Button Layout', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Layout', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -659,8 +659,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'vertical'   => __( 'Vertical', 'woocommerce-paypal-payments' ),
-				'horizontal' => __( 'Horizontal', 'woocommerce-paypal-payments' ),
+				'vertical'   => __( 'Vertical', 'woocommerce-for-japan' ),
+				'horizontal' => __( 'Horizontal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -670,9 +670,9 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_mini-cart_tagline'                 => array(
-			'title'        => __( 'Tagline', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Tagline', 'woocommerce-for-japan' ),
 			'type'         => 'checkbox',
-			'label'        => __( 'Enable tagline', 'woocommerce-paypal-payments' ),
+			'label'        => __( 'Enable tagline', 'woocommerce-for-japan' ),
 			'default'      => false,
 			'desc_tip'     => true,
 			'description'  => __(
@@ -687,7 +687,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_mini-cart_label'                   => array(
-			'title'        => __( 'Button Label', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Button Label', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -701,10 +701,10 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'paypal'   => __( 'PayPal', 'woocommerce-paypal-payments' ),
-				'checkout' => __( 'Checkout', 'woocommerce-paypal-payments' ),
-				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-paypal-payments' ),
-				'pay'      => __( 'Pay with PayPal', 'woocommerce-paypal-payments' ),
+				'paypal'   => __( 'PayPal', 'woocommerce-for-japan' ),
+				'checkout' => __( 'Checkout', 'woocommerce-for-japan' ),
+				'buynow'   => __( 'PayPal Buy Now', 'woocommerce-for-japan' ),
+				'pay'      => __( 'Pay with PayPal', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -714,7 +714,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_mini-cart_color'                   => array(
-			'title'        => __( 'Color', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Color', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -725,11 +725,11 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'gold'   => __( 'Gold (Recommended)', 'woocommerce-paypal-payments' ),
-				'blue'   => __( 'Blue', 'woocommerce-paypal-payments' ),
-				'silver' => __( 'Silver', 'woocommerce-paypal-payments' ),
-				'black'  => __( 'Black', 'woocommerce-paypal-payments' ),
-				'white'  => __( 'White', 'woocommerce-paypal-payments' ),
+				'gold'   => __( 'Gold (Recommended)', 'woocommerce-for-japan' ),
+				'blue'   => __( 'Blue', 'woocommerce-for-japan' ),
+				'silver' => __( 'Silver', 'woocommerce-for-japan' ),
+				'black'  => __( 'Black', 'woocommerce-for-japan' ),
+				'white'  => __( 'White', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -739,7 +739,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_mini-cart_shape'                   => array(
-			'title'        => __( 'Shape', 'woocommerce-paypal-payments' ),
+			'title'        => __( 'Shape', 'woocommerce-for-japan' ),
 			'type'         => 'select',
 			'class'        => array(),
 			'input_class'  => array( 'wc-enhanced-select' ),
@@ -750,8 +750,8 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'woocommerce-paypal-payments'
 			),
 			'options'      => array(
-				'pill' => __( 'Pill', 'woocommerce-paypal-payments' ),
-				'rect' => __( 'Rectangle', 'woocommerce-paypal-payments' ),
+				'pill' => __( 'Pill', 'woocommerce-for-japan' ),
+				'rect' => __( 'Rectangle', 'woocommerce-for-japan' ),
 			),
 			'screens'      => array(
 				State::STATE_START,
@@ -761,7 +761,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 			'gateway'      => 'paypal',
 		),
 		'button_mini-cart_height'                  => array(
-			'title'             => __( 'Button Height', 'woocommerce-paypal-payments' ),
+			'title'             => __( 'Button Height', 'woocommerce-for-japan' ),
 			'type'              => 'number',
 			'default'           => '35',
 			'custom_attributes' => array(
@@ -769,7 +769,7 @@ return function ( ContainerInterface $container, array $fields ): array {
 				'max' => 55,
 			),
 			'desc_tip'          => true,
-			'description'       => __( 'Add a value from 25 to 55.', 'woocommerce-paypal-payments' ),
+			'description'       => __( 'Add a value from 25 to 55.', 'woocommerce-for-japan' ),
 			'screens'           => array(
 				State::STATE_START,
 				State::STATE_ONBOARDED,

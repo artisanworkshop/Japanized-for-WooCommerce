@@ -173,14 +173,14 @@ class OrderProcessor {
 						$wc_order->get_id()
 					)
 				);
-				$this->last_error = __( 'Could not retrieve order. This browser may not be supported. Please try again with a different browser.', 'woocommerce-paypal-payments' );
+				$this->last_error = __( 'Could not retrieve order. This browser may not be supported. Please try again with a different browser.', 'woocommerce-for-japan' );
 				return false;
 			}
 
 			try {
 				$order = $this->order_endpoint->order( $order_id );
 			} catch ( RuntimeException $exception ) {
-				$this->last_error = __( 'Could not retrieve PayPal order.', 'woocommerce-paypal-payments' );
+				$this->last_error = __( 'Could not retrieve PayPal order.', 'woocommerce-for-japan' );
 				return false;
 			}
 		}
@@ -197,7 +197,7 @@ class OrderProcessor {
 		if ( $error_message ) {
 			$this->last_error = sprintf(
 				// translators: %s is the message of the error.
-				__( 'Payment error: %s', 'woocommerce-paypal-payments' ),
+				__( 'Payment error: %s', 'woocommerce-for-japan' ),
 				$error_message
 			);
 			return false;

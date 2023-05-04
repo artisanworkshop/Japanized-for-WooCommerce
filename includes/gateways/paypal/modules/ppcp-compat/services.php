@@ -17,10 +17,10 @@ return array(
 
 	'compat.ppec.mock-gateway'                      => static function( $container ) {
 		$settings = $container->get( 'wcgateway.settings' );
-		$title    = $settings->has( 'title' ) ? $settings->get( 'title' ) : __( 'PayPal', 'woocommerce-paypal-payments' );
+		$title    = $settings->has( 'title' ) ? $settings->get( 'title' ) : __( 'PayPal', 'woocommerce-for-japan' );
 		$title    = sprintf(
 			/* Translators: placeholder is the gateway name. */
-			__( '%s (Legacy)', 'woocommerce-paypal-payments' ),
+			__( '%s (Legacy)', 'woocommerce-for-japan' ),
 			$title
 		);
 

@@ -61,19 +61,19 @@ class HeaderRenderer {
 		return '
 			<div class="ppcp-settings-page-header">
 				<img alt="PayPal" src="' . esc_url( $this->module_url ) . 'assets/images/paypal.png"/>
-				<h4> <span class="ppcp-inline-only">-</span> ' . __( 'The all-in-one checkout solution for WooCommerce', 'woocommerce-paypal-payments' ) . '</h4>
+				<h4> <span class="ppcp-inline-only">-</span> ' . __( 'The all-in-one checkout solution for WooCommerce', 'woocommerce-for-japan' ) . '</h4>
 				<a class="button" target="_blank" href="https://woocommerce.com/document/woocommerce-paypal-payments/">'
-					. __( 'Documentation', 'woocommerce-paypal-payments' ) .
+					. __( 'Documentation', 'woocommerce-for-japan' ) .
 				'</a>
 				<a class="button" target="_blank" href="https://woocommerce.com/document/woocommerce-paypal-payments/#get-help">'
-					. __( 'Get Help', 'woocommerce-paypal-payments' ) .
+					. __( 'Get Help', 'woocommerce-for-japan' ) .
 				'</a>
 				<span class="ppcp-right-align">
 					<a target="_blank" href="https://woocommerce.com/feature-requests/woocommerce-paypal-payments/">'
-						. __( 'Request a feature', 'woocommerce-paypal-payments' ) .
+						. __( 'Request a feature', 'woocommerce-for-japan' ) .
 					'</a>
 					<a target="_blank" href="https://github.com/woocommerce/woocommerce-paypal-payments/issues/new?assignees=&labels=type%3A+bug&template=bug_report.md">'
-						. __( 'Submit a bug', 'woocommerce-paypal-payments' ) .
+						. __( 'Submit a bug', 'woocommerce-for-japan' ) .
 					'</a>
 				</span>
 			</div>

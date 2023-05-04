@@ -138,7 +138,7 @@ class ApproveOrderEndpoint implements EndpointInterface {
 			$data = $this->request_data->read_request( $this->nonce() );
 			if ( ! isset( $data['order_id'] ) ) {
 				throw new RuntimeException(
-					__( 'No order id given', 'woocommerce-paypal-payments' )
+					__( 'No order id given', 'woocommerce-for-japan' )
 				);
 			}
 
@@ -186,7 +186,7 @@ class ApproveOrderEndpoint implements EndpointInterface {
 			if ( $this->order_helper->contains_physical_goods( $order ) && ! $order->status()->is( OrderStatus::APPROVED ) && ! $order->status()->is( OrderStatus::CREATED ) ) {
 				$message = sprintf(
 				// translators: %s is the id of the order.
-					__( 'Order %s is not ready for processing yet.', 'woocommerce-paypal-payments' ),
+					__( 'Order %s is not ready for processing yet.', 'woocommerce-for-japan' ),
 					$data['order_id']
 				);
 

@@ -57,7 +57,7 @@ class OrderTablePaymentStatusColumn {
 		$columns = array_merge(
 			array_slice( $columns, 0, $to_insert_position ),
 			array(
-				self::COLUMN_KEY => __( 'Payment Captured', 'woocommerce-paypal-payments' ),
+				self::COLUMN_KEY => __( 'Payment Captured', 'woocommerce-for-japan' ),
 			),
 			array_slice( $columns, $to_insert_position )
 		);
@@ -131,7 +131,7 @@ class OrderTablePaymentStatusColumn {
 			'<span class="dashicons dashicons-yes">
                         <span class="screen-reader-text">%s</span>
                     </span>',
-			esc_html__( 'Payment captured', 'woocommerce-paypal-payments' )
+			esc_html__( 'Payment captured', 'woocommerce-for-japan' )
 		);
 	}
 
@@ -141,7 +141,7 @@ class OrderTablePaymentStatusColumn {
 	private function render_incomplete_status() {
 		printf(
 			'<mark class="onbackorder">%s</mark>',
-			esc_html__( 'Not captured', 'woocommerce-paypal-payments' )
+			esc_html__( 'Not captured', 'woocommerce-for-japan' )
 		);
 	}
 }

@@ -124,7 +124,7 @@ class PaymentCaptureCompleted implements RequestHandler {
 			return new WP_REST_Response( $response );
 		}
 		$wc_order->add_order_note(
-			__( 'Payment successfully captured.', 'woocommerce-paypal-payments' )
+			__( 'Payment successfully captured.', 'woocommerce-for-japan' )
 		);
 
 		$wc_order->payment_complete();

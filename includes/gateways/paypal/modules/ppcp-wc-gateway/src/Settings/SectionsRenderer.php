@@ -148,13 +148,13 @@ class SectionsRenderer {
 	 */
 	private function sections(): array {
 		$sections = array(
-			Settings::CONNECTION_TAB_ID => __( 'Connection', 'woocommerce-paypal-payments' ),
-			PayPalGateway::ID           => __( 'Standard Payments', 'woocommerce-paypal-payments' ),
-			Settings::PAY_LATER_TAB_ID  => __( 'Pay Later', 'woocommerce-paypal-payments' ),
-			CreditCardGateway::ID       => __( 'Advanced Card Processing', 'woocommerce-paypal-payments' ),
-			CardButtonGateway::ID       => __( 'Standard Card Button', 'woocommerce-paypal-payments' ),
-			OXXOGateway::ID             => __( 'OXXO', 'woocommerce-paypal-payments' ),
-			PayUponInvoiceGateway::ID   => __( 'Pay upon Invoice', 'woocommerce-paypal-payments' ),
+			Settings::CONNECTION_TAB_ID => __( 'Connection', 'woocommerce-for-japan' ),
+			PayPalGateway::ID           => __( 'Standard Payments', 'woocommerce-for-japan' ),
+			Settings::PAY_LATER_TAB_ID  => __( 'Pay Later', 'woocommerce-for-japan' ),
+			CreditCardGateway::ID       => __( 'Advanced Card Processing', 'woocommerce-for-japan' ),
+			CardButtonGateway::ID       => __( 'Standard Card Button', 'woocommerce-for-japan' ),
+			OXXOGateway::ID             => __( 'OXXO', 'woocommerce-for-japan' ),
+			PayUponInvoiceGateway::ID   => __( 'Pay upon Invoice', 'woocommerce-for-japan' ),
 		);
 
 		// Remove for all not registered in WC gateways that cannot render anything in this case.

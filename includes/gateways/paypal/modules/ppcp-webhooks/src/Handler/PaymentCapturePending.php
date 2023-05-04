@@ -112,7 +112,7 @@ class PaymentCapturePending implements RequestHandler {
 		}
 
 		if ( $wc_order->get_status() === 'pending' ) {
-			$wc_order->update_status( 'on-hold', __( 'Payment initiation was successful, and is waiting for the buyer to complete the payment.', 'woocommerce-paypal-payments' ) );
+			$wc_order->update_status( 'on-hold', __( 'Payment initiation was successful, and is waiting for the buyer to complete the payment.', 'woocommerce-for-japan' ) );
 
 		}
 

@@ -69,7 +69,7 @@ return array(
 			'other'           => array(
 				'name'  => 'Other',
 				'items' => array(
-					'OTHER' => _x( 'Other', 'Name of carrier', 'woocommerce-paypal-payments' ),
+					'OTHER' => _x( 'Other', 'Name of carrier', 'woocommerce-for-japan' ),
 				),
 			),
 		);

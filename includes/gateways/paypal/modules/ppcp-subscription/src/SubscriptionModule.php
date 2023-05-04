@@ -227,7 +227,7 @@ class SubscriptionModule implements ModuleInterface {
 
 			$output = sprintf(
 				'<p class="form-row form-row-wide"><label>%1$s</label><select id="saved-paypal-payment" name="saved_paypal_payment">',
-				esc_html__( 'Select a saved PayPal payment', 'woocommerce-paypal-payments' )
+				esc_html__( 'Select a saved PayPal payment', 'woocommerce-for-japan' )
 			);
 			foreach ( $tokens as $token ) {
 				if ( isset( $token->source()->paypal ) ) {
@@ -282,7 +282,7 @@ class SubscriptionModule implements ModuleInterface {
 
 			$output = sprintf(
 				'<p class="form-row form-row-wide"><label>%1$s</label><select id="saved-credit-card" name="saved_credit_card">',
-				esc_html__( 'Select a saved Credit Card payment', 'woocommerce-paypal-payments' )
+				esc_html__( 'Select a saved Credit Card payment', 'woocommerce-for-japan' )
 			);
 			foreach ( $tokens as $token ) {
 				if ( isset( $token->source()->card ) ) {

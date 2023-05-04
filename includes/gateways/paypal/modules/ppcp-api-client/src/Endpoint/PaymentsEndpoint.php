@@ -110,7 +110,7 @@ class PaymentsEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			$error = new RuntimeException(
-				__( 'Could not get authorized payment info.', 'woocommerce-paypal-payments' )
+				__( 'Could not get authorized payment info.', 'woocommerce-for-japan' )
 			);
 			$this->logger->log(
 				'warning',

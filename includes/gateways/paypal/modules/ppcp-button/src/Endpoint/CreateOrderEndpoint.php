@@ -218,7 +218,7 @@ class CreateOrderEndpoint implements EndpointInterface {
 					wp_send_json_error(
 						array(
 							'name'    => 'order-not-found',
-							'message' => __( 'Order not found', 'woocommerce-paypal-payments' ),
+							'message' => __( 'Order not found', 'woocommerce-for-japan' ),
 							'code'    => 0,
 							'details' => array(),
 						)
@@ -537,7 +537,7 @@ class CreateOrderEndpoint implements EndpointInterface {
 	private function validate_paynow_form( array $form_fields ): void {
 		if ( isset( $form_fields['terms-field'] ) && ! isset( $form_fields['terms'] ) ) {
 			throw new ValidationException(
-				array( __( 'Please read and accept the terms and conditions to proceed with your order.', 'woocommerce-paypal-payments' ) )
+				array( __( 'Please read and accept the terms and conditions to proceed with your order.', 'woocommerce-for-japan' ) )
 			);
 		}
 	}

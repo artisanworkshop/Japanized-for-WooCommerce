@@ -62,14 +62,14 @@ class FundingSourceRenderer {
 			}
 			return sprintf(
 				/* translators: %s - Sofort, BLIK, iDeal, Mercado Pago, etc. */
-				__( '%s (via PayPal)', 'woocommerce-paypal-payments' ),
+				__( '%s (via PayPal)', 'woocommerce-for-japan' ),
 				$this->funding_sources[ $id ]
 			);
 		}
 
 		return $this->settings->has( 'title' ) ?
 			$this->settings->get( 'title' )
-			: __( 'PayPal', 'woocommerce-paypal-payments' );
+			: __( 'PayPal', 'woocommerce-for-japan' );
 	}
 
 	/**
@@ -81,13 +81,13 @@ class FundingSourceRenderer {
 		if ( array_key_exists( $id, $this->funding_sources ) ) {
 			return sprintf(
 				/* translators: %s - Sofort, BLIK, iDeal, Mercado Pago, etc. */
-				__( 'Pay via %s.', 'woocommerce-paypal-payments' ),
+				__( 'Pay via %s.', 'woocommerce-for-japan' ),
 				$this->funding_sources[ $id ]
 			);
 		}
 
 		return $this->settings->has( 'description' ) ?
 			$this->settings->get( 'description' )
-			: __( 'Pay via PayPal.', 'woocommerce-paypal-payments' );
+			: __( 'Pay via PayPal.', 'woocommerce-for-japan' );
 	}
 }

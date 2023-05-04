@@ -58,7 +58,7 @@ class CancelView {
 			<?php
 			$name = $funding_source ?
 				$this->funding_source_renderer->render_name( $funding_source )
-				: ( $this->settings->has( 'title' ) ? $this->settings->get( 'title' ) : __( 'PayPal', 'woocommerce-paypal-payments' ) );
+				: ( $this->settings->has( 'title' ) ? $this->settings->get( 'title' ) : __( 'PayPal', 'woocommerce-for-japan' ) );
 			printf(
 					// translators: %3$ is funding source like "PayPal" or "Venmo", other placeholders are html tags for a link.
 				esc_html__(

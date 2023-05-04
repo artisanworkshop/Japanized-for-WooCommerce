@@ -266,11 +266,11 @@ class PayPalGateway extends \WC_Payment_Gateway {
 	public function init_form_fields() {
 		$this->form_fields = array(
 			'enabled' => array(
-				'title'       => __( 'Enable/Disable', 'woocommerce-paypal-payments' ),
+				'title'       => __( 'Enable/Disable', 'woocommerce-for-japan' ),
 				'type'        => 'checkbox',
 				'desc_tip'    => true,
-				'description' => __( 'In order to use PayPal or Advanced Card Processing, you need to enable the Gateway.', 'woocommerce-paypal-payments' ),
-				'label'       => __( 'Enable PayPal features for your store', 'woocommerce-paypal-payments' ),
+				'description' => __( 'In order to use PayPal or Advanced Card Processing, you need to enable the Gateway.', 'woocommerce-for-japan' ),
+				'label'       => __( 'Enable PayPal features for your store', 'woocommerce-for-japan' ),
 				'default'     => 'no',
 			),
 			'ppcp'    => array(
@@ -291,22 +291,22 @@ class PayPalGateway extends \WC_Payment_Gateway {
 	 */
 	private function define_method_title(): string {
 		if ( $this->is_connection_tab() ) {
-			return __( 'Account Setup', 'woocommerce-paypal-payments' );
+			return __( 'Account Setup', 'woocommerce-for-japan' );
 		}
 		if ( $this->is_credit_card_tab() ) {
-			return __( 'Advanced Card Processing', 'woocommerce-paypal-payments' );
+			return __( 'Advanced Card Processing', 'woocommerce-for-japan' );
 		}
 		if ( $this->is_pay_later_tab() ) {
-			return __( 'PayPal Pay Later', 'woocommerce-paypal-payments' );
+			return __( 'PayPal Pay Later', 'woocommerce-for-japan' );
 		}
 		if ( $this->is_paypal_tab() ) {
-			return __( 'Standard Payments', 'woocommerce-paypal-payments' );
+			return __( 'Standard Payments', 'woocommerce-for-japan' );
 		}
 		if ( $this->is_pui_tab() ) {
-			return __( 'Pay upon Invoice', 'woocommerce-paypal-payments' );
+			return __( 'Pay upon Invoice', 'woocommerce-for-japan' );
 		}
 
-		return __( 'PayPal', 'woocommerce-paypal-payments' );
+		return __( 'PayPal', 'woocommerce-for-japan' );
 	}
 
 	/**
@@ -329,7 +329,7 @@ class PayPalGateway extends \WC_Payment_Gateway {
 		if ( $this->is_pay_later_tab() ) {
 			return sprintf(
 			// translators: %1$s is </ br> HTML tag and %2$s, %3$s are the opening and closing of HTML <i> tag.
-				__( 'Let customers pay over time while you get paid up front — at no additional cost.%1$sPayPal’s pay later options are boosting merchant conversion rates and increasing cart sizes by 39%%. %2$s(PayPal Q2 Earnings-2021.)%3$s', 'woocommerce-paypal-payments' ),
+				__( 'Let customers pay over time while you get paid up front — at no additional cost.%1$sPayPal’s pay later options are boosting merchant conversion rates and increasing cart sizes by 39%%. %2$s(PayPal Q2 Earnings-2021.)%3$s', 'woocommerce-for-japan' ),
 				'</ br>',
 				'<i>',
 				'</ i>'
@@ -482,8 +482,8 @@ class PayPalGateway extends \WC_Payment_Gateway {
 			return $this->handle_payment_success( $wc_order );
 		} catch ( PayPalApiException $error ) {
 			$retry_keys_messages = array(
-				'INSTRUMENT_DECLINED'   => __( 'Instrument declined.', 'woocommerce-paypal-payments' ),
-				'PAYER_ACTION_REQUIRED' => __( 'Payer action required, possibly overcharge.', 'woocommerce-paypal-payments' ),
+				'INSTRUMENT_DECLINED'   => __( 'Instrument declined.', 'woocommerce-for-japan' ),
+				'PAYER_ACTION_REQUIRED' => __( 'Payer action required, possibly overcharge.', 'woocommerce-for-japan' ),
 			);
 			$retry_errors        = array_filter(
 				array_keys( $retry_keys_messages ),
@@ -504,7 +504,7 @@ class PayPalGateway extends \WC_Payment_Gateway {
 					return $this->handle_payment_failure(
 						null,
 						new Exception(
-							__( 'Please use a different payment method.', 'woocommerce-paypal-payments' ),
+							__( 'Please use a different payment method.', 'woocommerce-for-japan' ),
 							$error->getCode(),
 							$error
 						)

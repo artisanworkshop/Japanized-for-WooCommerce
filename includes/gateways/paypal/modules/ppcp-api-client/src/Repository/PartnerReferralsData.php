@@ -91,7 +91,7 @@ class PartnerReferralsData {
 					 */
 					'return_url_description' => apply_filters(
 						'woocommerce_paypal_payments_partner_config_override_return_url_description',
-						__( 'Return to your shop.', 'woocommerce-paypal-payments' )
+						__( 'Return to your shop.', 'woocommerce-for-japan' )
 					),
 					'show_add_credit_card'   => true,
 				),

@@ -107,7 +107,7 @@ class OrderTrackingModule implements ModuleInterface {
 					return;
 				}
 
-				add_meta_box( 'ppcp_order-tracking', __( 'Tracking Information', 'woocommerce-paypal-payments' ), array( $meta_box_renderer, 'render' ), 'shop_order', 'side' );
+				add_meta_box( 'ppcp_order-tracking', __( 'Tracking Information', 'woocommerce-for-japan' ), array( $meta_box_renderer, 'render' ), 'shop_order', 'side' );
 			},
 			10,
 			2

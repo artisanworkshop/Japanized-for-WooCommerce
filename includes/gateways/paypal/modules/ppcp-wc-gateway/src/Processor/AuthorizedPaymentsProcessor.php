@@ -181,7 +181,7 @@ class AuthorizedPaymentsProcessor {
 		if ( self::ALREADY_CAPTURED === $result_status ) {
 			if ( $wc_order->get_status() === 'on-hold' ) {
 				$wc_order->add_order_note(
-					__( 'Payment successfully captured.', 'woocommerce-paypal-payments' )
+					__( 'Payment successfully captured.', 'woocommerce-for-japan' )
 				);
 			}
 
@@ -206,7 +206,7 @@ class AuthorizedPaymentsProcessor {
 		if ( self::SUCCESSFUL === $result_status ) {
 			if ( $capture->status()->is( CaptureStatus::COMPLETED ) ) {
 				$wc_order->add_order_note(
-					__( 'Payment successfully captured.', 'woocommerce-paypal-payments' )
+					__( 'Payment successfully captured.', 'woocommerce-for-japan' )
 				);
 			}
 			$wc_order->update_meta_data( self::CAPTURED_META_KEY, 'true' );

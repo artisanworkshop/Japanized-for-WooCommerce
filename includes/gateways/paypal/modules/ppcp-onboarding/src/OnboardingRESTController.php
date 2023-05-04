@@ -174,7 +174,7 @@ class OnboardingRESTController {
 				'woocommerce_paypal_payments_invalid_environment',
 				sprintf(
 					/* translators: placeholder is an arbitrary string. */
-					__( 'Environment "%s" is invalid. Use "sandbox" or "production".', 'woocommerce-paypal-payments' ),
+					__( 'Environment "%s" is invalid. Use "sandbox" or "production".', 'woocommerce-for-japan' ),
 					isset( $params['environment'] ) ? $params['environment'] : ''
 				),
 				array( 'status' => 400 )
@@ -188,7 +188,7 @@ class OnboardingRESTController {
 				'woocommerce_paypal_payments_credentials_incomplete',
 				sprintf(
 					/* translators: placeholder is a comma-separated list of fields. */
-					__( 'Credentials are incomplete. Missing fields: %s.', 'woocommerce-paypal-payments' ),
+					__( 'Credentials are incomplete. Missing fields: %s.', 'woocommerce-for-japan' ),
 					implode( ', ', $missing_keys )
 				),
 				array(
@@ -242,7 +242,7 @@ class OnboardingRESTController {
 		if ( ! $settings->persist() ) {
 			return new \WP_Error(
 				'woocommerce_paypal_payments_credentials_not_saved',
-				__( 'An error occurred while saving the credentials.', 'woocommerce-paypal-payments' ),
+				__( 'An error occurred while saving the credentials.', 'woocommerce-for-japan' ),
 				array(
 					'status' => 500,
 				)

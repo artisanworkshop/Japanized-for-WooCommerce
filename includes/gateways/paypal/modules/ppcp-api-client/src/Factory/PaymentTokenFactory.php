@@ -28,7 +28,7 @@ class PaymentTokenFactory {
 	public function from_paypal_response( $data ): PaymentToken {
 		if ( ! isset( $data->id ) ) {
 			throw new RuntimeException(
-				__( 'No id for payment token given', 'woocommerce-paypal-payments' )
+				__( 'No id for payment token given', 'woocommerce-for-japan' )
 			);
 		}
 

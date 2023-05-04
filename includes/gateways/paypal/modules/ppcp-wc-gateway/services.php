@@ -363,11 +363,11 @@ return array(
 	'wcgateway.settings.should-render-settings'            => static function ( ContainerInterface $container ): bool {
 
 		$sections = array(
-			Settings::CONNECTION_TAB_ID => __( 'Connection', 'woocommerce-paypal-payments' ),
-			PayPalGateway::ID           => __( 'Standard Payments', 'woocommerce-paypal-payments' ),
-			Settings::PAY_LATER_TAB_ID  => __( 'Pay Later', 'woocommerce-paypal-payments' ),
-			CreditCardGateway::ID       => __( 'Advanced Card Processing', 'woocommerce-paypal-payments' ),
-			CardButtonGateway::ID       => __( 'Standard Card Button', 'woocommerce-paypal-payments' ),
+			Settings::CONNECTION_TAB_ID => __( 'Connection', 'woocommerce-for-japan' ),
+			PayPalGateway::ID           => __( 'Standard Payments', 'woocommerce-for-japan' ),
+			Settings::PAY_LATER_TAB_ID  => __( 'Pay Later', 'woocommerce-for-japan' ),
+			CreditCardGateway::ID       => __( 'Advanced Card Processing', 'woocommerce-for-japan' ),
+			CardButtonGateway::ID       => __( 'Standard Card Button', 'woocommerce-for-japan' ),
 		);
 
 		$current_page_id = $container->get( 'wcgateway.current-ppcp-settings-page-id' );
@@ -399,7 +399,7 @@ return array(
 
 		$fields              = array(
 			'checkout_settings_heading'              => array(
-				'heading'      => __( 'Standard Payments Settings', 'woocommerce-paypal-payments' ),
+				'heading'      => __( 'Standard Payments Settings', 'woocommerce-for-japan' ),
 				'type'         => 'ppcp-heading',
 				'screens'      => array(
 					State::STATE_START,
@@ -409,13 +409,13 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'title'                                  => array(
-				'title'        => __( 'Title', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Title', 'woocommerce-for-japan' ),
 				'type'         => 'text',
 				'description'  => __(
 					'This controls the title which the user sees during checkout.',
 					'woocommerce-paypal-payments'
 				),
-				'default'      => __( 'PayPal', 'woocommerce-paypal-payments' ),
+				'default'      => __( 'PayPal', 'woocommerce-for-japan' ),
 				'desc_tip'     => true,
 				'screens'      => array(
 					State::STATE_START,
@@ -425,10 +425,10 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'dcc_enabled'                            => array(
-				'title'        => __( 'Enable/Disable', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Enable/Disable', 'woocommerce-for-japan' ),
 				'desc_tip'     => true,
-				'description'  => __( 'Once enabled, the Credit Card option will show up in the checkout.', 'woocommerce-paypal-payments' ),
-				'label'        => __( 'Enable Advanced Card Processing', 'woocommerce-paypal-payments' ),
+				'description'  => __( 'Once enabled, the Credit Card option will show up in the checkout.', 'woocommerce-for-japan' ),
+				'label'        => __( 'Enable Advanced Card Processing', 'woocommerce-for-japan' ),
 				'type'         => 'checkbox',
 				'default'      => false,
 				'gateway'      => 'dcc',
@@ -440,13 +440,13 @@ return array(
 				),
 			),
 			'dcc_gateway_title'                      => array(
-				'title'        => __( 'Title', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Title', 'woocommerce-for-japan' ),
 				'type'         => 'text',
 				'description'  => __(
 					'This controls the title which the user sees during checkout.',
 					'woocommerce-paypal-payments'
 				),
-				'default'      => __( 'Credit Cards', 'woocommerce-paypal-payments' ),
+				'default'      => __( 'Credit Cards', 'woocommerce-for-japan' ),
 				'desc_tip'     => true,
 				'screens'      => array(
 					State::STATE_ONBOARDED,
@@ -457,7 +457,7 @@ return array(
 				'gateway'      => 'dcc',
 			),
 			'description'                            => array(
-				'title'        => __( 'Description', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Description', 'woocommerce-for-japan' ),
 				'type'         => 'text',
 				'desc_tip'     => true,
 				'description'  => __(
@@ -476,7 +476,7 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'intent'                                 => array(
-				'title'        => __( 'Intent', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Intent', 'woocommerce-for-japan' ),
 				'type'         => 'select',
 				'class'        => array(),
 				'input_class'  => array( 'wc-enhanced-select' ),
@@ -487,8 +487,8 @@ return array(
 					'woocommerce-paypal-payments'
 				),
 				'options'      => array(
-					'capture'   => __( 'Capture', 'woocommerce-paypal-payments' ),
-					'authorize' => __( 'Authorize', 'woocommerce-paypal-payments' ),
+					'capture'   => __( 'Capture', 'woocommerce-for-japan' ),
+					'authorize' => __( 'Authorize', 'woocommerce-for-japan' ),
 				),
 				'screens'      => array(
 					State::STATE_START,
@@ -498,7 +498,7 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'capture_on_status_change'               => array(
-				'title'        => __( 'Capture On Status Change', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Capture On Status Change', 'woocommerce-for-japan' ),
 				'type'         => 'checkbox',
 				'default'      => false,
 				'desc_tip'     => true,
@@ -506,7 +506,7 @@ return array(
 					'The transaction will be captured automatically when the order status changes to Processing or Completed.',
 					'woocommerce-paypal-payments'
 				),
-				'label'        => __( 'Capture On Status Change', 'woocommerce-paypal-payments' ),
+				'label'        => __( 'Capture On Status Change', 'woocommerce-for-japan' ),
 				'screens'      => array(
 					State::STATE_START,
 					State::STATE_ONBOARDED,
@@ -515,7 +515,7 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'capture_for_virtual_only'               => array(
-				'title'        => __( 'Capture Virtual-Only Orders ', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Capture Virtual-Only Orders ', 'woocommerce-for-japan' ),
 				'type'         => 'checkbox',
 				'default'      => false,
 				'desc_tip'     => true,
@@ -523,7 +523,7 @@ return array(
 					'If the order contains exclusively virtual items, enable this to immediately capture, rather than authorize, the transaction.',
 					'woocommerce-paypal-payments'
 				),
-				'label'        => __( 'Capture Virtual-Only Orders', 'woocommerce-paypal-payments' ),
+				'label'        => __( 'Capture Virtual-Only Orders', 'woocommerce-for-japan' ),
 				'screens'      => array(
 					State::STATE_START,
 					State::STATE_ONBOARDED,
@@ -532,7 +532,7 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'payee_preferred'                        => array(
-				'title'        => __( 'Instant Payments ', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Instant Payments ', 'woocommerce-for-japan' ),
 				'type'         => 'checkbox',
 				'default'      => false,
 				'desc_tip'     => true,
@@ -540,7 +540,7 @@ return array(
 					'If you enable this setting, PayPal will be instructed not to allow the buyer to use funding sources that take additional time to complete (for example, eChecks). Instead, the buyer will be required to use an instant funding source, such as an instant transfer, a credit/debit card, or Pay Later.',
 					'woocommerce-paypal-payments'
 				),
-				'label'        => __( 'Require Instant Payment', 'woocommerce-paypal-payments' ),
+				'label'        => __( 'Require Instant Payment', 'woocommerce-for-japan' ),
 				'screens'      => array(
 					State::STATE_START,
 					State::STATE_ONBOARDED,
@@ -549,7 +549,7 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'brand_name'                             => array(
-				'title'        => __( 'Brand Name', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Brand Name', 'woocommerce-for-japan' ),
 				'type'         => 'text',
 				'default'      => get_bloginfo( 'name' ),
 				'desc_tip'     => true,
@@ -565,7 +565,7 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'landing_page'                           => array(
-				'title'        => __( 'Landing Page', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Landing Page', 'woocommerce-for-japan' ),
 				'type'         => 'select',
 				'class'        => array(),
 				'input_class'  => array( 'wc-enhanced-select' ),
@@ -576,8 +576,8 @@ return array(
 					'woocommerce-paypal-payments'
 				),
 				'options'      => array(
-					ApplicationContext::LANDING_PAGE_LOGIN => __( 'Login (PayPal account login)', 'woocommerce-paypal-payments' ),
-					ApplicationContext::LANDING_PAGE_BILLING => __( 'Billing (Non-PayPal account)', 'woocommerce-paypal-payments' ),
+					ApplicationContext::LANDING_PAGE_LOGIN => __( 'Login (PayPal account login)', 'woocommerce-for-japan' ),
+					ApplicationContext::LANDING_PAGE_BILLING => __( 'Billing (Non-PayPal account)', 'woocommerce-for-japan' ),
 				),
 				'screens'      => array(
 					State::STATE_START,
@@ -587,7 +587,7 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'disable_funding'                        => array(
-				'title'        => __( 'Hide Funding Source(s)', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Hide Funding Source(s)', 'woocommerce-for-japan' ),
 				'type'         => 'ppcp-multiselect',
 				'class'        => array(),
 				'input_class'  => array( 'wc-enhanced-select' ),
@@ -595,7 +595,7 @@ return array(
 				'desc_tip'     => false,
 				'description'  => sprintf(
 				// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-					__( 'By default, all possible funding sources will be shown. This setting can disable funding sources such as Credit Cards, Pay Later, Venmo, or other %1$sAlternative Payment Methods%2$s.', 'woocommerce-paypal-payments' ),
+					__( 'By default, all possible funding sources will be shown. This setting can disable funding sources such as Credit Cards, Pay Later, Venmo, or other %1$sAlternative Payment Methods%2$s.', 'woocommerce-for-japan' ),
 					'<a
 						href="https://developer.paypal.com/docs/checkout/apm/"
 						target="_blank"
@@ -611,11 +611,11 @@ return array(
 				'gateway'      => 'paypal',
 			),
 			'vault_enabled'                          => array(
-				'title'        => __( 'Vaulting', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Vaulting', 'woocommerce-for-japan' ),
 				'type'         => 'checkbox',
 				'desc_tip'     => true,
 				'label'        => $container->get( 'button.helper.vaulting-label' ),
-				'description'  => __( 'Allow registered buyers to save PayPal and Credit Card accounts. Allow Subscription renewals.', 'woocommerce-paypal-payments' ),
+				'description'  => __( 'Allow registered buyers to save PayPal and Credit Card accounts. Allow Subscription renewals.', 'woocommerce-for-japan' ),
 				'default'      => false,
 				'screens'      => array(
 					State::STATE_ONBOARDED,
@@ -625,18 +625,18 @@ return array(
 				'input_class'  => $container->get( 'wcgateway.helper.vaulting-scope' ) ? array() : array( 'ppcp-disabled-checkbox' ),
 			),
 			'subscription_behavior_when_vault_fails' => array(
-				'title'                => __( 'Subscription capture behavior if Vault fails', 'woocommerce-paypal-payments' ),
+				'title'                => __( 'Subscription capture behavior if Vault fails', 'woocommerce-for-japan' ),
 				'type'                 => 'select',
 				'classes'              => $subscription_helper->plugin_is_active() ? array() : array( 'hide' ),
 				'input_class'          => array( 'wc-enhanced-select' ),
 				'default'              => 'void_auth',
 				'desc_tip'             => true,
-				'description'          => __( 'By default, subscription payments are captured only when saving the payment method was successful. Without a saved payment method, automatic renewal payments are not possible.', 'woocommerce-paypal-payments' ),
-				'description_with_tip' => __( 'Determines whether authorized payments for subscription orders are captured or voided if there is no saved payment method. This only applies when the intent Capture is used for the subscription order.', 'woocommerce-paypal-payments' ),
+				'description'          => __( 'By default, subscription payments are captured only when saving the payment method was successful. Without a saved payment method, automatic renewal payments are not possible.', 'woocommerce-for-japan' ),
+				'description_with_tip' => __( 'Determines whether authorized payments for subscription orders are captured or voided if there is no saved payment method. This only applies when the intent Capture is used for the subscription order.', 'woocommerce-for-japan' ),
 				'options'              => array(
-					'void_auth'           => __( 'Void authorization & fail the order/subscription', 'woocommerce-paypal-payments' ),
-					'capture_auth'        => __( 'Capture authorized payment & set subscription to Manual Renewal', 'woocommerce-paypal-payments' ),
-					'capture_auth_ignore' => __( 'Capture authorized payment & disregard missing payment method', 'woocommerce-paypal-payments' ),
+					'void_auth'           => __( 'Void authorization & fail the order/subscription', 'woocommerce-for-japan' ),
+					'capture_auth'        => __( 'Capture authorized payment & set subscription to Manual Renewal', 'woocommerce-for-japan' ),
+					'capture_auth_ignore' => __( 'Capture authorized payment & disregard missing payment method', 'woocommerce-for-japan' ),
 				),
 				'screens'              => array(
 					State::STATE_ONBOARDED,
@@ -645,17 +645,17 @@ return array(
 				'gateway'              => array( 'paypal', 'dcc' ),
 			),
 			'card_billing_data_mode'                 => array(
-				'title'        => __( 'Card billing data handling', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Card billing data handling', 'woocommerce-for-japan' ),
 				'type'         => 'select',
 				'class'        => array(),
 				'input_class'  => array( 'wc-enhanced-select' ),
 				'desc_tip'     => true,
-				'description'  => __( 'Using the WC form data increases convenience for the customers, but can cause issues if card details do not match the billing data in the checkout form.', 'woocommerce-paypal-payments' ),
+				'description'  => __( 'Using the WC form data increases convenience for the customers, but can cause issues if card details do not match the billing data in the checkout form.', 'woocommerce-for-japan' ),
 				'default'      => $container->get( 'wcgateway.settings.card_billing_data_mode.default' ),
 				'options'      => array(
-					CardBillingMode::USE_WC        => __( 'Use WC checkout form data (do not show any address fields)', 'woocommerce-paypal-payments' ),
-					CardBillingMode::MINIMAL_INPUT => __( 'Request only name and postal code', 'woocommerce-paypal-payments' ),
-					CardBillingMode::NO_WC         => __( 'Do not use WC checkout form data (request all address fields)', 'woocommerce-paypal-payments' ),
+					CardBillingMode::USE_WC        => __( 'Use WC checkout form data (do not show any address fields)', 'woocommerce-for-japan' ),
+					CardBillingMode::MINIMAL_INPUT => __( 'Request only name and postal code', 'woocommerce-for-japan' ),
+					CardBillingMode::NO_WC         => __( 'Do not use WC checkout form data (request all address fields)', 'woocommerce-for-japan' ),
 				),
 				'screens'      => array(
 					State::STATE_START,
@@ -665,11 +665,11 @@ return array(
 				'gateway'      => array( 'paypal', CardButtonGateway::ID ),
 			),
 			'allow_card_button_gateway'              => array(
-				'title'        => __( 'Separate Card Button from PayPal gateway', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Separate Card Button from PayPal gateway', 'woocommerce-for-japan' ),
 				'type'         => 'checkbox',
 				'desc_tip'     => true,
-				'label'        => __( 'Enable a separate payment gateway for the branded PayPal Debit or Credit Card button.', 'woocommerce-paypal-payments' ),
-				'description'  => __( 'By default, the Debit or Credit Card button is displayed in the Standard Payments payment gateway. This setting creates a second gateway for the Card button.', 'woocommerce-paypal-payments' ),
+				'label'        => __( 'Enable a separate payment gateway for the branded PayPal Debit or Credit Card button.', 'woocommerce-for-japan' ),
+				'description'  => __( 'By default, the Debit or Credit Card button is displayed in the Standard Payments payment gateway. This setting creates a second gateway for the Card button.', 'woocommerce-for-japan' ),
 				'default'      => $container->get( 'wcgateway.settings.allow_card_button_gateway.default' ),
 				'screens'      => array(
 					State::STATE_START,
@@ -680,7 +680,7 @@ return array(
 			),
 
 			'disable_cards'                          => array(
-				'title'        => __( 'Disable specific credit cards', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Disable specific credit cards', 'woocommerce-for-japan' ),
 				'type'         => 'ppcp-multiselect',
 				'class'        => array(),
 				'input_class'  => array( 'wc-enhanced-select' ),
@@ -691,13 +691,13 @@ return array(
 					'woocommerce-paypal-payments'
 				),
 				'options'      => array(
-					'visa'       => _x( 'Visa', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'mastercard' => _x( 'Mastercard', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'amex'       => _x( 'American Express', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'discover'   => _x( 'Discover', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'jcb'        => _x( 'JCB', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'elo'        => _x( 'Elo', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'hiper'      => _x( 'Hiper', 'Name of credit card', 'woocommerce-paypal-payments' ),
+					'visa'       => _x( 'Visa', 'Name of credit card', 'woocommerce-for-japan' ),
+					'mastercard' => _x( 'Mastercard', 'Name of credit card', 'woocommerce-for-japan' ),
+					'amex'       => _x( 'American Express', 'Name of credit card', 'woocommerce-for-japan' ),
+					'discover'   => _x( 'Discover', 'Name of credit card', 'woocommerce-for-japan' ),
+					'jcb'        => _x( 'JCB', 'Name of credit card', 'woocommerce-for-japan' ),
+					'elo'        => _x( 'Elo', 'Name of credit card', 'woocommerce-for-japan' ),
+					'hiper'      => _x( 'Hiper', 'Name of credit card', 'woocommerce-for-japan' ),
 				),
 				'screens'      => array(
 					State::STATE_ONBOARDED,
@@ -708,7 +708,7 @@ return array(
 				'gateway'      => 'dcc',
 			),
 			'card_icons'                             => array(
-				'title'        => __( 'Show logo of the following credit cards', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Show logo of the following credit cards', 'woocommerce-for-japan' ),
 				'type'         => 'ppcp-multiselect',
 				'class'        => array(),
 				'input_class'  => array( 'wc-enhanced-select' ),
@@ -719,15 +719,15 @@ return array(
 					'woocommerce-paypal-payments'
 				),
 				'options'      => array(
-					'visa'            => _x( 'Visa (light)', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'visa-dark'       => _x( 'Visa (dark)', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'mastercard'      => _x( 'Mastercard (light)', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'mastercard-dark' => _x( 'Mastercard (dark)', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'amex'            => _x( 'American Express', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'discover'        => _x( 'Discover', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'jcb'             => _x( 'JCB', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'elo'             => _x( 'Elo', 'Name of credit card', 'woocommerce-paypal-payments' ),
-					'hiper'           => _x( 'Hiper', 'Name of credit card', 'woocommerce-paypal-payments' ),
+					'visa'            => _x( 'Visa (light)', 'Name of credit card', 'woocommerce-for-japan' ),
+					'visa-dark'       => _x( 'Visa (dark)', 'Name of credit card', 'woocommerce-for-japan' ),
+					'mastercard'      => _x( 'Mastercard (light)', 'Name of credit card', 'woocommerce-for-japan' ),
+					'mastercard-dark' => _x( 'Mastercard (dark)', 'Name of credit card', 'woocommerce-for-japan' ),
+					'amex'            => _x( 'American Express', 'Name of credit card', 'woocommerce-for-japan' ),
+					'discover'        => _x( 'Discover', 'Name of credit card', 'woocommerce-for-japan' ),
+					'jcb'             => _x( 'JCB', 'Name of credit card', 'woocommerce-for-japan' ),
+					'elo'             => _x( 'Elo', 'Name of credit card', 'woocommerce-for-japan' ),
+					'hiper'           => _x( 'Hiper', 'Name of credit card', 'woocommerce-for-japan' ),
 				),
 				'screens'      => array(
 					State::STATE_ONBOARDED,
@@ -738,7 +738,7 @@ return array(
 				'gateway'      => 'dcc',
 			),
 			'3d_secure_heading'                      => array(
-				'heading'      => __( '3D Secure', 'woocommerce-paypal-payments' ),
+				'heading'      => __( '3D Secure', 'woocommerce-for-japan' ),
 				'type'         => 'ppcp-heading',
 				'description'  => wp_kses_post(
 					sprintf(
@@ -766,11 +766,11 @@ return array(
 				'gateway'      => 'dcc',
 			),
 			'3d_secure_contingency'                  => array(
-				'title'        => __( 'Contingency for 3D Secure', 'woocommerce-paypal-payments' ),
+				'title'        => __( 'Contingency for 3D Secure', 'woocommerce-for-japan' ),
 				'type'         => 'select',
 				'description'  => sprintf(
 				// translators: %1$s and %2$s opening and closing ul tag, %3$s and %4$s opening and closing li tag.
-					__( '%1$s%3$sNo 3D Secure will cause transactions to be denied if 3D Secure is required by the bank of the cardholder.%4$s%3$sSCA_WHEN_REQUIRED returns a 3D Secure contingency when it is a mandate in the region where you operate.%4$s%3$sSCA_ALWAYS triggers 3D Secure for every transaction, regardless of SCA requirements.%4$s%2$s', 'woocommerce-paypal-payments' ),
+					__( '%1$s%3$sNo 3D Secure will cause transactions to be denied if 3D Secure is required by the bank of the cardholder.%4$s%3$sSCA_WHEN_REQUIRED returns a 3D Secure contingency when it is a mandate in the region where you operate.%4$s%3$sSCA_ALWAYS triggers 3D Secure for every transaction, regardless of SCA requirements.%4$s%2$s', 'woocommerce-for-japan' ),
 					'<ul>',
 					'</ul>',
 					'<li>',
@@ -781,9 +781,9 @@ return array(
 				'default'      => $container->get( 'api.shop.is-psd2-country' ) ? 'SCA_WHEN_REQUIRED' : 'NO_3D_SECURE',
 				'desc_tip'     => true,
 				'options'      => array(
-					'NO_3D_SECURE'      => __( 'No 3D Secure (transaction will be denied if 3D Secure is required)', 'woocommerce-paypal-payments' ),
-					'SCA_WHEN_REQUIRED' => __( '3D Secure when required', 'woocommerce-paypal-payments' ),
-					'SCA_ALWAYS'        => __( 'Always trigger 3D Secure', 'woocommerce-paypal-payments' ),
+					'NO_3D_SECURE'      => __( 'No 3D Secure (transaction will be denied if 3D Secure is required)', 'woocommerce-for-japan' ),
+					'SCA_WHEN_REQUIRED' => __( '3D Secure when required', 'woocommerce-for-japan' ),
+					'SCA_ALWAYS'        => __( 'Always trigger 3D Secure', 'woocommerce-for-japan' ),
 				),
 				'screens'      => array(
 					State::STATE_ONBOARDED,
@@ -826,20 +826,20 @@ return array(
 
 	'wcgateway.all-funding-sources'                        => static function( ContainerInterface $container ): array {
 		return array(
-			'card'        => _x( 'Credit or debit cards', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'sepa'        => _x( 'SEPA-Lastschrift', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'bancontact'  => _x( 'Bancontact', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'blik'        => _x( 'BLIK', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'eps'         => _x( 'eps', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'giropay'     => _x( 'giropay', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'ideal'       => _x( 'iDEAL', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'mercadopago' => _x( 'Mercado Pago', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'mybank'      => _x( 'MyBank', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'p24'         => _x( 'Przelewy24', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'sofort'      => _x( 'Sofort', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'venmo'       => _x( 'Venmo', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'trustly'     => _x( 'Trustly', 'Name of payment method', 'woocommerce-paypal-payments' ),
-			'paylater'    => _x( 'Pay Later', 'Name of payment method', 'woocommerce-paypal-payments' ),
+			'card'        => _x( 'Credit or debit cards', 'Name of payment method', 'woocommerce-for-japan' ),
+			'sepa'        => _x( 'SEPA-Lastschrift', 'Name of payment method', 'woocommerce-for-japan' ),
+			'bancontact'  => _x( 'Bancontact', 'Name of payment method', 'woocommerce-for-japan' ),
+			'blik'        => _x( 'BLIK', 'Name of payment method', 'woocommerce-for-japan' ),
+			'eps'         => _x( 'eps', 'Name of payment method', 'woocommerce-for-japan' ),
+			'giropay'     => _x( 'giropay', 'Name of payment method', 'woocommerce-for-japan' ),
+			'ideal'       => _x( 'iDEAL', 'Name of payment method', 'woocommerce-for-japan' ),
+			'mercadopago' => _x( 'Mercado Pago', 'Name of payment method', 'woocommerce-for-japan' ),
+			'mybank'      => _x( 'MyBank', 'Name of payment method', 'woocommerce-for-japan' ),
+			'p24'         => _x( 'Przelewy24', 'Name of payment method', 'woocommerce-for-japan' ),
+			'sofort'      => _x( 'Sofort', 'Name of payment method', 'woocommerce-for-japan' ),
+			'venmo'       => _x( 'Venmo', 'Name of payment method', 'woocommerce-for-japan' ),
+			'trustly'     => _x( 'Trustly', 'Name of payment method', 'woocommerce-for-japan' ),
+			'paylater'    => _x( 'Pay Later', 'Name of payment method', 'woocommerce-for-japan' ),
 		);
 	},
 	'wcgateway.settings.funding-sources'                   => static function( ContainerInterface $container ): array {
@@ -1047,7 +1047,7 @@ return array(
 	'button.helper.vaulting-label'                         => static function ( ContainerInterface $container ): string {
 		$vaulting_label = sprintf(
 		// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-			__( 'Enable saved cards, PayPal accounts, and subscription features on your store. Payment methods are saved in the secure %1$sPayPal Vault%2$s.', 'woocommerce-paypal-payments' ),
+			__( 'Enable saved cards, PayPal accounts, and subscription features on your store. Payment methods are saved in the secure %1$sPayPal Vault%2$s.', 'woocommerce-for-japan' ),
 			'<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#vaulting-saving-a-payment-method" target="_blank">',
 			'</a>'
 		);
@@ -1055,7 +1055,7 @@ return array(
 		if ( ! $container->get( 'wcgateway.helper.vaulting-scope' ) ) {
 			$vaulting_label .= sprintf(
 				// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-				__( ' To use vaulting features, you must %1$senable vaulting on your account%2$s.', 'woocommerce-paypal-payments' ),
+				__( ' To use vaulting features, you must %1$senable vaulting on your account%2$s.', 'woocommerce-for-japan' ),
 				'<a
 					href="https://docs.woocommerce.com/document/woocommerce-paypal-payments/#enable-vaulting-on-your-live-account"
 					target="_blank"
@@ -1067,7 +1067,7 @@ return array(
 		$vaulting_label .= '<p class="description">';
 		$vaulting_label .= sprintf(
 		// translators: %1$s, %2$s, %3$s and %4$s are the opening and closing of HTML <a> tag.
-			__( 'This will disable all %1$sPay Later%2$s features and %3$sAlternative Payment Methods%4$s on your site.', 'woocommerce-paypal-payments' ),
+			__( 'This will disable all %1$sPay Later%2$s features and %3$sAlternative Payment Methods%4$s on your site.', 'woocommerce-for-japan' ),
 			'<a
 					href="https://woocommerce.com/document/woocommerce-paypal-payments/#pay-later"
 					target="_blank"
@@ -1152,7 +1152,7 @@ return array(
 	'wcgateway.settings.fraudnet-label'                    => static function ( ContainerInterface $container ): string {
 		$label = sprintf(
 			// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-			__( 'Manage online risk with %1$sFraudNet%2$s.', 'woocommerce-paypal-payments' ),
+			__( 'Manage online risk with %1$sFraudNet%2$s.', 'woocommerce-for-japan' ),
 			'<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#fraudnet" target="_blank">',
 			'</a>'
 		);
@@ -1160,7 +1160,7 @@ return array(
 		if ( 'DE' === $container->get( 'api.shop.country' ) ) {
 			$label .= '<br/>' . sprintf(
 				// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-				__( 'Required when %1$sPay upon Invoice%2$s is used.', 'woocommerce-paypal-payments' ),
+				__( 'Required when %1$sPay upon Invoice%2$s is used.', 'woocommerce-for-japan' ),
 				'<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#pay-upon-invoice-PUI" target="_blank">',
 				'</a>'
 			);
@@ -1171,7 +1171,7 @@ return array(
 	'wcgateway.settings.tracking-label'                    => static function ( ContainerInterface $container ): string {
 		$tracking_label = sprintf(
 			// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-			__( 'Enable %1$sshipment tracking information%2$s to be sent to PayPal for seller protection features.', 'woocommerce-paypal-payments' ),
+			__( 'Enable %1$sshipment tracking information%2$s to be sent to PayPal for seller protection features.', 'woocommerce-for-japan' ),
 			'<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#shipment-tracking" target="_blank">',
 			'</a>'
 		);
@@ -1179,7 +1179,7 @@ return array(
 		if ( 'DE' === $container->get( 'api.shop.country' ) ) {
 			$tracking_label .= '<br/>' . sprintf(
 				// translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-				__( 'Required when %1$sPay upon Invoice%2$s is used.', 'woocommerce-paypal-payments' ),
+				__( 'Required when %1$sPay upon Invoice%2$s is used.', 'woocommerce-for-japan' ),
 				'<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#pay-upon-invoice-PUI" target="_blank">',
 				'</a>'
 			);
@@ -1227,12 +1227,12 @@ return array(
 
 		$dcc_enabled = $dcc_product_status->dcc_is_active();
 
-		$enabled_status_text  = esc_html__( 'Status: Available', 'woocommerce-paypal-payments' );
-		$disabled_status_text = esc_html__( 'Status: Not yet enabled', 'woocommerce-paypal-payments' );
+		$enabled_status_text  = esc_html__( 'Status: Available', 'woocommerce-for-japan' );
+		$disabled_status_text = esc_html__( 'Status: Not yet enabled', 'woocommerce-for-japan' );
 
 		$dcc_button_text = $dcc_enabled
-			? esc_html__( 'Settings', 'woocommerce-paypal-payments' )
-			: esc_html__( 'Enable Advanced Card Payments', 'woocommerce-paypal-payments' );
+			? esc_html__( 'Settings', 'woocommerce-for-japan' )
+			: esc_html__( 'Enable Advanced Card Payments', 'woocommerce-for-japan' );
 
 		$enable_dcc_url = $environment->current_environment_is( Environment::PRODUCTION )
 			? $container->get( 'wcgateway.enable-dcc-url-live' )
@@ -1260,8 +1260,8 @@ return array(
 
 		$pui_enabled = $pui_product_status->pui_is_active();
 
-		$enabled_status_text  = esc_html__( 'Status: Available', 'woocommerce-paypal-payments' );
-		$disabled_status_text = esc_html__( 'Status: Not yet enabled', 'woocommerce-paypal-payments' );
+		$enabled_status_text  = esc_html__( 'Status: Available', 'woocommerce-for-japan' );
+		$disabled_status_text = esc_html__( 'Status: Not yet enabled', 'woocommerce-for-japan' );
 
 		$enable_pui_url = $environment->current_environment_is( Environment::PRODUCTION )
 			? $container->get( 'wcgateway.enable-pui-url-live' )
@@ -1272,8 +1272,8 @@ return array(
 			: $enable_pui_url;
 
 		$pui_button_text = $pui_enabled
-			? esc_html__( 'Settings', 'woocommerce-paypal-payments' )
-			: esc_html__( 'Enable Pay upon Invoice', 'woocommerce-paypal-payments' );
+			? esc_html__( 'Settings', 'woocommerce-for-japan' )
+			: esc_html__( 'Enable Pay upon Invoice', 'woocommerce-for-japan' );
 
 		return sprintf(
 			'<p>%1$s %2$s</p><p><a target="%3$s" href="%4$s" class="button">%5$s</a></p>',

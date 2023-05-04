@@ -58,7 +58,7 @@ class VaultingModule implements ModuleInterface {
 			'woocommerce_account_menu_items',
 			function( $menu_links ) {
 				$menu_links = array_slice( $menu_links, 0, 5, true )
-				+ array( 'ppcp-paypal-payment-tokens' => __( 'PayPal payments', 'woocommerce-paypal-payments' ) )
+				+ array( 'ppcp-paypal-payment-tokens' => __( 'PayPal payments', 'woocommerce-for-japan' ) )
 				+ array_slice( $menu_links, 5, null, true );
 
 				return $menu_links;
@@ -187,11 +187,11 @@ class VaultingModule implements ModuleInterface {
 					$logger->info( "Adding vaulting failure info to email for order #{$order->get_id()}." );
 
 					if ( $vault_failed === 'void_auth' ) {
-						echo wp_kses_post( '<p>' . __( 'The subscription payment failed because the payment method could not be saved. Please try again with a different payment method.', 'woocommerce-paypal-payments' ) . '</p>' );
+						echo wp_kses_post( '<p>' . __( 'The subscription payment failed because the payment method could not be saved. Please try again with a different payment method.', 'woocommerce-for-japan' ) . '</p>' );
 					}
 
 					if ( $vault_failed === 'capture_auth' ) {
-						echo wp_kses_post( '<p>' . __( 'The subscription has been activated, but the payment method could not be saved. Please contact the merchant to save a payment method for automatic subscription renewal payments.', 'woocommerce-paypal-payments' ) . '</p>' );
+						echo wp_kses_post( '<p>' . __( 'The subscription has been activated, but the payment method could not be saved. Please contact the merchant to save a payment method for automatic subscription renewal payments.', 'woocommerce-for-japan' ) . '</p>' );
 					}
 				}
 			}
