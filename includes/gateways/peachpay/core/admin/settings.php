@@ -208,7 +208,7 @@ add_action( 'admin_head', 'peachpay_hide_nag', 10 );
 function peachpay_render_active_submenu( $file ) {
 	global $plugin_page, $submenu_file;
 	// phpcs:ignore
-	$tab = isset( $_GET['tab'] ) ? $_GET['tab'] : null;
+	$tab = isset( $_GET['tab'] ) ? wc_clean($_GET['tab']) : null;
 	if ( 'peachpay' === $plugin_page && ! $tab ) {
 		// phpcs:ignore
 		$plugin_page = 'peachpay&tab=home';
@@ -261,7 +261,6 @@ function peachpay_settings_init() {
 	}
 	// phpcs:ignore
 	if ( isset( $_GET['tab'] ) && 'field' === $_GET['tab'] && peachpay_user_role( 'administrator' ) ) {
-
 		peachpay_field_editor();
 	}
 	// phpcs:ignore
@@ -435,7 +434,7 @@ function peachpay_options_page_html() {
 	do_action( 'peachpay_settings_admin_action', $plugin_capabilities );
 
 	// Directly using 'woocommerce_premium' capability to allow config access when 'connected' = false
-	update_option( 'peachpay_premium_capability', $plugin_capabilities['woocommerce_premium'] );
+	if(isset($plugin_capabilities['woocommerce_premium']))update_option( 'peachpay_premium_capability', $plugin_capabilities['woocommerce_premium'] );
 
 	// Show error/success messages.
 	settings_errors( 'peachpay_messages' );
@@ -444,7 +443,7 @@ function peachpay_options_page_html() {
 	$section = isset( $_GET['section'] ) ? wp_unslash( $_GET['section'] ) : '';
 
 	//phpcs:ignore
-	$tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'home';
+	$tab = isset( $_GET['tab'] ) ? wc_clean($_GET['tab']) : 'home';
 
 	PeachPay_Onboarding_Tour::display_onboarding_tour( ! peachpay_plugin_has_capability( 'woocommerce_premium', $plugin_capabilities ) );
 

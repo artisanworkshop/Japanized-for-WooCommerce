@@ -242,7 +242,7 @@ function peachpay_generate_buttons_headers_footer() {
 				href="
 		<?php
 		//phpcs:ignore
-		echo add_query_arg( 'reset_field', 'reset' );
+		echo esc_url( add_query_arg( 'reset_field', 'reset' ) );
 		peachpay_reset_default_fields();
 		?>
 				"
