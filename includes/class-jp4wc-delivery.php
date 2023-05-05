@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.2.15
+ * @version     2.5.9
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
@@ -488,16 +488,13 @@ class JP4WC_Delivery{
 	 */
 	public function shipping_fields($post){
 		$date = get_post_meta( $post->ID, 'wc4jp-delivery-date', true );
-		$date_timestamp = strtotime("+2 day");
 		$time = get_post_meta( $post->ID, 'wc4jp-delivery-time-zone', true );
-		$date_format = get_option( 'wc4jp-date-format', true );
         $delivery_date = get_post_meta( $post->ID, 'wc4jp-tracking-ship-date', true );
 		$shipping_fields = array(
 			'wc4jp-delivery-date' => array(
 				'type' => 'text',
 				'id' => 'wc4jp-delivery-date',
 				'label' => __('Delivery Date', 'woocommerce-for-japan'),
-				'placeholder' => date($date_format, $date_timestamp),
 				'description' => __('Date on which the customer wished delivery.', 'woocommerce-for-japan'),
 				'class' => 'wc4jp-delivery-date',
 				'value' => ($date) ? $date : ''
@@ -514,7 +511,6 @@ class JP4WC_Delivery{
 				'type' => 'text',
 				'id' => 'wc4jp-tracking-ship-date',
 				'label' => __('Tracking Ship Date', 'woocommerce-for-japan'),
-				'placeholder' => date($date_format, $date_timestamp),
 				'description' => __('Actually shipped to date', 'woocommerce-for-japan'),
 				'class' => 'wc4jp-tracking-ship-date',
 				'value' => ($delivery_date) ? $delivery_date : ''
