@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, shohei.tanaka, mt8biz
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 6.1.1
-Stable tag: 2.5.8
+Tested up to: 6.2.0
+Stable tag: 2.5.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,10 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.5.9 - 2023-05-05 =
+* Fixed - PayPal Payment Plugin conflict.
+* Tweak - Delete Delivery time and date placeholder.
 
 = 2.5.8 - 2023-05-04 =
 * Update - PayPal Payment 2.0.4.
