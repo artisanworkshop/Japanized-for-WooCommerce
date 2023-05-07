@@ -1,5 +1,5 @@
 === Japanized For WooCommerce  ===
-Contributors: artisan-workshop-1, shohei.tanaka, mt8biz
+Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
