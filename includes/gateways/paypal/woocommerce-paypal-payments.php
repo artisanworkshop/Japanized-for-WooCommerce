@@ -238,8 +238,8 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 		10,
 		2
 	);
-
-	add_action(
+// Delete following add_action by Shohei Tanaka for Japanese situation.(2023/05/13)
+/*	add_action(
 		'before_woocommerce_init',
 		function() {
 			if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
@@ -247,11 +247,11 @@ define( 'PPCP_FLAG_SUBSCRIPTION', true );
 				 * Skip WC class check.
 				 *
 				 * @psalm-suppress UndefinedClass
-				 */
+				 *
 				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 			}
 		}
-	);
+	);*/
 
 	/**
 	 * Check if WooCommerce is active.
