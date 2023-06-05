@@ -5,7 +5,7 @@
  * The Yahoo API to use is as follows
  * https://developer.yahoo.co.jp/webapi/map/openlocalplatform/v1/zipcodesearch.html
  *
- * @version     2.5.11
+ * @version     2.5.1
  * @category    Automatic address entry from zip code using Yahoo API
  * @author      Artisan Workshop
  */
@@ -63,7 +63,7 @@ class YahooAutoPostcode4jp{
 			$yahoo_app_id = get_option( 'wc4jp-yahoo-app-id' );
 		}
 		$state_id = 'select2-'.$method.'_state-container';
-        $endpoint_url = get_home_url().'/wp-json/yahoo/v1/postcode/';
+        $endpoint_url = get_site_url().'/wp-json/yahoo/v1/postcode/';
 		if(get_option( 'wc4jp-zip2address' )){
 			?>
 <script type="text/javascript">
