@@ -3,7 +3,7 @@
  * Japanized for WooCommerce
  * Shortcodes
  *
- * @version     2.2.17
+ * @version     2.5.12
  * @category    Shortcodes
  * @author      Artisan Workshop
  */
@@ -87,7 +87,7 @@ class JP4WC_Shortcodes{
         foreach($laws_array as $key => $value){
             if($value){
                 $content .= '        <tr><th>'.esc_attr( $key ).'</th><td>'.wp_kses( $value, $allowed_html ).'</td></tr>'."\n";
-            }elseif($key != __( 'Special conditions', 'woocommerce-for-japan' ) && $key != __( 'Telephone', 'woocommerce-for-japan' )){
+            }elseif($key != __( 'Special conditions', 'woocommerce-for-japan' ) && $key != __( 'Telephone', 'woocommerce-for-japan' ) && $key != __( 'Manager Name', 'woocommerce-for-japan' )){
                 $no_content[] = $key;
             }
         }
