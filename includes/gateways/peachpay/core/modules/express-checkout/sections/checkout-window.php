@@ -100,16 +100,6 @@ function peachpay_field_editor_general() {
 		);
 
 		peachpay_admin_input(
-			'peachpay_address_autocomplete',
-			'peachpay_express_checkout_window',
-			'address_autocomplete',
-			1,
-			__( 'Google Maps address autocomplete', 'peachpay-for-woocommerce' ),
-			__( 'When a shopper starts typing the street address, they will get autocomplete suggestions.', 'peachpay-for-woocommerce' ),
-			array( 'input_type' => 'checkbox' )
-		);
-
-		peachpay_admin_input(
 			'peachpay_wc_locale_rule',
 			'peachpay_express_checkout_window',
 			'use_wc_country_locale',

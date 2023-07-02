@@ -1,6 +1,6 @@
 <?php
 /**
- * PeachPay Stripe Credit / Debit card gateway.
+ * PeachPay Stripe Card gateway.
  *
  * @package PeachPay
  */
@@ -18,11 +18,18 @@ class PeachPay_Stripe_Card_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_card';
 		$this->stripe_payment_method_type            = 'card';
 		$this->stripe_payment_method_capability_type = 'card';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/cc-quad.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/cc-quad.svg' ),
+			),
+			'small' => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/card-small.svg' ),
+			),
+		);
 		$this->settings_priority                     = 0;
 
-		$this->title                 = 'Credit / Debit card';
-		$this->description           = 'Pay securely using your credit or debit card.';
+		$this->title                 = 'Card';
+		$this->description           = __( 'Pay securely using your credit or debit card.', 'peachpay-for-woocommerce' );
 		$this->payment_method_family = __( 'Card', 'peachpay-for-woocommerce' );
 
 		$this->form_fields = self::capture_method_setting( $this->form_fields );
@@ -95,6 +102,7 @@ class PeachPay_Stripe_Card_Gateway extends PeachPay_Stripe_Payment_Gateway {
 	public function payment_method_form() {
 		?>
 			<div>
+				<?php $this->display_fallback_currency_option_message(); ?>
 				<p style="text-align: left; margin: 0;">
 					<?php echo esc_html( $this->description ); ?>
 				<p>

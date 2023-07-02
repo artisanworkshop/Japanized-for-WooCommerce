@@ -18,7 +18,15 @@ class PeachPay_Stripe_Sofort_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_sofort';
 		$this->stripe_payment_method_type            = 'sofort';
 		$this->stripe_payment_method_capability_type = 'sofort';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/sofort.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/stripe/sofort-small-color.svg' ),
+			),
+			'small' => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/stripe/sofort-small-color.svg' ),
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/sofort-small-white.svg' ),
+			),
+		);
 		$this->settings_priority                     = 9;
 
 		// Customer facing title and description.

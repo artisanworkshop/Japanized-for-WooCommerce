@@ -31,7 +31,10 @@ class PeachPay_Admin {
 		add_filter( 'plugin_action_links_' . PeachPay::get_plugin_name(), array( $this, 'add_plugin_list_links' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_filter( 'admin_menu', array( $this, 'add_admin_menus' ) );
+		add_filter( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
 		add_action( 'wp_ajax_pp-deactivation-feedback', 'peachpay_handle_deactivation_feedback' );
+		add_action( 'admin_notices', array( $this, 'service_fee_admin_notice' ) );
+
 	}
 
 	/**
@@ -42,11 +45,50 @@ class PeachPay_Admin {
 	}
 
 	/**
-	 * Enqueue JS and CSS that we need on every PeachPay admin page. If it is gateway specific put it in the gateway. If it is related to settings section put it in that section.
+	 * Runs code after the "plugins_loaded" hook.
+	 */
+	public function plugins_loaded() {
+		require_once PEACHPAY_ABSPATH . 'core/admin/class-peachpay-account-data.php';
+
+		PeachPay_Admin_Section::Create(
+			'account',
+			array(
+				new PeachPay_Account_Data(),
+			),
+			array(),
+			false
+		);
+	}
+
+	/**
+	 * Enqueue JS and CSS that are a part of the core PeachPay functionality. If it is gateway specific put it in the gateway. If it is related to settings section put it in that section.
 	 *
 	 * @param string $page The current page in the WP admin dashboard.
 	 */
 	public function enqueue_scripts( $page ) {
+		if ( ! $this->is_peachpay_admin_page( $page ) ) {
+			// JS that should be loaded everywhere except PeachPay admin pages.
+			PeachPay::enqueue_script( 'peachpay-admin-global', 'public/dist/peachpay-submenu.bundle.js' );
+
+			// JS to be loaded on the plugins page (e.g. for deactivation feedback).
+			if ( 'plugins.php' === $page ) {
+				PeachPay::enqueue_script(
+					'deactivation-feedback',
+					'public/dist/deactivation-feedback.bundle.js'
+				);
+				PeachPay::enqueue_script_data(
+					'deactivation-feedback',
+					'peachpay_admin',
+					array(
+						'admin_ajax' => admin_url( 'admin-ajax.php' ),
+						'nonces'     => array(
+							'deactivation_feedback' => wp_create_nonce( 'peachpay-deactivation-feedback' ),
+						),
+					)
+				);
+			}
+			return;
+		}
 		PeachPay::enqueue_style( 'peachpay-admin-core', 'public/dist/admin.bundle.css' );
 		PeachPay::enqueue_script( 'peachpay-admin-core', 'public/dist/admin.bundle.js' );
 		PeachPay::enqueue_script_data(
@@ -87,17 +129,14 @@ class PeachPay_Admin {
 				),
 			)
 		);
-
-		if ( $this->is_peachpay_admin_page( $page ) ) {
-			PeachPay::enqueue_script( 'peachpay-heap-analytics', 'core/admin/assets/js/heap-analytics.js' );
-			PeachPay::enqueue_script_data(
-				'peachpay-heap-analytics',
-				'peachpay_heap',
-				array(
-					'environment_id' => peachpay_is_local_development_site() || peachpay_is_staging_site() ? '248465022' : '3719363403',
-				)
-			);
-		}
+		PeachPay::enqueue_script( 'peachpay-heap-analytics', 'core/admin/assets/js/heap-analytics.js' );
+		PeachPay::enqueue_script_data(
+			'peachpay-heap-analytics',
+			'peachpay_heap',
+			array(
+				'environment_id' => peachpay_is_local_development_site() || peachpay_is_staging_site() ? '248465022' : '3719363403',
+			)
+		);
 	}
 
 	/**
@@ -106,10 +145,14 @@ class PeachPay_Admin {
 	 * @param string $page The current page in the WP admin dashboard.
 	 */
 	private function is_peachpay_admin_page( $page ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$post_id = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : 0;
+
 		return 'toplevel_page_peachpay' === $page
-		|| 'peachpay_page_peachpay_analytics' === $page
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		|| ( 'woocommerce_page_wc-settings' === $page && isset( $_GET['section'] ) && str_contains( sanitize_text_field( wp_unslash( $_GET['section'] ) ), 'peachpay' ) );
+			|| 'peachpay_page_peachpay_analytics' === $page
+			|| ( 'woocommerce_page_wc-settings' === $page && isset( $_GET['section'] ) && strpos( sanitize_text_field( wp_unslash( $_GET['section'] ) ), 'peachpay' ) !== false )
+			|| ( get_post_type( $post_id ) === 'shop_order' && isset( $_SERVER['REQUEST_URI'] ) && strpos( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ), '/wp-admin/post.php?post=' ) !== false && strpos( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ), 'action=edit' ) !== false );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -166,6 +209,14 @@ class PeachPay_Admin {
 			__( 'Analytics', 'peachpay-for-woocommerce' ),
 			'manage_options',
 			'peachpay&tab=payment_methods&section=analytics',
+			array( __CLASS__, 'do_admin_page' )
+		);
+		add_submenu_page(
+			'peachpay',
+			__( 'Account', 'peachpay-for-woocommerce' ),
+			__( 'Account', 'peachpay-for-woocommerce' ),
+			'manage_woocommerce',
+			'peachpay&tab=data&section=account',
 			array( __CLASS__, 'do_admin_page' )
 		);
 	}
@@ -235,6 +286,60 @@ class PeachPay_Admin {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Display the PeachPay fee notice.
+	 */
+	public function service_fee_admin_notice() {
+		if ( get_current_screen()->base !== 'toplevel_page_peachpay' ) {
+			return;
+		}
+
+		if ( get_option( 'peachpay_service_fee_notice_dismissed' ) === 'yes' ) {
+			return;
+		}
+
+		// phpcs:ignore
+		if ( isset( $_GET['dismiss-service-fee-notice'] ) && '1' === $_GET['dismiss-service-fee-notice'] ) {
+			update_option( 'peachpay_service_fee_notice_dismissed', 'yes' );
+			return;
+		}
+
+		if ( ! PeachPay::service_fee_enabled() ) {
+			return;
+		}
+
+		?>
+			<div class="notice notice-success is-dismissible">
+				<h3><?php esc_html_e( 'Changes coming to PeachPay’s Free plan', 'peachpay-for-woocommerce' ); ?></h3>
+				<p>
+					<?php esc_html_e( 'Since the beginning, PeachPay has been devoted to simplifying payments for merchants and shoppers, establishing itself as one of the most reliable payment services on WooCommerce. We’ve introduced many features and added compatibility for countless plugins to make checkout as effortless as possible.', 'peachpay-for-woocommerce' ); ?>
+				</p>
+				<p>
+					<?php esc_html_e( 'To continue making your checkout better, we’re introducing a', 'peachpay-for-woocommerce' ); ?>
+					<b>
+						<?php echo esc_html( PeachPay::service_fee_percentage() * 100 ); ?><?php esc_html_e( '% service fee.', 'peachpay-for-woocommerce' ); ?>
+					</b>
+					<?php esc_html_e( "This fee will apply to the shopper's cart subtotal and will be paid by the shopper.", 'peachpay-for-woocommerce' ); ?>
+					<b>
+						<?php esc_html_e( 'Merchants, please note, there will be no additional charges for you.', 'peachpay-for-woocommerce' ); ?>
+					</b>
+					<?php esc_html_e( 'When other services charge fees, it directly affects your profits. With the rise of processing costs, we don’t want you to pay for this, so we are passing the cost down to the shopper.', 'peachpay-for-woocommerce' ); ?>
+				</p>
+				<p>
+					<strong><?php esc_html_e( 'You can remove this fee by upgrading to PeachPay Premium using the Upgrade button below.', 'peachpay-for-woocommerce' ); ?></strong>
+				</p>
+				<p>
+					<?php esc_html_e( 'If you have questions or concerns about the fee, our team is happy to answer them. Please reach out to us via the chat or by emailing', 'peachpay-for-woocommerce' ); ?>
+					<a target="_blank" href="mailto:support@peachpay.app?subject=PeachPay+service+fee+feedback">support@peachpay.app</a>
+				</p>
+				<p>
+					<?php esc_html_e( 'Thank you for your understanding and continued support. We look forward to serving you to take your ecommerce sales to the moon! 🚀', 'peachpay-for-woocommerce' ); ?>
+				</p>
+				<button class="notice-dismiss" type="button" onclick="window.location = '<?php echo esc_url_raw( admin_url( 'admin.php?page=peachpay&dismiss-service-fee-notice=1' ) ); ?>'"></button>
+			</div>
+		<?php
 	}
 }
 

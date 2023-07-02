@@ -32,16 +32,25 @@ final class PeachPay_Lifecycle_Analytics {
 	 * filter `peachpay_plugin_activated_analytics` to add information to the analytics data.
 	 */
 	public function plugin_activated() {
-		$this->send_analytics(
-			'plugin_activated',
-			apply_filters(
-				'peachpay_plugin_activated_analytics',
+		$data = array();
+
+		if ( function_exists( 'get_woocommerce_currency' ) ) {
+			$data = array_merge(
 				array(
 					'sales_currency'       => get_woocommerce_currency(),
 					'sales_ytd'            => $this->sales( 'ytd' ),
 					'sales_last_month'     => $this->sales( 'last_month' ),
 					'sales_last_12_months' => $this->sales( 'last_12_months' ),
-				)
+				),
+				$data
+			);
+		}
+
+		$this->send_analytics(
+			'plugin_activated',
+			apply_filters(
+				'peachpay_plugin_activated_analytics',
+				$data
 			)
 		);
 	}
@@ -51,12 +60,19 @@ final class PeachPay_Lifecycle_Analytics {
 	 * filter `peachpay_plugin_deactivated_analytics` to add information to the analytics data
 	 */
 	public function plugin_deactivated() {
-		$data = array(
-			'sales_currency'       => get_woocommerce_currency(),
-			'sales_ytd'            => $this->sales( 'ytd' ),
-			'sales_last_month'     => $this->sales( 'last_month' ),
-			'sales_last_12_months' => $this->sales( 'last_12_months' ),
-		);
+		$data = array();
+
+		if ( function_exists( 'get_woocommerce_currency' ) ) {
+			$data = array_merge(
+				array(
+					'sales_currency'       => get_woocommerce_currency(),
+					'sales_ytd'            => $this->sales( 'ytd' ),
+					'sales_last_month'     => $this->sales( 'last_month' ),
+					'sales_last_12_months' => $this->sales( 'last_12_months' ),
+				),
+				$data
+			);
+		}
 
 		$feedback = get_option( 'peachpay_deactivation_feedback', null );
 		if ( $feedback && is_array( $feedback ) ) {

@@ -33,11 +33,8 @@ final class PeachPay_Poynt_Integration {
 		if ( is_admin() ) {
 			add_action(
 				'peachpay_admin_add_payment_setting_section',
-				function( $current ) {
-					$class = 'pp-header pp-sub-nav-poynt';
-					if ( 'pp-sub-nav-poynt' !== $current ) {
-						$class .= ' hide';
-					}
+				function() {
+					$class = 'pp-header pp-sub-nav-poynt no-border-bottom';
 
 					add_settings_field(
 						'peachpay_poynt_setting',
@@ -89,18 +86,20 @@ final class PeachPay_Poynt_Integration {
 			return '';
 		}
 
-		// PHPCS:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-		$state = base64_encode(
-			wp_json_encode(
-				array(
-					'return_url'   => admin_url( 'admin.php?page=peachpay&tab=payment#poynt' ),
-					'merchant_id'  => peachpay_plugin_merchant_id(),
-					'merchant_url' => get_site_url(),
+		$state = rawurlencode(
+            // PHPCS:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+			base64_encode(
+				wp_json_encode(
+					array(
+						'return_url'   => admin_url( 'admin.php?page=peachpay&tab=payment#poynt' ),
+						'merchant_id'  => peachpay_plugin_merchant_id(),
+						'merchant_url' => get_site_url(),
+					)
 				)
 			)
 		);
 
-		return self::config()['signup_url'] . "&context=$state";
+		return add_query_arg( 'context', $state, self::config()['signup_url'] );
 	}
 
 		/**
@@ -111,18 +110,20 @@ final class PeachPay_Poynt_Integration {
 			return '';
 		}
 
-		// PHPCS:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-		$state = base64_encode(
-			wp_json_encode(
-				array(
-					'return_url'   => admin_url( 'admin.php?page=peachpay&tab=payment#poynt' ),
-					'merchant_id'  => peachpay_plugin_merchant_id(),
-					'merchant_url' => get_site_url(),
+		$state = rawurlencode(
+            // PHPCS:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+			base64_encode(
+				wp_json_encode(
+					array(
+						'return_url'   => admin_url( 'admin.php?page=peachpay&tab=payment#poynt' ),
+						'merchant_id'  => peachpay_plugin_merchant_id(),
+						'merchant_url' => get_site_url(),
+					)
 				)
 			)
 		);
 
-		return self::config()['login_url'] . "&context=$state";
+		return add_query_arg( 'context', $state, self::config()['login_url'] );
 	}
 
 	/**

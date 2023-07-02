@@ -20,7 +20,7 @@ const zeroDecimalCurrencies = new Set([
 ]);
 
 window.addEventListener('load', ()=>{
-	document.querySelector('#pp-currency-table-div')?.classList.remove('pp-load');
+	document.querySelector('#pp-currency-table-div')?.classList.remove('pp-load-currency');
 });
 
 window.addEventListener('load', (event)=>{
@@ -177,7 +177,7 @@ function hideCustomIntervals() {
 	}
 }
 
-document.querySelector('#submit').addEventListener('click', (event) => {
+document.querySelector('#submit')?.addEventListener('click', (event) => {
 	let countries = document.querySelectorAll('.countries').forEach((element)=>{
 		const td = element.closest('td');
 		const selected = td.querySelector('.currencyCountries').selectedOptions;

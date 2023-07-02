@@ -25,30 +25,12 @@ class PeachPay_Stripe_Afterpay_Gateway extends PeachPay_Stripe_Payment_Gateway {
 	 * .
 	 */
 	public function __construct() {
-		$this->id                                    = 'peachpay_stripe_afterpay';
+		$this->id    = 'peachpay_stripe_afterpay';
+		$this->title = $this->get_title();
+
 		$this->stripe_payment_method_type            = 'afterpay_clearpay';
 		$this->stripe_payment_method_capability_type = 'afterpay_clearpay';
 		$this->settings_priority                     = 5;
-
-		if ( WC()->customer && method_exists( WC()->customer, 'get_billing_country' ) ) {
-				$country = WC()->customer->get_billing_country();
-		} elseif ( WC()->countries && method_exists( WC()->countries, 'get_base_country' ) ) {
-				$country = WC()->countries->get_base_country();
-		} else {
-				$country = 'US';
-		}
-		switch ( $country ) {
-			case 'GB':
-			case 'ES':
-			case 'FR':
-			case 'IT':
-				$this->title = __( 'Clearpay', 'peachpay-for-woocommerce' );
-				$this->icon  = PeachPay::get_asset_url( 'img/marks/clearpay.svg' );
-				break;
-			default:
-				$this->title = __( 'Afterpay', 'peachpay-for-woocommerce' );
-				$this->icon  = PeachPay::get_asset_url( 'img/marks/afterpay.svg' );
-		}
 
 		// translators: %s Button text name.
 		$this->description = __( 'After selecting %s you will be redirected to complete your payment.', 'peachpay-for-woocommerce' );
@@ -68,8 +50,6 @@ class PeachPay_Stripe_Afterpay_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->form_fields = self::capture_method_setting( $this->form_fields );
 
 		parent::__construct();
-
-		add_action( 'woocommerce_checkout_update_order_review', array( $this, 'update_afterpay_title' ), 100 );
 	}
 
 	/**
@@ -90,10 +70,7 @@ class PeachPay_Stripe_Afterpay_Gateway extends PeachPay_Stripe_Payment_Gateway {
 			if ( ! WC()->cart->needs_shipping() ) {
 				$is_available = false;
 			}
-		}
-
-		// Availability for only the order pay page.
-		if ( $is_available && is_wc_endpoint_url( 'order-pay' ) ) {
+		} elseif ( $is_available && is_wc_endpoint_url( 'order-pay' ) ) {
 			$order_id = absint( get_query_var( 'order-pay' ) );
 			$order    = wc_get_order( $order_id );
 
@@ -114,36 +91,60 @@ class PeachPay_Stripe_Afterpay_Gateway extends PeachPay_Stripe_Payment_Gateway {
 	}
 
 	/**
-	 * Update afterpay name when the order is changed.
-	 *
-	 * @param array $fragments Script fragments.
+	 * Override get_title method to return afterpay/clearpay depending on customer billing.
+	 * If no customer, will default to store base country
 	 */
-	public function update_afterpay_title( $fragments ) {
-		// Customer facing title and description.
-		// The POST errors do not matter since we only do an equivalency check and the title
-		//  will only be set according to that.
-		// phpcs:ignore
-		if ( ! empty( $_POST ) && array_key_exists( 'country', $_POST ) ) {
-			// phpcs:ignore
-			$active_country = sanitize_text_field( wp_unslash( $_POST['country'] ) );
-		} elseif ( WC()->countries && method_exists( WC()->countries, 'get_base_country' ) ) {
-			$active_country = WC()->countries->get_base_country();
-		} else {
-			$active_country = 'US';
+	public function get_title() {
+		if ( $this->get_option( 'title' ) && '' !== $this->get_option( 'title' ) ) {
+			return $this->get_option( 'title' );
 		}
-		switch ( $active_country ) {
+
+		$afterpay_or_clearpay = $this->afterpay_or_clearpay();
+
+		return 'clearpay' === $afterpay_or_clearpay ? __( 'Clearpay', 'peachpay-for-woocommerce' ) : __( 'Afterpay', 'peachpay-for-woocommerce' );
+	}
+
+	/**
+	 * Override get_icon_url method to return afterpay/clearpay icon url depending on customer billing.
+	 * If no customer, will default to store base currency
+	 *
+	 * @param string $size       of the icon.
+	 * @param string $background of the icon.
+	 */
+	public function get_icon_url( $size = 'full', $background = 'color' ) {
+		$afterpay_or_clearpay = $this->afterpay_or_clearpay();
+
+		$this->icons = array(
+			'full'  => array(
+				'color' => PeachPay::get_asset_url( "img/marks/stripe/$afterpay_or_clearpay-full-color.svg" ),
+			),
+			'small' => array(
+				'color' => PeachPay::get_asset_url( "img/marks/stripe/$afterpay_or_clearpay-small-color.svg" ),
+				'white' => PeachPay::get_asset_url( "img/marks/stripe/$afterpay_or_clearpay-small-white.svg" ),
+			),
+		);
+
+		return parent::get_icon_url( $size, $background );
+	}
+
+	/**
+	 * Returns 'clearpay' if this payment method should be presented as Clearpay; returns 'afterpay' otherwise
+	 */
+	public function afterpay_or_clearpay() {
+		$country = wc_get_base_location()['country'];
+
+		if ( WC()->customer && method_exists( WC()->customer, 'get_billing_country' ) ) {
+			$country = WC()->customer->get_billing_country();
+		}
+
+		switch ( $country ) {
 			case 'GB':
 			case 'ES':
 			case 'FR':
 			case 'IT':
-				$this->title = __( 'Clearpay', 'peachpay-for-woocommerce' );
-				$this->icon  = PeachPay::get_asset_url( 'img/marks/clearpay.svg' );
-				break;
+				return 'clearpay';
 			default:
-				$this->title = __( 'Afterpay', 'peachpay-for-woocommerce' );
-				$this->icon  = PeachPay::get_asset_url( 'img/marks/afterpay.svg' );
+				return 'afterpay';
 		}
-
-		return $fragments;
 	}
 }

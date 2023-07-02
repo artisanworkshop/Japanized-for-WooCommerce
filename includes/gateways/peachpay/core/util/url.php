@@ -42,9 +42,6 @@ function peachpay_api_url( $mode = 'detect' ) {
 			case 'https://theme4.peachpay.app':
 			case 'https://theme5.peachpay.app':
 			case 'https://qa.peachpay.app':
-			case 'https://qa-david.peachpay.app':
-			case 'https://qa-vikrant.peachpay.app':
-			case 'https://demo-plum.peachpay.app':
 			case 'https://demo.peachpay.app':
 			case 'https://ui-test.peachpay.app':
 			case 'http://localhost:8000':

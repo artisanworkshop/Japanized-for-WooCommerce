@@ -36,6 +36,10 @@ final class PeachPay {
 	private function hooks() {
 		add_filter( 'woocommerce_update_order_review_fragments', 'peachpay_native_checkout_data_fragment' );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
+		add_action( 'peachpay_plugin_capabilities', 'peachpay_sync_service_fee_configuration', 0, 1 );
+		add_action( 'woocommerce_admin_order_data_after_billing_address', 'peachpay_display_service_fee_tooltip' );
+		add_action( 'woocommerce_cart_calculate_fees', 'peachpay_add_service_fee', 1 );
 	}
 
 	/**
@@ -61,6 +65,12 @@ final class PeachPay {
 		include_once PEACHPAY_ABSPATH . '/core/payments/poynt/class-peachpay-poynt-integration.php';
 		include_once PEACHPAY_ABSPATH . '/core/payments/authnet/class-peachpay-authnet-integration.php';
 		include_once PEACHPAY_ABSPATH . '/core/payments/peachpay/class-peachpay-payments-integration.php';
+
+		// TODO: Remove once amazonpay refactoring is complete.
+		include_once PEACHPAY_ABSPATH . 'core/payments/amazonpay/amazonpay.php';
+
+		include_once PEACHPAY_ABSPATH . 'core/modules/address-autocomplete/class-peachpay-address-autocomplete.php';
+		include_once PEACHPAY_ABSPATH . 'core/modules/bot-protection/class-peachpay-bot-protection.php';
 
 		if ( is_admin() ) {
 			include_once PEACHPAY_ABSPATH . 'core/admin/class-peachpay-admin.php';
@@ -90,11 +100,17 @@ final class PeachPay {
 	 * Gets the script data for the PeachPay native checkout experience.
 	 */
 	public function native_checkout_data() {
+		$default_customer_location = wc_get_customer_default_location();
+
 		$native_checkout_data = array(
 			'merchant'     => array(
-				'id'     => peachpay_plugin_merchant_id(),
-				'name'   => get_bloginfo( 'name' ),
-				'domain' => wp_parse_url( home_url(), PHP_URL_HOST ),
+				'id'       => peachpay_plugin_merchant_id(),
+				'name'     => get_bloginfo( 'name' ),
+				'domain'   => wp_parse_url( home_url(), PHP_URL_HOST ),
+				'defaults' => array(
+					'state'   => isset( $default_customer_location['state'] ) ? $default_customer_location['state'] : WC()->countries->get_base_state(),
+					'country' => isset( $default_customer_location['country'] ) ? $default_customer_location['country'] : WC()->countries->get_base_country(),
+				),
 			),
 
 			'page'         => array(
@@ -279,5 +295,19 @@ final class PeachPay {
 			</p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Gets if the PeachPay service fee is enabled for this store.
+	 */
+	public static function service_fee_enabled() {
+		return get_option( 'peachpay_service_fee_enabled' ) === 'yes';
+	}
+
+	/**
+	 * Gets the PeachPay service fee percentage for this store.
+	 */
+	public static function service_fee_percentage() {
+		return get_option( 'peachpay_service_fee_percentage', 0.015 );
 	}
 }

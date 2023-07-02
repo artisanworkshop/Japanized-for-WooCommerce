@@ -79,6 +79,11 @@ hr {
 
 	gap: 8px;
 	flex-wrap: wrap;
+	margin-bottom: 3rem;
+}
+.pp-analytics-definitions-footer h4 {
+	margin: 0;
+	padding: 1rem 0;
 }
 .pp-analytics-definitions-footer-inner {
 	display: flex;

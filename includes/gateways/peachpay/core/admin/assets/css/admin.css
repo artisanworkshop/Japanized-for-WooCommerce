@@ -300,99 +300,6 @@ input:disabled+.pp-slider {
 	line-height: 30px;
 }
 
-.pp-header {
-	display: flex;
-	width: 100%;
-	flex-direction: column;
-	box-sizing: border-box;
-	border-bottom: 1px solid #c4c4c4;
-	gap: 18px;
-	padding: 24px;
-	transition: all .3s;
-}
-
-.pp-header:last-of-type {
-	border-bottom: none;
-	padding-bottom: 0;
-}
-
-@media screen and (max-width: 1024px) {
-	.pp-header {
-		padding: 18px 14px;
-	}
-}
-
-@media screen and (max-width: 782px) {
-	.pp-header {
-		flex-direction: column;
-	}
-}
-
-.pp-header.pp-sub-nav-peachpay {
-	gap: 8px;
-}
-
-.pp-header {
-	display: flex;
-	width: 100%;
-	flex-direction: column;
-	gap: 18px;
-	border-bottom: 1px solid #c4c4c4;
-	padding: 24px;
-	box-sizing: border-box;
-	transition: all .3s;
-}
-
-.pp-header:last-of-type {
-	border-bottom: none;
-	padding-bottom: 0;
-}
-
-@media screen and (max-width: 1024px) {
-	.pp-header {
-		padding: 18px 14px;
-	}
-}
-
-@media screen and (max-width: 782px) {
-	.pp-header {
-		flex-direction: column;
-	}
-}
-
-.pp-header th {
-	width: 100%;
-	padding: 0;
-	font-size: 18px;
-	font-weight: 700;
-	line-height: 27px;
-	display: flex;
-	flex-shrink: 0;
-}
-
-@media screen and (max-width: 1024px) {
-	.pp-header th {
-		font-size: 16px;
-	}
-}
-
-.pp-header.pp-sub-nav-peachpay th {
-	font-size: 16px;
-}
-
-@media screen and (max-width: 1024px) {
-	.pp-header.pp-sub-nav-peachpay th {
-		font-size: 14px;
-	}
-}
-
-.pp-header td {
-	display: flex;
-	width: 100%;
-	padding: 0;
-	margin: 0;
-}
-
 #pp-active-currencies th,
 #pp-active-currencies td:not(#pp-currency-rate-column)
  {
@@ -639,10 +546,10 @@ input:disabled+.pp-slider {
 
 .pp-save-button-section {
 	display: flex;
-	align-content: center;
+	justify-content: flex-end;
 	align-items: center;
 	flex-wrap: nowrap;
-	gap: 16px;
+	gap: 8px;
 	margin-top: 0 !important;
 }
 
@@ -652,7 +559,6 @@ input:disabled+.pp-slider {
 }
 
 .pp-save-button-section .submit {
-	flex-grow: 1;
 	text-align: right;
 }
 
@@ -1003,6 +909,20 @@ input:disabled+.pp-slider {
 	height: 40px !important;
 	overflow-y: scroll !important;
 }
+
+
+.pp-load-currency {
+	margin-top: 20px;
+	border: 16px solid #f3f3f3;
+	/* Light grey */
+	border-top: 16px solid var(--pp-color);
+	/* Blue */
+	border-radius: 25%;
+	width: 30px;
+	height: 30px;
+	animation: spin 2s linear infinite;
+}
+
 
 .pp-load {
 	margin-top: 20px;

@@ -126,37 +126,37 @@ abstract class PeachPay_Authnet_Payment_Gateway extends PeachPay_Payment_Gateway
 			}
 
 			$transaction_params['billTo'] = array(
-				'firstName'   => $order->get_billing_first_name(),
-				'lastName'    => $order->get_billing_last_name(),
-				'address'     => $order->get_billing_address_1() . $order->get_billing_address_2(),
-				'city'        => $order->get_billing_city(),
-				'state'       => $order->get_billing_state(),
-				'zip'         => $order->get_billing_postcode(),
-				'country'     => $order->get_billing_country(),
-				'phoneNumber' => $order->get_billing_phone(),
+				'firstName'   => peachpay_truncate_str( $order->get_billing_first_name(), 50 ),
+				'lastName'    => peachpay_truncate_str( $order->get_billing_last_name(), 50 ),
+				'address'     => peachpay_truncate_str( $order->get_billing_address_1() . $order->get_billing_address_2(), 60 ),
+				'city'        => peachpay_truncate_str( $order->get_billing_city(), 40 ),
+				'state'       => peachpay_truncate_str( $order->get_billing_state(), 40 ),
+				'zip'         => peachpay_truncate_str( $order->get_billing_postcode(), 20 ),
+				'country'     => peachpay_truncate_str( $order->get_billing_country(), 60 ),
+				'phoneNumber' => peachpay_truncate_str( $order->get_billing_phone(), 25 ),
 			);
 
 			if ( $order->get_billing_company() ) {
 				$company = array(
-					'company' => $order->get_billing_company(),
+					'company' => peachpay_truncate_str( $order->get_billing_company(), 50 ),
 				);
 				array_merge( $transaction_params['billTo'], $company );
 			}
 
 			if ( $order->has_shipping_address() ) {
 				$transaction_params['shipTo'] = array(
-					'firstName' => $order->get_shipping_first_name(),
-					'lastName'  => $order->get_shipping_last_name(),
-					'address'   => $order->get_shipping_address_1() . $order->get_shipping_address_2(),
-					'city'      => $order->get_shipping_city(),
-					'state'     => $order->get_shipping_state(),
-					'zip'       => $order->get_shipping_postcode(),
-					'country'   => $order->get_shipping_country(),
+					'firstName' => peachpay_truncate_str( $order->get_shipping_first_name(), 50 ),
+					'lastName'  => peachpay_truncate_str( $order->get_shipping_last_name(), 50 ),
+					'address'   => peachpay_truncate_str( $order->get_shipping_address_1() . $order->get_shipping_address_2(), 60 ),
+					'city'      => peachpay_truncate_str( $order->get_shipping_city(), 40 ),
+					'state'     => peachpay_truncate_str( $order->get_shipping_state(), 40 ),
+					'zip'       => peachpay_truncate_str( $order->get_shipping_postcode(), 20 ),
+					'country'   => peachpay_truncate_str( $order->get_shipping_country(), 60 ),
 				);
 
 				if ( $order->get_shipping_company() ) {
 					$company = array(
-						'company' => $order->get_shipping_company(),
+						'company' => peachpay_truncate_str( $order->get_shipping_company(), 50 ),
 					);
 					array_merge( $transaction_params['shipTo'], $company );
 				}
@@ -181,6 +181,7 @@ abstract class PeachPay_Authnet_Payment_Gateway extends PeachPay_Payment_Gateway
 				case 'settledSuccessfully':
 				case 'FDSAuthorizedPendingReview':
 				case 'FDSPendingReview':
+				case 'underReview':
 					return array(
 						'result'   => 'success',
 						'redirect' => $order->get_checkout_order_received_url(),

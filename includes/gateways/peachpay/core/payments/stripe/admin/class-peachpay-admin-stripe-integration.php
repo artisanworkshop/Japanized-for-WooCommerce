@@ -25,11 +25,9 @@ final class PeachPay_Admin_Stripe_Integration {
 
 		add_action(
 			'peachpay_admin_add_payment_setting_section',
-			function( $current ) {
-				$class = 'pp-header pp-sub-nav-stripe';
-				if ( 'pp-sub-nav-stripe' !== $current ) {
-					$class .= ' hide';
-				}
+			function() {
+				$class = 'pp-header pp-sub-nav-stripe no-border-bottom';
+
 				add_settings_field(
 					'peachpay_stripe_setting',
 					null,
@@ -48,28 +46,18 @@ final class PeachPay_Admin_Stripe_Integration {
 	public static function do_admin_page() {
 		?>
 		<div id="stripe" class="peachpay-setting-section">
-			<div>
-				<?php
-					// Stripe connect option.
-					require PeachPay::get_plugin_path() . '/core/payments/stripe/admin/views/html-stripe-connect.php';
-				?>
-			</div>
-			<div>
-				<?php
-					$gateway_list = PeachPay_Stripe_Integration::get_payment_gateways();
-					require PeachPay::get_plugin_path() . '/core/admin/views/html-gateways.php';
-				?>
-			</div>
-			<div class="gateway-provider-info">
-				<p>
-					<?php esc_html_e( 'Learn more about', 'peachpay-for-woocommerce' ); ?>
-					<a href="https://stripe.com/payments/payment-methods-guide" target="_blank"><?php esc_html_e( 'payment methods', 'peachpay-for-woocommerce' ); ?></a>
-					<?php esc_html_e( 'powered by Stripe and any associated', 'peachpay-for-woocommerce' ); ?>
-					<a href="https://stripe.com/pricing/local-payment-methods" target="_blank">
-						<?php esc_html_e( 'fees', 'peachpay-for-woocommerce' ); ?>
-					</a>
-				</p>
-			</div>
+			<?php
+				// Stripe connect option.
+				require PeachPay::get_plugin_path() . '/core/payments/stripe/admin/views/html-stripe-connect.php';
+			?>
+			<?php if ( PeachPay_Stripe_Integration::connected() ) : ?>
+				<div>
+					<?php
+						$gateway_list = PeachPay_Stripe_Integration::get_payment_gateways();
+						require PeachPay::get_plugin_path() . '/core/admin/views/html-gateways.php';
+					?>
+				</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

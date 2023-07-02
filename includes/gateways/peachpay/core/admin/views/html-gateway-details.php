@@ -31,14 +31,16 @@ defined( 'PEACHPAY_ABSPATH' ) || exit;
 					if ( is_array( $currencies ) ) {
 						if ( count( $currencies ) > 0 ) {
 							?>
-							<input type="checkbox" class="sm-state-currency see-more-state hide" id="currency-list"/>
 							<div class="see-more-wrap">
-								<div class="sm-target-currency see-more-target">
-								<?php echo esc_html( implode( ', ', $currencies ) ); ?>
+								<input type="checkbox" class="sm-state-currency see-more-state hide" id="currency-list"/>
+								<div class="flex-col" style="flex-direction: column-reverse;">
+									<label for="currency-list" class="sm-trigger-currency see-more-trigger hide"></label>
+									<div class="sm-target-currency see-more-target" style="max-height: 58px;"><!-- [element].style.maxHeight (called on this element in displaySeeMoreButtons) only works with in-line styles -->
+										<?php echo esc_html( implode( ', ', $currencies ) ); ?>
+										<div class="fade-currency fade-bottom"></div>
+									</div>
 								</div>
-								<div class="fade-currency fade-bottom hide"></div>
 							</div>
-							<label for="currency-list" class="sm-trigger-currency see-more-trigger hide"></label>
 							<?php
 						} else {
 							esc_html_e( 'No supported currencies', 'peachpay-for-woocommerce' );
@@ -56,14 +58,16 @@ defined( 'PEACHPAY_ABSPATH' ) || exit;
 					if ( is_array( $countries ) ) {
 						if ( count( $countries ) > 0 ) {
 							?>
-							<input type="checkbox" class="sm-state-country see-more-state hide" id="country-list"/>
 							<div class="see-more-wrap">
-								<div class="sm-target-country see-more-target">
-								<?php echo esc_html( implode( ', ', $countries ) ); ?>
+								<input type="checkbox" class="sm-state-country see-more-state hide" id="country-list"/>
+								<div class="flex-col" style="flex-direction: column-reverse;">
+									<label for="country-list" class="sm-trigger-country see-more-trigger hide"></label>
+									<div class="sm-target-country see-more-target" style="max-height: 58px;">
+										<?php echo esc_html( implode( ', ', $countries ) ); ?>
+										<div class="fade-country fade-bottom"></div>
+									</div>
 								</div>
-								<div class="fade-country fade-bottom hide"></div>
 							</div>
-							<label for="country-list" class="sm-trigger-country see-more-trigger hide"></label>
 							<?php
 						} else {
 							esc_html_e( 'No supported countries', 'peachpay-for-woocommerce' );

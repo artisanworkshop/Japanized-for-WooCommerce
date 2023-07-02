@@ -22,7 +22,7 @@ trait PeachPay_Poynt_Gateway_Settings {
 					'title'       => __( 'Charge type', 'peachpay-for-woocommerce' ),
 					'type'        => 'select',
 					'description' => __( 'This option determines if the customers funds are captured immediately or only authorized for capture at a later time.', 'peachpay-for-woocommerce' ),
-					'default'     => 'automatic',
+					'default'     => 'SALE',
 					'options'     => array(
 						'SALE'      => __( 'Capture', 'peachpay-for-woocommerce' ),
 						'AUTHORIZE' => __( 'Authorize', 'peachpay-for-woocommerce' ),

@@ -255,11 +255,11 @@ final class PeachPay_Payment {
 				}
 
 				$total_icons++;
-				$icons .= $gateway->get_icon();
+				$icons .= $current_icon;
 			}
 		}
 
-		if ( $remaining_icons > 0 ) {
+		if ( $remaining_icons > 0 && '' !== $icons ) {
 			$icons .= '<span class="peachpay-gateway-icons" style="gap:0.2rem;margin-left:0.4rem;text-align: center;justify-content: center;align-items: center;height: calc(1.4rem - 2px);width: calc(1.4rem - 2px);font-size: 13px;">+' . $remaining_icons . '</span>';
 		}
 

@@ -23,11 +23,9 @@ final class PeachPay_Admin_Square_Integration {
 
 		add_action(
 			'peachpay_admin_add_payment_setting_section',
-			function( $current ) {
-				$class = 'pp-header pp-sub-nav-square';
-				if ( 'pp-sub-nav-square' !== $current ) {
-					$class .= ' hide';
-				}
+			function() {
+				$class = 'pp-header pp-sub-nav-square no-border-bottom';
+
 				add_settings_field(
 					'peachpay_square_setting',
 					null,
@@ -51,12 +49,14 @@ final class PeachPay_Admin_Square_Integration {
 				require PeachPay::get_plugin_path() . '/core/payments/square/admin/views/html-square-connect.php';
 				?>
 			</div>
-			<div>
-				<?php
-				$gateway_list = PeachPay_Square_Integration::get_payment_gateways();
-				require PeachPay::get_plugin_path() . '/core/admin/views/html-gateways.php';
-				?>
-			</div>
+			<?php if ( peachpay_square_connected() ) : ?>
+				<div>
+					<?php
+					$gateway_list = PeachPay_Square_Integration::get_payment_gateways();
+					require PeachPay::get_plugin_path() . '/core/admin/views/html-gateways.php';
+					?>
+				</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

@@ -34,11 +34,8 @@ final class PeachPay_PayPal_Integration {
 		if ( is_admin() ) {
 			add_action(
 				'peachpay_admin_add_payment_setting_section',
-				function( $current ) {
-					$class = 'pp-header pp-sub-nav-paypal';
-					if ( 'pp-sub-nav-paypal' !== $current ) {
-						$class .= ' hide';
-					}
+				function() {
+					$class = 'pp-header pp-sub-nav-paypal no-border-bottom';
 
 					add_settings_field(
 						'peachpay_paypal_setting',

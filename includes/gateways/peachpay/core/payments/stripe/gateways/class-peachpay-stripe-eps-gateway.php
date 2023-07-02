@@ -18,7 +18,14 @@ class PeachPay_Stripe_Eps_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_eps';
 		$this->stripe_payment_method_type            = 'eps';
 		$this->stripe_payment_method_capability_type = 'eps';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/eps.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/eps-full.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/eps-small-white.svg' ),
+			),
+		);
 		$this->settings_priority                     = 10;
 
 		// Customer facing title and description.
@@ -44,6 +51,7 @@ class PeachPay_Stripe_Eps_Gateway extends PeachPay_Stripe_Payment_Gateway {
 				<label style="font-weight: 600; font-size: 13px; color: #707070;"><?php esc_html_e( 'EPS Bank', 'peachpay-for-woocommerce' ); ?></label>
 				<div id="pp-eps-element"></div>
 			</div>
+			<?php $this->display_fallback_currency_option_message(); ?>
 			<?php if ( $this->description ) : ?>
 				<hr style="margin: 0.5rem 0;"/>
 				<p style="text-align: left; margin: 0; font-size: smaller;" class="muted">

@@ -15,36 +15,31 @@ require PEACHPAY_ABSPATH . 'core/modules/one-click-upsell/assets/class-peachpay-
  * Calls all functions that add the settings fields to the product recommendations section
  */
 function peachpay_express_checkout_product_recommendations_render() {
-	// phpcs:disable
-	$current = 'pp-sub-nav-pr';
-	if ( isset( $_COOKIE['pp_sub_nav_express_checkout_product_recommendations'] ) ) {
-		$current = $_COOKIE['pp_sub_nav_express_checkout_product_recommendations'];
-	}
-	peachpay_pr_ocu_sub_nav( $current );
-	peachpay_product_recommendations_section( $current );
-	peachpay_one_click_upsell( $current );
+	peachpay_pr_ocu_sub_nav();
+	peachpay_product_recommendations_section();
+	peachpay_one_click_upsell();
 }
 
 /**
  * Adds the product recommendations / ocu navigation tabs.
  */
-function peachpay_pr_ocu_sub_nav( $current ) {
+function peachpay_pr_ocu_sub_nav() {
 	?>
-	<div class='pp-flex-row pp-gap-12 pp-sub-nav-container'>
+	<div class='pp-flex-row pp-gap-12 pp-sub-nav-container pp-sub-nav-controller'>
 		<?php
 		$buttons = array(
 			array(
-				'id'    => 'pp-sub-nav-pr',
-				'title' => 'Product recommendations'
+				'href'  => 'pr',
+				'title' => __( 'Product recommendations', 'peachpay-for-woocommerce' ),
 			),
 			array(
-				'id'    => 'pp-sub-nav-ocu',
-				'title' => 'One-click upsell'
+				'href'  => 'ocu',
+				'title' => __( 'One-click upsell', 'peachpay-for-woocommerce' ),
 			),
 		);
-		foreach( $buttons as $button ) {
+		foreach ( $buttons as $button ) {
 			?>
-				<div class='pp-sub-nav-button<?php echo 0 === strcmp( $current, $button['id'] ) ? ' pp-sub-nav-button-active' : '' ?>' id='<?php echo esc_attr( $button['id'] ); ?>'><?php echo esc_html( $button['title'] ); ?></div>
+				<div class='pp-sub-nav-button' href='#<?php echo esc_attr( $button['href'] ); ?>'><?php echo esc_html( $button['title'] ); ?></div>
 			<?php
 		}
 		?>
@@ -55,11 +50,9 @@ function peachpay_pr_ocu_sub_nav( $current ) {
 /**
  * Adds product recommendation fields.
  */
-function peachpay_product_recommendations_section( $current ) {
+function peachpay_product_recommendations_section() {
 	$class = 'pp-header pp-sub-nav-pr';
-	if ( $current != 'pp-sub-nav-pr' ) {
-		$class .= ' hide';
-	}
+
 	add_settings_field(
 		'peachpay_rp_checkout_modal_section',
 		peachpay_build_section_header( __( 'Display', 'peachpay-for-woocommerce' ) ),
@@ -90,7 +83,7 @@ function peachpay_product_recommendations_section( $current ) {
 		'peachpay_manual_recommended_products_cb',
 		'peachpay',
 		'peachpay_express_checkout_render',
-		array( 'class' => $class )
+		array( 'class' => $class . ' no-border-bottom' )
 	);
 }
 
@@ -253,11 +246,9 @@ function peachpay_rp_checkout_modal_cb() {
 /**
  * Generates the upsell page field settings
  */
-function peachpay_one_click_upsell( $current ) {
+function peachpay_one_click_upsell() {
 	$class = 'pp-header pp-sub-nav-ocu';
-	if ( $current != 'pp-sub-nav-ocu' ) {
-		$class .= ' hide';
-	}
+
 	add_settings_field(
 		'peachpay_one_click_upsell_display',
 		peachpay_build_section_header( __( 'Display', 'peachpay-for-woocommerce' ), 'https://youtu.be/SUd1y03iGzY' ),
@@ -280,7 +271,7 @@ function peachpay_one_click_upsell( $current ) {
 		'peachpay_ocu_preview_cb',
 		'peachpay',
 		'peachpay_express_checkout_render',
-		array( 'class' => $class )
+		array( 'class' => $class . ' no-border-bottom' )
 	);
 }
 
@@ -416,6 +407,9 @@ function peachpay_ocu_appearance_settings() {
 	<?php
 }
 
+/**
+ * Renders the preview for the one-click upsell.
+ */
 function peachpay_ocu_preview_cb() {
 	$options = get_option( 'peachpay_express_checkout_product_recommendations', array() );
 	?>

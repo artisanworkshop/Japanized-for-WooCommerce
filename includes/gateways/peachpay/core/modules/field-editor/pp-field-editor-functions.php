@@ -26,3 +26,33 @@ function peachpay_virtual_product_fields_preset( $fields ) {
 	}
 	return $fields;
 }
+
+/**
+ * A helper method that check if the field is a default field or not.
+ * return true if it is default and false if it is not.
+ *
+ * @param string $section the target section string.
+ * @param string $target the string to check.
+ */
+function peachpay_is_default_field( $section, $target ) {
+	if ( 'additional' === $section ) {
+		return false;
+	}
+
+	$default_field_name_keys = array(
+		$section . '_email',
+		$section . '_phone',
+		$section . '_first_name',
+		$section . '_last_name',
+		$section . '_company',
+		$section . '_address_1',
+		$section . '_address_2',
+		$section . '_postcode',
+		$section . '_city',
+		$section . '_state',
+		$section . '_country',
+		$section . '_personal_header',
+		$section . '_address_header',
+	);
+	return in_array( $target, $default_field_name_keys, true );
+}

@@ -8,13 +8,62 @@
 defined( 'PEACHPAY_ABSPATH' ) || exit;
 
 ?>
-<div class="row">
-	<div class="col-3 flex-col gap-8" style="text-align: center;">
-		<div style="background-color: transparent; height: unset;" class="payment-logo">
-			<img src="<?php echo esc_attr( peachpay_url( 'core/payments/authnet/admin/assets/img/authnet-logo.svg' ) ); ?>" />
+<div class="flex-col payment-provider-header <?php echo esc_attr( PeachPay_Authnet_Integration::connected() ? 'is-connected' : '' ); ?>">
+	<div>
+		<div class="flex-col gap-24 w-100">
+			<div class="flex-row gap-12 ai-center provider-title">
+				<img src="<?php echo esc_attr( peachpay_url( 'public/img/marks/authnet/short.svg' ) ); ?>" />
+				<?php echo esc_html_e( 'Authorize.net Account', 'peachpay-for-woocommerce' ); ?>
+			</div>
+			<!-- Authnet Status -->
+			<?php if ( PeachPay_Authnet_Integration::connected() ) : ?>
+				<div class="flex-col gap-12 connected-info">
+					<div class="flex-row gap-8 ai-center connected-success">
+						<?php if ( peachpay_is_test_mode() ) : ?>
+							<?php echo esc_html_e( 'Your Authorize.net sandbox account is connected!', 'peachpay-for-woocommerce' ); ?>
+						<?php else : ?>
+							<?php echo esc_html_e( 'Your Authorize.net account is connected!', 'peachpay-for-woocommerce' ); ?>
+						<?php endif; ?>
+						<img src="<?php echo esc_attr( peachpay_url( 'public/img/checkmark-green.svg' ) ); ?>"/>
+					</div>
+					<div class="flex-col gap-4">
+						<?php if ( peachpay_is_test_mode() ) : ?>
+							<span class="account-info">
+								<?php esc_html_e( 'Make test payments following', 'peachpay-for-woocommerce' ); ?> 
+								<a href="https://developer.authorize.net/hello_world/testing_guide.html" target="_blank"><?php esc_html_e( 'these instructions', 'peachpay-for-woocommerce' ); ?></a>.
+							</span>
+						<?php endif; ?>
+						<span class="account-info">
+							<?php esc_html_e( 'Login Id:', 'peachpay-for-woocommerce' ); ?> <?php echo esc_html( PeachPay_Authnet_Integration::login_id() ); ?>
+						</span>
+						<span class="account-info">
+							<?php esc_html_e( 'Public Client Key:', 'peachpay-for-woocommerce' ); ?> <?php echo esc_html( PeachPay_Authnet_Integration::public_client_key() ); ?>
+						</span>
+					</div>
+				</div>
+			<?php else : ?>
+				<div class="flex-col provider-description">
+					<p><?php esc_html_e( 'Authorize.net is a credit card processor. Not sure if this one is right for you, or looking to switch? Authorize.net offers competitive transaction rates for stores selling more than $500K USD per year.', 'peachpay-for-woocommerce' ); ?></p>
+					<div class="method-icons">
+						<?php
+						foreach ( PeachPay_Authnet_Integration::get_payment_gateways() as $gateway ) {
+							$icon = $gateway->get_icon_url( 'small', 'color' );
+							?>
+							<span class="flex-row">
+								<img src="<?php echo esc_attr( $icon ); ?>" alt="<?php echo esc_attr( $gateway->title ); ?>"/>
+								<span class="gateway-title">
+									<span><?php echo esc_attr( $gateway->title ); ?></span>
+									<span>,</span>
+								</span>
+							</span>
+							<?php
+						}
+						?>
+					</div>
+				</div>
+			<?php endif; ?>
 		</div>
-
-		<div class="flex-col gap-8">
+		<div class="flex-col gap-12 ai-center buttons-container">
 			<!-- Authnet Connect / Unlink buttons -->
 			<?php if ( PeachPay_Authnet_Integration::connected() ) : ?>
 				<a class="update-payment-button button-primary-filled-medium" href="<?php echo esc_url( PeachPay_Authnet_Advanced::get_url() ); ?>" >
@@ -75,49 +124,11 @@ defined( 'PEACHPAY_ABSPATH' ) || exit;
 			<?php endif; ?>
 		</div>
 	</div>
-	<div class="col-9" style="padding-left: 1rem;">
-		<!-- Authnet Status -->
-		<?php if ( PeachPay_Authnet_Integration::connected() ) : ?>
-			<p>
-				<span class="dashicons dashicons-yes-alt"></span>
-				<?php if ( peachpay_is_test_mode() ) : ?>
-					<?php esc_html_e( "You've successfully connected your Authorize.net sandbox account", 'peachpay-for-woocommerce' ); ?>
-					<br/>
-					<br/>
-					<p>
-						<?php esc_html_e( 'Make sandbox payments following', 'peachpay-for-woocommerce' ); ?>
-						<a href="https://developer.authorize.net/hello_world/testing_guide.html"><?php esc_html_e( 'these instructions', 'peachpay-for-woocommerce' ); ?></a>.
-					</p>
-				<?php else : ?>
-					<?php esc_html_e( "You've successfully connected your Authorize.net account", 'peachpay-for-woocommerce' ); ?>
-				<?php endif; ?>
-			</p>
-		<?php else : ?>
-			<p>
-				<?php
-				if ( peachpay_is_test_mode() ) {
-					esc_html_e( 'Connect your Authorize.net sandbox account.', 'peachpay-for-woocommerce' );
-				} else {
-					esc_html_e( 'Connect your Authorize.net account.', 'peachpay-for-woocommerce' );
-				}
-				?>
-			</p>
-			<br>
-			<p>
-				<?php esc_html_e( 'Authorize.net is a credit card processor. Not sure if this one is right for you, or looking to switch? Authorize.net offers competitive transaction rates for stores selling more than $500K USD per year. For more information, visit the Authorize.net website.', 'peachpay-for-woocommerce' ); ?>
-			</p>
-		<?php endif; ?>
-
-		<!-- Authnet advanced details -->
-		<?php if ( PeachPay_Authnet_Integration::connected() ) : ?>
-		<details style="border: 1px solid #dcdcde; border-radius: 4px; padding: 4px 10px; width: content-width; margin-top: 1rem;">
-			<summary>
-				<b><?php esc_html_e( 'Advanced Details', 'peachpay-for-woocommerce' ); ?></b>
-			</summary>
-			<hr>
-			<p style="padding: 0 1rem 0; margin: 0;"><b><?php esc_html_e( 'Login Id:', 'peachpay-for-woocommerce' ); ?></b> <?php echo PeachPay_Authnet_Integration::login_id(); //phpcs:ignore ?></p>
-			<p style="padding: 0 1rem 0; margin: 0;"><b><?php esc_html_e( 'Public Client Key:', 'peachpay-for-woocommerce' ); ?></b> <?php echo PeachPay_Authnet_Integration::public_client_key(); //phpcs:ignore ?></p>
-		</details>
-		<?php endif; ?>
+	<div class="provider-info">
+		<div class="info-icon icon-18"></div>
+		<span>
+			<span><?php esc_html_e( 'For more information about Authorize.net\'s services and pricing, visit', 'peachpay-for-woocommerce' ); ?> <span>
+			<a href="https://www.authorize.net/sign-up/pricing.html" target="_blank"><?php esc_html_e( 'Authorize.net', 'peachpay-for-woocommerce' ); ?></a>
+		</span>
 	</div>
 </div>

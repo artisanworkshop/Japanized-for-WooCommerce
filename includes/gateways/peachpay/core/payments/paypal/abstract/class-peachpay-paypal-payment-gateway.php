@@ -61,6 +61,7 @@ abstract class PeachPay_PayPal_Payment_Gateway extends PeachPay_Payment_Gateway 
 					'label'  => $this->get_option( 'paypal_button_label' ),
 					'height' => intval( $this->get_option( 'paypal_button_height' ) ),
 				),
+				'default_currency'     => $this->get_option( 'default_currency' ) !== 'none' ? $this->get_option( 'default_currency' ) : null,
 				'title'                => $this->get_title(),
 			),
 		);
@@ -153,10 +154,11 @@ abstract class PeachPay_PayPal_Payment_Gateway extends PeachPay_Payment_Gateway 
 			PeachPay_PayPal_Order_Data::set_peachpay_details(
 				$order,
 				array(
-					'session_id'     => $session_id,
-					'transaction_id' => $transaction_id,
-					'peachpay_mode'  => peachpay_is_test_mode() ? 'test' : 'live',
-					'paypal_mode'    => $paypal_mode,
+					'session_id'             => $session_id,
+					'transaction_id'         => $transaction_id,
+					'peachpay_mode'          => peachpay_is_test_mode() ? 'test' : 'live',
+					'paypal_mode'            => $paypal_mode,
+					'service_fee_percentage' => PeachPay::service_fee_enabled() ? PeachPay::service_fee_percentage() : 0,
 				)
 			);
 
@@ -165,14 +167,25 @@ abstract class PeachPay_PayPal_Payment_Gateway extends PeachPay_Payment_Gateway 
 				'intent'         => 'CAPTURE',
 				'purchase_units' => array(
 					array(
-						'reference_id' => $order->get_order_number(),
-						'description'  => self::get_payment_description( $order ),
-						'payee'        => array(
+						'reference_id'        => $order->get_order_number(),
+						'description'         => self::get_payment_description( $order ),
+						'payee'               => array(
 							'merchant_id' => PeachPay_PayPal_Integration::merchant_id(),
 						),
-						'amount'       => array(
+						'amount'              => array(
 							'currency_code' => $order->get_currency(),
 							'value'         => PeachPay_PayPal::format_amount( $order->get_total(), $order->get_currency() ),
+						),
+						'payment_instruction' => array(
+							'disbursement_mode' => 'INSTANT',
+							'platform_fees'     => array(
+								array(
+									'amount' => array(
+										'currency_code' => $order->get_currency(),
+										'value'         => PeachPay_PayPal::format_amount( PeachPay_PayPal_Order_Data::get_service_fee_total( $order ), $order->get_currency() ),
+									),
+								),
+							),
 						),
 					),
 				),

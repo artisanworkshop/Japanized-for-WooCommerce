@@ -27,9 +27,6 @@ function peachpay_setup_currency_module() {
 		peachpay_unschedule_all_currency();
 		return;
 	}
-	// Add paypal settings.
-	// TODO: unused functionality, either update to new paypal or delete
-	add_action( 'peachpay_paypal_extra_settings', 'peachpay_field_auto_convert_paypal' );
 
 	// Add custom peachpay cron schedules.
 	add_filter( 'cron_schedules', 'peachpay_add_cron_schedules', 1, 1 );
@@ -359,6 +356,9 @@ function peachpay_currencies_to_modal_from_country( $country ) {
 	$currency_info = array();
 
 	foreach ( $currencies as $key => $currency ) {
+		if ( 'Select currency' === $currency['name'] ) {
+			continue;
+		}
 		$currency_info[ $currency['name'] ] ['name']                = PEACHPAY_SUPPORTED_CURRENCIES[ $currency['name'] ];
 		$currency_info[ $currency['name'] ] ['code']                = $currency['name'];
 		$currency_info[ $currency['name'] ] ['overridden_code']     = $currency['name'];
@@ -481,7 +481,21 @@ function peachpay_post_currency_changes( $old, $new ) {
 		}
 	}
 	if ( ! empty( $new['new_flag'] ) ) {
-		array_push( $new['selected_currencies'], $new['selected_currencies']['base'] );
+		$placeholder_currency = array(
+			'name'            => 'Select currency',
+			'auto_update'     => '1',
+			'rate'            => 1,
+			'decimals'        => 0,
+			'custom_interval' => 'none',
+			'round'           => 'up',
+			'countries'       => '',
+		);
+
+		array_push( $new['selected_currencies'], $placeholder_currency );
+	}
+
+	if ( ! isset( $new['selected_currencies'] ) ) {
+		return;
 	}
 
 	$paypal_default        = peachpay_get_settings_option( 'peachpay_payment_settings', 'paypal_defuault', 'none' );
@@ -510,6 +524,9 @@ function peachpay_rebuild_all_currencies( $base ) {
 	$currencies        = array( 'base' => $base );
 	foreach ( PEACHPAY_SUPPORTED_CURRENCIES as $key => $name ) {
 		if ( get_woocommerce_currency() === $key ) {
+			continue;
+		}
+		if ( 'Select currency' === $key ) {
 			continue;
 		}
 		$currency = array(
@@ -575,11 +592,16 @@ function peachpay_make_currency_cookie() {
 		}
 	}
 
-	$best = peachpay_best_currency( peachpay_get_client_country() );
-	setcookie( 'pp_active_currency', $best, time() + 60 * 60 * 24, '/' );
-	$_COOKIE['pp_active_currency'] = $best;
-	add_action( 'woocommerce_before_shop_loop', 'peachpay_render_currency_notice' );
+	$current_currency = get_woocommerce_currency();
+	$best_currency    = peachpay_best_currency( peachpay_get_client_country() );
 
+	if ( $current_currency === $best_currency ) {
+		return;
+	}
+
+	setcookie( 'pp_active_currency', $best_currency, time() + 60 * 60 * 24, '/' );
+	$_COOKIE['pp_active_currency'] = $best_currency;
+	peachpay_render_currency_notice();
 }
 
 /**
@@ -771,18 +793,15 @@ function peachpay_unsupported_currency_error() {
  * On first currency switch with autodetect it will alert a customer that the currency has switched.
  */
 function peachpay_render_currency_notice() {
-	$align = peachpay_get_settings_option( 'peachpay_express_checkout_button', 'floating_button_alignment', 'right' ) === 'left' ? 'right: 20px' : 'left:20px';
-	?>
-	<div class='pp-currency-set-notice hide' style="<?php echo esc_html( $align ); ?>"> 
-		<div class='pp-currency-notice-inner'>
-		<?php
-		esc_html_e( 'We detected the best currency for you would be ', 'peachpay-for-woocommerce' );
-		echo isset( $_COOKIE['pp_active_currency'] ) ? esc_html( PEACHPAY_SUPPORTED_CURRENCIES[ sanitize_text_field( wp_unslash( $_COOKIE['pp_active_currency'] ) ) ] ) : esc_html( PEACHPAY_SUPPORTED_CURRENCIES[ peachpay_best_currency( peachpay_get_client_country() ) ] );
-		esc_html_e( ' and automatically converted the prices!', 'peachpay-for-woocommerce' );
-		?>
-		</div>
-	</div>
-	<?php
+	if ( ! function_exists( 'wc_add_notice' ) ) {
+		return;
+	}
+
+	$message = __( 'We detected the best currency for you would be ', 'peachpay-for-woocommerce' ) .
+	( isset( $_COOKIE['pp_active_currency'] ) ? esc_html( PEACHPAY_SUPPORTED_CURRENCIES[ sanitize_text_field( wp_unslash( $_COOKIE['pp_active_currency'] ) ) ] ) : esc_html( PEACHPAY_SUPPORTED_CURRENCIES[ peachpay_best_currency( peachpay_get_client_country() ) ] ) ) .
+	__( ' and automatically converted the prices!', 'peachpay-for-woocommerce' );
+
+	wc_add_notice( $message, 'notice', array( 'pp-currency-switcher' => 'switched-notice' ) );
 }
 
 /**

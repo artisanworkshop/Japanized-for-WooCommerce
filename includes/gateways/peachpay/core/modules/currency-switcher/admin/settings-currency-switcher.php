@@ -122,19 +122,6 @@ function peachpay_currency_switch_auto_update_cb() {
 			<h4><?php esc_html_e( 'Frequency of auto-update', 'peachpay-for-woocommerce' ); ?></h4>
 			<?php peachpay_update_frequency_cb(); ?>
 		</div>
-		<div class="custom_frequencies">
-			<?php
-			peachpay_admin_input(
-				'enable_peachpay_currency_custom_intervals',
-				'peachpay_currency_options',
-				'custom_intervals',
-				1,
-				__( 'Custom intervals', 'peachpay-for-woocommerce' ),
-				__( 'Enable custom intervals to be selected for currencies.', 'peachpay-for-woocommerce' ),
-				array( 'input_type' => 'checkbox' )
-			);
-			?>
-		</div>
 		<div class="pp-save-button-section">
 			<?php submit_button( 'Save changes', 'pp-button-primary' ); ?>
 		</div>
@@ -153,7 +140,7 @@ function peachpay_currency_switch_widget_cb() {
 		</div>
 		<div class="currency-widget-section">
 			<a class="button-secondary pp-button-secondary" href="<?php echo esc_html( admin_url( '/widgets.php' ) ); ?>">Place currency switcher</a>
-			<a href="https://help.peachpay.app/en/articles/6314847-currency-switcher">View documentation</a>
+			<a href="https://help.peachpay.app/en/articles/7910567-peachpay-s-currency-switcher-widget" target="_blank">View documentation</a>
 		</div>
 	</div>
 	<?php
@@ -215,7 +202,7 @@ function peachpay_currencies_cb() {
 	$active_payment_methods = peachpay_get_active_payment_methods();
 
 	?>
-	<div id='pp-currency-table-div' class='pp-load'>
+	<div id='pp-currency-table-div' class='pp-load-currency'>
 		<table id="pp-active-currencies" >
 			<tr class=table-header-footer >
 				<th></th>
@@ -496,7 +483,7 @@ function peachpay_enqueue_currency_switcher_style( $hook ) {
  * @param string $hook the top level page.
  */
 function peachpay_enqueue_currency_admin_scripts( $hook ) {
-	if ( 'toplevel_page_peachpay' !== $hook || ( isset( $_GET['tab'] ) && 'currency' !== $_GET['tab'] ) ) {
+	if ( 'toplevel_page_peachpay' !== $hook || ! isset( $_GET['tab'] ) || 'currency' !== $_GET['tab'] ) {
 		return;
 	}
 	wp_enqueue_script(
@@ -537,70 +524,6 @@ function peachpay_get_active_payment_methods() {
 	// TODO followup this needs updated to work with new gateways.
 
 	return array();
-}
-
-/**
- * Allow merchants to always have paypal in usd even if paypal doesn't support the selected currency.
- */
-function peachpay_field_auto_convert_paypal() {
-	$paypal_supported_currencies = array(
-		'AUD',
-		'CAD',
-		'CZK',
-		'DKK',
-		'EUR',
-		'HKD',
-		'HUF',
-		'ILS',
-		'JPY',
-		'MXN',
-		'TWD',
-		'NZD',
-		'NOK',
-		'PHP',
-		'PLN',
-		'GBP',
-		'RUB',
-		'SGD',
-		'SEK',
-		'CHF',
-		'TBH',
-		'USD',
-	);
-	$currencies                  = peachpay_get_settings_option( 'peachpay_currency_options', 'selected_currencies', array() );
-	foreach ( $currencies as $key => $currency ) {
-		if ( array_search( $currency['name'], $paypal_supported_currencies, true ) === false ) {
-			unset( $currencies[ $key ] );
-		}
-	}
-	if ( 1 > count( $currencies ) ) {
-		return;
-	}
-	?>
-	<h4>
-		<?php esc_html_e( 'Default currency', 'peachpay-for-woocommerce' ); ?>
-	</h4>
-	<select
-		id="peachpay_paypal_auto_usd"
-		name="peachpay_payment_options[paypal_auto_convert]"
-		value="none"
-	>
-		<option value='none'> None </option>
-		<?php
-		foreach ( $currencies as $currency ) {
-			if ( in_array( $currency['name'], $paypal_supported_currencies, true ) ) {
-				// update later to name of currency.
-				echo '<option value="' . esc_html( $currency['name'] ) . '"' .
-				selected( peachpay_get_settings_option( 'peachpay_payment_options', 'paypal_auto_convert' ), $currency['name'], true ) .
-				'>' . esc_html( isset( PEACHPAY_SUPPORTED_CURRENCIES[ $currency['name'] ] ) ? PEACHPAY_SUPPORTED_CURRENCIES[ $currency['name'] ] : __( 'Unsupported Currency', 'peachpay-for-woocommerce' ) ) . '</option>';
-			}
-		}
-		?>
-	</select>
-	<p class='description' for="peachpay_paypal_auto_usd">
-		<?php esc_html_e( 'If a chosen currency is not supported by PayPal, switch to this currency instead of hiding PayPal. The currency switcher must be enabled for this option to work and will override country restrictions.', 'peachpay-for-woocommerce' ); ?>
-	</p>
-	<?php
 }
 
 /**

@@ -48,38 +48,16 @@ function peachpay_payment_settings_section_cb() {
 	<div class='pp-static-header'>
 		<?php
 		peachpay_field_test_mode_cb();
-
-		// Remove data upon uninstall option.
-		peachpay_admin_input(
-			'peachpay_data_retention',
-			'peachpay_payment_options',
-			'data_retention',
-			1,
-			__( 'Remove data on uninstall', 'peachpay-for-woocommerce' ),
-			__( 'PeachPay settings and data will be removed if the plugin is uninstalled.', 'peachpay-for-woocommerce' ),
-			array( 'input_type' => 'checkbox' )
-		);
 		?>
 		<div class="pp-save-button-section">
 			<?php submit_button( 'Save changes', 'pp-button-primary' ); ?>
 		</div>
 	</div>
 	<?php
-	$allowed_sub_nav_keys = array(
-		'pp-sub-nav-stripe',
-		'pp-sub-nav-square',
-		'pp-sub-nav-paypal',
-		'pp-sub-nav-poynt',
-		'pp-sub-nav-authnet',
-		'pp-sub-nav-amazonpay',
-		'pp-sub-nav-peachpay',
-	);
-	// phpcs:disable
-	$current = isset( $_COOKIE['pp_sub_nav_payment'] ) && in_array( $_COOKIE['pp_sub_nav_payment'], $allowed_sub_nav_keys ) ? $_COOKIE['pp_sub_nav_payment'] : 'pp-sub-nav-stripe';
 
-	peachpay_payment_sub_nav( $current );
+	peachpay_payment_sub_nav();
 
-	do_action( 'peachpay_admin_add_payment_setting_section', $current );
+	do_action( 'peachpay_admin_add_payment_setting_section' );
 
 	add_settings_field(
 		'peachpay_cod_check_bacs_setting',
@@ -87,47 +65,50 @@ function peachpay_payment_settings_section_cb() {
 		'peachpay_cod_check_bacs_setting_section',
 		'peachpay',
 		'peachpay_payment_settings_section',
-		array( 'class' => 'pp-header pp-sub-nav-peachpay' . ( 'pp-sub-nav-peachpay' !== $current ? ' hide' : '' ) )
+		array( 'class' => 'pp-header pp-sub-nav-peachpay no-border-bottom' )
 	);
 }
 
-function peachpay_payment_sub_nav( $current ) {
+/**
+ * Renders the payment settings horizontal sub-navigation tabs.
+ */
+function peachpay_payment_sub_nav() {
 	?>
-	<div class='pp-flex-row pp-section-nav-container'>
+	<div class='pp-flex-row pp-section-nav-container pp-sub-nav-controller'>
 		<?php
 		$buttons = array(
 			array(
-				'id'    => 'pp-sub-nav-stripe',
-				'title' => 'Stripe'
+				'href'  => 'stripe',
+				'title' => 'Stripe',
 			),
 			array(
-				'id'    => 'pp-sub-nav-square',
-				'title' => 'Square'
+				'href'  => 'square',
+				'title' => 'Square',
 			),
 			array(
-				'id'    => 'pp-sub-nav-paypal',
-				'title' => 'PayPal'
-			),
-            array(
-                'id'    => 'pp-sub-nav-poynt',
-                'title' => 'GoDaddy Poynt'
-            ),
-			array(
-				'id'    => 'pp-sub-nav-authnet',
-				'title' => 'Authorize.net'
+				'href'  => 'paypal',
+				'title' => 'PayPal',
 			),
 			array(
-				'id'    => 'pp-sub-nav-amazonpay',
-				'title' => 'Amazon Pay'
+				'href'  => 'poynt',
+				'title' => 'GoDaddy Poynt',
 			),
 			array(
-				'id'    => 'pp-sub-nav-peachpay',
-				'title' => 'Other'
+				'href'  => 'authnet',
+				'title' => 'Authorize.net',
+			),
+			array(
+				'href'  => 'amazonpay',
+				'title' => 'Amazon Pay',
+			),
+			array(
+				'href'  => 'peachpay',
+				'title' => 'Other',
 			),
 		);
-		foreach( $buttons as $button ) {
+		foreach ( $buttons as $button ) {
 			?>
-				<a class='pp-sub-nav-button <?php echo 0 === strcmp( $current, $button['id'] ) ? ' pp-sub-nav-button-active' : '' ?>' id='<?php echo esc_attr( $button['id'] ); ?>'><?php echo esc_html( $button['title'] ); ?></a>
+				<a class='pp-sub-nav-button' href='#<?php echo esc_attr( $button['href'] ); ?>'><?php echo esc_html( $button['title'] ); ?></a>
 			<?php
 		}
 		?>
@@ -143,8 +124,8 @@ function peachpay_payment_sub_nav( $current ) {
 function peachpay_cod_check_bacs_setting_section() {
 	?>
 	<div class="peachpay-setting-section">
-		<p><?php esc_html_e( 'Cash on Delivery, Check, and Bank Transfer payment options will be available through PeachPay if they are turned on in', 'peachpay_for_woocommerce' ); ?>
-			<a href="<?php /* phpcs:ignore */ echo admin_url('admin.php?page=wc-settings&tab=checkout'); ?>"><?php esc_html_e('WooCommerce', 'peachpay_for_woocommerce'); ?></a>.
+		<p><?php esc_html_e( 'Cash on Delivery, Check, and Bank Transfer payment options will be available through PeachPay if they are turned on in', 'peachpay-for-woocommerce' ); ?>
+			<a href="<?php /* phpcs:ignore */ echo admin_url('admin.php?page=wc-settings&tab=checkout'); ?>"><?php esc_html_e('WooCommerce', 'peachpay-for-woocommerce'); ?></a>.
 		</p>
 	</div>
 	<?php
@@ -166,10 +147,7 @@ function peachpay_field_test_mode_cb() {
 			<div>
 				<label class="pp-setting-label" for="peachpay_test_mode"><?php esc_html_e( 'Enable test mode', 'peachpay-for-woocommerce' ); ?></label>
 				<p class="description">
-					<?php esc_html_e( 'Make test payments with or without a connected payment method.', 'peachpay-for-woocommerce' ); ?>
-				</p>
-				<p class="description">
-					<?php esc_html_e( 'For Stripe, use card number', 'peachpay-for-woocommerce' ); ?>&nbsp<b>4242 4242 4242 4242</b>, <?php esc_html_e( 'with expiration', 'peachpay-for-woocommerce' ); ?>&nbsp<b>04/24</b> <?php esc_html_e( 'and CVC', 'peachpay-for-woocommerce' ); ?>&nbsp<b>444</b>. <?php esc_html_e( 'For PayPal, see', 'peachpay-for-woocommerce' ); ?>&nbsp<a target="_blank" href="https://help.peachpay.app/en/articles/6314678-payment-methods"><?php esc_html_e( 'these instructions', 'peachpay-for-woocommerce' ); ?></a>.
+					<?php esc_html_e( 'In test mode, you can make test payments for each payment method. Find instructions on how to make a test payment in each tab below.', 'peachpay-for-woocommerce' ); ?>
 				</p>
 			</div>
 		</div>

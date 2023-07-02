@@ -40,6 +40,13 @@ final class PeachPay_Admin_Section {
 	 */
 	private $generate_navigation_menu = true;
 
+	/**
+	 * Boolean value for premium lockout.
+	 *
+	 * @var bool
+	 */
+	private $is_premium_section = false;
+
 
 	/**
 	 * Initializes the section page.
@@ -48,8 +55,9 @@ final class PeachPay_Admin_Section {
 	 * @param PeachPay_Admin_Tab[] $tabs The tabs to include in this section.
 	 * @param array                $bread_crumbs The intermediate bread crumbs between this section and the root of the PeachPay settings.
 	 * @param bool                 $generate_navigation_menu To check whether a navigation menu should be built (for compatability with newer settings changes).
+	 * @param bool                 $is_premium_section To check whether or not to display premium banner and lockout input fields for the section.
 	 */
-	private function __construct( $section, $tabs, $bread_crumbs, $generate_navigation_menu = true ) {
+	private function __construct( $section, $tabs, $bread_crumbs, $generate_navigation_menu = true, $is_premium_section = false ) {
 		if ( ! $this->is_active() && count( $tabs ) <= 0 ) {
 			return;
 		}
@@ -60,6 +68,7 @@ final class PeachPay_Admin_Section {
 		$this->bread_crumbs = $bread_crumbs;
 
 		$this->generate_navigation_menu = $generate_navigation_menu;
+		$this->is_premium_section       = $is_premium_section;
 
 		$this->hooks();
 	}
@@ -148,30 +157,46 @@ final class PeachPay_Admin_Section {
 			?>
 				<div class="pp-admin-content-wrapper">
 					<?php require PeachPay::get_plugin_path() . '/core/admin/views/html-side-navigation.php'; ?>
-					<div id="peachpay_settings_container" class="advanced-gateway-settings pp-admin-content">
-						<?php if ( $this->generate_navigation_menu ) { ?>
-							<h1>
-								<?php echo esc_html( $admin_tab_view->get_title() ); ?>
-							</h1>
-							<p>
-								<?php echo esc_html( $admin_tab_view->get_description() ); ?>
-							</p>
+						<div class="pp-admin-content">
 							<?php
-							if ( count( $this->tabs ) > 1 ) {
-								require PEACHPAY_ABSPATH . 'core/admin/views/html-secondary-navigation.php';
+							if ( $this->is_premium_section && ! peachpay_plugin_has_capability( 'woocommerce_premium', array( 'woocommerce_premium' => get_option( 'peachpay_premium_capability' ) ) ) ) {
+								peachpay_display_premium_locked_notice();
 							}
-						}
-						?>
-						<?php $admin_tab_view->do_admin_view(); ?>
-						<div class="peachpay-notices-container"></div>
-						<?php
-							$peachpay_has_premium_capability = peachpay_plugin_has_capability( 'woocommerce_premium', array( 'woocommerce_premium' => get_option( 'peachpay_premium_capability' ) ) );
-							PeachPay_Onboarding_Tour::display_onboarding_tour( ! $peachpay_has_premium_capability );
-						?>
+							?>
+							<div id='peachpay_settings_container' class="advanced-gateway-settings pp-admin-content 
+							<?php
+							if ( $this->is_premium_section && ! peachpay_plugin_has_capability( 'woocommerce_premium', array( 'woocommerce_premium' => get_option( 'peachpay_premium_capability' ) ) ) ) {
+								echo esc_html( 'peachpay_premium_lock ' );
+							}
+							?>
+							">
+
+							<?php
+							if ( $this->generate_navigation_menu ) {
+								?>
+								f
+								<h1>
+									<?php echo esc_html( $admin_tab_view->get_title() ); ?>
+								</h1>
+								<p>
+									<?php echo esc_html( $admin_tab_view->get_description() ); ?>
+								</p>
+								<?php
+								if ( count( $this->tabs ) > 1 ) {
+									require PEACHPAY_ABSPATH . 'core/admin/views/html-secondary-navigation.php';
+								}
+							}
+							?>
+							<?php $admin_tab_view->do_admin_view(); ?>
+							<div class="peachpay-notices-container"></div>
+							<?php
+								$peachpay_has_premium_capability = peachpay_plugin_has_capability( 'woocommerce_premium', array( 'woocommerce_premium' => get_option( 'peachpay_premium_capability' ) ) );
+								PeachPay_Onboarding_Tour::display_onboarding_tour( ! $peachpay_has_premium_capability );
+							?>
+						</div>
 					</div>
 				</div>
-			</div>
-		<?php
+			<?php
 	}
 
 	/**
@@ -213,8 +238,9 @@ final class PeachPay_Admin_Section {
 	 * @param array  $tabs The tabs to include in this section.
 	 * @param array  $bread_crumbs The intermediate bread crumbs between this section and the root of the PeachPay settings.
 	 * @param bool   $generate_navigation_menu To check whether a navigation menu should be built (for compatability with newer settings changes).
+	 * @param bool   $is_premium_section To check whether or not to display premium banner and lockout input fields for the section.
 	 */
-	public static function create( $section, $tabs, $bread_crumbs = array(), $generate_navigation_menu = true ) {
-		return new self( $section, $tabs, $bread_crumbs, $generate_navigation_menu );
+	public static function create( $section, $tabs, $bread_crumbs = array(), $generate_navigation_menu = true, $is_premium_section = false ) {
+		return new self( $section, $tabs, $bread_crumbs, $generate_navigation_menu, $is_premium_section );
 	}
 }

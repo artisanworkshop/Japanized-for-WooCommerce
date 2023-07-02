@@ -136,21 +136,53 @@ function peachpay_stripe_handle_order_complete( $order_id, $status_from, $status
  * @param string $order_id The order id of the order that was cancelled.
  */
 function peachpay_stripe_handle_order_cancelled( $order_id ) {
-	if ( ! peachpay_get_settings_option( 'peachpay_payment_options', 'refund_on_cancel', false ) ) {
-		return;
-	}
-
 	$order = wc_get_order( $order_id );
 
-	if ( $order->meta_exists( '_pp_stripe_auto_cancelled_on_dispute' ) && 'true' === $order->get_meta( '_pp_stripe_auto_cancelled_on_dispute', true ) ) {
+	if ( ! $order || ! PeachPay_Stripe_Integration::is_payment_gateway( $order->get_payment_method() ) ) {
 		return;
 	}
 
-	if ( ! PeachPay_Stripe_Integration::is_payment_gateway( $order->get_payment_method() ) ) {
+	if ( PeachPay_Stripe_Advanced::get_setting( 'refund_on_cancel' ) !== 'yes' ) {
 		return;
 	}
 
-	PeachPay_Stripe::refund_payment( $order );
+	if ( $order->get_transaction_id() && $order->get_total() > 0 ) {
+		$amount             = $order->get_total() - $order->get_total_refunded();
+		$refund_amount      = PeachPay_Stripe::format_amount( $amount, $order->get_currency() );
+		$transaction_status = PeachPay_Stripe_Order_Data::get_payment_intent( $order, 'status' );
+
+		$charge_id = PeachPay_Stripe_Order_Data::get_charge( $order, 'id' );
+
+		$refund_result = null;
+		// TODO: Do we need to handle status of 'processing'?
+		if ( 'succeeded' === $transaction_status ) {
+			$refund_result = PeachPay_Stripe::refund_payment( $order, $refund_amount );
+		} elseif ( 'requires_capture' === $transaction_status ) {
+			$refund_result = PeachPay_Stripe::void_payment( $order );
+		} else {
+			$refund_result = array(
+				'success' => false,
+				// translators: %1$s the payment method title, %2$s Charge Id.
+				'message' => sprintf( __( 'Stripe %1$s could not be voided or refunded. (Transaction Id: %2$s)', 'peachpay-for-woocommerce' ), $order->get_payment_method_title(), $charge_id ),
+			);
+		}
+
+		if ( ! $refund_result['success'] ) {
+			$order->add_order_note( $refund_result['message'] );
+			return;
+		}
+
+		$refund = new WC_Order_Refund();
+		$refund->set_amount( $amount );
+		$refund->set_parent_id( $order->get_id() );
+		$refund->set_reason( 'Order was canceled or removed.' );
+		$refund->set_refunded_by( get_current_user_id() );
+		$refund->save();
+
+		// translators: %1$s the payment method title, %3$s Refund amount, %4$s Refund Id.
+		$order->add_order_note( sprintf( __( 'Stripe %1$s payment refunded %2$s because order was cancelled. (Transaction Id: %3$s)', 'peachpay-for-woocommerce' ), $order->get_payment_method_title(), wc_price( $amount, array( 'currency' => $order->get_currency() ) ), $charge_id ) );
+		$order->save();
+	}
 }
 
 /**

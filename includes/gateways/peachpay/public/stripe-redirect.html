@@ -94,7 +94,12 @@
             var $a = document.querySelector("#pp-manual-redirect");
             $a.style.backgroundColor = color
             $a.classList.remove("hide");
-            $a.href = url;
+
+            var buttonURL = new URL(url);
+            if(buttonURL.searchParams.has("cancel_order")){
+                buttonURL.search = "";
+            }
+            $a.href = buttonURL.toString();
 
             var $spinner = document.querySelector("#pp-spinner");
             if ($spinner) {

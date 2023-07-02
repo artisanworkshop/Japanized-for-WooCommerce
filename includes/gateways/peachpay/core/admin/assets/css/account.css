@@ -1,0 +1,15 @@
+th.titledesc {
+    display: none;
+}
+
+td.forminp {
+    padding: 15px 0px;
+}
+
+p.description {
+    padding-left: 36px;
+}
+
+label {
+    font-weight: bold;
+}

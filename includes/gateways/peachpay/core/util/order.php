@@ -195,8 +195,11 @@ function peachpay_get_order_pay_details( $order ) {
  */
 function peachpay_get_order_line_items( $order ) {
 	$line_items = array();
-	foreach ( $order->get_items( 'line_item' ) as $item ) {
-		$product      = $item->get_product();
+	foreach ( $order->get_items() as $item ) {
+		$product = $item->get_product();
+		if ( ! $product ) {
+			continue;
+		}
 		$line_items[] = array(
 			'id'       => strval( $product->get_id() ),
 			'label'    => $product->get_title(),

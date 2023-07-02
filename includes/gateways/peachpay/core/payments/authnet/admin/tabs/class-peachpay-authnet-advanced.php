@@ -89,7 +89,7 @@ final class PeachPay_Authnet_Advanced extends PeachPay_Admin_Tab {
 	public function do_admin_view() {
 		parent::do_admin_view()
 		?>
-			<div>
+			<div class="gateway-list">
 			<?php
 				$gateway_list = PeachPay_Authnet_Integration::get_payment_gateways();
 				require PeachPay::get_plugin_path() . '/core/admin/views/html-gateways.php';

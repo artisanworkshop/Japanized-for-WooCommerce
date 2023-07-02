@@ -17,11 +17,17 @@ class PeachPay_Poynt_Card_Gateway extends PeachPay_Poynt_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                = 'peachpay_poynt_card';
-		$this->icon              = PeachPay::get_asset_url( 'img/marks/cc-quad.svg' );
+		$this->icons             = array(
+			'full'  => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/cc-quad.svg' ),
+			),
+			'small' => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/card-small.svg' ),
+			),
+		);
 		$this->settings_priority = 0;
 
-		// Customer facing title and description.
-		$this->title = 'Credit/Debit card';
+		$this->title = 'Card';
 		// translators: %s Button text name.
 		$this->description = __( 'Pay securely using your credit or debit card.', 'peachpay-for-woocommerce' );
 
@@ -50,6 +56,7 @@ class PeachPay_Poynt_Card_Gateway extends PeachPay_Poynt_Payment_Gateway {
 	public function payment_method_form() {
 		?>
 			<div>
+				<?php $this->display_fallback_currency_option_message(); ?>
 				<p style="text-align: left; margin: 0;">
 					<?php echo esc_html( $this->description ); ?>
 				<p>

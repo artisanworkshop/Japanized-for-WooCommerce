@@ -18,7 +18,14 @@ class PeachPay_PayPal_Venmo_Gateway extends PeachPay_PayPal_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                = 'peachpay_paypal_venmo';
-		$this->icon              = PeachPay::get_asset_url( 'img/marks/venmo.svg' );
+		$this->icons             = array(
+			'full'  => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/venmo.svg' ),
+			),
+			'small' => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/paypal/venmo-small-color.svg' ),
+			),
+		);
 		$this->settings_priority = 3;
 
 		$this->title              = 'Venmo';

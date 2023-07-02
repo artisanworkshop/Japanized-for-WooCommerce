@@ -47,7 +47,7 @@ trait PeachPay_Extension {
 			'plugins_loaded',
 			function() use ( $extension ) {
 				$extension->plugins_loaded();
-			}
+			}, 20
 		);
 		add_action(
 			'wp_enqueue_scripts',

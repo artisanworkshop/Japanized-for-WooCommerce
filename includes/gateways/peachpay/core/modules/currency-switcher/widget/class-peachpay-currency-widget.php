@@ -34,7 +34,7 @@ class Peachpay_Currency_Widget extends WP_Widget {
 	 * @param array $instance the instance of the widget we are working with.
 	 */
 	public function widget( $args, $instance ) {
-		$title = apply_filters( 'widget_title', $instance['title'] );
+		$title = isset( $instance['title'] ) ? apply_filters( 'widget_title', $instance['title'] ) : __( 'Currency Switcher', 'peachpay-for-woocommerce' );
 
 		echo esc_html( $title ) . '<br>';
 
@@ -42,7 +42,7 @@ class Peachpay_Currency_Widget extends WP_Widget {
 
 		$active_currency = ( $_COOKIE && isset( $_COOKIE['pp_active_currency'] ) ) ? sanitize_text_field( wp_unslash( $_COOKIE['pp_active_currency'] ) ) : peachpay_best_currency( peachpay_get_client_country() );
 
-		if ( $instance['read_only'] ) {
+		if ( isset( $instance['read_only'] ) && $instance['read_only'] ) {
 			$string = PEACHPAY_SUPPORTED_CURRENCIES[ $active_currency ];
 			?>
 			<p class="description">

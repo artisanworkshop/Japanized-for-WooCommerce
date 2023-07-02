@@ -192,21 +192,6 @@ function peachpay_homepage_analytics_render_array_data( $data_array ) {
  * Populates the cards in the analytics section.
  */
 function peachpay_homepage_payment_methods() {
-	$base_country = wc_get_base_location() && array_key_exists( 'country', wc_get_base_location() ) ? wc_get_base_location()['country'] : null;
-
-	$afterpay_logo = PeachPay::get_asset_url( '/img/marks/afterpay.svg' );
-	switch ( $base_country ) {
-		case 'GB':
-		case 'ES':
-		case 'FR':
-		case 'IT':
-			$afterpay_logo = PeachPay::get_asset_url( '/img/marks/clearpay.svg' );
-			break;
-
-		default:
-			$afterpay_logo = PeachPay::get_asset_url( '/img/marks/afterpay.svg' );
-	}
-
 	$data = array(
 		array(
 			'title'       => 'Stripe',
@@ -215,19 +200,11 @@ function peachpay_homepage_payment_methods() {
 			'main_logo'   => PeachPay::get_asset_url( '/img/marks/stripe.svg' ),
 			'connection'  => (bool) PeachPay_Stripe_Integration::connected(),
 			'description' => 'Stripe will give you the largest selection of global payment methods along with Apple Pay and Google Pay.',
-			'sub_logos'   => array(
-				PeachPay::get_asset_url( '/img/marks/cards.svg' ),
-				PeachPay::get_asset_url( '/img/marks/apple-google.svg' ),
-				PeachPay::get_asset_url( '/img/marks/klarna.svg' ),
-				PeachPay::get_asset_url( '/img/marks/affirm.svg' ),
-				$afterpay_logo,
-				PeachPay::get_asset_url( '/img/marks/us_banks.svg' ),
-				PeachPay::get_asset_url( '/img/marks/bancontact-card.svg' ),
-				PeachPay::get_asset_url( '/img/marks/giropay-card.svg' ),
-				PeachPay::get_asset_url( '/img/marks/sofort-card.svg' ),
-				PeachPay::get_asset_url( '/img/marks/p24-card.svg' ),
-				PeachPay::get_asset_url( '/img/marks/eps-card.svg' ),
-				PeachPay::get_asset_url( '/img/marks/ideal-card.svg' ),
+			'sub_logos'   => array_map(
+				function ( $gateway ) {
+					return $gateway->get_icon_url( 'full' );
+				},
+				PeachPay_Stripe_Integration::get_payment_gateways()
 			),
 		),
 		array(
@@ -237,10 +214,11 @@ function peachpay_homepage_payment_methods() {
 			'main_logo'   => PeachPay::get_asset_url( '/img/marks/paypal.svg' ),
 			'connection'  => (bool) PeachPay_PayPal_Integration::connected(),
 			'description' => 'Accept payments from the largest number of countries with PayPal.',
-			'sub_logos'   => array(
-				PeachPay::get_asset_url( '/img/marks/paypal.svg' ),
-				PeachPay::get_asset_url( '/img/marks/paypal-paylater.svg' ),
-				PeachPay::get_asset_url( '/img/marks/venmo.svg' ),
+			'sub_logos'   => array_map(
+				function ( $gateway ) {
+					return $gateway->get_icon_url( 'full' );
+				},
+				PeachPay_PayPal_Integration::get_payment_gateways()
 			),
 		),
 		array(
@@ -250,10 +228,25 @@ function peachpay_homepage_payment_methods() {
 			'main_logo'   => PeachPay::get_asset_url( '/img/marks/square.svg' ),
 			'connection'  => peachpay_square_connected(),
 			'description' => 'Connect your Square account to PeachPay to start accepting card payments, Apple Pay, and Google Pay instantly.',
-			'sub_logos'   => array(
-				PeachPay::get_asset_url( '/img/marks/cards.svg' ),
-				PeachPay::get_asset_url( '/img/marks/applepay-card.svg' ),
-				PeachPay::get_asset_url( '/img/marks/googlepay-card.svg' ),
+			'sub_logos'   => array_map(
+				function ( $gateway ) {
+					return $gateway->get_icon_url( 'full' );
+				},
+				PeachPay_Square_Integration::get_payment_gateways()
+			),
+		),
+		array(
+			'title'       => 'GoDaddy Poynt',
+			'heap_id'     => 'poynt',
+			'hash'        => '#poynt',
+			'main_logo'   => PeachPay::get_asset_url( '/img/marks/poynt-logo.svg' ),
+			'connection'  => (bool) PeachPay_Poynt_Integration::connected(),
+			'description' => 'Connect your GoDaddy Poynt account to start accepting card payments.',
+			'sub_logos'   => array_map(
+				function ( $gateway ) {
+					return $gateway->get_icon_url( 'full' );
+				},
+				PeachPay_Poynt_Integration::get_payment_gateways()
 			),
 		),
 		array(
@@ -263,9 +256,11 @@ function peachpay_homepage_payment_methods() {
 			'main_logo'   => PeachPay::get_asset_url( '/img/marks/authnet.png' ),
 			'connection'  => (bool) PeachPay_Authnet_Integration::connected(),
 			'description' => 'Connect your Authorize.net account to PeachPay to start accepting card and US bank account payments.',
-			'sub_logos'   => array(
-				PeachPay::get_asset_url( '/img/marks/cards.svg' ),
-				PeachPay::get_asset_url( '/img/marks/us_banks.svg' ),
+			'sub_logos'   => array_map(
+				function ( $gateway ) {
+					return $gateway->get_icon_url( 'full' );
+				},
+				PeachPay_Authnet_Integration::get_payment_gateways()
 			),
 		),
 		array(
@@ -345,7 +340,19 @@ function peachpay_homepage_payment_methods() {
  * Populates the cards in the add-ons section.
  */
 function peachpay_homepage_add_ons() {
+	// Add 2 line by Shohei Tanaka at 2023/07/02
+	require_once PEACHPAY_ABSPATH . 'core/abstract/class-peachpay-admin-tab.php';
+	require_once PEACHPAY_ABSPATH . 'core/modules/bot-protection/class-peachpay-bot-protection-settings.php';
+
 	$data = array(
+		array(
+			'title'       => 'Express Checkout',
+			'heap_id'     => 'express_checkout',
+			'main_image'  => peachpay_url( '/core/admin/assets/img/add-ons/checkout_window.svg' ),
+			'connection'  => peachpay_express_checkout_enabled(),
+			'description' => 'Allow shoppers to buy from anywhere, not just the checkout page!',
+			'url'         => PeachPay_Admin::admin_settings_url( 'peachpay', 'express_checkout', 'branding', '', false ),
+		),
 		array(
 			'title'       => 'Currency Switcher',
 			'heap_id'     => 'currency_switcher',
@@ -371,12 +378,11 @@ function peachpay_homepage_add_ons() {
 			'url'         => PeachPay_Admin::admin_settings_url( 'peachpay', 'related_products', '', '', false ),
 		),
 		array(
-			'title'       => 'Express Checkout',
-			'heap_id'     => 'express_checkout',
-			'main_image'  => peachpay_url( '/core/admin/assets/img/add-ons/checkout_window.svg' ),
-			'connection'  => peachpay_express_checkout_enabled(),
-			'description' => 'Allow shoppers to buy from anywhere, not just the checkout page!',
-			'url'         => PeachPay_Admin::admin_settings_url( 'peachpay', 'express_checkout', 'branding', '', false ),
+			'title'       => __( 'Bot Protection', 'peachpay-for-woocommerce' ),
+			'main_image'  => peachpay_url( '/core/admin/assets/img/add-ons/bot.svg' ),
+			'connection'  => 'yes' === PeachPay_Bot_Protection_Settings::get_setting( 'enabled' ),
+			'description' => __( 'Block bots from spamming purchases by enabling reCAPTCHA v3 technology.', 'peachpay-for-woocommerce' ),
+			'url'         => PeachPay_Admin::admin_settings_url( 'peachpay', 'bot_protection', 'settings', '', false ),
 		),
 	);
 	foreach ( $data as $value ) {

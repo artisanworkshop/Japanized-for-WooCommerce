@@ -21,7 +21,7 @@ function peachpay_saved_settings_banner_admin_action() {
 
 		add_settings_error(
 			'peachpay_messages',
-			'peachpay_message',
+			'peachpay_message-auto_dismiss',
 			__( 'Changes were saved!', 'peachpay-for-woocommerce' ),
 			'success'
 		);

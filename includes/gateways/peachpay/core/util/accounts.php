@@ -39,8 +39,8 @@ function peachpay_login_user() {
 		if ( ! email_exists( $user_id ) && ! username_exists( $user_id ) ) {
 			return wp_send_json(
 				array(
-					'result'   => 'failure',
-					'messages' => __( 'Login failed: Email or Username does not exist.', 'peachpay-for-woocommerce' ),
+					'result'  => 'failure',
+					'message' => __( 'Login failed: Email or Username does not exist.', 'peachpay-for-woocommerce' ),
 				)
 			);
 		}
@@ -65,8 +65,8 @@ function peachpay_login_user() {
 		} else {
 			return wp_send_json(
 				array(
-					'result'   => 'failure',
-					'messages' => __( 'Login failed: incorrect password.', 'peachpay-for-woocommerce' ),
+					'result'  => 'failure',
+					'message' => __( 'Login failed: incorrect password.', 'peachpay-for-woocommerce' ),
 				)
 			);
 		}
@@ -98,8 +98,8 @@ function peachpay_login_user() {
 		if ( is_wp_error( $customer_id ) ) {
 			return wp_send_json(
 				array(
-					'result'   => 'failure',
-					'messages' => $customer_id->get_error_message(),
+					'result'  => 'failure',
+					'message' => $customer_id->get_error_message(),
 				)
 			);
 		}

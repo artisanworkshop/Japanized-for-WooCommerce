@@ -16,6 +16,7 @@ require_once PEACHPAY_ABSPATH . 'core/abstract/class-peachpay-payment-gateway.ph
 abstract class PeachPay_Square_Payment_Gateway extends PeachPay_Payment_Gateway {
 
 	public $payment_provider            = 'Square';
+	public $max_amount                  = 50000;
 	protected $requires_verification_id = false;
 
 	/**
@@ -31,9 +32,13 @@ abstract class PeachPay_Square_Payment_Gateway extends PeachPay_Payment_Gateway 
 			$this->method_description = sprintf( __( 'Accept %s payments through Square', 'peachpay-for-woocommerce' ), $this->title );
 		}
 
-		$this->max_amount = 50000;
-		$this->currencies = array( peachpay_square_currency() );
-		$this->supports   = array(
+		if ( is_array( $this->currencies ) ) {
+			$this->currencies = array_intersect( array( peachpay_square_currency() ), $this->currencies );
+		} else {
+			$this->currencies = array( peachpay_square_currency() );
+		}
+
+		$this->supports = array(
 			'products',
 			'refunds',
 		);
@@ -124,10 +129,11 @@ abstract class PeachPay_Square_Payment_Gateway extends PeachPay_Payment_Gateway 
 			PeachPay_Square_Order_Data::set_peachpay_details(
 				$order,
 				array(
-					'session_id'     => $session_id,
-					'transaction_id' => $transaction_id,
-					'peachpay_mode'  => peachpay_is_test_mode() ? 'test' : 'live',
-					'square_mode'    => $square_mode,
+					'session_id'             => $session_id,
+					'transaction_id'         => $transaction_id,
+					'peachpay_mode'          => peachpay_is_test_mode() ? 'test' : 'live',
+					'square_mode'            => $square_mode,
+					'service_fee_percentage' => PeachPay::service_fee_enabled() ? PeachPay::service_fee_percentage() : 0,
 				)
 			);
 
@@ -155,7 +161,7 @@ abstract class PeachPay_Square_Payment_Gateway extends PeachPay_Payment_Gateway 
 				unset( $order_data['details']['billing']['email'] );
 			}
 
-			$json = PeachPay_Square::create_payment( $order, $order_data, $payment_details, $this->get_callback_url(), $square_mode );
+			$json = PeachPay_Square::create_payment( $order, $order_data, $payment_details, $this->get_callback_url(), $this->get_order_details( $order ), $square_mode );
 
 			if ( ! $json['success'] ) {
 				if ( ! is_null( $token_id ) && 'new' !== $token_id ) {
@@ -398,10 +404,21 @@ abstract class PeachPay_Square_Payment_Gateway extends PeachPay_Payment_Gateway 
 				return null;
 			}
 
+			PeachPay_Square_Order_Data::set_peachpay_details(
+				$renewal_order,
+				array(
+					'session_id'             => $session_id,
+					'transaction_id'         => PeachPay_Square_Order_Data::get_peachpay( $renewal_order, 'transaction_id' ),
+					'peachpay_mode'          => $peachpay_mode,
+					'square_mode'            => $square_mode,
+					'service_fee_percentage' => PeachPay::service_fee_enabled() ? PeachPay::service_fee_percentage() : 0,
+				)
+			);
+
 			$order_data      = $this->prepare_payment_result( $renewal_order );
 			$payment_details = $this->prepare_payment_details( $source_id, false, null, $customer_id, $square_mode );
 
-			$result = PeachPay_Square::create_payment( $renewal_order, $order_data, $payment_details, $this->get_callback_url(), $square_mode );
+			$result = PeachPay_Square::create_payment( $renewal_order, $order_data, $payment_details, $this->get_callback_url(), $this->get_order_details( $renewal_order ), $square_mode );
 
 			if ( ! $result['success'] ) {
 				// translators: The payment method title, The failure reason

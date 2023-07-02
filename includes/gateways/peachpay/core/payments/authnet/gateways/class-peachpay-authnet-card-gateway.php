@@ -17,11 +17,18 @@ class PeachPay_Authnet_Card_Gateway extends PeachPay_Authnet_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                = 'peachpay_authnet_card';
-		$this->icon              = PeachPay::get_asset_url( 'img/marks/cc-quad.svg' );
+		$this->icons             = array(
+			'full'  => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/cc-quad.svg' ),
+			),
+			'small' => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/card-small.svg' ),
+			),
+		);
 		$this->settings_priority = 0;
 
 		// Customer facing title and description.
-		$this->title = 'Credit/Debit card';
+		$this->title = 'Card';
 		// translators: %s Button text name.
 		$this->description = __( 'After selecting %s a prompt will appear to complete your payment.', 'peachpay-for-woocommerce' );
 

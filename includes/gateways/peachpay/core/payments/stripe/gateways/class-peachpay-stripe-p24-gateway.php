@@ -18,7 +18,14 @@ class PeachPay_Stripe_P24_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_p24';
 		$this->stripe_payment_method_type            = 'p24';
 		$this->stripe_payment_method_capability_type = 'p24';
-		$this->icon                                  = peachpay_url( 'public/img/marks/p24.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'white' => peachpay_url( 'public/img/marks/stripe/p24-full.svg' ),
+			),
+			'small' => array(
+				'white' => peachpay_url( 'public/img/marks/stripe/p24-small-white.svg' ),
+			),
+		);
 		$this->settings_priority                     = 11;
 
 		// Customer facing title and description.

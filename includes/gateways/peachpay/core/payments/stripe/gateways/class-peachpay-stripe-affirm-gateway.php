@@ -19,7 +19,15 @@ class PeachPay_Stripe_Affirm_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_affirm';
 		$this->stripe_payment_method_type            = 'affirm';
 		$this->stripe_payment_method_capability_type = 'affirm';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/affirm.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/stripe/affirm-full.svg' ),
+			),
+			'small' => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/stripe/affirm-small-color.svg' ),
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/affirm-small-white.svg' ),
+			),
+		);
 		$this->settings_priority                     = 3;
 
 		// Customer facing title and description.

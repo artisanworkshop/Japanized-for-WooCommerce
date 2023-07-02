@@ -148,6 +148,28 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 	public $payment_method_family;
 
 	/**
+	 * Mapping of icon attribute combinations (size and color) to their respective urls.
+	 * array(
+	 *     "full"  => array(
+	 *         "color" => [url],
+	 *         "white" => [url],
+	 *         "clear" => [url]
+	 *     ),
+	 *     "small" => array(
+	 *         "color" => [url],
+	 *         "white" => [url],
+	 *         "clear" => [url]
+	 *     )
+	 * )
+	 *
+	 * Key-value pairs with null value should be omitted. For example, if a method only
+	 * has a small color icon, this property can be: array( "small" => array( "color" => [url] ) ).
+	 *
+	 * @var array
+	 */
+	public $icons;
+
+	/**
 	 * Base PeachPay gateway.
 	 */
 	public function __construct() {
@@ -160,8 +182,9 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 		$global_fields = $this->gateway_title_setting( $global_fields );
 		$global_fields = $this->custom_min_amount_settings( $global_fields );
 		$global_fields = $this->custom_max_amount_settings( $global_fields );
-		$global_fields = $this->currency_filter_settings( $global_fields );
 		$global_fields = $this->country_filter_setting( $global_fields );
+		$global_fields = $this->currency_filter_settings( $global_fields );
+		$global_fields = $this->default_currency_setting( $global_fields );
 		$global_fields = $this->fee_settings( $global_fields, $this->title );
 
 		$this->form_fields = array_merge(
@@ -206,6 +229,28 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Will either return the correct fallback currency or null on failure. Checks if the active currency
+	 *  is in the supported currencies, and only when the active currency is not in the supported currencies
+	 *  and a fallback currency exists, then we will return the fallback currency option.
+	 *
+	 * @return string Fallback currency option or null.
+	 */
+	protected function get_fallback_currency() {
+		if ( ! is_checkout() ) {
+			return null;
+		}
+
+		$supported_currencies = $this->get_supported_currencies();
+		$active_currency      = get_woocommerce_currency();
+
+		if ( is_array( $supported_currencies ) && $this->get_option( 'default_currency' ) !== 'none' && ! in_array( $active_currency, $supported_currencies, true ) ) {
+			return $this->get_option( 'default_currency' );
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * Registers the gateway as a feature for the PeachPay SDK. Override in child
 	 * classes to add special metadata if needed.
 	 *
@@ -221,6 +266,7 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 				'maximum_charge'       => INF === $this->get_maximum_charge() ? 0 : floatval( $this->get_maximum_charge() ),
 				'supported_currencies' => $this->get_supported_currencies(),
 				'supported_countries'  => $this->get_supported_countries(),
+				'default_currency'     => $this->get_option( 'default_currency' ) !== 'none' ? $this->get_option( 'default_currency' ) : null,
 				'title'                => $this->get_title(),
 			),
 		);
@@ -319,18 +365,21 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 			}
 		}
 
-		$currencies = $this->get_supported_currencies();
-		if ( is_array( $currencies ) && ! in_array( get_woocommerce_currency(), $currencies, true ) ) {
-			return false;
-		}
-
 		if ( is_object( WC()->customer ) && method_exists( WC()->customer, 'get_billing_country' ) ) {
 
 			$countries       = $this->get_supported_countries();
 			$billing_country = WC()->customer->get_billing_country();
-			if ( is_array( $countries ) && ! in_array( $billing_country, $this->get_supported_countries(), true ) && '' !== $billing_country && null !== $billing_country ) {
+			if ( is_array( $countries ) && ! in_array( $billing_country, $countries, true ) && '' !== $billing_country && null !== $billing_country ) {
 				return false;
 			}
+		}
+
+		$currencies = $this->get_supported_currencies();
+		// If ( no supported currencies ) OR ( currency switcher is NOT enabled AND the current currency is NOT supported )
+		//   OR ( the current currency is NOT supported AND the default currency is NONE )
+		if ( ( ! is_array( $currencies ) ) || ( ! peachpay_get_settings_option( 'peachpay_currency_options', 'enabled' ) && ! in_array( get_woocommerce_currency(), $currencies, true ) )
+			|| ( ! in_array( get_woocommerce_currency(), $currencies, true ) && 'none' === $this->get_option( 'default_currency', 'none' ) ) ) {
+			return false;
 		}
 
 		return true;
@@ -342,6 +391,26 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 	public function validate_fields() {
 		// PHPCS:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$result = true;
+
+		// Check supported currency / Default currency.
+		$pp_active_currency = get_woocommerce_currency();
+		$currencies         = $this->get_supported_currencies();
+		if ( ! is_array( $currencies ) || ! in_array( $pp_active_currency, $currencies, true ) || ( ! in_array( $pp_active_currency, $currencies, true ) && 'none' !== $this->get_option( 'default_currency', 'none' ) && $pp_active_currency !== $this->get_option( 'default_currency', 'none' ) ) ) {
+			$notice_message = sprintf(
+				// translators: 1$: Payment method title $2: Current currency $3: Default currency
+				esc_html__(
+					'%1$s does not support %2$s. Please switch currency to %3$s.',
+					'peachpay-for-woocommerce'
+				),
+				esc_html( $this->get_title() ),
+				esc_html( $pp_active_currency ),
+				$this->get_option( 'default_currency', 'none' )
+			);
+
+			wc_add_notice( $notice_message, 'error' );
+
+			$result = false;
+		}
 
 		$transaction_id = isset( $_POST['peachpay_session_id'] ) ? wp_unslash( $_POST['peachpay_session_id'] ) : null;
 		if ( ! $transaction_id ) {
@@ -422,6 +491,52 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Displays fallback currency option messaging.
+	 */
+	public function display_fallback_currency_option_message() {
+		$default_currency = $this->get_fallback_currency();
+
+		if ( ! $default_currency ) {
+			return;
+		}
+
+		// translators: 1$: Payment method title $2: Default currency button
+		$message = __(
+			'%1$s does not support the currency you currently have chosen. %2$s below to use this payment method.',
+			'peachpay-for-woocommerce'
+		);
+
+		?>
+			<div style="display: flex;flex-direction: column">
+				<p style="text-align: left; margin: 0.5rem 0 0;font-size: smaller; text-align: justify;">
+					<?php
+					echo sprintf(
+						esc_html( $message ),
+						esc_html( $this->get_title() ),
+						'<b>Update to ' .
+						esc_html( PEACHPAY_SUPPORTED_CURRENCIES[ $default_currency ] ) . '</b>'
+					);
+					?>
+				</p>
+				<button type="button" class="button pp-fallback-currency-switch" style="font-size: smaller;margin-bottom: 16px"
+					data-currency="<?php echo esc_html( $default_currency ); ?>"
+				>
+					<?php
+					echo sprintf(
+						// translators: Default currency option.
+						esc_html__(
+							'Update to %s',
+							'peachpay-for-woocommerce'
+						),
+						esc_html( PEACHPAY_SUPPORTED_CURRENCIES[ $default_currency ] )
+					);
+					?>
+				</button>
+			</div>
+		<?php
+	}
+
+	/**
 	 * Renders the Payment method form.
 	 */
 	public function payment_method_form() {
@@ -434,6 +549,7 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 					echo esc_html( sprintf( __( '%s selected for checkout.', 'peachpay-for-woocommerce' ), $this->title ) );
 					?>
 				</p>
+				<?php $this->display_fallback_currency_option_message(); ?>
 				<?php if ( $this->description ) : ?>
 					<hr style="margin: 0.5rem 0;"/>
 					<p style="text-align: left; margin: 0; font-size: smaller;" class="muted">
@@ -455,7 +571,11 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 	 */
 	public function payment_fields() {
 		?>
-		<div style="display:none" data-should-refresh-checkout="<?php echo esc_attr( $this->should_refresh_checkout() ); ?>"></div>
+		<div
+			style="display:none"
+			data-should-refresh-checkout="<?php echo esc_attr( $this->should_refresh_checkout() ); ?>"
+			data-service-fee="<?php echo esc_attr( peachpay_gateway_has_service_fee( $this->id ) ? 'true' : 'false' ); ?>"
+		></div>
 		<?php
 		$this->payment_field_test_mode_notice();
 		$this->payment_field_tokenize_error_notice();
@@ -603,7 +723,7 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 		}
 		// If merchant configure the custom_currencies, then custom_currencies should return an array of keys.
 		// Otherwise, it would be the same as $this->currencies.
-		if ( is_array( $this->custom_currencies ) && array_diff( $this->custom_currencies, $this->currencies ) && 'all' !== $this->custom_currency_availability ) {
+		if ( is_array( $this->custom_currencies ) && is_array( $this->currencies ) && array_diff( $this->custom_currencies, $this->currencies ) && 'all' !== $this->custom_currency_availability ) {
 			$currencies = null;
 			foreach ( $this->custom_currencies as $key ) {
 				if ( $this->currencies[ $key ] ) {
@@ -613,11 +733,11 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 			if ( 'allow' === $this->custom_currency_availability ) {
 				$result = $currencies;
 			} elseif ( 'block' === $this->custom_currency_availability ) {
-				$result = array_diff( $this->currencies, $currencies );
+				$result = is_array( $currencies ) ? array_diff( $this->currencies, $currencies ) : array();
 			}
 		}
 		// When "Select none" button is clicked.
-		if ( is_array( $this->custom_currencies ) && ! array_diff( $this->custom_currencies, $this->currencies ) && 'allow' === $this->custom_currency_availability ) {
+		if ( is_array( $this->custom_currencies ) && is_array( $this->currencies ) && ! array_diff( $this->custom_currencies, $this->currencies ) && 'allow' === $this->custom_currency_availability ) {
 			$result = array();
 		}
 
@@ -641,7 +761,7 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 			}
 		}
 
-		if ( is_array( $this->custom_countries ) && array_diff( $this->custom_countries, $this->countries ) && 'all' !== $this->custom_country_availability ) {
+		if ( is_array( $this->custom_countries ) && is_array( $this->countries ) && array_diff( $this->custom_countries, $this->countries ) && 'all' !== $this->custom_country_availability ) {
 			$countries = null;
 			foreach ( $this->custom_countries as $key ) {
 				if ( $this->countries[ $key ] ) {
@@ -651,11 +771,11 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 			if ( 'allow' === $this->custom_country_availability ) {
 				$result = $countries;
 			} elseif ( 'block' === $this->custom_country_availability ) {
-				$result = array_diff( $this->countries, $countries );
+				$result = is_array( $countries ) ? array_diff( $this->countries, $countries ) : array();
 			}
 		}
 		// When "Select none" button is clicked.
-		if ( is_array( $this->custom_countries ) && ! array_diff( $this->custom_countries, $this->countries ) && 'allow' === $this->custom_country_availability ) {
+		if ( is_array( $this->custom_countries ) && is_array( $this->countries ) && ! array_diff( $this->custom_countries, $this->countries ) && 'allow' === $this->custom_country_availability ) {
 			$result = array();
 		}
 
@@ -665,22 +785,46 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Return the gateway's icon.
 	 *
-	 * @param boolean $flex Whether to place the icon in a flex container or not.
+	 * @param boolean $flex       Whether to place the icon in a flex container or not.
+	 * @param string  $size       The size of the icon.
+	 * @param string  $background The background color.
 	 *
 	 * @return string
 	 */
-	public function get_icon( $flex = false ) {
+	public function get_icon( $flex = false, $size = 'full', $background = 'color' ) {
+		$icon = $this->get_icon_url( $size, $background ) ?? '';
+
 		ob_start();
-		if ( $this->icon ) {
-			?>
-			<span style="<?php echo $flex ? 'display:flex;' : ''; ?>gap: 0.2rem;margin-left: 0.4rem;align-items:center">
-				<img style="max-height:1.4rem;" gateway="<?php echo $this->id; ?>" src="<?php echo WC_HTTPS::force_https_url( $this->icon );//PHPCS:ignore ?>" alt="<?php esc_attr( $this->get_title() ); ?>" />
-			</span>
-			<?php
-		}
+		?>
+		<span style="<?php echo $flex ? 'display:flex;' : ''; ?>gap: 0.2rem;margin-left: 0.4rem;align-items:center">
+			<img style="max-height: 25px;" gateway="<?php echo $this->id; ?>" src="<?php echo WC_HTTPS::force_https_url( $icon );//PHPCS:ignore ?>" alt="<?php esc_attr( $this->get_title() ); ?>" />
+		</span>
+		<?php
 		$icon = ob_get_clean();
 
 		return apply_filters( 'woocommerce_gateway_icon', $icon, $this->id );
+	}
+
+	/**
+	 * Returns the gateway's icon url.
+	 *
+	 * @param string $size       of the icon.
+	 * @param string $background of the icon.
+	 */
+	public function get_icon_url( $size = 'full', $background = 'clear' ) {
+		$icons = $this->icons;
+
+		if ( ! $icons ) {
+			return;
+		}
+
+		if ( ! array_key_exists( $size, $icons ) ) {
+			$size = array_key_first( $icons );
+		} elseif ( ! array_key_exists( $background, $icons[ $size ] ) ) {
+			$background = array_key_first( $icons[ $size ] );
+		}
+
+		return $icons[ $size ][ $background ];
 	}
 
 	/**
@@ -835,6 +979,11 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 				'label' => __( 'Total', 'peachpay-for-woocommerce' ),
 				'total' => strval( $order->get_total() ),
 			),
+
+			'service_fee'           => array(
+				'percentage' => strval( PeachPay_Order_Data::get_service_fee_percentage( $order ) ),
+				'total'      => strval( PeachPay_Order_Data::get_service_fee_total( $order ) ),
+			),
 		);
 	}
 
@@ -888,7 +1037,8 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 			$line_items[] = array(
 				'id'        => strval( $product->get_id() ),
 				'label'     => $product->get_title(),
-				'amount'    => strval( $product->get_price() ),
+				// Checking for empty string because https://woocommerce.com/products/name-your-price/ products dont have a price.
+				'amount'    => strval( $product->get_price() ) !== '' ? strval( $product->get_price() ) : '-',
 				'quantity'  => $item->get_quantity(),
 				'total'     => strval( $item->get_total() ),
 				'image_url' => ( is_array( peachpay_product_image( $product ) ) && isset( peachpay_product_image( $product )[0] ) ) ? peachpay_product_image( $product )[0] : null,
@@ -1099,10 +1249,13 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 					),
 				),
 				'fee_amount'        => array(
-					'title'       => __( 'Fee amount', 'peachpay-for-woocommerce' ),
-					'description' => __( 'The amount you would like to charge', 'peachpay-for-woocommerce' ),
-					'type'        => 'number',
-					'default'     => 0,
+					'title'             => __( 'Fee amount', 'peachpay-for-woocommerce' ),
+					'description'       => __( 'The amount you would like to charge', 'peachpay-for-woocommerce' ),
+					'type'              => 'number',
+					'default'           => 0,
+					'custom_attributes' => array(
+						'min' => 0,
+					),
 				),
 				'fee_reason'        => array(
 					'title'       => __( 'Fee label', 'peachpay-for-woocommerce' ),
@@ -1111,16 +1264,22 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 					'default'     => 'Payment gateway fee',
 				),
 				'fee_threshold_min' => array(
-					'title'       => __( 'Fee minimum threshold', 'peachpay-for-woocommerce' ),
-					'description' => __( 'The extra fee will only be applied if the cart total is above this amount.', 'peachpay-for-woocommerce' ),
-					'type'        => 'number',
-					'default'     => 0,
+					'title'             => __( 'Fee minimum threshold', 'peachpay-for-woocommerce' ),
+					'description'       => __( 'The extra fee will only be applied if the cart total is above this amount.', 'peachpay-for-woocommerce' ),
+					'type'              => 'number',
+					'default'           => 0,
+					'custom_attributes' => array(
+						'min' => 0,
+					),
 				),
 				'fee_threshold_max' => array(
-					'title'       => __( 'Fee maximum threshold', 'peachpay-for-woocommerce' ),
-					'description' => __( 'The extra fee will only be applied if the cart total is below this amount. This must be less than or equal to this payment gateway\'s maximum charge.', 'peachpay-for-woocommerce' ),
-					'type'        => 'number',
-					'placeholder' => __( 'Not restricted', 'peachpay-for-woocommerce' ),
+					'title'             => __( 'Fee maximum threshold', 'peachpay-for-woocommerce' ),
+					'description'       => __( 'The extra fee will only be applied if the cart total is below this amount. This must be less than or equal to this payment gateway\'s maximum charge.', 'peachpay-for-woocommerce' ),
+					'type'              => 'number',
+					'placeholder'       => __( 'Not restricted', 'peachpay-for-woocommerce' ),
+					'custom_attributes' => array(
+						'min' => 0,
+					),
 				),
 			)
 		);
@@ -1136,7 +1295,7 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 			array(
 				'enabled' => array(
 					'type'    => 'checkbox',
-					'title'   => __( 'Enable/Disable', 'peachpay-for-woocommerce' ),
+					'title'   => __( 'Enable', 'peachpay-for-woocommerce' ),
 					// translators: %s gateway title.
 					'label'   => sprintf( __( 'Enable %s', 'peachpay-for-woocommerce' ), $this->title ),
 					'default' => 'no',
@@ -1164,6 +1323,38 @@ abstract class PeachPay_Payment_Gateway extends WC_Payment_Gateway {
 						'default'               => __( 'Both checkout page and Express Checkout', 'peachpay-for-woocommerce' ),
 						'checkout_page_only'    => __( 'Checkout page only', 'peachpay-for-woocommerce' ),
 						'express_checkout_only' => __( 'Express Checkout only', 'peachpay-for-woocommerce' ),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Settings for enabling/disabling/selecting a default currency in the native checkout / express checkout.
+	 *
+	 * @param array $form_fields The current fields.
+	 */
+	private function default_currency_setting( $form_fields ) {
+		$is_enabled = peachpay_get_settings_option( 'peachpay_currency_options', 'enabled' );
+
+		$supported_currencies = array();
+		foreach ( $this->get_supported_currencies() as $currency ) {
+			$supported_currencies[ $currency ] = $currency;
+		}
+
+		return array_merge(
+			$form_fields,
+			array(
+				'default_currency' => array(
+					'type'        => 'select',
+					'title'       => __( 'Default currency', 'peachpay-for-woocommerce' ),
+					// translators: %s gateway title.
+					'description' => sprintf( __( 'If the customer chooses an unsupported currency for this payment method, %s will still display but will switch the currency when the customer selects it.', 'peachpay-for-woocommerce' ), $this->title ),
+					'default'     => 'none',
+					'class'       => $is_enabled ? '' : 'pp-default-currency-hide',
+					'options'     => array_merge(
+						array( 'none' => __( 'Not set', 'peachpay-for-woocommerce' ) ),
+						$supported_currencies
 					),
 				),
 			)

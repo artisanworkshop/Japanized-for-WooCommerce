@@ -13,6 +13,30 @@ defined( 'PEACHPAY_ABSPATH' ) || exit;
 final class PeachPay_Onboarding_Tour {
 
 	/**
+	 * Translates PeachPay page tab names to the names used within the onboarding tour.
+	 * Note: only necessary for tabs that don't have the same naming as the original
+	 *  onboarding endpoints.
+	 *
+	 * @var array $onboarding_tab_translations .
+	 */
+	public static $onboarding_tab_translations = array(
+		'field' => 'field_editor',
+	);
+
+	/**
+	 * List of supported web endpoints. Any of the values not included in this
+	 *  list must be manually completed using the `complete_section` function.
+	 *
+	 * @var array $onboarding_endpoints .
+	 */
+	public static $onboarding_endpoints = array(
+		'currency'         => 1,
+		'field_editor'     => 1,
+		'related_products' => 1,
+		'express_checkout' => 1,
+	);
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {}
@@ -67,6 +91,14 @@ final class PeachPay_Onboarding_Tour {
 				'title'       => __( 'Manage a payment method', 'peachpay-for-woocommerce' ),
 				'description' => __( 'Set minimum/maximum charges and fees, restrict countries, and change the appearance', 'peachpay-for-woocommerce' ),
 				'href'        => esc_url_raw( Peachpay_Admin::admin_settings_url( 'peachpay', 'payment', '', '', false ) ),
+			),
+			'address_autocomplete' => array(
+				'checked'     => false,
+				'premium'     => true,
+				'id'          => 'pp-onboarding-tour-add-first-gateway',
+				'title'       => __( 'Manage address autocomplete', 'peachpay-for-woocommerce' ),
+				'description' => __( 'Enable address autocomplete for customers filling out billing and shipping details', 'peachpay-for-woocommerce' ),
+				'href'        => esc_url_raw( Peachpay_Admin::admin_settings_url( 'peachpay', 'settings', 'address_autocomplete', '', false ) . '&onboarding=address_autocomplete' ),
 			),
 			'analytics'            => array(
 				'checked'     => false,
@@ -134,24 +166,14 @@ final class PeachPay_Onboarding_Tour {
 			// phpcs:ignore
 			if ( 0 === strcmp( 'force_complete', $_GET['onboarding'] ) ) {
 				self::complete_section( 'force_complete' );
-				// Update onboarding tour message
-				$onboarding_tour_title       = __( 'You\'re good to go with PeachPay', 'peachpay-for-woocommerce' );
-				$onboarding_tour_description = __( 'Next time you load a PeachPay page, we\'ll remove this', 'peachpay-for-woocommerce' );
+				return;
 			}
-
-			// Check existence in expected categories:
-			$onboarding_endpoints = array(
-				'currency'         => 1,
-				'field_editor'     => 1,
-				'related_products' => 1,
-				'express_checkout' => 1,
-			);
 
 			// This only touches the contents of $_GET iff the value is in $onboarding_endpoints,
 			//  meaning that otherwise (if not in the above onboarding endpoints) the contents
 			//  will not get touched.
 			// phpcs:ignore
-			if ( array_key_exists( $_GET['onboarding'], $onboarding_endpoints ) ) {
+			if ( array_key_exists( $_GET['onboarding'], self::$onboarding_endpoints ) ) {
 				// phpcs:ignore
 				self::complete_section( $_GET['onboarding'] );
 			}

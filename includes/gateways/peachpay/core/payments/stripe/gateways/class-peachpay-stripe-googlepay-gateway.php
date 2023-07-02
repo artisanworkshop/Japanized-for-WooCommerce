@@ -18,7 +18,14 @@ class PeachPay_Stripe_Googlepay_Gateway extends PeachPay_Stripe_Payment_Gateway 
 		$this->id                                    = 'peachpay_stripe_googlepay';
 		$this->stripe_payment_method_type            = 'card';
 		$this->stripe_payment_method_capability_type = 'card';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/google-pay.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/googlepay-full.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/googlepay-small-white.svg' ),
+			),
+		);
 		$this->settings_priority                     = 1;
 
 		// Customer facing title and description.

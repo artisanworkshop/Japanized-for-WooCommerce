@@ -2,13 +2,13 @@
 /**
  * Plugin Name: PeachPay Checkout and Payments for WooCommerce: Stripe, PayPal, Square
  * Plugin URI: https://woocommerce.com/products/peachpay
- * Description: PeachPay is supercharging WooCommerce checkout and payments. Connect and manage all your payment methods, offer shoppers a beautiful Express Checkout, and track cart abandonment analytics, all from one place.
- * Version: 1.91.5
+ * Description: Connect and manage all your payment methods, offer shoppers a beautiful Express Checkout, and reduce cart abandonment.
+ * Version: 1.95.0
  * Author: PeachPay, Inc.
  * Author URI: https://peachpay.app
  *
  * WC requires at least: 5.0
- * WC tested up to: 7.6
+ * WC tested up to: 7.8
  *
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -47,6 +47,10 @@ function peachpay() {
 }
 
 $GLOBALS['peachpay'] = peachpay();
+
+if ( ! file_exists( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php' ) ) {
+	return;
+}
 
 if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 	return;
@@ -598,7 +602,7 @@ function peachpay_load_button_scripts( $available_gateways ) {
 				'wc_cart_url'                              => wc_get_cart_url(),
 				'has_valid_key'                            => peachpay_has_valid_key(),
 				'wc_prices_include_tax'                    => wc_prices_include_tax(),
-				'wc_tax_price_display'                     => ( isset( WC()->cart ) && '' !== WC()->cart ) ? WC()->cart->get_tax_price_display_mode() : '',
+				'wc_tax_price_display'                     => ( isset( WC()->cart ) && '' !== WC()->cart && method_exists( 'WC_Cart', 'get_tax_price_display_mode' ) ) ? WC()->cart->get_tax_price_display_mode() : '',
 				'wc_location_info'                         => peachpay_location_details(),
 				'language'                                 => peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'language', 'en-US' ),
 				'support_message'                          => peachpay_get_settings_option( 'peachpay_express_checkout_window', 'support_message', '' ),
@@ -624,7 +628,7 @@ function peachpay_load_button_scripts( $available_gateways ) {
 				'button_width_checkout_page'               => peachpay_get_settings_option( 'peachpay_express_checkout_button', 'button_width_checkout_page', null ),
 				'button_effect'                            => peachpay_get_settings_option( 'peachpay_express_checkout_button', 'button_effect', 'fade' ),
 				'disable_default_font_css'                 => peachpay_get_settings_option( 'peachpay_express_checkout_button', 'disable_default_font_css' ),
-				'button_available_icons'                   => PeachPay_Payment::available_gateway_icons(),
+				'button_available_icons'                   => peachpay_get_settings_option( 'peachpay_express_checkout_button', 'button_display_payment_method_icons' ) ? PeachPay_Payment::available_gateway_icons() : '',
 				'button_display_on_product_page'           => apply_filters( 'peachpay_hide_button_on_product_page', false ),
 				'button_display_payment_method_icons'      => peachpay_get_settings_option( 'peachpay_express_checkout_button', 'button_display_payment_method_icons' ),
 				'button_custom_css'                        => peachpay_get_settings_option( 'peachpay_express_checkout_advanced', 'custom_button_css', '' ),
@@ -786,10 +790,6 @@ function peachpay_feature_support_record() {
 		),
 		'use_wc_country_locale'    => array(
 			'enabled' => (bool) peachpay_get_settings_option( 'peachpay_express_checkout_window', 'use_wc_country_locale', false ),
-			'version' => 1,
-		),
-		'address_autocomplete'     => array(
-			'enabled' => (bool) peachpay_get_settings_option( 'peachpay_express_checkout_window', 'address_autocomplete', false ),
 			'version' => 1,
 		),
 		'button_shadow'            => array(

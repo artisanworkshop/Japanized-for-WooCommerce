@@ -368,6 +368,9 @@ class PeachPay_Authnet {
 				// translators: %1$s Payment method title, %2$s transaction id
 				$order->add_order_note( sprintf( __( 'Authorize.net %1$s payment was declined (Transaction Id: %2$s).', 'peachpay-for-woocommerce' ), $order->get_payment_method_title(), $authnet_transaction_id ) );
 			}
+		} elseif ( 'underReview' === $new_transaction_status ) {
+			// translators: %1$s Payment method title, %2$s transaction id.
+			$order->set_status( 'on-hold', sprintf( __( 'Authorize.net %1$s payment under review. Manage the payment in the Authorize.net MINT dashboard. (Transaction Id: %2$s)', 'peachpay-for-woocommerce' ), $order->get_payment_method_title(), $authnet_transaction_id ) );
 		}
 
 		$order->save();

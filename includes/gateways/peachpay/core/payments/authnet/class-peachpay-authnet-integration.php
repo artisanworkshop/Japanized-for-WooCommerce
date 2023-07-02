@@ -35,11 +35,8 @@ final class PeachPay_Authnet_Integration {
 		if ( is_admin() ) {
 			add_action(
 				'peachpay_admin_add_payment_setting_section',
-				function( $current ) {
-					$class = 'pp-header pp-sub-nav-authnet';
-					if ( 'pp-sub-nav-authnet' !== $current ) {
-						$class .= ' hide';
-					}
+				function() {
+					$class = 'pp-header pp-sub-nav-authnet no-border-bottom';
 
 					add_settings_field(
 						'peachpay_authnet_setting',
