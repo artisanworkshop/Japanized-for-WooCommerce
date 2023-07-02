@@ -20,6 +20,7 @@ require_once PEACHPAY_ABSPATH . 'core/migrations/migrate-square.php';
 require_once PEACHPAY_ABSPATH . 'core/migrations/migrate-stripe.php';
 require_once PEACHPAY_ABSPATH . 'core/migrations/migrate-paypal.php';
 require_once PEACHPAY_ABSPATH . 'core/migrations/migrate-settings-after-reorg.php';
+require_once PEACHPAY_ABSPATH . 'core/migrations/migrate-data-retention.php';
 
 // Execute migrations!
 // Order should be oldest migrations to the newest because merchants may skip some versions and
@@ -49,3 +50,7 @@ peachpay_migrate_stripe();
 peachpay_migrate_express_checkout();
 // Migrating <=1.85.0 -> 1.86.0
 peachpay_migrate_paypal();
+// Migrating <=1.93.0 -> 1.93.1
+peachpay_migrate_data_retention();
+// Migrating <=1.93.1 -> 1.93.2
+peachpay_migrate_related_products_separate_options();

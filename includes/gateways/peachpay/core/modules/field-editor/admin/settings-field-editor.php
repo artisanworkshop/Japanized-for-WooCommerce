@@ -165,19 +165,19 @@ function peachpay_generate_table_cb() {
 	<div class="pp-section-nav-container">
 	<a
 		class="<?php echo 'billing' === $section ? 'pp-sub-nav-link-active' : 'pp-sub-nav-link-inactive'; ?>"
-		href="<?php echo esc_url( add_query_arg( 'section', 'billing' ) ); ?>"
+		href="?page=peachpay&tab=field&section=billing"
 		style="text-decoration:none;"
 	> <?php esc_html_e( 'Billing', 'peachpay-for-woocommerce' ); ?>
 	</a>
 	<a
 		class="<?php echo 'shipping' === $section ? 'pp-sub-nav-link-active' : 'pp-sub-nav-link-inactive'; ?>"
-		href="<?php echo esc_url( add_query_arg( 'section', 'shipping' ) ); ?>"
+		href="?page=peachpay&tab=field&section=shipping"
 		style="text-decoration:none;"
 	> <?php esc_html_e( 'Shipping', 'peachpay-for-woocommerce' ); ?>
 	</a>
 	<a
 		class="<?php echo 'additional' === $section ? 'pp-sub-nav-link-active' : 'pp-sub-nav-link-inactive'; ?>"
-		href="<?php echo esc_url( add_query_arg( 'section', 'additional' ) ); ?>"
+		href="?page=peachpay&tab=field&section=additional"
 		style="text-decoration:none;"
 	> <?php esc_html_e( 'Additional', 'peachpay-for-woocommerce' ); ?>
 	</a>
@@ -242,7 +242,7 @@ function peachpay_generate_buttons_headers_footer() {
 				href="
 		<?php
 		//phpcs:ignore
-		echo esc_url( add_query_arg( 'reset_field', 'reset' ) );
+		echo add_query_arg( 'reset_field', 'reset' );
 		peachpay_reset_default_fields();
 		?>
 				"

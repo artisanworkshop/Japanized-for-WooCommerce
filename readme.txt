@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.2.2
-Stable tag: 2.5.11
+Stable tag: 2.5.13
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,12 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.5.13 - 2023-07-02 =
+* Update - PeachPay 1.95.0
+
+= 2.5.12 - 2023-06-23 =
+* Fixed - not required Manager Name for shortcode.
 
 = 2.5.11 - 2023-06-05 =
 * Fixed - Yahoo API endpoint setting bug.

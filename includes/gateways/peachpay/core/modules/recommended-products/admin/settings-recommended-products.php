@@ -22,7 +22,7 @@ function peachpay_related_products() {
 
 	add_settings_field(
 		'peachpay_rp_product_page_section',
-		__( 'Recommended products', 'peachpay-for-woocommerce' ),
+		__( 'Related products', 'peachpay-for-woocommerce' ),
 		'peachpay_rp_product_page_cb',
 		'peachpay',
 		'peachpay_related_products',
@@ -59,6 +59,34 @@ function peachpay_rp_product_page_cb() {
 			array(
 				'input_type' => 'checkbox',
 				'disabled'   => ! peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_enable' ),
+			)
+		);
+		peachpay_admin_input(
+			'peachpay_related_products_relation',
+			'peachpay_related_products_options',
+			'peachpay_related_products_relation',
+			'',
+			__( 'Related by', 'peachpay-for-woocommerce' ),
+			'',
+			array(
+				'input_type'     => 'select',
+				'select_options' => array(
+					'product_cat' => __( 'Product Category', 'peachpay-for-woocommerce' ),
+					'product_tag' => __( 'Product TAG', 'peachpay-for-woocommerce' ),
+					'attribute'   => __( 'Product Attributes', 'peachpay-for-woocommerce' ),
+				),
+			)
+		);
+		peachpay_admin_input(
+			'peachpay_related_exclude_id',
+			'peachpay_related_products_options',
+			'peachpay_related_exclude_id',
+			'',
+			__( 'Taxonomy IDs to exclude (comma separated)', 'peachpay-for-woocommerce' ),
+			'',
+			array(
+				'input_type'  => 'text',
+				'placeholder' => 'ie 12,45,32',
 			)
 		);
 		peachpay_admin_input(

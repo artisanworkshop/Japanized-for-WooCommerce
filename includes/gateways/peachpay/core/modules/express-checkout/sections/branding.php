@@ -82,7 +82,7 @@ function peachpay_render_colors_field() {
 				<div class="pp-color-input-container">
 					<input name='peachpay_express_checkout_branding[button_color]' type='color' value='<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'button_color', PEACHPAY_DEFAULT_BACKGROUND_COLOR ) ); ?>' />
 				</div>
-				<input name='button_color_text' type='text' value='<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'button_color', PEACHPAY_DEFAULT_BACKGROUND_COLOR ) ); ?>' />
+				<input name='button_color_text' type='text' maxlength='7' value='<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'button_color', PEACHPAY_DEFAULT_BACKGROUND_COLOR ) ); ?>' />
 			</div>
 			<p class="description"><?php esc_html_e( 'This will set the colors in the checkout window and for the checkout buttons.', 'peachpay-for-woocommerce' ); ?></p>
 		</div>
@@ -92,7 +92,7 @@ function peachpay_render_colors_field() {
 				<div class="pp-color-input-container">
 					<input name='peachpay_express_checkout_branding[button_text_color]' type='color' value='<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'button_text_color', PEACHPAY_DEFAULT_TEXT_COLOR ) ); ?>' />
 				</div>
-				<input name='button_text_color_text' type='text' value='<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'button_text_color', PEACHPAY_DEFAULT_TEXT_COLOR ) ); ?>' />
+				<input name='button_text_color_text' type='text' maxlength='7' value='<?php echo esc_attr( peachpay_get_settings_option( 'peachpay_express_checkout_branding', 'button_text_color', PEACHPAY_DEFAULT_TEXT_COLOR ) ); ?>' />
 			</div>
 			<p class="description"><?php esc_html_e( 'This will set the text color on buttons for the checkout window.', 'peachpay-for-woocommerce' ); ?></p>
 		</div>

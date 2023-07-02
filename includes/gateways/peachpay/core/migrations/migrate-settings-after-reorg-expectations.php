@@ -48,7 +48,6 @@ function peachpay_get_pre_migration_options( $fill ) {
         'display_product_images',
         'enable_quantity_changer',
         'enable_virtual_product_fields',
-        'address_autocomplete',
         'use_wc_country_locale'
     );
     $button_options_keys          = array(
@@ -158,7 +157,6 @@ function peachpay_get_expected_ec_window_keys() {
         'display_product_images',
         'enable_quantity_changer',
         'enable_virtual_product_fields',
-        'address_autocomplete',
         'use_wc_country_locale',
         'enable_store_support_message',
         'support_message_type',
@@ -275,9 +273,7 @@ function peachpay_get_expected_options_on_fresh_install() {
             'floating_button_icon'           => 'shopping_cart',
             'floating_button_alignment'      => 'right',
         ),
-        'peachpay_payment_options' => array(
-            'data_retention' => 1,
-        ),
+        'peachpay_data_retention' => 'yes',
     );
     return $expectations;
 }

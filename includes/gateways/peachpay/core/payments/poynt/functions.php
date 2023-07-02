@@ -42,7 +42,7 @@ function peachpay_poynt_handle_order_completed( $order_id ) {
 
 	$status = PeachPay_Poynt_Order_Data::get_transaction( $order, 'status' );
 
-	if ( 'AUTHORIZED' !== $status || ! $order->get_transaction_id() || $order->get_total() > 0 ) {
+	if ( 'AUTHORIZED' !== $status || ! $order->get_transaction_id() || $order->get_total() <= 0 ) {
 		return;
 	}
 

@@ -24,7 +24,6 @@ require_once PEACHPAY_ABSPATH . 'core/modules/field-editor/admin/settings-field-
 require_once PEACHPAY_ABSPATH . 'core/modules/recommended-products/admin/settings-recommended-products.php';
 require_once PEACHPAY_ABSPATH . 'core/modules/express-checkout/admin/settings-express-checkout.php';
 require_once PEACHPAY_ABSPATH . 'core/modules/currency-switcher/admin/settings-currency-switcher.php';
-require_once PEACHPAY_ABSPATH . 'core/modules/product-links/admin/settings-product-links.php';
 
 // Onboarding tour.
 require_once PEACHPAY_ABSPATH . 'core/admin/class-peachpay-onboarding-tour.php';
@@ -152,12 +151,6 @@ function peachpay_enqueue_settings_styles( $hook ) {
 		array(),
 		peachpay_file_version( 'public/dist/express-checkout-button.bundle.css' )
 	);
-	wp_enqueue_style(
-		'peachpay-ocu-settings-style',
-		peachpay_url( 'core/modules/one-click-upsell/assets/one-click-upsell.css' ),
-		array(),
-		peachpay_file_version( 'core/modules/one-click-upsell/assets/one-click-upsell.css' )
-	);
 }
 add_action( 'admin_enqueue_scripts', 'peachpay_enqueue_settings_styles' );
 
@@ -208,7 +201,7 @@ add_action( 'admin_head', 'peachpay_hide_nag', 10 );
 function peachpay_render_active_submenu( $file ) {
 	global $plugin_page, $submenu_file;
 	// phpcs:ignore
-	$tab = isset( $_GET['tab'] ) ? wc_clean($_GET['tab']) : null;
+	$tab = isset( $_GET['tab'] ) ? $_GET['tab'] : null;
 	if ( 'peachpay' === $plugin_page && ! $tab ) {
 		// phpcs:ignore
 		$plugin_page = 'peachpay&tab=home';
@@ -261,6 +254,7 @@ function peachpay_settings_init() {
 	}
 	// phpcs:ignore
 	if ( isset( $_GET['tab'] ) && 'field' === $_GET['tab'] && peachpay_user_role( 'administrator' ) ) {
+
 		peachpay_field_editor();
 	}
 	// phpcs:ignore
@@ -290,10 +284,23 @@ function peachpay_display_premium_locked_notice() {
 					<?php echo esc_html__( 'This is a Premium feature. Upgrade to unlock it!', 'peachpay-for-woocommerce' ); ?>
 				</strong>
 			</p>
-			<button type="button" class="pp-button-continue-premium">
-				<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html__( 'Upgrade', 'peachpay-for-woocommerce' ) : esc_html__( 'Try Premium', 'peachpay-for-woocommerce' ); ?>
-				<?php require_once PeachPay::get_plugin_path() . 'core/admin/views/html-premium-modal.php'; ?>
-			</button>
+			<?php
+			if ( ! peachpay_has_valid_key() && ! peachpay_is_test_mode() ) {
+				$retry_url = get_site_url() . '/wp-admin/admin.php?page=peachpay&retry_permission=1';
+				?>
+				<a href="<?php echo esc_url( $retry_url ); ?>" class="top-nav-link pp-button-premium pp-notice-button">
+					<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html__( 'Upgrade', 'peachpay-for-woocommerce' ) : esc_html__( 'Try Premium', 'peachpay-for-woocommerce' ); ?>
+				</a>
+				<?php
+			} else {
+				?>
+					<button type="button" class="pp-button-continue-premium">
+						<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html__( 'Upgrade', 'peachpay-for-woocommerce' ) : esc_html__( 'Try Premium', 'peachpay-for-woocommerce' ); ?>
+						<?php require_once PeachPay::get_plugin_path() . 'core/admin/views/html-premium-modal.php'; ?>
+					</button>
+				<?php
+			}
+			?>
 		</div>
 	<?php
 }
@@ -311,7 +318,24 @@ function peachpay_display_premium_trial_notice() {
 			</strong>
 		</p>
 		<div class="pp-banner-buttons">
-			<button type="button" class="pp-button-continue-premium"><?php echo esc_html__( 'Try Premium', 'peachpay-for-woocommerce' ); ?></button>
+			<?php
+			if ( ! peachpay_has_valid_key() && ! peachpay_is_test_mode() ) {
+				$retry_url = get_site_url() . '/wp-admin/admin.php?page=peachpay&retry_permission=1';
+				?>
+				<button style="display: none !important;"></button>
+				<a href="<?php echo esc_url( $retry_url ); ?>" class="top-nav-link pp-button-premium pp-notice-button">
+					<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html__( 'Upgrade', 'peachpay-for-woocommerce' ) : esc_html__( 'Try Premium', 'peachpay-for-woocommerce' ); ?>
+				</a>
+				<?php
+			} else {
+				?>
+					<button type="button" class="pp-button-continue-premium">
+						<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html__( 'Upgrade', 'peachpay-for-woocommerce' ) : esc_html__( 'Try Premium', 'peachpay-for-woocommerce' ); ?>
+						<?php require_once PeachPay::get_plugin_path() . 'core/admin/views/html-premium-modal.php'; ?>
+					</button>
+				<?php
+			}
+			?>
 			<button type="button" class="pp-notice-dismiss notice-dismiss"></button>
 		</div>
 	</div>
@@ -371,6 +395,7 @@ function peachpay_turn_off_premium_features() {
 	peachpay_set_settings_option( 'peachpay_express_checkout_button', 'checkout_page_enabled', false );
 	peachpay_set_settings_option( 'peachpay_express_checkout_button', 'mini_cart_enabled', false );
 
+	require_once PEACHPAY_ABSPATH . 'core/modules/field-editor/pp-field-editor-functions.php';
 	// phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 	try {
 		$field_editor_billing = get_option( 'peachpay_field_editor_billing' );
@@ -433,8 +458,15 @@ function peachpay_options_page_html() {
 	do_action( 'peachpay_plugin_capabilities', $plugin_capabilities );
 	do_action( 'peachpay_settings_admin_action', $plugin_capabilities );
 
-	// Directly using 'woocommerce_premium' capability to allow config access when 'connected' = false
-	if(isset($plugin_capabilities['woocommerce_premium']))update_option( 'peachpay_premium_capability', $plugin_capabilities['woocommerce_premium'] );
+	if ( isset( $plugin_capabilities['woocommerce_premium'] ) ) {
+		// Directly using 'woocommerce_premium' capability to allow config access when 'connected' = false
+		update_option( 'peachpay_premium_capability', $plugin_capabilities['woocommerce_premium'] );
+	}
+	$premium_locked = ! peachpay_plugin_has_capability( 'woocommerce_premium', array( 'woocommerce_premium' => get_option( 'peachpay_premium_capability' ) ) );
+
+	if ( $premium_locked ) {
+		peachpay_turn_off_premium_features();
+	}
 
 	// Show error/success messages.
 	settings_errors( 'peachpay_messages' );
@@ -443,25 +475,25 @@ function peachpay_options_page_html() {
 	$section = isset( $_GET['section'] ) ? wp_unslash( $_GET['section'] ) : '';
 
 	//phpcs:ignore
-	$tab = isset( $_GET['tab'] ) ? wc_clean($_GET['tab']) : 'home';
+	$tab = isset( $_GET['tab'] ) ? $_GET['tab'] : 'home';
 
-	PeachPay_Onboarding_Tour::display_onboarding_tour( ! peachpay_plugin_has_capability( 'woocommerce_premium', $plugin_capabilities ) );
+	$premium_tab = in_array( $tab, array( 'currency', 'field', 'related_products', 'express_checkout' ), true );
+
+	$has_hashed_tabs = ( 'payment' === $tab ) || ( 'express_checkout' === $tab && 'product_recommendations' === $section ) || ( 'express_checkout' === $tab && 'button' === $section );
+
+	if ( isset( PeachPay_Onboarding_Tour::$onboarding_endpoints[ $tab ] ) ) {
+		PeachPay_Onboarding_Tour::complete_section( $tab );
+	} elseif ( isset( PeachPay_Onboarding_Tour::$onboarding_tab_translations[ $tab ] ) ) {
+		PeachPay_Onboarding_Tour::complete_section( PeachPay_Onboarding_Tour::$onboarding_tab_translations[ $tab ] );
+	}
+	PeachPay_Onboarding_Tour::display_onboarding_tour( $premium_locked );
 
 	?>
 	<div class="peachpay peachpay-container">
 		<?php
-		$premium_locked = ! peachpay_plugin_has_capability( 'woocommerce_premium', $plugin_capabilities );
-
-		if ( $premium_locked ) {
-			peachpay_turn_off_premium_features();
-		}
-
-		$premium_tab = in_array( $tab, array( 'currency', 'field', 'related_products', 'express_checkout' ), true );
-
 		require PeachPay::get_plugin_path() . '/core/admin/views/html-primary-navigation.php';
-
 		?>
-		<div class="pp-admin-content-wrapper">
+		<div class="pp-admin-content-wrapper <?php echo esc_attr( $has_hashed_tabs ? 'has-hashed-tabs' : '' ); ?>">
 			<?php
 			require PeachPay::get_plugin_path() . '/core/admin/views/html-side-navigation.php';
 
@@ -678,6 +710,7 @@ define(
 		'unlink_amazonpay',
 
 		'onboarding',
+		'dismiss-service-fee-notice',
 	)
 );
 

@@ -20,28 +20,31 @@ final class PeachPay_Square {
 	 * @param mixed    $order_data order data processed by prepare_payment_result.
 	 * @param mixed    $square_payment_details transaction details for square. Contains source_id, verification_token, prepare_reuse, and customer_id.
 	 * @param string   $callback_url url callback for updating order status.
+	 * @param array    $order_details Standardized order details for creating a payment.
 	 * @param string   $mode Square mode to make payment in.
 	 */
-	public static function create_payment( $order, $order_data, $square_payment_details, $callback_url, $mode ) {
+	public static function create_payment( $order, $order_data, $square_payment_details, $callback_url, $order_details, $mode ) {
 		$body = array(
-			'session'     => array(
+			'session'       => array(
 				'id'             => PeachPay_Square_Order_Data::get_peachpay( $order, 'session_id' ),
 				'merchant_id'    => peachpay_plugin_merchant_id(),
 				'merchant_url'   => home_url(),
 				'merchant_name'  => get_bloginfo( 'name' ),
 				'plugin_version' => PEACHPAY_VERSION,
 			),
-			'transaction' => array(
+			'transaction'   => array(
 				'id'                  => PeachPay_Square_Order_Data::get_peachpay( $order, 'transaction_id' ),
 				'square'              => $square_payment_details,
 				'status_callback_url' => $callback_url,
 			),
-			'order'       => array(
-				'id'       => $order->get_id(),
-				'amount'   => $order->get_total(),
-				'currency' => peachpay_currency_code(),
-				'data'     => $order_data,
+			'order'         => array(
+				'id'                 => $order->get_id(),
+				'amount'             => $order->get_total(),
+				'service_fee_amount' => PeachPay_Square_Order_Data::get_service_fee_total( $order ),
+				'currency'           => peachpay_currency_code(),
+				'data'               => $order_data,
 			),
+			'order_details' => $order_details,
 		);
 
 		$response = wp_remote_post(

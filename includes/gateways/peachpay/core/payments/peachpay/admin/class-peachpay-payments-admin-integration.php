@@ -21,11 +21,9 @@ final class PeachPay_Payments_Admin_Integration {
 	private function init() {
 		add_action(
 			'peachpay_admin_add_payment_setting_section',
-			function( $current ) {
+			function() {
 				$class = 'pp-header pp-sub-nav-peachpay';
-				if ( 'pp-sub-nav-peachpay' !== $current ) {
-					$class .= ' hide';
-				}
+
 				add_settings_field(
 					'peachpay_purchase_order_setting',
 					__( 'Other payment methods', 'peachpay-for-woocommerce' ),

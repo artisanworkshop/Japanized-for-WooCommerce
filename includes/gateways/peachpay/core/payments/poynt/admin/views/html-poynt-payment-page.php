@@ -15,10 +15,12 @@ defined( 'PEACHPAY_ABSPATH' ) || exit;
 			require PeachPay::get_plugin_path() . '/core/payments/poynt/admin/views/html-poynt-connect.php';
 		?>
 	</div>
-	<div>
-		<?php
-			$gateway_list = PeachPay_Poynt_Integration::get_payment_gateways();
-			require PeachPay::get_plugin_path() . '/core/admin/views/html-gateways.php';
-		?>
-	</div>
+	<?php if ( PeachPay_Poynt_Integration::connected() ) : ?>
+		<div>
+			<?php
+				$gateway_list = PeachPay_Poynt_Integration::get_payment_gateways();
+				require PeachPay::get_plugin_path() . '/core/admin/views/html-gateways.php';
+			?>
+		</div>
+	<?php endif; ?>
 </div>

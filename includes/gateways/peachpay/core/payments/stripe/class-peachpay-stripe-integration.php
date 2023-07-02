@@ -63,6 +63,7 @@ final class PeachPay_Stripe_Integration {
 		require_once PEACHPAY_ABSPATH . 'core/payments/stripe/gateways/class-peachpay-stripe-sofort-gateway.php';
 		require_once PEACHPAY_ABSPATH . 'core/payments/stripe/gateways/class-peachpay-stripe-p24-gateway.php';
 		require_once PEACHPAY_ABSPATH . 'core/payments/stripe/gateways/class-peachpay-stripe-eps-gateway.php';
+		require_once PEACHPAY_ABSPATH . 'core/payments/stripe/gateways/class-peachpay-stripe-sepadebit-gateway.php';
 
 		$this->payment_gateways[] = 'PeachPay_Stripe_Card_Gateway';
 		$this->payment_gateways[] = 'PeachPay_Stripe_ApplePay_Gateway';
@@ -77,6 +78,7 @@ final class PeachPay_Stripe_Integration {
 		$this->payment_gateways[] = 'PeachPay_Stripe_Sofort_Gateway';
 		$this->payment_gateways[] = 'PeachPay_Stripe_P24_Gateway';
 		$this->payment_gateways[] = 'PeachPay_Stripe_Eps_Gateway';
+		$this->payment_gateways[] = 'PeachPay_Stripe_SepaDebit_Gateway';
 	}
 
 	/**
@@ -230,6 +232,28 @@ final class PeachPay_Stripe_Integration {
 				'permission_callback' => '__return_true',
 			)
 		);
+	}
+
+	/**
+	 * Called on the WordPress plugins loaded action.
+	 */
+	private function plugins_loaded() {
+		include_once PEACHPAY_ABSPATH . '/core/payments/stripe/admin/tabs/class-peachpay-stripe-advanced.php';
+
+		if ( is_admin() ) {
+			PeachPay_Admin_Section::Create(
+				'stripe',
+				array(
+					new PeachPay_Stripe_Advanced(),
+				),
+				array(
+					array(
+						'name' => __( 'Payments', 'peachpay-for-woocommerce' ),
+						'url'  => PeachPay_Admin::admin_settings_url( 'peachpay', 'payment', '', '#stripe', false ),
+					),
+				)
+			);
+		}
 	}
 }
 PeachPay_Stripe_Integration::instance();

@@ -47,3 +47,22 @@ function peachpay_migrate_linked_and_related_products_settings_option() {
 		update_option( 'peachpay_migrated_related_products_option', 1 );
 	}
 }
+
+/**
+ * Separate the settings from recommended products to related products.
+ */
+function peachpay_migrate_related_products_separate_options() {
+	if ( get_option( 'peachpay_migrated_separate_rp_settings', 0 ) === 0 ) {
+		if ( peachpay_get_settings_option( 'peachpay_express_checkout_product_recommendations', 'peachpay_product_relation' ) ) {
+			$value = peachpay_get_settings_option( 'peachpay_express_checkout_product_recommendations', 'peachpay_product_relation' );
+			peachpay_set_settings_option( 'peachpay_related_products_options', 'peachpay_related_products_relation', $value );
+		}
+
+		if ( peachpay_get_settings_option( 'peachpay_express_checkout_product_recommendations', 'peachpay_exclude_id' ) ) {
+			$value = peachpay_get_settings_option( 'peachpay_express_checkout_product_recommendations', 'peachpay_exclude_id' );
+			peachpay_set_settings_option( 'peachpay_related_products_options', 'peachpay_related_exclude_id', $value );
+		}
+
+		update_option( 'peachpay_migrated_separate_rp_settings', 1 );
+	}
+}

@@ -13,8 +13,6 @@
  * @return array
  */
 
-require_once PEACHPAY_ABSPATH . 'core/payments/amazonpay/amazonpay.php';
-
 /**
  * This function is called via the add_action below it to initialize the
  * PeachPay_WC_Gateway class.

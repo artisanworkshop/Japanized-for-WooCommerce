@@ -71,7 +71,6 @@ function peachpay_migrate_checkout_window() {
 		'display_product_images',
 		'enable_quantity_changer',
 		'enable_virtual_product_fields',
-		'address_autocomplete',
 		'use_wc_country_locale',
 		'enable_store_support_message',
 		'support_message_type',

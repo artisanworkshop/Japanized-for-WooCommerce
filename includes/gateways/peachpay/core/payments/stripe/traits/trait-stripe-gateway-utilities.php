@@ -23,6 +23,7 @@ trait PeachPay_Stripe_Gateway_Utilities {
 				'capture_method',
 				'statement_descriptor_suffix',
 				'payment_method_options__card__request_three_d_secure',
+				'payment_clearing_email',
 			),
 			true
 		) ) {
@@ -79,7 +80,7 @@ trait PeachPay_Stripe_Gateway_Utilities {
 						'gateway'          => $order->get_payment_method(),
 						'intermediate_url' => $this->payment_intent_intermediate_url( $order ),
 						'success_url'      => $order->get_checkout_order_received_url(),
-						'cancel_url'       => str_replace( '&amp;', '&', $order->get_cancel_order_url() ),
+						'cancel_url'       => wc_get_cart_url(),
 						'data'             => array(
 							'id'            => PeachPay_Stripe_Order_Data::get_payment_intent( $order, 'id' ),
 							'client_secret' => $client_secret,
@@ -109,7 +110,7 @@ trait PeachPay_Stripe_Gateway_Utilities {
 		if ( is_wc_endpoint_url( 'order-pay' ) ) {
 			$cancel_order_url = $order->get_checkout_payment_url();
 		} else {
-			$cancel_order_url = str_replace( '&amp;', '&', $order->get_cancel_order_url() );
+			$cancel_order_url = wc_get_cart_url();
 		}
 		$state_param_data = rawurlencode(
             // PHPCS:ignore

@@ -17,7 +17,14 @@ class PeachPay_Authnet_ECheck_Gateway extends PeachPay_Authnet_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                = 'peachpay_authnet_echeck';
-		$this->icon              = PeachPay::get_asset_url( 'img/marks/bank.svg' );
+		$this->icons             = array(
+			'full'  => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/us_banks-full.svg' ),
+			),
+			'small' => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/us_banks-small.svg' ),
+			),
+		);
 		$this->settings_priority = 1;
 
 		// Customer facing title and description.

@@ -255,7 +255,13 @@ abstract class PeachPay_Poynt_Payment_Gateway extends PeachPay_Payment_Gateway {
 		$order->add_order_note( sprintf( __( 'GoDaddy Poynt %1$s payment setup for future use.', 'peachpay-for-woocommerce' ), $order->get_payment_method_title() ) );
 		$order->save();
 
-		PeachPay_Payment::update_transaction( $order, $this->get_order_details( $order ), 'SETUP' );
+		PeachPay_Payment::update_transaction(
+			$order,
+			array(
+				'payment_status' => 'setup',
+				'order_details'  => $this->get_order_details( $order ),
+			)
+		);
 
 		return array(
 			'result'   => 'success',

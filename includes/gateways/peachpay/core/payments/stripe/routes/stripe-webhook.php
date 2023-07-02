@@ -28,11 +28,11 @@ function peachpay_rest_api_stripe_webhook( $request ) {
 		$reason = $request['status_message'];
 	}
 
-	// Block old intent ids from modifiying the woocommerce order status
-	if (
-		isset( $request['stripe'] ) && isset( $request['stripe']['payment_intent_id'] ) &&
-		PeachPay_Stripe_Order_Data::get_payment_intent( $order, 'id' ) === $request['stripe']['payment_intent_id']
-	) {
+	$is_most_recent_payment_intent = isset( $request['payment_intent_details'] ) && isset( $request['payment_intent_details']['id'] ) && PeachPay_Stripe_Order_Data::get_payment_intent( $order, 'id' ) === $request['payment_intent_details']['id'];
+	$is_dispute                    = isset( $request['type'] ) && ( 'charge.dispute.created' === $request['type'] || 'charge.dispute.closed' === $request['type'] );
+
+	// Block old intent ids from modifiying the woocommerce order status, but ignore this restriction for dispute webhooks
+	if ( $is_most_recent_payment_intent || $is_dispute ) {
 		PeachPay_Stripe::calculate_payment_state( $order, $request, $reason );
 	}
 

@@ -13,7 +13,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-peachpay-related-products.
 
 add_action(
 	'admin_enqueue_scripts',
-	function() {
+	function( $hook_suffix ) {
+		if ( 'toplevel_page_peachpay' !== $hook_suffix ) {
+			return;
+		}
 		wp_enqueue_style(
 			'peachpay-related-products',
 			plugin_dir_url( __FILE__ ) . 'assets/pp-related-products.css',
@@ -87,7 +90,7 @@ function peachpayrpdisplay( $atts ) {
 	}
 	// needs improvement.
 	// will be removed later as it is used only to make easier the transition from 1.x to 2.x.
-	$basedonf = esc_attr( peachpay_get_settings_option( 'peachpay_express_checkout_product_recommendations', 'peachpay_product_relation' ) );
+	$basedonf = esc_attr( peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_products_relation' ) );
 	if ( 'category' === $basedonf ) {
 		$basedonf = 'product_cat';
 	}
@@ -131,7 +134,7 @@ function peachpayrprr_wp_taxonomy( $basedonf, $atts ) {
 		$product_based_id[] = $term->term_id;
 	}
 	// exlude ids.
-	$exclude          = explode( ',', peachpay_get_settings_option( 'peachpay_express_checkout_product_recommendations', 'peachpay_exclude_id' ) );
+	$exclude          = explode( ',', peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_exclude_id' ) );
 	$product_based_id = array_diff( $product_based_id, $exclude );
 
 	?>
@@ -533,6 +536,10 @@ function peachpay_rp_ids() {
 	$recommended_products_ids = array_unique( $recommended_products_ids );
 
 	$products_number = peachpay_get_settings_option( 'peachpay_express_checkout_product_recommendations', 'peachpay_rp_nproducts' );
+	if ( 0 >= $products_number ) {
+		return array();
+	}
+
 	// Resize the array if size of array exceeds the limit.
 	$products_number && count( $recommended_products_ids ) > $products_number ? array_splice( $recommended_products_ids, $products_number ) : '';
 

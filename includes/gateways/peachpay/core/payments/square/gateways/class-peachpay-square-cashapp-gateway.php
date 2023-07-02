@@ -17,7 +17,15 @@ class PeachPay_Square_Cashapp_Gateway extends PeachPay_Square_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                = 'peachpay_square_cashapp';
-		$this->icon              = PeachPay::get_asset_url( 'img/marks/cashapp-green.svg' );
+		$this->icons             = array(
+			'full'  => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/cashapp-green.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/square/cashapp-small-white.svg' ),
+				'color' => PeachPay::get_asset_url( 'img/marks/square/cashapp-small-color.svg' ),
+			),
+		);
 		$this->settings_priority = 5;
 
 		// Customer facing title and description.
@@ -39,13 +47,13 @@ class PeachPay_Square_Cashapp_Gateway extends PeachPay_Square_Payment_Gateway {
 			<style>
 				.peachpay-cashapp-styling {
 					width: fit-content;
-					margin: auto;
 					padding: 1rem 0 1rem 0;
 					animation: scale-up 2s ease-in-out;
 					animation-iteration-count: infinite;
 				}
 			</style>
 			<div>
+				<?php $this->display_fallback_currency_option_message(); ?>
 				<div class="peachpay-cashapp-styling" id="pp-square-cashapp-element"></div>
 				<?php if ( $this->description ) : ?>
 					<p style="text-align: left; margin: 0; font-size: smaller;" class="muted">

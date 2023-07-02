@@ -14,6 +14,8 @@ require_once PEACHPAY_ABSPATH . 'core/traits/trait-peachpay-singleton.php';
  *   - Activate, Deactivate, Upgrade, or Downgrade
  */
 final class PeachPay_Lifecycle {
+
+
 	use PeachPay_Singleton;
 
 	/**
@@ -37,29 +39,33 @@ final class PeachPay_Lifecycle {
 		/**
 		 * Listen for Plugin version change.
 		 */
-		try {
-			$previous_plugin_version = get_option( 'peachpay_plugin_version', PEACHPAY_VERSION );
-			update_option( 'peachpay_plugin_version', PEACHPAY_VERSION );
+		if ( wp_cache_add( 'peachpay_lifecycle_update_lock', true, '', 100 ) ) {
+			try {
+				$previous_plugin_version = get_option( 'peachpay_plugin_version', PEACHPAY_VERSION );
+				update_option( 'peachpay_plugin_version', PEACHPAY_VERSION );
 
-			if ( PEACHPAY_VERSION !== $previous_plugin_version ) {
-				if ( version_compare( PEACHPAY_VERSION, $previous_plugin_version, '>' ) ) {
-					add_action(
-						'plugins_loaded',
-						function() use ( $lifecycle, $previous_plugin_version ) {
-							$lifecycle->plugin_upgraded( $previous_plugin_version );
-						}
-					);
-				} else {
-					add_action(
-						'plugins_loaded',
-						function() use ( $lifecycle, $previous_plugin_version ) {
-							$lifecycle->plugin_downgraded( $previous_plugin_version );
-						}
-					);
+				if ( PEACHPAY_VERSION !== $previous_plugin_version ) {
+					if ( version_compare( PEACHPAY_VERSION, $previous_plugin_version, '>' ) ) {
+						add_action(
+							'plugins_loaded',
+							function () use ( $lifecycle, $previous_plugin_version ) {
+								$lifecycle->plugin_upgraded( $previous_plugin_version );
+								wp_cache_delete( 'peachpay_lifecycle_update_lock' );
+							}
+						);
+					} else {
+						add_action(
+							'plugins_loaded',
+							function () use ( $lifecycle, $previous_plugin_version ) {
+								$lifecycle->plugin_downgraded( $previous_plugin_version );
+								wp_cache_delete( 'peachpay_lifecycle_update_lock' );
+							}
+						);
+					}
 				}
+			} catch ( Exception $ex ) {
+				update_option( 'peachpay_plugin_version', PEACHPAY_VERSION );
 			}
-		} catch ( Exception $ex ) {
-			update_option( 'peachpay_plugin_version', PEACHPAY_VERSION );
 		}
 	}
 

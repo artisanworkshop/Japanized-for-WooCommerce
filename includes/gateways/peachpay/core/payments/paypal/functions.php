@@ -28,7 +28,6 @@ function peachpay_paypal_register_feature( $feature_list ) {
 			'update_order_security'  => wp_create_nonce( 'peachpay-paypal-update-order' ),
 
 			'approve_order_url'      => home_url() . '?wc-ajax=pp-paypal-approve-order',
-			'approve_order_security' => wp_create_nonce( 'peachpay-paypal-approve-order' ),
 		),
 	);
 
@@ -96,16 +95,7 @@ function peachpay_paypal_handle_update_order() {
  * WC Ajax request to capture a PayPal order.
  */
 function peachpay_paypal_handle_approve_order() {
-	if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['security'] ) ), 'peachpay-paypal-approve-order' ) ) {
-		return wp_send_json(
-			array(
-				'success' => false,
-				'message' => 'Invalid nonce. Please refresh the page and try again.',
-			),
-			401
-		);
-	}
-
+    // PHPCS:disable WordPress.Security.NonceVerification.Missing
 	if ( ! isset( $_POST['order_id'] ) ) {
 		return wp_send_json(
 			array(
@@ -115,7 +105,9 @@ function peachpay_paypal_handle_approve_order() {
 			400
 		);
 	}
+
 	$order_id = floatval( wp_unslash( $_POST['order_id'] ) );
+    // PHPCS:enable WordPress.Security.NonceVerification.Missing
 
 	$order = wc_get_order( $order_id );
 	if ( ! $order ) {

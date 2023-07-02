@@ -18,7 +18,15 @@ class PeachPay_Stripe_Applepay_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_applepay';
 		$this->stripe_payment_method_type            = 'card';
 		$this->stripe_payment_method_capability_type = 'card';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/apple-pay.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/applepay-full.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/applepay-small-white.svg' ),
+				'color' => PeachPay::get_asset_url( 'img/marks/applepay-small-color.svg' ),
+			),
+		);
 		$this->settings_priority                     = 1;
 
 		// Customer facing title and description.

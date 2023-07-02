@@ -12,7 +12,7 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
 /**
  * .
  */
-abstract class PeachPay_Order_Data {
+class PeachPay_Order_Data {
 
 	/**
 	 * Stores an array of metadata on a order.
@@ -76,5 +76,56 @@ abstract class PeachPay_Order_Data {
 	 */
 	public static function get_peachpay( $order, $key ) {
 		return self::get_order_metadata( $order, '_pp_details', $key );
+	}
+
+	/**
+	 * Get if a order has a PeachPay service fee.
+	 *
+	 * @param WC_Order $order The order object.
+	 * @return boolean If the order has a service fee.
+	 */
+	public static function has_service_fee( $order ) {
+		$fees = $order->get_fees();
+
+		foreach ( $fees as $fee ) {
+			if ( $fee->get_name() === peachpay_get_service_fee_label() ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Gets an order's PeachPay service fee.
+	 *
+	 * @param WC_Order $order The order object.
+	 * @return float The service fee total.
+	 */
+	public static function get_service_fee_total( $order ) {
+		$fees = $order->get_fees();
+
+		foreach ( $fees as $fee ) {
+			if ( $fee->get_name() === peachpay_get_service_fee_label() ) {
+				return floatval( $fee->get_amount() );
+			}
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 * Gets an order's PeachPay service fee percentage.
+	 *
+	 * @param WC_Order $order The order object.
+	 * @return float The service fee percentage.
+	 */
+	public static function get_service_fee_percentage( $order ) {
+		if ( self::get_order_metadata( $order, '_pp_details', 'service_fee_percentage' ) === null ) {
+			return 0;
+		}
+
+		return self::get_order_metadata( $order, '_pp_details', 'service_fee_percentage' );
 	}
 }

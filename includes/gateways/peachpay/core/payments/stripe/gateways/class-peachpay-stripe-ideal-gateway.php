@@ -18,7 +18,14 @@ class PeachPay_Stripe_Ideal_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_ideal';
 		$this->stripe_payment_method_type            = 'ideal';
 		$this->stripe_payment_method_capability_type = 'ideal';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/ideal.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/ideal-full.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/ideal-small-white.svg' ),
+			),
+		);
 		$this->settings_priority                     = 8;
 
 		// Customer facing title and description.
@@ -44,6 +51,7 @@ class PeachPay_Stripe_Ideal_Gateway extends PeachPay_Stripe_Payment_Gateway {
 				<label style="font-weight: 600; font-size: 13px; color: #707070;"><?php esc_html_e( 'iDEAL Bank', 'peachpay-for-woocommerce' ); ?></label>
 				<div id="pp-stripe-ideal-element" style="width: 100%; display: flex; flex-direction: column;"></div>
 			</div>
+			<?php $this->display_fallback_currency_option_message(); ?>
 			<?php if ( $this->description ) : ?>
 				<hr style="margin: 0.5rem 0;"/>
 				<p style="text-align: left; margin: 0; font-size: smaller;" class="muted">

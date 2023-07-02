@@ -18,7 +18,14 @@ class PeachPay_Stripe_Bancontact_Gateway extends PeachPay_Stripe_Payment_Gateway
 		$this->id                                    = 'peachpay_stripe_bancontact';
 		$this->stripe_payment_method_type            = 'bancontact';
 		$this->stripe_payment_method_capability_type = 'bancontact';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/bancontact.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/bancontact-full.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/bancontact-small-white.svg' ),
+			),
+		);
 		$this->settings_priority                     = 7;
 
 		// Customer facing title and description.

@@ -19,7 +19,7 @@ $peachpay_premium_modal = function () {
 				<span id="premium-modal-close" class="premium-modal-close">&times;</span>
 
 				<p class="premium-modal-header">
-				<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html_e( 'Start PeachPay', 'peachpay-for-woocommerce' ) : esc_html_e( 'Start your trial of PeachPay', 'peachpay-for-woocommerce' ); ?>
+				<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html_e( 'Get PeachPay', 'peachpay-for-woocommerce' ) : esc_html_e( 'Start your trial of PeachPay', 'peachpay-for-woocommerce' ); ?>
 				<?php require PeachPay::get_plugin_path() . '/public/img/crown-icon.svg'; ?>
 				<span style="color: #FF876C">Premium!</span>
 				</p>
@@ -27,19 +27,15 @@ $peachpay_premium_modal = function () {
 				<div class="feature-list">
 					<p class="feature-element">
 						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
-						All payment methods on the checkout page
+						Express Checkout
 					</p>
 					<p class="feature-element">
 						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
-						Field editor
+						Field Editor
 					</p>
 					<p class="feature-element">
 						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
-						Currency switcher
-					</p>
-					<p class="feature-element">
-						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
-						Express checkout
+						Currency Switcher
 					</p>
 					<p class="feature-element">
 						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
@@ -47,19 +43,15 @@ $peachpay_premium_modal = function () {
 					</p>
 					<p class="feature-element">
 						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
-						Advanced analytics
-					</p>
-					<p class="feature-element">
-						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
 						Priority support
 					</p>
 					<p class="feature-element">
 						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
-						Custom branding
+						Remove PeachPay branding
 					</p>
 					<p class="feature-element">
 						<?php require PeachPay::get_plugin_path() . '/public/img/checkmark-green.svg'; ?>
-						Early access to new features
+						<strong>No service fee</strong>
 					</p>
 				</div>
 

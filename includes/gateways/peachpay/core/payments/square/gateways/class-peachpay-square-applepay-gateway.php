@@ -17,7 +17,15 @@ class PeachPay_Square_ApplePay_Gateway extends PeachPay_Square_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                = 'peachpay_square_applepay';
-		$this->icon              = peachpay_url( 'public/img/marks/apple-pay.svg' );
+		$this->icons             = array(
+			'full'  => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/applepay-full.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/applepay-small-white.svg' ),
+				'color' => PeachPay::get_asset_url( 'img/marks/applepay-small-color.svg' ),
+			),
+		);
 		$this->settings_priority = 1;
 
 		// Customer facing title and description.

@@ -18,7 +18,14 @@ class PeachPay_PayPal_Wallet_Gateway extends PeachPay_PayPal_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                = 'peachpay_paypal_wallet';
-		$this->icon              = PeachPay::get_asset_url( 'img/marks/paypal.svg' );
+		$this->icons             = array(
+			'full'  => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/paypal.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/paypal/small-white.svg' ),
+			),
+		);
 		$this->settings_priority = 1;
 
 		$this->title              = 'PayPal';

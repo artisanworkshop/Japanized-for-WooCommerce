@@ -19,8 +19,8 @@ function peachpay_wc_ajax_create_order() {
 	if ( WC()->cart->is_empty() ) {
 		return wp_send_json(
 			array(
-				'result'   => 'failure',
-				'messages' => __( 'PeachPay was unable to process your order because the cart is empty.', 'peachpay-for-woocommerce' ),
+				'result'  => 'failure',
+				'message' => __( 'PeachPay was unable to process your order because the cart is empty.', 'peachpay-for-woocommerce' ),
 			)
 		);
 	}

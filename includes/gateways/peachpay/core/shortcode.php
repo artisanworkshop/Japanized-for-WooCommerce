@@ -15,6 +15,11 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  * @param array $atts Shortcode Attributes.
  */
 function peachpay_shortcode( $atts ) {
+	$premium_locked = ! peachpay_plugin_has_capability( 'woocommerce_premium', array( 'woocommerce_premium' => get_option( 'peachpay_premium_capability' ) ) );
+	if ( $premium_locked ) {
+		return;
+	}
+
 	$attributes = shortcode_atts(
 		array(
 			'product_id' => null,

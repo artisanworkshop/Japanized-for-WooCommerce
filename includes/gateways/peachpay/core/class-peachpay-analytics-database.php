@@ -34,7 +34,7 @@ class PeachPay_Analytics_Database {
 	public function __construct() {
 		// Begin detecting cart hooks.
 		add_action( 'woocommerce_add_to_cart', array( $this, 'update_cart' ) );
-		add_action( 'woocommerce_cart_item_remove', array( $this, 'update_cart' ) );
+		add_action( 'woocommerce_cart_item_removed', array( $this, 'update_cart' ) );
 		add_action( 'woocommerce_cart_item_set_quantity', array( $this, 'update_cart' ) );
 
 		// Billing information hook.
@@ -1265,13 +1265,13 @@ class PeachPay_Analytics_Database {
 	 * @param number $order_id - ID of order to cancel.
 	 * @param number $refund_id - ID of refund.
 	 *
-	 * @return number if the order has been fully refunded.
+	 * @return number Errors (0 for no errors, 1 for errors).
 	 */
 	public static function order_refunded( $order_id, $refund_id ) {
 		$order = wc_get_order( $order_id );
 		// Check if this order is being tracked.
-		if ( ! $order->get_meta( 'peachpay_tracked_order', 1 ) ) {
-			return;
+		if ( ! $order instanceof WC_Order || ! $order->get_meta( 'peachpay_tracked_order', 1 ) ) {
+			return 1;
 		}
 
 		$status = $order->get_meta( 'peachpay_tracked_order_pre_refund_status', 1 );
@@ -1279,6 +1279,10 @@ class PeachPay_Analytics_Database {
 		$currency = $order->get_currency();
 
 		$refund = wc_get_order( $refund_id );
+		if ( ! $order instanceof WC_Order_Refund ) {
+			return 1;
+		}
+
 		$refund = $refund->get_amount();
 
 		try {
@@ -1686,7 +1690,7 @@ class PeachPay_Analytics_Database {
 		$order = wc_get_order( $order_id );
 
 		// Check if this order is being tracked.
-		if ( ! $order->get_meta( 'peachpay_tracked_order', 1 ) ) {
+		if ( ! $order instanceof WC_Order || ! $order->get_meta( 'peachpay_tracked_order', 1 ) ) {
 			return;
 		}
 
@@ -1778,14 +1782,14 @@ class PeachPay_Analytics_Database {
 		$cart_id = self::session_value( 'cart-id' );
 		$order   = wc_get_order( $order_id );
 
+		if ( ! $order instanceof WC_Order ) {
+			return;
+		}
+
 		try {
 			if ( ! $cart_id ) {
 				// Stripe Afterpay / Affirm / redirecting payment edge case: does not have cookies passed along
 				// Attempt to match this order with an order in the analytics database.
-				if ( ! is_object( $order ) ) {
-					return;
-				}
-
 				$email = $order->get_billing_email();
 
 				// Attempt to pull row from database with same email. More than one? Whichever comes back first.

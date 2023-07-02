@@ -149,7 +149,7 @@ final class PeachPay_Poynt {
 	 * @param array    $order_details The order details needed to create the charge.
 	 */
 	public static function create_payment( $order, $charge_options, $order_details ) {
-		$mode       = PeachPay_Poynt_Order_Data::get_peachpay( $order, 'mode' );
+		$mode       = PeachPay_Poynt_Order_Data::get_peachpay( $order, 'peachpay_mode' );
 		$poynt_mode = PeachPay_Poynt_Order_Data::get_peachpay( $order, 'poynt_mode' );
 
 		$response = wp_remote_post(

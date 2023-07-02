@@ -105,17 +105,12 @@ final class PeachPay_Stripe_Order_Data extends PeachPay_Order_Data {
 
 		$net = $balance_transaction['net'];
 
-		$refunds = self::get_charge( $order, 'refunds' );
-		if ( null === $refunds ) {
+		$refund_total = self::get_charge( $order, 'amount_refunded' );
+		if ( null === $refund_total ) {
 			return $net;
 		}
 
-		foreach ( $refunds as $refund ) {
-			if ( ! isset( $refund['balance_transaction'] ) ) {
-				continue;
-			}
-			$net += $refund['balance_transaction']['net'];
-		}
+		$net -= $refund_total;
 
 		return $net;
 	}
@@ -154,21 +149,33 @@ final class PeachPay_Stripe_Order_Data extends PeachPay_Order_Data {
 	 * @param WC_Order $order A order.
 	 */
 	public static function total_refunds( $order ) {
-		$refund_total = 0;
+		$refund_total = self::get_charge( $order, 'amount_refunded' );
 
-		$refunds = self::get_charge( $order, 'refunds' );
-		if ( null === $refunds ) {
+		if ( null === $refund_total ) {
 
-			return $refund_total;
-		}
-
-		foreach ( $refunds as $refund ) {
-			if ( ! isset( $refund['balance_transaction'] ) ) {
-				continue;
-			}
-			$refund_total += $refund['balance_transaction']['net'];
+			return 0;
 		}
 
 		return $refund_total;
+	}
+
+	/**
+	 * Saves the previous order status for order disputes.
+	 *
+	 * @param WC_Order $order A order.
+	 * @param array    $status The previous order status.
+	 */
+	public static function set_prev_status( $order, $status ) {
+		return self::set_order_metadata( $order, '_pp_stripe_order_prev_status', $status );
+	}
+
+	/**
+	 * Get the previous order status if dispute was won.
+	 *
+	 * @param WC_Order $order An order.
+	 * @param string   $key Metadata key.
+	 */
+	public static function get_prev_status( $order, $key ) {
+		return self::get_order_metadata( $order, '_pp_stripe_order_prev_status', $key );
 	}
 }

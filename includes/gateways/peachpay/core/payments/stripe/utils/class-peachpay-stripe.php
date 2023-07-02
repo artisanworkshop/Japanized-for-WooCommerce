@@ -172,7 +172,6 @@ final class PeachPay_Stripe {
 		'XOF',
 		'XPF',
 		'TWD',
-		'HUF',
 	);
 
 	/**
@@ -194,8 +193,8 @@ final class PeachPay_Stripe {
 	/**
 	 * Formats an amount to use with stripe API's
 	 *
-	 * @param string $amount The amount to format.
-	 * @param string $currency_code Currency code returned from Stripe API.
+	 * @param string|float $amount The amount to format.
+	 * @param string       $currency_code Currency code returned from Stripe API.
 	 */
 	public static function format_amount( $amount, $currency_code ) {
 		$amount = floatval( $amount );
@@ -402,10 +401,11 @@ final class PeachPay_Stripe {
 				),
 				'body'        => wp_json_encode(
 					array(
-						'payment_intent_id' => PeachPay_Stripe_Order_Data::get_payment_intent( $order, 'id' ),
-						'charge_id'         => PeachPay_Stripe_Order_Data::get_charge( $order, 'id' ),
-						'amount'            => $amount,
-						'reason'            => $reason,
+						'payment_intent_id'      => PeachPay_Stripe_Order_Data::get_payment_intent( $order, 'id' ),
+						'charge_id'              => PeachPay_Stripe_Order_Data::get_charge( $order, 'id' ),
+						'amount'                 => $amount,
+						'reason'                 => $reason,
+						'refund_application_fee' => PeachPay_Stripe_Order_Data::has_service_fee( $order ),
 					)
 				),
 			)
@@ -452,6 +452,8 @@ final class PeachPay_Stripe {
 	 * @param string   $reason An optional message to include with some order status changes. Mostly for indicating error messages.
 	 */
 	public static function calculate_payment_state( $order, $payment_details = null, $reason = '' ) {
+		$old_transaction_status = PeachPay_Stripe_Order_Data::get_payment_intent( $order, 'status' );
+
 		if ( null !== $payment_details ) {
 			if ( isset( $payment_details['payment_intent_details'] ) ) {
 				PeachPay_Stripe_Order_Data::set_payment_intent_details( $order, $payment_details['payment_intent_details'] );
@@ -483,6 +485,22 @@ final class PeachPay_Stripe {
 		$charge_id      = PeachPay_Stripe_Order_Data::get_charge( $order, 'id' );
 		if ( null !== $charge_id ) {
 			$order->set_transaction_id( $charge_id );
+		}
+
+		if ( $old_transaction_status === $payment_status ) {
+			if ( ! isset( $payment_details['type'] ) ) {
+				return;
+			}
+
+			if ( 'charge.dispute.created' === $payment_details['type'] && PeachPay_Stripe_Advanced::get_setting( 'dispute_created' ) === 'yes' ) {
+				self::handle_dispute_created( $order, $payment_details );
+			}
+
+			if ( 'charge.dispute.closed' === $payment_details['type'] && PeachPay_Stripe_Advanced::get_setting( 'dispute_closed' ) === 'yes' ) {
+				self::handle_dispute_closed( $order, $payment_details );
+			}
+
+			return;
 		}
 
 		if ( 'succeeded' === $payment_status && ! $order->is_paid() ) {
@@ -605,5 +623,69 @@ final class PeachPay_Stripe {
 			),
 			true
 		);
+	}
+
+	/**
+	 * Handles disputed order by displaying additional order notes and changing order status.
+	 *
+	 * @param WC_Order $order The WC stripe order to calculate its order status.
+	 * @param array    $dispute_details The stripe order dispute details.
+	 */
+	private static function handle_dispute_created( $order, $dispute_details ) {
+		$charge_id      = PeachPay_Stripe_Order_Data::get_charge( $order, 'id' );
+		$dispute_status = strtoupper( $dispute_details['status'] );
+		// translators: %1$s charge id,  %2$s dispute status.
+		$order->add_order_note( sprintf( __( 'A dispute has been created for charge Id: %1$s. Dispute status: %2$s.', 'peachpay-for-woocommerce' ), $charge_id, $dispute_status ) );
+
+		PeachPay_Stripe_Order_Data::set_prev_status( $order, array( 'prev_status' => $order->get_status() ) );
+
+		if ( PeachPay_Stripe_Advanced::get_setting( 'dispute_order_status' ) === 'on-hold' ) {
+			$order->set_status( 'on-hold' );
+		} elseif ( PeachPay_Stripe_Advanced::get_setting( 'dispute_order_status' ) === 'cancelled' ) {
+			$order->set_status( 'cancelled' );
+		} elseif ( PeachPay_Stripe_Advanced::get_setting( 'dispute_order_status' ) === 'refunded' ) {
+			$dispute_message = isset( $payment_details['status_message'] ) ? $payment_details['status_message'] : 'Order was disputed.';
+			$refund          = new WC_Order_Refund();
+			$refund->set_amount( $order->get_total() - $order->get_total_refunded() );
+			$refund->set_parent_id( $order->get_id() );
+			$refund->set_reason( $dispute_message );
+			$refund->set_refunded_by( get_current_user_id() );
+			$refund->save();
+
+			// translators: %1$s the payment method title, %3$s Refund amount, %4$s Refund Id.
+			$order->add_order_note( sprintf( __( 'Stripe %1$s payment refunded %2$s (Transaction Id: %3$s)', 'peachpay-for-woocommerce' ), $order->get_payment_method_title(), wc_price( $order->get_total(), array( 'currency' => $order->get_currency() ) ), $charge_id ) );
+			$order->set_status( 'refunded' );
+		}
+
+		$order->save();
+	}
+
+	/**
+	 * Handle closed dispute orders.
+	 *
+	 * @param WC_Order $order The WC stripe order to calculate its order status.
+	 * @param array    $dispute_details The stripe order dispute details.
+	 */
+	private static function handle_dispute_closed( $order, $dispute_details ) {
+		$dispute_id = $dispute_details['dispute_id'];
+		$result     = $dispute_details['status'];
+
+		// translators: %1$s charge id,  %2$s dispute status.
+		$order->add_order_note( sprintf( __( 'Dispute %1$s has been closed. Result: %2$s.', 'peachpay-for-woocommerce' ), $dispute_id, $result ) );
+
+		if ( 'lost' === $result ) {
+			$order->set_status( 'failed' );
+		} elseif ( 'won' === $result ) {
+			if ( $order->get_status() === 'refunded' ) {
+				$refunds = $order->get_refunds();
+				foreach ( $refunds as $refund ) {
+					$refund->delete();
+				}
+			}
+			$status = PeachPay_Stripe_Order_Data::get_prev_status( $order, 'prev_status' );
+			$order->set_status( $status );
+		}
+
+		$order->save();
 	}
 }

@@ -249,7 +249,7 @@ function showModal(event) {
 						name="field_enable"
 						value="yes"
 					/>
-					<label for="field_enable"> ${getPluginLocaleText('Enable', isAdminPageText = true)} </label><br />
+					<label for="field_enable"> ${getPluginLocaleText('Enabled', isAdminPageText = true)} </label><br />
 				</div>
 				<!-- <div class="input-checkboxes">
 					<input
@@ -454,6 +454,7 @@ function showRequiredFields(event) {
 		document.querySelector('#input-checkboxes-required').classList.add('hide');
 	} else if (event.target.value === 'tel' || event.target.value === 'email'
 		|| event.target.value === 'country' || event.target.value === 'state') {
+		document.querySelector('#field_default_box #field_default').value = '';
 		document.querySelector('#field_default_box.input-field').classList.add('hide');
 		if (event.target.value === 'state') {
 			document.querySelector('#field_label').value = 'State/Provice';
@@ -893,6 +894,10 @@ function getURLSection() {
 }
 
 function isDefaultField(name, section) {
+	if (section === 'additional') {
+		return false;
+	}
+
 	const defaultFieldNames = [
 		section + '_email',
 		section + '_phone',

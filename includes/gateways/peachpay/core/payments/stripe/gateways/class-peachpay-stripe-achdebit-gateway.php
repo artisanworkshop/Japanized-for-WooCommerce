@@ -20,17 +20,26 @@ class PeachPay_Stripe_AchDebit_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_achdebit';
 		$this->stripe_payment_method_type            = 'us_bank_account';
 		$this->stripe_payment_method_capability_type = 'us_bank_account_ach';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/bank.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/us_banks-full.svg' ),
+			),
+			'small' => array(
+				'clear' => PeachPay::get_asset_url( 'img/marks/us_banks-small.svg' ),
+			),
+		);
 		$this->settings_priority                     = 6;
 
 		// Customer facing title and description.
-		$this->title = 'US bank account';
+		$this->title = 'US Bank Account';
 		// translators: %s Button text name.
 		$this->description = __( 'After selecting %s a prompt will appear to complete your payment.', 'peachpay-for-woocommerce' );
 
 		$this->currencies            = array( 'USD' );
 		$this->countries             = array( 'US' );
 		$this->payment_method_family = __( 'Bank debit', 'peachpay-for-woocommerce' );
+
+		$this->form_fields = self::payment_clearing_email_setting( $this->form_fields );
 
 		$this->supports = array(
 			'products',
@@ -133,4 +142,36 @@ class PeachPay_Stripe_AchDebit_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$order->set_payment_method_title( $title );
 		$order->save();
 	}
+
+	/**
+	 * Adds the payment clearing email setting to the gateway settings.
+	 *
+	 * @param array $form_fields The existing gateway settings.
+	 */
+	private static function payment_clearing_email_setting( $form_fields ) {
+		return array_merge(
+			$form_fields,
+			array(
+				'payment_clearing_email' => array(
+					'type'    => 'checkbox',
+					'title'   => __( 'Payment clearing email', 'peachpay-for-woocommerce' ),
+					'label'   => __( 'Send an email notification when the ACH payment clears. It will be sent to the email associated with the Stripe account.', 'peachpay-for-woocommerce' ),
+					'default' => 'no',
+				),
+			)
+		);
+	}
+
+	/**
+	 * Override this function to include the payment clearing email setting.
+	 *
+	 * @param WC_Order $order THe order to get the dashboard url from.
+	 */
+	protected function intent_metadata( $order ) {
+		return array(
+			'order_dashboard_url' => $order->get_edit_order_url(),
+			'send_clearing_email' => $this->payment_clearing_email,
+		);
+	}
+
 }

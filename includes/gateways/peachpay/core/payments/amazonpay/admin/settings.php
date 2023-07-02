@@ -13,14 +13,10 @@ require_once PEACHPAY_ABSPATH . 'core/payments/payment-threshold.php';
 
 /**
  * PeachPay Amazon Pay admin settings.
- *
- * @param string $current The key of the current payment section tab.
  */
-function peachpay_amazonpay_admin_settings_section( $current ) {
-	$class = 'pp-header pp-sub-nav-amazonpay';
-	if ( 'pp-sub-nav-amazonpay' !== $current ) {
-		$class .= ' hide';
-	}
+function peachpay_amazonpay_admin_settings_section() {
+	$class = 'pp-header pp-sub-nav-amazonpay no-border-bottom';
+
 	add_settings_field(
 		'peachpay_amazonpay_setting',
 		__( 'Amazon Pay', 'peachpay-for-woocommerce' ),
@@ -37,8 +33,13 @@ add_action( 'admin_enqueue_scripts', 'peachpay_enqueue_amazonpay_admin_scripts' 
 
 /**
  * Adds required amazonpay admin scripts
+ *
+ * @param string $hook_suffix The hook suffix of admin_enqueue_scripts.
  */
-function peachpay_enqueue_amazonpay_admin_scripts() {
+function peachpay_enqueue_amazonpay_admin_scripts( $hook_suffix ) {
+	if ( 'toplevel_page_peachpay' !== $hook_suffix ) {
+		return;
+	}
 	if ( ! peachpay_amazonpay_account_connected() ) {
 		wp_enqueue_script(
 			'pp_amazonpay_connect_account',
@@ -128,20 +129,13 @@ function peachpay_field_amazonpay_connect_setting() {
 			<?php
 		} else {
 			?>
-			<a type="button" id="amazon-pay-connect-button" type="submit" class="pp-connect-payment" style="background-color: #231f20;" href=<?php echo esc_html( peachpay_amazonpay_signup_link() ); ?> target="_blank">
+			<a type="button" id="amazon-pay-connect-button" type="button" class="pp-connect-payment" style="background-color: #231f20;" href=<?php echo esc_html( peachpay_amazonpay_signup_link() ); ?> target="_blank">
 				<span><?php esc_html_e( 'Connect with', 'peachpay-for-woocommerce' ); ?></span>
 				<img style="height: 100%; vertical-align: middle; width: 4rem; translate: 0rem 0.28rem;" src="<?php echo esc_attr( peachpay_url( 'public/img/marks/amazon-logo-white.svg' ) ); ?>"/>
 			</a>
-			<button type="button" id="amazon-pay-connect-loading" type="submit" class="pp-connect-payment pp-connect-payment-loading" style="display: none; background-color: white; border: 0.1rem solid black;" title="<?php esc_html_e( 'Awaiting response from Amazon', 'peachpay-for-woocommerce' ); ?>">
-				<img style="color: black; vertical-align: middle; height: 1.2rem;" src="<?php echo esc_attr( peachpay_url( 'public/img/spinner-dark.svg' ) ); ?>"/>
+			<button type="button" id="amazon-pay-refresh-button" type="button" class="pp-connect-payment" style="background-color: #ff856c;display: none;">
+				<span style="color: white"><?php esc_html_e( 'Refresh Page', 'peachpay-for-woocommerce' ); ?></span>
 			</button>
-			<div id="amazon-pay-section-refresh" style="display: none">
-				<button type="button" id="amazon-pay-refresh-button" type="submit" class="pp-connect-payment" style="background-color: #ff856c;">
-					<span style="color: white"><?php esc_html_e( 'refresh', 'peachpay-for-woocommerce' ); ?> page</span>
-				</button>
-				<p id="success-message"><?php esc_html_e( 'Your Amazon account has successfully been linked with PeachPay! Please refresh page or save changes.', 'peachpay-for-woocommerce' ); ?></p>
-				<p id="failed-message"><?php esc_html_e( 'An error was encountered while trying to link your Amazon account. If this error persists reach out to PeachPay support!', 'peachpay-for-woocommerce' ); ?></p>
-			</div>
 			<?php
 		}
 	}

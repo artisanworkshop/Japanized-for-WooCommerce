@@ -18,7 +18,14 @@ class PeachPay_Stripe_Giropay_Gateway extends PeachPay_Stripe_Payment_Gateway {
 		$this->id                                    = 'peachpay_stripe_giropay';
 		$this->stripe_payment_method_type            = 'giropay';
 		$this->stripe_payment_method_capability_type = 'giropay';
-		$this->icon                                  = PeachPay::get_asset_url( 'img/marks/giropay.svg' );
+		$this->icons                                 = array(
+			'full'  => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/giropay-full.svg' ),
+			),
+			'small' => array(
+				'white' => PeachPay::get_asset_url( 'img/marks/stripe/giropay-small-white.svg' ),
+			),
+		);
 		$this->settings_priority                     = 8;
 
 		// Customer facing title and description.

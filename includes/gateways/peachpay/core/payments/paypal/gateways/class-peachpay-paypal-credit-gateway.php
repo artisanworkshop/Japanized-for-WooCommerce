@@ -18,7 +18,14 @@ class PeachPay_PayPal_Credit_Gateway extends PeachPay_PayPal_Payment_Gateway {
 	 */
 	public function __construct() {
 		$this->id                = 'peachpay_paypal_credit';
-		$this->icon              = PeachPay::get_asset_url( 'img/marks/paypal.svg' );
+		$this->icons             = array(
+			'full'  => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/paypal/credit-full.svg' ),
+			),
+			'small' => array(
+				'color' => PeachPay::get_asset_url( 'img/marks/paypal/credit-small-color.svg' ),
+			),
+		);
 		$this->settings_priority = 2;
 
 		$this->title              = 'PayPal Credit';

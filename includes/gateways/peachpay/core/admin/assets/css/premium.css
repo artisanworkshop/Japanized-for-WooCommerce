@@ -1,0 +1,12 @@
+.peachpay_premium_lock {
+	content: ' ';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	opacity: 50%;
+	z-index: 1;
+	background-color: black;
+	border-radius: 8px;
+	cursor: default;
+	pointer-events: none;
+}

@@ -75,6 +75,7 @@ class PeachPay_Purchase_Order_Gateway extends PeachPay_Payment_Gateway {
 				'supported_countries'  => $this->get_supported_countries(),
 				'field_name'           => $this->get_option( 'field_name', $this->title ),
 				'description'          => $this->get_option( 'description', '' ),
+				'default_currency'     => $this->get_option( 'default_currency' ) !== 'none' ? $this->get_option( 'default_currency' ) : null,
 			),
 		);
 
@@ -174,11 +175,13 @@ class PeachPay_Purchase_Order_Gateway extends PeachPay_Payment_Gateway {
 	/**
 	 * There is no icon.
 	 *
-	 * @param $boolean $flex This is unused.
+	 * @param boolean $flex       This is unused.
+	 * @param string  $size       This is unused.
+	 * @param string  $background This is unused.
 	 *
 	 * @return string empty string
 	 */
-	public function get_icon( $flex = false ) {
+	public function get_icon( $flex = false, $size = 'full', $background = 'clear' ) {
 		return '';
 	}
 }

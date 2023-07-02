@@ -147,4 +147,15 @@ abstract class PeachPay_Admin_Tab extends WC_Settings_API {
 		$settings_instance = new static( true );
 		return $settings_instance->get_option( $setting );
 	}
+
+	/**
+	 * Sets the value for a specific setting.
+	 *
+	 * @param string $setting The key of the setting to set a value for.
+	 * @param mixed  $value The value to set for the specified setting.
+	 */
+	public static function update_setting( $setting, $value ) {
+		$settings_instance = new static( true );
+		return $settings_instance->update_option( $setting, $value );
+	}
 }

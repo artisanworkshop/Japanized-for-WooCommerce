@@ -30,6 +30,11 @@ function peachpay_get_current_nav_top_tab() {
 	if ( ! isset( $_GET['tab'] ) || isset( $_GET['tab'] ) && 'home' === $_GET['tab'] ) {
 		return 'dashboard';
 	}
+	// PHPCS:ignore
+	if ( peachpay_nav_is_account_page() ) {
+		return 'account';
+	}
+
 	return 'settings';
 }
 
@@ -69,19 +74,6 @@ function peachpay_get_current_nav_sub_tab() {
 }
 
 /**
- * Returns the current hash value.
- */
-function peachpay_get_current_hashed_nav() {
-	if ( ! isset( $_COOKIE['pp_sub_nav_payment'] ) ) {
-		return '';
-	}
-	$prefix = 'pp-sub-nav-';
-	// PHPCS:ignore
-	$hash = substr( $_COOKIE['pp_sub_nav_payment'], strlen( $prefix ) );
-	return $hash;
-}
-
-/**
  * Returns true if this is a PeachPay settings page (but not a gateway page).
  */
 function peachpay_nav_is_peachpay_page() {
@@ -98,6 +90,14 @@ function peachpay_nav_is_analytics_page() {
 }
 
 /**
+ * Returns true if this is the PeachPay Account Settings page.
+ */
+function peachpay_nav_is_account_page() {
+	// PHPCS:ignore
+	return isset( $_GET['page'] ) && ( 'peachpay' === sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) && isset( $_GET['section'] ) && ( 'account' === sanitize_text_field( wp_unslash( $_GET['section'] ) ) );
+}
+
+/**
  * Returns true if this is a PeachPay gateway page.
  */
 function peachpay_nav_is_gateway_page() {
@@ -108,12 +108,23 @@ function peachpay_nav_is_gateway_page() {
 /**
  * Returns true if the feature in this tab is active.
  *
- * @param string $tab The tab key.
+ * @param string $section The navigation section key.
+ *
+ * @param string $tab The navigation tab key.
  */
-function peachpay_nav_feature_is_active( $tab ) {
-	if ( peachpay_should_mark_premium( $tab ) ) {
+function peachpay_nav_feature_is_active( $section, $tab ) {
+	if ( peachpay_should_mark_premium( $section, $tab ) ) {
 		return false;
 	}
+
+	switch ( $section ) {
+		case 'address_autocomplete':
+			return 'yes' === PeachPay_Address_Autocomplete_Settings::get_setting( 'enabled' );
+	}
+	// Add 2 line by Shohei Tanaka at 2023/07/02
+	require_once PEACHPAY_ABSPATH . 'core/abstract/class-peachpay-admin-tab.php';
+	require_once PEACHPAY_ABSPATH . 'core/modules/bot-protection/class-peachpay-bot-protection-settings.php';
+
 	switch ( $tab ) {
 		case 'payment':
 			return ! peachpay_is_test_mode();
@@ -123,6 +134,8 @@ function peachpay_nav_feature_is_active( $tab ) {
 			return true;
 		case 'related_products':
 			return peachpay_get_settings_option( 'peachpay_related_products_options', 'peachpay_related_enable' );
+		case 'bot_protection':
+			return 'yes' === PeachPay_Bot_Protection_Settings::get_setting( 'enabled' );
 		case 'express_checkout':
 			return peachpay_express_checkout_enabled();
 		default:
@@ -173,11 +186,11 @@ function peachpay_get_subtabs( $tab ) {
 		<?php
 		if ( $sub_tabs_exist ) {
 			foreach ( $tabs_with_subtabs[ $tab ] as $subtab => $title ) {
-				peachpay_generate_subtab( $tab, $subtab, '', $title );
+				peachpay_generate_subtab( $tab, $subtab, null, $title );
 			}
 		} elseif ( $hashed_navigation_exists ) {
 			foreach ( $tabs_with_hashed_navigation[ $tab ] as $hash => $title ) {
-				peachpay_generate_subtab( $tab, '', $hash, $title );
+				peachpay_generate_subtab( $tab, '', "#$hash", $title );
 			}
 		}
 		?>
@@ -194,19 +207,11 @@ function peachpay_get_subtabs( $tab ) {
  * @param string $title  the sub-tab title.
  */
 function peachpay_generate_subtab( $tab, $subtab, $hash, $title ) {
-	if ( '' === $subtab ) {
-		?>
-		<div class="nav-sub-tab <?php echo esc_attr( ( peachpay_get_current_hashed_nav() === $hash ) ? 'current' : '' ); ?>" tabindex="0" data-hash="<?php echo esc_attr( trim( wp_json_encode( $hash ), '"' ) ); ?>" data-tab="<?php echo esc_attr( trim( wp_json_encode( $tab ), '"' ) ); ?>">
-			<?php peachpay_generate_nav_tab_title( $title ); ?>
-		</div>
-		<?php
-	} else {
-		?>
-		<a class="nav-sub-tab <?php echo esc_attr( ( peachpay_get_current_nav_sub_tab() === $subtab ) ? 'current' : '' ); ?>" href="<?php echo esc_url( PeachPay_Admin::admin_settings_url( 'peachpay', $tab, $subtab, '', false ) ); ?>">
+	?>
+		<a class="nav-sub-tab <?php echo esc_attr( $hash ? 'hashed' : ( peachpay_get_current_nav_sub_tab() === $subtab ? 'current' : '' ) ); ?>" href="<?php echo esc_url( PeachPay_Admin::admin_settings_url( 'peachpay', $tab, $subtab, $hash, false ) ); ?>">
 			<?php peachpay_generate_nav_tab_title( $title ); ?>
 		</a>
 		<?php
-	}
 }
 
 /**
@@ -247,6 +252,10 @@ function peachpay_top_nav_dropdown() {
 			<div class="icon analytics-icon"></div>
 			<?php peachpay_generate_nav_tab_title( 'Analytics' ); ?>
 		</a>
+		<a class="<?php echo esc_attr( 'account' === peachpay_get_current_nav_top_tab() ? 'current' : '' ); ?>" href="<?php echo esc_url( PeachPay_Admin::admin_settings_url( 'peachpay', 'data', 'account', '', false ) ); ?>">
+			<div class="icon account-icon"></div>
+			<?php peachpay_generate_nav_tab_title( 'My account' ); ?>
+		</a>
 	</div>
 	<?php
 }
@@ -263,38 +272,38 @@ function peachpay_top_nav_dropdown() {
 function peachpay_generate_nav_tab( $page, $tab, $section, $title, $has_subtabs = false ) {
 	if ( $has_subtabs ) {
 		?>
-		<div class="tab-with-subtabs-container <?php echo esc_attr( peachpay_should_mark_premium( $tab ) ? 'pp-popup-mousemove-trigger' : '' ); ?>">
+		<div class="tab-with-subtabs-container <?php echo esc_attr( peachpay_should_mark_premium( $section, $tab ) ? 'pp-popup-mousemove-trigger' : '' ); ?>">
 			<div class="nav-tab has-subtabs accordion-tab <?php echo esc_attr( ( peachpay_get_current_nav_tab() === $tab ) ? 'current expanded' : '' ); ?>">
 				<div class="title">
-					<div class="icon <?php echo esc_attr( str_replace( '_', '-', $tab ) ); ?>-icon">
+					<div class="icon <?php echo esc_attr( get_class_name_for_icon( $section, $tab ) ); ?>-icon">
 					</div>
-					<?php if ( peachpay_nav_feature_is_active( $tab ) ) { ?>
+					<?php if ( peachpay_nav_feature_is_active( $section, $tab ) ) { ?>
 						<div class="active-status"></div>
 					<?php } ?>
 					<div class="flex-row"><?php peachpay_generate_nav_tab_title( $title ); ?></div>
-					<?php peachpay_premium_crown( $tab ); ?>
+					<?php peachpay_premium_crown( $section, $tab ); ?>
 				</div>
 				<?php if ( $has_subtabs ) { ?>
 					<div class="icon chevron-down"></div>
 				<?php } ?>
-				<?php if ( peachpay_should_mark_premium( $tab ) ) { ?>
+				<?php if ( peachpay_should_mark_premium( $section, $tab ) ) { ?>
 					<div class="pp-popup pp-popup-right pp-tooltip-popup"> <?php esc_html_e( 'Premium Feature', 'peachpay-for-woocommerce' ); ?> </div>
 				<?php } ?>
 			</div>
 			<?php peachpay_get_subtabs( $tab ); ?>
 		</div>
 	<?php } else { ?>
-		<a class="nav-tab <?php echo esc_attr( ( peachpay_get_current_nav_tab() === $tab ) ? 'current' : '' ); ?> <?php echo esc_attr( peachpay_should_mark_premium( $tab ) ? 'pp-popup-mousemove-trigger' : '' ); ?>" href="<?php esc_url( PeachPay_Admin::admin_settings_url( $page, $tab, $section ) ); ?>">
+		<a class="nav-tab <?php echo esc_attr( ( peachpay_get_current_nav_tab() === $tab ) ? 'current' : '' ); ?> <?php echo esc_attr( peachpay_should_mark_premium( $section, $tab ) ? 'pp-popup-mousemove-trigger' : '' ); ?>" href="<?php esc_url( PeachPay_Admin::admin_settings_url( $page, $tab, $section ) ); ?>">
 			<div class="title">
-				<div class="icon <?php echo esc_attr( str_replace( '_', '-', $tab ) ); ?>-icon">
+				<div class="icon <?php echo esc_attr( get_class_name_for_icon( $section, $tab ) ); ?>-icon">
 				</div>
-				<?php if ( peachpay_nav_feature_is_active( $tab ) ) { ?>
+				<?php if ( peachpay_nav_feature_is_active( $section, $tab ) ) { ?>
 					<div class="active-status"></div>
 				<?php } ?>
 				<div class="flex-row"><?php peachpay_generate_nav_tab_title( $title ); ?></div>
-				<?php peachpay_premium_crown( $tab ); ?>
+				<?php peachpay_premium_crown( $section, $tab ); ?>
 			</div>
-			<?php if ( peachpay_should_mark_premium( $tab ) ) { ?>
+			<?php if ( peachpay_should_mark_premium( $section, $tab ) ) { ?>
 				<div class="pp-popup pp-popup-right pp-tooltip-popup"> <?php esc_html_e( 'Premium Feature', 'peachpay-for-woocommerce' ); ?> </div>
 			<?php } ?>
 		</a>
@@ -325,6 +334,9 @@ function peachpay_generate_nav_tab_title( $title ) {
 		case 'Related products':
 			echo esc_html_e( 'Related products', 'peachpay-for-woocommerce' );
 			break;
+		case 'Bot protection':
+			echo esc_html_e( 'Bot protection', 'peachpay-for-woocommerce' );
+			break;
 		case 'Express checkout':
 			echo esc_html_e( 'Express checkout', 'peachpay-for-woocommerce' );
 			break;
@@ -345,6 +357,9 @@ function peachpay_generate_nav_tab_title( $title ) {
 			break;
 		case 'Checkout window':
 			echo esc_html_e( 'Checkout window', 'peachpay-for-woocommerce' );
+			break;
+		case 'Address autocomplete':
+			echo esc_html_e( 'Address autocomplete', 'peachpay-for-woocommerce' );
 			break;
 		case 'Product recommendations':
 			echo esc_html_e( 'Product recommendations', 'peachpay-for-woocommerce' );
@@ -424,16 +439,45 @@ function peachpay_generate_nav_tab_title( $title ) {
 		case 'Purchase order':
 			echo esc_html_e( 'Purchase Order', 'peachpay-for-woocommerce' );
 			break;
+		case 'My account':
+			echo esc_html_e( 'My account', 'peachpay-for-woocommerce' );
+			break;
+		case 'Data':
+			echo esc_html_e( 'Data', 'peachpay-for-woocommerce' );
+			break;
+	}
+}
+
+/**
+ * Returns what the class should be for the icon display .
+ *
+ * @param string $section The navigation section key.
+ *
+ * @param string $tab The navigation tab key.
+ */
+function get_class_name_for_icon( $section, $tab ) {
+	if ( 'address_autocomplete' === $section ) {
+		return str_replace( '_', '-', $section );
+	} else {
+		return str_replace( '_', '-', $tab );
 	}
 }
 
 /**
  * Returns true if the feature located at the given tab needs to be marked as premium.
  *
+ * @param string $section The navigation section key.
+ *
  * @param string $tab The navigation tab key.
  */
-function peachpay_should_mark_premium( $tab ) {
-	return ! peachpay_premium_status() && in_array(
+function peachpay_should_mark_premium( $section, $tab ) {
+	$not_premium = ! peachpay_premium_status();
+
+	if ( $not_premium && 'address_autocomplete' === $section ) {
+		return true;
+	}
+
+	return $not_premium && in_array(
 		$tab,
 		array(
 			'currency',
@@ -511,23 +555,35 @@ function peachpay_premium_misc_link() {
 		require_once PeachPay::get_plugin_path() . '/core/admin/views/html-premium-portal.php';
 	} else {
 		$peachpay_premium_config = peachpay_plugin_get_capability_config( 'woocommerce_premium', array( 'woocommerce_premium' => get_option( 'peachpay_premium_capability' ) ) );
-		?>
-			<button class="pp-button-continue-premium button-to-anchor top-nav-link <?php echo esc_attr( 'crown-icon' ); ?>-link'">
-				<div class="icon <?php echo esc_attr( 'crown-icon' ); ?>"></div>
-				<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html_e( 'Upgrade', 'peachpay-for-woocommerce' ) : esc_html_e( 'Try Premium', 'peachpay-for-woocommerce' ); ?>
-			</button>
-		<?php
-		require_once PeachPay::get_plugin_path() . 'core/admin/views/html-premium-modal.php';
+		if ( ! peachpay_has_valid_key() && ! peachpay_is_test_mode() ) {
+			$retry_url = get_site_url() . '/wp-admin/admin.php?page=peachpay&retry_permission=1';
+			?>
+				<a href="<?php echo esc_url( $retry_url ); ?>" class="top-nav-link pp-button-premium">
+					<div class="icon <?php echo esc_attr( 'crown-icon' ); ?>"></div>
+					<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html_e( 'Upgrade', 'peachpay-for-woocommerce' ) : esc_html_e( 'Try Premium', 'peachpay-for-woocommerce' ); ?>
+				</a>
+			<?php
+		} else {
+			?>
+				<button type="button" class="pp-button-continue-premium pp-button-premium button-to-anchor top-nav-link <?php echo esc_attr( 'crown-icon' ); ?>-link'">
+					<div class="icon <?php echo esc_attr( 'crown-icon' ); ?>"></div>
+					<?php echo isset( $peachpay_premium_config['canceled'] ) ? esc_html_e( 'Upgrade', 'peachpay-for-woocommerce' ) : esc_html_e( 'Try Premium', 'peachpay-for-woocommerce' ); ?>
+				</button>
+			<?php
+			require_once PeachPay::get_plugin_path() . 'core/admin/views/html-premium-modal.php';
+		}
 	}
 }
 
 /**
  * Renders the premium crown if the feature located at the given tab needs to be marked as premium.
  *
+ * @param string $section The navigation section key.
+ *
  * @param string $tab The navigation tab key.
  */
-function peachpay_premium_crown( $tab ) {
-	if ( peachpay_should_mark_premium( $tab ) ) {
+function peachpay_premium_crown( $section, $tab ) {
+	if ( peachpay_should_mark_premium( $section, $tab ) ) {
 		?>
 		<div class="icon crown-icon"></div>
 		<?php

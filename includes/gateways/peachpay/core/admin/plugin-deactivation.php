@@ -90,6 +90,7 @@ function peachpay_add_feedback_modal() {
 									<?php esc_html_e( 'support chat', 'peachpay-for-woocommerce' ); ?>
 								</a>
 							</div>
+							<input id="couldnt-get-to-work-reason" class="reason_dropdown_input" type="text" name="deactivation_explanation" placeholder="<?php esc_html_e( 'What didn\'t work?', 'peachpay-for-woocommerce' ); ?>" data-show-if="peachpay-deactivate-feedback-couldnt-get-to-work">
 						</div>
 						<div id="peachpay-deactivate-feedback-input-wrapper" class="feedback-input">
 							<input id="peachpay-deactivate-feedback-temporary-deactivation" class="peachpay-deactivate-feedback-input" type="radio" name="deactivation_reason" value="temporary-deactivation">

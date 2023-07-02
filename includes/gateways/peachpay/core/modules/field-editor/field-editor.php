@@ -33,6 +33,8 @@ function peachpay_setup_field_editor() {
 	// Need to remove this for future use.
 	add_filter( 'woocommerce_checkout_fields', 'peachpay_shipping_fields', 10, 1 );
 
+	add_filter( 'woocommerce_form_field', 'peachpay_render_custom_fields', 10, 3 );
+
 	// Adding new fields for the checkout page.
 	add_action( 'woocommerce_before_order_notes', 'peachpay_additional_fields' );
 	// save fields to order meta.
@@ -41,6 +43,21 @@ function peachpay_setup_field_editor() {
 	add_action( 'woocommerce_checkout_process', 'check_if_required' );
 	// Render a table of custom fields in receipt page.
 	add_action( 'woocommerce_order_details_after_order_table', 'peachpay_render_additional_fields_receipt' );
+}
+
+/**
+ * Renders custom fields for the native checkout page.
+ *
+ * @param string $field The existing field html.
+ * @param string $key The fields name/key attribute.
+ * @param array  $args The field arguments.
+ */
+function peachpay_render_custom_fields( $field, $key, $args ) {
+	if ( 'header' === $args['type'] ) {
+		return '<h3 class="form-row form-row-wide" data-priority="' . $args['priority'] . '">' . $args['label'] . '</h3>';
+	}
+
+	return $field;
 }
 
 /**
@@ -137,9 +154,6 @@ function field_adjustments( $fields, $section ) {
 	}
 
 	foreach ( $field_option[ $section ] as $key => $value ) {
-		if ( 'header' === $value['type_list'] ) {
-			continue;
-		}
 		if ( ! isset( $value['field_enable'] ) || 'yes' !== $value['field_enable'] ) {
 			continue;
 		}
@@ -771,36 +785,6 @@ function peachpay_is_valid_import_field( $plugin, $type ) {
 }
 
 /**
- * A helper method that check if the field is a default field or not.
- * return true if it is default and false if it is not.
- *
- * @param string $section the target section string.
- * @param string $target the string to check.
- */
-function peachpay_is_default_field( $section, $target ) {
-	if ( 'additional' === $section ) {
-		return false;
-	}
-
-	$default_field_name_keys = array(
-		$section . '_email',
-		$section . '_phone',
-		$section . '_first_name',
-		$section . '_last_name',
-		$section . '_company',
-		$section . '_address_1',
-		$section . '_address_2',
-		$section . '_postcode',
-		$section . '_city',
-		$section . '_state',
-		$section . '_country',
-		$section . '_personal_header',
-		$section . '_address_header',
-	);
-	return in_array( $target, $default_field_name_keys, true );
-}
-
-/**
  * Returns a list of all the enabled field order arrangements for rendering in the modal.
  *
  * @param object $section This is to determin which section it is to pull data from.
@@ -980,6 +964,10 @@ function get_array_intersection( $meta_data, $fields_list ) {
  * @param Object $param an object passed in by a hook that contains useful data such as order number.
  */
 function peachpay_render_additional_fields_receipt( $param ) {
+	if ( ! is_object( $param ) || ! method_exists( $param, 'get_id' ) ) {
+		return;
+	}
+
 	$fields       = peachpay_all_additional_enabled_field_list();
 	$order_number = $param->get_id();
 	$order_data   = get_post_meta( $order_number );

@@ -13,37 +13,32 @@ if ( ! defined( 'PEACHPAY_ABSPATH' ) ) {
  * Calls functions that add the settings fields to the express checkout / checkout button section.
  */
 function peachpay_express_checkout_button_render() {
-	// phpcs:disable
-	$current = 'pp-sub-nav-full';
-	if ( isset( $_COOKIE['pp_sub_nav_express_checkout_button'] ) ) {
-		$current = $_COOKIE['pp_sub_nav_express_checkout_button'];
-	}
-	peachpay_checkout_button_sub_nav( $current );
-	peachpay_button_section_overall( $current );
-	peachpay_button_display_by_pages( $current );
-	peachpay_button_section_shop_page( $current );
+	peachpay_checkout_button_sub_nav();
+	peachpay_button_section_overall();
+	peachpay_button_display_by_pages();
+	peachpay_button_section_shop_page();
 }
 
 /**
  * Adds thee checkout button / floating button tabs.
  */
-function peachpay_checkout_button_sub_nav( $current ) {
+function peachpay_checkout_button_sub_nav() {
 	?>
-	<div class='pp-flex-row pp-gap-12 pp-sub-nav-container'>
+	<div class='pp-flex-row pp-gap-12 pp-sub-nav-container pp-sub-nav-controller'>
 		<?php
 		$buttons = array(
 			array(
-				'id'    => 'pp-sub-nav-full',
-				'title' => 'Full button'
+				'href'  => 'full',
+				'title' => __( 'Full button', 'peachpay-for-woocommerce' ),
 			),
 			array(
-				'id'    => 'pp-sub-nav-floating',
-				'title' => 'Floating button'
+				'href'  => 'floating',
+				'title' => __( 'Floating button', 'peachpay-for-woocommerce' ),
 			),
 		);
-		foreach( $buttons as $button ) {
+		foreach ( $buttons as $button ) {
 			?>
-				<div class='pp-sub-nav-button<?php echo 0 === strcmp( $current, $button['id'] ) ? ' pp-sub-nav-button-active' : '' ?>' id='<?php echo esc_attr( $button['id'] ); ?>'><?php echo esc_html( $button['title'] ); ?></div>
+				<div class='pp-sub-nav-button' href='#<?php echo esc_attr( $button['href'] ); ?>'><?php echo esc_html( $button['title'] ); ?></div>
 			<?php
 		}
 		?>
@@ -54,11 +49,9 @@ function peachpay_checkout_button_sub_nav( $current ) {
 /**
  * Adds the general settings fields.
  */
-function peachpay_button_section_overall( $current ) {
+function peachpay_button_section_overall() {
 	$class = 'pp-header pp-sub-nav-full';
-	if ( $current != 'pp-sub-nav-full' ) {
-		$class .= ' hide';
-	}
+
 	add_settings_field(
 		'peachpay_field_button_appearance',
 		peachpay_build_section_header( __( 'Appearance', 'peachpay-for-woocommerce' ), 'https://youtu.be/CLoNYAWQxY0' ),
@@ -307,11 +300,9 @@ function peachpay_field_button_effect_cb() {
 /**
  * Adds the fields for PeachPay button on all pages subsection.
  */
-function peachpay_button_display_by_pages( $current ) {
-	$class = 'pp-header pp-sub-nav-full';
-	if ( $current != 'pp-sub-nav-full' ) {
-		$class .= ' hide';
-	}
+function peachpay_button_display_by_pages() {
+	$class = 'pp-header pp-sub-nav-full no-border-bottom';
+
 	add_settings_field(
 		'peachpay_button_by_all_pages',
 		peachpay_build_section_header( __( 'Button display by pages', 'peachpay-for-woocommerce' ), 'https://youtu.be/3k7Gfz_iLS0' ),
@@ -522,11 +513,9 @@ function peachpay_field_button_preview_cb() {
 /**
  * Renders the shop page button options.
  */
-function peachpay_button_section_shop_page( $current ) {
-	$class = 'pp-header pp-sub-nav-floating';
-	if ( $current != 'pp-sub-nav-floating' ) {
-		$class .= ' hide';
-	}
+function peachpay_button_section_shop_page() {
+	$class = 'pp-header pp-sub-nav-floating no-border-bottom';
+
 	add_settings_field(
 		'peachpay_shop_page_button',
 		peachpay_build_section_header( __( 'Floating button', 'peachpay-for-woocommerce' ), 'https://youtu.be/YjMG7IZlziM' ),

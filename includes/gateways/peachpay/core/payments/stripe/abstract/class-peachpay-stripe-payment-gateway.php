@@ -137,10 +137,11 @@ abstract class PeachPay_Stripe_Payment_Gateway extends PeachPay_Payment_Gateway 
 			PeachPay_Stripe_Order_Data::set_peachpay_details(
 				$order,
 				array(
-					'session_id'     => $session_id,
-					'transaction_id' => $transaction_id,
-					'peachpay_mode'  => peachpay_is_test_mode() ? 'test' : 'live',
-					'stripe_mode'    => $stripe_mode,
+					'session_id'             => $session_id,
+					'transaction_id'         => $transaction_id,
+					'peachpay_mode'          => peachpay_is_test_mode() ? 'test' : 'live',
+					'stripe_mode'            => $stripe_mode,
+					'service_fee_percentage' => PeachPay::service_fee_enabled() ? PeachPay::service_fee_percentage() : 0,
 				)
 			);
 
@@ -165,11 +166,13 @@ abstract class PeachPay_Stripe_Payment_Gateway extends PeachPay_Payment_Gateway 
 				'payment_method'              => $payment_method_id,
 				'payment_method_types'        => array( $this->stripe_payment_method_type ),
 				'setup_future_usage'          => $this->setup_future_usage(),
-				'statement_descriptor'        => peachpay_truncate_str( wp_parse_url( get_site_url(), PHP_URL_HOST ), 22 ),
+				'statement_descriptor'        => '' !== PeachPay_Stripe_Advanced::get_setting( 'statement_descriptor' ) ? peachpay_truncate_str( PeachPay_Stripe_Advanced::get_setting( 'statement_descriptor' ), 22 ) : null,
 				'statement_descriptor_suffix' => is_string( $this->statement_descriptor_suffix ) ? peachpay_truncate_str( $this->statement_descriptor_suffix, 22 ) : null,
 				'capture_method'              => $this->capture_method,
 				'payment_method_options'      => $this->payment_method_options(),
 				'mandate_data'                => $this->mandate_data( $order, 'online' ),
+				'metadata'                    => $this->intent_metadata( $order ),
+				'application_fee_amount'      => PeachPay_Stripe::format_amount( PeachPay_Stripe_Order_Data::get_service_fee_total( $order ), $order->get_currency() ),
 			);
 
 			if ( $order->has_shipping_address() ) {
@@ -253,6 +256,17 @@ abstract class PeachPay_Stripe_Payment_Gateway extends PeachPay_Payment_Gateway 
 				return null;
 			}
 
+			PeachPay_Stripe_Order_Data::set_peachpay_details(
+				$renewal_order,
+				array(
+					'session_id'             => $session_id,
+					'transaction_id'         => PeachPay_Stripe_Order_Data::get_peachpay( $renewal_order, 'transaction_id' ),
+					'peachpay_mode'          => $peachpay_mode,
+					'stripe_mode'            => $stripe_mode,
+					'service_fee_percentage' => PeachPay::service_fee_enabled() ? PeachPay::service_fee_percentage() : 0,
+				)
+			);
+
 			$payment_intent_params = array(
 				'confirm'                     => true,
 				'amount'                      => PeachPay_Stripe::format_amount( $renewal_total, $renewal_order->get_currency() ),
@@ -267,6 +281,7 @@ abstract class PeachPay_Stripe_Payment_Gateway extends PeachPay_Payment_Gateway 
 				'capture_method'              => $this->capture_method,
 				'payment_method_options'      => $this->payment_method_options(),
 				'mandate_data'                => $this->mandate_data( $renewal_order, 'offline' ),
+				'application_fee_amount'      => PeachPay_Stripe::format_amount( PeachPay_Stripe_Order_Data::get_service_fee_total( $renewal_order ), $renewal_order->get_currency() ),
 			);
 
 			if ( $renewal_order->has_shipping_address() ) {
@@ -345,6 +360,14 @@ abstract class PeachPay_Stripe_Payment_Gateway extends PeachPay_Payment_Gateway 
 
 		// Clear information stored on session because we do not need it anymore.
 		unset( WC()->session->{'peachpay_setup_intent_details'} );
+
+		PeachPay_Payment::update_transaction(
+			$order,
+			array(
+				'payment_status' => 'setup',
+				'order_details'  => $this->get_order_details( $order ),
+			)
+		);
 
 		return array(
 			'result'   => 'success',
@@ -562,5 +585,16 @@ abstract class PeachPay_Stripe_Payment_Gateway extends PeachPay_Payment_Gateway 
 		}
 
 		return $data['setup_intent_details']['customer'];
+	}
+
+	/**
+	 * Adds the ACH clearing email properties to the metadata of the payment intent.
+	 *
+	 * @param WC_Order $order The order to get the dashboard url from.
+	 */
+	protected function intent_metadata( $order ) {
+		return array(
+			'order_dashboard_url' => $order->get_edit_order_url(),
+		);
 	}
 }

@@ -326,12 +326,18 @@ function peachpay_handle_square_success_status( $order, $request ) {
  * @param array $feature_list The list of features.
  */
 function peachpay_square_register_feature( $feature_list ) {
+	$script_src = 'https://web.squarecdn.com/v1/square.js';
+	if ( PeachPay_Square_Integration::mode() === 'test' ) {
+		$script_src = 'https://sandbox.web.squarecdn.com/v1/square.js';
+	}
+
 	$feature_list['peachpay_square_gateways'] = array(
 		'enabled'  => (bool) peachpay_square_connected() && PeachPay_Square_Integration::has_gateway_enabled(),
 		'metadata' => array(
 			'country'        => peachpay_square_country(),
 			'location_id'    => peachpay_square_location_id(),
 			'application_id' => peachpay_square_application_id(),
+			'script_src'     => $script_src,
 		),
 	);
 
