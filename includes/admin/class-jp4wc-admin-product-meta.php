@@ -99,7 +99,7 @@ class JP4WC_Admin_Product_Meta {
     /**
      * Save meta data for simple subscription product type when the "Edit Product" form is submitted.
      *
-     * @param int post_id
+     * @param int post_id for Product ID
      * @return array Array of Product types & their labels, including the Subscription product type.
      * @since 2.2
      */
