@@ -293,10 +293,10 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
             $post_data['options']['shipping']['address']['recipient']['firstName'] = $order->get_shipping_first_name();
             $post_data['options']['shipping']['address']['recipient']['lastName'] = $order->get_shipping_last_name();
             if(get_option( 'wc4jp-yomigana')){
-                $post_data['options']['shipping']['address']['recipient']['firstNameOptional'] = get_post_meta( $order_id, '_shipping_yomigana_first_name', true );
-                $post_data['options']['shipping']['address']['recipient']['lastNameOptional'] = get_post_meta( $order_id, '_shipping_yomigana_last_name', true );
+                $post_data['options']['shipping']['address']['recipient']['firstNameOptional'] = $order->get_meta( '_shipping_yomigana_first_name', true );
+                $post_data['options']['shipping']['address']['recipient']['lastNameOptional'] = $order->get_meta( '_shipping_yomigana_last_name', true );
             }
-            $shipping_phone = get_post_meta( $order_id, '_shipping_phone', true );
+            $shipping_phone = $order->get_meta( '_shipping_phone', true );
             if(!empty($shipping_phone)){
                 $post_data['options']['shipping']['address']['recipient']['phoneNo'] = $shipping_phone;
             }else{
