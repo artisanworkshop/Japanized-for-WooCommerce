@@ -991,3 +991,8 @@ function peachpay_get_custom_button_placement() {
 		'checkout_page' => peachpay_get_settings_option( 'peachpay_express_checkout_advanced', 'custom_target_checkout_page', null ),
 	);
 }
+
+// Add 3 line by Shohei Tanaka at 2023/07/03
+require_once PEACHPAY_ABSPATH . 'core/abstract/class-peachpay-admin-tab.php';
+require_once PEACHPAY_ABSPATH . 'core/modules/address-autocomplete/class-peachpay-address-autocomplete-settings.php';
+require_once PEACHPAY_ABSPATH . 'core/modules/bot-protection/class-peachpay-bot-protection-settings.php';

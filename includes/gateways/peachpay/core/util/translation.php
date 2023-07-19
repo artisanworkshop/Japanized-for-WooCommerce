@@ -14,7 +14,10 @@ require_once PEACHPAY_ABSPATH . 'core/util/checkout-modal-translations.php';
  * @return array translated terms all all languages array.
  */
 function peachpay_get_translated_modal_terms_all_languages() {
-	return $GLOBALS['PEACHPAY_TRANSLATED_MODAL_TERMS'];
+	if(isset($GLOBALS['PEACHPAY_TRANSLATED_MODAL_TERMS'])){//Add isset by Shohei Tanaka
+		return $GLOBALS['PEACHPAY_TRANSLATED_MODAL_TERMS'];
+	}
+	return null;
 }
 
 /**
@@ -24,13 +27,16 @@ function peachpay_get_translated_modal_terms_all_languages() {
  * @return array|null translated terms array
  */
 function peachpay_get_translated_modal_terms( $language_code ) {
-	$translated_modal_terms = $GLOBALS['PEACHPAY_TRANSLATED_MODAL_TERMS'];
+	if(isset($GLOBALS['PEACHPAY_TRANSLATED_MODAL_TERMS'])){//Add isset by Shohei Tanaka
+		$translated_modal_terms = $GLOBALS['PEACHPAY_TRANSLATED_MODAL_TERMS'];
 
-	if ( array_key_exists( $language_code, $translated_modal_terms ) ) {
-		return $translated_modal_terms[ $language_code ];
-	} else {
-		return null;
+		if ( array_key_exists( $language_code, $translated_modal_terms ) ) {
+			return $translated_modal_terms[ $language_code ];
+		} else {
+			return null;
+		}
 	}
+	return null;
 }
 
 /**

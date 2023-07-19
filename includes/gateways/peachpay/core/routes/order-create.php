@@ -53,7 +53,9 @@ function peachpay_append_payment_method( $order_id ) {
 	//phpcs:ignore
 	if ( ! empty( $_POST['payment_method_variation'] ) ) {
 		//phpcs:ignore
-		update_post_meta( $order_id, 'payment_method_variation', wc_sanitize_term_text_based( wp_unslash( $_POST['payment_method_variation'] ) ) );
+		$order = wc_get_order( $order_id );
+		$order->set_meta_data( array( 'payment_method_variation' => wc_sanitize_term_text_based( wp_unslash( $_POST['payment_method_variation'] ) ) ) );
+		$order->save_meta_data();
 	}
 }
 

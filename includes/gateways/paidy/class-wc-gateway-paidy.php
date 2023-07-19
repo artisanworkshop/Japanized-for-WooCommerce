@@ -752,7 +752,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                 $message = $this->jp4wc_framework->jp4wc_array_to_message($capture_array) . 'This is capture data.';
                 $this->jp4wc_framework->jp4wc_debug_log($message, $this->debug, 'paidy-wc');
 
-                update_post_meta($order_id, 'paidy_capture_id', $capture_array['captures'][0]['id']);
+                $order->set_meta_data( array( 'paidy_capture_id' => $capture_array['captures'][0]['id'] ) );
+                $order->save_meta_data();
                 if ($capture_array['amount'] == $order->get_total() and $transaction_id == $capture_array['id']) {
                     $order->add_order_note(__('In the payment completion process, the amount and ID match were confirmed.', 'woocommerce-for-japan'));
                     return true;
@@ -787,7 +788,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         $secret_key = $this->set_api_secret_key();
         $order = wc_get_order( $order_id );
         $order_payment_method = $order->get_payment_method();
-        $capture_id = get_post_meta( $order_id, 'paidy_capture_id', true );
+        $capture_id = $order->get_meta( 'paidy_capture_id', true );
         if( $order_payment_method == $this->id ) {
             $transaction_id = $order->get_transaction_id();
             $post_data = '{"capture_id":"' . $capture_id . '","amount":"' . $amount . '","metadata" : {"Platform" : "WooCommerce"}}';
@@ -816,13 +817,14 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                 $order->add_order_note( $refund->get_error_message() );
                 return false;
             }elseif( $refund_array['status'] == 'closed' ){
-                $refunds_array = get_post_meta($order_id, 'paidy_refund_id', false);
+                $refunds_array = $order->get_meta( 'paidy_refund_id', false );
                 if( empty($refunds_array) ){
                     $refunds_array = array( $refund_array['refunds'][0]['id'] );
                 }else{
                     $refunds_array = array_merge( $refunds_array, array( $refund_array['refunds'][0]['id'] ));
                 }
-                update_post_meta( $order_id, 'paidy_refund_id', $refunds_array);
+                $order->set_meta_data( array( 'paidy_refund_id' => $refunds_array ) );
+                $order->save_meta_data();
                 $order->add_order_note( __('Completion refunding has been completed at Paidy.', 'woocommerce-for-japan') );
                 return true;
             }else{

@@ -234,6 +234,7 @@ class JP4WC_Delivery{
 
 		$date = false;
 		$time = false;
+		$order = wc_get_order( $order_id );
 
 		if(isset($_POST['wc4jp_delivery_date'])){
 			$date = apply_filters('wc4jp_delivery_date', $_POST['wc4jp_delivery_date'], $order_id );
@@ -243,28 +244,29 @@ class JP4WC_Delivery{
 				$date = strtotime($date);
 				$date = date(get_option( 'wc4jp-date-format' ),$date);
 			}
-			update_post_meta( $order_id, 'wc4jp-delivery-date', esc_attr(htmlspecialchars($date)));
+			$order->set_meta_data( array( 'wc4jp-delivery-date' => esc_attr( htmlspecialchars( $date ) ) ) );
 		}else{
-            delete_post_meta( $order_id, 'wc4jp-delivery-date' );
+			$order->delete_meta_data( 'wc4jp-delivery-date' );
         }
 
         if(isset($_POST['wc4jp_delivery_time_zone'])){
             $time = apply_filters('wc4jp_delivery_time_zone', $_POST['wc4jp_delivery_time_zone'], $order_id );
         }
 		if( !empty($time) && $time != 0 ){
-			update_post_meta( $order_id, 'wc4jp-delivery-time-zone', esc_attr(htmlspecialchars($time)));
+			$order->set_meta_data( array( 'wc4jp-delivery-time-zone' => esc_attr( htmlspecialchars( $time ) ) ) );
         }else{
-            delete_post_meta( $order_id, 'wc4jp-delivery-time-zone' );
+            $order->delete_meta_data( 'wc4jp-delivery-time-zone' );
 		}
 
         if(isset($_POST['wc4jp-tracking-ship-date'])){
             $ship_date = apply_filters('wc4jp_ship_date', $_POST['wc4jp-tracking-ship-date'], $order_id );
         }
         if( isset($ship_date) && $ship_date != 0 ){
-            update_post_meta( $order_id, 'wc4jp-tracking-ship-date', esc_attr(htmlspecialchars($ship_date)));
+            $order->set_meta_data( array( 'wc4jp-tracking-ship-date' => esc_attr( htmlspecialchars( $ship_date ) ) ) );
         }else{
-            delete_post_meta( $order_id, 'wc4jp-tracking-ship-date' );
+            $order->delete_meta_data( 'wc4jp-tracking-ship-date' );
         }
+		$order->save_meta_data();
 	}
 	/**
 	 * Frontend: Add date and timeslot to frontend order overview
@@ -472,10 +474,12 @@ class JP4WC_Delivery{
      * @param object WP_POST
      */
 	 public function save_meta_box( $post_id, $post ){
+		$order = wc_get_order( $post_id );
 		$shipping_fields = $this->shipping_fields($post);
 		foreach ($shipping_fields as $field) {
 			if(isset($_POST[$field['id']]) && $_POST[$field['id']] != 0){
-				update_post_meta($post_id, $field['id'], wc_clean($_POST[$field['id']]));
+				$order->set_meta_data( array( $field['id'] => wc_clean( $_POST[$field['id']] ) ) );
+				$order->save_meta_data();
 			}
 		}
 	}
@@ -483,13 +487,13 @@ class JP4WC_Delivery{
 	 * Show the meta box for shipment info on the order page
  	 *
 	 * @access public
-     * @param object $post
+     * @param object WC_Order
      * @return array
 	 */
-	public function shipping_fields($post){
-		$date = get_post_meta( $post->ID, 'wc4jp-delivery-date', true );
-		$time = get_post_meta( $post->ID, 'wc4jp-delivery-time-zone', true );
-        $delivery_date = get_post_meta( $post->ID, 'wc4jp-tracking-ship-date', true );
+	public function shipping_fields( $order ){
+		$date = $order->get_meta( 'wc4jp-delivery-date', true );
+		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+        $delivery_date = $order->get_meta( 'wc4jp-tracking-ship-date', true );
 		$shipping_fields = array(
 			'wc4jp-delivery-date' => array(
 				'type' => 'text',
