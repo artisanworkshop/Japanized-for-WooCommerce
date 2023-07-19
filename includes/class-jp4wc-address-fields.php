@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.2.21
+ * @version     2.6.0
  * @category    Address Setting for Japan
  * @author      Artisan Workshop
  */

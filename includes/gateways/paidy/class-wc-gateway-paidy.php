@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_Paidy
  * @extends		WC_Payment_Gateway
- * @version		1.2.0
+ * @version		1.3.0
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */

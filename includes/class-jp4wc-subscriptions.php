@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.2.17
+ * @version     2.6.0
  * @category    WooCommerce Subscriptions for Japan
  * @author      Artisan Workshop
  */

@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.3.3
+ * @version     2.6.0
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
@@ -729,7 +729,8 @@ class JP4WC_Admin_Screen {
 	 * Email customize Customer name option.
 	 */
 	public function jp4wc_options_custom_email_customer_name() {
-		$description = __( 'Please check it if you want to change customer name display.( from first name to full name )', 'woocommerce-for-japan' );
+		$add_message = __( 'This process has no hooks, so it overwrites the template files in /emails/. If you have customized the email template, please refer to the 12 files in the folder below and add them to your customization.<br/>woocommerce-for-japan/templates/emails/', 'woocommerce-for-japan' );
+		$description = __( 'Please check it if you want to change customer name display.( from first name to full name )', 'woocommerce-for-japan' ).'<br />'.$add_message;
 		$this->jp4wc_plugin->jp4wc_input_checkbox('custom-email-customer-name', $description, $this->prefix);
 	}
 
