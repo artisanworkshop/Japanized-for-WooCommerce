@@ -18,6 +18,7 @@ class JP4WC_Subscriptions{
      * @var object
      */
     public $jp4wc_plugin;
+    public $prefix;
 
     /**
      * Constructor
@@ -37,7 +38,7 @@ class JP4WC_Subscriptions{
      * @return mixed
      */
     public function jp4wc_subscription_price_string( string $subscription_string, $product){
-        $price_string = get_post_meta( $product->get_id(), '_subscription_price_string', true );
+        $price_string = $product->get_meta( '_subscription_price_string', true );
         if($price_string){
             return $price_string;
         }

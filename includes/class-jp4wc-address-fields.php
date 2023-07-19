@@ -242,10 +242,10 @@ class AddressField4jp{
      * @return array
      */
 	public function jp4wc_billing_address( $fields, $args) {
-	    $order_id = $args->get_id();
-	    $fields['yomigana_first_name'] = get_post_meta( $order_id, '_billing_yomigana_first_name', true );
-	    $fields['yomigana_last_name'] = get_post_meta( $order_id, '_billing_yomigana_last_name', true );
-	    $fields['phone'] = get_post_meta( $order_id, '_billing_phone', true );
+		$order = wc_get_order( $args->get_id() );
+	    $fields['yomigana_first_name'] = $order->get_meta( '_billing_yomigana_first_name', true );
+	    $fields['yomigana_last_name'] = $order->get_meta( '_billing_yomigana_last_name', true );
+	    $fields['phone'] = $order->get_meta( '_billing_phone', true );
 
 		if($fields['country'] == '')$fields['country'] = 'JP';
 
@@ -263,10 +263,10 @@ class AddressField4jp{
      */
 	public function jp4wc_shipping_address( $fields, $args) {
         if(isset($fields['first_name'])) {
-            $order_id = $args->get_id();
-            $fields['yomigana_first_name'] = get_post_meta($order_id, '_shipping_yomigana_first_name', true);
-            $fields['yomigana_last_name'] = get_post_meta($order_id, '_shipping_yomigana_last_name', true);
-            $fields['phone'] = get_post_meta($order_id, '_shipping_phone', true);
+			$order = wc_get_order( $args->get_id() );
+            $fields['yomigana_first_name'] = $order->get_meta( '_shipping_yomigana_first_name', true );
+            $fields['yomigana_last_name'] = $order->get_meta( '_shipping_yomigana_last_name', true );
+            $fields['phone'] = $order->get_meta( '_shipping_phone', true );
             if ($fields['country'] == '') $fields['country'] = 'JP';
         }
 
@@ -279,14 +279,14 @@ class AddressField4jp{
      * @since 2.2.13
      * @param string address
      * @param $raw_address
-     * @param $object
+     * @param object WC_Order
      * @return string
      */
-	public function jp4wc_shipping_address_add_phone( $address, $raw_address, $object ){
+	public function jp4wc_shipping_address_add_phone( $address, $raw_address, $order ){
 	    if( is_order_received_page() || is_admin() || version_compare( WC_VERSION, '5.6', '>=' )){
             return $address;
         }else{
-            $field_value = get_post_meta( $object->get_id(), '_shipping_phone', true );
+            $field_value = $order->get_meta( '_shipping_phone', true );
             $field_value = wc_make_phone_clickable( $field_value );
             $phone_display = '<br />'. wp_kses_post( $field_value ) . '<br />';
             return $address.$phone_display;
@@ -297,12 +297,12 @@ class AddressField4jp{
      *
      * @since  1.2
      * @version 2.0.0
-     * @param  object $order
+     * @param  object WC_Order
      */
 	public function admin_order_data_after_shipping_address( $order ){
 		$order_id = $order->get_id();
 		$field['label'] = __( 'Shipping Phone', 'woocommerce-for-japan' );
-		$field_value = get_post_meta( $order_id, '_shipping_phone', true );
+		$field_value = $order->get_meta( '_shipping_phone', true );
 		$field_value = wc_make_phone_clickable( $field_value );
 		echo '<div style="display:block;clear:both;"><p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p></div>';
 	}
