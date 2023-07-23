@@ -264,12 +264,8 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
         $post_data['redirectUrls']['cancelUrl'] = wc_get_cart_url().'?linepay=cancel&order_id='.$order_id;
 
         //Set States
-        if(version_compare( WC_VERSION, '3.6', '>=' )){
-            $jp4wc_countries = new WC_Countries;
-            $states = $jp4wc_countries->get_states();
-        }else{
-            global $states;
-        }
+        $jp4wc_countries = new WC_Countries;
+        $states = $jp4wc_countries->get_states();
 
         //Set Shipping information
         $shipping_total = preg_replace('/[^0-9]/', '', $order->get_shipping_total());
@@ -296,7 +292,7 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
                 $post_data['options']['shipping']['address']['recipient']['firstNameOptional'] = $order->get_meta( '_shipping_yomigana_first_name', true );
                 $post_data['options']['shipping']['address']['recipient']['lastNameOptional'] = $order->get_meta( '_shipping_yomigana_last_name', true );
             }
-            $shipping_phone = $order->get_meta( '_shipping_phone', true );
+            $shipping_phone = $order->get_shipping_phone();
             if(!empty($shipping_phone)){
                 $post_data['options']['shipping']['address']['recipient']['phoneNo'] = $shipping_phone;
             }else{
@@ -587,7 +583,7 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
 				// Shipping address
 				$order->set_shipping_first_name($linepay_order->info[0]->shipping->address->recipient->firstName);
 				$order->set_shipping_last_name($linepay_order->info[0]->shipping->address->recipient->lastName);
-				$order->update_meta_data('_shipping_phone',$linepay_order->info[0]->shipping->address->recipient->phoneNo);
+				$order->set_shipping_phone($linepay_order->info[0]->shipping->address->recipient->phoneNo);
 				$order->update_meta_data('_shipping_email',$linepay_order->info[0]->shipping->address->recipient->email);
 				$order->set_shipping_country($country_code);
 				$order->set_shipping_state($state_code);

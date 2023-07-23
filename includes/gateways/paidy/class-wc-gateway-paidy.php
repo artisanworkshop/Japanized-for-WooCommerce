@@ -315,12 +315,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             $user_id = 'guest-paidy'.$paidy_order_ref;
         }
 
-        if(version_compare( WC_VERSION, '3.6', '>=' )){
-            $jp4wc_countries = new WC_Countries;
-            $states = $jp4wc_countries->get_states();
-        }else{
-            global $states;
-        }
+        $jp4wc_countries = new WC_Countries;
+        $states = $jp4wc_countries->get_states();
 
         //Get products and coupons information from order
         $order_items = apply_filters( 'jp4wc_paidy_order_items', $order->get_items(array('line_item','coupon')) );

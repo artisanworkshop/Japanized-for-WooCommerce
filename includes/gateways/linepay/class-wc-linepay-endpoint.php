@@ -55,13 +55,8 @@ function linepay_shipping_webhook( $data ){
     $order_id = ltrim($orderId, $order_prefix);
     $order = wc_get_order($order_id);
     //Set States
-    if(version_compare( WC_VERSION, '3.6', '>=' )){
-        $jp4wc_countries = new WC_Countries;
-        $default_states = $jp4wc_countries->get_states( $country );
-    }else{
-        global $states;
-        $default_states = $states;
-    }
+    $jp4wc_countries = new WC_Countries;
+    $default_states = $jp4wc_countries->get_states( $country );
     $current_states = array();
     foreach ($default_states as $key => $value){
         $current_states[$value] = $key;

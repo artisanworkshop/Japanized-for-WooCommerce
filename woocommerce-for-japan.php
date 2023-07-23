@@ -8,7 +8,7 @@
  * Author URI: https://wc.artws.info/
  * Requires at least: 5.0
  * Tested up to: 6.2.2
- * WC requires at least: 5.0
+ * WC requires at least: 6.0
  * WC tested up to: 7.8.0
  *
  * Text Domain: woocommerce-for-japan
@@ -64,6 +64,8 @@ class JP4WC{
 		// rated appeal
 		add_action( 'wp_ajax_wc4jp_rated', array( __CLASS__, 'jp4wc_rated') );
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
+		// handle HPOS compatibility
+		add_action( 'before_woocommerce_init', [ $this, 'jp4wc_handle_hpos_compatibility' ] );
 	}
 
     /**
@@ -175,7 +177,7 @@ class JP4WC{
 
         // Add PeachPay Checkout
 		if ( ! is_plugin_active( 'peachpay-for-woocommerce/peachpay.php' ) && get_option('wc4jp-peachpay') ) {
-			require_once JP4WC_INCLUDES_PATH . 'gateways/peachpay/peachpay.php';
+//			require_once JP4WC_INCLUDES_PATH . 'gateways/peachpay/peachpay.php';
 		}
 
         // Include the main WooCommerce class.
@@ -278,6 +280,21 @@ class JP4WC{
 
 		update_option( 'wc4jp_admin_footer_text_rated', 1 );
 		die();
+	}
+
+	/**
+	 * Declares HPOS compatibility if the plugin is compatible with HPOS.
+	 *
+	 * @internal
+	 *
+	 * @since 2.6.0
+	 */
+	public function jp4wc_handle_hpos_compatibility() {
+
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+            $slug = dirname( plugin_basename( __FILE__ ) );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables',trailingslashit( $slug ) . $slug . '.php' , true );
+		}
 	}
 }
 

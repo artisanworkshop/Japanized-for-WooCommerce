@@ -149,9 +149,6 @@ class AddressField4jp{
 			if(isset($args['yomigana_last_name']))$fields['{yomigana_last_name}'] = $args['yomigana_last_name'];
 			if(isset($args['yomigana_first_name']))$fields['{yomigana_first_name}'] = $args['yomigana_first_name'];
 		}
-		if(version_compare( WC_VERSION, '3.1', '<=' )){
-			$fields['{phone}'] = $args['phone'];
-		}
 		if(is_order_received_page()){
 			$fields['{phone}'] = $args['phone'];
 		}
@@ -178,32 +175,17 @@ class AddressField4jp{
         }else{
             $set_yomigana = "\n{yomigana_last_name} {yomigana_first_name}";
         }
-		if(version_compare( WC_VERSION, '3.1', '>=' )){
-			if(get_option( 'wc4jp-company-name') and get_option( 'wc4jp-yomigana')){
-				$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}".$set_yomigana."\n{last_name} {first_name}".$honorific_suffix."\n {country}";
-			}
-            if(get_option( 'wc4jp-company-name') and !get_option( 'wc4jp-yomigana')){
-                $fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}\n{last_name} {first_name}".$honorific_suffix."\n {country}";
-            }
-			if(!get_option( 'wc4jp-company-name') and get_option( 'wc4jp-yomigana')){
-				$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}".$set_yomigana."\n{last_name} {first_name}".$honorific_suffix."\n {country}";
-			}
-			if(!get_option( 'wc4jp-company-name') and !get_option( 'wc4jp-yomigana')){
-				$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{last_name} {first_name}".$honorific_suffix."\n {country}";
-			}
-		}else{
-			if(get_option( 'wc4jp-company-name') and get_option( 'wc4jp-yomigana')){
-				$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}".$set_yomigana."\n{last_name} {first_name}".$honorific_suffix."\n {phone}\n {country}";
-			}
-            if(get_option( 'wc4jp-company-name') and !get_option( 'wc4jp-yomigana')){
-                $fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}\n{last_name} {first_name}".$honorific_suffix."\n {phone}\n {country}";
-            }
-			if(!get_option( 'wc4jp-company-name') and get_option( 'wc4jp-yomigana')){
-				$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}".$set_yomigana."\n{last_name} {first_name}".$honorific_suffix."\n {phone}\n {country}";
-			}
-			if(!get_option( 'wc4jp-company-name') and !get_option( 'wc4jp-yomigana')){
-				$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{last_name} {first_name}".$honorific_suffix."\n {phone}\n {country}";
-			}			
+		if(get_option( 'wc4jp-company-name') and get_option( 'wc4jp-yomigana')){
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}".$set_yomigana."\n{last_name} {first_name}".$honorific_suffix."\n {country}";
+		}
+		if(get_option( 'wc4jp-company-name') and !get_option( 'wc4jp-yomigana')){
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}\n{last_name} {first_name}".$honorific_suffix."\n {country}";
+		}
+		if(!get_option( 'wc4jp-company-name') and get_option( 'wc4jp-yomigana')){
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}".$set_yomigana."\n{last_name} {first_name}".$honorific_suffix."\n {country}";
+		}
+		if(!get_option( 'wc4jp-company-name') and !get_option( 'wc4jp-yomigana')){
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{last_name} {first_name}".$honorific_suffix."\n {country}";
 		}
 		if(is_cart()){
 			$fields['JP'] = "〒{postcode}{state}{city}{address_1}{address_2} {country}";
@@ -245,7 +227,7 @@ class AddressField4jp{
 		$order = wc_get_order( $args->get_id() );
 	    $fields['yomigana_first_name'] = $order->get_meta( '_billing_yomigana_first_name', true );
 	    $fields['yomigana_last_name'] = $order->get_meta( '_billing_yomigana_last_name', true );
-	    $fields['phone'] = $order->get_meta( '_billing_phone', true );
+	    $fields['phone'] = $order->get_billing_phone();
 
 		if($fields['country'] == '')$fields['country'] = 'JP';
 
@@ -266,7 +248,7 @@ class AddressField4jp{
 			$order = wc_get_order( $args->get_id() );
             $fields['yomigana_first_name'] = $order->get_meta( '_shipping_yomigana_first_name', true );
             $fields['yomigana_last_name'] = $order->get_meta( '_shipping_yomigana_last_name', true );
-            $fields['phone'] = $order->get_meta( '_shipping_phone', true );
+            $fields['phone'] = $order->get_shipping_phone();
             if ($fields['country'] == '') $fields['country'] = 'JP';
         }
 
@@ -283,10 +265,10 @@ class AddressField4jp{
      * @return string
      */
 	public function jp4wc_shipping_address_add_phone( $address, $raw_address, $order ){
-	    if( is_order_received_page() || is_admin() || version_compare( WC_VERSION, '5.6', '>=' )){
+	    if( is_order_received_page() || is_admin() ){
             return $address;
         }else{
-            $field_value = $order->get_meta( '_shipping_phone', true );
+            $field_value = $order->get_shipping_phone();
             $field_value = wc_make_phone_clickable( $field_value );
             $phone_display = '<br />'. wp_kses_post( $field_value ) . '<br />';
             return $address.$phone_display;
@@ -302,7 +284,7 @@ class AddressField4jp{
 	public function admin_order_data_after_shipping_address( $order ){
 		$order_id = $order->get_id();
 		$field['label'] = __( 'Shipping Phone', 'woocommerce-for-japan' );
-		$field_value = $order->get_meta( '_shipping_phone', true );
+		$field_value = $order->get_shipping_phone();
 		$field_value = wc_make_phone_clickable( $field_value );
 		echo '<div style="display:block;clear:both;"><p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p></div>';
 	}
