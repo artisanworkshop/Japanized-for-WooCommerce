@@ -1047,13 +1047,9 @@ class JP4WC_Admin_Screen {
      */
     public function jp4wc_law_location() {
         $description = __( 'Please enter the location.', 'woocommerce-for-japan' );
-        if(version_compare( WC_VERSION, '3.6', '>=' )){
-            $wc4jp_countries = new WC_Countries;
-            $states = $wc4jp_countries->get_states();
-        }else{
-            global $states;
-        }
-        $country = get_option('woocommerce_default_country');
+		$wc4jp_countries = new WC_Countries;
+		$states = $wc4jp_countries->get_states();
+		$country = get_option('woocommerce_default_country');
         $country_code = substr($country, 0, 2);
         $state_code = substr($country, 3);
         $location = $this->get_option('woocommerce_store_postcode').' '.$states[$country_code][$state_code].get_option('woocommerce_store_city').get_option('woocommerce_store_address').get_option('woocommerce_store_address_2').$country_code;

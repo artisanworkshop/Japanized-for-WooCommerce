@@ -95,7 +95,7 @@ class WC_Gateway_AtStore_JP extends WC_Payment_Gateway {
      * @param bool $plain_text
      */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-	    $payment_method = version_compare( WC_VERSION, '2.7', '<' ) ? $order->payment_method : $order->get_payment_method();
+	    $payment_method = $order->get_payment_method();
         if ( $this->instructions && ! $sent_to_admin && 'atstore' === $payment_method && $order->has_status( 'on-hold' ) ) {
 			echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 		}
