@@ -282,7 +282,6 @@ class AddressField4jp{
      * @param  object WC_Order
      */
 	public function admin_order_data_after_shipping_address( $order ){
-		$order_id = $order->get_id();
 		$field['label'] = __( 'Shipping Phone', 'woocommerce-for-japan' );
 		$field_value = $order->get_shipping_phone();
 		$field_value = wc_make_phone_clickable( $field_value );

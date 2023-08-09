@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.6.0
+ * @version     2.6.1
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
@@ -244,7 +244,7 @@ class JP4WC_Delivery{
 				$date = strtotime($date);
 				$date = date(get_option( 'wc4jp-date-format' ),$date);
 			}
-			$order->set_meta_data( array( 'wc4jp-delivery-date' => esc_attr( htmlspecialchars( $date ) ) ) );
+			$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $date ) ) );
 		}else{
 			$order->delete_meta_data( 'wc4jp-delivery-date' );
         }
@@ -253,7 +253,7 @@ class JP4WC_Delivery{
             $time = apply_filters('wc4jp_delivery_time_zone', $_POST['wc4jp_delivery_time_zone'], $order_id );
         }
 		if( !empty($time) && $time != 0 ){
-			$order->set_meta_data( array( 'wc4jp-delivery-time-zone' => esc_attr( htmlspecialchars( $time ) ) ) );
+			$order->update_meta_data( 'wc4jp-delivery-time-zone', esc_attr( htmlspecialchars( $time ) ) );
         }else{
             $order->delete_meta_data( 'wc4jp-delivery-time-zone' );
 		}
@@ -262,11 +262,11 @@ class JP4WC_Delivery{
             $ship_date = apply_filters('wc4jp_ship_date', $_POST['wc4jp-tracking-ship-date'], $order_id );
         }
         if( isset($ship_date) && $ship_date != 0 ){
-            $order->set_meta_data( array( 'wc4jp-tracking-ship-date' => esc_attr( htmlspecialchars( $ship_date ) ) ) );
+            $order->update_meta_data( 'wc4jp-tracking-ship-date', esc_attr( htmlspecialchars( $ship_date ) ) );
         }else{
             $order->delete_meta_data( 'wc4jp-tracking-ship-date' );
         }
-		$order->save_meta_data();
+		$order->save();
 	}
 	/**
 	 * Frontend: Add date and timeslot to frontend order overview
@@ -444,7 +444,10 @@ class JP4WC_Delivery{
 	 */
 	public function add_meta_box(){
 		if(get_option( 'wc4jp-delivery-date' ) or get_option( 'wc4jp-delivery-time-zone' )){
-			add_meta_box('woocommerce-shipping-date-and-time', __('Shipping Detail', 'woocommerce-for-japan'), array(&$this, 'meta_box'), 'shop_order', 'side', 'high');
+			$current_screen = get_current_screen();
+			
+//			add_meta_box('woocommerce-shipping-date-and-time', __('Shipping Detail', 'woocommerce-for-japan'), array(&$this, 'meta_box'), 'shop_order', 'side', 'high');
+			add_meta_box('woocommerce-shipping-date-and-time', __('Shipping Detail', 'woocommerce-for-japan'), array(&$this, 'meta_box'), $current_screen->id, 'side', 'high');
 		}
 	}
 
@@ -454,8 +457,14 @@ class JP4WC_Delivery{
 	 * @access public
 	 */
 	public function meta_box(){
-		global $post;
-		$shipping_fields = $this->shipping_fields($post);
+//		global $post;
+		if(isset($_GET['post'])){
+			$order_id = $_GET['post'];
+		}else{
+			$order_id = $_GET['id'];
+		}
+		$order = wc_get_order( $order_id );
+		$shipping_fields = $this->shipping_fields( $order );
 		echo '<div id="aftership_wrapper">';
 		foreach($shipping_fields as $key =>$value){
 			if( $value['type'] == 'text' ){
@@ -478,8 +487,8 @@ class JP4WC_Delivery{
 		$shipping_fields = $this->shipping_fields($post);
 		foreach ($shipping_fields as $field) {
 			if(isset($_POST[$field['id']]) && $_POST[$field['id']] != 0){
-				$order->set_meta_data( array( $field['id'] => wc_clean( $_POST[$field['id']] ) ) );
-				$order->save_meta_data();
+				$order->update_meta_data( $field['id'], wc_clean( $_POST[$field['id']] ) );
+				$order->save();
 			}
 		}
 	}
@@ -487,10 +496,11 @@ class JP4WC_Delivery{
 	 * Show the meta box for shipment info on the order page
  	 *
 	 * @access public
-     * @param object WC_Order
+     * @param object WP_Order
      * @return array
 	 */
 	public function shipping_fields( $order ){
+//		$order = wc_get_order( $post->ID );
 		$date = $order->get_meta( 'wc4jp-delivery-date', true );
 		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
         $delivery_date = $order->get_meta( 'wc4jp-tracking-ship-date', true );
@@ -520,7 +530,7 @@ class JP4WC_Delivery{
 				'value' => ($delivery_date) ? $delivery_date : ''
 			),
 		);
-		return apply_filters( 'wc4jp_shipping_fields', $shipping_fields, $post );
+		return apply_filters( 'wc4jp_shipping_fields', $shipping_fields, $order );
 	}
 }
 
