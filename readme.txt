@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 6.2.2
-Stable tag: 2.5.13
+Tested up to: 6.3.0
+Stable tag: 2.6.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -59,62 +59,14 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
-= 2.5.13 - 2023-07-02 =
-* Update - PeachPay 1.95.0
+= 2.6.1 & 2.6.2 & 2.6.3 - 2023-08-10 =
+* Fixed - The bug of display shipping phone at email.
+* Fixed - Order post meta display bug for shipping date and term.
 
-= 2.5.12 - 2023-06-23 =
-* Fixed - not required Manager Name for shortcode.
-
-= 2.5.11 - 2023-06-05 =
-* Fixed - Yahoo API endpoint setting bug.
-
-= 2.5.10 - 2023-05-13 =
-* Fixed - PayPal Payment frequent error messages.
-
-= 2.5.9 - 2023-05-05 =
-* Fixed - PayPal Payment Plugin conflict.
-* Tweak - Delete Delivery time and date placeholder.
-
-= 2.5.8 - 2023-05-04 =
-* Update - PayPal Payment 2.0.4.
-* Fixed - Law Page setting.
-* Fixed - Reflected Cross-Site Scripting.
-
-= 2.5.7 - 2023-05-02 =
-* Update - PeachPay 1.91.5.
-* Update - Fixed Reflected Cross-Site Scripting.
-
-= 2.5.6 - 2023-02-28 =
-* Update - Paidy Payments system Update to 1.2.
-
-= 2.5.5 - 2023-02-21 =
-* Fixed - Fixed Reflected Cross-Site Scripting.
-
-= 2.5.4 - 2023-02-10 =
-* Fixed - Fixed a bug in handling virtual goods.
-
-= 2.5.3 - 2022-07-25 =
-* Fixed - Automatic address entry from zip code using Yahoo! API bug.
-
-= 2.5.2 - 2022-07-05 =
-* Fixed - Paidy Payments bug.
-
-= 2.5.1 - 2022-07-04 =
-* Fixed - Automatic address entry from zip code using Yahoo! API bug.
-
-= 2.5.0 - 2022-07-01 =
-* Fixed - Replaced the old Yahoo! API with the new Yahoo! API mechanism.
-* Dev - For download products, a function to reduce input items
-
-= 2.4.1 - 2022-06-03 =
-* Fixed - The PayPal Payments bug.
-* Fixed - Some localize text-domains.
-* Dev - Add argument $order for following filter hooks, wc4jp_delivery_details_text, wc4jp_delivery_date_text, wc4jp_time_zone_text
-
-= 2.4.0 - 2022-06-01 =
-* Dev - Add New PayPal Checkout Payments.
-* Dev - Add telephone setting at law page.
-* Update - PeachPay 1.65.0.
+= 2.6.0 - 2023-08-03 =
+* Update - Compatible HPOS
+* Update - Changed the required version of WooCommerce to 6.0 or higher.
+* Fixed - Some bugs
 
 [more older](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
