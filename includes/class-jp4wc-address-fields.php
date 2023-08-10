@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.6.0
+ * @version     2.6.3
  * @category    Address Setting for Japan
  * @author      Artisan Workshop
  */
@@ -34,7 +34,6 @@ class AddressField4jp{
 		// Check Out Display for address
 		add_filter( 'woocommerce_order_formatted_billing_address', array( $this, 'jp4wc_billing_address'),10,2);
 		add_filter( 'woocommerce_order_formatted_shipping_address', array( $this, 'jp4wc_shipping_address'),20,2);
-		add_filter( 'woocommerce_order_get_formatted_shipping_address', array( $this, 'jp4wc_shipping_address_add_phone'),20,3);
 		add_action( 'woocommerce_admin_order_data_after_shipping_address', array( $this, 'admin_order_data_after_shipping_address'), 10 );
 		// include get_order function
 		add_filter( 'woocommerce_get_order_address', array( $this, 'jp4wc_get_order_address'),20,3);//includes/abstract/abstract-wc-order.php
@@ -255,26 +254,7 @@ class AddressField4jp{
 		return $fields;
 	}
 
-    /**
-     * Set shipping phone display for e-mail and complete page
-     *
-     * @since 2.2.13
-     * @param string address
-     * @param $raw_address
-     * @param object WC_Order
-     * @return string
-     */
-	public function jp4wc_shipping_address_add_phone( $address, $raw_address, $order ){
-	    if( is_order_received_page() || is_admin() ){
-            return $address;
-        }else{
-            $field_value = $order->get_shipping_phone();
-            $field_value = wc_make_phone_clickable( $field_value );
-            $phone_display = '<br />'. wp_kses_post( $field_value ) . '<br />';
-            return $address.$phone_display;
-        }
-    }
-    /**
+	/**
      * Display phone number of shipping address in admin screen
      *
      * @since  1.2

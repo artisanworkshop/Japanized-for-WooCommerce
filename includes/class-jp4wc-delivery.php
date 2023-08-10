@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.6.1
+ * @version     2.6.2
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
@@ -445,9 +445,9 @@ class JP4WC_Delivery{
 	public function add_meta_box(){
 		if(get_option( 'wc4jp-delivery-date' ) or get_option( 'wc4jp-delivery-time-zone' )){
 			$current_screen = get_current_screen();
-			
-//			add_meta_box('woocommerce-shipping-date-and-time', __('Shipping Detail', 'woocommerce-for-japan'), array(&$this, 'meta_box'), 'shop_order', 'side', 'high');
-			add_meta_box('woocommerce-shipping-date-and-time', __('Shipping Detail', 'woocommerce-for-japan'), array(&$this, 'meta_box'), $current_screen->id, 'side', 'high');
+			if($current_screen->id == 'shop_order' || $current_screen->id == 'woocommerce_page_wc-orders' ){
+				add_meta_box('woocommerce-shipping-date-and-time', __('Shipping Detail', 'woocommerce-for-japan'), array(&$this, 'meta_box'), $current_screen->id, 'side', 'high');
+			}
 		}
 	}
 
@@ -484,7 +484,7 @@ class JP4WC_Delivery{
      */
 	 public function save_meta_box( $post_id, $post ){
 		$order = wc_get_order( $post_id );
-		$shipping_fields = $this->shipping_fields($post);
+		$shipping_fields = $this->shipping_fields($order);
 		foreach ($shipping_fields as $field) {
 			if(isset($_POST[$field['id']]) && $_POST[$field['id']] != 0){
 				$order->update_meta_data( $field['id'], wc_clean( $_POST[$field['id']] ) );

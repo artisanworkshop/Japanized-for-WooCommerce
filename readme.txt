@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.3.0
-Stable tag: 2.6.1
+Stable tag: 2.6.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -59,10 +59,11 @@ The manual installation method involves downloading our plugin and uploading it 
 
 == Changelog ==
 
-= 2.6.1 - 2023-08-10 =
+= 2.6.1 & 2.6.2 & 2.6.3 - 2023-08-10 =
+* Fixed - The bug of display shipping phone at email.
 * Fixed - Order post meta display bug for shipping date and term.
 
-= 2.6.0 - 2023-07-24 =
+= 2.6.0 - 2023-08-03 =
 * Update - Compatible HPOS
 * Update - Changed the required version of WooCommerce to 6.0 or higher.
 * Fixed - Some bugs
