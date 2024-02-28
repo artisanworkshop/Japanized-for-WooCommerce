@@ -11,7 +11,7 @@ add_action( 'rest_api_init', function () {
 
 /**
  * Yahoo API Postal Code Webhook response.
- * Version: 2.5.0
+ * Version: 2.6.4
  *
  * @param object $request post data.
  * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
@@ -53,26 +53,30 @@ function yahoo_api_postcode( $request ){
 
 		// Convert from json to associative array
 	    $result_array = json_decode($result, true);
-	    $postcode_address = $result_array['Feature'][0]['Property']['Address'];
-	    $jp4wc_countries = new WC_Countries;
-	    $states = $jp4wc_countries->get_states();
-	    $set_prefecture_code = 0;
-	    $set_prefecture_name = 0;
-		foreach($states['JP'] as $key => $value){
-			if(mb_substr($value, 0, 3) === mb_substr( $postcode_address, 0, 3)){
-				$set_prefecture_code = $key;
-				$set_prefecture_name = $value;
+		if(isset($result_array['Feature'][0]['Property']['Address'])){
+			$postcode_address = $result_array['Feature'][0]['Property']['Address'];
+			$jp4wc_countries = new WC_Countries;
+			$states = $jp4wc_countries->get_states();
+			$set_prefecture_code = 0;
+			$set_prefecture_name = 0;
+			foreach($states['JP'] as $key => $value){
+				if(mb_substr($value, 0, 3) === mb_substr( $postcode_address, 0, 3)){
+					$set_prefecture_code = $key;
+					$set_prefecture_name = $value;
+				}
 			}
-		}
-		if($set_prefecture_code === 0){
-			return new WP_Error( 'no_address', 'No match address', array( 'status' => 404 ));
+			if($set_prefecture_code === 0){
+				return new WP_Error( 'no_address', 'No match address', array( 'status' => 404 ));
+			}else{
+				$postcode_result = array(
+					'state_code' => $set_prefecture_code,
+					'state' => $set_prefecture_name,
+					'city' => str_replace($states['JP'][$set_prefecture_code], '', $postcode_address),
+				);
+				return new WP_REST_Response($postcode_result, 200);
+			}
 		}else{
-			$postcode_result = array(
-				'state_code' => $set_prefecture_code,
-				'state' => $set_prefecture_name,
-				'city' => str_replace($states['JP'][$set_prefecture_code], '', $postcode_address),
-			);
-			return new WP_REST_Response($postcode_result, 200);
+			return new WP_Error( 'no_address', 'No match address', array( 'status' => 404 ));
 		}
     }else{
         // Debug

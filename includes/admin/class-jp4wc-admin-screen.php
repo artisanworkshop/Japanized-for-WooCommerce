@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.6.0
+ * @version     2.6.7
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
@@ -72,7 +72,7 @@ class JP4WC_Admin_Screen {
 	public function admin_info_page() {
 		include( 'views/html-admin-info-screen.php' );
 	}
-	
+
 	function jp4wc_setting_init(){
 
 		register_setting(
@@ -86,6 +86,13 @@ class JP4WC_Admin_Screen {
 			'jp4wc_general', __( 'Address Display Setting', 'woocommerce-for-japan' ),
 			'',
 			'jp4wc_setting'
+		);
+		add_settings_field(
+			'jp4wc_options_notice',
+			__( 'Notice', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_options_notice' ),
+			'jp4wc_setting',
+			'jp4wc_general'
 		);
 		add_settings_field(
 			'jp4wc_options_yomigana',
@@ -163,6 +170,21 @@ class JP4WC_Admin_Screen {
 			array( $this, 'jp4wc_virtual_order_billing_setting' ),
 			'jp4wc_setting',
 			'jp4wc_virtual'
+		);
+
+		// Tracking  Setting
+		add_settings_section(
+			'jp4wc_tracking', __( 'Usage tracking', 'woocommerce-for-japan' ),
+			'',
+			'jp4wc_setting'
+		);
+
+		add_settings_field(
+			'jp4wc_setting_tracking',
+			__( 'Tracking', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_tracking' ),
+			'jp4wc_setting',
+			'jp4wc_tracking'
 		);
 
 		// Delivery date designation
@@ -311,13 +333,6 @@ class JP4WC_Admin_Screen {
 			'jp4wc_options_cod2',
 			__( 'COD for Subscriptions', 'woocommerce-for-japan' ),
 			array( $this, 'jp4wc_options_cod2' ),
-			'jp4wc_payment',
-			'jp4wc_payments'
-		);
-		add_settings_field(
-			'jp4wc_options_peachpay',
-			__( 'PeachPay', 'woocommerce-for-japan' ),
-			array( $this, 'jp4wc_options_peachpay' ),
 			'jp4wc_payment',
 			'jp4wc_payments'
 		);
@@ -520,6 +535,7 @@ class JP4WC_Admin_Screen {
 					'billing_address_1',
 					'billing_address_2',
 					'billing_phone',
+					'tracking',
 				);
 				$this->jp4wc_save_methods( $add_methods );
 				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
@@ -531,21 +547,20 @@ class JP4WC_Admin_Screen {
 					'postofficebank',
 					'atstore',
 					'cod2',
-					'peachpay',
 					'jp4wc-paypal',
 				);
 				foreach($payment_methods as $payment_method){
 					$woocommerce_settings = get_option('woocommerce_'.$payment_method.'_settings');
 					if(isset($_POST[$payment_method]) && $_POST[$payment_method]){
 						update_option( $this->prefix.$payment_method, $_POST[$payment_method]);
-						if(isset($woocommerce_settings)){
+						if( isset( $woocommerce_settings ) && isset( $woocommerce_settings['enabled'] ) ){
 							$woocommerce_settings['enabled'] = 'yes';
 							update_option( 'woocommerce_'.$payment_method.'_settings', $woocommerce_settings);
 						}
                         do_action( 'jp4wc_save_methods_activation', $payment_method );
 					}else{
 						update_option( $this->prefix.$payment_method, '');
-						if(isset($woocommerce_settings)){
+						if( isset( $woocommerce_settings ) && isset( $woocommerce_settings['enabled'] ) ){
 							$woocommerce_settings['enabled'] = 'no';
 							update_option( 'woocommerce_'.$payment_method.'_settings', $woocommerce_settings);
 						}
@@ -681,6 +696,10 @@ class JP4WC_Admin_Screen {
 		}
 	}
 
+	public function jp4wc_options_notice(){
+		echo __( 'Regarding this setting, etc., we do not yet support block shopping carts or purchase procedures. Please use the shortcode to use this feature.', 'woocommerce-for-japan' );
+	}
+
 	/**
 	 * Yomigana option.
 	 */
@@ -758,6 +777,11 @@ class JP4WC_Admin_Screen {
         echo '<p>';
         _e( 'Check the address input field to hide in the virtual order.', 'woocommerce-for-japan' );
 		echo '</p>';
+	}
+
+	public function jp4wc_tracking(){
+		$description = __( 'Enable usage tracking', 'woocommerce-for-japan' );
+		$this->jp4wc_plugin->jp4wc_input_checkbox('tracking', $description, $this->prefix);
 	}
 
 	/**
@@ -947,7 +971,7 @@ class JP4WC_Admin_Screen {
 	 */
 	public function jp4wc_delivery_time_zone_mgn(){
 		$time_zone_details = array(
-			array ( 'start_time' => '08:00', 'end_time' => '12:00' ), 
+			array ( 'start_time' => '08:00', 'end_time' => '12:00' ),
 			array ( 'start_time' => '12:00', 'end_time' => '14:00' ),
 			array ( 'start_time' => '14:00', 'end_time' => '16:00' ),
 			array ( 'start_time' => '16:00', 'end_time' => '18:00' ),
@@ -990,15 +1014,6 @@ class JP4WC_Admin_Screen {
 		$title = __( 'COD for Subscriptions', 'woocommerce-for-japan' );
 		$description = $this->jp4wc_plugin->jp4wc_description_payment_pattern( $title );
 		$this->jp4wc_plugin->jp4wc_input_checkbox('cod2', $description, $this->prefix);
-	}
-
-	/**
-	 * PeachPay option.
-	 */
-	public function jp4wc_options_peachpay() {
-		$title = __( 'PeachPay', 'woocommerce-for-japan' );
-		$description = $this->jp4wc_plugin->jp4wc_description_payment_pattern( $title );
-		$this->jp4wc_plugin->jp4wc_input_checkbox('peachpay', $description, $this->prefix);
 	}
 
 	/**
@@ -1177,7 +1192,7 @@ class JP4WC_Admin_Screen {
      * @param array Default array
 	 */
 	 public function jp4wc_input_time_zone_html( $default_array ){
-		if(get_option( 'wc4jp_time_zone_details')){			
+		if(get_option( 'wc4jp_time_zone_details')){
 	    	$time_zone_details = get_option( 'wc4jp_time_zone_details',
 				array(
 					array(
@@ -1253,7 +1268,7 @@ class JP4WC_Admin_Screen {
 	 }
 	/**
 	 * Validate options.
-	 * 
+	 *
 	 * @param array $input
 	 * @return array
 	 */
@@ -1277,12 +1292,12 @@ class JP4WC_Admin_Screen {
 	 */
 	public function jp4wc_informations_services() {
 		echo sprintf(__('<a href="%s" target="_blank" title="Payment Setting Support">Payment Setting Support</a> :  We support Payment Plugins Setting.<br >', 'woocommerce-for-japan'),'https://wc.artws.info/shop/setting-support/payment-support/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information');
-		echo sprintf(__('<a href="%s" target="_blank" title="Maintenance Support">Maintenance Support</a> : We support your WordPress and WooCommmerce site, update or somethings.<br >', 'woocommerce-for-japan'),'https://wc.artws.info/shop/maintenance-support/woocommerce-professional-support-subscription/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information');
+		echo sprintf(__('<a href="%s" target="_blank" title="Maintenance Support">Maintenance Support</a> : We support your WordPress and WooCommmerce site, update or somethings.<br >', 'woocommerce-for-japan'),'https://wc4jp-pro.work/product/site-security-for-woo/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information');
 	}
 
 	/**
 	 * Enqueue admin scripts and styles.
-	 * 
+	 *
 	 * @param $page
 	 */
 	public function admin_enqueue_scripts( $page ) {

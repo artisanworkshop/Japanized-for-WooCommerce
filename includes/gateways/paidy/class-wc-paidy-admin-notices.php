@@ -119,7 +119,7 @@ class WC_Paidy_Admin_Notices {
                 }
             }
         }elseif( empty( $show_pr_notice ) && get_option('wc-paygent-paidy') == false){
-            $paidy_link = 'https://campaign.paidy.com/woocommerce';
+            $paidy_link = 'https://paidy.com/merchant/application/';
             /* translators: 1) Paidy PR link */
             $this->add_admin_notice( 'paidy_pr', 'notice notice-info', sprintf( __( 'Paidy payment is a monthly postpaid payment that is adopted by Amazon and Yodobashi Camera. <a href="%s">Click here for details.</a>.', 'woocommerce-for-japan' ), $paidy_link ), true );
         }

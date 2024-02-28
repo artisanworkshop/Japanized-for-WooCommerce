@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_LINEPay
  * @extends		WC_Payment_Gateway
- * @version		1.2.0
+ * @version		1.2.1
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -37,31 +37,21 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
     public $linepay_func;
 
     /**
-     * Environment mode
+     * Settings parameter
      *
-     * @var string
+     * @var mixed
      */
+    public $environment_details;
     public $environment;
-
-    /**
-     * Order Prefix text
-     *
-     * @var string
-     */
+    public $api_channel_id;
+    public $api_channel_secret_key;
+    public $test_api_channel_id;
+    public $test_api_channel_secret_key;
+    public $shop_name;
     public $order_prefix;
-
-    /**
-     * Payment Action mode
-     *
-     * @var string
-     */
     public $payment_action;
-
-    /**
-     * Debug mode
-     *
-     * @var string
-     */
+    public $cart_checkout_enabled;
+    public $contracted_name;
     public $debug;
 
     /**
@@ -96,13 +86,11 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
         // Define user set variables
 		$this->title        = $this->get_option( 'title' );
 		$this->description  = $this->get_option( 'description' );
-		$this->instructions = $this->get_option( 'instructions', $this->description );
 
 		// Actions Hook
         add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
         add_action( 'woocommerce_order_status_completed', array( $this, 'sales_complete' ) );
-//        add_action( 'woocommerce_before_cart', array($this, 'cart_cancel' ) );
         add_filter( 'gettext', array( $this, 'change_hiragana_validation'), 20, 3 );
         add_filter( 'woocommerce_thankyou_order_id', array( $this, 'linepay_set_order_data'), 20, 1);
     }

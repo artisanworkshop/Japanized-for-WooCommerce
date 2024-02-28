@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.6.2
+ * @version     2.6.4
  * @package 	Admin Screen
  * @author 		ArtisanWorkshop
  */
@@ -177,8 +177,8 @@ class JP4WC_Delivery{
                 __('Sat', 'woocommerce-for-japan')
             );
 
-            echo '<p class="form-row delivery-date" id="order_delivery_date_field">';
-            echo '<label for="delivery_date" class="">'.__('Preferred delivery date', 'woocommerce-for-japan' ).'</label>';
+            echo '<p class="form-row delivery-date" id="order_wc4jp_delivery_date_field">';
+            echo '<label for="wc4jp_delivery_date" class="">'.__('Preferred delivery date', 'woocommerce-for-japan' ).'</label>';
             echo '<select name="wc4jp_delivery_date" class="input-select" id="wc4jp_delivery_date">';
             if(get_option( 'wc4jp-delivery-date-required' ) != 1){
                 echo '<option value="0">'.$setting['unspecified-date'].'</option>';
@@ -210,8 +210,8 @@ class JP4WC_Delivery{
 	function delivery_time_display($setting){
 		$time_zone_setting = get_option( 'wc4jp_time_zone_details' );
 		if(get_option( 'wc4jp-delivery-time-zone' )){
-			echo '<p class="form-row delivery-time" id="order_delivery_time_field">';
-			echo '<label for="delivery_time_zone" class="">'.__('Delivery Time Zone', 'woocommerce-for-japan' ).'</label>';
+			echo '<p class="form-row delivery-time" id="order_wc4jp_delivery_time_field">';
+			echo '<label for="wc4jp_delivery_time_zone" class="">'.__('Delivery Time Zone', 'woocommerce-for-japan' ).'</label>';
 			echo '<select name="wc4jp_delivery_time_zone" class="input-select" id="wc4jp_delivery_time_zone">';
 			if(get_option( 'wc4jp-delivery-time-zone-required' ) != 1){
                 echo '<option value="0">'.$setting['unspecified-time'].'</option>';
@@ -457,13 +457,19 @@ class JP4WC_Delivery{
 	 * @access public
 	 */
 	public function meta_box(){
-//		global $post;
 		if(isset($_GET['post'])){
 			$order_id = $_GET['post'];
-		}else{
+		}elseif(isset($_GET['id'])){
 			$order_id = $_GET['id'];
+		}else{
+			$order_id = false;
 		}
-		$order = wc_get_order( $order_id );
+		
+		if($order_id){
+			$order = wc_get_order( $order_id );
+		}else{
+			$order = false;
+		}
 		$shipping_fields = $this->shipping_fields( $order );
 		echo '<div id="aftership_wrapper">';
 		foreach($shipping_fields as $key =>$value){
@@ -501,9 +507,13 @@ class JP4WC_Delivery{
 	 */
 	public function shipping_fields( $order ){
 //		$order = wc_get_order( $post->ID );
-		$date = $order->get_meta( 'wc4jp-delivery-date', true );
-		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
-        $delivery_date = $order->get_meta( 'wc4jp-tracking-ship-date', true );
+		if($order){
+			$date = $order->get_meta( 'wc4jp-delivery-date', true );
+			$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+			$delivery_date = $order->get_meta( 'wc4jp-tracking-ship-date', true );
+		}else{
+			$date = $time = $delivery_date = '';
+		}
 		$shipping_fields = array(
 			'wc4jp-delivery-date' => array(
 				'type' => 'text',

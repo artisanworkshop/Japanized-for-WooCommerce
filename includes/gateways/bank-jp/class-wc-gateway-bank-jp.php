@@ -16,13 +16,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class 		WC_Gateway_BANK_JP
  * @extends		WC_Payment_Gateway
- * @version		2.2.21
+ * @version		2.6.8
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
 class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 
     /**
+     * Settings parameter
+     *
+     * @var mixed
+     */
+	public $account_details;
+	public $bank_name;
+	public $bank_branch;
+	public $bank_type;
+	public $account_number;
+	public $account_name;
+	public $instructions;
+
+
+	/**
      * Constructor for the gateway.
      */
     public function __construct() {
@@ -35,14 +49,13 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 		// Load the settings.
 		$this->init_form_fields();
 		$this->init_settings();
-		
+
 		// Get setting values
 		foreach ( $this->settings as $key => $val ) $this->$key = $val;
 
         // Define user set variables
 		$this->title        = $this->get_option( 'title' );
 		$this->description  = $this->get_option( 'description' );
-		$this->instructions = $this->get_option( 'instructions' );
 
 		// BANK Japan account fields shown on the thanks page and in emails
 		$this->account_details = get_option( 'woocommerce_bankjp_accounts',
@@ -89,13 +102,6 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Make your payment directly into our bank account.', 'woocommerce-for-japan' ),
-				'desc_tip'    => true,
-			),
-			'instructions' => array(
-				'title'       => __( 'Instructions', 'woocommerce-for-japan' ),
-				'type'        => 'textarea',
-				'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce-for-japan' ),
-				'default'     => '',
 				'desc_tip'    => true,
 			),
 			'account_details' => array(
