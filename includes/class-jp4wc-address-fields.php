@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.6.3
+ * @version     2.6.5
  * @category    Address Setting for Japan
  * @author      Artisan Workshop
  */
@@ -62,6 +62,7 @@ class AddressField4jp{
         $fields['first_name']['class'] = array( 'form-row-last' );
         $fields['first_name']['priority'] = 20;
         $fields['postcode']['class'] = array( 'form-row-first' );
+        $fields['postcode']['type'] = 'tel';
         $fields['state']['class'] = array( 'form-row-last' );
 
 		return $fields;

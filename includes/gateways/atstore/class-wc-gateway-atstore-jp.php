@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 			WC_Gateway_AtStore_JP
  * @extends		WC_Payment_Gateway
- * @version		2.1.14
+ * @version		2.6.8
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -31,7 +31,6 @@ class WC_Gateway_AtStore_JP extends WC_Payment_Gateway {
 		// Define user set variables
 		$this->title        = $this->get_option( 'title' );
 		$this->description  = $this->get_option( 'description' );
-		$this->instructions = $this->get_option( 'instructions' );
 
 		// Actions
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -95,7 +94,7 @@ class WC_Gateway_AtStore_JP extends WC_Payment_Gateway {
      * @param bool $plain_text
      */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-	    $payment_method = $order->get_payment_method();
+	    $payment_method = version_compare( WC_VERSION, '2.7', '<' ) ? $order->payment_method : $order->get_payment_method();
         if ( $this->instructions && ! $sent_to_admin && 'atstore' === $payment_method && $order->has_status( 'on-hold' ) ) {
 			echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 		}

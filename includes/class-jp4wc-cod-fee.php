@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		JP4WC_Cod_Fee_Addons
  * @extends		WC_Gateway_COD
- * @version		2.0.5
+ * @version		2.6.7
  * @package		WooCommerce/Classes/Payment
  * @author		Artisan Workshop
  */
@@ -21,6 +21,13 @@ class JP4WC_Cod_Fee_Addons extends WC_Gateway_COD {
      * @var double
      */
     public $current_extra_charge_amount;
+
+    /**
+     * COD fee settings
+     *
+     * @var array
+     */
+    public $extra_charge_terms_of_use;
 
     /**
      * Constructor.

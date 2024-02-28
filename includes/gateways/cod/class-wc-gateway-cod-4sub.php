@@ -247,7 +247,7 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	 * @param bool $plain_text
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-	    $payment_method = $order->get_payment_method();
+	    $payment_method = version_compare( WC_VERSION, '2.7', '<' ) ? $order->payment_method : $order->get_payment_method();
 		if ( $this->instructions && ! $sent_to_admin && 'cod2' === $payment_method ) {
 			echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 		}

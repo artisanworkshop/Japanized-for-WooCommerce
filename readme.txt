@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 6.3.0
-Stable tag: 2.6.3
+Tested up to: 6.4.2
+Stable tag: 2.6.10
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -47,7 +47,7 @@ Automatic installation is the easiest option as WordPress handles the file trans
 In the search field type “Japanized For WooCommerce” and click Search Plugins. Once you’ve found our eCommerce plugin you can view details about it such as the the point release, rating and description. Most importantly of course, you can install it by simply clicking “Install Now”.
 
 = Manual installation =
-The manual installation method involves downloading our plugin and uploading it to your webserver via your favourite FTP application.
+The manual installation method involves downloading and uploading our plugin to your webserver via your favorite FTP application.
 
 == Screenshots ==
 
@@ -58,6 +58,31 @@ The manual installation method involves downloading our plugin and uploading it 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.6.10 - 2024-02-05 =
+* Fixed - Some bugs for notice.
+
+= 2.6.9 - 2024-01-26 =
+* Dev - Compatible checkout block for Paidy payments.
+
+= 2.6.8 - 2024-01-23 =
+* Dev - Compatible checkout block for at-store, bank-jp, postal office bank payments.
+
+= 2.6.7 - 2024-01-19 =
+* Fixed - Payment gateway warnign bugs.
+* Dev - Add JP4WC Tracker
+
+= 2.6.6 - 2023-11-28 =
+* Fixed - Update order on-hold email template.
+
+= 2.6.5 - 2023-10-27 =
+* Fixed - Input postalcode for iPhone behavior.
+* Dev - Remove peachPay plugin
+
+= 2.6.4 - 2023-09-26 =
+* Fixed - The bug of New Order at Admin.
+* Fixed - the label CSS at delivery time and date.
+* Fixed - Yahoo! API endpoint bug.
 
 = 2.6.1 & 2.6.2 & 2.6.3 - 2023-08-10 =
 * Fixed - The bug of display shipping phone at email.

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that represents admin notices.
  *
- * @version 2.3.7
+ * @version 2.6.10
  * @since 2.3.4
  */
 class JP4WC_Admin_Notices {
@@ -22,7 +22,7 @@ class JP4WC_Admin_Notices {
 	 * @since 2.3.4
 	 */
 	public function __construct() {
-//		add_action( 'admin_notices', array( $this, 'admin_jp4wc_notices' ) );
+		add_action( 'admin_notices', array( $this, 'admin_jp4wc_notices' ) );
 		add_action( 'wp_ajax_jp4wc_pr_dismiss_prompt', array( $this, 'jp4wc_dismiss_review_prompt' ) );
 	}
 
@@ -34,7 +34,7 @@ class JP4WC_Admin_Notices {
 
 		if ( ! empty( $_POST['type'] ) ) {
 			if ( 'remove' === $_POST['type'] ) {
-				update_option( 'jp4wc_pr_hide_notice', true );
+				update_option( 'jp4wc_pr_hide_notice', date_i18n( 'Y-m-d H:i:s' ) );
 				wp_send_json_success( array(
 					'status' => 'removed'
 				) );
@@ -46,7 +46,7 @@ class JP4WC_Admin_Notices {
 	 * Display any notices we've collected thus far.
 	 *
 	 * @since 2.3.4
-     * @version 2.3.6
+     * @version 2.6.8
 	 */
 	public function admin_jp4wc_notices() {
 		// Only show to WooCommerce admins
@@ -59,17 +59,22 @@ class JP4WC_Admin_Notices {
 			return;
 		}
 
+		// Notice removed by page
+		$allow_pages = array( 'wc-admin', 'wc-orders', 'wc-settings', 'wc-status', 'wc-reports', 'wc4jp-options' );
+		if ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allow_pages) ) {
+			// Notification display content
+			$this->jp4wc_pr_display();
+		}
+
 		// Delete notice when deadline expires
-		$today = new DateTime('now');
+/*		$today = new DateTime('now');
 		$end_day = new DateTime('2021-11-19');
 		$diff = $end_day->diff($today);
 		$diff_days = $diff->days;
 		if ( $diff_days <= 0 ) {
 			return;
-		}
+		}*/
 
-		// Notification display content
-		$this->jp4wc_pr_display( $diff_days );
     }
 
 	/**
@@ -77,19 +82,17 @@ class JP4WC_Admin_Notices {
 	 * or the environment changes after activation. Also handles upgrade routines.
 	 *
 	 * @since 2.3.4
-     * @version 2.3.6
+     * @version 2.6.8
 	 */
-	public function jp4wc_pr_display( $diff_days ) {
-		$pr_link = 'https://wooecfes.jp/';
-		/* translators: 1) Japanixed for WooCommerce PR link */
+	public function jp4wc_pr_display() {
+		$pr_link = 'https://wc4jp-pro.work/product/site-security-for-woo/';
+		/* translators: 1) Japanized for WooCommerce PR link */
 		?>
         <div class="notice notice-info is-dismissible jp4wc-pr-notice" id="pr_jp4wc">
-            <div id="pr_jp4wc_wooecfes2021">
-                <p><?php echo sprintf( __('WooCommerce\'s online conference <b><a href="%s?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=wooecfses2021" target="_blank">[Woo EC Fes Japan 2021]</b></a> will be held in Japan from November 19th to 20th, 2021.', 'woocommerce-for-japan' ), $pr_link );?><br />
-					<?php _e('You can get knowledge about online shops and learn the functions of WooCommerce from some Contributors.', 'woocommerce-for-japan' );?><br />
-                    <strong style="color:orangered;font-size: large;"><?php echo sprintf( __('%s days until the event!', 'woocommerce-for-japan' ), $diff_days );?></strong>
+            <div id="pr_jp4wc_">
+                <p><?php echo sprintf( __('<a href="%s?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=wooecfses2021" target="_blank">Run WooCommerce safely with regular updates, security monitoring, and a quick alert system.</a>', 'woocommerce-for-japan' ), $pr_link );?><br />
+					<?php _e( 'If you have not taken measures yet, please take measures for WooCommerce dedicated site monitoring starting from 2,200 yen per month.', 'woocommerce-for-japan' );?>
                 </p>
-                <p> <?php echo sprintf( __( 'Please join us. <a href="%stickets/?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=wooecfses2021" target="_blank">Click here to apply.</a>', 'woocommerce-for-japan' ), $pr_link ); ?>🙂</p>
             </div>
         </div>
         <script>

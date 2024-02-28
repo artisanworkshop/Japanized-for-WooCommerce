@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_Paidy
  * @extends		WC_Payment_Gateway
- * @version		1.3.0
+ * @version		1.4.0
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -30,43 +30,29 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
     public $jp4wc_framework;
 
     /**
-     * debug mode
+     * Settings parameter
      *
      * @var string
      */
-    public $debug;
-
-    /**
-     * Environment mode
-     *
-     * @var string
-     */
+    public $paidy_description;
+    public $order_button_text;
     public $environment;
-
-    /**
-     * API secret key
-     *
-     * @var string
-     */
+    public $api_public_key;
     public $api_secret_key;
-
-    /**
-     * Test (Sandbox) API secret key
-     *
-     * @var string
-     */
+    public $test_api_public_key;
     public $test_api_secret_key;
     public $store_name;
-    public $api_public_key;
-	public $test_api_public_key;
-	public $notice_email;
+    public $logo_image_url;
+    public $debug;
+    public $webhook;
+    public $notice_email;
 
     /**
      * Constructor for the gateway.
      */
     public function __construct() {
 		$this->id                 = 'paidy';
-		$this->icon               = apply_filters('woocommerce_paidy_icon', JP4WC_URL_PATH . '/assets/images/paidy_logo_100_2023.png');
+//		$this->icon               = apply_filters('woocommerce_paidy_icon', 'assets/images/paidy_logo_100_2023.png');
 		$this->has_fields         = false;
         $this->order_button_text = sprintf(__( 'Proceed to %s', 'woocommerce-for-japan' ), __('Paidy', 'woocommerce-for-japan' ));
 
@@ -90,7 +76,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         // Define user set variables
 		$this->title        = $this->get_option( 'title' );
 		$this->description  = $this->get_option( 'description' );
-		$this->instructions = $this->get_option( 'instructions', $this->description );
 
 		// Actions Hook
         add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
@@ -106,9 +91,9 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 
         add_action( 'woocommerce_order_status_completed', array( $this, 'jp4wc_order_paidy_status_completed' ) );
         add_action( 'woocommerce_order_status_cancelled', array( $this, 'jp4wc_order_paidy_status_cancelled' ) );
-    }
+	}
 
-    /**
+	/**
      * Initialise Gateway Settings Form Fields
      */
 	public function init_form_fields() {
@@ -319,29 +304,22 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         $states = $jp4wc_countries->get_states();
 
         //Get products and coupons information from order
-        $order_items = apply_filters( 'jp4wc_paidy_order_items', $order->get_items(array('line_item','coupon')) );
+        $order_items = apply_filters( 'jp4wc_paidy_order_items', $order->get_items( 'line_item' ) );
         $items_count = 0;
         $cart_total = 0;
         $fees = $order->get_fees();
         $items = '';
         $paidy_amount = 0;
         foreach( $order_items as $key => $item){
-            if(isset($item['product_id'])) {
-                $item['name'] = str_replace('"','\"',$item['name']);
-                $unit_price = round($item['subtotal'] / $item['quantity'], 0);
+            if( $item->get_product_id() ) {
+                $item_name = str_replace( '"','\"',$item->get_name() );
+                $unit_price = round($item->get_subtotal() / $item->get_quantity(), 0);
                 $items .= '{
-                    "id":"' . $item['product_id'] . '",
-                    "quantity":' . $item['quantity'] . ',
-                    "title":"' . $item['name'] . '",
+                    "id":"' . $item->get_product_id() . '",
+                    "quantity":' . $item->get_quantity() . ',
+                    "title":"' . $item_name . '",
                     "unit_price":' . $unit_price;
-                $paidy_amount += $item['quantity']*$unit_price;
-            }elseif(isset($item['discount'])){
-                $items .= '{
-                    "id":"'.$item['code'].'",
-                    "quantity":1,
-                    "title":"'.$item['name'].'",
-                    "unit_price":-'.$item['discount'];
-                $paidy_amount -= $item['discount'];
+                $paidy_amount += $item->get_quantity()*$unit_price;
             }
             if ($item === end($order_items) and (!isset($fees))) {
                 $items .= '}
@@ -350,10 +328,29 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                 $items .= '},
                     ';
             }
-            $items_count += $item['quantity'];
-            $cart_total += $item['subtotal'];
+		}
+        $order_coupons = apply_filters( 'jp4wc_paidy_order_coupons', $order->get_items( 'coupon' ) );
+        foreach( $order_coupons as $key => $coupon){
+			if( $coupon->get_discount() ){
+                $items .= '{
+                    "id":"'.$coupon->get_code().'",
+                    "quantity":1,
+                    "title":"'.$coupon->get_name().'",
+                    "unit_price":-'.$coupon->get_discount();
+                $paidy_amount -= $coupon->get_discount();
+            }
+            if ($coupon === end($order_items) and (!isset($fees))) {
+                $items .= '}
+';
+            }else{
+                $items .= '},
+                    ';
+            }
+            $items_count += $coupon->get_quantity();
+            $cart_total += $coupon->get_subtotal();
         }
-        if(isset( $fees )){
+
+		if(isset( $fees )){
             $i = 1;
             foreach ( $fees as $fee ){
                 $items .= '{
@@ -495,7 +492,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                             "items": [
                                 <?php echo $items;?>
 
-                            ],
+						],
                             "order_ref": "<?php echo $paidy_order_ref; ?>",
                             <?php if($not_virtual)echo '"shipping": '.$order->get_shipping_total().','; ?>
                             "tax": <?php echo $tax;?>
@@ -834,6 +831,30 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         return true;
     }
 
+	/**
+     * Check Paidy payment details by payment_id
+     *
+     * @param string $payment_id
+     * @return void
+     */
+    public function paidy_get_payment_data( $payment_id ){
+        $send_url = 'https://api.paidy.com/payments/' . $payment_id ;
+        $args = array(
+            'method' => 'GET',
+            'body' => '',
+            'headers' => array(
+                'Content-Type' => 'application/json',
+                'Paidy-Version' => '2018-04-10',
+                'Authorization' => 'Bearer ' . $this->set_api_secret_key()
+            )
+        );
+		$payment_order = wp_remote_post( $send_url, $args );
+		if( isset($payment_order['response']['code']) || $payment_order['response']['code'] != 200 ){
+			return false;
+		}
+		return json_decode($payment_order['body']);
+    }
+
     /**
      * Send notice e-mail to shop owner
      *
@@ -959,6 +980,22 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 
         return ob_get_clean();
     }
+
+	/**
+	 * Registers WooCommerce Blocks integration.
+	 *
+	 */
+	public static function wc_paidy_blocks_support(){
+		if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+			add_action(
+				'woocommerce_blocks_payment_method_type_registration',
+				function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry  $payment_method_registry ) {
+					require_once 'class-wc-payments-paidy-blocks-support.php';
+					$payment_method_registry->register( new WC_Gateway_Paidy_Blocks_Support() );
+				}
+			);
+		}
+	}
 }
 
 if( function_exists( 'add_wc4jp_paidy_gateway' ) === false ){
@@ -989,4 +1026,12 @@ if( function_exists( 'wc4jp_paidy_available_gateways' ) === false ) {
     }
 
     add_filter('woocommerce_available_payment_gateways', 'wc4jp_paidy_available_gateways');
+}
+add_shortcode( 'test_display', 'test_display' );
+function test_display(){
+	$payment_id = 'pay_ZMr_CFMAAFMAc_Bj';
+	$disp = new WC_Gateway_Paidy();
+	$order = $disp->paidy_get_payment_data( $payment_id );
+	echo $order->id."TEST</br>";
+	print_r($order);
 }

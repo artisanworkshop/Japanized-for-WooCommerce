@@ -3,13 +3,13 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.6.3
+ * Version: 2.6.10
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  * Requires at least: 5.0
- * Tested up to: 6.3.0
+ * Tested up to: 6.4.3
  * WC requires at least: 6.0
- * WC tested up to: 8.0.1
+ * WC tested up to: 8.5.2
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
@@ -33,7 +33,7 @@ class JP4WC{
 	 *
 	 * @var string
 	 */
-	public $version = '2.6.3';
+	public $version = '2.6.10';
 
     /**
      * Japanized for WooCommerce Framework version.
@@ -90,6 +90,7 @@ class JP4WC{
         $this->define_constants();
         register_deactivation_hook( JP4WC_PLUGIN_FILE, array( $this, 'on_deactivation' ) );
         add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ), 20 );
+        add_action( 'woocommerce_blocks_loaded', array( $this, 'jp4wc_blocks_support' ) );
     }
 
     /**
@@ -140,6 +141,8 @@ class JP4WC{
 		if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\'.$version_text.'\\JP4WC_Plugin' ) ) {
             require_once JP4WC_INCLUDES_PATH . 'jp4wc-framework/class-jp4wc-framework.php';
 		}
+        // Install
+        require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
         // Admin Setting Screen
         require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-screen.php';
         require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
@@ -175,11 +178,6 @@ class JP4WC{
 	        require_once JP4WC_INCLUDES_PATH . 'gateways/paypal/woocommerce-paypal-payments.php';
         }
 
-        // Add PeachPay Checkout
-		if ( ! is_plugin_active( 'peachpay-for-woocommerce/peachpay.php' ) && get_option('wc4jp-peachpay') ) {
-//			require_once JP4WC_INCLUDES_PATH . 'gateways/peachpay/peachpay.php';
-		}
-
         // Include the main WooCommerce class.
         if ( ! class_exists( 'WC_Gateway_Paidy', false ) ) {
             // Add Paidy Checkout
@@ -200,6 +198,8 @@ class JP4WC{
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-subscriptions.php';
 		// Add Virtual setting
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-virtual.php';
+        // Usage tracking
+		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-usage-tracking.php';
 	}
 
     /**
@@ -280,6 +280,44 @@ class JP4WC{
 
 		update_option( 'wc4jp_admin_footer_text_rated', 1 );
 		die();
+	}
+
+	/**
+	 * Registers WooCommerce Blocks integration.
+	 *
+	 */
+	public static function jp4wc_blocks_support(){
+		if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+			if( get_option( 'wc4jp-postofficebank' ) ) add_action(
+				'woocommerce_blocks_payment_method_type_registration',
+				function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry  $payment_method_registry ) {
+					require_once 'includes/blocks/class-wc-payments-postofficebank-blocks-support.php';
+					$payment_method_registry->register( new WC_Gateway_PostOfficeBank_Blocks_Support() );
+				}
+			);
+			if( get_option( 'wc4jp-bankjp' ) ) add_action(
+				'woocommerce_blocks_payment_method_type_registration',
+				function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry  $payment_method_registry ) {
+					require_once 'includes/blocks/class-wc-payments-bank-jp-blocks-support.php';
+					$payment_method_registry->register( new WC_Gateway_BANK_JP_Blocks_Support() );
+				}
+			);
+			if( get_option('wc4jp-atstore') ) add_action(
+				'woocommerce_blocks_payment_method_type_registration',
+				function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry  $payment_method_registry ) {
+					require_once 'includes/blocks/class-wc-payments-atstore-blocks-support.php';
+					$payment_method_registry->register( new WC_Gateway_AtStore_Blocks_Support() );
+				}
+			);
+
+			add_action(
+				'woocommerce_blocks_payment_method_type_registration',
+				function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry  $payment_method_registry ) {
+					require_once 'includes/gateways/paidy/class-wc-payments-paidy-blocks-support.php';
+					$payment_method_registry->register( new WC_Gateway_Paidy_Blocks_Support() );
+				}
+			);
+		}
 	}
 
 	/**
