@@ -189,6 +189,7 @@ class JP4WC_Delivery{
                 $display_date[$i] = get_date_from_gmt($set_display_date, __('Y/m/d', 'woocommerce-for-japan' ));
                 if($setting['day-of-week']){
                     $week_name = $week[$delivery_start_day->format("w")];
+					/* translators: %s: Week name */
                     $display_date[$i] = $display_date[$i].sprintf(__( '(%s)', 'woocommerce-for-japan' ), $week_name);
                 }
                 echo '<option value="'.$value_date[$i].'">'.$display_date[$i].'</option>';
