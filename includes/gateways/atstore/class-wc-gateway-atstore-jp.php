@@ -9,11 +9,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 			WC_Gateway_AtStore_JP
  * @extends		WC_Payment_Gateway
- * @version		2.6.8
+ * @version		2.6.11
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
 class WC_Gateway_AtStore_JP extends WC_Payment_Gateway {
+
+    /**
+     * Settings parameter
+     *
+     * @var string
+     */
+	public $instructions;
 
     /**
      * Constructor for the gateway.
@@ -23,6 +30,7 @@ class WC_Gateway_AtStore_JP extends WC_Payment_Gateway {
 		$this->has_fields         = false;
 		$this->method_title       = __( 'Pay At Store', 'woocommerce-for-japan' );
 		$this->method_description = __( 'Allows At Store payments.', 'woocommerce-for-japan' );
+		$this->instructions = '';
 
 		// Load the settings.
 		$this->init_form_fields();
