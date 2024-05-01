@@ -30,7 +30,6 @@ class WC_Gateway_AtStore_JP extends WC_Payment_Gateway {
 		$this->has_fields         = false;
 		$this->method_title       = __( 'Pay At Store', 'woocommerce-for-japan' );
 		$this->method_description = __( 'Allows At Store payments.', 'woocommerce-for-japan' );
-		$this->instructions = '';
 
 		// Load the settings.
 		$this->init_form_fields();
