@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_PostOfficeBank_JP
  * @extends		WC_Payment_Gateway
- * @version		2.6.8
+ * @version		2.6.12
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -96,6 +96,13 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Make your payment directly into our Post Office Bank account.', 'woocommerce-for-japan' ),
+				'desc_tip'    => true,
+			),
+			'instructions' => array(
+				'title'       => __( 'Instructions', 'woocommerce-for-japan' ),
+				'type'        => 'textarea',
+				'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce-for-japan' ),
+				'default'     => '',
 				'desc_tip'    => true,
 			),
 			'account_details' => array(
