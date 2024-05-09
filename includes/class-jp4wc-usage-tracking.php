@@ -579,6 +579,84 @@ class JP4WC_Tracker {
 	}
 
 	/**
+	 * Get order totals.
+	 *
+	 * @since 5.4.0
+	 * @return array
+	 */
+	public static function get_last_month_order_totals() {
+		global $wpdb;
+
+		$orders_table = OrdersTableDataStore::get_orders_table_name();
+        $one_month_ago = date( "Y-m-d H:i:s", strtotime("-1 month") );
+
+		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$monthly_gross_total = $wpdb->get_var(
+				"
+				SELECT SUM(total_amount) AS 'gross_total'
+				FROM $orders_table
+				WHERE date_created_gmt > '$one_month_ago'
+                    AND status in ('wc-completed', 'wc-refunded');
+			"
+			);
+			// phpcs:enable
+		} else {
+			$monthly_gross_total = $wpdb->get_var(
+				"
+					SELECT
+						SUM( order_meta.meta_value ) AS 'gross_total'
+					FROM {$wpdb->prefix}posts AS orders
+					LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+					WHERE order_meta.meta_key = '_order_total'
+                        AND orders.post_date_gmt > '$one_month_ago'
+                        AND orders.post_status in ( 'wc-completed', 'wc-refunded' )
+					GROUP BY order_meta.meta_key
+				"
+			);
+		}
+
+		if ( is_null( $monthly_gross_total ) ) {
+			$monthly_gross_total = 0;
+		}
+
+        if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$monthly_processing_gross_total = $wpdb->get_var(
+				"
+				SELECT SUM(total_amount) AS 'gross_total'
+				FROM $orders_table
+				WHERE date_created_gmt > '$one_month_ago'
+                    AND status = 'wc-processing';
+			"
+			);
+			// phpcs:enable
+		} else {
+			$monthly_processing_gross_total = $wpdb->get_var(
+				"
+				SELECT
+					SUM( order_meta.meta_value ) AS 'gross_total'
+				FROM {$wpdb->prefix}posts AS orders
+				LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+				WHERE order_meta.meta_key = '_order_total'
+                    AND orders.post_date_gmt >= '$one_month_ago'
+                    AND orders.post_status = 'wc-processing'
+				GROUP BY order_meta.meta_key
+			"
+			);
+		}
+
+		if ( is_null( $monthly_processing_gross_total ) ) {
+			$monthly_processing_gross_total = 0;
+		}
+
+		return array(
+			'monthly_gross'    => $monthly_gross_total,
+			'monthly_processing_gross' => $monthly_processing_gross_total,
+		);
+	}
+
+	/**
 	 * Get last order date.
 	 *
 	 * @return string

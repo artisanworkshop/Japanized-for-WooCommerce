@@ -46,6 +46,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
     public $debug;
     public $webhook;
     public $notice_email;
+	public $instructions;
 
     /**
      * Constructor for the gateway.

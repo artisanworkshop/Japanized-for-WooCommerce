@@ -1,0 +1,9 @@
+/* CSS Document */
+div#jp4wc_admin_dashboard_php_notice div.postbox-header{background-color: crimson;}
+div#jp4wc_admin_dashboard_php_notice div.postbox-header h2.ui-sortable-handle{color: white;}
+div#jp4wc_admin_dashboard_php_notice div.postbox-header .handle-order-higher, div#jp4wc_admin_dashboard_php_notice div.postbox-header .handle-order-lower , div#jp4wc_admin_dashboard_php_notice div.postbox-header .handlediv .toggle-indicator{color: white;}
+div#jp4wc_admin_dashboard_php_notice .description div {
+    margin-top: 11px;
+    float: left;
+    width: 70%;
+}

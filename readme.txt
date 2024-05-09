@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 6.5.2
-Stable tag: 2.6.11
+Tested up to: 6.5.3
+Stable tag: 2.6.12
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -59,8 +59,12 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.6.11 - 2024-05-01 =
+= 2.6.12 - 2024-05-09 =
+* Dev - Warning display for PHP version sites whose support has expired.
 * Fixed - Some bugs for AtStore Payment gateway.
+
+= 2.6.11 - 2024-05-01 =
+* Fixed - Some bugs for some Payment gateway.
 
 = 2.6.10 - 2024-02-05 =
 * Fixed - Some bugs for notice.

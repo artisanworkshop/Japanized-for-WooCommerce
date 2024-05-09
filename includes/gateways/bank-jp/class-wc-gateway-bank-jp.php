@@ -35,7 +35,6 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 	public $account_name;
 	public $instructions;
 
-
 	/**
      * Constructor for the gateway.
      */
@@ -102,6 +101,13 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Make your payment directly into our bank account.', 'woocommerce-for-japan' ),
+				'desc_tip'    => true,
+			),
+			'instructions' => array(
+				'title'       => __( 'Instructions', 'woocommerce-for-japan' ),
+				'type'        => 'textarea',
+				'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce-for-japan' ),
+				'default'     => '',
 				'desc_tip'    => true,
 			),
 			'account_details' => array(

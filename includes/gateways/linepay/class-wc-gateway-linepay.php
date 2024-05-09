@@ -53,6 +53,7 @@ class WC_Gateway_LINEPay extends WC_Payment_Gateway {
     public $cart_checkout_enabled;
     public $contracted_name;
     public $debug;
+	public $instructions;
 
     /**
      * Constructor for the gateway.
