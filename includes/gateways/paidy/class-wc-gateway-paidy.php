@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_Paidy
  * @extends		WC_Payment_Gateway
- * @version		1.4.0
+ * @version		1.4.1
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -307,7 +307,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
         //Get products and coupons information from order
         $order_items = apply_filters( 'jp4wc_paidy_order_items', $order->get_items( 'line_item' ) );
         $items_count = 0;
-        $cart_total = 0;
         $fees = $order->get_fees();
         $items = '';
         $paidy_amount = 0;
@@ -348,7 +347,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
                     ';
             }
             $items_count += $coupon->get_quantity();
-            $cart_total += $coupon->get_subtotal();
         }
 
 		if(isset( $fees )){
