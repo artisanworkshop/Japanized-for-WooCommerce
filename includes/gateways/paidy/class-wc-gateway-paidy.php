@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_Paidy
  * @extends		WC_Payment_Gateway
- * @version		1.4.1
+ * @version		1.4.2
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -342,7 +342,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
             if ($coupon === end($order_items) and (!isset($fees))) {
                 $items .= '}
 ';
-            }else{
+            }elseif( $coupon->get_discount() ){
                 $items .= '},
                     ';
             }
