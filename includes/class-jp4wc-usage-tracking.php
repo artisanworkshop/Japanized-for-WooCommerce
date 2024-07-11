@@ -6,7 +6,7 @@
  * No personal information is tracked, only general WooCommerce settings, general product, order and user counts and admin email for discount code.
  *
  * @class JP4WC_Tracker
- * @since 2.6.7
+ * @since 2.6.15
  * @package JP4WC\Classes
  */
 
@@ -133,7 +133,7 @@ class JP4WC_Tracker {
 
 		// General site info.
 		$data['url']      = home_url();
-		$data['store_id'] = get_option( \WC_Install::STORE_ID_OPTION, null );
+		if( defined( \WC_Install::STORE_ID_OPTION) )$data['store_id'] = get_option( \WC_Install::STORE_ID_OPTION, null );
 		$data['blog_id']  = class_exists( 'Jetpack_Options' ) ? Jetpack_Options::get_option( 'id' ) : null;
 
 		/**

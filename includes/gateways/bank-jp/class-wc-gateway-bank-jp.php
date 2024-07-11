@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class 		WC_Gateway_BANK_JP
  * @extends		WC_Payment_Gateway
- * @version		2.6.8
+ * @version		2.6.15
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -33,8 +33,20 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 	public $bank_type;
 	public $account_number;
 	public $account_name;
+
+	/**
+	 * Gateway instructions that will be added to the thank you page and emails.
+	 *
+	 * @var string
+	 */
 	public $instructions;
 
+	/**
+	 * Display location of the transfer account information on the e-mail.
+	 *
+	 * @var int
+	 */
+	public $display_location;
 
 	/**
      * Constructor for the gateway.
@@ -56,6 +68,7 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
         // Define user set variables
 		$this->title        = $this->get_option( 'title' );
 		$this->description  = $this->get_option( 'description' );
+		$this->instructions = $this->get_option( 'instructions' );
 
 		// BANK Japan account fields shown on the thanks page and in emails
 		$this->account_details = get_option( 'woocommerce_bankjp_accounts',
@@ -76,7 +89,11 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 	    add_action( 'woocommerce_thankyou_bankjp', array( $this, 'thankyou_page' ) );
 
 	    // Customer Emails
-	    add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
+		if( $this->display_location ){
+			add_action( 'woocommerce_email_order_details', array( $this, 'email_instructions' ), $this->display_location, 3 );
+		}else{
+			add_action( 'woocommerce_email_order_details', array( $this, 'email_instructions' ), 9, 3 );
+		}
     }
 
     /**
@@ -102,6 +119,21 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Make your payment directly into our bank account.', 'woocommerce-for-japan' ),
+				'desc_tip'    => true,
+			),
+			'instructions'    => array(
+				'title'       => __( 'Instructions', 'woocommerce-for-japan' ),
+				'type'        => 'textarea',
+				'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce-for-japan' ) . ' ' .
+					__( 'Unless customized by an extension plugin, 9 will be before the order and 15 will be after the order.', 'woocommerce-for-japan' ),
+				'default'     => '',
+				'desc_tip'    => true,
+			),
+			'display_location' => array(
+				'title'       => __( 'Transfer account display Location', 'woocommerce-for-japan' ),
+				'type'        => 'number',
+				'description' => __( 'The location of the transfer account information on the e-mail.', 'woocommerce-for-japan' ),
+				'default'     => 9,
 				'desc_tip'    => true,
 			),
 			'account_details' => array(
@@ -222,7 +254,7 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 		if ( $this->instructions ) {
         	echo wp_kses_post( wpautop( wptexturize( wp_kses_post( $this->instructions ) ) ) );
         }
-        $this->bank_details( $order_id );
+        $this->html_bank_details( $order_id );
     }
 
 	/**
@@ -240,7 +272,11 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 				echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 			}
 			$order_id = $order->get_id();
-			$this->bank_details( $order_id );
+			if( $plain_text ){
+				$this->text_bank_details( $order_id );
+			}else{
+				$this->html_bank_details( $order_id );
+			}
 		}
     }
 
@@ -249,26 +285,25 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 	 *
 	 * @param int $order_id Order ID.
 	 */
-    private function bank_details( $order_id = '' ) {
+    private function html_bank_details( $order_id = '' ) {
 
     	if ( empty( $this->account_details ) ) {
     		return;
     	}
 
-    	$html = '<h2>' . __( 'Our Bank Details', 'woocommerce-for-japan' ) . '</h2>' . PHP_EOL;
-
     	$bankjp_accounts = apply_filters( 'woocommerce_bankjp_accounts', $this->account_details );
 
     	if ( ! empty( $bankjp_accounts ) ) {
+			$html = '<h2>' . __( 'Bank Account Details', 'woocommerce-for-japan' ) . '</h2>' . PHP_EOL;
 			$number_label = __( 'Account Number', 'woocommerce-for-japan' );
 			$name_label = __( 'Account Name', 'woocommerce-for-japan' );
+			$html .= '<ul class="order_details bankjp_details" style="margin-bottom: 18px;">' . "\n";
 	    	foreach ( $bankjp_accounts as $bankjp_account ) {
-			    $html .= '<ul class="order_details bankjp_details">' . "\n";
 
 	    		$bankjp_account = (object) $bankjp_account;
 
 	    		// BANK account fields shown on the thanks page and in emails
-				$account_fields = apply_filters( 'woocommerce_bankjp_account_fields', array(
+				$account_field = apply_filters( 'woocommerce_bankjp_account_fields', array(
 					'account_info'=> array(
 						'bank_name' => $bankjp_account->bank_name,
 						'bank_branch' => $bankjp_account->bank_branch,
@@ -278,19 +313,56 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 					)
 				), $order_id );
 
-	    		foreach ( $account_fields as $field_key => $field ) {
-				    $html .= '<li class="' . esc_attr( $field_key ) . '">'."\n".'<strong>' . implode( ' - ', array_filter( array( esc_attr( $field['bank_name'] ), esc_attr( $field['bank_branch'] ),esc_attr( $field['bank_type'] ) ) ) ) . '</strong><br/>';
-				    $html .= $number_label . ': <strong>' . wptexturize( $field['value'] ) . '</strong><br/>';
-				    $html .= $name_label . ': <strong>' . wptexturize( $field['account_name'] ) . '</strong>'."\n".'</li>';
-				}
+			    $html .= '<li class="account_info">'."\n".'<strong>' . implode( ' - ', array_filter( array( esc_attr( $account_field['account_info']['bank_name'] ), esc_attr( $account_field['account_info']['bank_branch'] ),esc_attr( $account_field['account_info']['bank_type'] ) ) ) ) . '</strong><br/>';
+			    $html .= $number_label . ': <strong>' . wptexturize( $account_field['account_info']['value'] ) . '</strong><br/>';
+			    $html .= $name_label . ': <strong>' . wptexturize( $account_field['account_info']['account_name'] ) . '</strong>'."\n".'</li>';
 
-			    $html .= '</ul>';
 	    	}
+			$html .= '</ul>';
+			echo apply_filters( 'jp4wc_bank_details', $html, $bankjp_accounts, $order_id );
 	    }
-        echo apply_filters( 'jp4wc_bank_details', $html, $bankjp_accounts, $order_id );
     }
 
-    /**
+	/**
+	 * Get bank details and place into a list format.
+	 *
+	 * @param int $order_id Order ID.
+	 */
+    private function text_bank_details( $order_id = '' ) {
+
+    	if ( empty( $this->account_details ) ) {
+    		return;
+    	}
+
+    	$bankjp_accounts = apply_filters( 'woocommerce_bankjp_accounts', $this->account_details );
+
+    	if ( ! empty( $bankjp_accounts ) ) {
+			$text = __( 'Bank Account Details', 'woocommerce-for-japan' ) . "\n" . PHP_EOL;
+			$number_label = __( 'Account Number', 'woocommerce-for-japan' );
+			$name_label = __( 'Account Name', 'woocommerce-for-japan' );
+	    	foreach ( $bankjp_accounts as $bankjp_account ) {
+	    		$bankjp_account = (object) $bankjp_account;
+
+	    		// BANK account fields shown on the thanks page and in emails
+				$account_field = apply_filters( 'woocommerce_bankjp_account_fields', array(
+					'account_info'=> array(
+						'bank_name' => $bankjp_account->bank_name,
+						'bank_branch' => $bankjp_account->bank_branch,
+						'bank_type' => $bankjp_account->bank_type,
+						'value' => $bankjp_account->account_number,
+						'account_name' => $bankjp_account->account_name,
+					)
+				), $order_id );
+
+			    $text .= implode( ' - ', array_filter( array( esc_attr( $account_field['account_info']['bank_name'] ), esc_attr( $account_field['account_info']['bank_branch'] ), esc_attr( $account_field['account_info']['bank_type'] ) ) ) ) . "\n";
+			    $text .= $number_label . ': ' . wptexturize( $account_field['account_info']['value'] ) . "\n";
+			    $text .= $name_label . ': ' . wptexturize( $account_field['account_info']['account_name'] ) . "\n" . "\n";
+	    	}
+			echo apply_filters( 'jp4wc_text_bank_details', $text, $bankjp_accounts, $order_id );
+	    }
+    }
+
+	/**
      * Process the payment and return the result
      *
      * @param int $order_id
