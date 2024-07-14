@@ -3,7 +3,7 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 6.5.3
+Tested up to: 6.5.5
 Stable tag: 2.6.15
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -60,6 +60,7 @@ The manual installation method involves downloading and uploading our plugin to 
 == Changelog ==
 
 = 2.6.15 - 2024-07-11 =
+* Fixed - Fixed PHP warning bug on multisite.
 * Fixed - Error handling in older WC versions.
 * Tweak - Bank and postal transfer processing.
 * Dev - Change in display position of bank transfer and postal transfer.

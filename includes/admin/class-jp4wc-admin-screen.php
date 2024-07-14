@@ -798,7 +798,8 @@ class JP4WC_Admin_Screen {
 	 */
 	public function jp4wc_options_yahoo_app_id() {
 		$title = __( 'Yahoo! APP ID', 'woocommerce-for-japan' );
-		$description = sprintf(__( 'If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input %s here. Please get it from <a href="https://e.developer.yahoo.co.jp/dashboard/" target="_blank">here</a>.', 'woocommerce-for-japan' ), $title);
+		/* translators: %s: Setting title */
+		$description = sprintf( __( 'If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input %s here. Please get it from <a href="https://e.developer.yahoo.co.jp/dashboard/" target="_blank">here</a>.', 'woocommerce-for-japan' ), $title );
 		$this->jp4wc_plugin->jp4wc_input_text('yahoo-app-id', $description, 60, '', $this->prefix);
 	}
 
@@ -1263,8 +1264,9 @@ class JP4WC_Admin_Screen {
      * @param string Title
 	 */
 	 public function jp4wc_description_address_pattern( $title ){
-			$description = sprintf(__( 'Please check it if you want to use input field for %s', 'woocommerce-for-japan' ), $title);
-			return $description;
+		/* translators: %s: Setting title */
+		$description = sprintf(__( 'Please check it if you want to use input field for %s', 'woocommerce-for-japan' ), $title);
+		return $description;
 	 }
 	/**
 	 * Validate options.
@@ -1283,7 +1285,9 @@ class JP4WC_Admin_Screen {
 	 * Plugins information display.
 	 */
 	public function jp4wc_informations_plugins() {
+		/* translators: %s: Setting URL */
 		echo sprintf(__('<a href="%s" target="_blank" title="Paygent Payment">Paygent Payment</a> :  You can handle Credit Card payment and Convini payment, etc<br >', 'woocommerce-for-japan'),'https://wc.artws.info/shop/wordpress-official/paygent-for-woocommerce/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=plugins-information');
+		/* translators: %s: Setting URL */
 		echo sprintf(__('<a href="%s" target="_blank" title="WooCommerce Subscriptions">WooCommerce Subscriptions</a> : You can handle Subscriptions.<br >', 'woocommerce-for-japan'),'https://wc.artws.info/shop/woothemes-official/woocommerce-subscriptions/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=plugins-information');
 	}
 
@@ -1291,7 +1295,9 @@ class JP4WC_Admin_Screen {
 	 * Services information display.
 	 */
 	public function jp4wc_informations_services() {
+		/* translators: %s: Setting URL */
 		echo sprintf(__('<a href="%s" target="_blank" title="Payment Setting Support">Payment Setting Support</a> :  We support Payment Plugins Setting.<br >', 'woocommerce-for-japan'),'https://wc.artws.info/shop/setting-support/payment-support/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information');
+		/* translators: %s: Setting URL */
 		echo sprintf(__('<a href="%s" target="_blank" title="Maintenance Support">Maintenance Support</a> : We support your WordPress and WooCommmerce site, update or somethings.<br >', 'woocommerce-for-japan'),'https://wc4jp-pro.work/product/site-security-for-woo/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information');
 	}
 

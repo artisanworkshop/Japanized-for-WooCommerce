@@ -3,13 +3,14 @@
  * Plugin Name: Japanized for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/woocommerce-for-japan/
  * Description: Woocommerce toolkit for Japanese use.
- * Version: 2.6.15
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
+ * Version: 2.6.15
+ * Requires Plugins: woocommerce
  * Requires at least: 5.0
- * Tested up to: 6.4.3
+ * Tested up to: 6.5.5
  * WC requires at least: 6.0
- * WC tested up to: 8.5.2
+ * WC tested up to: 9.0.2
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
@@ -144,10 +145,20 @@ class JP4WC{
         // Install
         require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
         // Admin Setting Screen
-        require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-screen.php';
-        require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
+		require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin.php';
 		// Admin PR notice
 		require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-notices.php';
+        // Usage tracking
+		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-usage-tracking.php';
+		// Admin PHP notice
+		if ( is_multisite() ) {
+			if ( is_network_admin() ) {
+				require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-php-notice.php';
+			}
+		}else{
+			$screen = get_current_screen();
+			if( isset( $screen->id ) && $screen->id == 'dashboard' )require JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-php-notice.php';
+		}
 		// Payment Gateway For Bank
 		require_once JP4WC_INCLUDES_PATH . 'gateways/bank-jp/class-wc-gateway-bank-jp.php';
 		// Payment Gateway For Post Office Bank
@@ -198,8 +209,6 @@ class JP4WC{
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-subscriptions.php';
 		// Add Virtual setting
 		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-virtual.php';
-        // Usage tracking
-		require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-usage-tracking.php';
 	}
 
     /**
