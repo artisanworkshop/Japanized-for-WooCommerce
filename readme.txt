@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 6.5.3
-Stable tag: 2.6.14
+Tested up to: 6.6.1
+Stable tag: 2.6.17
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,6 +58,18 @@ The manual installation method involves downloading and uploading our plugin to 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.6.17 - 2024-08-06 =
+* Change - Add LINE PAY End notice.
+
+= 2.6.16 - 2024-07-16 =
+*Fixed -fatal error at php file rquired. 
+
+= 2.6.15 - 2024-07-11 =
+* Fixed - Fixed PHP warning bug on multisite.
+* Fixed - Error handling in older WC versions.
+* Tweak - Bank and postal transfer processing.
+* Dev - Change in display position of bank transfer and postal transfer.
 
 = 2.6.14 - 2024-05-15 =
 * Fixed - Coupon bugs for Paidy Payment.
