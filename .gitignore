@@ -1,26 +1,19 @@
-# ignore everything in the root except the "wp-content" directory.
-!wp-content/
+# Editors
+.idea
+.vscode/*
+*.code-workspace
 
-# ignore everything in the "wp-content" directory, except:
-# "mu-plugins", "plugins", "themes" directory
-wp-content/*
-!wp-content/mu-plugins/
-!wp-content/plugins/
-!wp-content/themes/
-
-# ignore these plugins
-wp-content/plugins/hello.php
-
-# ignore specific themes
-wp-content/themes/twenty*/
-
-# ignore node dependency directories
+# Grunt
 node_modules/
+deploy/
+package-lock.json
 
-# ignore log files and databases
-*.log
-*.sql
-*.sqlite
+# Composer
+vendor/
+composer.lock
+
+# Sass
+.sass-cache/
 
 # OS X metadata
 .DS_Store
@@ -28,16 +21,9 @@ node_modules/
 # Windows junk
 Thumbs.db
 
-# remove composer.lock
-composer.lock
+# wp-env config
+.wp-env.override.json
 
-<<<<<<< HEAD
-# remove .idea directory
-.idea/*
-
-# remove .scss map data
-*.css.map
-=======
-#php storm file
-.idea/
->>>>>>> 8729e8f871b5d28c1c6e8b071cc9cc3c7955cc26
+# Ignore all log files except for .htaccess
+/logs/*
+!/logs/.htaccess
