@@ -1,14 +1,20 @@
 <?php
+/**
+ * Post Office Bank payment method block support.
+ *
+ * @package WooCommerce\Payments
+ */
+
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * WC_Gateway_PostOfficeBank_Blocks_Support class.
+ * WC_Payments_PostOfficeBank_Blocks_Support class.
  *
  * @extends AbstractPaymentMethodType
  */
-final class WC_Gateway_PostOfficeBank_Blocks_Support extends AbstractPaymentMethodType {
+final class WC_Payments_PostOfficeBank_Blocks_Support extends AbstractPaymentMethodType {
 	/**
 	 * The gateway instance.
 	 *
@@ -27,7 +33,7 @@ final class WC_Gateway_PostOfficeBank_Blocks_Support extends AbstractPaymentMeth
 	 * Initializes the payment method type.
 	 */
 	public function initialize() {
-		$this->settings = get_option( 'woocommerce_postofficebank_settings', [] );
+		$this->settings = get_option( 'woocommerce_postofficebank_settings', array() );
 		$gateways       = WC()->payment_gateways->payment_gateways();
 		$this->gateway  = $gateways[ $this->name ];
 	}
@@ -50,18 +56,18 @@ final class WC_Gateway_PostOfficeBank_Blocks_Support extends AbstractPaymentMeth
 		$script_path       = '/assets/js/frontend/blocks/postofficebank.js';
 		$script_asset_path = JP4WC_ABSPATH . 'assets/js/frontend/blocks/postofficebank.asset.php';
 		$script_asset      = file_exists( $script_asset_path )
-			? require( $script_asset_path )
+			? require $script_asset_path
 			: array(
 				'dependencies' => array(),
-				'version'      => '1.2.0'
+				'version'      => '1.2.0',
 			);
 		$script_url        = JP4WC_URL_PATH . $script_path;
 
 		wp_register_script(
 			'wc-postofficebank-payments-blocks',
 			$script_url,
-			$script_asset[ 'dependencies' ],
-			$script_asset[ 'version' ],
+			$script_asset['dependencies'],
+			$script_asset['version'],
 			true
 		);
 
@@ -69,7 +75,7 @@ final class WC_Gateway_PostOfficeBank_Blocks_Support extends AbstractPaymentMeth
 			wp_set_script_translations( 'wc-postofficebank-payments-blocks', 'woocommerce-for-japan', JP4WC_ABSPATH . 'i18n/' );
 		}
 
-		return [ 'wc-postofficebank-payments-blocks' ];
+		return array( 'wc-postofficebank-payments-blocks' );
 	}
 
 	/**
@@ -78,10 +84,10 @@ final class WC_Gateway_PostOfficeBank_Blocks_Support extends AbstractPaymentMeth
 	 * @return array
 	 */
 	public function get_payment_method_data() {
-		return [
+		return array(
 			'title'       => $this->get_setting( 'title' ),
 			'description' => $this->get_setting( 'description' ),
-			'supports'    => array_filter( $this->gateway->supports, [ $this->gateway, 'supports' ] )
-		];
+			'supports'    => array_filter( $this->gateway->supports, array( $this->gateway, 'supports' ) ),
+		);
 	}
 }
