@@ -35,9 +35,11 @@ class JP4WC_Admin_Notices {
 		if ( ! empty( $_POST['type'] ) ) {
 			if ( 'remove' === $_POST['type'] ) {
 				update_option( 'jp4wc_pr_hide_notice', date_i18n( 'Y-m-d H:i:s' ) );
-				wp_send_json_success( array(
-					'status' => 'removed'
-				) );
+				wp_send_json_success( 
+					array(
+						'status' => 'removed'
+					)
+				);
 			}
 		}
 	}
@@ -90,7 +92,10 @@ class JP4WC_Admin_Notices {
 		?>
         <div class="notice notice-info is-dismissible jp4wc-pr-notice" id="pr_jp4wc">
             <div id="pr_jp4wc_">
-                <p><?php echo sprintf( __('<a href="%s?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=wooecfses2021" target="_blank">Run WooCommerce safely with regular updates, security monitoring, and a quick alert system.</a>', 'woocommerce-for-japan' ), $pr_link );?><br />
+				<p><?php 
+				/* translators: 1) Japanized for WooCommerce PR link */
+				echo sprintf( __('<a href="%s?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=woo_security" target="_blank">Run WooCommerce safely with regular updates, security monitoring, and a quick alert system.</a>', 'woocommerce-for-japan' ), $pr_link );
+				?><br />
 					<?php _e( 'If you have not taken measures yet, please take measures for WooCommerce dedicated site monitoring starting from 2,200 yen per month.', 'woocommerce-for-japan' );?>
                 </p>
             </div>

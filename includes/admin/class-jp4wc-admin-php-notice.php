@@ -68,11 +68,13 @@ if ( ! class_exists( 'JP4WC_Admin_Dashboard_PHP_Notice', false ) ) :
             if ( version_compare( $php_ver, '8.1.0', '>=' ) ) {
 				return false;
 			}
-            $month_totals = JP4WC_Tracker::get_last_month_order_totals();
-            $month_total = $month_totals['monthly_gross'] + $month_totals['monthly_processing_gross'];
-            if ($month_total <= 0){
-                return false;
-            }
+			if( ! is_multisite() ){
+				$month_totals = JP4WC_Tracker::get_last_month_order_totals();
+				$month_total = $month_totals['monthly_gross'] + $month_totals['monthly_processing_gross'];
+				if ( $month_total <= 0 ){
+					return false;
+				}
+			}
 
 			return true;
 		}
