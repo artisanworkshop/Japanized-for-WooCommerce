@@ -24,9 +24,8 @@ This plugin is an additional feature plugin that makes WooCommerce easier to use
 6. Addition of payment methods (bank transfer, postal transfer, over-the-counter payment, cash on delivery subscription)
 7. Addition of official postpaid payment Paidy for Japanized for WooCommerce
 8. Addition of PayPal Checkout (compatible with Japan)
-9. Addition of LINE Pay payment
-10. Creation of Specified Commercial Transactions Law and setting of short code
-* 7-9 payments are also distributed as individual payment plug-ins.
+9. Creation of Specified Commercial Transactions Law and setting of short code
+* 7-8 payments are also distributed as individual payment plug-ins.
 
 [youtube https://www.youtube.com/watch?v=mPYlDDuGzis]
 
