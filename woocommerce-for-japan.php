@@ -303,7 +303,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
 							require_once 'includes/blocks/class-wc-payments-postofficebank-blocks-support.php';
-							$payment_method_registry->register( new WC_Gateway_PostOfficeBank_Blocks_Support() );
+							$payment_method_registry->register( new WC_Payments_PostOfficeBank_Blocks_Support() );
 						}
 					);
 				}
@@ -312,7 +312,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
 							require_once 'includes/blocks/class-wc-payments-bank-jp-blocks-support.php';
-							$payment_method_registry->register( new WC_Gateway_BANK_JP_Blocks_Support() );
+							$payment_method_registry->register( new WC_Payments_BANK_JP_Blocks_Support() );
 						}
 					);
 				}
@@ -321,7 +321,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
 							require_once 'includes/blocks/class-wc-payments-atstore-blocks-support.php';
-							$payment_method_registry->register( new WC_Gateway_AtStore_Blocks_Support() );
+							$payment_method_registry->register( new WC_Payments_AtStore_Blocks_Support() );
 						}
 					);
 				}

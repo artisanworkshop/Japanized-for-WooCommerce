@@ -1,4 +1,11 @@
 <?php
+/**
+ * WooCommerce At Store Payment Gateway Blocks Support
+ *
+ * @package Japanized_For_WooCommerce
+ * @version 1.2.0
+ */
+
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
 defined( 'ABSPATH' ) || exit;
@@ -8,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @extends AbstractPaymentMethodType
  */
-final class WC_Gateway_AtStore_Blocks_Support extends AbstractPaymentMethodType {
+final class WC_Payments_AtStore_Blocks_Support extends AbstractPaymentMethodType {
 	/**
 	 * The gateway instance.
 	 *
@@ -27,7 +34,7 @@ final class WC_Gateway_AtStore_Blocks_Support extends AbstractPaymentMethodType 
 	 * Initializes the payment method type.
 	 */
 	public function initialize() {
-		$this->settings = get_option( 'woocommerce_atstore_settings', [] );
+		$this->settings = get_option( 'woocommerce_atstore_settings', array() );
 		$gateways       = WC()->payment_gateways->payment_gateways();
 		$this->gateway  = $gateways[ $this->name ];
 	}
@@ -50,18 +57,18 @@ final class WC_Gateway_AtStore_Blocks_Support extends AbstractPaymentMethodType 
 		$script_path       = '/assets/js/frontend/blocks/atstore.js';
 		$script_asset_path = JP4WC_ABSPATH . 'assets/js/frontend/blocks/atstore.asset.php';
 		$script_asset      = file_exists( $script_asset_path )
-			? require( $script_asset_path )
+			? require $script_asset_path
 			: array(
 				'dependencies' => array(),
-				'version'      => '1.2.0'
+				'version'      => '1.2.0',
 			);
 		$script_url        = JP4WC_URL_PATH . $script_path;
 
 		wp_register_script(
 			'wc-atstore-payments-blocks',
 			$script_url,
-			$script_asset[ 'dependencies' ],
-			$script_asset[ 'version' ],
+			$script_asset['dependencies'],
+			$script_asset['version'],
 			true
 		);
 
@@ -69,7 +76,7 @@ final class WC_Gateway_AtStore_Blocks_Support extends AbstractPaymentMethodType 
 			wp_set_script_translations( 'wc-atstore-payments-blocks', 'woocommerce-for-japan', JP4WC_ABSPATH . 'i18n/' );
 		}
 
-		return [ 'wc-atstore-payments-blocks' ];
+		return array( 'wc-atstore-payments-blocks' );
 	}
 
 	/**
@@ -78,10 +85,10 @@ final class WC_Gateway_AtStore_Blocks_Support extends AbstractPaymentMethodType 
 	 * @return array
 	 */
 	public function get_payment_method_data() {
-		return [
+		return array(
 			'title'       => $this->get_setting( 'title' ),
 			'description' => $this->get_setting( 'description' ),
-			'supports'    => array_filter( $this->gateway->supports, [ $this->gateway, 'supports' ] )
-		];
+			'supports'    => array_filter( $this->gateway->supports, array( $this->gateway, 'supports' ) ),
+		);
 	}
 }
