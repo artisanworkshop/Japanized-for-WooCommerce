@@ -191,13 +191,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 				require_once JP4WC_INCLUDES_PATH . 'gateways/paidy/class-wc-paidy-endpoint.php';
 				require_once JP4WC_INCLUDES_PATH . 'gateways/paidy/class-wc-paidy-admin-notices.php';
 			}
-			if ( ! class_exists( 'WC_Gateway_LINEPay', false ) ) {
-				// Add LINE Pay Checkout.
-				require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-gateway-linepay.php';
-				require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-gateway-linepay-cart-handler.php';
-				require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-linepay-endpoint.php';
-				require_once JP4WC_INCLUDES_PATH . 'gateways/linepay/class-wc-linepay-admin-notices.php';
-			}
 			// Add affiliates setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-affiliate.php';
 			// Add Subscriptions setting.
@@ -344,7 +337,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 * @since 2.6.0
 		 */
 		public function jp4wc_handle_hpos_compatibility() {
-
 			if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
 				$slug = dirname( plugin_basename( __FILE__ ) );
 				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', trailingslashit( $slug ) . $slug . '.php', true );
