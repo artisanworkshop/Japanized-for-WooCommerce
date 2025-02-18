@@ -5,7 +5,7 @@
  * Description: Woocommerce toolkit for Japanese use.
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
- * Version: 2.6.19
+ * Version: 2.6.20
  * Requires Plugins: woocommerce
  * Requires at least: 5.0
  * Tested up to: 6.7.2
@@ -39,7 +39,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '2.6.19';
+		public $version = '2.6.20';
 
 		/**
 		 * Japanized for WooCommerce Framework version.
@@ -96,6 +96,11 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			register_deactivation_hook( JP4WC_PLUGIN_FILE, array( $this, 'on_deactivation' ) );
 			add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ), 20 );
 			add_action( 'woocommerce_blocks_loaded', array( $this, 'jp4wc_blocks_support' ) );
+			if ( ! get_transient( 'jp4wc_first_installing' ) ) {
+				// First time installing.
+				set_transient( 'jp4wc_first_installing', 'yes', 180 * DAY_IN_SECONDS );
+				update_option( 'wc4jp-tracking', true );
+			}
 		}
 
 		/**
@@ -153,7 +158,11 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// Admin PR notice.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-notices.php';
 			// Usage tracking.
-			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-usage-tracking.php';
+			if ( 'yes' === get_transient( 'jp4wc_first_installing' ) ) {
+				require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-usage-tracking.php';
+				JP4WC_Usage_Tracking::init();
+			}
+
 			// Payment Gateway For Bank.
 			require_once JP4WC_INCLUDES_PATH . 'gateways/bank-jp/class-wc-gateway-bank-jp.php';
 			// Payment Gateway For Post Office Bank.

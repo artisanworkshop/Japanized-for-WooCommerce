@@ -14,7 +14,7 @@
 .gitattributes
 .distignore
 .gitignore
+composer.json
 composer.lock
 package-lock.json
-LICENSE
 README.md

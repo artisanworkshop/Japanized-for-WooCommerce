@@ -92,12 +92,8 @@ class JP4WC_Admin_Notices {
 			return;
 		}
 
-		// Notice removed by page.
-		$allow_pages = array( 'wc-admin', 'wc-orders', 'wc-settings', 'wc-status', 'wc-reports', 'wc4jp-options' );
-		if ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allow_pages ) ) {
-			// Notification display content.
-			$this->jp4wc_pr2025_display();
-		}
+		// Notification display content.
+		$this->jp4wc_pr2025_display();
 	}
 
 	/**
@@ -120,7 +116,7 @@ class JP4WC_Admin_Notices {
 				<?php
 				/* translators: %s: number of days until April 2025 */
 				$catch_copy = sprintf( esc_html__( 'Only %s days left. New credit card payment standards are coming into force in April 2025!', 'woocommerce-for-japan' ), $days );
-				echo '<h2>' . esc_html( $catch_copy ) . '</h2>';
+				echo '<h2 style="color: #2C045D;">' . esc_html( $catch_copy ) . '</h2>';
 				esc_html_e( 'Coming into force in April 2025! Is your website ready for the new credit card payment standards?', 'woocommerce-for-japan' );
 				?>
 				<br />

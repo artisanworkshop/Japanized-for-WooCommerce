@@ -1,0 +1,34 @@
+{
+	"name": "woocommerce-for-japan",
+	"title": "Japanized for WooCommerce",
+	"version": "2.6.20",
+	"author": "Shohei Tanaka",
+	"license": "GPL-3.0+",
+	"keywords": [],
+	"engines": {
+		"node": "^20.12.0",
+		"npm": "^10.5.0"
+	},
+	"devDependencies": {
+		"@woocommerce/dependency-extraction-webpack-plugin": "2.2.0",
+		"@wordpress/scripts": "^30.0.2",
+		"cross-env": "7.0.3"
+	},
+	"scripts": {
+		"start": "wp-scripts start",
+		"build": "wp-scripts build && npm run i18n:build",
+		"i18n": "npm run i18n:build",
+		"composer": "wp-env run cli composer",
+		"i18n:build": "npm run i18n:pot && ./bin/build_i18n.sh",
+		"i18n:pot": "php -d xdebug.max_nesting_level=512 $(which wp) i18n make-pot --exclude=\"node_modules/,i18n/,assets/\" --headers='{\"Report-Msgid-Bugs-To\":\"https://woocommerce.com/my-account/create-a-ticket/\", \"language-team\":\"LANGUAGE <EMAIL@ADDRESS>\"}' . i18n/metaps-for-wc.pot",
+		"i18n:json": "$(which wp) i18n make-json languages --no-purge",
+		"packages-update": "wp-scripts packages-update",
+		"check-engines": "wp-scripts check-engines",
+		"format": "wp-scripts format",
+		"make-pot": "wp-env run cli --env-cwd=wp-content/plugins/woocommerce-for-japan/ wp i18n make-pot ./ i18n/woocommerce-for-japan.pot --ignore-domain",
+		"make-json": "wp-env run cli --env-cwd=wp-content/plugins/woocommerce-for-japan/ wp i18n make-json i18n --no-purge"
+		},
+	"dependencies": {
+		"sass-loader": "^16.0.2"
+	}
+}

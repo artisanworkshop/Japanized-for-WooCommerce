@@ -2,9 +2,9 @@
 .gitmodules export-ignore
 .gitignore export-ignore
 .github export-ignore
+.wp-env.json export-ignore
 README.md export-ignore
 package.json export-ignore
-package-lock.json export-ignore
 composer.json export-ignore
 webpack.config.js export-ignore
 docs export-ignore

@@ -1,227 +1,248 @@
-#, fuzzy
+# Copyright (C) 2025 Artisan Workshop
+# This file is distributed under the same license as the Japanized for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Japanized for WooCommerce\n"
-"POT-Creation-Date: 2024-01-26 09:33+0900\n"
-"PO-Revision-Date: 2024-01-26 09:33+0900\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"Project-Id-Version: Japanized for WooCommerce 2.6.19\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-for-japan\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-"X-Generator: Poedit 3.4.2\n"
-"X-Poedit-Basepath: ..\n"
-"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
-"X-Poedit-WPHeader: woocommerce-for-japan.php\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: *.min.js\n"
-"X-Poedit-SearchPathExcluded-1: node_modules\n"
-"X-Poedit-SearchPathExcluded-2: includes/gateways/paidy/node_modules\n"
-"X-Poedit-SearchPathExcluded-3: includes/gateways/paypal/vendor\n"
+"POT-Creation-Date: 2025-02-18T18:55:41+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
 
-#. translators: 1) Japanized for WooCommerce PR link
-#: includes/admin/class-jp4wc-admin-notices.php:93
-#, php-format
-msgid ""
-"<a href=\"%s?"
-"utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=wooecfses2021\" "
-"target=\"_blank\">Run WooCommerce safely with regular updates, security "
-"monitoring, and a quick alert system.</a>"
+#. Plugin Name of the plugin
+#: woocommerce-for-japan.php
+#: includes/admin/views/html-admin-setting-screen.php:35
+msgid "Japanized for WooCommerce"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:94
-msgid ""
-"If you have not taken measures yet, please take measures for WooCommerce "
-"dedicated site monitoring starting from 2,200 yen per month."
+#. Plugin URI of the plugin
+#: woocommerce-for-japan.php
+msgid "https://wordpress.org/plugins/woocommerce-for-japan/"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-product-meta.php:53
+#. Description of the plugin
+#: woocommerce-for-japan.php
+msgid "Woocommerce toolkit for Japanese use."
+msgstr ""
+
+#. Author of the plugin
+#: woocommerce-for-japan.php
+msgid "Artisan Workshop"
+msgstr ""
+
+#. Author URI of the plugin
+#: woocommerce-for-japan.php
+msgid "https://wc.artws.info/"
+msgstr ""
+
+#. translators: %s: number of days until April 2025
+#: includes/admin/class-jp4wc-admin-notices.php:118
+msgid "Only %s days left. New credit card payment standards are coming into force in April 2025!"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-notices.php:120
+msgid "Coming into force in April 2025! Is your website ready for the new credit card payment standards?"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-notices.php:123
+msgid "We recommend that you take the following measures to ensure that your store is ready for the new credit card payment standards."
+msgstr ""
+
+#. translators: 1: Opening anchor tag with URL, 2: Closing anchor tag
+#: includes/admin/class-jp4wc-admin-notices.php:127
+msgid "%1$s [Security measures for WooCommerce] in line with the \"Credit Card Security Guidelines\" %2$s"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-php-notice.php:34
+msgid "[Immediate response recommended]PHP Version notice!"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-product-meta.php:69
 msgid "Change the price display in the product display of subscription."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-product-meta.php:61
-#: includes/admin/class-jp4wc-admin-product-meta.php:90
+#: includes/admin/class-jp4wc-admin-product-meta.php:77
+#: includes/admin/class-jp4wc-admin-product-meta.php:108
 msgid "Subscription price string"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-product-meta.php:65
-#: includes/admin/class-jp4wc-admin-product-meta.php:93
+#: includes/admin/class-jp4wc-admin-product-meta.php:81
+#: includes/admin/class-jp4wc-admin-product-meta.php:111
 msgctxt "example price string"
 msgid "e.g. 5.90 per month"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:52
+#: includes/admin/class-jp4wc-admin-screen.php:75
 msgid "For Japanese"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:86
+#: includes/admin/class-jp4wc-admin-screen.php:119
 msgid "Address Display Setting"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:92
+#: includes/admin/class-jp4wc-admin-screen.php:125
 msgid "Notice"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:99
-#: includes/admin/class-jp4wc-admin-screen.php:707
+#: includes/admin/class-jp4wc-admin-screen.php:132
+#: includes/admin/class-jp4wc-admin-screen.php:755
 msgid "Name Yomigana"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:106
+#: includes/admin/class-jp4wc-admin-screen.php:139
 msgid "Required Name Yomigana"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:113
+#: includes/admin/class-jp4wc-admin-screen.php:146
 msgid "Honorific suffix(Sama)"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:120
-#: includes/admin/class-jp4wc-admin-screen.php:733
+#: includes/admin/class-jp4wc-admin-screen.php:153
+#: includes/admin/class-jp4wc-admin-screen.php:781
 msgid "Company Name"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:127
-#: includes/admin/class-jp4wc-admin-screen.php:791
+#: includes/admin/class-jp4wc-admin-screen.php:160
+#: includes/admin/class-jp4wc-admin-screen.php:850
 msgid "Automatic zip code entry"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:134
+#: includes/admin/class-jp4wc-admin-screen.php:167
 msgid "Yahoo APP ID"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:141
+#: includes/admin/class-jp4wc-admin-screen.php:174
 msgid "No Japanese Address"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:148
-#: includes/admin/class-jp4wc-admin-screen.php:742
+#: includes/admin/class-jp4wc-admin-screen.php:181
+#: includes/admin/class-jp4wc-admin-screen.php:790
 msgid "Free Shipping Display"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:155
+#: includes/admin/class-jp4wc-admin-screen.php:188
 msgid "Custamize Email template at customer name"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:163
+#: includes/admin/class-jp4wc-admin-screen.php:197
 msgid "Virtual order Setting"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:169
+#: includes/admin/class-jp4wc-admin-screen.php:203
 msgid "Hide address input"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:177
+#: includes/admin/class-jp4wc-admin-screen.php:212
 msgid "Usage tracking"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:184
+#: includes/admin/class-jp4wc-admin-screen.php:219
 msgid "Tracking"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:193
-#: includes/admin/class-jp4wc-admin-screen.php:817
+#: includes/admin/class-jp4wc-admin-screen.php:228
+#: includes/admin/class-jp4wc-admin-screen.php:877
 msgid "Delivery date designation"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:199
+#: includes/admin/class-jp4wc-admin-screen.php:234
 #: includes/class-jp4wc-delivery.php:181
 msgid "Preferred delivery date"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:206
+#: includes/admin/class-jp4wc-admin-screen.php:241
 msgid "Preferred delivery date required"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:213
+#: includes/admin/class-jp4wc-admin-screen.php:248
 msgid "Start Date"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:220
+#: includes/admin/class-jp4wc-admin-screen.php:255
 msgid "Delivery Term"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:227
+#: includes/admin/class-jp4wc-admin-screen.php:262
 msgid "Unspecified date description"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:234
+#: includes/admin/class-jp4wc-admin-screen.php:269
 msgid "Date format"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:241
-#: includes/admin/class-jp4wc-admin-screen.php:867
+#: includes/admin/class-jp4wc-admin-screen.php:276
+#: includes/admin/class-jp4wc-admin-screen.php:927
 msgid "Display day of week"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:248
+#: includes/admin/class-jp4wc-admin-screen.php:283
 msgid "Delivery deadline"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:255
+#: includes/admin/class-jp4wc-admin-screen.php:290
 msgid "No delivery weekday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:262
+#: includes/admin/class-jp4wc-admin-screen.php:297
 msgid "Holiday term"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:271
+#: includes/admin/class-jp4wc-admin-screen.php:306
 msgid "Delivery Time designation"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:277
-#: includes/admin/class-jp4wc-admin-screen.php:948
+#: includes/admin/class-jp4wc-admin-screen.php:312
+#: includes/admin/class-jp4wc-admin-screen.php:1014
 msgid "Delivery time zone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:284
+#: includes/admin/class-jp4wc-admin-screen.php:319
 msgid "Delivery time zone required"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:291
+#: includes/admin/class-jp4wc-admin-screen.php:326
 msgid "Unspecified Time description"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:298
+#: includes/admin/class-jp4wc-admin-screen.php:333
 msgid "Delivery time zone management"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:307
+#: includes/admin/class-jp4wc-admin-screen.php:342
 msgid "Payment Method"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:313
-#: includes/admin/class-jp4wc-admin-screen.php:989
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:46
-#: src/blocks/bank-jp/index.js:16
+#: includes/admin/class-jp4wc-admin-screen.php:348
+#: includes/admin/class-jp4wc-admin-screen.php:1076
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:95
+#: assets/js/frontend/blocks/bank-jp.js:1
 msgid "BANK PAYMENT IN JAPAN"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:320
-#: includes/admin/class-jp4wc-admin-screen.php:997
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:42
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:91
-#: src/blocks/postofficebank/index.js:15
+#: includes/admin/class-jp4wc-admin-screen.php:355
+#: includes/admin/class-jp4wc-admin-screen.php:1084
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:86
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:139
+#: assets/js/frontend/blocks/postofficebank.js:1
 msgid "Postal transfer"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:327
-#: includes/admin/class-jp4wc-admin-screen.php:1005
+#: includes/admin/class-jp4wc-admin-screen.php:362
+#: includes/admin/class-jp4wc-admin-screen.php:1092
 msgid "Pay at store"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:334
-#: includes/admin/class-jp4wc-admin-screen.php:1014
+#: includes/admin/class-jp4wc-admin-screen.php:369
+#: includes/admin/class-jp4wc-admin-screen.php:1101
 msgid "COD for Subscriptions"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:341
-#: includes/admin/class-jp4wc-admin-screen.php:1023
+#: includes/admin/class-jp4wc-admin-screen.php:376
+#: includes/admin/class-jp4wc-admin-screen.php:1110
 #: includes/gateways/paypal/modules/ppcp-compat/services.php:20
 #: includes/gateways/paypal/modules/ppcp-session/src/Cancellation/CancelView.php:61
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:418
@@ -236,497 +257,491 @@ msgstr ""
 msgid "PayPal"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:350
+#: includes/admin/class-jp4wc-admin-screen.php:385
 #: includes/admin/views/html-admin-screen.php:15
 msgid "Specified Commercial Transaction Law"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:356
+#: includes/admin/class-jp4wc-admin-screen.php:391
 #: includes/class-jp4wc-shortcodes.php:64
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:176
 msgid "Shop Name"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:363
+#: includes/admin/class-jp4wc-admin-screen.php:398
 #: includes/class-jp4wc-shortcodes.php:65
 msgid "Sales company name (company name)"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:370
+#: includes/admin/class-jp4wc-admin-screen.php:405
 #: includes/class-jp4wc-shortcodes.php:66
 msgid "Owner Name"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:377
+#: includes/admin/class-jp4wc-admin-screen.php:412
 #: includes/class-jp4wc-shortcodes.php:67
 #: includes/class-jp4wc-shortcodes.php:90
 msgid "Manager Name"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:384
+#: includes/admin/class-jp4wc-admin-screen.php:419
 #: includes/class-jp4wc-shortcodes.php:68
 msgid "Location"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:391
+#: includes/admin/class-jp4wc-admin-screen.php:426
 #: includes/class-jp4wc-shortcodes.php:69
 msgid "Contact"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:398
+#: includes/admin/class-jp4wc-admin-screen.php:433
 #: includes/class-jp4wc-shortcodes.php:70
 #: includes/class-jp4wc-shortcodes.php:90
 msgid "Telephone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:405
+#: includes/admin/class-jp4wc-admin-screen.php:440
 #: includes/class-jp4wc-shortcodes.php:71
 msgid "Selling price"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:412
+#: includes/admin/class-jp4wc-admin-screen.php:447
 #: includes/class-jp4wc-shortcodes.php:72
 msgid "Payment method"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:419
+#: includes/admin/class-jp4wc-admin-screen.php:454
 #: includes/class-jp4wc-shortcodes.php:73
 msgid "Product purchase method"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:426
+#: includes/admin/class-jp4wc-admin-screen.php:461
 #: includes/class-jp4wc-shortcodes.php:74
 msgid "Product delivery time"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:433
+#: includes/admin/class-jp4wc-admin-screen.php:468
 #: includes/class-jp4wc-shortcodes.php:75
 msgid "Costs other than product charges"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:440
+#: includes/admin/class-jp4wc-admin-screen.php:475
 #: includes/class-jp4wc-shortcodes.php:76
 msgid "Returns / Cancellations"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:447
+#: includes/admin/class-jp4wc-admin-screen.php:482
 #: includes/class-jp4wc-shortcodes.php:77
 #: includes/class-jp4wc-shortcodes.php:90
 msgid "Special conditions"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:454
+#: includes/admin/class-jp4wc-admin-screen.php:489
 msgid "Setting method"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:463
+#: includes/admin/class-jp4wc-admin-screen.php:498
 #: includes/admin/views/html-admin-screen.php:16
-#: includes/admin/views/html-admin-setting-screen.php:15
+#: includes/admin/views/html-admin-setting-screen.php:21
 msgid "Affiliate Setting"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:470
+#: includes/admin/class-jp4wc-admin-screen.php:505
 msgid "A8.net Setting"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:478
+#: includes/admin/class-jp4wc-admin-screen.php:513
 msgid "felmat Setting"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:492
+#: includes/admin/class-jp4wc-admin-screen.php:527
 msgid "Plugins Information"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:498
+#: includes/admin/class-jp4wc-admin-screen.php:533
 msgid "Featured Plugins"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:507
+#: includes/admin/class-jp4wc-admin-screen.php:542
 msgid "Professional services Information"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:513
+#: includes/admin/class-jp4wc-admin-screen.php:548
 msgid "Featured Services"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:541
-#: includes/admin/class-jp4wc-admin-screen.php:570
-#: includes/admin/class-jp4wc-admin-screen.php:615
-#: includes/admin/class-jp4wc-admin-screen.php:636
-#: includes/admin/class-jp4wc-admin-screen.php:648
+#: includes/admin/class-jp4wc-admin-screen.php:576
+#: includes/admin/class-jp4wc-admin-screen.php:605
+#: includes/admin/class-jp4wc-admin-screen.php:650
+#: includes/admin/class-jp4wc-admin-screen.php:671
+#: includes/admin/class-jp4wc-admin-screen.php:683
 msgid "Your settings have been saved."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:700
-msgid ""
-"Regarding this setting, etc., we do not yet support block shopping carts or "
-"purchase procedures. Please use the shortcode to use this feature."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:716
-msgid "Check if you want to require yomigana."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:724
-msgid "Honorific Suffix(Sama)"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:751
-msgid ""
-"This process has no hooks, so it overwrites the template files in /emails/. "
-"If you have customized the email template, please refer to the 12 files in "
-"the folder below and add them to your customization.<br/>woocommerce-for-"
-"japan/templates/emails/"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:752
-msgid ""
-"Please check it if you want to change customer name display.( from first "
-"name to full name )"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:761
-msgid "Postcode / ZIP"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:762
-msgid "Prefecture"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:763
-msgid "Town / City"
+#: includes/admin/class-jp4wc-admin-screen.php:748
+msgid "Regarding this setting, etc., we do not yet support block shopping carts or purchase procedures. Please use the shortcode to use this feature."
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:764
+msgid "Check if you want to require yomigana."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:772
+msgid "Honorific Suffix(Sama)"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:799
+msgid "This process has no hooks, so it overwrites the template files in /emails/. If you have customized the email template, please refer to the 12 files in the folder below and add them to your customization.<br/>woocommerce-for-japan/templates/emails/"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:800
+msgid "Please check it if you want to change customer name display.( from first name to full name )"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:809
+msgid "Postcode / ZIP"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:810
+msgid "Prefecture"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:811
+msgid "Town / City"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:812
 msgid "Street address"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:765
+#: includes/admin/class-jp4wc-admin-screen.php:813
 msgid "Apartment, suite, unit, etc. (optional)"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:766
+#: includes/admin/class-jp4wc-admin-screen.php:814
 #: includes/class-jp4wc-address-fields.php:380
 #: includes/class-jp4wc-address-fields.php:444
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:339
 msgid "Phone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:778
+#: includes/admin/class-jp4wc-admin-screen.php:826
 msgid "Check the address input field to hide in the virtual order."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:783
+#: includes/admin/class-jp4wc-admin-screen.php:842
 msgid "Enable usage tracking"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:800
+#: includes/admin/class-jp4wc-admin-screen.php:859
 msgid "Yahoo! APP ID"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:801
-#, php-format
-msgid ""
-"If you use it a bit for testing, you do not need to enter it here. But if "
-"you want to use Automatic zip code entry, you must get and input %s here. "
-"Please get it from <a href=\"https://e.developer.yahoo.co.jp/dashboard/\" "
-"target=\"_blank\">here</a>."
+#. translators: %s: Setting title
+#: includes/admin/class-jp4wc-admin-screen.php:861
+msgid "If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input %s here. Please get it from <a href=\"https://e.developer.yahoo.co.jp/dashboard/\" target=\"_blank\">here</a>."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:809
+#: includes/admin/class-jp4wc-admin-screen.php:869
 msgid "Eliminate the order of addresses for Japan."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:826
+#: includes/admin/class-jp4wc-admin-screen.php:886
 msgid "Check here if you want to specify the delivery date as a required."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:834
-msgid ""
-"Please enter the number of days until the first day you can receive the "
-"delivery date / time. If you enter 0 you can specify delivery from today."
+#: includes/admin/class-jp4wc-admin-screen.php:894
+msgid "Please enter the number of days until the first day you can receive the delivery date / time. If you enter 0 you can specify delivery from today."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:842
-msgid ""
-"Please enter the number of days for which you can accept the delivery "
-"reservation. Please enter 1 or more."
+#: includes/admin/class-jp4wc-admin-screen.php:902
+msgid "Please enter the number of days for which you can accept the delivery reservation. Please enter 1 or more."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:850
-msgid ""
-"Please enter the sentence when you do not need to specify the delivery date."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:851
-msgid "No specified date"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:858
-msgid ""
-"Please enter the format when you want to save the data by format. Use PHP "
-"format type."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:859
-msgid "Check from here."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:876
-msgid "Please enter the time delivery deadline of your store."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:886
-msgid "Sunday"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:891
-msgid "Moday"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:895
-msgid "Tuesday"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:899
-msgid "Wednesday"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:903
-msgid "Thursday"
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:907
-msgid "Friday"
+#: includes/admin/class-jp4wc-admin-screen.php:910
+msgid "Please enter the sentence when you do not need to specify the delivery date."
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:911
+msgid "No specified date"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:918
+msgid "Please enter the format when you want to save the data by format. Use PHP format type."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:919
+msgid "Check from here."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:936
+msgid "Please enter the time delivery deadline of your store."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:946
+msgid "Sunday"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:951
+msgid "Moday"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:955
+msgid "Tuesday"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:959
+msgid "Wednesday"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:963
+msgid "Thursday"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:967
+msgid "Friday"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:971
 msgid "Saturday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:921
-msgid ""
-"Please check the days of the week that you do not ship. In case of "
-"continuous, we will correspond up to three days."
+#: includes/admin/class-jp4wc-admin-screen.php:987
+msgid "Please check the days of the week that you do not ship. In case of continuous, we will correspond up to three days."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:929
+#: includes/admin/class-jp4wc-admin-screen.php:995
 msgid "Holiday Start Date"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:935
+#: includes/admin/class-jp4wc-admin-screen.php:1001
 msgid "Holiday End Date"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:940
+#: includes/admin/class-jp4wc-admin-screen.php:1006
 msgid "Please enter the date term long holiday of your store."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:957
-msgid ""
-"Check here if you want to specify the delivery time zone as a required item."
+#: includes/admin/class-jp4wc-admin-screen.php:1023
+msgid "Check here if you want to specify the delivery time zone as a required item."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:965
-msgid ""
-"Please enter the sentence when you do not need to specify the delivery time."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:966
-msgid "No designated time zone"
+#: includes/admin/class-jp4wc-admin-screen.php:1031
+msgid "Please enter the sentence when you do not need to specify the delivery time."
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:1032
+msgid "No designated time zone"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1119
 msgid "Please enter the shop name."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1040
+#: includes/admin/class-jp4wc-admin-screen.php:1127
 msgid "Please enter the company name."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1048
+#: includes/admin/class-jp4wc-admin-screen.php:1135
 msgid "Please enter the owner name."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1056
+#: includes/admin/class-jp4wc-admin-screen.php:1143
 msgid "Please enter the Manager name."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1064
+#: includes/admin/class-jp4wc-admin-screen.php:1151
 msgid "Please enter the location."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1078
+#: includes/admin/class-jp4wc-admin-screen.php:1165
 msgid "Please enter the contact rule."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1079
+#: includes/admin/class-jp4wc-admin-screen.php:1166
 msgid "Please contact us from the inquiry form."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1087
+#: includes/admin/class-jp4wc-admin-screen.php:1183
 msgid "Please enter the telephone number."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1095
+#: includes/admin/class-jp4wc-admin-screen.php:1191
 msgid "Please enter the Selling price rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1096
+#: includes/admin/class-jp4wc-admin-screen.php:1192
 msgid "The product price is displayed on each product screen."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1104
+#: includes/admin/class-jp4wc-admin-screen.php:1200
 msgid "Please enter the Payment methods rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1105
+#: includes/admin/class-jp4wc-admin-screen.php:1201
 msgid "Payment methods are limited to various credit cards."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1113
+#: includes/admin/class-jp4wc-admin-screen.php:1209
 msgid "Please enter the purchase rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1114
-msgid ""
-"Put the product you want to purchase in the cart, proceed to purchase, pay "
-"with credit card and purchase."
+#: includes/admin/class-jp4wc-admin-screen.php:1210
+msgid "Put the product you want to purchase in the cart, proceed to purchase, pay with credit card and purchase."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1122
+#: includes/admin/class-jp4wc-admin-screen.php:1218
 msgid "Please enter the product delivery time rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1123
+#: includes/admin/class-jp4wc-admin-screen.php:1219
 msgid "The shipping date of the product is listed on each product page."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1131
+#: includes/admin/class-jp4wc-admin-screen.php:1227
 msgid "Please enter the cost rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1132
+#: includes/admin/class-jp4wc-admin-screen.php:1228
 msgid "A separate shipping fee will be added to the purchase price."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1140
+#: includes/admin/class-jp4wc-admin-screen.php:1236
 msgid "Please enter the return and cancellation rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1141
-msgid ""
-"We will not accept returns or exchanges other than mistakes at the time of "
-"delivery on our company side."
+#: includes/admin/class-jp4wc-admin-screen.php:1237
+msgid "We will not accept returns or exchanges other than mistakes at the time of delivery on our company side."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1149
+#: includes/admin/class-jp4wc-admin-screen.php:1245
 msgid "Please enter the Special rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1157
-msgid ""
-"It will be displayed if you put [jp4wc_law] shortcode on a page or post."
+#: includes/admin/class-jp4wc-admin-screen.php:1253
+msgid "It will be displayed if you put [jp4wc_law] shortcode on a page or post."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1164
+#: includes/admin/class-jp4wc-admin-screen.php:1260
 msgid "A8.net tracking settings"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1168
+#: includes/admin/class-jp4wc-admin-screen.php:1264
 msgid "Please enter your A8.net Advertising ID."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1171
+#: includes/admin/class-jp4wc-admin-screen.php:1267
 msgid "A8.net test mode"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1180
+#: includes/admin/class-jp4wc-admin-screen.php:1276
 msgid "felmat tracking settings"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1184
+#: includes/admin/class-jp4wc-admin-screen.php:1280
 msgid "Please enter your felmat Advertising ID."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1212
+#: includes/admin/class-jp4wc-admin-screen.php:1309
 msgid "Delivery time zone start time"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1214
+#: includes/admin/class-jp4wc-admin-screen.php:1311
 msgid "Delivery time zone end time"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1219
+#: includes/admin/class-jp4wc-admin-screen.php:1316
 msgid "+ Add Time Zone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1219
+#: includes/admin/class-jp4wc-admin-screen.php:1316
 msgid "Remove selected Time Zone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1266
-#, php-format
+#. translators: %s: Setting title
+#: includes/admin/class-jp4wc-admin-screen.php:1364
 msgid "Please check it if you want to use input field for %s"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1277
+#: includes/admin/class-jp4wc-admin-screen.php:1375
 msgid "Settings saved."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1286
-#, php-format
-msgid ""
-"<a href=\"%s\" target=\"_blank\" title=\"Paygent Payment\">Paygent Payment</"
-"a> :  You can handle Credit Card payment and Convini payment, etc<br >"
+#. translators: %s: Setting URL
+#: includes/admin/class-jp4wc-admin-screen.php:1385
+msgid "<a href=\"%s\" target=\"_blank\" title=\"Paygent Payment\">Paygent Payment</a> :  You can handle Credit Card payment and Convini payment, etc<br >"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1287
-#, php-format
-msgid ""
-"<a href=\"%s\" target=\"_blank\" title=\"WooCommerce "
-"Subscriptions\">WooCommerce Subscriptions</a> : You can handle Subscriptions."
-"<br >"
+#. translators: %s: Setting URL
+#: includes/admin/class-jp4wc-admin-screen.php:1387
+msgid "<a href=\"%s\" target=\"_blank\" title=\"WooCommerce Subscriptions\">WooCommerce Subscriptions</a> : You can handle Subscriptions.<br >"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1294
-#, php-format
-msgid ""
-"<a href=\"%s\" target=\"_blank\" title=\"Payment Setting Support\">Payment "
-"Setting Support</a> :  We support Payment Plugins Setting.<br >"
+#. translators: %s: Setting URL
+#: includes/admin/class-jp4wc-admin-screen.php:1395
+msgid "<a href=\"%s\" target=\"_blank\" title=\"Payment Setting Support\">Payment Setting Support</a> :  We support Payment Plugins Setting.<br >"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1295
-#, php-format
-msgid ""
-"<a href=\"%s\" target=\"_blank\" title=\"Maintenance Support\">Maintenance "
-"Support</a> : We support your WordPress and WooCommmerce site, update or "
-"somethings.<br >"
+#. translators: %s: Setting URL
+#: includes/admin/class-jp4wc-admin-screen.php:1397
+msgid "<a href=\"%s\" target=\"_blank\" title=\"Maintenance Support\">Maintenance Support</a> : We support your WordPress and WooCommmerce site, update or somethings.<br >"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1369
+#: includes/admin/class-jp4wc-admin-screen.php:1471
 msgid "Japanized for WooCommerce Information"
 msgstr ""
 
-#: includes/admin/views/html-admin-info-screen.php:2
+#: includes/admin/views/html-admin-dashboard-php-notice.php:12
+msgid "Technology is constantly evolving, and web development especially requires updates to languages like PHP."
+msgstr ""
+
+#. Translators: %1$s is the PHP version number, %2$s is the date of support end.
+#: includes/admin/views/html-admin-dashboard-php-notice.php:15
+msgid "The PHP version of this site is %1$s, and support has already ended in <strong>%2$s</strong>."
+msgstr ""
+
+#. Translators: %1$s is the PHP version number, %2$s is the date of support end.
+#: includes/admin/views/html-admin-dashboard-php-notice.php:15
+msgid "November 2022"
+msgstr ""
+
+#. Translators: %1$s is the PHP version number, %2$s is the date of support end.
+#: includes/admin/views/html-admin-dashboard-php-notice.php:18
+msgid "The PHP version of this site is %1$s, and support has already ended in %2$s."
+msgstr ""
+
+#. Translators: %1$s is the PHP version number, %2$s is the date of support end.
+#: includes/admin/views/html-admin-dashboard-php-notice.php:18
+msgid "November 2023"
+msgstr ""
+
+#. Translators: $s is the PHP version number.
+#: includes/admin/views/html-admin-dashboard-php-notice.php:21
+msgid "The PHP version of this site is %s, and support has already ended."
+msgstr ""
+
+#: includes/admin/views/html-admin-dashboard-php-notice.php:23
+msgid "Please see here for the detail"
+msgstr ""
+
+#: includes/admin/views/html-admin-info-screen.php:14
 msgid "Information of Our Support"
 msgstr ""
 
-#: includes/admin/views/html-admin-info-screen.php:3
+#: includes/admin/views/html-admin-info-screen.php:15
 msgid "Sorry, Mainly Japanese and some English support Only"
 msgstr ""
 
-#: includes/admin/views/html-admin-info-screen.php:15
-#, php-format
+#. translators: 1) Japanized for WooCommerce framework version
+#: includes/admin/views/html-admin-info-screen.php:30
 msgid "The currently working framework version is %s."
 msgstr ""
 
-#: includes/admin/views/html-admin-info-screen.php:18
+#: includes/admin/views/html-admin-info-screen.php:35
 msgid "Nice to meet you on Facebook page!"
 msgstr ""
 
-#: includes/admin/views/html-admin-info-screen.php:19
-msgid "Woo Japan Wave Facebook page!"
+#: includes/admin/views/html-admin-info-screen.php:36
+msgid "Japanized for WooCommerce Facebook page!"
 msgstr ""
 
 #: includes/admin/views/html-admin-screen.php:12
@@ -745,40 +760,35 @@ msgstr ""
 msgid "Infomations"
 msgstr ""
 
-#: includes/admin/views/html-admin-setting-screen.php:11
+#: includes/admin/views/html-admin-setting-screen.php:17
 msgid "General Setting"
 msgstr ""
 
-#: includes/admin/views/html-admin-setting-screen.php:12
+#: includes/admin/views/html-admin-setting-screen.php:18
 msgid "Shipment Setting"
 msgstr ""
 
-#: includes/admin/views/html-admin-setting-screen.php:13
+#: includes/admin/views/html-admin-setting-screen.php:19
 msgid "Payment Setting"
 msgstr ""
 
-#: includes/admin/views/html-admin-setting-screen.php:14
+#: includes/admin/views/html-admin-setting-screen.php:20
 msgid "Notation based on Specified Commercial Transaction Law"
 msgstr ""
 
-#: includes/admin/views/html-admin-setting-screen.php:18
+#: includes/admin/views/html-admin-setting-screen.php:25
 msgid "The URL for this page is incorrect."
 msgstr ""
 
-#. Plugin Name of the plugin/theme
-#: includes/admin/views/html-admin-setting-screen.php:25
-msgid "Japanized for WooCommerce"
-msgstr ""
-
-#: includes/admin/views/html-admin-setting-screen.php:34
+#: includes/admin/views/html-admin-setting-screen.php:47
 msgid "Do you like this plugin?"
 msgstr ""
 
-#: includes/admin/views/html-admin-setting-screen.php:35
+#: includes/admin/views/html-admin-setting-screen.php:48
 msgid "Rate it 5"
 msgstr ""
 
-#: includes/admin/views/html-admin-setting-screen.php:35
+#: includes/admin/views/html-admin-setting-screen.php:48
 msgid "on WordPress.org"
 msgstr ""
 
@@ -909,60 +919,63 @@ msgstr ""
 msgid "Y/m/d"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:192
-#, php-format
+#. translators: %s: Week name
+#: includes/class-jp4wc-delivery.php:193
 msgid "(%s)"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:214
+#: includes/class-jp4wc-delivery.php:215
 msgid "Delivery Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:221
+#: includes/class-jp4wc-delivery.php:222
 msgid "-"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:310 includes/class-jp4wc-delivery.php:326
+#: includes/class-jp4wc-delivery.php:311
+#: includes/class-jp4wc-delivery.php:327
 msgid "Scheduled Delivery date and time"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:314 includes/class-jp4wc-delivery.php:330
+#: includes/class-jp4wc-delivery.php:315
+#: includes/class-jp4wc-delivery.php:331
 msgid "Scheduled Delivery Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:318 includes/class-jp4wc-delivery.php:334
+#: includes/class-jp4wc-delivery.php:319
+#: includes/class-jp4wc-delivery.php:335
 msgid "Scheduled Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:402
+#: includes/class-jp4wc-delivery.php:403
 msgid "Delivery"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:449
+#: includes/class-jp4wc-delivery.php:450
 msgid "Shipping Detail"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:521
+#: includes/class-jp4wc-delivery.php:522
 msgid "Delivery Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:522
+#: includes/class-jp4wc-delivery.php:523
 msgid "Date on which the customer wished delivery."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:529
+#: includes/class-jp4wc-delivery.php:530
 msgid "Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:530
+#: includes/class-jp4wc-delivery.php:531
 msgid "Time Zone on which the customer wished delivery."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:537
+#: includes/class-jp4wc-delivery.php:538
 msgid "Tracking Ship Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:538
+#: includes/class-jp4wc-delivery.php:539
 msgid "Actually shipped to date"
 msgstr ""
 
@@ -971,26 +984,21 @@ msgid " and "
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:108
-msgid ""
-"The following items of \"Notation based on the Specified Commercial "
-"Transactions Law\" have not been entered. Please enter the item of "
-"\"Notation based on Specified Commercial Transactions Law\" from the "
-"management screen."
+msgid "The following items of \"Notation based on the Specified Commercial Transactions Law\" have not been entered. Please enter the item of \"Notation based on Specified Commercial Transactions Law\" from the management screen."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:24
-#: src/blocks/atstore/index.js:16
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:31
+#: assets/js/frontend/blocks/atstore.js:1
 msgid "Pay At Store"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:25
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:32
 msgid "Allows At Store payments."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:50
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:88
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:104
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:102
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:57
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:142
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:103
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:428
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:231
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:138
@@ -998,755 +1006,504 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:174
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:61
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:107
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:82
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:130
 msgid "Enable/Disable"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:52
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:59
 msgid "Enable At Store Payment"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:56
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:94
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:91
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:110
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:108
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:63
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:148
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:83
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:109
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:412
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:443
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:239
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:146
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:182
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:88
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:136
 msgid "Title"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:58
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:96
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:112
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:110
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:415
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:446
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:65
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:150
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:111
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:414
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:445
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:243
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:150
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:186
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:90
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:138
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:59
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:66
 msgid "At Store Payment"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:63
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:101
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:98
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:117
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:115
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:70
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:155
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:90
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:116
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:460
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:246
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:153
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:189
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:95
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:143
 msgid "Description"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:65
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:103
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:93
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:119
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:117
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:97
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:72
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:157
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:85
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:118
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:145
 msgid "Payment method description that the customer will see on your checkout."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:66
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:73
 msgid "Please pay the fee at Store."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:70
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:105
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:77
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:162
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:97
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:150
 msgid "Instructions"
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:72
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:79
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:164
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:152
 msgid "Instructions that will be added to the thank you page and emails."
 msgstr ""
 
-#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:114
+#: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:121
 msgid "Awaiting At Store payment"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:47
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:96
 msgid "Allows payments by bank transfer in Japan."
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:90
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:144
 msgid "Enable Bank Transfer"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:97
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:151
 msgid "Bank Transfer in Japan"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:104
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:158
 msgid "Make your payment directly into our bank account."
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:120
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:169
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:157
+msgid "Transfer account display Location"
+msgstr ""
+
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:171
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:159
+msgid "The location of the transfer account information on the e-mail."
+msgstr ""
+
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:172
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:160
+msgid "Unless customized by an extension plugin, 9 will be before the order and 15 will be after the order."
+msgstr ""
+
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:177
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:165
+msgid "Display order of instructions and transfer account"
+msgstr ""
+
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:179
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:167
+msgid "Check this box if you want to reverse the order in which instructions and transfer accounts are displayed."
+msgstr ""
+
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:196
 msgid "Account Details"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:126
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:202
 msgid "Bank Name"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:127
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:203
 msgid "Bank Branch"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:128
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:204
 msgid "Bank Type"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:129
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:263
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:121
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:252
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:205
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:356
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:399
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:191
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:340
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:376
 msgid "Account Number"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:130
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:264
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:122
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:250
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:206
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:357
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:400
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:192
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:338
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:374
 msgid "Account Name"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:135
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:127
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:211
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:197
 msgid "+ Add Account"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:135
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:127
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:211
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:197
 msgid "Remove selected account(s)"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:258
-msgid "Our Bank Details"
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:355
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:398
+msgid "Bank Account Details"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:304
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:434
 msgid "Awaiting BANK payment"
 msgstr ""
 
 #: includes/gateways/cod/class-wc-addons-gateway-cod.php:101
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:225
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:217
 msgid "Payment to be made upon delivery."
 msgstr ""
 
 #: includes/gateways/cod/class-wc-addons-gateway-cod.php:120
-#, php-format
 msgid "COD Failed (%s)"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:40
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:32
 msgid "Cash on Delivery for Subscriptions"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:41
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:33
 msgid "Have your customers pay with cash (or by other means) upon delivery."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:84
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:76
 msgid "Enable COD"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:85
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:77
 msgid "Enable Cash on Delivery"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:94
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:86
 msgid "Cash on Delivery"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:100
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:92
 msgid "Payment method description that the customer will see on your website."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:101
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:108
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:93
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:100
 msgid "Pay with cash upon delivery."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:107
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:99
 msgid "Instructions that will be added to the thank you page."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:112
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:104
 msgid "Enable for shipping methods"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:117
-msgid ""
-"If COD is only available for certain methods, set it up here. Leave blank to "
-"enable for all methods."
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:109
+msgid "If COD is only available for certain methods, set it up here. Leave blank to enable for all methods."
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:121
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:113
 msgid "Select shipping methods"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:125
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:117
 msgid "Accept for virtual orders"
 msgstr ""
 
-#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:126
+#: includes/gateways/cod/class-wc-gateway-cod-4sub.php:118
 msgid "Accept COD if the order is virtual"
 msgstr ""
 
-#: includes/gateways/linepay/class-wc-gateway-linepay-cart-handler.php:147
-msgid "&mdash; or &mdash;"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:64
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:127
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:57
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:133
-#, php-format
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:58
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:134
 msgid "Proceed to %s"
 msgstr ""
 
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:64
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:70
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:113
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:127
-msgid "LINE Pay"
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:58
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:134
+#: includes/gateways/paidy/assets/js/frontend/paidy.js:1
+msgid "Paidy"
 msgstr ""
 
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:71
-msgid "Pay using LINE Pay."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:64
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:112
+msgid "Paidy Payment"
 msgstr ""
 
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:106
-msgid "Enable LINE Pay"
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:65
+msgid "\"Paidy next month payment\" reduces the opportunity loss due to the payment method and contributes to sales increase."
 msgstr ""
 
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:124
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:130
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:105
+msgid "Enable Paidy"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:119
+msgid "No matter how many times you shop a month, you pay once in the following month. <br /> The following payment methods are available."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:123
+msgid "Paidy description"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:126
+msgid "Payment method description for paidy explanation that the customer will see on your checkout."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:131
 msgid "Order Button Text"
 msgstr ""
 
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:126
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:132
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:464
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:133
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:463
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:250
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:157
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:193
 msgid "This controls the description which the user sees during checkout."
 msgstr ""
 
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:130
-msgid "API Environment setting"
-msgstr ""
-
-#. translators: %s: URL
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:133
-#, php-format
-msgid ""
-"Please refer to <a href=\"%s\" target=\"_blank\">the LINE Pay setting flow "
-"page</a> for setting up the LINE Pay API. Examination is necessary for the "
-"use."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:136
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:136
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:137
 msgid "Environment"
 msgstr ""
 
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:139
-msgid ""
-"This setting specifies whether you will process production transactions, or "
-"whether you will process simulated transactions using the LINEPay Test."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:143
-msgid "Production"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:144
-msgid "Test merchant"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:148
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:150
-msgid "Channel Id"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:150
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:157
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:149
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:156
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:163
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:170
-#, php-format
-msgid "Please enter %s from Paidy Admin site."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:150
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:164
-msgid "This field is numeric only."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:155
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:157
-msgid "Channel Secret Key"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:162
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:164
-msgid "Test Channel Id"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:164
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:171
-#, php-format
-msgid "Please enter %s from LINE pay Admin site."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:169
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:171
-msgid "Test Channel Secret Key"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:178
-msgid "Please enter shop name for LINE pay."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:183
-msgid "Order prefix"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:185
-msgid "Please enter Order prefix for LINE pay."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:190
-msgid "Payment Action"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:193
-msgid ""
-"Choose whether you wish to capture funds immediately or authorize payment "
-"only."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:197
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:490
-msgid "Capture"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:198
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:491
-msgid "Authorize"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:202
-msgid "Checkout on cart page"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:204
-msgid "Enable LINEPay Checkout on the cart page"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:205
-msgid "This shows or hides the LINEPay Checkout button on the cart page."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:210
-msgid "Contracting company name"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:212
-msgid ""
-"Please enter the name of the company or sole proprietor contracted with LINE "
-"Pay."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:217
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:189
-msgid "Debug Mode"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:219
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:191
-msgid "Enable Debug Mode"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:221
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:193
-msgid "Save debug data using WooCommerce logging."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:333
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:339
-msgid "All Yomigana must be katakana."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:492
-#, php-format
-msgid "Authorization Expire Date is %s."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:498
-msgid "Confirm API processing was successful."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:508
-#, php-format
-msgid ""
-"The payment amount differs between the system and LINE PAY. The system is "
-"%1$s and LINE PAY is %2$s."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:511
-msgid "Confirm API processing failed."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:610
-msgid "Free Shipping"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:629
-msgid "Shipping Fee"
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:664
-msgid "Capture API processing was successful."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:666
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:669
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:672
-msgid "Capture API processing failed."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:669
-msgid " Not Authorize or not match amount."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:682
-msgid "This order is cancelled by LINE Pay."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:715
-msgid "The Void was successful."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:719
-msgid "The Void was failed."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:729
-msgid "The refund was successful."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:733
-msgid "The refund was failed."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-gateway-linepay.php:738
-msgid "The refund was failed. not match some conditions"
-msgstr ""
-
-#. translators: 1) Wikipedia link
-#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:94
-#, php-format
-msgid ""
-"LINE Pay is enabled, but a SSL certificate is not detected. Your checkout "
-"may not be secure! Please ensure your server has a valid <a href=\"%1$s\" "
-"target=\"_blank\">SSL certificate</a>."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:99
-msgid "LINE Pay for WooCommerce - cURL is not installed."
-msgstr ""
-
-#. translators: 1) LINE Pay PR link
-#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:105
-#, php-format
-msgid ""
-"LINE Pay can reach many LINE users from the payment method without fixed "
-"monthly fee. <a href=\"%s\">Click here for details.</a>."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:118
-#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:137
-msgid "Action failed. Please refresh the page and retry."
-msgstr ""
-
-#: includes/gateways/linepay/class-wc-linepay-admin-notices.php:122
-#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:141
-msgid "Cheatin&#8217; huh?"
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:57
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:133
-#: includes/gateways/paidy/src/paidy/index.js:16
-msgid "Paidy"
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:63
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:111
-msgid "Paidy Payment"
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:64
-msgid ""
-"\"Paidy next month payment\" reduces the opportunity loss due to the payment "
-"method and contributes to sales increase."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:104
-msgid "Enable Paidy"
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:118
-msgid ""
-"No matter how many times you shop a month, you pay once in the following "
-"month. <br /> The following payment methods are available."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:122
-msgid "Paidy description"
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:125
-msgid ""
-"Payment method description for paidy explanation that the customer will see "
-"on your checkout."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:138
-msgid ""
-"This setting specifies whether you will process live transactions, or "
-"whether you will process simulated transactions using the Paidy Sandbox."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:142
-msgid "Live"
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:139
+msgid "This setting specifies whether you will process live transactions, or whether you will process simulated transactions using the Paidy Sandbox."
 msgstr ""
 
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:143
+msgid "Live"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:144
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:220
 msgid "Sandbox"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:147
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:149
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:641
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:148
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:150
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:640
 msgid "API Public Key"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:154
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:156
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:652
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:150
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:157
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:164
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:171
+msgid "Please enter %s from Paidy Admin site."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:155
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:157
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:651
 msgid "API Secret Key"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:161
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:163
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:162
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:164
 msgid "Test API Public Key"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:168
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:170
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:169
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:171
 msgid "Test API Secret Key"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:175
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:176
 msgid "Store Name"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:177
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:178
 msgid "This controls the store name which the user sees during paidy checkout."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:181
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:182
 msgid "Logo Image (168×168 recommend)"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:183
-msgid ""
-"URL of a custom logo that can be displayed in the checkout application "
-"header. If no value is specified, the Paidy logo will be displayed."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:184
+msgid "URL of a custom logo that can be displayed in the checkout application header. If no value is specified, the Paidy logo will be displayed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:186
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:187
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:174
 msgid "Optional"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:196
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:190
+msgid "Debug Mode"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:192
+msgid "Enable Debug Mode"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:194
+msgid "Save debug data using WooCommerce logging."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:197
 msgid "About Webhook"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:198
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:199
 msgid "The webhooks set in the Paidy management screen are as follows. <br />"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:201
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:202
 msgid "Notice e-mail"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:203
-msgid ""
-"Set an e-mail address to send an e-mail when an error occurs during "
-"connection with paidy."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:204
+msgid "Set an e-mail address to send an e-mail when an error occurs during connection with paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:516
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:515
 msgid "This order has already been settled."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:518
-msgid ""
-"API Public key is not set. Please set an API public key in the admin page."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:517
+msgid "API Public key is not set. Please set an API public key in the admin page."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:606
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:605
 msgid "Once the customer interrupted the payment.. Order ID:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:609
-msgid ""
-"This Paidy payment has been declined. Please select another payment method."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:608
+msgid "This Paidy payment has been declined. Please select another payment method."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:627
-msgid ""
-"Paidy Payment succeeds to authorize and move to thank you page. Get data is "
-"following."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:626
+msgid "Paidy Payment succeeds to authorize and move to thank you page. Get data is following."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:641
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:652
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:640
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:651
 msgid "Production environment"
 msgstr ""
 
 #. translators: 1) Field title 2) Environment 3) Paidy PR link
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:667
-#, php-format
-msgid ""
-"If you do not set %1$s, it will not work in the %2$s. Application is "
-"necessary for acquisition."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:666
+msgid "If you do not set %1$s, it will not work in the %2$s. Application is necessary for acquisition."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:709
-msgid ""
-"Cancelled processing has not been completed due to a Paidy error. Please "
-"check Paidy admin."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:708
+msgid "Cancelled processing has not been completed due to a Paidy error. Please check Paidy admin."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:741
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:751
-msgid ""
-"In the payment completion process, the amount and ID match were confirmed."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:740
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:750
+msgid "In the payment completion process, the amount and ID match were confirmed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:754
-msgid ""
-"In the payment completion process, the amount and ID did not match. Check on "
-"the Paidy admin."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:753
+msgid "In the payment completion process, the amount and ID did not match. Check on the Paidy admin."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:763
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:827
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:762
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:826
 msgid "Completion processing has not been completed due to a Paidy error."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:765
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:764
 msgid "Status Change from Processing to completed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:805
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:804
 msgid "Refund is not possible because Paidy has not completed processing."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:821
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:820
 msgid "Completion refunding has been completed at Paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:866
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:865
 msgid "[WooCommerce] Notice of error occurrence in Paidy payment linkage"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:883
-msgid ""
-"An error has occurred in the Paidy payment linkage when changing the status "
-"of WooCommerce."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:882
+msgid "An error has occurred in the Paidy payment linkage when changing the status of WooCommerce."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:884
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:883
 msgid "Please check the status of Paidy payment and respond accordingly."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:885
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:884
 msgid "Order number:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:886
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:885
 msgid "Order details URL:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:887
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:886
 msgid "Paidy payment ID:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:888
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:887
 msgid "Error occurrence time:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:889
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:891
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:888
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:890
 msgid "Error situation:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:893
-msgid ""
-"* This e-mail is for sending only, so you cannot reply directly to this e-"
-"mail."
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:892
+msgid "* This e-mail is for sending only, so you cannot reply directly to this e-mail."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:948
-#, php-format
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:947
 msgid "Already using URL as image: %s"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:956
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:955
 msgid "Select a image to upload"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:957
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:956
 msgid "Use this image"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:958
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:961
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:957
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:960
 msgid "Add image"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:969
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:968
 msgid "Remove image"
 msgstr ""
 
 #. translators: 1) Wikipedia link
 #: includes/gateways/paidy/class-wc-paidy-admin-notices.php:96
-#, php-format
-msgid ""
-"Paidy is enabled, but a SSL certificate is not detected. Your checkout may "
-"not be secure! Please ensure your server has a valid <a href=\"%1$s\" "
-"target=\"_blank\">SSL certificate</a>."
+msgid "Paidy is enabled, but a SSL certificate is not detected. Your checkout may not be secure! Please ensure your server has a valid <a href=\"%1$s\" target=\"_blank\">SSL certificate</a>."
 msgstr ""
 
 #: includes/gateways/paidy/class-wc-paidy-admin-notices.php:101
@@ -1755,28 +1512,25 @@ msgstr ""
 
 #. translators: 1) setting link
 #: includes/gateways/paidy/class-wc-paidy-admin-notices.php:110
-#, php-format
-msgid ""
-"Paidy is in test mode however your test keys may not be valid. Test keys "
-"start with pk_test and sk_test. Please go to your settings and, <a "
-"href=\"%s\">set your Paidy account keys</a>."
+msgid "Paidy is in test mode however your test keys may not be valid. Test keys start with pk_test and sk_test. Please go to your settings and, <a href=\"%s\">set your Paidy account keys</a>."
 msgstr ""
 
 #. translators: 1) setting link
 #: includes/gateways/paidy/class-wc-paidy-admin-notices.php:118
-#, php-format
-msgid ""
-"Paidy is in live mode however your test keys may not be valid. Live keys "
-"start with pk_live and sk_live. Please go to your settings and, <a "
-"href=\"%s\">set your Paidy account keys</a>."
+msgid "Paidy is in live mode however your test keys may not be valid. Live keys start with pk_live and sk_live. Please go to your settings and, <a href=\"%s\">set your Paidy account keys</a>."
 msgstr ""
 
 #. translators: 1) Paidy PR link
 #: includes/gateways/paidy/class-wc-paidy-admin-notices.php:124
-#, php-format
-msgid ""
-"Paidy payment is a monthly postpaid payment that is adopted by Amazon and "
-"Yodobashi Camera. <a href=\"%s\">Click here for details.</a>."
+msgid "Paidy payment is a monthly postpaid payment that is adopted by Amazon and Yodobashi Camera. <a href=\"%s\">Click here for details.</a>."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:137
+msgid "Action failed. Please refresh the page and retry."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:141
+msgid "Cheatin&#8217; huh?"
 msgstr ""
 
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:63
@@ -1784,7 +1538,6 @@ msgstr ""
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:69
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:71
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:73
-#, php-format
 msgid "It succeeded to check the %s of the order in Paidy Webhook."
 msgstr ""
 
@@ -1793,9 +1546,7 @@ msgid "authorization"
 msgstr ""
 
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:65
-msgid ""
-"This order status is processing, this site received authorize_success from "
-"the Paidy webhook."
+msgid "This order status is processing, this site received authorize_success from the Paidy webhook."
 msgstr ""
 
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:67
@@ -1815,59 +1566,47 @@ msgid "refunded"
 msgstr ""
 
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:75
-#, php-format
 msgid "It failed to check the %s of the order in Paidy Webhook."
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/CachingContainer.php:64
-#, php-format
 msgid "Key \"%1$s\" not found in inner container"
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/CachingContainer.php:67
-#, php-format
 msgid "Could not retrieve value for key \"%1$s from inner container"
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/CachingContainer.php:96
-#, php-format
 msgid "Could not check cache for key \"%1$s\""
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/CachingContainer.php:105
-#, php-format
 msgid "Could not check inner container for key \"%1$s\""
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/CompositeContainer.php:57
-#, php-format
-msgid ""
-"Failed to retrieve value for key \"%1$s\" from container at index \"%2$s\""
+msgid "Failed to retrieve value for key \"%1$s\" from container at index \"%2$s\""
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/CompositeContainer.php:63
 #: includes/gateways/paypal/lib/packages/Dhii/Container/CompositeContainer.php:94
-#, php-format
 msgid "Failed check for key \"%1$s\" on container at index \"%2$s\""
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/CompositeContainer.php:71
-#, php-format
 msgid "Key \"%1$s\" not found in any of the containers"
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/DelegatingContainer.php:47
-#, php-format
 msgid "Service not found for key \"%1$s\""
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/DelegatingContainer.php:59
-#, php-format
 msgid "Could not create service \"%1$s\""
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/DelegatingContainer.php:77
-#, php-format
 msgid "Could not extend service \"%1$s\""
 msgstr ""
 
@@ -1877,17 +1616,14 @@ msgid "Factory could not be invoked"
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/Dictionary.php:43
-#, php-format
 msgid "Dictionary does not have key \"%1$s\""
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/Dictionary.php:119
-#, php-format
 msgid "Key at index %1$d is not a string"
 msgstr ""
 
 #: includes/gateways/paypal/lib/packages/Dhii/Container/MaskingContainer.php:67
-#, php-format
 msgid "Inner key \"%1$s\" is not exposed"
 msgstr ""
 
@@ -1901,7 +1637,7 @@ msgstr ""
 msgid "Could not create token."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/IdentityToken.php:122
+#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/IdentityToken.php:121
 msgid "Could not create identity token."
 msgstr ""
 
@@ -1929,11 +1665,10 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/OrderEndpoint.php:427
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/PaymentsStatusHandlingTrait.php:78
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/PaymentsStatusHandlingTrait.php:121
-msgid ""
-"Payment provider declined the payment, please use a different payment method."
+msgid "Payment provider declined the payment, please use a different payment method."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/OrderEndpoint.php:386
+#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/OrderEndpoint.php:385
 msgid "Could not authorize order."
 msgstr ""
 
@@ -1951,8 +1686,12 @@ msgstr ""
 msgid "Action URL not found."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PartnersEndpoint.php:115
+#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PartnersEndpoint.php:114
 msgid "Could not fetch sellers status."
+msgstr ""
+
+#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PaymentsEndpoint.php:113
+msgid "Could not get authorized payment info."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PaymentTokenEndpoint.php:121
@@ -1961,10 +1700,6 @@ msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PaymentTokenEndpoint.php:184
 msgid "Could not delete payment token."
-msgstr ""
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PaymentsEndpoint.php:113
-msgid "Could not get authorized payment info."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/WebhookEndpoint.php:116
@@ -1991,15 +1726,14 @@ msgstr ""
 msgid "Not a valid webhook to verify."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/WebhookEndpoint.php:368
-#, php-format
+#. translators: %s is the headers key.
+#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/WebhookEndpoint.php:367
 msgid "Not a valid webhook event. Header %s is missing"
 msgstr ""
 
 #. translators: %s is the current status.
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/AuthorizationStatus.php:66
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/OrderStatus.php:53
-#, php-format
 msgid "%s is not a valid status"
 msgstr ""
 
@@ -2012,10 +1746,7 @@ msgid "The payer initiated a dispute for this captured payment with PayPal."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:78
-msgid ""
-"The captured funds were reversed in response to the payer disputing this "
-"captured payment with the issuer of the financial instrument used to pay for "
-"this captured payment."
+msgid "The captured funds were reversed in response to the payer disputing this captured payment with the issuer of the financial instrument used to pay for this captured payment."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:80
@@ -2023,15 +1754,11 @@ msgid "The payer paid by an eCheck that has not yet cleared."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:82
-msgid ""
-"Visit your online account. In your Account Overview, accept and deny this "
-"payment."
+msgid "Visit your online account. In your Account Overview, accept and deny this payment."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:84
-msgid ""
-"No additional specific reason can be provided. For more information about "
-"this captured payment, visit your account online or contact PayPal."
+msgid "No additional specific reason can be provided. For more information about this captured payment, visit your account online or contact PayPal."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:86
@@ -2039,12 +1766,7 @@ msgid "The captured payment is pending manual review."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:88
-msgid ""
-"The payee has not yet set up appropriate receiving preferences for their "
-"account. For more information about how to accept or deny this payment, "
-"visit your account online. This reason is typically offered in scenarios "
-"such as when the currency of the captured payment is different from the "
-"primary holding currency of the payee."
+msgid "The payee has not yet set up appropriate receiving preferences for their account. For more information about how to accept or deny this payment, visit your account online. This reason is typically offered in scenarios such as when the currency of the captured payment is different from the primary holding currency of the payee."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:90
@@ -2052,9 +1774,7 @@ msgid "The captured funds were refunded."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:92
-msgid ""
-"The payer must send the funds for this captured payment. This code generally "
-"appears for manual EFTs."
+msgid "The payer must send the funds for this captured payment. This code generally appears for manual EFTs."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/CaptureStatusDetails.php:94
@@ -2067,7 +1787,6 @@ msgstr ""
 
 #. translators: %s is the current type.
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/PayerTaxInfo.php:55
-#, php-format
 msgid "%s is not a valid tax type."
 msgstr ""
 
@@ -2075,8 +1794,8 @@ msgstr ""
 msgid "Not a valid payment source type."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Exception/PayPalApiException.php:45
-#, php-format
+#. translators: %1$d - HTTP status code number (404, 500, ...)
+#: includes/gateways/paypal/modules/ppcp-api-client/src/Exception/PayPalApiException.php:44
 msgid "Unknown error while connecting to PayPal. Status code: %1$d."
 msgstr ""
 
@@ -2274,13 +1993,11 @@ msgstr ""
 
 #. translators: %s is the current breakdown key.
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AmountFactory.php:222
-#, php-format
 msgid "No value given for breakdown %s"
 msgstr ""
 
 #. translators: %s is the current breakdown key.
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AmountFactory.php:231
-#, php-format
 msgid "No currency given for breakdown %s"
 msgstr ""
 
@@ -2320,10 +2037,7 @@ msgstr ""
 msgid "Order does not contain intent."
 msgstr ""
 
-#. translators: %s: email address
-#.
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/PayerFactory.php:199
-#, php-format
 msgid "%s is not a valid email address."
 msgstr ""
 
@@ -2337,7 +2051,6 @@ msgstr ""
 
 #. translators: %1$s is the first name and %2$s is the second name. wc translation.
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/ShippingFactory.php:47
-#, php-format
 msgctxt "full name"
 msgid "%1$s %2$s"
 msgstr ""
@@ -2374,18 +2087,6 @@ msgstr ""
 msgid "Return to your shop."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/assets/js/button.js:2
-msgid "delete"
-msgstr ""
-
-#: includes/gateways/paypal/modules/ppcp-button/assets/js/button.js:2
-msgid "has"
-msgstr ""
-
-#: includes/gateways/paypal/modules/ppcp-button/assets/js/button.js:2
-msgid "get"
-msgstr ""
-
 #: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:290
 msgid "Save your Credit Card"
 msgstr ""
@@ -2398,8 +2099,8 @@ msgstr ""
 msgid "Choose a saved payment"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:342
-#, php-format
+#. translators: %1$s - email, %2$s, %3$s - HTML tags for a link.
+#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:341
 msgid "Using %2$s%1$s%3$s PayPal."
 msgstr ""
 
@@ -2416,49 +2117,42 @@ msgstr ""
 msgid "MM/YY"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:861
+#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:860
 msgid "Unfortunately, your credit card details are not valid."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:865
+#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:864
 msgid "Unfortunately, we do not support your credit card."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:868
-msgid ""
-"Cardholder's first and last name are required, please fill the checkout form "
-"required fields."
+msgid "Cardholder's first and last name are required, please fill the checkout form required fields."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:877
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:240
-msgid ""
-"Something went wrong. Please try again or choose another payment source."
+#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:876
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:239
+msgid "Something went wrong. Please try again or choose another payment source."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:882
+#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:881
 msgid "Required form fields are not filled."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:886
-#, php-format
 msgid "%s is a required field."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:889
+#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:888
 #: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/CreateOrderEndpoint.php:540
-msgid ""
-"Please read and accept the terms and conditions to proceed with your order."
+msgid "Please read and accept the terms and conditions to proceed with your order."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:897
-#, php-format
 msgctxt "checkout-validation"
 msgid "Billing %s"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:899
-#, php-format
 msgctxt "checkout-validation"
 msgid "Shipping %s"
 msgstr ""
@@ -2467,31 +2161,28 @@ msgstr ""
 msgid "No order id given"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:158
+#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:157
 msgid "Unfortunately, we do not accept this card."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:169
+#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:168
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:177
-msgid ""
-"Unfortunately, we can't accept your card. Please choose a different payment "
-"method."
+#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:176
+msgid "Unfortunately, we can't accept your card. Please choose a different payment method."
 msgstr ""
 
 #. translators: %s is the id of the order.
 #: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:189
-#, php-format
 msgid "Order %s is not ready for processing yet."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ChangeCartEndpoint.php:142
+#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ChangeCartEndpoint.php:141
 msgid "Necessary fields not defined. Action aborted."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ChangeCartEndpoint.php:181
+#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ChangeCartEndpoint.php:180
 msgid "Something went wrong. Action aborted"
 msgstr ""
 
@@ -2504,9 +2195,7 @@ msgid "Could not validate nonce."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-button/src/Validation/CheckoutFormValidator.php:69
-msgid ""
-"An account is already registered with your email address. <a href=\"#\" "
-"class=\"showlogin\">Please log in.</a>"
+msgid "An account is already registered with your email address. <a href=\"#\" class=\"showlogin\">Please log in.</a>"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-button/src/Validation/CheckoutFormValidator.php:81
@@ -2514,30 +2203,20 @@ msgid "Please enter a valid account username."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-button/src/Validation/CheckoutFormValidator.php:89
-msgid ""
-"An account is already registered with that username. Please choose another."
+msgid "An account is already registered with that username. Please choose another."
 msgstr ""
 
+#. Translators: placeholder is the gateway name.
 #: includes/gateways/paypal/modules/ppcp-compat/services.php:23
-#, php-format
 msgid "%s (Legacy)"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-compat/src/PPEC/DeactivateNote.php:52
-msgid ""
-"As of 1 Sept 2021, PayPal Checkout will be officially retired from "
-"WooCommerce.com, and support for this product will end as of 1 March 2022. "
-"PayPal Payments can now handle all your subscription renewals even if they "
-"were first created using PayPal Checkout. To fully switch over, all you need "
-"to do is deactivate and/or remove the PayPal Checkout plugin from your store."
+#: includes/gateways/paypal/modules/ppcp-compat/src/PPEC/DeactivateNote.php:51
+msgid "As of 1 Sept 2021, PayPal Checkout will be officially retired from WooCommerce.com, and support for this product will end as of 1 March 2022. PayPal Payments can now handle all your subscription renewals even if they were first created using PayPal Checkout. To fully switch over, all you need to do is deactivate and/or remove the PayPal Checkout plugin from your store."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-compat/src/PPEC/DeactivateNote.php:57
-msgid ""
-"As of 1 Sept 2021, PayPal Checkout will be officially retired from "
-"WooCommerce.com, and support for this product will end as of 1 March 2022. "
-"To fully switch over, all you need to do is deactivate and/or remove the "
-"PayPal Checkout plugin from your store."
+#: includes/gateways/paypal/modules/ppcp-compat/src/PPEC/DeactivateNote.php:56
+msgid "As of 1 Sept 2021, PayPal Checkout will be officially retired from WooCommerce.com, and support for this product will end as of 1 March 2022. To fully switch over, all you need to do is deactivate and/or remove the PayPal Checkout plugin from your store."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-compat/src/PPEC/DeactivateNote.php:67
@@ -2552,14 +2231,8 @@ msgstr ""
 msgid "Learn More"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-onboarding/assets/js/onboarding.js:1
-msgid "hidden"
-msgstr ""
-
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Assets/OnboardingAssets.php:119
-msgid ""
-"Note: If no button location is selected, the PayPal gateway will not be "
-"available."
+msgid "Note: If no button location is selected, the PayPal gateway will not be available."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Assets/OnboardingAssets.php:156
@@ -2568,13 +2241,11 @@ msgstr ""
 
 #. translators: placeholder is an arbitrary string.
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/OnboardingRESTController.php:177
-#, php-format
 msgid "Environment \"%s\" is invalid. Use \"sandbox\" or \"production\"."
 msgstr ""
 
 #. translators: placeholder is a comma-separated list of fields.
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/OnboardingRESTController.php:191
-#, php-format
 msgid "Credentials are incomplete. Missing fields: %s."
 msgstr ""
 
@@ -2583,15 +2254,11 @@ msgid "An error occurred while saving the credentials."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:64
-msgid ""
-"Enable PayPal Payments — includes PayPal, Venmo, Pay Later — with fraud "
-"protection"
+msgid "Enable PayPal Payments — includes PayPal, Venmo, Pay Later — with fraud protection"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:68
-msgid ""
-"Securely accept all major credit & debit cards on the strength of the PayPal "
-"network"
+msgid "Securely accept all major credit & debit cards on the strength of the PayPal network"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:94
@@ -2635,10 +2302,7 @@ msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:125
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:164
-msgid ""
-"No matter what you sell, Seller Protection can help you avoid chargebacks, "
-"reversals, and fees on eligible PayPal payment transactions — even when a "
-"customer has filed a dispute."
+msgid "No matter what you sell, Seller Protection can help you avoid chargebacks, reversals, and fees on eligible PayPal payment transactions — even when a customer has filed a dispute."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:126
@@ -2657,10 +2321,7 @@ msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:131
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:186
-msgid ""
-"For Standard payments, Casual sellers may connect their Personal PayPal "
-"account in eligible countries to sell on WooCommerce. For Advanced payments, "
-"a Business PayPal account is required."
+msgid "For Standard payments, Casual sellers may connect their Personal PayPal account in eligible countries to sell on WooCommerce. For Advanced payments, a Business PayPal account is required."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:141
@@ -2668,9 +2329,7 @@ msgid "Standard Card Processing"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:143
-msgid ""
-"Card transactions are managed by PayPal, which simplifies compliance "
-"requirements for you."
+msgid "Card transactions are managed by PayPal, which simplifies compliance requirements for you."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:153
@@ -2686,9 +2345,7 @@ msgid "Fraud Protection"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:170
-msgid ""
-"Included with Advanced Checkout at no extra cost, Fraud Protection gives you "
-"the insight and control you need to better balance chargebacks and declines."
+msgid "Included with Advanced Checkout at no extra cost, Fraud Protection gives you the insight and control you need to better balance chargebacks and declines."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:173
@@ -2696,10 +2353,7 @@ msgid "Chargeback Protection"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:175
-msgid ""
-"If you choose this optional, fee-based alternative to Fraud Protection, "
-"PayPal will manage chargebacks for eligible credit and debit card "
-"transactions — so you won’t have to worry about unexpected costs."
+msgid "If you choose this optional, fee-based alternative to Fraud Protection, PayPal will manage chargebacks for eligible credit and debit card transactions — so you won’t have to worry about unexpected costs."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:176
@@ -2711,9 +2365,7 @@ msgid "Additional Vetting and Underwriting Required"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:181
-msgid ""
-"Business Ownership and other business information will be required during "
-"the application for Advanced Card Processing."
+msgid "Business Ownership and other business information will be required during the application for Advanced Card Processing."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:185
@@ -2722,16 +2374,14 @@ msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:194
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:369
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:200
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:199
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:297
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SectionsRenderer.php:154
 msgid "Advanced Card Processing"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:196
-msgid ""
-"PayPal acts as the payment processor for card transactions. You can add "
-"optional features like Chargeback Protection for more security."
+msgid "PayPal acts as the payment processor for card transactions. You can add optional features like Chargeback Protection for more security."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingRenderer.php:124
@@ -2742,7 +2392,7 @@ msgstr ""
 msgid "Test payments with PayPal sandbox"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingRenderer.php:131
+#: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingRenderer.php:130
 msgid "We could not properly connect to PayPal. Try reloading the page."
 msgstr ""
 
@@ -4628,7 +4278,6 @@ msgstr ""
 
 #. translators: %1$s is the action message (created or updated).
 #: includes/gateways/paypal/modules/ppcp-order-tracking/src/Endpoint/OrderTrackingEndpoint.php:98
-#, php-format
 msgctxt "tracking info success message"
 msgid "successfully %1$s"
 msgstr ""
@@ -4657,8 +4306,8 @@ msgstr ""
 msgid "Tracking Information"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-session/src/Cancellation/CancelView.php:65
-#, php-format
+#. translators: %3$ is funding source like "PayPal" or "Venmo", other placeholders are html tags for a link.
+#: includes/gateways/paypal/modules/ppcp-session/src/Cancellation/CancelView.php:64
 msgid ""
 "You are currently paying with %3$s. If you want to cancel\n"
 "                            this process, please click %1$shere%2$s."
@@ -4741,8 +4390,7 @@ msgid "Used PayPal Checkout plugin"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-status-report/src/StatusReportModule.php:149
-msgid ""
-"Whether the PayPal Checkout Gateway plugin was configured previously or not"
+msgid "Whether the PayPal Checkout Gateway plugin was configured previously or not"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-status-report/src/StatusReportModule.php:155
@@ -4757,25 +4405,21 @@ msgstr ""
 msgid "WooCommerce PayPal Payments"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:187
-#, php-format
+#. translators: %1$s is the payment token Id, %2$s is the error message.
+#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:186
 msgid "Could not add token Id to subscription %1$s: %2$s"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:223
-msgid ""
-"No PayPal payments saved, in order to use a saved payment you first need to "
-"create it through a purchase."
+#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:222
+msgid "No PayPal payments saved, in order to use a saved payment you first need to create it through a purchase."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:230
 msgid "Select a saved PayPal payment"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:277
-msgid ""
-"No Credit Card saved, in order to use a saved Credit Card you first need to "
-"create it through a purchase."
+#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:276
+msgid "No Credit Card saved, in order to use a saved Credit Card you first need to create it through a purchase."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:285
@@ -4795,9 +4439,7 @@ msgid "Remove PayPal Payments data from Database on uninstall"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-uninstall/extensions.php:32
-msgid ""
-"Remove options and scheduled actions from database when uninstalling the "
-"plugin."
+msgid "Remove options and scheduled actions from database when uninstalling the plugin."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-uninstall/extensions.php:42
@@ -4826,16 +4468,12 @@ msgstr ""
 msgid "Operation failed. Check WooCommerce logs for more details."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-vaulting/src/CustomerApprovalListener.php:79
-msgid ""
-"This PayPal account is already saved on this site. Please check that you are "
-"logged in correctly."
+#: includes/gateways/paypal/modules/ppcp-vaulting/src/CustomerApprovalListener.php:78
+msgid "This PayPal account is already saved on this site. Please check that you are logged in correctly."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-vaulting/src/PaymentTokenChecker.php:174
-msgid ""
-"Subscription set to Manual Renewal because payment method was not saved at "
-"PayPal."
+msgid "Subscription set to Manual Renewal because payment method was not saved at PayPal."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-vaulting/src/PaymentTokenChecker.php:214
@@ -4860,16 +4498,11 @@ msgid "PayPal payments"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-vaulting/src/VaultingModule.php:190
-msgid ""
-"The subscription payment failed because the payment method could not be "
-"saved. Please try again with a different payment method."
+msgid "The subscription payment failed because the payment method could not be saved. Please try again with a different payment method."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-vaulting/src/VaultingModule.php:194
-msgid ""
-"The subscription has been activated, but the payment method could not be "
-"saved. Please contact the merchant to save a payment method for automatic "
-"subscription renewal payments."
+msgid "The subscription has been activated, but the payment method could not be saved. Please contact the merchant to save a payment method for automatic subscription renewal payments."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:366
@@ -4911,20 +4544,24 @@ msgstr ""
 msgid "Credit Cards"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:468
-msgid ""
-"Pay via PayPal; you can pay with your credit card if you don't have a PayPal "
-"account."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:467
+msgid "Pay via PayPal; you can pay with your credit card if you don't have a PayPal account."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:479
 msgid "Intent"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:486
-msgid ""
-"The intent to either capture payment immediately or authorize a payment for "
-"an order after order creation."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:485
+msgid "The intent to either capture payment immediately or authorize a payment for an order after order creation."
+msgstr ""
+
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:490
+msgid "Capture"
+msgstr ""
+
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:491
+msgid "Authorize"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:501
@@ -4932,20 +4569,16 @@ msgstr ""
 msgid "Capture On Status Change"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:506
-msgid ""
-"The transaction will be captured automatically when the order status changes "
-"to Processing or Completed."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:505
+msgid "The transaction will be captured automatically when the order status changes to Processing or Completed."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:518
 msgid "Capture Virtual-Only Orders "
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:523
-msgid ""
-"If the order contains exclusively virtual items, enable this to immediately "
-"capture, rather than authorize, the transaction."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:522
+msgid "If the order contains exclusively virtual items, enable this to immediately capture, rather than authorize, the transaction."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:526
@@ -4956,12 +4589,8 @@ msgstr ""
 msgid "Instant Payments "
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:540
-msgid ""
-"If you enable this setting, PayPal will be instructed not to allow the buyer "
-"to use funding sources that take additional time to complete (for example, "
-"eChecks). Instead, the buyer will be required to use an instant funding "
-"source, such as an instant transfer, a credit/debit card, or Pay Later."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:539
+msgid "If you enable this setting, PayPal will be instructed not to allow the buyer to use funding sources that take additional time to complete (for example, eChecks). Instead, the buyer will be required to use an instant funding source, such as an instant transfer, a credit/debit card, or Pay Later."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:543
@@ -4972,16 +4601,15 @@ msgstr ""
 msgid "Brand Name"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:557
-msgid ""
-"Control the name of your shop, customers will see in the PayPal process."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:556
+msgid "Control the name of your shop, customers will see in the PayPal process."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:568
 msgid "Landing Page"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:575
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:574
 msgid "Type of PayPal page to display."
 msgstr ""
 
@@ -4999,11 +4627,7 @@ msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:598
-#, php-format
-msgid ""
-"By default, all possible funding sources will be shown. This setting can "
-"disable funding sources such as Credit Cards, Pay Later, Venmo, or other "
-"%1$sAlternative Payment Methods%2$s."
+msgid "By default, all possible funding sources will be shown. This setting can disable funding sources such as Credit Cards, Pay Later, Venmo, or other %1$sAlternative Payment Methods%2$s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:614
@@ -5011,9 +4635,7 @@ msgid "Vaulting"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:618
-msgid ""
-"Allow registered buyers to save PayPal and Credit Card accounts. Allow "
-"Subscription renewals."
+msgid "Allow registered buyers to save PayPal and Credit Card accounts. Allow Subscription renewals."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:628
@@ -5021,17 +4643,11 @@ msgid "Subscription capture behavior if Vault fails"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:634
-msgid ""
-"By default, subscription payments are captured only when saving the payment "
-"method was successful. Without a saved payment method, automatic renewal "
-"payments are not possible."
+msgid "By default, subscription payments are captured only when saving the payment method was successful. Without a saved payment method, automatic renewal payments are not possible."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:635
-msgid ""
-"Determines whether authorized payments for subscription orders are captured "
-"or voided if there is no saved payment method. This only applies when the "
-"intent Capture is used for the subscription order."
+msgid "Determines whether authorized payments for subscription orders are captured or voided if there is no saved payment method. This only applies when the intent Capture is used for the subscription order."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:637
@@ -5051,10 +4667,7 @@ msgid "Card billing data handling"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:653
-msgid ""
-"Using the WC form data increases convenience for the customers, but can "
-"cause issues if card details do not match the billing data in the checkout "
-"form."
+msgid "Using the WC form data increases convenience for the customers, but can cause issues if card details do not match the billing data in the checkout form."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:656
@@ -5074,71 +4687,64 @@ msgid "Separate Card Button from PayPal gateway"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:671
-msgid ""
-"Enable a separate payment gateway for the branded PayPal Debit or Credit "
-"Card button."
+msgid "Enable a separate payment gateway for the branded PayPal Debit or Credit Card button."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:672
-msgid ""
-"By default, the Debit or Credit Card button is displayed in the Standard "
-"Payments payment gateway. This setting creates a second gateway for the Card "
-"button."
+msgid "By default, the Debit or Credit Card button is displayed in the Standard Payments payment gateway. This setting creates a second gateway for the Card button."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:683
 msgid "Disable specific credit cards"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:690
-msgid ""
-"By default all possible credit cards will be accepted. You can disable some "
-"cards, if you wish."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:689
+msgid "By default all possible credit cards will be accepted. You can disable some cards, if you wish."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:694
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:298
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:297
 msgctxt "Name of credit card"
 msgid "Visa"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:695
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:303
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:302
 msgctxt "Name of credit card"
 msgid "Mastercard"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:696
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:726
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:308
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:307
 msgctxt "Name of credit card"
 msgid "American Express"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:697
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:727
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:313
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:312
 msgctxt "Name of credit card"
 msgid "Discover"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:698
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:728
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:318
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:317
 msgctxt "Name of credit card"
 msgid "JCB"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:699
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:729
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:323
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:322
 msgctxt "Name of credit card"
 msgid "Elo"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:700
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:730
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:328
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:327
 msgctxt "Name of credit card"
 msgid "Hiper"
 msgstr ""
@@ -5147,7 +4753,7 @@ msgstr ""
 msgid "Show logo of the following credit cards"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:718
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:717
 msgid "Define which cards you want to display in your checkout."
 msgstr ""
 
@@ -5175,14 +4781,12 @@ msgstr ""
 msgid "3D Secure"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:747
-#, php-format
+#. translators: %1$s and %2$s is a link tag.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:746
 msgid ""
 "3D Secure benefits cardholders and merchants by providing\n"
-"                                  an additional layer of verification using "
-"Verified by Visa,\n"
-"                                  MasterCard SecureCode and American Express "
-"SafeKey.\n"
+"                                  an additional layer of verification using Verified by Visa,\n"
+"                                  MasterCard SecureCode and American Express SafeKey.\n"
 "                                  %1$sLearn more about 3D Secure.%2$s"
 msgstr ""
 
@@ -5192,13 +4796,7 @@ msgstr ""
 
 #. translators: %1$s and %2$s opening and closing ul tag, %3$s and %4$s opening and closing li tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:773
-#, php-format
-msgid ""
-"%1$s%3$sNo 3D Secure will cause transactions to be denied if 3D Secure is "
-"required by the bank of the cardholder.%4$s%3$sSCA_WHEN_REQUIRED returns a "
-"3D Secure contingency when it is a mandate in the region where you operate."
-"%4$s%3$sSCA_ALWAYS triggers 3D Secure for every transaction, regardless of "
-"SCA requirements.%4$s%2$s"
+msgid "%1$s%3$sNo 3D Secure will cause transactions to be denied if 3D Secure is required by the bank of the cardholder.%4$s%3$sSCA_WHEN_REQUIRED returns a 3D Secure contingency when it is a mandate in the region where you operate.%4$s%3$sSCA_ALWAYS triggers 3D Secure for every transaction, regardless of SCA requirements.%4$s%2$s"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:784
@@ -5285,52 +4883,38 @@ msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1050
-#, php-format
-msgid ""
-"Enable saved cards, PayPal accounts, and subscription features on your "
-"store. Payment methods are saved in the secure %1$sPayPal Vault%2$s."
+msgid "Enable saved cards, PayPal accounts, and subscription features on your store. Payment methods are saved in the secure %1$sPayPal Vault%2$s."
 msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1058
-#, php-format
-msgid ""
-" To use vaulting features, you must %1$senable vaulting on your account%2$s."
+msgid " To use vaulting features, you must %1$senable vaulting on your account%2$s."
 msgstr ""
 
 #. translators: %1$s, %2$s, %3$s and %4$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1070
-#, php-format
-msgid ""
-"This will disable all %1$sPay Later%2$s features and %3$sAlternative Payment "
-"Methods%4$s on your site."
+msgid "This will disable all %1$sPay Later%2$s features and %3$sAlternative Payment Methods%4$s on your site."
 msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1155
-#, php-format
 msgid "Manage online risk with %1$sFraudNet%2$s."
 msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1163
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1182
-#, php-format
 msgid "Required when %1$sPay upon Invoice%2$s is used."
 msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1174
-#, php-format
-msgid ""
-"Enable %1$sshipment tracking information%2$s to be sent to PayPal for seller "
-"protection features."
+msgid "Enable %1$sshipment tracking information%2$s to be sent to PayPal for seller protection features."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1197
-#, php-format
-msgid ""
-" To use tracking features, you must %1$senable tracking on your account%2$s."
+#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1196
+msgid " To use tracking features, you must %1$senable tracking on your account%2$s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1230
@@ -5382,40 +4966,36 @@ msgid "Payment captured"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/OrderTablePaymentStatusColumn.php:144
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/PaymentStatusOrderDetail.php:51
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/PaymentStatusOrderDetail.php:50
 msgid "Not captured"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/PaymentStatusOrderDetail.php:55
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/PaymentStatusOrderDetail.php:54
 msgid "To capture the payment select capture action from the list below."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/RenderAuthorizeAction.php:50
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/RenderAuthorizeAction.php:49
 msgid "Capture authorized PayPal payment"
 msgstr ""
 
 #. translators: %s - Sofort, BLIK, iDeal, Mercado Pago, etc.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/FundingSource/FundingSourceRenderer.php:65
-#, php-format
 msgid "%s (via PayPal)"
 msgstr ""
 
 #. translators: %s - Sofort, BLIK, iDeal, Mercado Pago, etc.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/FundingSource/FundingSourceRenderer.php:84
-#, php-format
 msgid "Pay via %s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/FundingSource/FundingSourceRenderer.php:91
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:347
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Settings.php:109
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:346
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Settings.php:108
 msgid "Pay via PayPal."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:200
-msgid ""
-"The separate payment gateway with the card button. If disabled, the button "
-"is included in the PayPal gateway."
+msgid "The separate payment gateway with the card button. If disabled, the button is included in the PayPal gateway."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:201
@@ -5430,10 +5010,8 @@ msgstr ""
 msgid "Enable/Disable the separate payment gateway with the card button."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:204
-msgid ""
-"Accept debit and credit cards, and local payment methods with PayPal’s "
-"latest solution."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:203
+msgid "Accept debit and credit cards, and local payment methods with PayPal’s latest solution."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:258
@@ -5441,8 +5019,7 @@ msgid "CVV"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/Messages.php:24
-msgid ""
-"Failed to process the payment. Please try again or contact the shop admin."
+msgid "Failed to process the payment. Please try again or contact the shop admin."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:105
@@ -5453,16 +5030,14 @@ msgid "See OXXO voucher"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:145
-msgid ""
-"OXXO voucher has expired or the buyer didn't complete the payment "
-"successfully."
+msgid "OXXO voucher has expired or the buyer didn't complete the payment successfully."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:166
 msgid "OXXO Voucher/Ticket"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:244
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:243
 msgid "Required form fields are not filled or invalid."
 msgstr ""
 
@@ -5473,10 +5048,7 @@ msgid "OXXO"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:105
-msgid ""
-"OXXO is a Mexican chain of convenience stores.<br />*Get PayPal account "
-"permission to use OXXO payment functionality by contacting us at (+52) "
-"800-925-0304"
+msgid "OXXO is a Mexican chain of convenience stores.<br />*Get PayPal account permission to use OXXO payment functionality by contacting us at (+52) 800-925-0304"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:108
@@ -5488,9 +5060,7 @@ msgid "Enable/Disable OXXO payment gateway."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:272
-msgid ""
-"In order to use PayPal or Advanced Card Processing, you need to enable the "
-"Gateway."
+msgid "In order to use PayPal or Advanced Card Processing, you need to enable the Gateway."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:273
@@ -5513,20 +5083,16 @@ msgstr ""
 msgid "Pay upon Invoice"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:324
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:323
 msgid "Accept debit and credit cards, and local payment methods."
 msgstr ""
 
 #. translators: %1$s is </ br> HTML tag and %2$s, %3$s are the opening and closing of HTML <i> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:332
-#, php-format
-msgid ""
-"Let customers pay over time while you get paid up front — at no additional "
-"cost.%1$sPayPal’s pay later options are boosting merchant conversion rates "
-"and increasing cart sizes by 39%%. %2$s(PayPal Q2 Earnings-2021.)%3$s"
+msgid "Let customers pay over time while you get paid up front — at no additional cost.%1$sPayPal’s pay later options are boosting merchant conversion rates and increasing cart sizes by 39%%. %2$s(PayPal Q2 Earnings-2021.)%3$s"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:341
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:340
 msgid "Accept PayPal, Pay Later and alternative payment types."
 msgstr ""
 
@@ -5567,16 +5133,11 @@ msgid "Could not enable gateway because \"Logo URL\" field is empty."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:479
-msgid ""
-"Could not enable gateway because \"Customer service instructions\" field is "
-"empty."
+msgid "Could not enable gateway because \"Customer service instructions\" field is empty."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:508
-msgid ""
-"Could not enable gateway because the connected PayPal account is not "
-"activated for Pay upon Invoice. Reconnect your account while Onboard with "
-"Pay upon Invoice is selected to try again."
+msgid "Could not enable gateway because the connected PayPal account is not activated for Pay upon Invoice. Reconnect your account while Onboard with Pay upon Invoice is selected to try again."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:526
@@ -5584,17 +5145,11 @@ msgid "RatePay payment instructions"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:135
-msgid ""
-"Pay upon Invoice is an invoice payment method in Germany. It is a local buy "
-"now, pay later payment method that allows the buyer to place an order, "
-"receive the goods, try them, verify they are in good order, and then pay the "
-"invoice within 30 days."
+msgid "Pay upon Invoice is an invoice payment method in Germany. It is a local buy now, pay later payment method that allows the buyer to place an order, receive the goods, try them, verify they are in good order, and then pay the invoice within 30 days."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:139
-msgid ""
-"Once you place an order, pay within 30 days. Our payment partner Ratepay "
-"will send you payment instructions."
+msgid "Once you place an order, pay within 30 days. Our payment partner Ratepay will send you payment instructions."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:179
@@ -5606,9 +5161,7 @@ msgid "Experience Context"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:198
-msgid ""
-"Specify brand name, logo and customer service instructions to be presented "
-"on Ratepay's payment instructions."
+msgid "Specify brand name, logo and customer service instructions to be presented on Ratepay's payment instructions."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:201
@@ -5632,73 +5185,64 @@ msgid "Customer service instructions"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:219
-msgid ""
-"Customer service instructions to be presented on Ratepay's payment "
-"instructions."
+msgid "Customer service instructions to be presented on Ratepay's payment instructions."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:258
 msgid "Awaiting Pay upon Invoice payment."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:51
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:50
 msgid "Could not retrieve information. Try again later."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:58
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:57
 msgid "Payment already captured."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:65
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:64
 msgid "Failed to capture. Try again later or checks the logs."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:72
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:71
 msgid "Cannot capture, no valid payment authorization."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:79
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:78
 msgid "Could not find payment to process."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:86
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:85
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/AuthorizedPaymentsProcessor.php:184
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/AuthorizedPaymentsProcessor.php:209
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureCompleted.php:127
 msgid "Payment successfully captured."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/ConnectAdminNotice.php:60
-#, php-format
-msgid ""
-"PayPal Payments is almost ready. To get started, <a href=\"%1$s\">connect "
-"your account</a>."
+#. translators: %1$s the gateway name.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/ConnectAdminNotice.php:59
+msgid "PayPal Payments is almost ready. To get started, <a href=\"%1$s\">connect your account</a>."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/GatewayWithoutPayPalAdminNotice.php:99
-#, php-format
-msgid ""
-"%1$s cannot be used without the PayPal gateway. <a href=\"%2$s\">Enable the "
-"PayPal gateway</a>."
+#. translators: %1$s the gateway name, %2$s URL.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/GatewayWithoutPayPalAdminNotice.php:98
+msgid "%1$s cannot be used without the PayPal gateway. <a href=\"%2$s\">Enable the PayPal gateway</a>."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:176
-msgid ""
-"Could not retrieve order. This browser may not be supported. Please try "
-"again with a different browser."
+msgid "Could not retrieve order. This browser may not be supported. Please try again with a different browser."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:183
 msgid "Could not retrieve PayPal order."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:193
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:192
 msgid "The payment is not ready for processing yet."
 msgstr ""
 
 #. translators: %s is the message of the error.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:200
-#, php-format
 msgid "Payment error: %s"
 msgstr ""
 
@@ -5718,13 +5262,11 @@ msgstr ""
 
 #. translators: %1$s - PENDING, DENIED, ... %2$s - text explaining the reason, ...
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/PaymentsStatusHandlingTrait.php:140
-#, php-format
 msgid "PayPal order payment is set to %1$s status, details: %2$s"
 msgstr ""
 
 #. translators: %s is the PayPal transaction ID
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/TransactionIdHandlingTrait.php:43
-#, php-format
 msgid "PayPal transaction ID: %s"
 msgstr ""
 
@@ -5737,17 +5279,12 @@ msgid "Sandbox API Credentials"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:93
-msgid ""
-"Your account is connected to sandbox, no real charging takes place. To "
-"accept live payments, turn off sandbox mode and connect your live PayPal "
-"account."
+msgid "Your account is connected to sandbox, no real charging takes place. To accept live payments, turn off sandbox mode and connect your live PayPal account."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:147
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:160
-msgid ""
-"Prior to accepting live payments, you can test payments on your WooCommerce "
-"platform in a safe PayPal sandbox environment."
+msgid "Prior to accepting live payments, you can test payments on your WooCommerce platform in a safe PayPal sandbox environment."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:164
@@ -5839,11 +5376,7 @@ msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:358
-#, php-format
-msgid ""
-"Displays whether available advanced features are enabled for the connected "
-"PayPal account. More information about advanced features is available in the "
-"%1$sFeature sign-up documentation%2$s."
+msgid "Displays whether available advanced features are enabled for the connected PayPal account. More information about advanced features is available in the %1$sFeature sign-up documentation%2$s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:364
@@ -5855,8 +5388,7 @@ msgid "Shipment Tracking"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:388
-msgid ""
-"Allows to send shipment tracking numbers to PayPal for PayPal transactions."
+msgid "Allows to send shipment tracking numbers to PayPal for PayPal transactions."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:398
@@ -5864,9 +5396,7 @@ msgid "FraudNet"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:402
-msgid ""
-"FraudNet is a JavaScript library developed by PayPal and embedded into a "
-"merchant’s web page to collect browser-based data to help reduce fraud."
+msgid "FraudNet is a JavaScript library developed by PayPal and embedded into a merchant’s web page to collect browser-based data to help reduce fraud."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:413
@@ -5875,10 +5405,7 @@ msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:422
-#, php-format
-msgid ""
-"Configure integration specific settings such as a unique invoice prefix, or "
-"logging for potential %1$stroubleshooting%2$s."
+msgid "Configure integration specific settings such as a unique invoice prefix, or logging for potential %1$stroubleshooting%2$s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:428
@@ -5886,10 +5413,7 @@ msgid "Invoice prefix"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:431
-msgid ""
-"If you use your PayPal account with more than one installation, please use a "
-"distinct prefix to separate those installations. Please use only English "
-"letters and \"-\", \"_\" characters."
+msgid "If you use your PayPal account with more than one installation, please use a distinct prefix to separate those installations. Please use only English letters and \"-\", \"_\" characters."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:451
@@ -5905,15 +5429,11 @@ msgid "View logs"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/connection-tab-fields.php:456
-msgid ""
-"Enable logging of unexpected behavior. This can also log private data and "
-"should only be enabled in a development or stage environment."
+msgid "Enable logging of unexpected behavior. This can also log private data and should only be enabled in a development or stage environment."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:31
-msgid ""
-"You have PayPal vaulting enabled, that's why Pay Later options are "
-"unavailable now. You cannot use both features at the same time."
+msgid "You have PayPal vaulting enabled, that's why Pay Later options are unavailable now. You cannot use both features at the same time."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:32
@@ -5931,10 +5451,7 @@ msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:54
-#, php-format
-msgid ""
-"When enabled, a %1$sPay Later button%2$s is displayed for eligible customers."
-"%3$sPayPal buttons must be enabled to display the Pay Later button."
+msgid "When enabled, a %1$sPay Later button%2$s is displayed for eligible customers.%3$sPayPal buttons must be enabled to display the Pay Later button."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:71
@@ -5951,11 +5468,7 @@ msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:100
-#, php-format
-msgid ""
-"When enabled, %1$sPayPal Pay Later messaging%2$s is displayed for eligible "
-"customers.%3$sCustomers automatically see the most relevant Pay Later "
-"offering."
+msgid "When enabled, %1$sPayPal Pay Later messaging%2$s is displayed for eligible customers.%3$sCustomers automatically see the most relevant Pay Later offering."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:117
@@ -6007,9 +5520,7 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:285
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:409
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:533
-msgid ""
-"What logo the text message contains. Only applicable, when the layout style "
-"Text is used."
+msgid "What logo the text message contains. Only applicable, when the layout style Text is used."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:163
@@ -6048,9 +5559,7 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:303
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:427
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:551
-msgid ""
-"The position of the logo. Only applicable, when the layout style Text is "
-"used."
+msgid "The position of the logo. Only applicable, when the layout style Text is used."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:181
@@ -6082,8 +5591,7 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:320
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:444
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:568
-msgid ""
-"The color of the text. Only applicable, when the layout style Text is used."
+msgid "The color of the text. Only applicable, when the layout style Text is used."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:198
@@ -6148,8 +5656,7 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:338
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:462
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:586
-msgid ""
-"The color of the text. Only applicable, when the layout style Banner is used."
+msgid "The color of the text. Only applicable, when the layout style Banner is used."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:216
@@ -6186,9 +5693,7 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:359
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:483
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:607
-msgid ""
-"The width/height ratio of the banner. Only applicable, when the layout style "
-"Banner is used."
+msgid "The width/height ratio of the banner. Only applicable, when the layout style Banner is used."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:237
@@ -6307,12 +5812,11 @@ msgstr ""
 msgid "PayPal Smart Buttons"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:52
-#, php-format
+#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:51
 msgid ""
 "Customize the appearance of the PayPal smart buttons on the\n"
-"\t\t\t\t\t%1$sCheckout page%5$s, %2$sSingle Product Page%5$s, %3$sCart "
-"page%5$s or on %4$sMini Cart%5$s."
+"\t\t\t\t\t%1$sCheckout page%5$s, %2$sSingle Product Page%5$s, %3$sCart page%5$s or on %4$sMini Cart%5$s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:64
@@ -6339,13 +5843,9 @@ msgstr ""
 msgid "Button Layout"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:92
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:238
-msgid ""
-"If additional funding sources are available to the buyer through PayPal, "
-"then multiple buttons are displayed in the space provided. Choose "
-"\"vertical\" for a dynamic list of alternative and local payment options, or "
-"\"horizontal\" when space is limited."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:91
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:237
+msgid "If additional funding sources are available to the buyer through PayPal, then multiple buttons are displayed in the space provided. Choose \"vertical\" for a dynamic list of alternative and local payment options, or \"horizontal\" when space is limited."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:96
@@ -6380,14 +5880,12 @@ msgstr ""
 msgid "Enable tagline"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:113
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:259
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:399
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:539
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:679
-msgid ""
-"Add the tagline. This line will only show up, if you select a horizontal "
-"layout."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:112
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:258
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:398
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:538
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:678
+msgid "Add the tagline. This line will only show up, if you select a horizontal layout."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:124
@@ -6398,11 +5896,11 @@ msgstr ""
 msgid "Button Label"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:134
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:280
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:420
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:560
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:700
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:133
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:279
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:419
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:559
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:699
 msgid "This controls the label on the primary button."
 msgstr ""
 
@@ -6438,15 +5936,12 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:158
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:304
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:444
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:584
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:724
-msgid ""
-"Controls the background color of the primary button. Use \"Gold\" to "
-"leverage PayPal's recognition and preference, or change it to match your "
-"site design or aesthetic."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:157
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:303
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:443
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:583
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:723
+msgid "Controls the background color of the primary button. Use \"Gold\" to leverage PayPal's recognition and preference, or change it to match your site design or aesthetic."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:162
@@ -6473,15 +5968,12 @@ msgstr ""
 msgid "Shape"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:183
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:329
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:469
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:609
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:749
-msgid ""
-"The pill-shaped button's unique and powerful shape signifies PayPal in "
-"people's minds. Use the rectangular button as an alternative when pill-"
-"shaped buttons might pose design challenges."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:182
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:328
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:468
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:608
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:748
+msgid "The pill-shaped button's unique and powerful shape signifies PayPal in people's minds. Use the rectangular button as an alternative when pill-shaped buttons might pose design challenges."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:187
@@ -6504,13 +5996,11 @@ msgstr ""
 msgid "Checkout Buttons"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:213
-#, php-format
+#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:212
 msgid ""
-"Customize the appearance of the PayPal smart buttons on the %1$sCheckout "
-"page%2$s.\n"
-"\t\t\t\t\t%3$sCheckout Buttons must be enabled to display the PayPal gateway "
-"on the Checkout page.\n"
+"Customize the appearance of the PayPal smart buttons on the %1$sCheckout page%2$s.\n"
+"\t\t\t\t\t%3$sCheckout Buttons must be enabled to display the PayPal gateway on the Checkout page.\n"
 "\t\t\t\t\t"
 msgstr ""
 
@@ -6518,43 +6008,33 @@ msgstr ""
 msgid "Single Product Page Buttons"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:359
-#, php-format
-msgid ""
-"Customize the appearance of the PayPal smart buttons on the %1$sSingle "
-"Product Page%2$s."
+#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:358
+msgid "Customize the appearance of the PayPal smart buttons on the %1$sSingle Product Page%2$s."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:378
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:518
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:658
-msgid ""
-"If additional funding sources are available to the buyer through PayPal, "
-"such as Venmo, then multiple buttons are displayed in the space provided. "
-"Choose \"vertical\" for a dynamic list of alternative and local payment "
-"options, or \"horizontal\" when space is limited."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:377
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:517
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:657
+msgid "If additional funding sources are available to the buyer through PayPal, such as Venmo, then multiple buttons are displayed in the space provided. Choose \"vertical\" for a dynamic list of alternative and local payment options, or \"horizontal\" when space is limited."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:495
 msgid "Cart Buttons"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:499
-#, php-format
-msgid ""
-"Customize the appearance of the PayPal smart buttons on the %1$sCart "
-"page%2$s."
+#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:498
+msgid "Customize the appearance of the PayPal smart buttons on the %1$sCart page%2$s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:635
 msgid "Mini Cart Buttons"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:639
-#, php-format
-msgid ""
-"Customize the appearance of the PayPal smart buttons on the %1$sMini "
-"Cart%2$s."
+#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:638
+msgid "Customize the appearance of the PayPal smart buttons on the %1$sMini Cart%2$s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:764
@@ -6588,14 +6068,12 @@ msgstr ""
 msgid "Submit a bug"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Settings.php:121
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Settings.php:120
 msgid "Pay with your credit card."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:147
-msgid ""
-"We could not complete the onboarding process. Some features, such as card "
-"processing, will not be available. To fix this, please try again."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:146
+msgid "We could not complete the onboarding process. Some features, such as card processing, will not be available. To fix this, please try again."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:499
@@ -6603,17 +6081,12 @@ msgstr ""
 msgid "Onboarding"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:504
-msgid ""
-"Credit Card processing for your account has not yet been activated by "
-"PayPal. If your account is new, this can take some days. Otherwise, please "
-"get in contact with PayPal."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:503
+msgid "Credit Card processing for your account has not yet been activated by PayPal. If your account is new, this can take some days. Otherwise, please get in contact with PayPal."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:525
-msgid ""
-"You need to complete your onboarding, before you can use the Advanced Card "
-"Processing option."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:524
+msgid "You need to complete your onboarding, before you can use the Advanced Card Processing option."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:533
@@ -6624,13 +6097,11 @@ msgstr ""
 msgid "Card Processing not available"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:552
-msgid ""
-"Unfortunately, the card processing option is not yet available in your "
-"country."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:551
+msgid "Unfortunately, the card processing option is not yet available in your country."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:559
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:558
 msgid "Advanced credit and debit country and currency availability."
 msgstr ""
 
@@ -6640,50 +6111,39 @@ msgstr ""
 
 #. translators: %1$s is AVS order note title, %2$s is AVS order note result markup
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:108
-#, php-format
 msgid "%1$s %2$s"
 msgstr ""
 
 #. translators: %s is fraud AVS code
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:119
-#, php-format
 msgid "AVS: %s"
 msgstr ""
 
 #. translators: %s is fraud AVS address match
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:121
-#, php-format
 msgid "Address Match: %s"
 msgstr ""
 
 #. translators: %s is fraud AVS postal match
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:123
-#, php-format
 msgid "Postal Match: %s"
 msgstr ""
 
 #. translators: %s is fraud CVV match
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:136
-#, php-format
 msgid "CVV2 Match: %s"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:314
-msgid ""
-"Could not process WC order because PAYMENT.CAPTURE.COMPLETED webhook not "
-"received."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:313
+msgid "Could not process WC order because PAYMENT.CAPTURE.COMPLETED webhook not received."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:489
 msgid "Authentication with PayPal failed: "
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:492
-msgid ""
-"Please verify your API Credentials and try again to connect your PayPal "
-"business account. Visit the <a href=\"https://docs.woocommerce.com/document/"
-"woocommerce-paypal-payments/\" target=\"_blank\">plugin documentation</a> "
-"for more information about the setup."
+#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:491
+msgid "Please verify your API Credentials and try again to connect your PayPal business account. Visit the <a href=\"https://docs.woocommerce.com/document/woocommerce-paypal-payments/\" target=\"_blank\">plugin documentation</a> for more information about the setup."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/extensions.php:19
@@ -6692,10 +6152,7 @@ msgstr ""
 
 #. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
 #: includes/gateways/paypal/modules/ppcp-webhooks/extensions.php:28
-#, php-format
-msgid ""
-"Status of the webhooks subscription. More information about the webhooks is "
-"available in the %1$sWebhook Status documentation%2$s."
+msgid "Status of the webhooks subscription. More information about the webhooks is available in the %1$sWebhook Status documentation%2$s."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/extensions.php:34
@@ -6711,9 +6168,7 @@ msgid "Resubscribe"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/extensions.php:55
-msgid ""
-"Click to remove the current webhook subscription and subscribe again, for "
-"example, if the website domain or URL structure changed."
+msgid "Click to remove the current webhook subscription and subscribe again, for example, if the website domain or URL structure changed."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/extensions.php:65
@@ -6725,9 +6180,7 @@ msgid "Simulate"
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/extensions.php:73
-msgid ""
-"Click to request a sample webhook payload from PayPal, allowing to check "
-"that your server can successfully receive webhooks."
+msgid "Click to request a sample webhook payload from PayPal, allowing to check that your server can successfully receive webhooks."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/services.php:120
@@ -6747,28 +6200,26 @@ msgid "Tracked events"
 msgstr ""
 
 #. translators: %s is the PayPal webhook Id.
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:101
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCapturePending.php:77
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureRefunded.php:79
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:81
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:100
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCapturePending.php:76
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureRefunded.php:78
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:80
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/RequestHandlerTrait.php:74
-#, php-format
 msgid "No order for webhook event %s was found."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:124
-#, php-format
+#. translators: %s is the PayPal webhook Id.
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:123
 msgid "No paypal payment for webhook event %s was found."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:147
-#, php-format
+#. translators: %s is the PayPal webhook Id.
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:146
 msgid "Could not capture payment for webhook event %s."
 msgstr ""
 
 #. translators: %s is the PayPal order Id.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:178
-#, php-format
 msgid "Order for PayPal order %s not found."
 msgstr ""
 
@@ -6776,68 +6227,60 @@ msgstr ""
 msgid "Payment can be captured."
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:213
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderCompleted.php:98
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureCompleted.php:138
-#, php-format
+#. translators: %s is the order ID.
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:212
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderCompleted.php:97
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureCompleted.php:137
 msgid "Order %s has been updated through PayPal"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutPaymentApprovalReversed.php:86
-#, php-format
+#. translators: %1$s is the order id.
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutPaymentApprovalReversed.php:85
 msgid "Failed to capture order %1$s through PayPal."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCapturePending.php:115
-msgid ""
-"Payment initiation was successful, and is waiting for the buyer to complete "
-"the payment."
+msgid "Payment initiation was successful, and is waiting for the buyer to complete the payment."
 msgstr ""
 
 #. translators: %s is the PayPal refund Id.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureRefunded.php:99
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:101
-#, php-format
 msgid "Order for PayPal refund %s not found."
 msgstr ""
 
 #. translators: %s is the order id.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureRefunded.php:135
-#, php-format
 msgid "Order %s could not be refunded"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureRefunded.php:153
-#, php-format
+#. translators: %1$s is the order id %2$s is the amount which has been refunded.
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureRefunded.php:152
 msgid "Order %1$s has been refunded with %2$s through PayPal"
 msgstr ""
 
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:130
-#, php-format
+#. translators: %1$s is the order id.
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:129
 msgid "Order %1$s has been cancelled through PayPal"
 msgstr ""
 
 #. translators: %1$s is the order id.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:136
-#, php-format
 msgid "Failed to cancel order %1$s through PayPal"
 msgstr ""
 
 #. translators: %s is the PayPal order Id.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/RequestHandlerTrait.php:91
-#, php-format
 msgid "WC order for PayPal order %s not found."
 msgstr ""
 
 #. translators: %s is the event type.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/IncomingWebhookEndpoint.php:208
-#, php-format
 msgid "Webhook has been handled by %s"
 msgstr ""
 
 #. translators: %s is the request type.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/IncomingWebhookEndpoint.php:222
-#, php-format
 msgid "Could not find handler for request type %s"
 msgstr ""
 
@@ -6850,17 +6293,12 @@ msgid "The webhook was received successfully."
 msgstr ""
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Status/Assets/WebhooksStatusPageAssets.php:114
-msgid ""
-"Looks like the webhook cannot be received. Check that your website is "
-"accessible from the internet."
+msgid "Looks like the webhook cannot be received. Check that your website is accessible from the internet."
 msgstr ""
 
 #. translators: 1. URL link.
 #: includes/gateways/paypal/woocommerce-paypal-payments.php:57
-#, php-format
-msgid ""
-"WooCommerce PayPal Payments requires WooCommerce to be installed and active. "
-"You can download %s here."
+msgid "WooCommerce PayPal Payments requires WooCommerce to be installed and active. You can download %s here."
 msgstr ""
 
 #: includes/gateways/paypal/woocommerce-paypal-payments.php:67
@@ -6871,51 +6309,48 @@ msgstr ""
 msgid "Get help"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:43
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:87
 msgid "Allows payments by Postal transfer in Japan."
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:84
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:132
 msgid "Enable Postal transfer"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:98
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:146
 msgid "Make your payment directly into our Post Office Bank account."
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:114
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:184
 msgid "Post Office Account Details"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:120
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:190
 msgid "Bank Symbol"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:237
-msgid "Our Post Office Bank Details"
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:329
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:366
+msgid "Post Office Bank Account Details"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:279
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:401
 msgid "Awaiting Post Office BANK payment"
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:21
-#, php-format
 msgid "Please check it if you want to use %s."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:22
-#, php-format
 msgid "Please check it if you want to use the payment method of %s."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:23
-#, php-format
 msgid "Please input %s."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:24
-#, php-format
 msgid "Please select one from these as %s."
 msgstr ""
 
@@ -6924,19 +6359,11 @@ msgid "Need support?"
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:26
-#, php-format
-msgid ""
-"If you are having problems with this plugin, talk about them in the <a "
-"href=\"%s\" target=\"_blank\" title=\"Pro Version\">Support forum</a>."
+msgid "If you are having problems with this plugin, talk about them in the <a href=\"%s\" target=\"_blank\" title=\"Pro Version\">Support forum</a>."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:27
-#, php-format
-msgid ""
-"If you need professional support, please consider about <a href=\"%1$s\" "
-"target=\"_blank\" title=\"Site Construction Support service\">Site "
-"Construction Support service</a> or <a href=\"%2$s\" target=\"_blank\" "
-"title=\"Maintenance Support service\">Maintenance Support service</a>."
+msgid "If you need professional support, please consider about <a href=\"%1$s\" target=\"_blank\" title=\"Site Construction Support service\">Site Construction Support service</a> or <a href=\"%2$s\" target=\"_blank\" title=\"Maintenance Support service\">Maintenance Support service</a>."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:28
@@ -6944,16 +6371,11 @@ msgid "Pro version"
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:29
-#, php-format
-msgid ""
-"The pro version is available <a href=\"%s\" target=\"_blank\" "
-"title=\"Support forum\">here</a>."
+msgid "The pro version is available <a href=\"%s\" target=\"_blank\" title=\"Support forum\">here</a>."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:30
-msgid ""
-"The pro version includes support for bulletin boards. Please consider "
-"purchasing the pro version."
+msgid "The pro version includes support for bulletin boards. Please consider purchasing the pro version."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:31
@@ -6961,12 +6383,7 @@ msgid "Finished Latest Update, WordPress and WooCommerce?"
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:32
-#, php-format
-msgid ""
-"One the security, latest update is the most important thing. If you need "
-"site maintenance support, please consider about <a href=\"%s\" "
-"target=\"_blank\" title=\"Support forum\">Site Maintenance Support service</"
-"a>."
+msgid "One the security, latest update is the most important thing. If you need site maintenance support, please consider about <a href=\"%s\" target=\"_blank\" title=\"Support forum\">Site Maintenance Support service</a>."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:33
@@ -6974,17 +6391,11 @@ msgid "Where is the study group of Woocommerce in Japan?"
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:34
-#, php-format
-msgid ""
-"<a href=\"%s\" target=\"_blank\" title=\"Tokyo WooCommerce Meetup\">Tokyo "
-"WooCommerce Meetup</a>."
+msgid "<a href=\"%s\" target=\"_blank\" title=\"Tokyo WooCommerce Meetup\">Tokyo WooCommerce Meetup</a>."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:35
-#, php-format
-msgid ""
-"<a href=\"%s\" target=\"_blank\" title=\"Kansai WooCommerce Meetup\">Kansai "
-"WooCommerce Meetup</a>."
+msgid "<a href=\"%s\" target=\"_blank\" title=\"Kansai WooCommerce Meetup\">Kansai WooCommerce Meetup</a>."
 msgstr ""
 
 #: includes/jp4wc-framework/config-jp4wc-framework.php:36
@@ -7012,7 +6423,6 @@ msgstr ""
 #: templates/emails/plain/customer-on-hold-order.php:25
 #: templates/emails/plain/customer-processing-order.php:25
 #: templates/emails/plain/customer-refunded-order.php:25
-#, php-format
 msgid "Hi %s,"
 msgstr ""
 
@@ -7026,10 +6436,7 @@ msgstr ""
 #. translators: %1$s: Site title, %2$s: Order pay link
 #: templates/emails/customer-invoice.php:38
 #: templates/emails/plain/customer-invoice.php:31
-#, php-format
-msgid ""
-"An order has been created for you on %1$s. Your invoice is below, with a "
-"link to make payment when you’re ready: %2$s"
+msgid "An order has been created for you on %1$s. Your invoice is below, with a link to make payment when you’re ready: %2$s"
 msgstr ""
 
 #: templates/emails/customer-invoice.php:46
@@ -7040,7 +6447,6 @@ msgstr ""
 #. translators: %s: Order date
 #: templates/emails/customer-invoice.php:55
 #: templates/emails/plain/customer-invoice.php:39
-#, php-format
 msgid "Here are the details of your order placed on %s:"
 msgstr ""
 
@@ -7056,71 +6462,41 @@ msgstr ""
 
 #: templates/emails/customer-on-hold-order.php:27
 #: templates/emails/plain/customer-on-hold-order.php:26
-msgid ""
-"Thanks for your order. It’s on-hold until we confirm that payment has been "
-"received."
+msgid "Thanks for your order. It’s on-hold until we confirm that payment has been received."
 msgstr ""
 
 #. translators: %s: Order number
 #: templates/emails/customer-processing-order.php:30
 #: templates/emails/plain/customer-processing-order.php:27
-#, php-format
-msgid ""
-"Just to let you know &mdash; we've received your order #%s, and it is now "
-"being processed:"
+msgid "Just to let you know &mdash; we've received your order #%s, and it is now being processed:"
 msgstr ""
 
 #. translators: %s: Site title
 #: templates/emails/customer-refunded-order.php:32
 #: templates/emails/plain/customer-refunded-order.php:28
-#, php-format
-msgid ""
-"Your order on %s has been partially refunded. There are more details below "
-"for your reference:"
+msgid "Your order on %s has been partially refunded. There are more details below for your reference:"
 msgstr ""
 
 #. translators: %s: Site title
 #: templates/emails/customer-refunded-order.php:35
 #: templates/emails/plain/customer-refunded-order.php:31
-#, php-format
-msgid ""
-"Your order on %s has been refunded. There are more details below for your "
-"reference:"
+msgid "Your order on %s has been refunded. There are more details below for your reference:"
 msgstr ""
 
-#: woocommerce-for-japan.php:259
-#, php-format
-msgid ""
-"If you like <strong>Japanized for WooCommerce</strong> please leave us a "
-"%s&#9733;&#9733;&#9733;&#9733;&#9733;%s rating. A huge thanks in advance!"
+#. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
+#: woocommerce-for-japan.php:269
+msgid "If you like <strong>Japanized for WooCommerce</strong> please leave us a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. A huge thanks in advance!"
 msgstr ""
 
-#: woocommerce-for-japan.php:259
+#. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
+#: woocommerce-for-japan.php:269
 msgid "Thanks :)"
 msgstr ""
 
-#: woocommerce-for-japan.php:267
+#: woocommerce-for-japan.php:279
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr ""
 
-#: woocommerce-for-japan.php:358
-msgid ""
-"Japanized for WooCommerce is enabled but not effective. It requires "
-"WooCommerce in order to work."
-msgstr ""
-
-#. Plugin URI of the plugin/theme
-msgid "https://wordpress.org/plugins/woocommerce-for-japan/"
-msgstr ""
-
-#. Description of the plugin/theme
-msgid "Woocommerce toolkit for Japanese use."
-msgstr ""
-
-#. Author of the plugin/theme
-msgid "Artisan Workshop"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "https://wc.artws.info/"
+#: woocommerce-for-japan.php:375
+msgid "Japanized for WooCommerce is enabled but not effective. It requires WooCommerce in order to work."
 msgstr ""
