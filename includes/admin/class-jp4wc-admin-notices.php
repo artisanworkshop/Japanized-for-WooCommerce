@@ -1,6 +1,18 @@
 <?php
+/**
+ * Admin Notices Class for WooCommerce for Japan.
+ *
+ * Handles the display of various admin notices specific to the Japanese market settings.
+ *
+ * @package woocommerce-for-japan
+ * @category Admin
+ * @author Shohei Tanaka
+ * @since 1.0.0
+ * @license GPL-2.0+
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -12,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JP4WC_Admin_Notices {
 	/**
 	 * Notices (array)
+	 *
 	 * @var array
 	 */
 	public $notices = array();
@@ -26,18 +39,29 @@ class JP4WC_Admin_Notices {
 		add_action( 'wp_ajax_jp4wc_pr_dismiss_prompt', array( $this, 'jp4wc_dismiss_review_prompt' ) );
 	}
 
+	/**
+	 * Dismisses the review prompt notice
+	 *
+	 * Handles the ajax request to dismiss the review prompt notice
+	 * by storing the dismiss status in user meta.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
 	public function jp4wc_dismiss_review_prompt() {
 
-		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'jp4wc_pr_dismiss_prompt' ) ) {
-			die('Failed');
+		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'jp4wc_pr_dismiss_prompt' ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			die( 'Failed' );
 		}
 
 		if ( ! empty( $_POST['type'] ) ) {
 			if ( 'remove' === $_POST['type'] ) {
-				update_option( 'jp4wc_pr_hide_notice', date_i18n( 'Y-m-d H:i:s' ) );
-				wp_send_json_success( 
+				update_option( 'jp4wc_202502pr_hide_notice', date_i18n( 'Y-m-d H:i:s' ) );
+				wp_send_json_success(
 					array(
-						'status' => 'removed'
+						'status' => 'removed',
 					)
 				);
 			}
@@ -48,74 +72,92 @@ class JP4WC_Admin_Notices {
 	 * Display any notices we've collected thus far.
 	 *
 	 * @since 2.3.4
-     * @version 2.6.8
+	 * @version 2.6.8
 	 */
 	public function admin_jp4wc_notices() {
-		// Only show to WooCommerce admins
+		// Only show to WooCommerce admins.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
 		}
 
-		// Notice has been removed
-		if ( get_option( 'jp4wc_pr_hide_notice' ) ) {
+		// Notice has been removed.
+		if ( get_option( 'jp4wc_202502pr_hide_notice' ) ) {
 			return;
 		}
 
-		// Notice removed by page
+		// Delete notice when deadline expires.
+		$today   = strtotime( date_i18n( 'Y-m-d' ) );
+		$end_day = strtotime( '2025-04-01' );
+		if ( $today > $end_day ) {
+			return;
+		}
+
+		// Notice removed by page.
 		$allow_pages = array( 'wc-admin', 'wc-orders', 'wc-settings', 'wc-status', 'wc-reports', 'wc4jp-options' );
-		if ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allow_pages) ) {
-			// Notification display content
-			$this->jp4wc_pr_display();
+		if ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allow_pages ) ) {
+			// Notification display content.
+			$this->jp4wc_pr2025_display();
 		}
-
-		// Delete notice when deadline expires
-/*		$today = new DateTime('now');
-		$end_day = new DateTime('2021-11-19');
-		$diff = $end_day->diff($today);
-		$diff_days = $diff->days;
-		if ( $diff_days <= 0 ) {
-			return;
-		}*/
-
-    }
+	}
 
 	/**
 	 * The backup sanity check, in case the plugin is activated in a weird way,
 	 * or the environment changes after activation. Also handles upgrade routines.
 	 *
 	 * @since 2.3.4
-     * @version 2.6.8
+	 * @version 2.6.8
 	 */
-	public function jp4wc_pr_display() {
-		$pr_link = 'https://wc4jp-pro.work/product/site-security-for-woo/';
-		/* translators: 1) Japanized for WooCommerce PR link */
+	public function jp4wc_pr2025_display() {
+		$pr_link = 'https://wc4jp-pro.work/about-security-service/';
+		$today   = new DateTime();
+		$end_day = new DateTime( '2025-04-01' );
+		$diff    = $today->diff( $end_day );
+		$days    = $diff->format( '%a' );
 		?>
-        <div class="notice notice-info is-dismissible jp4wc-pr-notice" id="pr_jp4wc">
-            <div id="pr_jp4wc_">
-				<p><?php 
-				/* translators: 1) Japanized for WooCommerce PR link */
-				echo sprintf( __('<a href="%s?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=woo_security" target="_blank">Run WooCommerce safely with regular updates, security monitoring, and a quick alert system.</a>', 'woocommerce-for-japan' ), $pr_link );
-				?><br />
-					<?php _e( 'If you have not taken measures yet, please take measures for WooCommerce dedicated site monitoring starting from 2,200 yen per month.', 'woocommerce-for-japan' );?>
-                </p>
-            </div>
-        </div>
-        <script>
-            jQuery(document).ready(function($) {
-                $('body').on('click', '#pr_jp4wc .notice-dismiss', function(event) {
-                    event.preventDefault();
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        data: {
-                            action: 'jp4wc_pr_dismiss_prompt',
-                            nonce: "<?php echo wp_create_nonce( 'jp4wc_pr_dismiss_prompt' ) ?>",
-                            type: 'remove'
-                        },
-                    })
-                });
-            });
-        </script>
+		<div class="notice notice-error is-dismissible jp4wc-pr-notice" id="pr_jp4wc" style="background-color: #D1C1FF; color: #2C045D;">
+			<div id="pr_jp4wc_2025">
+				<p>	
+				<?php
+				/* translators: %s: number of days until April 2025 */
+				$catch_copy = sprintf( esc_html__( 'Only %s days left. New credit card payment standards are coming into force in April 2025!', 'woocommerce-for-japan' ), $days );
+				echo '<h2>' . esc_html( $catch_copy ) . '</h2>';
+				esc_html_e( 'Coming into force in April 2025! Is your website ready for the new credit card payment standards?', 'woocommerce-for-japan' );
+				?>
+				<br />
+				<?php esc_html_e( 'We recommend that you take the following measures to ensure that your store is ready for the new credit card payment standards.', 'woocommerce-for-japan' ); ?>
+				<br />
+				<?php
+				/* translators: 1: Opening anchor tag with URL, 2: Closing anchor tag */
+				$product_link = sprintf( __( '%1$s [Security measures for WooCommerce] in line with the "Credit Card Security Guidelines" %2$s', 'woocommerce-for-japan' ), '<a href="' . esc_url( $pr_link ) . '?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=woo_security" target="_blank">', '</a>' );
+				echo wp_kses(
+					$product_link,
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				);
+				?>
+				</p>
+			</div>
+		</div>
+		<script>
+			jQuery(document).ready(function($) {
+				$('body').on('click', '#pr_jp4wc .notice-dismiss', function(event) {
+					event.preventDefault();
+					jQuery.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: {
+							action: 'jp4wc_pr_dismiss_prompt',
+							nonce: "<?php echo esc_js( wp_create_nonce( 'jp4wc_pr_dismiss_prompt' ) ); ?>",
+							type: 'remove'
+						},
+					})
+				});
+			});
+		</script>
 		<?php
 	}
 }
