@@ -5,6 +5,7 @@
  * @package JP4WC\Classes
  * @version 2.6.9
  */
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -15,8 +16,8 @@ class JP4WC_Install {
 	 * Hook in tabs.
 	 */
 	public static function init() {
-        add_action( 'init', array( __CLASS__, 'check_version' ), 5 );
-    }
+		add_action( 'init', array( __CLASS__, 'check_version' ), 5 );
+	}
 
 	/**
 	 * Check Japanized for WooCommerce version and run the updater is required.
@@ -26,7 +27,7 @@ class JP4WC_Install {
 	public static function check_version() {
 		$wc_version      = get_option( 'jp4wc_version' );
 		$requires_update = version_compare( $wc_version, JP4WC_VERSION, '<' );
-        if( $requires_update ){
+		if ( $requires_update ) {
 			self::install();
 			/**
 			 * Run after WooCommerce has been updated.
@@ -35,8 +36,8 @@ class JP4WC_Install {
 			 */
 			do_action( 'jp4wc_updated' );
 
-        }
-    }
+		}
+	}
 
 	/**
 	 * Install WC.
@@ -46,7 +47,7 @@ class JP4WC_Install {
 			return;
 		}
 
-        // Check if we are not already running this routine.
+		// Check if we are not already running this routine.
 		if ( self::is_installing() ) {
 			return;
 		}
@@ -54,11 +55,11 @@ class JP4WC_Install {
 		// If we made it till here nothing is running yet, lets set the transient now.
 		set_transient( 'jp4wc_installing', 'yes', MINUTE_IN_SECONDS * 10 );
 
-        self::create_cron_jobs();
+		self::create_cron_jobs();
 		self::update_jp4wc_version();
 
-        delete_transient( 'jp4wc_installing' );
-    }
+		delete_transient( 'jp4wc_installing' );
+	}
 
 	/**
 	 * Returns true if we're installing.
@@ -73,16 +74,14 @@ class JP4WC_Install {
 	 * Create cron jobs (clear them first).
 	 */
 	private static function create_cron_jobs() {
-        wp_clear_scheduled_hook( 'jp4wc_tracker_send_event' );
+		wp_clear_scheduled_hook( 'jp4wc_tracker_send_event' );
 		/**
 		 * How frequent to schedule the tracker send event.
 		 *
 		 * @since 2.6.0
 		 */
-		wp_schedule_event( time() + 10, apply_filters( 'wc4jp_tracker_event_recurrence', 'weekly' ), 'wc4jp_tracker_send_event' );
-		wp_schedule_event( time() + ( 3 * HOUR_IN_SECONDS ), 'daily', 'woocommerce_cleanup_rate_limits' );
-
-    }
+		wp_schedule_event( time() + 10, apply_filters( 'jp4wc_tracker_event_recurrence', 'weekly' ), 'jp4wc_tracker_send_event' );
+	}
 
 	/**
 	 * Update WC version to current.
