@@ -70,7 +70,7 @@ if ( ! class_exists( 'JP4WC_Admin_PHP_Notice', false ) ) :
 				return false;
 			}
 			if ( ! is_multisite() ) {
-				$month_totals = JP4WC_Tracker::get_last_month_order_totals();
+				$month_totals = JP4WC_Usage_Tracking::get_last_month_order_totals();
 				$month_total  = $month_totals['monthly_gross'] + $month_totals['monthly_processing_gross'];
 				if ( $month_total <= 0 ) {
 					return false;
