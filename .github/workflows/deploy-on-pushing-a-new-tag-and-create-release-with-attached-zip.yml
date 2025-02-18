@@ -24,8 +24,7 @@ jobs:
       env:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-        plugin_slug: "woocommerce-for-japan"
-        assets–dir: ".wordpress-org"
+        SLUG: "woocommerce-for-japan"
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
       with:
