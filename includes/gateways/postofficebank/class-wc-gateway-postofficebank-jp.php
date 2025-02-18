@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  *
  * @class 		WC_Gateway_PostOfficeBank_JP
  * @extends		WC_Payment_Gateway
- * @version		2.6.12
+ * @version		2.6.15
  * @package		WooCommerce/Classes/Payment
  * @author 		Artisan Workshop
  */
@@ -26,15 +26,59 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
      * @var mixed
      */
 	public $account_details;
+
+	/**
+	 * Settings parameter
+	 *
+	 * @var mixed
+	 */
 	public $settings;
+
+	/**
+	 * Bank symbol
+	 *
+	 * @var mixed
+	 */
 	public $bank_symbol;
+
+	/**
+	 * Account number
+	 *
+	 * @var mixed
+	 */
 	public $account_number;
+
+	/**
+	 * Account name
+	 *
+	 * @var mixed
+	 */
 	public $account_name;
+
+	/**
+	 * Gateway instructions that will be added to the thank you page and emails.
+	 *
+	 * @var string
+	 */
 	public $instructions;
 
-    /**
-     * Constructor for the gateway.
-     */
+	/**
+	 * Display location of the transfer account information on the e-mail.
+	 *
+	 * @var int
+	 */
+	public $display_location;
+
+	/**
+	 * Display order of instructions and transfer account.
+	 *
+	 * @var bool
+	 */
+	public $display_order;
+
+	/**
+	 * Constructor for the gateway.
+	 */
     public function __construct() {
 		$this->id                 = 'postofficebank';
 	    $this->icon               = apply_filters( 'woocommerce_postofficebank_icon', JP4WC_URL_PATH . '/assets/images/jp4wc-jppost-bank.png' );
@@ -70,7 +114,11 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 
 		// Customer Emails
-        add_action( 'woocommerce_email_before_order_table', array( $this, 'email_instructions' ), 10, 3 );
+		if( $this->display_location ){
+			add_action( 'woocommerce_email_order_details', array( $this, 'email_instructions' ), $this->display_location, 3 );
+		}else{
+			add_action( 'woocommerce_email_order_details', array( $this, 'email_instructions' ), 9, 3 );
+		}
     }
 
     /**
@@ -98,11 +146,26 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 				'default'     => __( 'Make your payment directly into our Post Office Bank account.', 'woocommerce-for-japan' ),
 				'desc_tip'    => true,
 			),
-			'instructions' => array(
+			'instructions'    => array(
 				'title'       => __( 'Instructions', 'woocommerce-for-japan' ),
 				'type'        => 'textarea',
 				'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce-for-japan' ),
 				'default'     => '',
+				'desc_tip'    => true,
+			),
+			'display_location' => array(
+				'title'       => __( 'Transfer account display Location', 'woocommerce-for-japan' ),
+				'type'        => 'number',
+				'description' => __( 'The location of the transfer account information on the e-mail.', 'woocommerce-for-japan' ) . ' ' .
+					__( 'Unless customized by an extension plugin, 9 will be before the order and 15 will be after the order.', 'woocommerce-for-japan' ),
+				'default'     => 9,
+				'desc_tip'    => true,
+			),
+			'display_order'   => array(
+				'title'       => __( 'Display order of instructions and transfer account', 'woocommerce-for-japan' ),
+				'type'        => 'checkbox',
+				'description' => __( 'Check this box if you want to reverse the order in which instructions and transfer accounts are displayed.', 'woocommerce-for-japan' ),
+				'default'     => 'no',
 				'desc_tip'    => true,
 			),
 			'account_details' => array(
@@ -206,10 +269,18 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
      * Output for the order received page.
      */
     public function thankyou_page( $order_id ) {
+		$instructions = '';
 		if ( $this->instructions ) {
-        	echo wpautop( wptexturize( wp_kses_post( $this->instructions ) ) );
+        	$instructions = wp_kses_post( wpautop( wptexturize( wp_kses_post( $this->instructions ) ) ) );
         }
-        $this->bank_details( $order_id );
+        $bank_detail = $this->html_bank_details( $order_id );
+		if( $this->display_order == 'yes' ){
+			echo $bank_detail;
+			echo $instructions;
+		}else{
+			echo $instructions;
+			echo $bank_detail;
+		}
     }
 
     /**
@@ -226,33 +297,43 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 		$order_status = $order->get_status();
     	if ( ! $sent_to_admin && $this->id == $payment_method && ('on-hold' === $order_status || 'pending' === $order_status ) ) {
 			if ( $this->instructions ) {
-				echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
+				$instructions = wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 			}
 			$order_id = $order->get_id();
-			$this->bank_details( $order_id );
+			if( $plain_text ){
+				$bank_detail = $this->text_bank_details( $order_id );
+			}else{
+				$bank_detail = $this->html_bank_details( $order_id );
+			}
+			if( $this->display_order == 'yes' ){
+				echo $bank_detail;
+				echo $instructions;
+			}else{
+				echo $instructions;
+				echo $bank_detail;
+			}
 		}
     }
 
     /**
      * Get bank details and place into a list format
      */
-    private function bank_details( $order_id = '' ) {
+    private function html_bank_details( $order_id = '' ) {
     	if ( empty( $this->account_details ) ) {
     		return;
     	}
 
-    	echo '<h2>' . __( 'Our Post Office Bank Details', 'woocommerce-for-japan' ) . '</h2>' . PHP_EOL;
-
     	$postofficebankjp_accounts = apply_filters( 'woocommerce_postofficebankjp_accounts', $this->account_details );
 
     	if ( ! empty( $postofficebankjp_accounts ) ) {
+			$html = '<h2>' . __( 'Post Office Bank Account Details', 'woocommerce-for-japan' ) . '</h2>' . PHP_EOL;
+			$html .= '<ul class="order_details postofficebankjp_details">' . PHP_EOL;
 	    	foreach ( $postofficebankjp_accounts as $postofficebankjp_account ) {
-	    		echo '<ul class="order_details postofficebankjp_details">' . PHP_EOL;
 
 	    		$postofficebankjp_account = (object) $postofficebankjp_account;
 
 	    		// BANK account fields shown on the thanks page and in emails
-				$account_fields = apply_filters( 'woocommerce_postofficebankjp_account_fields', array(
+				$account_field = apply_filters( 'woocommerce_postofficebankjp_account_fields', array(
 					'account_number'=> array(
 						'name_label' => __( 'Account Name', 'woocommerce-for-japan' ),
 						'name' => $postofficebankjp_account->account_name,
@@ -262,17 +343,51 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 					)
 				), $order_id );
 
-	    		foreach ( $account_fields as $field_key => $field ) {
-					echo '<li class="' . esc_attr( $field_key ) . '">'.wptexturize($field['name_label']).': <strong>' . wptexturize($field['name']) . '</strong>' . PHP_EOL;
-				    echo '' . esc_attr( $field['number_label'] ) . ': <strong>' . wptexturize($field['bank_symbol']).'-'.wptexturize( $field['value'] ) . '</strong></li>' . PHP_EOL;
-				}
-
-	    		echo '</ul>';
-	    	}
-	    }
+				$html .= '<li class="account_number">'.wptexturize($account_field['account_number']['name_label']).': <strong>' . wptexturize($account_field['account_number']['name']) . '</strong>' . PHP_EOL;
+			    $html .= esc_attr( $account_field['account_number']['number_label'] ) . ': <strong>' . wptexturize($account_field['account_number']['bank_symbol']).'-'.wptexturize( $account_field['account_number']['value'] ) . '</strong></li>' . PHP_EOL;
+	 		}
+			$html .= '</ul>';
+			return apply_filters( 'jp4wc_html_po_bank_details', $html, $postofficebankjp_accounts, $order_id );
+		}
     }
 
     /**
+	 * Get bank details and place into a list format for emails.
+	 
+	 */
+	private function text_bank_details( $order_id = '' ) {
+    	if ( empty( $this->account_details ) ) {
+    		return;
+    	}
+
+    	$postofficebankjp_accounts = apply_filters( 'woocommerce_postofficebankjp_accounts', $this->account_details );
+
+    	if ( ! empty( $postofficebankjp_accounts ) ) {
+			$text = __( 'Post Office Bank Account Details', 'woocommerce-for-japan' ) . "\n" . PHP_EOL;
+	    	foreach ( $postofficebankjp_accounts as $postofficebankjp_account ) {
+
+	    		$postofficebankjp_account = (object) $postofficebankjp_account;
+
+	    		// BANK account fields shown on the thanks page and in emails
+				$account_field = apply_filters( 'woocommerce_postofficebankjp_account_fields', array(
+					'account_number'=> array(
+						'name_label' => __( 'Account Name', 'woocommerce-for-japan' ),
+						'name' => $postofficebankjp_account->account_name,
+						'number_label' => __( 'Account Number', 'woocommerce-for-japan' ),
+						'bank_symbol' => $postofficebankjp_account->bank_symbol,
+						'value' => $postofficebankjp_account->account_number
+					)
+				), $order_id );
+
+				$text .= wptexturize($account_field['account_number']['name_label']).': ' . wptexturize($account_field['account_number']['name']) . "\n" . PHP_EOL;
+			    $text .= esc_attr( $account_field['account_number']['number_label'] ) . ': ' . wptexturize($account_field['account_number']['bank_symbol']).'-'.wptexturize( $account_field['account_number']['value'] ) . "\n" . PHP_EOL;
+	 		}
+			$text .= "\n" . PHP_EOL;
+			return apply_filters( 'jp4wc_text_po_bank_details', $text, $postofficebankjp_accounts, $order_id );
+		}
+    }
+
+	/**
      * Process the payment and return the result
      *
      * @param int $order_id
