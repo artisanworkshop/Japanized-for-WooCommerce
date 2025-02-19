@@ -5,7 +5,7 @@
  * Description: Woocommerce toolkit for Japanese use.
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
- * Version: 2.6.21
+ * Version: 2.6.22
  * Requires Plugins: woocommerce
  * Requires at least: 5.0
  * Tested up to: 6.7.2
@@ -39,7 +39,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '2.6.21';
+		public $version = '2.6.22';
 
 		/**
 		 * Japanized for WooCommerce Framework version.
@@ -71,6 +71,8 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
 			// handle HPOS compatibility.
 			add_action( 'before_woocommerce_init', array( $this, 'jp4wc_handle_hpos_compatibility' ) );
+			// Add COD gateway for fee.
+			add_filter( 'woocommerce_payment_gateways', array( $this, 'add_jp4wc_custom_cod_gateway' ) );
 		}
 
 		/**
@@ -180,6 +182,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-delivery.php';
 			// ADD COD Fee.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-cod-fee.php';
+
 			// ADD Shortcodes.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-shortcodes.php';
 			// Add Free Shipping display.
@@ -350,6 +353,21 @@ if ( ! class_exists( 'JP4WC' ) ) :
 				$slug = dirname( plugin_basename( __FILE__ ) );
 				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', trailingslashit( $slug ) . $slug . '.php', true );
 			}
+		}
+
+		/**
+		 * Add the gateway to WooCommerce
+		 *
+		 * @param array $methods Payment methods.
+		 * @return array $methods Payment methods.
+		 */
+		public function add_jp4wc_custom_cod_gateway( $methods ) {
+			$methods[] = 'JP4WC_COD_Fee';
+			$key       = array_search( 'WC_Gateway_COD', $methods, true );
+			if ( false !== $key ) {
+				unset( $methods[ $key ] );
+			}
+			return $methods;
 		}
 	}
 
