@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.7.2
-Stable tag: 2.6.21
+Stable tag: 2.6.22
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -57,6 +57,11 @@ The manual installation method involves downloading and uploading our plugin to 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.6.22 - 2025-02-20 =
+* Add - Supports checkout block for cash on delivery calculation.
+* Fixed - Address Fields bug fixed.
+* Fixed - Some code has been adapted to the official WordPress coding standards.
 
 = 2.6.21 - 2025-02-19 =
 * Add - Credit Card Security list notice.
