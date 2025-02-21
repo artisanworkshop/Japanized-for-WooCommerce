@@ -43,7 +43,11 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_billing_fields', array( $this, 'billing_address_fields' ) );
 		add_filter( 'woocommerce_shipping_fields', array( $this, 'shipping_address_fields' ), 20 );
 		add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'address_replacements' ), 20, 2 );
-		add_filter( 'woocommerce_localisation_address_formats', array( $this, 'address_formats' ), 20 );
+		if ( function_exists( 'wc_is_checkout_block_page' ) && ! wc_is_checkout_block_page() ) {
+			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'address_formats' ), 20 );
+		} else {
+			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'block_address_formats' ), 20 );
+		}
 		// My Account Display for address.
 		add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'formatted_address' ), 20, 3 );// template/myaccount/my-address.php
 		// Check Out Display for address.
@@ -162,8 +166,6 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function address_replacements( $fields, $args ) {
-		$fields['{name}']       = $args['last_name'] . ' ' . $args['first_name'];
-		$fields['{name_upper}'] = strtoupper( $args['last_name'] . ' ' . $args['first_name'] );
 		if ( get_option( 'wc4jp-yomigana' ) ) {
 			if ( isset( $args['yomigana_last_name'] ) ) {
 				$fields['{yomigana_last_name}'] = $args['yomigana_last_name'];
@@ -172,11 +174,21 @@ class JP4WC_Address_Fields {
 				$fields['{yomigana_first_name}'] = $args['yomigana_first_name'];
 			}
 		}
-		if ( is_order_received_page() ) {
+		if ( is_order_received_page() && isset( $args['phone'] ) ) {
 			$fields['{phone}'] = $args['phone'];
 		}
 
 		return $fields;
+	}
+
+	/**
+	 * Check if the current request is a block-based checkout request.
+	 */
+	public function is_block_checkout_request() {
+		$rest_route = isset( $_REQUEST['rest_route'] ) ? wp_unslash( $_REQUEST['rest_route'] ) : '';
+
+		// If it starts with /wc/store/, it is considered a block-based checkout.
+		return ( 0 === strpos( $rest_route, '/wc/store/' ) );
 	}
 
 	/**
@@ -218,6 +230,22 @@ class JP4WC_Address_Fields {
 		if ( is_order_received_page() ) {
 			$fields['JP'] = $fields['JP'] . "\n {phone}";
 		}
+		if ( $this->is_block_checkout_request() ) {
+			$fields['JP'] = '〒{postcode}{state}{city}{address_1}{address_2} {country}';
+		}
+		return $fields;
+	}
+
+	/**
+	 * Modifies the address format fields for Japanese addresses by Checkout Block.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $fields The default address format fields.
+	 * @return array Modified address format fields for Japanese addresses.
+	 */
+	public function block_address_formats( $fields ) {
+		$fields['JP'] = '〒{postcode}{state}{city}{address_1}{address_2} {country}';
 		return $fields;
 	}
 
@@ -249,9 +277,10 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function jp4wc_billing_address( $fields, $args ) {
+		$order = wc_get_order( $args->get_id() );
 		if ( empty( $order ) ) {
-			return; }
-		$order                         = wc_get_order( $args->get_id() );
+			return;
+		}
 		$fields['yomigana_first_name'] = $order->get_meta( '_billing_yomigana_first_name', true );
 		$fields['yomigana_last_name']  = $order->get_meta( '_billing_yomigana_last_name', true );
 		$fields['phone']               = $order->get_billing_phone();
