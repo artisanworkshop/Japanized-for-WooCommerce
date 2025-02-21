@@ -68,7 +68,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 
 		// Hooks & Filters.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_frontend' ) );
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'save_account_details' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_cod', array( $this, 'save_account_details' ) );
 		add_filter( 'woocommerce_cart_calculate_fees', array( $this, 'jp4wc_calculate_order_totals' ) );
 	}
 
@@ -278,7 +278,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		$extra_charge_amount = 0;
 		$extra_charge_name   = '';
 		// Add charges to cart totals.
-		if ( ! empty( $current_gateway ) && ( empty( $extra_charge_max_cart_value ) || $extra_charge_max_cart_value >= $subtotal ) && $this->id === $current_gateway->id ) {
+		if ( ! empty( $current_gateway ) && ( empty( $extra_charge_max_cart_value ) || $extra_charge_max_cart_value >= $subtotal ) && 'cod' === $current_gateway->id ) {
 
 			if ( isset( $cod_setting['extra_charge_name'] ) ) {
 				$extra_charge_name = $cod_setting['extra_charge_name'];
