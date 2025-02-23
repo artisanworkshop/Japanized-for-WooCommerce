@@ -48,6 +48,9 @@ class JP4WC_Address_Fields {
 		} else {
 			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'block_address_formats' ), 20 );
 		}
+		// Address Display for e-mail.
+		add_filter( 'woocommerce_order_get_formatted_billing_address', array( $this, 'jp4wc_get_address' ), 10, 3 );
+		add_filter( 'woocommerce_order_get_formatted_shipping_address', array( $this, 'jp4wc_get_address' ), 20, 3 );
 		// My Account Display for address.
 		add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'formatted_address' ), 20, 3 );// template/myaccount/my-address.php
 		// Check Out Display for address.
@@ -182,16 +185,6 @@ class JP4WC_Address_Fields {
 	}
 
 	/**
-	 * Check if the current request is a block-based checkout request.
-	 */
-	public function is_block_checkout_request() {
-		$rest_route = isset( $_REQUEST['rest_route'] ) ? wp_unslash( $_REQUEST['rest_route'] ) : '';
-
-		// If it starts with /wc/store/, it is considered a block-based checkout.
-		return ( 0 === strpos( $rest_route, '/wc/store/' ) );
-	}
-
-	/**
 	 * Setting address formats for Japanese.
 	 *
 	 * @since  1.2
@@ -234,6 +227,16 @@ class JP4WC_Address_Fields {
 			$fields['JP'] = '〒{postcode}{state}{city}{address_1}{address_2} {country}';
 		}
 		return $fields;
+	}
+
+	/**
+	 * Check if the current request is a block-based checkout request.
+	 */
+	public function is_block_checkout_request() {
+		$rest_route = isset( $_REQUEST['rest_route'] ) ? wp_unslash( $_REQUEST['rest_route'] ) : '';// phpcs:ignore 
+
+		// If it starts with /wc/store/, it is considered a block-based checkout.
+		return ( 0 === strpos( $rest_route, '/wc/store/' ) );
 	}
 
 	/**
@@ -327,6 +330,29 @@ class JP4WC_Address_Fields {
 		$field_value    = $order->get_shipping_phone();
 		$field_value    = wc_make_phone_clickable( $field_value );
 		echo '<div style="display:block;clear:both;"><p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p></div>';
+	}
+
+	/**
+	 * Get shipping address format for Japanese addresses
+	 *
+	 * @param string $address      The formatted shipping address.
+	 * @param array  $raw_address  Raw address fields.
+	 * @param object $order        The order object.
+	 * @return string             Modified shipping address format for Japanese addresses
+	 */
+	public function jp4wc_get_address( $address, $raw_address, $order ) {
+		if ( 'store-api' === $order->get_created_via() && isset( $raw_address['last_name'] ) && isset( $raw_address['first_name'] ) ) {
+			$address_name     = $raw_address['last_name'] . ' ' . $raw_address['first_name'];
+			$honorific_suffix = '';
+			if ( get_option( 'wc4jp-honorific-suffix' ) ) {
+				$honorific_suffix = '様';
+			}
+			$address_name .= $honorific_suffix;
+			if ( isset( $raw_address['country'] ) && 'JP' === $raw_address['country'] ) {
+				$address .= ' ' . $address_name;
+			}
+		}
+		return $address . $order->get_created_via();
 	}
 
 	/**

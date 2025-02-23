@@ -69,7 +69,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		// Hooks & Filters.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_frontend' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_cod', array( $this, 'save_account_details' ) );
-		add_filter( 'woocommerce_cart_calculate_fees', array( $this, 'jp4wc_calculate_order_totals' ) );
+		add_filter( 'woocommerce_cart_calculate_fees', array( $this, 'jp4wc_calculate_order_totals' ), 1001 );
 	}
 
 	/**
@@ -84,9 +84,11 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		$min = ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ? '.min' : '';
 
 		if ( ! is_checkout() ) {
-			return; }
+			return;
+		}
 
 		wp_enqueue_script( 'wc-pf-checkout', JP4WC_URL_PATH . 'assets/js/checkout' . $min . '.js', array( 'jquery' ), JP4WC_VERSION, true );
+		// $this->jp4wc_blocks_script();
 	}
 
 	/**
@@ -135,13 +137,25 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 	/**
 	 * Generate account details html.
 	 *
-	 * @return string
+	 * @return string The HTML markup for tax class setting
 	 */
 	public function generate_terms_of_use_details_html() {
+		$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
+		$tax_class = empty( $tax_class ) ? 'standard' : $tax_class;
 
 		ob_start();
 
 		?>
+		<tr valign="top" id="tax_class_setting">
+			<th scope="row" class="titledesc"><?php esc_html_e( 'Tax Class:', 'woocommerce-for-japan' ); ?></th>
+			<td class="forminp" id="tax_class_setting">
+			<select name="jp4wc_tax_class_for_cod">
+			<?php foreach ( jp4wc_get_fee_tax_classes() as $tax_class_id => $tax_class_name ) : ?>
+					<option value="<?php echo esc_attr( $tax_class_id ); ?>" <?php echo selected( $tax_class, $tax_class_id, true ); ?>><?php echo esc_html( $tax_class_name ); ?></option>
+			<?php endforeach; ?>
+			</select>
+			</td>
+		</tr>
 		<tr valign="top" id="terms_of_use_details">
 			<th scope="row" class="titledesc"><?php esc_html_e( 'Charge amount of details:', 'woocommerce-for-japan' ); ?></th>
 			<td class="forminp" id="bacs_accounts">
@@ -223,6 +237,10 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 					'cod_max' => $cod_maxs[ $i ],
 				);
 			}
+
+			if ( isset( $_POST['jp4wc_tax_class_for_cod'] ) ) {
+				update_option( 'jp4wc_tax_class_for_cod', $_POST['jp4wc_tax_class_for_cod'] );// phpcs:ignore
+			}
 		}
 		update_option( 'woocommerce_cod_fees', $fees );
 	}
@@ -238,20 +256,18 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		if ( is_admin() || 0 === $cart->get_cart_contents_count() ) {
 			return;
 		}
-		if ( defined( 'WOOCOMMERCE_STOREAPI' ) && WOOCOMMERCE_STOREAPI ) {
-			// Parse php://input to get the payment method.
-			$raw_input = file_get_contents( 'php://input' );
-			$body_json = json_decode( $raw_input, true );
+		$current_gateway = WC()->session->get( 'jp4wc_gateway_id' );
+		$current_gateway = empty( $current_gateway ) ? WC()->session->get( 'chosen_payment_method' ) : $current_gateway;
 
-			// If a payment method is sent with a block-based checkout, it goes in "payment_method" key.
-			if ( isset( $body_json['payment_method'] ) ) {
-				$current_gateway = $body_json['payment_method'];
-			} else {
-				return;
-			}
-		} else {
-			// For traditional checkout (shortcode), retrieve from session.
-			$current_gateway = WC()->session->get( 'chosen_payment_method' );
+		if ( empty( $current_gateway ) ) {
+			return;
+		}
+
+		$fee_data  = self::get_gateway_fee_value( $cart_obj );
+		$fee_value = $fee_data['fee_value'];
+
+		if ( empty( $fee_value ) ) {
+			return;
 		}
 
 		$available_gateways = WC()->payment_gateways->get_available_payment_gateways();
@@ -267,6 +283,8 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 				$current_gateway = current( $available_gateways );
 			}
 		}
+		$current_gateway_id = WC()->session->get( 'chosen_payment_method' );
+		$current_gateway_id = empty( $current_gateway_id ) ? WC()->session->get( 'chosen_payment_method' ) : $current_gateway_id;
 
 		$cod_setting = get_option( 'woocommerce_cod_settings' );
 		if ( isset( $cod_setting['extra_charge_max_cart_value'] ) ) {
@@ -277,8 +295,11 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 
 		$extra_charge_amount = 0;
 		$extra_charge_name   = '';
+		if ( isset( $cod_setting['extra_charge_name'] ) ) {
+			$extra_charge_name = $cod_setting['extra_charge_name'];
+		}
 		// Add charges to cart totals.
-		if ( ! empty( $current_gateway ) && ( empty( $extra_charge_max_cart_value ) || $extra_charge_max_cart_value >= $subtotal ) && 'cod' === $current_gateway->id ) {
+		if ( ! empty( $current_gateway_id ) && ( empty( $extra_charge_max_cart_value ) || $extra_charge_max_cart_value >= $subtotal ) && 'cod' === $current_gateway_id ) {
 
 			if ( isset( $cod_setting['extra_charge_name'] ) ) {
 				$extra_charge_name = $cod_setting['extra_charge_name'];
@@ -323,12 +344,74 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 					}
 				}
 
+				$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
+				$tax_class = empty( $tax_class ) ? 'standard' : $tax_class;
+
 				if ( ! $already_exists ) {
-					$cart->add_fee( $extra_charge_name, $extra_charge_amount, $taxable );
-				} else {
-					$fees[ $fee_id ]->amount = $extra_charge_amount;
+					$fee = array(
+						'id'        => 'jp4wc_gateway_fee',
+						'name'      => $extra_charge_name,
+						'amount'    => $extra_charge_amount,
+						'taxable'   => $taxable,
+						'tax_class' => $tax_class,
+					);
+					$cart->fees_api()->add_fee( $fee );
 				}
 			}
+		} else {
+			self::remove_fee( $extra_charge_name );
 		}
+	}
+
+
+	/**
+	 * Add Gateway Total Fee.
+	 *
+	 * @param object $cart_obj Cart object.
+	 */
+	public static function get_gateway_fee_value( $cart_obj ) {
+		$fee_value = array(
+			'fee_value' => 0,
+			'fee_text'  => '',
+		);
+
+		// Return if the gateway id is empty.
+		$gateway_id = WC()->session->get( 'jp4wc_gateway_id' );
+		$gateway_id = empty( $gateway_id ) ? WC()->session->get( 'chosen_payment_method' ) : $gateway_id;
+		if ( empty( $gateway_id ) ) {
+			return $fee_value;
+		}
+
+		$cod_setting = get_option( 'woocommerce_cod_settings' );
+		$value       = $cod_setting['extra_charge_amount'];
+		$fee_text    = $cod_setting['extra_charge_name'];
+
+		// Return if the gateway fee is disabled.
+		if ( 'cod' !== $gateway_id ) {
+			self::remove_fee( $fee_text );
+			return $fee_value;
+		}
+
+		return array(
+			'fee_value' => $value,
+			'fee_text'  => $fee_text,
+		);
+	}
+
+	/**
+	 * Remove Fee from Cart
+	 *
+	 * @param string $fee_text Fee Text.
+	 */
+	public static function remove_fee( $fee_text ) {
+		$fees = WC()->cart->get_fees();
+
+		foreach ( $fees as $key => $fee ) {
+			if ( ( $fees[ $key ]->name === $fee_text ) ) {
+				unset( $fees[ $key ] );
+			}
+		}
+
+		WC()->cart->fees_api()->set_fees( $fees );
 	}
 }
