@@ -43,9 +43,9 @@ if ( ! isset( $current_title[ $current_tab ] ) ) {
 					<p class="inner">
 						<?php
 						$product_link_url = 'https://wc4jp-pro.work/about-security-service/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=maintenance-support';
-
 						/* translators: %s: URL */
-						printf( esc_html__( 'One the security, latest update is the most important thing. The credit card security guidelines that will be established from April 2025 are also important. If you need site maintenance support, please consider about <a href="%s" target="_blank" title="Security measures for WooCommerce">Security measures for WooCommerce</a>', 'woocommerce-for-japan' ), esc_url( $product_link_url ) );
+						$explain_product = __( 'One the security, latest update is the most important thing. The credit card security guidelines that will be established from April 2025 are also important. If you need site maintenance support, please consider about <a href="%s" target="_blank" title="Security measures for WooCommerce">Security measures for WooCommerce</a>', 'woocommerce-for-japan' );
+						printf( wp_kses_post( $explain_product ), esc_url( $product_link_url ) );
 						?>
 					</p>
 					<hr />
