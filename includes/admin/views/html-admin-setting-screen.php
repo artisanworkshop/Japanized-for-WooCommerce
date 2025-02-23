@@ -39,7 +39,15 @@ if ( ! isset( $current_title[ $current_tab ] ) ) {
 				<div class="inside">
 					<?php $this->jp4wc_plugin->jp4wc_pro_notice( 'https://wc4jp-pro.work/' ); ?>
 					<hr />
-					<?php $this->jp4wc_plugin->jp4wc_update_notice(); ?>
+					<h4 class="inner"><?php esc_html_e( 'Security measures for WooCommerce', 'woocommerce-for-japan' ); ?></h4>
+					<p class="inner">
+						<?php
+						$product_link_url = 'https://wc4jp-pro.work/about-security-service/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=maintenance-support';
+
+						/* translators: %s: URL */
+						printf( esc_html__( 'One the security, latest update is the most important thing. The credit card security guidelines that will be established from April 2025 are also important. If you need site maintenance support, please consider about <a href="%s" target="_blank" title="Security measures for WooCommerce">Security measures for WooCommerce</a>', 'woocommerce-for-japan' ), esc_url( $product_link_url ) );
+						?>
+					</p>
 					<hr />
 					<?php $this->jp4wc_plugin->jp4wc_community_info(); ?>
 					<?php if ( ! get_option( 'wc4jp_admin_footer_text_rated' ) ) : ?>

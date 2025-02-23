@@ -174,6 +174,10 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// Payment Gateway For COD subscriptions.
 			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-gateway-cod-4sub.php';
 			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-addons-gateway-cod.php';
+
+			// common functions.
+			require_once JP4WC_INCLUDES_PATH . 'jp4wc-common-functions.php';
+
 			// Address Setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-address-fields.php';
 			// Automatic address entry from zip code using Yahoo API.
@@ -182,6 +186,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-delivery.php';
 			// ADD COD Fee.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-cod-fee.php';
+			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-cod-fee-handler.php';
 
 			// ADD Shortcodes.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-shortcodes.php';
