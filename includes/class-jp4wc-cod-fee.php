@@ -263,7 +263,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			return;
 		}
 
-		$fee_data  = self::get_gateway_fee_value( $cart_obj );
+		$fee_data  = self::get_gateway_fee_value( $cart );
 		$fee_value = $fee_data['fee_value'];
 
 		if ( empty( $fee_value ) ) {
