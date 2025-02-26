@@ -83,6 +83,9 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		 * @return void
 		 */
 		public static function jp4wc_block_external_js_files() {
+			if ( ! is_checkout() ) {
+				return;
+			}
 			$enqueue_array = array(
 				'jp4wc-wc-blocks' => array(
 					'callable' => array( 'JP4WC_COD_Fee_Handler', 'jp4wc_blocks_script' ),
@@ -115,7 +118,13 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		 * @return void
 		 */
 		public static function jp4wc_blocks_script() {
-			$gatewayfee_enabled = 'yes';
+
+			wp_register_script(
+				'jquery-modal',
+				JP4WC_URL_PATH . 'assets/js/jquery.modal.min.js',
+				array( 'jquery' ),
+				JP4WC_VERSION
+			);
 			wp_enqueue_script(
 				'jp4wc-cod-wc-blocks',
 				JP4WC_URL_PATH . 'assets/js/jp4wc-cod-wc-blocks.js',
@@ -124,6 +133,7 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 				true
 			);
 
+			$gatewayfee_enabled = 'yes';
 			wp_localize_script(
 				'jp4wc-cod-wc-blocks',
 				'jp4wc_cod_blocks_param',

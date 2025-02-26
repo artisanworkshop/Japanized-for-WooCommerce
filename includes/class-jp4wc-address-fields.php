@@ -352,7 +352,7 @@ class JP4WC_Address_Fields {
 				$address .= ' ' . $address_name;
 			}
 		}
-		return $address . $order->get_created_via();
+		return $address;
 	}
 
 	/**
