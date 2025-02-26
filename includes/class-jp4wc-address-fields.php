@@ -341,7 +341,7 @@ class JP4WC_Address_Fields {
 	 * @return string             Modified shipping address format for Japanese addresses
 	 */
 	public function jp4wc_get_address( $address, $raw_address, $order ) {
-		if ( 'store-api' === $order->get_created_via() && isset( $raw_address['last_name'] ) && isset( $raw_address['first_name'] ) ) {
+		if ( ( 'store-api' === $order->get_created_via() || 'checkout' === $order->get_created_via() ) && isset( $raw_address['last_name'] ) && isset( $raw_address['first_name'] ) ) {
 			$address_name     = $raw_address['last_name'] . ' ' . $raw_address['first_name'];
 			$honorific_suffix = '';
 			if ( get_option( 'wc4jp-honorific-suffix' ) ) {

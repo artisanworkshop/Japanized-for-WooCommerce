@@ -104,7 +104,7 @@ class JP4WC_Admin_Notices {
 	 * @version 2.6.8
 	 */
 	public function jp4wc_pr2025_display() {
-		$pr_link = 'https://wc4jp-pro.work/about-security-service/';
+		$pr_link = 'https://wc4jp-pro.work/about-security-service/2025lp/';
 		$today   = new DateTime();
 		$end_day = new DateTime( '2025-04-01' );
 		$diff    = $today->diff( $end_day );
@@ -114,26 +114,46 @@ class JP4WC_Admin_Notices {
 			<div id="pr_jp4wc_2025">
 				<p>	
 				<?php
-				/* translators: %s: number of days until April 2025 */
-				$catch_copy = sprintf( esc_html__( 'Only %s days left. New credit card payment standards are coming into force in April 2025!', 'woocommerce-for-japan' ), $days );
-				echo '<h2 style="color: #2C045D;">' . esc_html( $catch_copy ) . '</h2>';
-				esc_html_e( 'Coming into force in April 2025! Is your website ready for the new credit card payment standards?', 'woocommerce-for-japan' );
-				?>
-				<br />
-				<?php esc_html_e( 'We recommend that you take the following measures to ensure that your store is ready for the new credit card payment standards.', 'woocommerce-for-japan' ); ?>
-				<br />
-				<?php
-				/* translators: 1: Opening anchor tag with URL, 2: Closing anchor tag */
-				$product_link = sprintf( __( '%1$s [Security measures for WooCommerce] in line with the "Credit Card Security Guidelines" %2$s', 'woocommerce-for-japan' ), '<a href="' . esc_url( $pr_link ) . '?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=woo_security" target="_blank">', '</a>' );
-				echo wp_kses(
-					$product_link,
-					array(
-						'a' => array(
-							'href'   => array(),
-							'target' => array(),
-						),
-					)
-				);
+				$second     = date_i18n( 's' );
+				$second_int = (int) $second;
+				if ( 0 === $second_int % 2 ) {
+					/* translators: %s: number of days until April 2025 */
+					$catch_copy = sprintf( esc_html__( 'Only %s days left. New credit card payment standards are coming into force in April 2025!', 'woocommerce-for-japan' ), $days );
+					echo '<h2 style="color: #2C045D;">' . esc_html( $catch_copy ) . '</h2>';
+					esc_html_e( 'Coming into force in April 2025! Is your website ready for the new credit card payment standards?', 'woocommerce-for-japan' );
+					echo '<br />';
+					esc_html_e( 'We recommend that you take the following measures to ensure that your store is ready for the new credit card payment standards.', 'woocommerce-for-japan' );
+					echo '<br />';
+					/* translators: 1: Opening anchor tag with URL, 2: Closing anchor tag */
+					$product_link = sprintf( __( '%1$s [Security measures for WooCommerce] in line with the "Credit Card Security Guidelines" %2$s', 'woocommerce-for-japan' ), '<a href="' . esc_url( $pr_link ) . '?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=woo_security" target="_blank">', '</a>' );
+					echo wp_kses(
+						$product_link,
+						array(
+							'a' => array(
+								'href'   => array(),
+								'target' => array(),
+							),
+						)
+					);
+				} else {
+					$catch_copy = __( '🔒 Are you ready for the new standard in credit card payments?', 'woocommerce-for-japan' );
+					echo '<h2 style="color: #2C045D;">' . esc_html( $catch_copy ) . '</h2>';
+					esc_html_e( 'Are you prepared for the new security guidelines that will come into effect in April 2025?', 'woocommerce-for-japan' );
+					echo '<br />';
+					echo '<b>' . esc_html( 'Don\'t worry if you\'re not ready yet!', 'woocommerce-for-japan' ) . '</b> ' . esc_html( 'Let our experts help you establish a safe payment environment.', 'woocommerce-for-japan' );
+					echo '<br />';
+					/* translators: 1: Opening anchor tag with URL, 2: Closing anchor tag */
+					$product_link = sprintf( __( '%1$s 📢 Check it out now and be fully prepared! %2$s', 'woocommerce-for-japan' ), '<a href="' . esc_url( $pr_link ) . '?utm_source=jp4wc_plugin&utm_medium=site&utm_campaign=woo_security_safe" target="_blank">', '</a>' );
+					echo wp_kses(
+						$product_link,
+						array(
+							'a' => array(
+								'href'   => array(),
+								'target' => array(),
+							),
+						)
+					);
+				}
 				?>
 				</p>
 			</div>
