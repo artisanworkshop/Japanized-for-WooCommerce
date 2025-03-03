@@ -263,15 +263,15 @@ class JP4WC_Delivery {
 
 		if ( isset( $_POST['wc4jp_delivery_date'] ) ) {
 			$date = apply_filters( 'wc4jp_delivery_date', sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) ), $order_id );
-		}
-		if ( isset( $date ) && '0' !== $date ) {
-			if ( get_option( 'wc4jp-date-format' ) ) {
-				$date = strtotime( $date );
-				$date = date_i18n( get_option( 'wc4jp-date-format' ), $date );
+			if ( isset( $date ) && '0' !== $date ) {
+				if ( get_option( 'wc4jp-date-format' ) ) {
+					$date = strtotime( $date );
+					$date = date_i18n( get_option( 'wc4jp-date-format' ), $date );
+					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $date ) ) );
+				}
+			} else {
+				$order->delete_meta_data( 'wc4jp-delivery-date' );
 			}
-			$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $date ) ) );
-		} else {
-			$order->delete_meta_data( 'wc4jp-delivery-date' );
 		}
 
 		if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) {
