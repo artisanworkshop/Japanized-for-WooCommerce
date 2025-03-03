@@ -1,7 +1,7 @@
 <?php
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -9,11 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Provides a Cash on Delivery Payment Gateway for Subscriptions.
  *
- * @class 		WC_Gateway_COD2
- * @extends		WC_Payment_Gateway
- * @version		2.2.19
- * @package		WooCommerce/Classes/Payment
- * @author 		ArtsanWorkshop
+ * @class       WC_Gateway_COD2
+ * @extends     WC_Payment_Gateway
+ * @version     2.2.19
+ * @package     WooCommerce/Classes/Payment
+ * @author      ArtsanWorkshop
  */
 class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	/**
@@ -22,6 +22,29 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	 * @var bool
 	 */
 	private $subscription_support_enabled = false;
+
+	/**
+	 * Instructions to be displayed on the thank you page and in emails.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	public $instructions;
+
+	/**
+	 * Array of shipping method IDs this COD gateway is allowed for
+	 *
+	 * @var array
+	 */
+	public $enable_for_methods;
+
+	/**
+	 * Enable COD for virtual products option
+	 *
+	 * @var string
+	 */
+	public $enable_for_virtual;
+
 
 	/**
 	 * Constructor for the gateway.
@@ -43,7 +66,6 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 			'subscription_suspension',
 			'subscription_date_changes',
 		);
-
 
 		// Get settings
 		$this->title              = $this->get_option( 'title' );
@@ -67,33 +89,33 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 
 		if ( is_admin() ) {
 			foreach ( WC()->shipping()->load_shipping_methods() as $method ) {
-                $shipping_methods[ $method->id ] = $method->get_method_title();
+				$shipping_methods[ $method->id ] = $method->get_method_title();
 			}
 		}
 
 		$this->form_fields = array(
-			'enabled' => array(
+			'enabled'            => array(
 				'title'       => __( 'Enable COD', 'woocommerce-for-japan' ),
 				'label'       => __( 'Enable Cash on Delivery', 'woocommerce-for-japan' ),
 				'type'        => 'checkbox',
 				'description' => '',
-				'default'     => 'no'
+				'default'     => 'no',
 			),
-			'title' => array(
+			'title'              => array(
 				'title'       => __( 'Title', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Cash on Delivery', 'woocommerce-for-japan' ),
 				'desc_tip'    => true,
 			),
-			'description' => array(
+			'description'        => array(
 				'title'       => __( 'Description', 'woocommerce-for-japan' ),
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description that the customer will see on your website.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Pay with cash upon delivery.', 'woocommerce-for-japan' ),
 				'desc_tip'    => true,
 			),
-			'instructions' => array(
+			'instructions'       => array(
 				'title'       => __( 'Instructions', 'woocommerce-for-japan' ),
 				'type'        => 'textarea',
 				'description' => __( 'Instructions that will be added to the thank you page.', 'woocommerce-for-japan' ),
@@ -110,16 +132,16 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 				'options'           => $shipping_methods,
 				'desc_tip'          => true,
 				'custom_attributes' => array(
-					'data-placeholder' => __( 'Select shipping methods', 'woocommerce-for-japan' )
-				)
+					'data-placeholder' => __( 'Select shipping methods', 'woocommerce-for-japan' ),
+				),
 			),
 			'enable_for_virtual' => array(
-				'title'             => __( 'Accept for virtual orders', 'woocommerce-for-japan' ),
-				'label'             => __( 'Accept COD if the order is virtual', 'woocommerce-for-japan' ),
-				'type'              => 'checkbox',
-				'default'           => 'yes'
-			)
-	   );
+				'title'   => __( 'Accept for virtual orders', 'woocommerce-for-japan' ),
+				'label'   => __( 'Accept COD if the order is virtual', 'woocommerce-for-japan' ),
+				'type'    => 'checkbox',
+				'default' => 'yes',
+			),
+		);
 	}
 
 	/**
@@ -175,7 +197,6 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 				if ( $order->shipping_method ) {
 					$check_method = $order->shipping_method;
 				}
-
 			} elseif ( empty( $chosen_shipping_methods ) || sizeof( $chosen_shipping_methods ) > 1 ) {
 				$check_method = false;
 			} elseif ( sizeof( $chosen_shipping_methods ) == 1 ) {
@@ -214,18 +235,18 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 		$order = wc_get_order( $order_id );
 
 		// Mark as processing or on-hold (payment won't be taken until delivery)
-		$order->update_status( 'processing' , __( 'Payment to be made upon delivery.', 'woocommerce-for-japan' ) );
+		$order->update_status( 'processing', __( 'Payment to be made upon delivery.', 'woocommerce-for-japan' ) );
 
 		// Reduce stock levels
-        wc_reduce_stock_levels( $order_id );
+		wc_reduce_stock_levels( $order_id );
 
 		// Remove cart
 		WC()->cart->empty_cart();
 
 		// Return thankyou redirect
 		return array(
-			'result' 	=> 'success',
-			'redirect'	=> $this->get_return_url( $order )
+			'result'   => 'success',
+			'redirect' => $this->get_return_url( $order ),
 		);
 	}
 
@@ -234,7 +255,7 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	 */
 	public function thankyou_page() {
 		if ( $this->instructions ) {
-            echo wpautop( wptexturize( wp_kses_post( $this->instructions ) ) );
+			echo wpautop( wptexturize( wp_kses_post( $this->instructions ) ) );
 		}
 	}
 
@@ -243,11 +264,11 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	 *
 	 * @access public
 	 * @param WC_Order $order
-	 * @param bool $sent_to_admin
-	 * @param bool $plain_text
+	 * @param bool     $sent_to_admin
+	 * @param bool     $plain_text
 	 */
 	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-	    $payment_method = version_compare( WC_VERSION, '2.7', '<' ) ? $order->payment_method : $order->get_payment_method();
+		$payment_method = version_compare( WC_VERSION, '2.7', '<' ) ? $order->payment_method : $order->get_payment_method();
 		if ( $this->instructions && ! $sent_to_admin && 'cod2' === $payment_method ) {
 			echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 		}
@@ -257,16 +278,17 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
  * Add the gateway to woocommerce
  */
 function add_wc4jp_cod2_gateway( $methods ) {
-		if ( class_exists( 'WC_Subscriptions_Order' ) && function_exists( 'wcs_create_renewal_order' ) ) {
-			$subscription_support_enabled = true;
-		}
-		if ( isset($subscription_support_enabled) ) {
-			$methods[] = 'WC_Addons_Gateway_COD2';
-		} else {
-			$methods[] = 'WC_Gateway_COD2';
-		}
+	if ( class_exists( 'WC_Subscriptions_Order' ) && function_exists( 'wcs_create_renewal_order' ) ) {
+		$subscription_support_enabled = true;
+	}
+	if ( isset( $subscription_support_enabled ) ) {
+		$methods[] = 'WC_Addons_Gateway_COD2';
+	} else {
+		$methods[] = 'WC_Gateway_COD2';
+	}
 	return $methods;
 }
 
-if(get_option('wc4jp-cod2')) add_filter( 'woocommerce_payment_gateways', 'add_wc4jp_cod2_gateway' );
-
+if ( get_option( 'wc4jp-cod2' ) ) {
+	add_filter( 'woocommerce_payment_gateways', 'add_wc4jp_cod2_gateway' );
+}
