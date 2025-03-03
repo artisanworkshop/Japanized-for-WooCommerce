@@ -383,8 +383,8 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		}
 
 		$cod_setting = get_option( 'woocommerce_cod_settings' );
-		$value       = $cod_setting['extra_charge_amount'];
-		$fee_text    = $cod_setting['extra_charge_name'];
+		$value       = isset( $cod_setting['extra_charge_amount'] ) ? $cod_setting['extra_charge_amount'] : 0;
+		$fee_text    = isset( $cod_setting['extra_charge_name'] ) ? $cod_setting['extra_charge_name'] : '';
 
 		// Return if the gateway fee is disabled.
 		if ( 'cod' !== $gateway_id ) {

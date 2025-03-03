@@ -264,7 +264,7 @@ class JP4WC_Delivery {
 		if ( isset( $_POST['wc4jp_delivery_date'] ) ) {
 			$date = apply_filters( 'wc4jp_delivery_date', sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) ), $order_id );
 		}
-		if ( isset( $date ) && 0 !== $date ) {
+		if ( isset( $date ) && '0' !== $date ) {
 			if ( get_option( 'wc4jp-date-format' ) ) {
 				$date = strtotime( $date );
 				$date = date_i18n( get_option( 'wc4jp-date-format' ), $date );
@@ -277,7 +277,7 @@ class JP4WC_Delivery {
 		if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) {
 			$time = apply_filters( 'wc4jp_delivery_time_zone', sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) ), $order_id );
 		}
-		if ( ! empty( $time ) && 0 !== $time ) {
+		if ( ! empty( $time ) && '0' !== $time ) {
 			$order->update_meta_data( 'wc4jp-delivery-time-zone', esc_attr( htmlspecialchars( $time ) ) );
 		} else {
 			$order->delete_meta_data( 'wc4jp-delivery-time-zone' );
@@ -320,10 +320,12 @@ class JP4WC_Delivery {
 		if ( ! $date_time ) {
 			return;
 		}
-		if ( 0 === $date_time['date'] ) {
-			$date_time['date'] = get_option( 'wc4jp-unspecified-date' );}
-		if ( 0 === $date_time['time'] ) {
-			$date_time['time'] = get_option( 'wc4jp-unspecified-time' );}
+		if ( '0' === $date_time['date'] ) {
+			$date_time['date'] = get_option( 'wc4jp-unspecified-date' );
+		}
+		if ( '0' === $date_time['time'] ) {
+			$date_time['time'] = get_option( 'wc4jp-unspecified-time' );
+		}
 		$date_time['date'] = apply_filters( 'wc4jp-unspecified-date', $date_time['date'], $order );
 		$date_time['time'] = apply_filters( 'wc4jp-unspecified-time', $date_time['time'], $order );
 		$show_title        = apply_filters( 'wc4jp-show-title', $show_title, $date_time['date'], $date_time['time'], $order );

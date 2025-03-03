@@ -3,7 +3,7 @@
  * Japanized for WooCommerce
  *
  * @package     Japanized for WooCommerce
- * @version     2.6.22
+ * @version     2.6.25
  * @category    Address Setting for Japan
  * @author      Artisan Workshop
  */
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * to better suit Japanese addressing conventions and postal formats.
  *
  * @package WooCommerce for Japan
- * @version 2.6.22
+ * @version 2.6.25
  * @category Address Management
  * @author Shohei Tanaka
  */
@@ -48,15 +48,17 @@ class JP4WC_Address_Fields {
 		} else {
 			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'block_address_formats' ), 20 );
 		}
+
 		// Address Display for e-mail.
-		add_filter( 'woocommerce_order_get_formatted_billing_address', array( $this, 'jp4wc_get_address' ), 10, 3 );
-		add_filter( 'woocommerce_order_get_formatted_shipping_address', array( $this, 'jp4wc_get_address' ), 20, 3 );
+		add_filter( 'woocommerce_order_get_formatted_billing_address', array( $this, 'billing_jp4wc_get_address' ), 10, 3 );
+		add_filter( 'woocommerce_order_get_formatted_shipping_address', array( $this, 'shipping_jp4wc_get_address' ), 20, 3 );
 		// My Account Display for address.
 		add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'formatted_address' ), 20, 3 );// template/myaccount/my-address.php
-		// Check Out Display for address.
+		// Checkout Display for address.
 		add_filter( 'woocommerce_order_formatted_billing_address', array( $this, 'jp4wc_billing_address' ), 10, 2 );
 		add_filter( 'woocommerce_order_formatted_shipping_address', array( $this, 'jp4wc_shipping_address' ), 20, 2 );
 		add_action( 'woocommerce_admin_order_data_after_shipping_address', array( $this, 'admin_order_data_after_shipping_address' ), 10 );
+
 		// include get_order function.
 		add_filter( 'woocommerce_get_order_address', array( $this, 'jp4wc_get_order_address' ), 20, 3 );// includes/abstract/abstract-wc-order.php
 		// FrontEnd CSS file.
@@ -342,6 +344,11 @@ class JP4WC_Address_Fields {
 	 */
 	public function jp4wc_get_address( $address, $raw_address, $order ) {
 		if ( ( 'store-api' === $order->get_created_via() || 'checkout' === $order->get_created_via() ) && isset( $raw_address['last_name'] ) && isset( $raw_address['first_name'] ) ) {
+			if ( preg_match( '/\p{Han}/u', $address, $matches, PREG_OFFSET_CAPTURE ) ) {
+				$pos     = $matches[0][1];
+				$address = substr_replace( $address, '<br />', $pos, 0 );
+			}
+
 			$address_name     = $raw_address['last_name'] . ' ' . $raw_address['first_name'];
 			$honorific_suffix = '';
 			if ( get_option( 'wc4jp-honorific-suffix' ) ) {
@@ -349,9 +356,49 @@ class JP4WC_Address_Fields {
 			}
 			$address_name .= $honorific_suffix;
 			if ( isset( $raw_address['country'] ) && 'JP' === $raw_address['country'] ) {
-				$address .= ' ' . $address_name;
+				$address .= ' <br/>' . $address_name;
 			}
 		}
+		return $address;
+	}
+
+	/**
+	 * Gets the billing address for Japanese orders
+	 *
+	 * @param string $address      Formatted address.
+	 * @param array  $raw_address  Raw address in array format.
+	 * @param object $order        WC_Order object.
+	 * @return string Modified billing address for Japanese orders.
+	 */
+	public function billing_jp4wc_get_address( $address, $raw_address, $order ) {
+		$address = $this->jp4wc_get_address( $address, $raw_address, $order );
+
+		$billing_yomigana_first_name = $order->get_meta( '_billing_yomigana_first_name', true );
+		$billing_yomigana_last_name  = $order->get_meta( '_billing_yomigana_last_name', true );
+		if ( $billing_yomigana_first_name && $billing_yomigana_last_name ) {
+			$address .= '<br />(' . $billing_yomigana_last_name . ' ' . $billing_yomigana_first_name . ')';
+		}
+
+		return $address;
+	}
+
+	/**
+	 * Gets the shipping address for Japanese orders
+	 *
+	 * @param string $address      Formatted address.
+	 * @param array  $raw_address  Raw address in array format.
+	 * @param object $order        WC_Order object.
+	 * @return string Modified shipping address for Japanese orders.
+	 */
+	public function shipping_jp4wc_get_address( $address, $raw_address, $order ) {
+		$address = $this->jp4wc_get_address( $address, $raw_address, $order );
+
+		$shipping_yomigana_first_name = $order->get_meta( '_shipping_yomigana_first_name', true );
+		$shipping_yomigana_last_name  = $order->get_meta( '_shipping_yomigana_last_name', true );
+		if ( $shipping_yomigana_first_name && $shipping_yomigana_last_name ) {
+			$address .= '<br />(' . $shipping_yomigana_last_name . ' ' . $shipping_yomigana_first_name . ')';
+		}
+
 		return $address;
 	}
 
@@ -486,6 +533,7 @@ class JP4WC_Address_Fields {
 
 		return $fields;
 	}
+
 	/**
 	 * Setting Address Fields for the edit user pages for Japanese.
 	 *
