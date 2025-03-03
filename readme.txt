@@ -58,6 +58,10 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
+= 2.6.25 - 2025-03-03 =
+* Fixed - Address Fields at checkout block bug fixed.
+* Add - Security notice change words and bug fixed.
+
 = 2.6.24 - 2025-02-26 =
 * Fixed - Address Fields at checkout block bug fixed.
 * Fixed - Cod bug fixed.
