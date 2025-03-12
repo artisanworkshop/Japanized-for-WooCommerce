@@ -1,0 +1,52 @@
+div.woocommerce-layout__main {
+    h1 {
+        padding-bottom: 15px;
+    }
+    div.components-panel {
+        div.components-panel__body {
+        h2 {
+            background-color: #002F6C;
+            button {
+                color: #F8F8F8;
+                font-weight: bold;
+            }
+            button:hover {
+                color: #002F6C;
+            }
+        }
+        div.jp4wc_security_check_admin_login, div.jp4wc_security_check_security_plugins {
+            margin-top: 20px;
+        }
+        div.jp4wc-security-check__malware-scan {
+            margin-top: 20px;
+            line-height: 2em;
+        }
+        div.components-panel__row {
+            button{
+                margin-top: 15px;
+            }
+            .no_suspicious_files{
+                color: #002F6C;
+            }
+        }
+        h3{
+            color: #B71C1C;
+        }
+    }
+        div.jp4wc-security-check__promotion h2{
+            background-color: #FFA000;
+        }
+        a.jp4wc-security-check__promotion-button{
+            background-color: #FFA000;
+            color: #F8F8F8;
+            font-size: 1.5em;
+            padding: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    }
+}
+div.jp4wc-save{
+    margin-top: 20px;
+}
+

@@ -10,3 +10,5 @@ webpack.config.js export-ignore
 docs export-ignore
 wordpress_org_assets export-ignore
 assets/css/*.scss export-ignore
+LICENSE export-ignore
+.map export-ignore

@@ -72,7 +72,14 @@ class JP4WC_Admin_Screen {
 	 * Admin Menu
 	 */
 	public function jp4wc_admin_menu() {
-		add_submenu_page( 'woocommerce', __( 'For Japanese', 'woocommerce-for-japan' ), __( 'For Japanese', 'woocommerce-for-japan' ), 'manage_woocommerce', 'wc4jp-options', array( $this, 'jp4wc_output_display' ) );
+		add_submenu_page(
+			'woocommerce',
+			__( 'For Japanese', 'woocommerce-for-japan' ),
+			__( 'For Japanese', 'woocommerce-for-japan' ),
+			'manage_woocommerce',
+			'wc4jp-options',
+			array( $this, 'jp4wc_output_display' )
+		);
 	}
 
 	/**
