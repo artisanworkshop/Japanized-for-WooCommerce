@@ -157,6 +157,11 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
 			// Admin Setting Screen.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin.php';
+			// Admin Security Screen.
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-check-security.php';
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-malware-check.php';
+			new JP4WC_Check_Security();
+
 			// Admin PR notice.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-notices.php';
 			// Usage tracking.
