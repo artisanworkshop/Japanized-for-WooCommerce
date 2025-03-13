@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Japanized for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Japanized for WooCommerce 2.6.27\n"
+"Project-Id-Version: Japanized for WooCommerce 2.6.28\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-for-japan\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-12T09:53:39+00:00\n"
+"POT-Creation-Date: 2025-03-13T04:24:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 
@@ -277,7 +277,6 @@ msgstr ""
 #: includes/admin/class-jp4wc-admin-screen.php:355
 #: includes/admin/class-jp4wc-admin-screen.php:1083
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:95
-#: assets/js/frontend/blocks/bank-jp.js:1
 msgid "BANK PAYMENT IN JAPAN"
 msgstr ""
 
@@ -285,7 +284,6 @@ msgstr ""
 #: includes/admin/class-jp4wc-admin-screen.php:1091
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:86
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:139
-#: assets/js/frontend/blocks/postofficebank.js:1
 msgid "Postal transfer"
 msgstr ""
 
@@ -755,65 +753,53 @@ msgstr ""
 msgid "Security Check List"
 msgstr ""
 
-#: includes/admin/class-jp4wc-check-security.php:144
+#: includes/admin/class-jp4wc-check-security.php:146
 msgid "WordPress core update required"
 msgstr ""
 
-#: includes/admin/class-jp4wc-check-security.php:146
+#: includes/admin/class-jp4wc-check-security.php:148
 msgid "Not all plugins are up to date."
 msgstr ""
 
-#: includes/admin/class-jp4wc-check-security.php:148
+#: includes/admin/class-jp4wc-check-security.php:150
 msgid "Not all themes are up to date."
 msgstr ""
 
-#: includes/admin/class-jp4wc-check-security.php:251
+#: includes/admin/class-jp4wc-check-security.php:252
 msgid "Error: "
 msgstr ""
 
 #. translators: %s: PHP version number
-#: includes/admin/class-jp4wc-check-security.php:385
+#: includes/admin/class-jp4wc-check-security.php:386
 msgid "Support information for PHP %s is unknown."
 msgstr ""
 
 #. translators: %s: PHP version number
-#: includes/admin/class-jp4wc-check-security.php:395
+#: includes/admin/class-jp4wc-check-security.php:396
 msgid "PHP %s is **Active Support** (new features and bug fixes available)"
 msgstr ""
 
 #. translators: %s: PHP version number
-#: includes/admin/class-jp4wc-check-security.php:401
+#: includes/admin/class-jp4wc-check-security.php:402
 msgid "PHP %s is in **Security Support** (security fixes only)"
 msgstr ""
 
 #. translators: 1: PHP version number, 2: Last supported date
-#: includes/admin/class-jp4wc-check-security.php:407
+#: includes/admin/class-jp4wc-check-security.php:408
 msgid "PHP %1$s has **End of Life (EOL)**!\\nLast supported date: %2$s \\nWe recommend you upgrade immediately."
 msgstr ""
 
-#: includes/admin/class-jp4wc-check-security.php:432
-#: includes/admin/class-jp4wc-check-security.php:433
-#: includes/admin/class-jp4wc-check-security.php:434
-msgid "Update required"
-msgstr ""
-
-#: includes/admin/class-jp4wc-check-security.php:432
-#: includes/admin/class-jp4wc-check-security.php:433
-#: includes/admin/class-jp4wc-check-security.php:434
-msgid "Latest"
-msgstr ""
-
-#: includes/admin/class-jp4wc-check-security.php:554
+#: includes/admin/class-jp4wc-check-security.php:555
 msgid "No scan session found. Please start a new scan."
 msgstr ""
 
 #. translators: %s: Site URL
-#: includes/admin/class-jp4wc-check-security.php:581
+#: includes/admin/class-jp4wc-check-security.php:582
 msgid "Malware Alert on %s"
 msgstr ""
 
 #. translators: %s: Site URL
-#: includes/admin/class-jp4wc-check-security.php:583
+#: includes/admin/class-jp4wc-check-security.php:584
 msgid "The following suspicious files were detected on your site (%s):"
 msgstr ""
 
@@ -908,8 +894,8 @@ msgid "The URL for this page is incorrect."
 msgstr ""
 
 #: includes/admin/views/html-admin-setting-screen.php:42
-#: assets/js/admin/security.js:1633
-#: assets/js/admin/security.js:1642
+#: assets/js/admin/security.js:1634
+#: assets/js/admin/security.js:1643
 #: src/jp4wc/admin/security/components/controls.jsx:255
 #: src/jp4wc/admin/security/components/controls.jsx:264
 #: assets/js/admin/security.js:1597
@@ -1134,7 +1120,6 @@ msgid "The following items of \"Notation based on the Specified Commercial Trans
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:31
-#: assets/js/frontend/blocks/atstore.js:1
 msgid "Pay At Store"
 msgstr ""
 
@@ -6817,13 +6802,13 @@ msgstr ""
 #: assets/js/admin/security.js:1573
 #: src/jp4wc/admin/security/components/controls.jsx:190
 #: assets/js/admin/security.js:1532
-msgid "Malware Scanner Check"
+msgid "Malware security quick check (PHP files only)"
 msgstr ""
 
 #: assets/js/admin/security.js:1576
 #: src/jp4wc/admin/security/components/controls.jsx:192
 #: assets/js/admin/security.js:1534
-msgid "Check for suspicious files in the wp-content folder in WordPress."
+msgid "Check for suspicious PHP files in the wp-content folder in WordPress."
 msgstr ""
 
 #: assets/js/admin/security.js:1576
@@ -6838,109 +6823,109 @@ msgstr ""
 msgid "Suspicious files are judged based on whether the following codes are embedded in them: "
 msgstr ""
 
-#: assets/js/admin/security.js:1586
+#: assets/js/admin/security.js:1587
 #: src/jp4wc/admin/security/components/controls.jsx:200
 #: assets/js/admin/security.js:1542
 msgid "Start Scan"
 msgstr ""
 
-#: assets/js/admin/security.js:1589
+#: assets/js/admin/security.js:1590
 #: src/jp4wc/admin/security/components/controls.jsx:204
 #: assets/js/admin/security.js:1546
 msgid "Scanning: "
 msgstr ""
 
-#: assets/js/admin/security.js:1597
+#: assets/js/admin/security.js:1598
 #: src/jp4wc/admin/security/components/controls.jsx:211
 #: assets/js/admin/security.js:1553
 msgid "Scan Complete!"
 msgstr ""
 
-#: assets/js/admin/security.js:1601
+#: assets/js/admin/security.js:1602
 #: src/jp4wc/admin/security/components/controls.jsx:214
 #: assets/js/admin/security.js:1556
 msgid "Suspicious files:"
 msgstr ""
 
-#: assets/js/admin/security.js:1606
+#: assets/js/admin/security.js:1607
 #: src/jp4wc/admin/security/components/controls.jsx:220
 #: assets/js/admin/security.js:1562
 msgid "Detected pattern:"
 msgstr ""
 
-#: assets/js/admin/security.js:1606
+#: assets/js/admin/security.js:1607
 #: src/jp4wc/admin/security/components/controls.jsx:221
 #: assets/js/admin/security.js:1563
 msgid "Line#:"
 msgstr ""
 
-#: assets/js/admin/security.js:1606
+#: assets/js/admin/security.js:1607
 #: src/jp4wc/admin/security/components/controls.jsx:222
 #: assets/js/admin/security.js:1564
 msgid "Line:"
 msgstr ""
 
-#: assets/js/admin/security.js:1610
+#: assets/js/admin/security.js:1611
 #: src/jp4wc/admin/security/components/controls.jsx:231
 #: assets/js/admin/security.js:1573
 msgid "The number and line number within the file will be displayed so you can verify that the contents are safe."
 msgstr ""
 
-#: assets/js/admin/security.js:1610
+#: assets/js/admin/security.js:1611
 #: src/jp4wc/admin/security/components/controls.jsx:232
 #: assets/js/admin/security.js:1574
 msgid "If a line is longer than 100 characters, only the first 100 characters are displayed."
 msgstr ""
 
-#: assets/js/admin/security.js:1610
+#: assets/js/admin/security.js:1611
 #: src/jp4wc/admin/security/components/controls.jsx:233
 #: assets/js/admin/security.js:1575
 msgid "If you have any questions, please contact the developer."
 msgstr ""
 
-#: assets/js/admin/security.js:1614
+#: assets/js/admin/security.js:1615
 #: src/jp4wc/admin/security/components/controls.jsx:236
 #: assets/js/admin/security.js:1578
 msgid "No suspicious files were found."
 msgstr ""
 
-#: assets/js/admin/security.js:1624
+#: assets/js/admin/security.js:1625
 #: src/jp4wc/admin/security/components/controls.jsx:248
 #: assets/js/admin/security.js:1590
 msgid "Suggestions for WooCommerce security measures"
 msgstr ""
 
-#: assets/js/admin/security.js:1627
+#: assets/js/admin/security.js:1628
 #: src/jp4wc/admin/security/components/controls.jsx:250
 #: assets/js/admin/security.js:1592
 msgid "We provide the following support. If you are not sure about security measures, please leave it to the experts."
 msgstr ""
 
-#: assets/js/admin/security.js:1636
+#: assets/js/admin/security.js:1637
 #: src/jp4wc/admin/security/components/controls.jsx:260
 #: assets/js/admin/security.js:1602
 msgid "For stores striving to achieve monthly sales of 1 million yen"
 msgstr ""
 
-#: assets/js/admin/security.js:1637
+#: assets/js/admin/security.js:1638
 #: src/jp4wc/admin/security/components/controls.jsx:261
 #: assets/js/admin/security.js:1603
 msgid "Please note that this service is available on a limited number of sites."
 msgstr ""
 
-#: assets/js/admin/security.js:1637
+#: assets/js/admin/security.js:1638
 #: src/jp4wc/admin/security/components/controls.jsx:262
 #: assets/js/admin/security.js:1604
 msgid "With an eye towards future potential, we offer security measures starting from 1,000 yen per month in the first year."
 msgstr ""
 
-#: assets/js/admin/security.js:1642
+#: assets/js/admin/security.js:1643
 #: src/jp4wc/admin/security/components/controls.jsx:264
 #: assets/js/admin/security.js:1606
 msgid "Starter Plan: "
 msgstr ""
 
-#: assets/js/admin/security.js:1732
+#: assets/js/admin/security.js:1733
 #: src/jp4wc/admin/security/components/security-page.jsx:22
 #: assets/js/admin/security.js:1665
 msgid "Credit Card Security Guidelines Check"

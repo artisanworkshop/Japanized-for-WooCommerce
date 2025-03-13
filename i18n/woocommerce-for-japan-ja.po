@@ -6,8 +6,8 @@ msgstr ""
 "release)\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-for-"
 "japan\n"
-"POT-Creation-Date: 2025-03-12T09:53:39+00:00\n"
-"PO-Revision-Date: 2025-03-12 19:08+0900\n"
+"POT-Creation-Date: 2025-03-13T04:24:01+00:00\n"
+"PO-Revision-Date: 2025-03-13 13:24+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja_JP\n"
@@ -299,7 +299,6 @@ msgstr "支払い方法"
 #: includes/admin/class-jp4wc-admin-screen.php:355
 #: includes/admin/class-jp4wc-admin-screen.php:1083
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:95
-#: assets/js/frontend/blocks/bank-jp.js:1
 msgid "BANK PAYMENT IN JAPAN"
 msgstr "銀行振込 (日本国内向け)"
 
@@ -307,7 +306,6 @@ msgstr "銀行振込 (日本国内向け)"
 #: includes/admin/class-jp4wc-admin-screen.php:1091
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:86
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:139
-#: assets/js/frontend/blocks/postofficebank.js:1
 msgid "Postal transfer"
 msgstr "郵便振替"
 
@@ -844,39 +842,39 @@ msgstr "Japanized for WooCommerce 情報"
 msgid "Security Check List"
 msgstr "セキュリティチェック"
 
-#: includes/admin/class-jp4wc-check-security.php:144
+#: includes/admin/class-jp4wc-check-security.php:146
 msgid "WordPress core update required"
 msgstr "WordPressコアのアップデートが必要"
 
-#: includes/admin/class-jp4wc-check-security.php:146
+#: includes/admin/class-jp4wc-check-security.php:148
 msgid "Not all plugins are up to date."
 msgstr "すべてのプラグインが最新ではありません。"
 
-#: includes/admin/class-jp4wc-check-security.php:148
+#: includes/admin/class-jp4wc-check-security.php:150
 msgid "Not all themes are up to date."
 msgstr "すべてのテーマが最新ではありません。"
 
-#: includes/admin/class-jp4wc-check-security.php:251
+#: includes/admin/class-jp4wc-check-security.php:252
 msgid "Error: "
 msgstr "エラー: "
 
 #. translators: %s: PHP version number
-#: includes/admin/class-jp4wc-check-security.php:385
+#: includes/admin/class-jp4wc-check-security.php:386
 msgid "Support information for PHP %s is unknown."
 msgstr "PHP %s のサポート情報は不明です。"
 
 #. translators: %s: PHP version number
-#: includes/admin/class-jp4wc-check-security.php:395
+#: includes/admin/class-jp4wc-check-security.php:396
 msgid "PHP %s is **Active Support** (new features and bug fixes available)"
 msgstr "PHP %s は **Active Support** (新機能とバグフィックスが利用可能)です。"
 
 #. translators: %s: PHP version number
-#: includes/admin/class-jp4wc-check-security.php:401
+#: includes/admin/class-jp4wc-check-security.php:402
 msgid "PHP %s is in **Security Support** (security fixes only)"
 msgstr "PHP %s は **セキュリティサポート** （セキュリティ修正のみ）です。"
 
 #. translators: 1: PHP version number, 2: Last supported date
-#: includes/admin/class-jp4wc-check-security.php:407
+#: includes/admin/class-jp4wc-check-security.php:408
 msgid ""
 "PHP %1$s has **End of Life (EOL)**!\\nLast supported date: %2$s \\nWe "
 "recommend you upgrade immediately."
@@ -884,29 +882,17 @@ msgstr ""
 "PHP %1$s は**サポート終了 (EOL)** です。最終サポート日: %2$s すぐにアップグ"
 "レードすることをお勧めします。"
 
-#: includes/admin/class-jp4wc-check-security.php:432
-#: includes/admin/class-jp4wc-check-security.php:433
-#: includes/admin/class-jp4wc-check-security.php:434
-msgid "Update required"
-msgstr "更新が必要"
-
-#: includes/admin/class-jp4wc-check-security.php:432
-#: includes/admin/class-jp4wc-check-security.php:433
-#: includes/admin/class-jp4wc-check-security.php:434
-msgid "Latest"
-msgstr "最新"
-
-#: includes/admin/class-jp4wc-check-security.php:554
+#: includes/admin/class-jp4wc-check-security.php:555
 msgid "No scan session found. Please start a new scan."
 msgstr "スキャンセッションが見つかりません。新しいスキャンを開始してください。"
 
 #. translators: %s: Site URL
-#: includes/admin/class-jp4wc-check-security.php:581
+#: includes/admin/class-jp4wc-check-security.php:582
 msgid "Malware Alert on %s"
 msgstr "%s にてマルウェアを検知通知"
 
 #. translators: %s: Site URL
-#: includes/admin/class-jp4wc-check-security.php:583
+#: includes/admin/class-jp4wc-check-security.php:584
 msgid "The following suspicious files were detected on your site (%s):"
 msgstr "サイトで以下の不審なファイルが検出されました（%s）："
 
@@ -1012,7 +998,7 @@ msgid "The URL for this page is incorrect."
 msgstr "このページの URL が正しくありません。"
 
 #: includes/admin/views/html-admin-setting-screen.php:42
-#: assets/js/admin/security.js:1633 assets/js/admin/security.js:1642
+#: assets/js/admin/security.js:1634 assets/js/admin/security.js:1643
 #: src/jp4wc/admin/security/components/controls.jsx:255
 #: src/jp4wc/admin/security/components/controls.jsx:264
 #: assets/js/admin/security.js:1597 assets/js/admin/security.js:1606
@@ -1248,7 +1234,6 @@ msgstr ""
 "「特定商取引法に基づく表記」の項目を入力してください。"
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:31
-#: assets/js/frontend/blocks/atstore.js:1
 msgid "Pay At Store"
 msgstr "店頭払い"
 
@@ -7612,15 +7597,16 @@ msgstr "スキャン進行エラー: "
 #: assets/js/admin/security.js:1573
 #: src/jp4wc/admin/security/components/controls.jsx:190
 #: assets/js/admin/security.js:1532
-msgid "Malware Scanner Check"
-msgstr "マルウェアスキャナーチェック"
+msgid "Malware security quick check (PHP files only)"
+msgstr "マルウェアセキュリティー簡易チェック(PHP ファイルのみ)"
 
 #: assets/js/admin/security.js:1576
 #: src/jp4wc/admin/security/components/controls.jsx:192
 #: assets/js/admin/security.js:1534
-msgid "Check for suspicious files in the wp-content folder in WordPress."
+msgid "Check for suspicious PHP files in the wp-content folder in WordPress."
 msgstr ""
-"WordPress の wp-content フォルダに不審なファイルがないかを簡易に確認します。"
+"WordPress の wp-content フォルダに不審な PHP ファイルがないかを簡易に確認しま"
+"す。"
 
 #: assets/js/admin/security.js:1576
 #: src/jp4wc/admin/security/components/controls.jsx:193
@@ -7644,49 +7630,49 @@ msgstr ""
 "この簡易チェックでは、不審なファイルを以下のコードが埋め込まれているかどうか"
 "で判断されます: "
 
-#: assets/js/admin/security.js:1586
+#: assets/js/admin/security.js:1587
 #: src/jp4wc/admin/security/components/controls.jsx:200
 #: assets/js/admin/security.js:1542
 msgid "Start Scan"
 msgstr "スキャンの開始"
 
-#: assets/js/admin/security.js:1589
+#: assets/js/admin/security.js:1590
 #: src/jp4wc/admin/security/components/controls.jsx:204
 #: assets/js/admin/security.js:1546
 msgid "Scanning: "
 msgstr "スキャン: "
 
-#: assets/js/admin/security.js:1597
+#: assets/js/admin/security.js:1598
 #: src/jp4wc/admin/security/components/controls.jsx:211
 #: assets/js/admin/security.js:1553
 msgid "Scan Complete!"
 msgstr "スキャンが完了しました !"
 
-#: assets/js/admin/security.js:1601
+#: assets/js/admin/security.js:1602
 #: src/jp4wc/admin/security/components/controls.jsx:214
 #: assets/js/admin/security.js:1556
 msgid "Suspicious files:"
 msgstr "不審なファイル:"
 
-#: assets/js/admin/security.js:1606
+#: assets/js/admin/security.js:1607
 #: src/jp4wc/admin/security/components/controls.jsx:220
 #: assets/js/admin/security.js:1562
 msgid "Detected pattern:"
 msgstr "検出されたパターン:"
 
-#: assets/js/admin/security.js:1606
+#: assets/js/admin/security.js:1607
 #: src/jp4wc/admin/security/components/controls.jsx:221
 #: assets/js/admin/security.js:1563
 msgid "Line#:"
 msgstr "ライン番号:"
 
-#: assets/js/admin/security.js:1606
+#: assets/js/admin/security.js:1607
 #: src/jp4wc/admin/security/components/controls.jsx:222
 #: assets/js/admin/security.js:1564
 msgid "Line:"
 msgstr "行:"
 
-#: assets/js/admin/security.js:1610
+#: assets/js/admin/security.js:1611
 #: src/jp4wc/admin/security/components/controls.jsx:231
 #: assets/js/admin/security.js:1573
 msgid ""
@@ -7696,7 +7682,7 @@ msgstr ""
 "ファイル内の番号と行番号が表示されるので、内容が安全であることを確認してくだ"
 "さい。"
 
-#: assets/js/admin/security.js:1610
+#: assets/js/admin/security.js:1611
 #: src/jp4wc/admin/security/components/controls.jsx:232
 #: assets/js/admin/security.js:1574
 msgid ""
@@ -7704,7 +7690,7 @@ msgid ""
 "displayed."
 msgstr "行が100文字を超える場合、最初の100文字だけが表示されます。"
 
-#: assets/js/admin/security.js:1610
+#: assets/js/admin/security.js:1611
 #: src/jp4wc/admin/security/components/controls.jsx:233
 #: assets/js/admin/security.js:1575
 msgid "If you have any questions, please contact the developer."
@@ -7712,19 +7698,19 @@ msgstr ""
 "ご不明な点がございましたら、サイト、および各プラグインやテーマの開発者までお"
 "問い合わせください。"
 
-#: assets/js/admin/security.js:1614
+#: assets/js/admin/security.js:1615
 #: src/jp4wc/admin/security/components/controls.jsx:236
 #: assets/js/admin/security.js:1578
 msgid "No suspicious files were found."
 msgstr "不審なファイルは見つかりませんでした。"
 
-#: assets/js/admin/security.js:1624
+#: assets/js/admin/security.js:1625
 #: src/jp4wc/admin/security/components/controls.jsx:248
 #: assets/js/admin/security.js:1590
 msgid "Suggestions for WooCommerce security measures"
 msgstr "WooCommerce のセキュリティ対策に関する提案"
 
-#: assets/js/admin/security.js:1627
+#: assets/js/admin/security.js:1628
 #: src/jp4wc/admin/security/components/controls.jsx:250
 #: assets/js/admin/security.js:1592
 msgid ""
@@ -7734,20 +7720,20 @@ msgstr ""
 "弊社では以下のサポートを行っております。セキュリティ対策が不安な方は専門家に"
 "お任せください。"
 
-#: assets/js/admin/security.js:1636
+#: assets/js/admin/security.js:1637
 #: src/jp4wc/admin/security/components/controls.jsx:260
 #: assets/js/admin/security.js:1602
 msgid "For stores striving to achieve monthly sales of 1 million yen"
 msgstr "月商100万円を目指す店舗向け"
 
-#: assets/js/admin/security.js:1637
+#: assets/js/admin/security.js:1638
 #: src/jp4wc/admin/security/components/controls.jsx:261
 #: assets/js/admin/security.js:1603
 msgid ""
 "Please note that this service is available on a limited number of sites."
 msgstr "このサービスは数量限定サイトでのみご利用いただけます。"
 
-#: assets/js/admin/security.js:1637
+#: assets/js/admin/security.js:1638
 #: src/jp4wc/admin/security/components/controls.jsx:262
 #: assets/js/admin/security.js:1604
 msgid ""
@@ -7755,13 +7741,13 @@ msgid ""
 "from 1,000 yen per month in the first year."
 msgstr "将来性を見込んで1年目を月額1000円からセキュリティ対策を行います。"
 
-#: assets/js/admin/security.js:1642
+#: assets/js/admin/security.js:1643
 #: src/jp4wc/admin/security/components/controls.jsx:264
 #: assets/js/admin/security.js:1606
 msgid "Starter Plan: "
 msgstr "スタータープラン:"
 
-#: assets/js/admin/security.js:1732
+#: assets/js/admin/security.js:1733
 #: src/jp4wc/admin/security/components/security-page.jsx:22
 #: assets/js/admin/security.js:1665
 msgid "Credit Card Security Guidelines Check"
@@ -7782,15 +7768,5 @@ msgstr ""
 "クレジットカードセキュリティガイドライン(経済産業省策定)に準拠した簡易チェッ"
 "ク"
 
-#~ msgid ""
-#~ "This is a simple test, but if you have never checked your server for "
-#~ "malware before, please try it."
-#~ msgstr ""
-#~ "これは簡単なテストですが、サーバーのマルウェアをチェックしたことがない方"
-#~ "は、ぜひお試しください。"
-
-#~ msgid ""
-#~ "It may take a few minutes to process, so please do not move away from the "
-#~ "page."
-#~ msgstr ""
-#~ "処理に数分かかる場合がありますので、ページから移動しないでください。"
+#~ msgid "Malware Scanner Check"
+#~ msgstr "マルウェアスキャナーチェック"

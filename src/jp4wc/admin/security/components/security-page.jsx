@@ -27,7 +27,7 @@ const SettingsTitle = () => {
 const SaveButton = ( { onClick } ) => {
 	return (
 		<div className="jp4wc-save">
-		<Button isPrimary className="jp4wc-save jp4wc-button" onClick={ onClick }>
+		<Button className="jp4wc-save jp4wc-button is-primary" onClick={ onClick }>
 			{ __( 'Save', 'woocommerce-for-japan' ) }
 		</Button>
 		</div>

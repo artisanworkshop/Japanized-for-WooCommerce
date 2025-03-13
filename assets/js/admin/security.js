@@ -1570,10 +1570,10 @@ const CheckMalwareScanner = () => {
     percent = Math.round(progress.current / progress.total * 100);
   }
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelBody, {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Malware Scanner Check', 'woocommerce-for-japan'),
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Malware security quick check (PHP files only)', 'woocommerce-for-japan'),
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelRow, {
       className: "jp4wc-security-check__malware-scan",
-      children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Check for suspicious files in the wp-content folder in WordPress.', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('This is a simple test, but if you have never checked your server for malware before, please try it. It may take a few minutes to process, so please do not move away from the page.', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Suspicious files are judged based on whether the following codes are embedded in them: ', 'woocommerce-for-japan'), '(eval, base64_decode, gzinflate, str_rot13, shell_exec, system, exec)', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {})]
+      children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Check for suspicious PHP files in the wp-content folder in WordPress.', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('This is a simple test, but if you have never checked your server for malware before, please try it. It may take a few minutes to process, so please do not move away from the page.', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Suspicious files are judged based on whether the following codes are embedded in them: ', 'woocommerce-for-japan'), '(eval, gzinflate, str_rot13, shell_exec, system, exec)', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {})]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelRow, {
       className: "jp4wc-security-check__malware-scan",
       children: [error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("p", {
@@ -1583,6 +1583,7 @@ const CheckMalwareScanner = () => {
         children: error
       }), !scanning && !complete && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
         onClick: startScan,
+        className: "is-primary",
         children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Start Scan', 'woocommerce-for-japan')
       }), scanning && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("p", {
@@ -1738,8 +1739,7 @@ const SaveButton = ({
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
     className: "jp4wc-save",
     children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
-      isPrimary: true,
-      className: "jp4wc-save jp4wc-button",
+      className: "jp4wc-save jp4wc-button is-primary",
       onClick: onClick,
       children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Save', 'woocommerce-for-japan')
     })
