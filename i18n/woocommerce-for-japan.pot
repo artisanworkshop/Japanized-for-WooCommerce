@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-13T04:24:01+00:00\n"
+"POT-Creation-Date: 2025-03-13T04:30:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 
@@ -721,7 +721,7 @@ msgstr ""
 #: includes/admin/class-jp4wc-admin-screen.php:1382
 #: assets/js/admin/security.js:1842
 #: src/jp4wc/admin/security/hooks/use-settings.js:36
-#: assets/js/admin/security.js:1748
+#: assets/js/admin/security.js:1746
 msgid "Settings saved."
 msgstr ""
 
@@ -896,10 +896,10 @@ msgstr ""
 #: includes/admin/views/html-admin-setting-screen.php:42
 #: assets/js/admin/security.js:1634
 #: assets/js/admin/security.js:1643
-#: src/jp4wc/admin/security/components/controls.jsx:255
-#: src/jp4wc/admin/security/components/controls.jsx:264
-#: assets/js/admin/security.js:1597
-#: assets/js/admin/security.js:1606
+#: src/jp4wc/admin/security/components/controls.jsx:256
+#: src/jp4wc/admin/security/components/controls.jsx:265
+#: assets/js/admin/security.js:1598
+#: assets/js/admin/security.js:1607
 msgid "Security measures for WooCommerce"
 msgstr ""
 
@@ -6823,105 +6823,111 @@ msgstr ""
 msgid "Suspicious files are judged based on whether the following codes are embedded in them: "
 msgstr ""
 
+#: assets/js/admin/security.js:1576
+#: src/jp4wc/admin/security/components/controls.jsx:196
+#: assets/js/admin/security.js:1538
+msgid "Note: Ideally, you should check all files, not just PHP files."
+msgstr ""
+
 #: assets/js/admin/security.js:1587
-#: src/jp4wc/admin/security/components/controls.jsx:200
-#: assets/js/admin/security.js:1542
+#: src/jp4wc/admin/security/components/controls.jsx:201
+#: assets/js/admin/security.js:1543
 msgid "Start Scan"
 msgstr ""
 
 #: assets/js/admin/security.js:1590
-#: src/jp4wc/admin/security/components/controls.jsx:204
-#: assets/js/admin/security.js:1546
+#: src/jp4wc/admin/security/components/controls.jsx:205
+#: assets/js/admin/security.js:1547
 msgid "Scanning: "
 msgstr ""
 
 #: assets/js/admin/security.js:1598
-#: src/jp4wc/admin/security/components/controls.jsx:211
-#: assets/js/admin/security.js:1553
+#: src/jp4wc/admin/security/components/controls.jsx:212
+#: assets/js/admin/security.js:1554
 msgid "Scan Complete!"
 msgstr ""
 
 #: assets/js/admin/security.js:1602
-#: src/jp4wc/admin/security/components/controls.jsx:214
-#: assets/js/admin/security.js:1556
+#: src/jp4wc/admin/security/components/controls.jsx:215
+#: assets/js/admin/security.js:1557
 msgid "Suspicious files:"
-msgstr ""
-
-#: assets/js/admin/security.js:1607
-#: src/jp4wc/admin/security/components/controls.jsx:220
-#: assets/js/admin/security.js:1562
-msgid "Detected pattern:"
 msgstr ""
 
 #: assets/js/admin/security.js:1607
 #: src/jp4wc/admin/security/components/controls.jsx:221
 #: assets/js/admin/security.js:1563
-msgid "Line#:"
+msgid "Detected pattern:"
 msgstr ""
 
 #: assets/js/admin/security.js:1607
 #: src/jp4wc/admin/security/components/controls.jsx:222
 #: assets/js/admin/security.js:1564
-msgid "Line:"
+msgid "Line#:"
 msgstr ""
 
-#: assets/js/admin/security.js:1611
-#: src/jp4wc/admin/security/components/controls.jsx:231
-#: assets/js/admin/security.js:1573
-msgid "The number and line number within the file will be displayed so you can verify that the contents are safe."
+#: assets/js/admin/security.js:1607
+#: src/jp4wc/admin/security/components/controls.jsx:223
+#: assets/js/admin/security.js:1565
+msgid "Line:"
 msgstr ""
 
 #: assets/js/admin/security.js:1611
 #: src/jp4wc/admin/security/components/controls.jsx:232
 #: assets/js/admin/security.js:1574
-msgid "If a line is longer than 100 characters, only the first 100 characters are displayed."
+msgid "The number and line number within the file will be displayed so you can verify that the contents are safe."
 msgstr ""
 
 #: assets/js/admin/security.js:1611
 #: src/jp4wc/admin/security/components/controls.jsx:233
 #: assets/js/admin/security.js:1575
+msgid "If a line is longer than 100 characters, only the first 100 characters are displayed."
+msgstr ""
+
+#: assets/js/admin/security.js:1611
+#: src/jp4wc/admin/security/components/controls.jsx:234
+#: assets/js/admin/security.js:1576
 msgid "If you have any questions, please contact the developer."
 msgstr ""
 
 #: assets/js/admin/security.js:1615
-#: src/jp4wc/admin/security/components/controls.jsx:236
-#: assets/js/admin/security.js:1578
+#: src/jp4wc/admin/security/components/controls.jsx:237
+#: assets/js/admin/security.js:1579
 msgid "No suspicious files were found."
 msgstr ""
 
 #: assets/js/admin/security.js:1625
-#: src/jp4wc/admin/security/components/controls.jsx:248
-#: assets/js/admin/security.js:1590
+#: src/jp4wc/admin/security/components/controls.jsx:249
+#: assets/js/admin/security.js:1591
 msgid "Suggestions for WooCommerce security measures"
 msgstr ""
 
 #: assets/js/admin/security.js:1628
-#: src/jp4wc/admin/security/components/controls.jsx:250
-#: assets/js/admin/security.js:1592
+#: src/jp4wc/admin/security/components/controls.jsx:251
+#: assets/js/admin/security.js:1593
 msgid "We provide the following support. If you are not sure about security measures, please leave it to the experts."
 msgstr ""
 
 #: assets/js/admin/security.js:1637
-#: src/jp4wc/admin/security/components/controls.jsx:260
-#: assets/js/admin/security.js:1602
-msgid "For stores striving to achieve monthly sales of 1 million yen"
-msgstr ""
-
-#: assets/js/admin/security.js:1638
 #: src/jp4wc/admin/security/components/controls.jsx:261
 #: assets/js/admin/security.js:1603
-msgid "Please note that this service is available on a limited number of sites."
+msgid "For stores striving to achieve monthly sales of 1 million yen"
 msgstr ""
 
 #: assets/js/admin/security.js:1638
 #: src/jp4wc/admin/security/components/controls.jsx:262
 #: assets/js/admin/security.js:1604
+msgid "Please note that this service is available on a limited number of sites."
+msgstr ""
+
+#: assets/js/admin/security.js:1638
+#: src/jp4wc/admin/security/components/controls.jsx:263
+#: assets/js/admin/security.js:1605
 msgid "With an eye towards future potential, we offer security measures starting from 1,000 yen per month in the first year."
 msgstr ""
 
 #: assets/js/admin/security.js:1643
-#: src/jp4wc/admin/security/components/controls.jsx:264
-#: assets/js/admin/security.js:1606
+#: src/jp4wc/admin/security/components/controls.jsx:265
+#: assets/js/admin/security.js:1607
 msgid "Starter Plan: "
 msgstr ""
 
@@ -6939,6 +6945,6 @@ msgstr ""
 
 #: assets/js/admin/security.js:2047
 #: src/jp4wc/admin/security/index.js:18
-#: assets/js/admin/security.js:1842
+#: assets/js/admin/security.js:1840
 msgid "Simple check to comply with credit card security guidelines (established by the Ministry of Economy, Trade and Industry)"
 msgstr ""

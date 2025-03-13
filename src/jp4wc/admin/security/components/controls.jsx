@@ -193,6 +193,7 @@ const CheckMalwareScanner = () => {
                 { __( 'This is a simple test, but if you have never checked your server for malware before, please try it. It may take a few minutes to process, so please do not move away from the page.', 'woocommerce-for-japan' ) }<br />
                 { __( 'Suspicious files are judged based on whether the following codes are embedded in them: ', 'woocommerce-for-japan' ) }
                 { '(eval, gzinflate, str_rot13, shell_exec, system, exec)' }<br />
+                { __( 'Note: Ideally, you should check all files, not just PHP files.', 'woocommerce-for-japan' ) }
             </PanelRow>
             <PanelRow className="jp4wc-security-check__malware-scan">
             { error && <p style={{ color: 'red' }}>{ error }</p> }
