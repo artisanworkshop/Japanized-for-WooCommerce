@@ -187,17 +187,17 @@ const CheckMalwareScanner = () => {
     }
 
     return (
-        <PanelBody title={ __( 'Malware Scanner Check', 'woocommerce-for-japan' ) }>
+        <PanelBody title={ __( 'Malware security quick check (PHP files only)', 'woocommerce-for-japan' ) }>
             <PanelRow className="jp4wc-security-check__malware-scan">
-                { __( 'Check for suspicious files in the wp-content folder in WordPress.', 'woocommerce-for-japan' ) }<br />
+                { __( 'Check for suspicious PHP files in the wp-content folder in WordPress.', 'woocommerce-for-japan' ) }<br />
                 { __( 'This is a simple test, but if you have never checked your server for malware before, please try it. It may take a few minutes to process, so please do not move away from the page.', 'woocommerce-for-japan' ) }<br />
                 { __( 'Suspicious files are judged based on whether the following codes are embedded in them: ', 'woocommerce-for-japan' ) }
-                { '(eval, base64_decode, gzinflate, str_rot13, shell_exec, system, exec)' }<br />
+                { '(eval, gzinflate, str_rot13, shell_exec, system, exec)' }<br />
             </PanelRow>
             <PanelRow className="jp4wc-security-check__malware-scan">
             { error && <p style={{ color: 'red' }}>{ error }</p> }
                 { !scanning && !complete && (
-                    <Button onClick={ startScan }>{ __( 'Start Scan', 'woocommerce-for-japan' ) }</Button>
+                    <Button onClick={ startScan } className='is-primary'>{ __( 'Start Scan', 'woocommerce-for-japan' ) }</Button>
                 ) }
                 { scanning && (
                     <div>

@@ -133,20 +133,21 @@ class JP4WC_Check_Security {
 		$check_php_flag    = $check_php['result'];
 		$check_php_message = $check_php['message'];
 
-		$check_update = $this::jp4wc_check_wordpress_updates();
+		$check_update                = $this::jp4wc_check_wordpress_updates();
+		$check_core_update_message   = '';
+		$check_plugin_update_message = '';
+		$check_theme_update_message  = '';
+		$check_update_flag           = false;
 		if ( true === $check_update ) {
 			$check_update_flag    = true;
 			$check_update_message = '';
-		} else {
-			$check_update_flag = false;
-			if ( is_array( $check_update ) ) {
-				if ( 'Update required' === $check_update['core'] ) {
-					$check_core_update_message = __( 'WordPress core update required', 'woocommerce-for-japan' );
-				} elseif ( 'Update required' === $check_update['plugins'] ) {
-					$check_plugin_update_message = __( 'Not all plugins are up to date.', 'woocommerce-for-japan' );
-				} elseif ( 'Update required' === $check_update['themes'] ) {
-					$check_theme_update_message = __( 'Not all themes are up to date.', 'woocommerce-for-japan' );
-				}
+		} elseif ( is_array( $check_update ) ) {
+			if ( 'Update required' === $check_update['core'] ) {
+				$check_core_update_message = __( 'WordPress core update required', 'woocommerce-for-japan' );
+			} elseif ( 'Update required' === $check_update['plugins'] ) {
+				$check_plugin_update_message = __( 'Not all plugins are up to date.', 'woocommerce-for-japan' );
+			} elseif ( 'Update required' === $check_update['themes'] ) {
+				$check_theme_update_message = __( 'Not all themes are up to date.', 'woocommerce-for-japan' );
 			}
 		}
 
