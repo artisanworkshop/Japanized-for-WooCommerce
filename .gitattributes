@@ -11,4 +11,6 @@ docs export-ignore
 wordpress_org_assets export-ignore
 assets/css/*.scss export-ignore
 LICENSE export-ignore
-.map export-ignore
+src export-ignore
+*.js.map export-ignore
+*.css.map export-ignore
