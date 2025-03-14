@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.7.2
-Stable tag: 2.6.32
+Stable tag: 2.6.33
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -57,6 +57,10 @@ The manual installation method involves downloading and uploading our plugin to 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.6.33 - 2025-03-14 =
+* Fixed - Fixed a bug where the company name was not displayed.
+* Fixed - Security Check Function to check external files.
 
 = 2.6.32 - 2025-03-13 =
 * Add - Security Check page for Japanese Credit Card Security Guide line.
