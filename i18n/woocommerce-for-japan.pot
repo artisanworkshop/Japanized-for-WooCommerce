@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Japanized for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Japanized for WooCommerce 2.6.28\n"
+"Project-Id-Version: Japanized for WooCommerce 2.6.32\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-for-japan\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-13T04:30:58+00:00\n"
+"POT-Creation-Date: 2025-03-14T07:28:57+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 
@@ -721,7 +721,7 @@ msgstr ""
 #: includes/admin/class-jp4wc-admin-screen.php:1382
 #: assets/js/admin/security.js:1842
 #: src/jp4wc/admin/security/hooks/use-settings.js:36
-#: assets/js/admin/security.js:1746
+#: assets/js/admin/security.js:1748
 msgid "Settings saved."
 msgstr ""
 
@@ -896,10 +896,10 @@ msgstr ""
 #: includes/admin/views/html-admin-setting-screen.php:42
 #: assets/js/admin/security.js:1634
 #: assets/js/admin/security.js:1643
-#: src/jp4wc/admin/security/components/controls.jsx:256
-#: src/jp4wc/admin/security/components/controls.jsx:265
-#: assets/js/admin/security.js:1598
-#: assets/js/admin/security.js:1607
+#: src/jp4wc/admin/security/components/controls.jsx:257
+#: src/jp4wc/admin/security/components/controls.jsx:267
+#: assets/js/admin/security.js:1599
+#: assets/js/admin/security.js:1609
 msgid "Security measures for WooCommerce"
 msgstr ""
 
@@ -6898,53 +6898,65 @@ msgstr ""
 #: assets/js/admin/security.js:1625
 #: src/jp4wc/admin/security/components/controls.jsx:249
 #: assets/js/admin/security.js:1591
-msgid "Suggestions for WooCommerce security measures"
+msgid "🚀✨[Limited time offer! Safe and secure professional support]✨🚀"
 msgstr ""
 
 #: assets/js/admin/security.js:1628
 #: src/jp4wc/admin/security/components/controls.jsx:251
 #: assets/js/admin/security.js:1593
-msgid "We provide the following support. If you are not sure about security measures, please leave it to the experts."
+msgid "🔒 If you're worried about security measures, this is a must-see!"
+msgstr ""
+
+#: assets/js/admin/security.js:1628
+#: src/jp4wc/admin/security/components/controls.jsx:252
+#: assets/js/admin/security.js:1594
+msgid "Our experts will do their best to protect your business💼."
 msgstr ""
 
 #: assets/js/admin/security.js:1637
-#: src/jp4wc/admin/security/components/controls.jsx:261
-#: assets/js/admin/security.js:1603
-msgid "For stores striving to achieve monthly sales of 1 million yen"
-msgstr ""
-
-#: assets/js/admin/security.js:1638
 #: src/jp4wc/admin/security/components/controls.jsx:262
 #: assets/js/admin/security.js:1604
-msgid "Please note that this service is available on a limited number of sites."
+msgid "💰 Exclusive for stores aiming to achieve their dream of 1 million yen in monthly sales! 💰"
 msgstr ""
 
 #: assets/js/admin/security.js:1638
 #: src/jp4wc/admin/security/components/controls.jsx:263
 #: assets/js/admin/security.js:1605
-msgid "With an eye towards future potential, we offer security measures starting from 1,000 yen per month in the first year."
+msgid "🎉 In addition, this special service is only available on a limited number of sites! 🎉"
+msgstr ""
+
+#: assets/js/admin/security.js:1638
+#: src/jp4wc/admin/security/components/controls.jsx:264
+#: assets/js/admin/security.js:1606
+msgid "🔮 As a smart investment for the future, you can achieve reliable security measures for only 1,000 yen per month for the first year 💪!"
+msgstr ""
+
+#: assets/js/admin/security.js:1638
+#: src/jp4wc/admin/security/components/controls.jsx:265
+#: assets/js/admin/security.js:1607
+msgid "🔥 Don't miss this chance to take your store operations to the next level right now! 🔥"
 msgstr ""
 
 #: assets/js/admin/security.js:1643
-#: src/jp4wc/admin/security/components/controls.jsx:265
-#: assets/js/admin/security.js:1607
+#: src/jp4wc/admin/security/components/controls.jsx:267
+#: assets/js/admin/security.js:1609
 msgid "Starter Plan: "
 msgstr ""
 
 #: assets/js/admin/security.js:1733
 #: src/jp4wc/admin/security/components/security-page.jsx:22
-#: assets/js/admin/security.js:1665
+#: assets/js/admin/security.js:1667
 msgid "Credit Card Security Guidelines Check"
 msgstr ""
 
 #: assets/js/admin/security.js:1744
 #: src/jp4wc/admin/security/components/security-page.jsx:31
-#: assets/js/admin/security.js:1674
+#: assets/js/admin/security.js:1676
 msgid "Save"
 msgstr ""
 
 #: assets/js/admin/security.js:2047
 #: src/jp4wc/admin/security/index.js:18
-#: assets/js/admin/security.js:1840
+#: assets/js/admin/security.js:1842
 msgid "Simple check to comply with credit card security guidelines (established by the Ministry of Economy, Trade and Industry)"
 msgstr ""

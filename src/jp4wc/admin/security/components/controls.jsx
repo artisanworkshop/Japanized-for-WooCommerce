@@ -246,9 +246,10 @@ const CheckMalwareScanner = () => {
 const PromotionSecurity = () => {
     const salesLast30Days = window.jp4wcSecurityCheckResult?.salesLast30Days || false;
     return (
-        <PanelBody title={ __( 'Suggestions for WooCommerce security measures', 'woocommerce-for-japan' ) } className="jp4wc-security-check__promotion">
+        <PanelBody title={ __( '🚀✨[Limited time offer! Safe and secure professional support]✨🚀', 'woocommerce-for-japan' ) } className="jp4wc-security-check__promotion">
             <PanelRow>
-                { __( 'We provide the following support. If you are not sure about security measures, please leave it to the experts.', 'woocommerce-for-japan' ) }<br />
+                { __( '🔒 If you\'re worried about security measures, this is a must-see!', 'woocommerce-for-japan' ) }<br />
+                { __( 'Our experts will do their best to protect your business💼.', 'woocommerce-for-japan' ) }<br />
             </PanelRow>
             <PanelRow>
                 { salesLast30Days > 1000000 &&
@@ -258,9 +259,10 @@ const PromotionSecurity = () => {
                 }
                 { salesLast30Days < 1000000 &&
                     <div>
-                    <h3>{ __( 'For stores striving to achieve monthly sales of 1 million yen', 'woocommerce-for-japan' ) }</h3>
-                    { __( 'Please note that this service is available on a limited number of sites.', 'woocommerce-for-japan' ) }<br />
-                    { __( 'With an eye towards future potential, we offer security measures starting from 1,000 yen per month in the first year.', 'woocommerce-for-japan' ) }<br />
+                    <h3>{ __( '💰 Exclusive for stores aiming to achieve their dream of 1 million yen in monthly sales! 💰', 'woocommerce-for-japan' ) }</h3>
+                    { __( '🎉 In addition, this special service is only available on a limited number of sites! 🎉', 'woocommerce-for-japan' ) }<br />
+                    { __( '🔮 As a smart investment for the future, you can achieve reliable security measures for only 1,000 yen per month for the first year 💪!', 'woocommerce-for-japan' ) }<br />
+                    { __( '🔥 Don\'t miss this chance to take your store operations to the next level right now! 🔥', 'woocommerce-for-japan' ) }<br />
                     <Button href="https://wc4jp-pro.work/about-security-service/descript-starter-plan/" target="_blank" rel="noopener noreferrer" className="jp4wc-security-check__promotion-button">
                     { __( 'Starter Plan: ', 'woocommerce-for-japan' ) }{ __( 'Security measures for WooCommerce', 'woocommerce-for-japan' ) }
                     </Button>

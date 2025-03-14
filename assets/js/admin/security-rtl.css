@@ -37,9 +37,10 @@ div.woocommerce-layout__main div.components-panel a.jp4wc-security-check__promot
   background-color: #FFA000;
   color: #F8F8F8;
   font-size: 1.5em;
-  padding: 10px;
+  padding: 20px;
   margin-top: 15px;
   font-weight: bold;
+  border-radius: 10px;
 }
 
 div.jp4wc-save {
