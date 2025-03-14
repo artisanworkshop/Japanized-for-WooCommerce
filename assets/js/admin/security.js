@@ -1622,10 +1622,10 @@ const CheckMalwareScanner = () => {
 const PromotionSecurity = () => {
   const salesLast30Days = window.jp4wcSecurityCheckResult?.salesLast30Days || false;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelBody, {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Suggestions for WooCommerce security measures', 'woocommerce-for-japan'),
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('🚀✨[Limited time offer! Safe and secure professional support]✨🚀', 'woocommerce-for-japan'),
     className: "jp4wc-security-check__promotion",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelRow, {
-      children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('We provide the following support. If you are not sure about security measures, please leave it to the experts.', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {})]
+      children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('🔒 If you\'re worried about security measures, this is a must-see!', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Our experts will do their best to protect your business💼.', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {})]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelRow, {
       children: [salesLast30Days > 1000000 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
         href: "https://wc4jp-pro.work/about-security-service/",
@@ -1634,8 +1634,8 @@ const PromotionSecurity = () => {
         children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Security measures for WooCommerce', 'woocommerce-for-japan')
       }), salesLast30Days < 1000000 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h3", {
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('For stores striving to achieve monthly sales of 1 million yen', 'woocommerce-for-japan')
-        }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Please note that this service is available on a limited number of sites.', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('With an eye towards future potential, we offer security measures starting from 1,000 yen per month in the first year.', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('💰 Exclusive for stores aiming to achieve their dream of 1 million yen in monthly sales! 💰', 'woocommerce-for-japan')
+        }), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('🎉 In addition, this special service is only available on a limited number of sites! 🎉', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('🔮 As a smart investment for the future, you can achieve reliable security measures for only 1,000 yen per month for the first year 💪!', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('🔥 Don\'t miss this chance to take your store operations to the next level right now! 🔥', 'woocommerce-for-japan'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
           href: "https://wc4jp-pro.work/about-security-service/descript-starter-plan/",
           target: "_blank",
           rel: "noopener noreferrer",

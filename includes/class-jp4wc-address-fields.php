@@ -375,8 +375,12 @@ class JP4WC_Address_Fields {
 
 		$billing_yomigana_first_name = $order->get_meta( '_billing_yomigana_first_name', true );
 		$billing_yomigana_last_name  = $order->get_meta( '_billing_yomigana_last_name', true );
+		$billing_company             = $order->get_billing_company();
 		if ( $billing_yomigana_first_name && $billing_yomigana_last_name ) {
 			$address .= '<br />(' . $billing_yomigana_last_name . ' ' . $billing_yomigana_first_name . ')';
+		}
+		if ( $billing_company ) {
+			$address .= '<br />' . $billing_company;
 		}
 
 		return $address;
@@ -395,8 +399,12 @@ class JP4WC_Address_Fields {
 
 		$shipping_yomigana_first_name = $order->get_meta( '_shipping_yomigana_first_name', true );
 		$shipping_yomigana_last_name  = $order->get_meta( '_shipping_yomigana_last_name', true );
+		$shipping_company             = $order->get_shipping_company();
 		if ( $shipping_yomigana_first_name && $shipping_yomigana_last_name ) {
 			$address .= '<br />(' . $shipping_yomigana_last_name . ' ' . $shipping_yomigana_first_name . ')';
+		}
+		if ( $shipping_company ) {
+			$address .= '<br />' . $shipping_company;
 		}
 
 		return $address;

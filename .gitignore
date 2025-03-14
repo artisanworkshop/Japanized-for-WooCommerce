@@ -24,6 +24,9 @@ Thumbs.db
 # wp-env config
 .wp-env.override.json
 
+# Logs
+*.log
+
 # Ignore all log files except for .htaccess
 /logs/*
 !/logs/.htaccess
