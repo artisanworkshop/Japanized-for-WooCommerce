@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.7.2
-Stable tag: 2.6.33
+Stable tag: 2.6.34
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
