@@ -107,18 +107,20 @@ class JP4WC_Check_Security {
 			$asset['version'],
 		);
 
-		$login_url          = wp_login_url();
-		$check_basic        = $this::jp4wc_security_check_admin_login_basic( $login_url );
-		$check_ip           = $this::jp4wc_security_check_admin_login_ip( $login_url, '117.103.160.46' );
-		$check_two_factor   = $this::jp4wc_is_two_factor_plugin_active();
-		$security_plugins   = array(
+		$login_url        = wp_login_url();
+		$check_basic      = $this::jp4wc_security_check_admin_login_basic( $login_url );
+		$check_ip         = $this::jp4wc_security_check_admin_login_ip( $login_url, '117.103.160.46' );
+		$check_two_factor = $this::jp4wc_is_two_factor_plugin_active();
+		$security_plugins = array(
 			'siteguard/siteguard.php',
 			'wordfence/wordfence.php',
 			'all-in-one-wp-security-and-firewall/wp-security.php',
 			'security-malware-firewall/security-malware-firewall.php',
 			'bulletproof-security/bulletproof-security.php',
 			'sucuri-scanner/sucuri.php',
+			'wpremote/plugin.php',
 		);
+
 		$check_plugins      = $this::jp4wc_check_plugins_status( $security_plugins );
 		$check_plugins_flag = false;
 		if ( ! empty( $check_plugins ) ) {
@@ -129,6 +131,12 @@ class JP4WC_Check_Security {
 				}
 			}
 		}
+
+		// Check if Jetpack Protect module is active.
+		if ( $this->jp4wc_is_jetpack_protect_active() && $this->jp4wc_check_jetpack_protect_status() ) {
+			$check_plugins_flag = true;
+		}
+
 		$check_php         = $this::jp4wc_check_php_version();
 		$check_php_flag    = $check_php['result'];
 		$check_php_message = $check_php['message'];
@@ -344,6 +352,56 @@ class JP4WC_Check_Security {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Check if Jetpack Protect module is active.
+	 *
+	 * @since 2.6.34
+	 * @return bool True if Jetpack Protect module is active, false otherwise.
+	 */
+	private function jp4wc_is_jetpack_protect_active() {
+		if ( class_exists( 'Jetpack' ) ) {
+			$active_modules = Jetpack::get_active_modules();
+
+			// Check if the Protect module is enabled.
+			if ( in_array( 'protect', $active_modules ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if Jetpack Protect is active and functioning.
+	 *
+	 * @since 2.6.34
+	 * @return bool True if Jetpack Protect is active and functioning, false otherwise.
+	 */
+	private function jp4wc_check_jetpack_protect_status() {
+		if ( ! class_exists( 'Jetpack' ) ) {
+			return false;
+		}
+
+		$site_url        = get_home_url();
+		$jetpack_options = get_option( 'jetpack_options' );
+
+		if ( isset( $jetpack_options['id'] ) ) {
+			$jetpack_site_id = $jetpack_options['id'];
+
+			$response = wp_remote_get( "https://public-api.wordpress.com/rest/v1.1/sites/{$jetpack_site_id}/protect" );
+
+			if ( is_wp_error( $response ) ) {
+				return false;
+			}
+
+			$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+			return isset( $body['active'] ) && $body['active'];
+		}
+
+		return false;
 	}
 
 	/**
