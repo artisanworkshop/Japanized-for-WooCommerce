@@ -217,6 +217,7 @@ class JP4WC_Address_Fields {
 		if ( is_order_received_page() ) {
 			$fields['JP'] = $fields['JP'] . "\n {phone}";
 		}
+
 		// Core page IDs.
 		$cart_page_id     = wc_get_page_id( 'cart' );
 		$checkout_page_id = wc_get_page_id( 'checkout' );
