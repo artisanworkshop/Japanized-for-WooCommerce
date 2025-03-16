@@ -43,15 +43,7 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_billing_fields', array( $this, 'billing_address_fields' ) );
 		add_filter( 'woocommerce_shipping_fields', array( $this, 'shipping_address_fields' ), 20 );
 		add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'address_replacements' ), 20, 2 );
-		if ( function_exists( 'wc_is_checkout_block_page' ) && ! wc_is_checkout_block_page() ) {
-			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'address_formats' ), 20 );
-		} else {
-			add_filter( 'woocommerce_localisation_address_formats', array( $this, 'block_address_formats' ), 20 );
-		}
-
-		// Address Display for e-mail.
-		add_filter( 'woocommerce_order_get_formatted_billing_address', array( $this, 'billing_jp4wc_get_address' ), 10, 3 );
-		add_filter( 'woocommerce_order_get_formatted_shipping_address', array( $this, 'shipping_jp4wc_get_address' ), 20, 3 );
+		add_filter( 'woocommerce_localisation_address_formats', array( $this, 'address_formats' ), 20 );
 		// My Account Display for address.
 		add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'formatted_address' ), 20, 3 );// template/myaccount/my-address.php
 		// Checkout Display for address.
@@ -220,13 +212,21 @@ class JP4WC_Address_Fields {
 			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
 		}
 		if ( is_cart() ) {
-			$fields['JP'] = '〒{postcode}{state}{city}{address_1}{address_2} {country}';
+			$fields['JP'] = '〒{postcode}{state}{city}';
 		}
 		if ( is_order_received_page() ) {
 			$fields['JP'] = $fields['JP'] . "\n {phone}";
 		}
-		if ( $this->is_block_checkout_request() ) {
-			$fields['JP'] = '〒{postcode}{state}{city}{address_1}{address_2} {country}';
+
+		// Core page IDs.
+		$cart_page_id     = wc_get_page_id( 'cart' );
+		$checkout_page_id = wc_get_page_id( 'checkout' );
+
+		// Checks a specific page (by ID) to see if it contains the named block.
+		$has_block_cart     = $cart_page_id && has_block( 'woocommerce/cart', $cart_page_id );
+		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+		if ( $has_block_checkout && is_checkout() ) {
+			$fields['JP'] = '〒{postcode} {state}{city}{address_1} {address_2} {country}';
 		}
 		return $fields;
 	}
@@ -239,19 +239,6 @@ class JP4WC_Address_Fields {
 
 		// If it starts with /wc/store/, it is considered a block-based checkout.
 		return ( 0 === strpos( $rest_route, '/wc/store/' ) );
-	}
-
-	/**
-	 * Modifies the address format fields for Japanese addresses by Checkout Block.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @param array $fields The default address format fields.
-	 * @return array Modified address format fields for Japanese addresses.
-	 */
-	public function block_address_formats( $fields ) {
-		$fields['JP'] = '〒{postcode}{state}{city}{address_1}{address_2} {country}';
-		return $fields;
 	}
 
 	/**
@@ -332,82 +319,6 @@ class JP4WC_Address_Fields {
 		$field_value    = $order->get_shipping_phone();
 		$field_value    = wc_make_phone_clickable( $field_value );
 		echo '<div style="display:block;clear:both;"><p><strong>' . esc_html( $field['label'] ) . ':</strong> ' . wp_kses_post( $field_value ) . '</p></div>';
-	}
-
-	/**
-	 * Get shipping address format for Japanese addresses
-	 *
-	 * @param string $address      The formatted shipping address.
-	 * @param array  $raw_address  Raw address fields.
-	 * @param object $order        The order object.
-	 * @return string             Modified shipping address format for Japanese addresses
-	 */
-	public function jp4wc_get_address( $address, $raw_address, $order ) {
-		if ( ( 'store-api' === $order->get_created_via() || 'checkout' === $order->get_created_via() ) && isset( $raw_address['last_name'] ) && isset( $raw_address['first_name'] ) ) {
-			if ( preg_match( '/\p{Han}/u', $address, $matches, PREG_OFFSET_CAPTURE ) ) {
-				$pos     = $matches[0][1];
-				$address = substr_replace( $address, '<br />', $pos, 0 );
-			}
-
-			$address_name     = $raw_address['last_name'] . ' ' . $raw_address['first_name'];
-			$honorific_suffix = '';
-			if ( get_option( 'wc4jp-honorific-suffix' ) ) {
-				$honorific_suffix = '様';
-			}
-			$address_name .= $honorific_suffix;
-			if ( isset( $raw_address['country'] ) && 'JP' === $raw_address['country'] ) {
-				$address .= ' <br/>' . $address_name;
-			}
-		}
-		return $address;
-	}
-
-	/**
-	 * Gets the billing address for Japanese orders
-	 *
-	 * @param string $address      Formatted address.
-	 * @param array  $raw_address  Raw address in array format.
-	 * @param object $order        WC_Order object.
-	 * @return string Modified billing address for Japanese orders.
-	 */
-	public function billing_jp4wc_get_address( $address, $raw_address, $order ) {
-		$address = $this->jp4wc_get_address( $address, $raw_address, $order );
-
-		$billing_yomigana_first_name = $order->get_meta( '_billing_yomigana_first_name', true );
-		$billing_yomigana_last_name  = $order->get_meta( '_billing_yomigana_last_name', true );
-		$billing_company             = $order->get_billing_company();
-		if ( $billing_yomigana_first_name && $billing_yomigana_last_name ) {
-			$address .= '<br />(' . $billing_yomigana_last_name . ' ' . $billing_yomigana_first_name . ')';
-		}
-		if ( $billing_company ) {
-			$address .= '<br />' . $billing_company;
-		}
-
-		return $address;
-	}
-
-	/**
-	 * Gets the shipping address for Japanese orders
-	 *
-	 * @param string $address      Formatted address.
-	 * @param array  $raw_address  Raw address in array format.
-	 * @param object $order        WC_Order object.
-	 * @return string Modified shipping address for Japanese orders.
-	 */
-	public function shipping_jp4wc_get_address( $address, $raw_address, $order ) {
-		$address = $this->jp4wc_get_address( $address, $raw_address, $order );
-
-		$shipping_yomigana_first_name = $order->get_meta( '_shipping_yomigana_first_name', true );
-		$shipping_yomigana_last_name  = $order->get_meta( '_shipping_yomigana_last_name', true );
-		$shipping_company             = $order->get_shipping_company();
-		if ( $shipping_yomigana_first_name && $shipping_yomigana_last_name ) {
-			$address .= '<br />(' . $shipping_yomigana_last_name . ' ' . $shipping_yomigana_first_name . ')';
-		}
-		if ( $shipping_company ) {
-			$address .= '<br />' . $shipping_company;
-		}
-
-		return $address;
 	}
 
 	/**

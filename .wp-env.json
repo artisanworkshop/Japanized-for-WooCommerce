@@ -5,8 +5,9 @@
 		"https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip",
 		"https://downloads.wordpress.org/plugin/wp-mail-logging.latest-stable.zip",
 		"https://downloads.wordpress.org/plugin/plugin-check.latest-stable.zip",
-		"https://downloads.wordpress.org/plugin/debug-bar.latest-stable.zip",
         "https://downloads.wordpress.org/plugin/wp-crontrol.latest-stable.zip",
+		"https://downloads.wordpress.org/plugin/debug-bar.latest-stable.zip",
+        "https://downloads.wordpress.org/plugin/woocommerce-delivery-notes.latest-stable.zip",
 		"."
 	],
 	"config": {
