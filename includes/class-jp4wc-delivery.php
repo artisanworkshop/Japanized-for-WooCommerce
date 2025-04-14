@@ -34,6 +34,7 @@ class JP4WC_Delivery {
 		add_action( 'woocommerce_before_order_notes', array( $this, 'delivery_date_designation' ), 10 );
 		// Save delivery date and time values to order.
 		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'update_order_meta' ) );
+		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_date_time_checkout_field' ), 10, 2 );
 		// Show on order detail at thanks page (frontend).
 		add_action( 'woocommerce_order_details_after_order_table', array( $this, 'frontend_order_timedate' ) );
 		// Show on order detail email (frontend).
@@ -103,86 +104,15 @@ class JP4WC_Delivery {
 	 */
 	public function delivery_date_display( array $setting ) {
 		if ( get_option( 'wc4jp-delivery-date' ) ) {
-			// Get current time.
-			$datetime = new DateTime();
-			// Get current hours and minutes.
-			$time = $datetime->format( 'H:i' );
-			$now  = get_date_from_gmt( $time );
-			// Set today by delivery deadline.
-			if ( strtotime( $now ) > strtotime( $setting['delivery-deadline'] ) ) {
-				$today = date_i18n( 'Y/m/d', strtotime( '+1 day' ) );
-			} else {
-				$today = date_i18n( 'Y/m/d' );
-			}
-			// Get delivery start day.
-			$delivery_start_day = new DateTime( $today );
-			if (
-				isset( $setting['holiday-start-date'] ) &&
-				isset( $setting['holiday-end-date'] ) &&
-				strtotime( $today ) >= strtotime( $setting['holiday-start-date'] ) &&
-				strtotime( $today ) <= strtotime( $setting['holiday-end-date'] )
-			) {
-				$delivery_start_day->setDate(
-					substr( $setting['holiday-end-date'], 0, 4 ),
-					substr( $setting['holiday-end-date'], 5, 2 ),
-					substr( $setting['holiday-end-date'], 8, 2 )
-				);
-				$delivery_start_day->modify( '+1 day' );
-			}
-			// The day of week check.
-			$weekday_options = array(
-				'0' => 'no-sun',
-				'1' => 'no-mon',
-				'2' => 'no-tue',
-				'3' => 'no-wed',
-				'4' => 'no-thu',
-				'5' => 'no-fri',
-				'6' => 'no-sat',
-			);
-			// Set no ship weekdays.
-			$no_ship_weekdays = array();
-			foreach ( $weekday_options as $key => $value ) {
-				if ( get_option( 'wc4jp-' . $value ) ) {
-					$no_ship_weekdays[ $value ] = $key;
-				}
-			}
-			// Set week repeat.
-			$w = $delivery_start_day->format( 'w' );
-			if ( 6 === $w ) {
-				$tomorrow        = 0;
-				$after_tomorrow  = 1;
-				$after_tomorrow2 = 2;
-			} elseif ( 5 === $w ) {
-				$tomorrow        = 6;
-				$after_tomorrow  = 0;
-				$after_tomorrow2 = 1;
-			} elseif ( 4 === $w ) {
-				$tomorrow        = 5;
-				$after_tomorrow  = 6;
-				$after_tomorrow2 = 0;
-			} elseif ( is_numeric( $w ) ) {
-				$tomorrow        = $w + 1;
-				$after_tomorrow  = $w + 2;
-				$after_tomorrow2 = $w + 3;
-			}
-			$no_ship_term = 0;
-			if ( isset( $tomorrow ) && array_search( $tomorrow, $no_ship_weekdays ) ) {
-				if ( isset( $after_tomorrow ) && array_search( $after_tomorrow, $no_ship_weekdays ) ) {
-					if ( isset( $after_tomorrow2 ) && array_search( $after_tomorrow2, $no_ship_weekdays ) ) {
-						$no_ship_term = 3;
-					} else {
-						$no_ship_term = 2;
-					}
-				} else {
-					$no_ship_term = 1;
-				}
-			}
-			$delivery_start_day->modify( '+' . $no_ship_term . ' day' );
+			// Set delivery date.
+			$today = $this->jp4wc_set_by_delivery_deadline( $setting['delivery-deadline'] );
+			// Get delivery start day by holiday settings.
+			$delivery_start_day = $this->jp4wc_get_delivery_start_day_by_holiday( $today, $setting );
+			// Set delivery start day.
+			$start_day = $this->jp4wc_get_earliest_shipping_date( $delivery_start_day );
 			if ( isset( $setting['start-date'] ) ) {
-				$add_day = $setting['start-date'];
-				$delivery_start_day->modify( '+' . $add_day . ' day' );
+				$start_day = date_i18n( 'Y-m-d', strtotime( $start_day . ' ' . $setting['start-date'] . ' day' ) );
 			}
-			$start_day = $delivery_start_day->format( 'Y-m-d' );
 
 			// Set Japanese Week name.
 			$week = array(
@@ -202,16 +132,17 @@ class JP4WC_Delivery {
 				echo '<option value="0">' . esc_html( $setting['unspecified-date'] ) . '</option>';
 			}
 			for ( $i = 0; $i <= $setting['reception-period']; $i++ ) {
-				$set_display_date   = $delivery_start_day->format( 'Y-m-d h:i:s' );
-				$value_date[ $i ]   = get_date_from_gmt( $set_display_date, 'Y-m-d' );
-				$display_date[ $i ] = get_date_from_gmt( $set_display_date, __( 'Y/m/d', 'woocommerce-for-japan' ) );
+				$start_day_timestamp = strtotime( $start_day );
+				$set_display_date    = date_i18n( 'Y-m-d h:i:s', $start_day_timestamp );
+				$value_date[ $i ]    = get_date_from_gmt( $set_display_date, 'Y-m-d' );
+				$display_date[ $i ]  = get_date_from_gmt( $set_display_date, __( 'Y/m/d', 'woocommerce-for-japan' ) );
 				if ( $setting['day-of-week'] ) {
-					$week_name = $week[ $delivery_start_day->format( 'w' ) ];
+					$week_name = $week[ date_i18n( 'w', $start_day_timestamp ) ];
 					/* translators: %s: Week name */
 					$display_date[ $i ] = $display_date[ $i ] . sprintf( __( '(%s)', 'woocommerce-for-japan' ), $week_name );
 				}
 				echo '<option value="' . esc_attr( $value_date[ $i ] ) . '">' . esc_html( $display_date[ $i ] ) . '</option>';
-				$delivery_start_day->modify( '+ 1 day' );
+				$start_day = date_i18n( 'Y-m-d', strtotime( $start_day . ' 1 day' ) );
 			}
 			echo '</select>';
 			echo '</p>';
@@ -219,6 +150,109 @@ class JP4WC_Delivery {
 			// after display delivery date select action hook.
 			do_action( 'after_wc4jp_delivery_date', $setting, $start_day );
 		}
+	}
+
+	/**
+	 * Set delivery date based on delivery deadline.
+	 *
+	 * This function determines the effective "today" date based on whether
+	 * the current time has passed the specified delivery deadline.
+	 *
+	 * @param string $settung_delivery_deadline The delivery deadline time.
+	 * @return string The calculated today date in Y-m-d format.
+	 */
+	public function jp4wc_set_by_delivery_deadline( $settung_delivery_deadline ) {
+		// Get current time.
+		$now = date_i18n( 'Y-m-d H:i:s' );
+		// Set today by delivery deadline.
+		if ( strtotime( $now ) > strtotime( $settung_delivery_deadline ) ) {
+			$today = date_i18n( 'Y-m-d', strtotime( '+1 day' ) );
+		} else {
+			$today = date_i18n( 'Y-m-d' );
+		}
+		return $today;
+	}
+
+	/**
+	 * Calculate the delivery start day based on current date and settings.
+	 *
+	 * This function determines the appropriate delivery start date, taking into account
+	 * holidays and other date restrictions specified in the settings.
+	 *
+	 * @param string $today   The current date string.
+	 * @param array  $setting The delivery settings array.
+	 * @return string The calculated delivery start date in Y-m-d format.
+	 */
+	public function jp4wc_get_delivery_start_day_by_holiday( $today, $setting ) {
+		// Get delivery start day.
+		$delivery_start_day = new DateTime( $today );
+		if (
+			isset( $setting['holiday-start-date'] ) &&
+			isset( $setting['holiday-end-date'] ) &&
+			strtotime( $today ) >= strtotime( $setting['holiday-start-date'] ) &&
+			strtotime( $today ) <= strtotime( $setting['holiday-end-date'] )
+		) {
+			$delivery_start_day->setDate(
+				substr( $setting['holiday-end-date'], 0, 4 ),
+				substr( $setting['holiday-end-date'], 5, 2 ),
+				substr( $setting['holiday-end-date'], 8, 2 )
+			);
+			$delivery_start_day->modify( '+1 day' );
+		}
+		return $delivery_start_day->format( 'Y-m-d' );
+	}
+
+	/**
+	 * Calculate the earliest possible shipping date based on prohibited shipping days.
+	 *
+	 * This function determines the earliest available shipping date from a given start date,
+	 * taking into account days of the week when shipping is not allowed.
+	 *
+	 * @param string $start_date The starting date from which to calculate (default: 'today').
+	 * @return string The earliest possible shipping date in Y-m-d format.
+	 */
+	public function jp4wc_get_earliest_shipping_date( $start_date = 'today' ) {
+		// Shipping prohibition day option setting (day of the week in "no-XXX" format).
+		$weekday_options = array(
+			'0' => 'no-sun', // Sunday.
+			'1' => 'no-mon', // Monday.
+			'2' => 'no-tue', // Tuesday.
+			'3' => 'no-wed', // Wednesday.
+			'4' => 'no-thu', // Thursday.
+			'5' => 'no-fri', // Friday.
+			'6' => 'no-sat', // Saturday.
+		);
+
+		$no_ship_weekdays = array();
+		foreach ( $weekday_options as $key => $value ) {
+			if ( get_option( 'wc4jp-' . $value ) ) {
+				$no_ship_weekdays[] = intval( $key );
+			}
+		}
+
+		// Convert a given start date to a timestamp.
+		$start_timestamp = strtotime( $start_date );  // Supports 'today' and 'Y-m-d'.
+		if ( false === $start_timestamp ) {
+			return '無効な開始日です';
+		}
+
+		$days_to_add = 0;
+
+		while ( true ) {
+			// $start_timestamp に $daysToAdd 日を加算した日付の曜日を取得
+			// date("w") は曜日を数字（0: 日, 1: 月, ..., 6: 土）で返す
+			$current_day = date_i18n( 'w', strtotime( "+$days_to_add days", $start_timestamp ) );
+
+			// If the current day is not included in the list of days on which shipments cannot be made, the loop ends.
+			if ( ! in_array( intval( $current_day ), $no_ship_weekdays, true ) ) {
+				break;
+			}
+			++$days_to_add;
+		}
+
+		// Calculate and format the available shipping date (e.g. "Y-m-d").
+		$shipping_date = date_i18n( 'Y-m-d', strtotime( "+$days_to_add days", $start_timestamp ) );
+		return $shipping_date;
 	}
 
 	/**
@@ -293,6 +327,31 @@ class JP4WC_Delivery {
 		}
 		$order->save();
 	}
+
+	/**
+	 * Validate delivery date and time fields at checkout
+	 *
+	 * Checks if delivery date is required and has been filled in by the customer.
+	 * Adds an error if the field is required but empty.
+	 *
+	 * @param array    $fields The checkout fields.
+	 * @param WP_Error $errors Validation errors.
+	 * @return void
+	 */
+	public function validate_date_time_checkout_field( $fields, $errors ) {
+		if ( get_option( 'wc4jp-delivery-date' ) && get_option( 'wc4jp-delivery-date-required' ) && ! jp4wc_is_using_checkout_blocks() ) {
+			if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ||
+				! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' )
+			) {
+				return;
+			}
+
+			if ( empty( $_POST['wc4jp_delivery_date'] ) ) {
+				$errors->add( 'required-field', __( '"Desired delivery date" is a required field. Please enter it.', 'woocommerce-for-japan' ) );
+			}
+		}
+	}
+
 	/**
 	 * Frontend: Add date and timeslot to frontend order overview
 	 *
