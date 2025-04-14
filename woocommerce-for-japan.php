@@ -5,12 +5,12 @@
  * Description: Woocommerce toolkit for Japanese use.
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
- * Version: 2.6.35
+ * Version: 2.6.36
  * Requires Plugins: woocommerce
  * Requires at least: 5.0
  * Tested up to: 6.7.2
  * WC requires at least: 6.0
- * WC tested up to: 9.7.1
+ * WC tested up to: 9.8.1
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
@@ -39,7 +39,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '2.6.35';
+		public $version = '2.6.36';
 
 		/**
 		 * Japanized for WooCommerce Framework version.
@@ -153,6 +153,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\' . $version_text . '\\JP4WC_Plugin' ) ) {
 				require_once JP4WC_INCLUDES_PATH . 'jp4wc-framework/class-jp4wc-framework.php';
 			}
+			// common functions.
+			require_once JP4WC_INCLUDES_PATH . 'jp4wc-common-functions.php';
+
 			// Install.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
 			// Admin Setting Screen.
@@ -177,11 +180,8 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// Payment Gateway at Real Store.
 			require_once JP4WC_INCLUDES_PATH . 'gateways/atstore/class-wc-gateway-atstore-jp.php';
 			// Payment Gateway For COD subscriptions.
-			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-gateway-cod-4sub.php';
+			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-gateway-cod2.php';
 			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-addons-gateway-cod.php';
-
-			// common functions.
-			require_once JP4WC_INCLUDES_PATH . 'jp4wc-common-functions.php';
 
 			// Address Setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-address-fields.php';
@@ -202,7 +202,18 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// Add Payments setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-payments.php';
 			// Add PayPal Checkout(New from 2023/05 ).
-			if ( ! is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' ) ) {
+			if ( ! function_exists( 'is_plugin_active' ) ) {
+				include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+			if ( ! is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' ) &&
+				! isset( $_GET['action'] ) &&
+				! isset( $_REQUEST['plugin'] ) &&
+				! ( isset( $_REQUEST['action'] ) &&
+					isset( $_REQUEST['_wpnonce'] ) &&
+					wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'activate-plugin_' . sanitize_text_field( wp_unslash( $_REQUEST['plugin'] ?? '' ) ) ) &&
+					'activate' === sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) &&
+					isset( $_REQUEST['plugin'] ) &&
+					false !== strpos( sanitize_text_field( wp_unslash( $_REQUEST['plugin'] ) ), 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' ) ) ) {
 				require_once JP4WC_INCLUDES_PATH . 'gateways/paypal/woocommerce-paypal-payments.php';
 			}
 
@@ -372,11 +383,25 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 * @return array $methods Payment methods.
 		 */
 		public function add_jp4wc_custom_cod_gateway( $methods ) {
+			// Add the COD gateway for Fee.
 			$methods[] = 'JP4WC_COD_Fee';
 			$key       = array_search( 'WC_Gateway_COD', $methods, true );
 			if ( false !== $key ) {
 				unset( $methods[ $key ] );
 			}
+
+			// Add the COD2 gateway.
+			if ( get_option( 'wc4jp-cod2' ) ) {
+				if ( class_exists( 'WC_Subscriptions_Order' ) && function_exists( 'wcs_create_renewal_order' ) ) {
+					$subscription_support_enabled = true;
+				}
+				if ( isset( $subscription_support_enabled ) ) {
+					$methods[] = 'WC_Addons_Gateway_COD2';
+				} else {
+					$methods[] = 'WC_Gateway_COD2';
+				}
+			}
+
 			return $methods;
 		}
 	}

@@ -5,7 +5,7 @@
  * Handles the admin screen functionalities for Japanized for WooCommerce
  *
  * @package Japanized_For_WooCommerce
- * @version 1.0.0
+ * @version 2.6.36
  * @since 1.0.0
  */
 
@@ -558,8 +558,8 @@ class JP4WC_Admin_Screen {
 			'jp4wc_services'
 		);
 
-		if ( isset( $_POST['_wpnonce'] ) and isset( $_GET['page'] ) and $_GET['page'] == 'wc4jp-options' ) {
-			if ( ( isset( $_GET['tab'] ) and $_GET['tab'] == 'setting' ) or ! isset( $_GET['tab'] ) ) {
+		if ( isset( $_POST['_wpnonce'] ) && isset( $_GET['page'] ) && 'wc4jp-options' === $_GET['page'] ) {
+			if ( ( isset( $_GET['tab'] ) && 'setting' === $_GET['tab'] ) || ! isset( $_GET['tab'] ) ) {
 				// Save general setting.
 				$add_methods = array(
 					'yomigana',
@@ -714,11 +714,11 @@ class JP4WC_Admin_Screen {
 	 * Output messages + errors.
 	 */
 	public function show_messages() {
-		if ( sizeof( $this->errors ) > 0 ) {
+		if ( count( $this->errors ) > 0 ) {
 			foreach ( $this->errors as $error ) {
 				echo '<div id="message" class="error inline"><p><strong>' . esc_html( $error ) . '</strong></p></div>';
 			}
-		} elseif ( sizeof( $this->messages ) > 0 ) {
+		} elseif ( count( $this->messages ) > 0 ) {
 			foreach ( $this->messages as $message ) {
 				echo '<div id="message" class="updated inline"><p><strong>' . esc_html( $message ) . '</strong></p></div>';
 			}
@@ -734,6 +734,8 @@ class JP4WC_Admin_Screen {
 		foreach ( $add_methods as $add_method ) {
 			if ( isset( $_POST[ $add_method ] ) && $_POST[ $add_method ] ) {
 				update_option( $this->prefix . $add_method, $_POST[ $add_method ] );
+			} elseif ( isset( $_POST[ $add_method ] ) && '0' === $_POST[ $add_method ] ) {
+				update_option( $this->prefix . $add_method, '0' );
 			} else {
 				update_option( $this->prefix . $add_method, '' );
 			}
@@ -824,7 +826,7 @@ class JP4WC_Admin_Screen {
 			$jp4wc_virtual_billing_setting = $this->jp4wc_plugin->jp4wc_option_setting( 'billing_' . $slug, $this->prefix );
 			?>
 		<label for="woocommerce_input_postcode">
-		<input type="checkbox" id="woocommerce_input_virtula_billing_<?php echo $slug; ?>" name="billing_<?php echo $slug; ?>" value="1" <?php checked( $jp4wc_virtual_billing_setting, 1 ); ?>>
+		<input type="checkbox" id="woocommerce_input_virtula_billing_<?php echo esc_attr( $slug ); ?>" name="billing_<?php echo esc_attr( $slug ); ?>" value="1" <?php checked( $jp4wc_virtual_billing_setting, 1 ); ?>>
 			<?php echo esc_html( $label ); ?>
 		</label>
 			<?php
@@ -985,7 +987,19 @@ class JP4WC_Admin_Screen {
 				echo '<strong>';
 			}
 			$checkbox = $this->jp4wc_plugin->jp4wc_input_checkbox( $weekday['name'], null, $this->prefix );
-			echo esc_html( $weekday['label'] ) . wp_kses_post( $checkbox ) . ' ';
+			$allowed  = array(
+				'input' => array(
+					'type'  => array(),
+					'name'  => array(),
+					'id'    => array(),
+					'value' => array(),
+					'class' => array(),
+				),
+			);
+			echo esc_html( $weekday['label'] );
+			if ( isset( $checkbox ) ) {
+				echo wp_kses( $checkbox, $allowed ) . ' ';
+			}
 			if ( isset( $weekday['bold'] ) ) {
 				echo '</strong>';
 			}
@@ -1313,14 +1327,14 @@ class JP4WC_Admin_Screen {
 					<thead>
 						<tr>
 							<th class="sort" style="width: 17px;">&nbsp;</th>
-							<th><?php _e( 'Delivery time zone start time', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'Delivery time zone start time', 'woocommerce-for-japan' ); ?></th>
 							<th></th>
-							<th><?php _e( 'Delivery time zone end time', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'Delivery time zone end time', 'woocommerce-for-japan' ); ?></th>
 						</tr>
 					</thead>
 					<tfoot>
 						<tr>
-							<th colspan="7"><a href="#" class="add button"><?php _e( '+ Add Time Zone', 'woocommerce-for-japan' ); ?></a> <a href="#" class="remove_rows button"><?php _e( 'Remove selected Time Zone', 'woocommerce-for-japan' ); ?></a></th>
+							<th colspan="7"><a href="#" class="add button"><?php esc_html_e( '+ Add Time Zone', 'woocommerce-for-japan' ); ?></a> <a href="#" class="remove_rows button"><?php esc_html_e( 'Remove selected Time Zone', 'woocommerce-for-japan' ); ?></a></th>
 						</tr>
 					</tfoot>
 					<tbody class="time_zone">
@@ -1332,9 +1346,9 @@ class JP4WC_Admin_Screen {
 
 								echo '<tr class="time_zone">
 		                			<td class="sort"></td>
-		                			<td><input type="time" value="' . esc_attr( $time_zone['start_time'] ) . '" name="start_time[' . $i . ']" /></td>
+		                			<td><input type="time" value="' . esc_attr( $time_zone['start_time'] ) . '" name="start_time[' . esc_attr( $i ) . ']" /></td>
 		                			<td>~</td>
-		                			<td><input type="time" value="' . esc_attr( $time_zone['end_time'] ) . '" name="end_time[' . $i . ']" /></td>
+		                			<td><input type="time" value="' . esc_attr( $time_zone['end_time'] ) . '" name="end_time[' . esc_attr( $i ) . ']" /></td>
 			                    </tr>';
 							}
 						}
@@ -1362,9 +1376,9 @@ class JP4WC_Admin_Screen {
 	}
 
 	/**
-	 * create description for address pattern.
+	 * Create description for address pattern.
 	 *
-	 * @param string Title
+	 * @param string $title Title.
 	 */
 	public function jp4wc_description_address_pattern( $title ) {
 		/* translators: %s: Setting title */
@@ -1374,7 +1388,7 @@ class JP4WC_Admin_Screen {
 	/**
 	 * Validate options.
 	 *
-	 * @param array $input
+	 * @param array $input Input.
 	 * @return array
 	 */
 	public function validate_options( $input ) {

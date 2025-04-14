@@ -41,3 +41,47 @@ if ( ! function_exists( 'jp4wc_get_fee_tax_classes' ) ) {
 		return apply_filters( 'jp4wc_tax_classes', $tax_class );
 	}
 }
+
+if ( ! function_exists( 'jp4wc_is_using_checkout_blocks' ) ) {
+
+	/**
+	 * A function to determine if a WooCommerce Checkout Block is being used.
+	 *
+	 * @return bool true if you are using Checkout Block, false if not.
+	 */
+	function jp4wc_is_using_checkout_blocks() {
+		// Block-based checkout only available on WooCommerce 6.9.0 and above.
+		if ( version_compare( WC()->version, '6.9.0', '<' ) ) {
+			return false;
+		}
+
+		// Get the checkout page ID from your WooCommerce settings.
+		$checkout_page_id = wc_get_page_id( 'checkout' );
+
+		if ( $checkout_page_id <= 0 ) {
+			return false;
+		}
+
+		// Get the checkout page content.
+		$checkout_post = get_post( $checkout_page_id );
+
+		if ( ! $checkout_post || empty( $checkout_post->post_content ) ) {
+			return false;
+		}
+
+		// Check if you are using a checkout block.
+		// Check the block checkout identifier.
+		$has_checkout_block = false;
+
+		// Check if woocommerce/checkout block exists.
+		if ( has_block( 'woocommerce/checkout', $checkout_post->post_content ) ) {
+			$has_checkout_block = true;
+		}
+
+		if ( strpos( $checkout_post->post_content, '<!-- wp:woocommerce/checkout' ) !== false ) {
+			$has_checkout_block = true;
+		}
+
+		return $has_checkout_block;
+	}
+}

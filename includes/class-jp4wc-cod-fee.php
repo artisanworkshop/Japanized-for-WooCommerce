@@ -81,14 +81,12 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 	 * @return void
 	 */
 	public function enqueue_scripts_frontend() {
-		$min = ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ? '.min' : '';
-
-		if ( ! is_checkout() ) {
-			return;
+		if ( ! is_checkout() || ! jp4wc_is_using_checkout_blocks() ) {
+			// return;
 		}
 
+		$min = ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ? '.min' : '';
 		wp_enqueue_script( 'wc-pf-checkout', JP4WC_URL_PATH . 'assets/js/checkout' . $min . '.js', array( 'jquery' ), JP4WC_VERSION, true );
-		// $this->jp4wc_blocks_script();
 	}
 
 	/**
