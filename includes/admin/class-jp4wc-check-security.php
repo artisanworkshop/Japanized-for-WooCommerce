@@ -3,7 +3,7 @@
  * Security Check functionality for WooCommerce Japan
  *
  * @package WooCommerce-For-Japan
- * @version 2.6.28
+ * @version 2.6.37
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that represents security checks.
  *
- * @version 2.6.28
+ * @version 2.6.37
  * @since 2.6.27
  */
 class JP4WC_Check_Security {
