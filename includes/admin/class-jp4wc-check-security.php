@@ -412,17 +412,21 @@ class JP4WC_Check_Security {
 	 */
 	private function jp4wc_check_php_version() {
 		$php_versions = array(
+			'8.4' => array(
+				'active_support'   => '2026-12-31',
+				'security_support' => '2028-12-31',
+			),
 			'8.3' => array(
-				'active_support'   => '2025-11-23',
-				'security_support' => '2028-11-23',
+				'active_support'   => '2025-12-31',
+				'security_support' => '2027-12-31',
 			),
 			'8.2' => array(
-				'active_support'   => '2024-12-08',
-				'security_support' => '2027-12-08',
+				'active_support'   => '2024-12-31',
+				'security_support' => '2026-12-31',
 			),
 			'8.1' => array(
 				'active_support'   => '2023-11-25',
-				'security_support' => '2026-11-25',
+				'security_support' => '2025-12-31',
 			),
 			'8.0' => array(
 				'active_support'   => '2022-11-26',
