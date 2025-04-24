@@ -69,7 +69,7 @@ if ( ! class_exists( 'JP4WC_Admin_PHP_Notice', false ) ) :
 			if ( version_compare( $php_ver, '8.1.0', '>=' ) ) {
 				return false;
 			}
-			if ( ! is_multisite() ) {
+			if ( ! is_multisite() && class_exists( 'JP4WC_Usage_Tracking' ) ) {
 				$month_totals = JP4WC_Usage_Tracking::get_last_month_order_totals();
 				$month_total  = $month_totals['monthly_gross'] + $month_totals['monthly_processing_gross'];
 				if ( $month_total <= 0 ) {

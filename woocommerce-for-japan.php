@@ -5,12 +5,12 @@
  * Description: Woocommerce toolkit for Japanese use.
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
- * Version: 2.6.36
+ * Version: 2.6.37
  * Requires Plugins: woocommerce
  * Requires at least: 5.0
- * Tested up to: 6.7.2
+ * Tested up to: 6.8
  * WC requires at least: 6.0
- * WC tested up to: 9.8.1
+ * WC tested up to: 9.8.2
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
@@ -39,7 +39,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '2.6.36';
+		public $version = '2.6.37';
 
 		/**
 		 * Japanized for WooCommerce Framework version.
@@ -170,7 +170,10 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// Usage tracking.
 			if ( 'yes' === get_transient( 'jp4wc_first_installing' ) ) {
 				require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-usage-tracking.php';
-				JP4WC_Usage_Tracking::init();
+				// Usage tracking.
+				if ( ! class_exists( 'JP4WC_Usage_Tracking' ) ) {
+					JP4WC_Usage_Tracking::init();
+				}
 			}
 
 			// Payment Gateway For Bank.

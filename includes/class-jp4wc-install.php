@@ -88,7 +88,9 @@ class JP4WC_Install {
 	 */
 	private static function update_jp4wc_version() {
 		update_option( 'jp4wc_version', JP4WC_VERSION );
-		JP4WC_Usage_Tracking::jp4wc_send_tracking_data( true );
+		if ( class_exists( 'JP4WC_Usage_Tracking' ) ) {
+			JP4WC_Usage_Tracking::jp4wc_send_tracking_data( true );
+		}
 	}
 }
 JP4WC_Install::init();
