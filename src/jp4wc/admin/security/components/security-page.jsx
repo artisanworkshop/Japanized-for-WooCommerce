@@ -48,6 +48,7 @@ const SecurityPage = () => {
             <Notices />
             <Panel>
                 <ExplainCSG />
+                <PromotionSecurity />
                 <CheckAdminLogin 
     				value={ checkAdminLogin }
 	    			onChange={ ( value ) => setCheckAdminLogin( value ) }
@@ -58,7 +59,6 @@ const SecurityPage = () => {
                 />
                 <VulnerabilityAssessment />
                 <CheckMalwareScanner />
-                <PromotionSecurity />
             </Panel>
             <SaveButton onClick={ saveSettings } />
         </>

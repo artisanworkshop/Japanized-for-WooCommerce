@@ -1755,13 +1755,13 @@ const SecurityPage = () => {
   } = (0,_hooks__WEBPACK_IMPORTED_MODULE_2__.useSettings)();
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(SettingsTitle, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_notices__WEBPACK_IMPORTED_MODULE_3__.Notices, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Panel, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.ExplainCSG, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.CheckAdminLogin, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.ExplainCSG, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.PromotionSecurity, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.CheckAdminLogin, {
         value: checkAdminLogin,
         onChange: value => setCheckAdminLogin(value)
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.CheckSeucirytPluigns, {
         value: checkSeucirytPluigns,
         onChange: value => setCheckSeucirytPluigns(value)
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.VulnerabilityAssessment, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.CheckMalwareScanner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.PromotionSecurity, {})]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.VulnerabilityAssessment, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_controls__WEBPACK_IMPORTED_MODULE_4__.CheckMalwareScanner, {})]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(SaveButton, {
       onClick: saveSettings
     })]
