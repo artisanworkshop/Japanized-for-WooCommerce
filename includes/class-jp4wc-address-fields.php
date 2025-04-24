@@ -3,7 +3,7 @@
  * Japanized for WooCommerce
  *
  * @package     Japanized for WooCommerce
- * @version     2.6.25
+ * @version     2.6.37
  * @category    Address Setting for Japan
  * @author      Artisan Workshop
  */
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * to better suit Japanese addressing conventions and postal formats.
  *
  * @package WooCommerce for Japan
- * @version 2.6.25
+ * @version 2.6.37
  * @category Address Management
  * @author Shohei Tanaka
  */
@@ -117,7 +117,7 @@ class JP4WC_Address_Fields {
 	 * Japan corresponding set of billing address information
 	 *
 	 * @since  1.2
-	 * @version 2.0.0
+	 * @version 2.6.37
 	 * @param  array $fields The formatted address fields.
 	 * @return array
 	 */
@@ -125,6 +125,16 @@ class JP4WC_Address_Fields {
 		if ( ! get_option( 'wc4jp-company-name' ) ) {
 			unset( $fields['billing_company'] );
 		}
+		if ( ! isset( $fields['billing_company'] ) ) {
+			$fields['billing_company'] = array(
+				'label'    => __( 'Company Name', 'woocommerce-for-japan' ),
+				'required' => false,
+				'class'    => array( 'form-row-wide' ),
+				'clear'    => true,
+				'priority' => 20,
+			);
+		}
+
 		return $fields;
 	}
 
@@ -132,7 +142,7 @@ class JP4WC_Address_Fields {
 	 * Japan corresponding set of shipping address information
 	 *
 	 * @since  1.2
-	 * @version 2.0.0
+	 * @version 2.6.37
 	 * @param  array $fields The formatted address fields.
 	 * @return array
 	 */
@@ -149,6 +159,15 @@ class JP4WC_Address_Fields {
 		);
 		if ( ! get_option( 'wc4jp-company-name' ) ) {
 			unset( $address_fields['shipping_company'] );
+		}
+		if ( ! isset( $address_fields['shipping_company'] ) ) {
+			$address_fields['shipping_company'] = array(
+				'label'    => __( 'Company Name', 'woocommerce-for-japan' ),
+				'required' => false,
+				'class'    => array( 'form-row-wide' ),
+				'clear'    => true,
+				'priority' => 20,
+			);
 		}
 		return $address_fields;
 	}
