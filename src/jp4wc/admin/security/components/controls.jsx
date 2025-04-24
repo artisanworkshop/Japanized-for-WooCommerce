@@ -253,7 +253,7 @@ const PromotionSecurity = () => {
             </PanelRow>
             <PanelRow>
                 { salesLast30Days > 1000000 &&
-                    <Button href="https://wc4jp-pro.work/about-security-service/" target="_blank" rel="noopener noreferrer" className="jp4wc-security-check__promotion-button">
+                    <Button href="https://wc4jp-pro.work/about-security-service/?utm_source=plugin&utm_medium=link&utm_campaign=jp4wc" target="_blank" rel="noopener noreferrer" className="jp4wc-security-check__promotion-button">
                     { __( 'Security measures for WooCommerce', 'woocommerce-for-japan' ) }
                     </Button>
                 }
@@ -263,7 +263,7 @@ const PromotionSecurity = () => {
                     { __( '🎉 In addition, this special service is only available on a limited number of sites! 🎉', 'woocommerce-for-japan' ) }<br />
                     { __( '🔮 As a smart investment for the future, you can achieve reliable security measures for only 1,000 yen per month for the first year 💪!', 'woocommerce-for-japan' ) }<br />
                     { __( '🔥 Don\'t miss this chance to take your store operations to the next level right now! 🔥', 'woocommerce-for-japan' ) }<br />
-                    <Button href="https://wc4jp-pro.work/about-security-service/descript-starter-plan/" target="_blank" rel="noopener noreferrer" className="jp4wc-security-check__promotion-button">
+                    <Button href="https://wc4jp-pro.work/about-security-service/descript-starter-plan/?utm_source=plugin&utm_medium=link&utm_campaign=jp4wc" target="_blank" rel="noopener noreferrer" className="jp4wc-security-check__promotion-button">
                     { __( 'Starter Plan: ', 'woocommerce-for-japan' ) }{ __( 'Security measures for WooCommerce', 'woocommerce-for-japan' ) }
                     </Button>
                     </div>
