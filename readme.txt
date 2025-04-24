@@ -1,9 +1,9 @@
-=== Japanized For WooCommerce  ===
+=== Japanized for WooCommerce  ===
 Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
-Tested up to: 6.7.2
+Tested up to: 6.8
 Stable tag: 2.6.37
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html

@@ -398,7 +398,12 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			$product_count_data     = wp_count_posts( 'product' );
 			$product_count['total'] = $product_count_data->publish;
 
-			$product_statuses = get_terms( 'product_type', array( 'hide_empty' => 0 ) );
+			$product_statuses = get_terms(
+				array(
+					'taxonomy'   => 'product_type',
+					'hide_empty' => 0,
+				)
+			);
 			foreach ( $product_statuses as $product_status ) {
 				$product_count[ $product_status->name ] = $product_status->count;
 			}
@@ -446,6 +451,12 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			$orders_table  = OrdersTableDataStore::get_orders_table_name();
 			$one_month_ago = date_i18n( 'Y-m-d H:i:s', strtotime( '-1 month' ) );
 
+			// キャッシュキーを定義
+			$cache_key   = 'wc_orders_gross_total';
+			$cache_group = 'wc_reports';
+
+			// キャッシュからデータを取得してみる
+			$gross_total = wp_cache_get( $cache_key, $cache_group );
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
 				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$gross_total = $wpdb->get_var(
@@ -469,6 +480,7 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 				"
 				);
 			}
+			wp_cache_set( $cache_key, $gross_total, $cache_group, 600 );
 
 			if ( is_null( $gross_total ) ) {
 				$gross_total = 0;
@@ -545,16 +557,19 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 				// phpcs:enable
 			} else {
 				$monthly_processing_gross_total = $wpdb->get_var(
-					"
-				SELECT
-					SUM( order_meta.meta_value ) AS 'gross_total'
-				FROM {$wpdb->prefix}posts AS orders
-				LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
-				WHERE order_meta.meta_key = '_order_total'
-                    AND orders.post_date_gmt >= '$one_month_ago'
-                    AND orders.post_status = 'wc-processing'
-				GROUP BY order_meta.meta_key
-			"
+					$wpdb->prepare(
+						"
+						SELECT 
+							SUM( order_meta.meta_value ) AS 'gross_total'
+						FROM {$wpdb->prefix}posts AS orders
+						LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+						WHERE order_meta.meta_key = '_order_total'
+							AND orders.post_date_gmt >= %s
+							AND orders.post_status = 'wc-processing'
+						GROUP BY order_meta.meta_key
+						",
+						$one_month_ago
+					)
 				);
 			}
 
@@ -580,7 +595,7 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			global $wpdb;
 
 			$orders_table  = OrdersTableDataStore::get_orders_table_name();
-			$one_month_ago = date( 'Y-m-d H:i:s', strtotime( '-1 month' ) );
+			$one_month_ago = date_i18n( 'Y-m-d H:i:s', strtotime( '-1 month' ) );
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
 				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -800,38 +815,44 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 				$orders_table = OrdersTableDataStore::get_orders_table_name();
 				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$orders_and_gateway_details = $wpdb->get_results(
-					"
-				SELECT payment_method AS gateway, currency AS currency, SUM( total_amount ) AS totals, count( id ) AS counts
-				FROM $orders_table
-				WHERE date_created_gmt >= " . $three_month_ago . "
-                    AND status IN ( 'wc-completed', 'wc-processing', 'wc-refunded' )
-				GROUP BY gateway, currency;
-				"
+					$wpdb->prepare(
+						"
+						SELECT payment_method AS gateway, currency AS currency, SUM( total_amount ) AS totals, count( id ) AS counts
+						FROM $orders_table
+						WHERE date_created_gmt >= %s
+							AND status IN ( 'wc-completed', 'wc-processing', 'wc-refunded' )
+						GROUP BY gateway, currency;
+						",
+						$three_month_ago
+					)
 				);
 				// phpcs:enable
 			} else {
 				$orders_and_gateway_details = $wpdb->get_results(
-					"
-				SELECT
-					gateway, currency, SUM(total) AS totals, COUNT(order_id) AS counts
-				FROM (
-					SELECT
-						orders.id AS order_id,
-						MAX(CASE WHEN meta_key = '_payment_method' THEN meta_value END) gateway,
-						MAX(CASE WHEN meta_key = '_order_total' THEN meta_value END) total,
-						MAX(CASE WHEN meta_key = '_order_currency' THEN meta_value END) currency
-					FROM
-						{$wpdb->prefix}posts orders
-					LEFT JOIN
-						{$wpdb->prefix}postmeta order_meta ON order_meta.post_id = orders.id
-					WHERE orders.post_type = 'shop_order'
-                        AND orders.post_date_gmt >= " . $three_month_ago . "
-						AND orders.post_status in ( 'wc-completed', 'wc-processing', 'wc-refunded' )
-						AND meta_key in( '_payment_method','_order_total','_order_currency')
-					GROUP BY orders.id
-				) order_gateways
-				GROUP BY gateway, currency
-				"
+					$wpdb->prepare(
+						"
+						SELECT
+							gateway, currency, SUM(total) AS totals, COUNT(order_id) AS counts
+						FROM (
+							SELECT
+								orders.id AS order_id,
+								MAX(CASE WHEN meta_key = '_payment_method' THEN meta_value END) gateway,
+								MAX(CASE WHEN meta_key = '_order_total' THEN meta_value END) total,
+								MAX(CASE WHEN meta_key = '_order_currency' THEN meta_value END) currency
+							FROM
+								{$wpdb->prefix}posts orders
+							LEFT JOIN
+								{$wpdb->prefix}postmeta order_meta ON order_meta.post_id = orders.id
+							WHERE orders.post_type = 'shop_order'
+								AND orders.post_date_gmt >= %s
+								AND orders.post_status in ( 'wc-completed', 'wc-processing', 'wc-refunded' )
+								AND meta_key in( '_payment_method','_order_total','_order_currency')
+							GROUP BY orders.id
+						) order_gateways
+						GROUP BY gateway, currency
+						",
+						$three_month_ago
+					)
 				);
 			}
 
