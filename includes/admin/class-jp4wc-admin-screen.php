@@ -580,7 +580,7 @@ class JP4WC_Admin_Screen {
 					'tracking',
 				);
 				$this->jp4wc_save_methods( $add_methods );
-				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
+				self::add_message( __( 'Your settings have been saved.', 'woocommerce-for-japan' ) );
 			}
 			if ( isset( $_GET['tab'] ) && 'payment' === $_GET['tab'] ) {
 				// Save payment setting.
@@ -609,7 +609,7 @@ class JP4WC_Admin_Screen {
 						do_action( 'jp4wc_save_methods_deactivation', $payment_method );
 					}
 				}
-				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
+				self::add_message( __( 'Your settings have been saved.', 'woocommerce-for-japan' ) );
 			}
 			if ( isset( $_GET['tab'] ) && 'shipment' === $_GET['tab'] ) {
 				// Save shipment setting.
@@ -654,7 +654,7 @@ class JP4WC_Admin_Screen {
 					}
 				}
 				update_option( 'wc4jp_time_zone_details', $time_zones );
-				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
+				self::add_message( __( 'Your settings have been saved.', 'woocommerce-for-japan' ) );
 			}
 			if ( ( isset( $_GET['tab'] ) && 'law' === $_GET['tab'] ) ) {
 				// Save general setting.
@@ -675,7 +675,7 @@ class JP4WC_Admin_Screen {
 					'law-special',
 				);
 				$this->jp4wc_save_methods( $add_methods );
-				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
+				self::add_message( __( 'Your settings have been saved.', 'woocommerce-for-japan' ) );
 			}
 			if ( ( isset( $_GET['tab'] ) && 'affiliate' === $_GET['tab'] ) ) {
 				// Save affiliate setting.
@@ -687,7 +687,7 @@ class JP4WC_Admin_Screen {
 					'affiliate-felmat-pid',
 				);
 				$this->jp4wc_save_methods( $add_methods );
-				self::add_message( __( 'Your settings have been saved.', 'woocommerce' ) );
+				self::add_message( __( 'Your settings have been saved.', 'woocommerce-for-japan' ) );
 			}
 		}
 	}
