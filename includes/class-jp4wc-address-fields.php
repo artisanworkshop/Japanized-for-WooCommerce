@@ -122,9 +122,6 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function billing_address_fields( $fields ) {
-		if ( ! get_option( 'wc4jp-company-name' ) ) {
-			unset( $fields['billing_company'] );
-		}
 		if ( ! isset( $fields['billing_company'] ) ) {
 			$fields['billing_company'] = array(
 				'label'    => __( 'Company Name', 'woocommerce-for-japan' ),
@@ -133,6 +130,9 @@ class JP4WC_Address_Fields {
 				'clear'    => true,
 				'priority' => 20,
 			);
+		}
+		if ( ! get_option( 'wc4jp-company-name' ) ) {
+			unset( $fields['billing_company'] );
 		}
 
 		return $fields;
@@ -157,9 +157,6 @@ class JP4WC_Address_Fields {
 			'validate' => array( 'phone' ),
 			'priority' => 100,
 		);
-		if ( ! get_option( 'wc4jp-company-name' ) ) {
-			unset( $address_fields['shipping_company'] );
-		}
 		if ( ! isset( $address_fields['shipping_company'] ) ) {
 			$address_fields['shipping_company'] = array(
 				'label'    => __( 'Company Name', 'woocommerce-for-japan' ),
@@ -168,6 +165,9 @@ class JP4WC_Address_Fields {
 				'clear'    => true,
 				'priority' => 20,
 			);
+		}
+		if ( ! get_option( 'wc4jp-company-name' ) ) {
+			unset( $address_fields['shipping_company'] );
 		}
 		return $address_fields;
 	}
