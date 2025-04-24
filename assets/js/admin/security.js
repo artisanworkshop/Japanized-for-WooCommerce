@@ -1631,6 +1631,7 @@ const PromotionSecurity = () => {
         href: "https://wc4jp-pro.work/about-security-service/",
         target: "_blank",
         rel: "noopener noreferrer",
+        className: "jp4wc-security-check__promotion-button",
         children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Security measures for WooCommerce', 'woocommerce-for-japan')
       }), salesLast30Days < 1000000 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("h3", {

@@ -253,7 +253,7 @@ const PromotionSecurity = () => {
             </PanelRow>
             <PanelRow>
                 { salesLast30Days > 1000000 &&
-                    <Button href="https://wc4jp-pro.work/about-security-service/" target="_blank" rel="noopener noreferrer">
+                    <Button href="https://wc4jp-pro.work/about-security-service/" target="_blank" rel="noopener noreferrer" className="jp4wc-security-check__promotion-button">
                     { __( 'Security measures for WooCommerce', 'woocommerce-for-japan' ) }
                     </Button>
                 }
