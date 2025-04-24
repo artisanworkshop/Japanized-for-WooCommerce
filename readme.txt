@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.8
-Stable tag: 2.6.37
+Stable tag: 2.6.39
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,7 +58,7 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.6.36 - 2025-04-24 =
+= 2.6.39 - 2025-04-24 =
 * Fixed - Company input bug.
 * Fixed - Class JP4WC_Usage_Tracking Bugs
 * Updated - PHP Version check.
