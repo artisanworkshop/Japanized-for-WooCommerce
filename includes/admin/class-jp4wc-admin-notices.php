@@ -241,20 +241,70 @@ class JP4WC_Admin_Notices {
 	}
 
 	/**
-	 * Checks if the site is running the latest WooCommerce version.
+	 * Checks if the site is running a recent version of WooCommerce.
+	 *
+	 * Compares the current WooCommerce version with the latest available version
+	 * to determine if an update is needed. Considers a version outdated if it's
+	 * at least 2 minor versions behind.
 	 *
 	 * @since 2.6.37
-	 * @return bool True if running the latest WooCommerce version, false otherwise.
+	 * @return bool True if running an acceptable WooCommerce version, false if update needed.
 	 */
 	public function is_latest_woocommerce_version() {
-		$latest_version = get_site_transient( 'update_plugins' );
-		if ( ! empty( $latest_version->response ) ) {
-			foreach ( $latest_version->response as $plugin => $update ) {
-				if ( 'woocommerce/woocommerce.php' === $plugin ) {
-					return false;
-				}
-			}
+		// Get the currently installed WooCommerce version.
+		if ( ! function_exists( 'WC' ) ) {
+			// WooCommerce is not active.
+			return true;
 		}
+
+		$current_version = WC()->version;
+
+		// Get the latest WooCommerce version from the WordPress.org API.
+		$response = wp_remote_get( 'https://api.wordpress.org/plugins/info/1.0/woocommerce.json' );
+
+		// Check if request was successful.
+		if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
+			// If we can't determine the latest version, assume current version is OK.
+			return true;
+		}
+
+		$plugin_info = json_decode( wp_remote_retrieve_body( $response ) );
+
+		if ( empty( $plugin_info ) || ! isset( $plugin_info->version ) ) {
+			// If we can't determine the latest version, assume current version is OK.
+			return true;
+		}
+
+		$latest_version = $plugin_info->version;
+
+		// Parse version numbers.
+		$current_parts = explode( '.', $current_version );
+		$latest_parts  = explode( '.', $latest_version );
+
+		// Ensure we have at least major.minor.patch format.
+		$current_parts_count = count( $current_parts );
+		while ( $current_parts_count < 3 ) {
+			$current_parts[] = '0';
+			++$current_parts_count;
+		}
+		$latest_parts_count = count( $latest_parts );
+		while ( $latest_parts_count < 3 ) {
+			$latest_parts[] = '0';
+			++$latest_parts_count;
+		}
+
+		// Compare major versions.
+		if ( $current_parts[0] < $latest_parts[0] ) {
+			// If major version is behind, check if minor version is at least 2 versions behind.
+			return ( $latest_parts[1] - $current_parts[1] >= 2 ) ? false : true;
+		}
+
+		// If major versions are the same, check if minor version is at least 2 versions behind.
+		if ( $current_parts[0] === $latest_parts[0] && ( $latest_parts[1] - $current_parts[1] >= 2 ) ) {
+			return false;
+		}
+
+		// Otherwise, the version is current enough.
 		return true;
 	}
 }
