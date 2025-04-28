@@ -732,6 +732,7 @@ class JP4WC_Admin_Screen {
 	 */
 	public function jp4wc_save_methods( $add_methods ) {
 		foreach ( $add_methods as $add_method ) {
+			do_action( 'jp4wc_save_methods_' . $add_method, $_POST[ $add_method ] );
 			if ( isset( $_POST[ $add_method ] ) && $_POST[ $add_method ] ) {
 				update_option( $this->prefix . $add_method, $_POST[ $add_method ] );
 			} elseif ( isset( $_POST[ $add_method ] ) && '0' === $_POST[ $add_method ] ) {
