@@ -154,11 +154,55 @@ class JP4WC_Admin_Notices {
 			echo '<br />';
 			echo '<br />';
 		}
-			esc_html_e( 'We recommend you do a quick check on the following page.', 'woocommerce-for-japan' );
-			echo '<br />';
-			esc_html_e( 'The above warning will no longer be displayed, and once you have checked the page problems, addressed them, checked and saved, this message will disappear.', 'woocommerce-for-japan' );
-			echo '<br />';
-			echo '<a href="' . esc_url( $check_link ) . '" style="color:#fff;">' . esc_html__( 'Check the security checklist', 'woocommerce-for-japan' ) . '</a>';
+		$messages = array(
+			array(
+				'text' => __( 'Get 2,200 yen/month and cashback now! Click here for your chance to switch to a secure server.', 'woocommerce-for-japan' ),
+				'link' => '001',
+			),
+			array(
+				'text' => __( '30-day money back guarantee! Click here for details on the security-enabled server migration campaign.', 'woocommerce-for-japan' ),
+				'link' => '002',
+			),
+			array(
+				'text' => __( 'Get a cashback on all your current server costs! Click here for a safe and economical migration.', 'woocommerce-for-japan' ),
+				'link' => '003',
+			),
+			array(
+				'text' => __( 'Fully secure! Migration + cashback for just 2,200 yen per month [Click here for details].', 'woocommerce-for-japan' ),
+				'link' => '004',
+			),
+			array(
+				'text' => __( 'Migration is also safe. 30-day money back guarantee! Click here for security-enabled servers.', 'woocommerce-for-japan' ),
+				'link' => '005',
+			),
+			array(
+				'text' => __( 'If you\'re worried about server migration, check out SoftStepsEC for Pressable!', 'woocommerce-for-japan' ),
+				'link' => '006',
+			),
+			array(
+				'text' => __( 'Now is your chance to switch! Check out the ¥2,200/month + cashback campaign.', 'woocommerce-for-japan' ),
+				'link' => '007',
+			),
+			array(
+				'text' => __( '[Hurry] Check out the details of this safe and affordable server migration campaign now!', 'woocommerce-for-japan' ),
+				'link' => '008',
+			),
+		);
+		// Get a random key from the array.
+		$random_key = array_rand( $messages );
+		esc_html_e( 'We recommend you do a quick check on the following page.', 'woocommerce-for-japan' );
+		echo '<br />';
+		esc_html_e( 'The above warning will no longer be displayed, and once you have checked the page problems, addressed them, checked and saved, this message will disappear.', 'woocommerce-for-japan' );
+		echo '<br />';
+		echo '<a href="' . esc_url( $check_link ) . '" style="color:#fff;">' . esc_html__( 'Check the security checklist', 'woocommerce-for-japan' ) . '</a>';
+		echo '<br />';
+		echo '<strong style="color:#fff;margin-top: 15px;display: inline-block;">';
+		esc_html_e( '[Introducing servers that comply with credit card guidelines]', 'woocommerce-for-japan' );
+		echo '</strong>';
+		echo '<br />';
+		echo '<a href="https://wc4jp-pro.work/product/softstepec-for-pressable/?utm_source=jp4wc&utm_medium=plugin&utm_campaign=' . esc_html( $messages[ $random_key ]['link'] ) . '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; border: 2px solid #3498db; border-radius: 12px; text-decoration: none;color:#fff; font-weight:bold;margin: 15px 0 5px;">';
+		echo esc_html( $messages[ $random_key ]['text'] );
+		echo '</a>';
 		?>
 			</p>
 		</div>
