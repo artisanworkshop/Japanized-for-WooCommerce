@@ -74,13 +74,14 @@ class JP4WC_Install {
 	 * Create cron jobs (clear them first).
 	 */
 	private static function create_cron_jobs() {
-		wp_clear_scheduled_hook( 'jp4wc_tracker_send_event' );
-		/**
-		 * How frequent to schedule the tracker send event.
-		 *
-		 * @since 2.6.0
-		 */
-		wp_schedule_event( time() + 10, apply_filters( 'jp4wc_tracker_event_recurrence', 'weekly' ), 'jp4wc_tracker_send_event' );
+		if ( ! wp_next_scheduled( 'jp4wc_tracker_send_event' ) ) {
+			/**
+			 * How frequent to schedule the tracker send event.
+			 *
+			 * @since 2.6.0
+			 */
+			wp_schedule_event( time() + 10, apply_filters( 'jp4wc_tracker_event_recurrence', 'weekly' ), 'jp4wc_tracker_send_event' );
+		}
 	}
 
 	/**
@@ -88,8 +89,10 @@ class JP4WC_Install {
 	 */
 	private static function update_jp4wc_version() {
 		update_option( 'jp4wc_version', JP4WC_VERSION );
-		if ( class_exists( 'JP4WC_Usage_Tracking' ) ) {
-			JP4WC_Usage_Tracking::jp4wc_send_tracking_data( true );
+		if ( class_exists( 'JP4WC_Usage_Tracking' ) || ! get_option( 'wc4jp-tracking' ) ) {
+			if ( ! wp_next_scheduled( 'jp4wc_tracker_send_event' ) ) {
+				JP4WC_Usage_Tracking::jp4wc_send_tracking_data( true );
+			}
 		}
 	}
 }
