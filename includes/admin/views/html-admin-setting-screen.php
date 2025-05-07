@@ -37,6 +37,27 @@ if ( ! isset( $current_title[ $current_tab ] ) ) {
 				?>
 				</h3>
 				<div class="inside">
+					<h4 class="inner"><?php esc_html_e( 'For those who are having trouble with WooCommerce', 'woocommerce-for-japan' ); ?></h4>
+					<p class="inner"><?php esc_html_e( 'We are currently offering a 15-minute free Zoom consultation. A professional will check your current situation and propose the best course of action.', 'woocommerce-for-japan' ); ?><br/><br/>
+					<!-- Google Calendar Appointment Scheduling begin -->
+					<link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
+					<script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
+					<script>
+(function() {
+	var target = document.currentScript;
+	window.addEventListener('load', function() {
+	calendar.schedulingButton.load({
+		url: 'https://calendar.google.com/calendar/appointments/AcZssZ3mnRQcAL8LU9tPWptKCm05Zge58Oy2jffVIIQ=?gv=true',
+		color: '#039BE5',
+		label: "15\u5206\u7121\u6599 Zoom \u76F8\u8AC7\u306B\u7533\u3057\u8FBC\u3080",
+		target,
+	});
+	});
+})();
+					</script>
+					<!-- end Google Calendar Appointment Scheduling -->
+					</p>
+					<hr />
 					<?php $this->jp4wc_plugin->jp4wc_pro_notice( 'https://wc4jp-pro.work/' ); ?>
 					<hr />
 					<h4 class="inner"><?php esc_html_e( 'Security measures for WooCommerce', 'woocommerce-for-japan' ); ?></h4>
