@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 5.0.0
 Tested up to: 6.8
-Stable tag: 2.6.40
+Stable tag: 2.6.42
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,7 +58,7 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.6.41 - 2025-05-07 =
+= 2.6.42 - 2025-05-07 =
 * Fixed - Cross Site Request Forgery (CSRF) vulnerability.
 
 = 2.6.40 - 2025-04-28 =
