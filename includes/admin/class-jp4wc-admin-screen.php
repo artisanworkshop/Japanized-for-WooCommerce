@@ -557,8 +557,7 @@ class JP4WC_Admin_Screen {
 			'jp4wc_informations',
 			'jp4wc_services'
 		);
-
-		if ( isset( $_POST['_wpnonce'] ) && isset( $_GET['page'] ) && 'wc4jp-options' === $_GET['page'] ) {
+		if ( isset( $_POST['_wpnonce'] ) && isset( $_POST['option_page'] ) && wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ), sanitize_key( $_POST['option_page'] ) . '-options' ) && isset( $_GET['page'] ) && 'wc4jp-options' === $_GET['page'] ) {
 			if ( ( isset( $_GET['tab'] ) && 'setting' === $_GET['tab'] ) || ! isset( $_GET['tab'] ) ) {
 				// Save general setting.
 				$add_methods = array(
@@ -593,8 +592,9 @@ class JP4WC_Admin_Screen {
 				);
 				foreach ( $payment_methods as $payment_method ) {
 					$woocommerce_settings = get_option( 'woocommerce_' . $payment_method . '_settings' );
-					if ( isset( $_POST[ $payment_method ] ) && $_POST[ $payment_method ] ) {
-						update_option( $this->prefix . $payment_method, $_POST[ $payment_method ] );
+					if ( isset( $_POST[ $payment_method ] ) && ! empty( $_POST[ $payment_method ] ) ) {
+						$payment_value = sanitize_text_field( wp_unslash( $_POST[ $payment_method ] ) );
+						update_option( $this->prefix . $payment_method, $payment_value );
 						if ( isset( $woocommerce_settings ) && isset( $woocommerce_settings['enabled'] ) ) {
 							$woocommerce_settings['enabled'] = 'yes';
 							update_option( 'woocommerce_' . $payment_method . '_settings', $woocommerce_settings );
@@ -638,10 +638,10 @@ class JP4WC_Admin_Screen {
 				$this->jp4wc_save_methods( $add_methods );
 				// Save timezones setting.
 				$time_zones = array();
-				if ( isset( $_POST['start_time'] ) ) {
+				if ( isset( $_POST['start_time'] ) && isset( $_POST['end_time'] ) ) {
 
-					$start_times = array_map( 'wc_clean', $_POST['start_time'] );
-					$end_times   = array_map( 'wc_clean', $_POST['end_time'] );
+					$start_times = array_map( 'wc_clean', wp_unslash( $_POST['start_time'] ) );
+					$end_times   = array_map( 'wc_clean', wp_unslash( $_POST['end_time'] ) );
 
 					foreach ( $start_times as $i => $start_time ) {
 						if ( ! isset( $start_times[ $i ] ) ) {
@@ -732,11 +732,14 @@ class JP4WC_Admin_Screen {
 	 */
 	public function jp4wc_save_methods( $add_methods ) {
 		foreach ( $add_methods as $add_method ) {
-			do_action( 'jp4wc_save_methods_' . $add_method, $_POST[ $add_method ] );
-			if ( isset( $_POST[ $add_method ] ) && $_POST[ $add_method ] ) {
-				update_option( $this->prefix . $add_method, $_POST[ $add_method ] );
-			} elseif ( isset( $_POST[ $add_method ] ) && '0' === $_POST[ $add_method ] ) {
-				update_option( $this->prefix . $add_method, '0' );
+			if ( isset( $_POST[ $add_method ] ) ) {
+				$post_add_method = sanitize_text_field( wp_unslash( $_POST[ $add_method ] ) );
+				if ( $post_add_method ) {
+					update_option( $this->prefix . $add_method, $post_add_method );
+					do_action( 'jp4wc_save_methods_' . $add_method, $post_add_method );
+				} elseif ( '0' === $post_add_method ) {
+					update_option( $this->prefix . $add_method, '0' );
+				}
 			} else {
 				update_option( $this->prefix . $add_method, '' );
 			}

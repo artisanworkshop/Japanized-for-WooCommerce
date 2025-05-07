@@ -58,6 +58,9 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
+= 2.6.41 - 2025-05-07 =
+* Fixed - Cross Site Request Forgery (CSRF) vulnerability.
+
 = 2.6.40 - 2025-04-28 =
 * Fixed - Class JP4WC_Usage_Tracking Bugs
 * Updated - Updated warning text.
