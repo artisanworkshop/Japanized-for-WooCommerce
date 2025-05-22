@@ -289,8 +289,8 @@ class JP4WC_Address_Fields {
 	 */
 	public function jp4wc_billing_address( $fields, $args ) {
 		$order = wc_get_order( $args->get_id() );
-		if ( empty( $order ) ) {
-			return;
+		if ( isset( $_GET['preview_woocommerce_mail'] ) || empty( $order ) ) {
+			return $fields;
 		}
 		$fields['yomigana_first_name'] = $order->get_meta( '_billing_yomigana_first_name', true );
 		$fields['yomigana_last_name']  = $order->get_meta( '_billing_yomigana_last_name', true );
@@ -314,7 +314,11 @@ class JP4WC_Address_Fields {
 	 */
 	public function jp4wc_shipping_address( $fields, $args ) {
 		if ( isset( $fields['first_name'] ) ) {
-			$order                         = wc_get_order( $args->get_id() );
+			$order = wc_get_order( $args->get_id() );
+			if ( isset( $_GET['preview_woocommerce_mail'] ) || empty( $order ) ) {
+				return $fields;
+			}
+
 			$fields['yomigana_first_name'] = $order->get_meta( '_shipping_yomigana_first_name', true );
 			$fields['yomigana_last_name']  = $order->get_meta( '_shipping_yomigana_last_name', true );
 			$fields['phone']               = $order->get_shipping_phone();
@@ -351,7 +355,12 @@ class JP4WC_Address_Fields {
 	 * @return array The stored address after filter.
 	 */
 	public function jp4wc_get_order_address( $address, $type, $args ) {
+		if ( empty( $args ) ) {
+			return $address;
+		}
+
 		$order_id = $args->get_id();
+
 		if ( 'billing' === $type ) {
 			$address['yomigana_first_name'] = $args->get_meta( '_billing_yomigana_first_name', true );
 			$address['yomigana_last_name']  = $args->get_meta( '_billing_yomigana_last_name', true );
