@@ -62,6 +62,11 @@ class JP4WC_Address_Fields {
 
 		// Remove checkout fields for PayPal cart checkout.
 		add_filter( 'woocommerce_default_address_fields', array( $this, 'remove_checkout_fields_for_paypal' ) );
+
+		add_filter( 'woocommerce_email_preview_dummy_order', array( $this, 'jp4wc_email_preview_dummy_order' ), 10 );
+		add_filter( 'woocommerce_email_preview_dummy_address', array( $this, 'jp4wc_email_preview_dummy_address' ), 10 );
+		add_filter( 'woocommerce_email_preview_dummy_product', array( $this, 'jp4wc_email_preview_dummy_product' ), 10 );
+		add_filter( 'woocommerce_email_preview_dummy_product_variation', array( $this, 'jp4wc_email_preview_dummy_product_variation' ), 10 );
 	}
 
 	/**
@@ -569,6 +574,66 @@ class JP4WC_Address_Fields {
 			$fields['yomigana_first_name']['required'] = false;
 		}
 		return $fields;
+	}
+
+	/**
+	 * Modifies the dummy order for email previews to use JPY currency
+	 *
+	 * @since 2.6.43
+	 * @param WC_Order $order The order object to modify.
+	 * @return WC_Order The modified order object.
+	 */
+	public function jp4wc_email_preview_dummy_order( $order ) {
+		$order->set_currency( 'JPY' );
+		$order->set_discount_total( 1000 );
+		$order->set_shipping_total( 500 );
+		$order->set_total( 3000 );
+		return $order;
+	}
+
+	/**
+	 * Modifies the dummy address for email previews with Japanese sample data
+	 *
+	 * @since 2.6.43
+	 * @param array $address    The address data to modify.
+	 * @return array The modified address with Japanese sample data.
+	 */
+	public function jp4wc_email_preview_dummy_address( $address ) {
+		$address['first_name'] = __( 'Taro', 'woocommerce-for-japan' );
+		$address['last_name']  = __( 'Yamada', 'woocommerce-for-japan' );
+		$address['company']    = __( 'Company', 'woocommerce-for-japan' );
+		$address['phone']      = '090-1234-5678';
+		$address['email']      = 'yamada.taro@company.com';
+		$address['address_1']  = __( '2-1 Dougenzaka', 'woocommerce-for-japan' );
+		$address['city']       = __( 'Shibuya Ku', 'woocommerce-for-japan' );
+		$address['postcode']   = '150-0002';
+		$address['country']    = 'JP';
+		$address['state']      = 'JP13';
+		return $address;
+	}
+
+	/**
+	 * Modifies the dummy product for email previews with Japanese pricing
+	 *
+	 * @since 2.6.43
+	 * @param WC_Product $product The product object to modify.
+	 * @return WC_Product The modified product object.
+	 */
+	public function jp4wc_email_preview_dummy_product( $product ) {
+		$product->set_price( 1000 );
+		return $product;
+	}
+
+	/**
+	 * Modifies the dummy product variation for email previews with Japanese pricing
+	 *
+	 * @since 2.6.43
+	 * @param WC_Product_Variation $product The product variation object to modify.
+	 * @return WC_Product_Variation The modified product variation object.
+	 */
+	public function jp4wc_email_preview_dummy_product_variation( $product ) {
+		$product->set_price( 1500 );
+		return $product;
 	}
 }
 // Address Fields Class load.
