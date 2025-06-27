@@ -30,3 +30,6 @@ Thumbs.db
 # Ignore all log files except for .htaccess
 /logs/*
 !/logs/.htaccess
+
+# Ignore all map files
+*.map
