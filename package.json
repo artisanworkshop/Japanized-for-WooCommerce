@@ -12,7 +12,7 @@
 	"devDependencies": {
 		"@woocommerce/dependency-extraction-webpack-plugin": "^3.1.0",
 		"@woocommerce/eslint-plugin": "^2.3.0",
-		"@wordpress/scripts": "^30.0.2",
+		"@wordpress/scripts": "^30.19.0",
 		"cross-env": "7.0.3"
 	},
 	"scripts": {
@@ -28,7 +28,7 @@
 		"format": "wp-scripts format",
 		"make-pot": "wp-env run cli --env-cwd=wp-content/plugins/woocommerce-for-japan/ wp i18n make-pot ./ i18n/woocommerce-for-japan.pot --ignore-domain",
 		"make-json": "wp-env run cli --env-cwd=wp-content/plugins/woocommerce-for-japan/ wp i18n make-json i18n --no-purge"
-		},
+	},
 	"dependencies": {
 		"sass-loader": "^16.0.2"
 	}

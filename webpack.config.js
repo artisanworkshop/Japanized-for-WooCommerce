@@ -29,6 +29,9 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		'admin/security': '/src/jp4wc/admin/security/index.js',
+		'frontend/blocks/atstore': '/src/jp4wc/frontend/blocks/atstore/index.js',
+		'frontend/blocks/bank-jp': '/src/jp4wc/frontend/blocks/bank-jp/index.js',
+		'frontend/blocks/postofficebank': '/src/jp4wc/frontend/blocks/postofficebank/index.js',
 	},
 	output: {
 		path: path.resolve( __dirname, 'assets/js' ),
