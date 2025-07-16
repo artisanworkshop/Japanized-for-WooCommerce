@@ -45,9 +45,9 @@ class JP4WC_Check_Security {
 			array(
 				'id'         => 'jp4wc-security-check',
 				'title'      => __( 'Security Check List', 'woocommerce-for-japan' ),
+				'page_title' => __( 'Security Check List', 'woocommerce-for-japan' ),
 				'parent'     => 'woocommerce',
 				'path'       => '/jp4wc-security-check',
-				'position'   => 200,
 				'capability' => 'manage_woocommerce',
 			)
 		);
@@ -77,7 +77,7 @@ class JP4WC_Check_Security {
 			return;
 		}
 
-		$asset_file = JP4WC_ABSPATH . 'assets/js/admin/security.asset.php';
+		$asset_file = JP4WC_ABSPATH . 'assets/js/build/admin/security.asset.php';
 		if ( ! file_exists( $asset_file ) ) {
 			return;
 		}
@@ -87,7 +87,7 @@ class JP4WC_Check_Security {
 
 		wp_enqueue_script(
 			$handle,
-			JP4WC_URL_PATH . 'assets/js/admin/security.js',
+			JP4WC_URL_PATH . 'assets/js/build/admin/security.js',
 			$asset['dependencies'],
 			$asset['version'],
 			array(
@@ -97,7 +97,7 @@ class JP4WC_Check_Security {
 
 		wp_enqueue_style(
 			'jp4wc-security-check-style',
-			JP4WC_URL_PATH . 'assets/js/admin/security.css',
+			JP4WC_URL_PATH . 'assets/js/build/admin/security.css',
 			array_filter(
 				$asset['dependencies'],
 				function ( $style ) {
@@ -365,7 +365,7 @@ class JP4WC_Check_Security {
 			$active_modules = Jetpack::get_active_modules();
 
 			// Check if the Protect module is enabled.
-			if ( in_array( 'protect', $active_modules ) ) {
+			if ( in_array( 'protect', $active_modules, true ) ) {
 				return true;
 			}
 		}
@@ -557,10 +557,9 @@ class JP4WC_Check_Security {
 	/**
 	 * Initiates the security scan process.
 	 *
-	 * @param WP_REST_Request $request The REST request object.
 	 * @return WP_REST_Response Response object containing scan initialization status.
 	 */
-	public function jp4wc_ms_start_scan_func( WP_REST_Request $request ) {
+	public function jp4wc_ms_start_scan_func() {
 		$directory = ABSPATH . 'wp-content/';
 		$scanner   = new JP4WC_Malware_Check( $directory );
 		$files     = $scanner->get_file_list();
