@@ -28,13 +28,14 @@ const requestToHandle = (request) => {
 module.exports = {
 	...defaultConfig,
 	entry: {
-		'admin/security': '/src/jp4wc/admin/security/index.js',
-		'frontend/blocks/atstore': '/src/jp4wc/frontend/blocks/atstore/index.js',
-		'frontend/blocks/bank-jp': '/src/jp4wc/frontend/blocks/bank-jp/index.js',
-		'frontend/blocks/postofficebank': '/src/jp4wc/frontend/blocks/postofficebank/index.js',
+		'admin/security': '/src/js/jp4wc/admin/security/index.js',
+//		'admin/settings': '/src/js/jp4wc/admin/settings/index.js',
+		'frontend/blocks/atstore': '/src/js/jp4wc/frontend/blocks/atstore/index.js',
+		'frontend/blocks/bank-jp': '/src/js/jp4wc/frontend/blocks/bank-jp/index.js',
+		'frontend/blocks/postofficebank': '/src/js/jp4wc/frontend/blocks/postofficebank/index.js',
 	},
 	output: {
-		path: path.resolve( __dirname, 'assets/js' ),
+		path: path.resolve( __dirname, 'assets/js/build' ),
 		filename: '[name].js',
 	},
 	plugins: [

@@ -185,7 +185,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 
 			// Payment Gateway For COD subscriptions.
 			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-gateway-cod2.php';
-			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-addons-gateway-cod.php';
+			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-addons-gateway-cod2.php';
 
 			// Address Setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-address-fields.php';

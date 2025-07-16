@@ -53,8 +53,8 @@ final class WC_Payments_PostOfficeBank_Blocks_Support extends AbstractPaymentMet
 	 * @return array
 	 */
 	public function get_payment_method_script_handles() {
-		$script_path       = '/assets/js/frontend/blocks/postofficebank.js';
-		$script_asset_path = JP4WC_ABSPATH . 'assets/js/frontend/blocks/postofficebank.asset.php';
+		$script_path       = '/assets/js/build/frontend/blocks/postofficebank.js';
+		$script_asset_path = JP4WC_ABSPATH . 'assets/js/build/frontend/blocks/postofficebank.asset.php';
 		$script_asset      = file_exists( $script_asset_path )
 			? require $script_asset_path
 			: array(

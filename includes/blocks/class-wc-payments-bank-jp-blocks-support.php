@@ -54,8 +54,8 @@ final class WC_Payments_BANK_JP_Blocks_Support extends AbstractPaymentMethodType
 	 * @return array
 	 */
 	public function get_payment_method_script_handles() {
-		$script_path       = '/assets/js/frontend/blocks/bank-jp.js';
-		$script_asset_path = JP4WC_ABSPATH . 'assets/js/frontend/blocks/bank-jp.asset.php';
+		$script_path       = '/assets/js/build/frontend/blocks/bank-jp.js';
+		$script_asset_path = JP4WC_ABSPATH . 'assets/js/build/frontend/blocks/bank-jp.asset.php';
 		$script_asset      = file_exists( $script_asset_path )
 			? require $script_asset_path
 			: array(
