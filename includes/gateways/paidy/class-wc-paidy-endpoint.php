@@ -4,88 +4,192 @@
  *
  * @package WooCommerce\Gateways
  */
-use \ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
 
-add_action( 'rest_api_init', function () {
-    register_rest_route( 'paidy/v1', '/order/', array(
-        'methods' => 'POST',
-        'callback' => 'paidy_check_webhook',
-        'permission_callback' => '__return_true',
-    ) );
-} );
+use ArtisanWorkshop\PluginFramework\v2_0_13 as Framework;
 
 /**
- * Paidy Webhook response.
- * Version: 1.1.3
- *
- * @param object $data post data.
- * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
+ * WC_Paidy_Endpoint class.
  */
-function paidy_check_webhook( $data ){
-    $jp4wc_framework =new Framework\JP4WC_Plugin();
-    $paidy = new WC_Gateway_Paidy();
-    $debug = $paidy->debug;
-    $body_data = (array)$data->get_body();
-    $main_data = json_decode($body_data[0], true);
-    if ( empty( $data ) ) {
-        $message = 'no_data';
-        $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
+class WC_Paidy_Endpoint {
 
-        return new WP_Error( 'no_data', 'Invalid author', array( 'status' => 404 ) );
-    }elseif( isset( $main_data['payment_id'] ) && isset( $main_data['order_ref'] )){
-        if(is_numeric($main_data['order_ref'])){
-            // Debug
-	        if($main_data['payment_id'] == 'pay_0000000000000001'){
-		        $message = 'This notification is a test request from Paidy.'. "\n" . $jp4wc_framework->jp4wc_array_to_message($main_data);
-		        $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
-		        return new WP_REST_Response($main_data, 200);
-	        }else{
-		        $message = 'Exist [payment_id] and [order_ref]'. "\n" . $jp4wc_framework->jp4wc_array_to_message($main_data);
-		        $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
-	        }
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		// Rest API to receive payment notifications from Paidy.
+		add_action( 'rest_api_init', array( $this, 'paidy_register_routes' ) );
+		// WebHook to get data from paidy.artws.info.
+		add_action( 'rest_api_init', array( $this, 'paidy_check_regist_webhook' ) );
+	}
 
-            $order = wc_get_order( $main_data['order_ref'] );
-	        if($order === false){
-		        $message = 'The order with this order number does not exist in the store.'. "\n" . 'Order# :' . $main_data['order_ref'];
-		        $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
-		        return new WP_REST_Response($main_data, 200);
-	        }
-            $status = $order->get_status();
+	/**
+	 * Callback. Rest API to receive payment notifications from Paidy.
+	 */
+	public function paidy_register_routes() {
+		// POST /wp-json/paidy/v1/order .
+		register_rest_route(
+			'paidy/v1',
+			'/order',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'paidy_check_webhook' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+	}
 
-            if( $main_data["status"] == 'authorize_success' && $status == 'pending' || $status == 'cancelled' ){
-                // Reduce stock levels
-                wc_reduce_stock_levels($main_data['order_ref']);
-                if(isset($main_data['payment_id'])){
-                    $order->payment_complete($main_data['payment_id']);
-                }else{
-                    $order->payment_complete();
-                }
-                $order->add_order_note(sprintf(__('It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan'), __('authorization', 'woocommerce-for-japan')));
-            }elseif( $main_data["status"] == 'authorize_success' && $status == 'processing' ){
-                $order->add_order_note( __('This order status is processing, this site received authorize_success from the Paidy webhook.', 'woocommerce-for-japan') );
-            }elseif( $main_data["status"] == 'capture_success' && $status == 'processing' ){
-                $order->add_order_note( sprintf( __( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ), __( 'completed', 'woocommerce-for-japan' ) ) );
-            }elseif( $main_data["status"] == 'close_success' && $status == 'cancelled' ){
-                $order->add_order_note( sprintf( __( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ), __( 'cancelled', 'woocommerce-for-japan' ) ) );
-            }elseif( $main_data["status"] == 'close_success' && $status == 'completed' ){
-                $order->add_order_note( sprintf( __( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ), __( 'close', 'woocommerce-for-japan' ) ) );
-            }elseif( $main_data["status"] == 'refund_success' && $status == 'refunded' ){
-                $order->add_order_note( sprintf( __( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ), __( 'refunded', 'woocommerce-for-japan' ) ) );
-            }else{
-                $order->add_order_note( sprintf( __( 'It failed to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ), $main_data["status"] ) );
-            }
-            return new WP_REST_Response($main_data, 200);
-        }else{
-            // Debug
-            $message = 'Payment_id exist but order_id. Payment_id : '.$main_data["payment_id"] . '; Status : ' . $main_data["status"];
-            $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
-            return new WP_Error( 'no_order_id', $message , array( 'status' => 404 ) );
-        }
-    }else{
-        // Debug
-        $message = '[no_payment_id]'. $jp4wc_framework->jp4wc_array_to_message($main_data);
-        $jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc');
-        return new WP_Error( 'no_payment_id', 'Invalid author', array( 'status' => 404 ) );
-    }
+	/**
+	 * Paidy Webhook response.
+	 * Version: 1.4.6
+	 *
+	 * @param object $data post data.
+	 * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
+	 */
+	public function paidy_check_webhook( $data ) {
+		$jp4wc_framework = new Framework\JP4WC_Framework();
+		$paidy           = new WC_Gateway_Paidy();
+		$debug           = $paidy->debug;
+		$body_data       = (array) $data->get_body();
+		$main_data       = json_decode( $body_data[0], true );
+		$notice_message  = __( 'Paidy Webhook received. ', 'woocommerce-for-japan' );
+		if ( empty( $data ) ) {
+			$message = $notice_message . 'no_data';
+			$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+
+			return new WP_Error( 'no_data', 'Invalid author', array( 'status' => 404 ) );
+		} elseif ( isset( $main_data['payment_id'] ) && isset( $main_data['order_ref'] ) ) {
+			if ( is_numeric( $main_data['order_ref'] ) ) {
+				// Debug.
+				if ( 'pay_0000000000000001' === $main_data['payment_id'] ) {
+					$message = $notice_message . __( 'This notification is a test request from Paidy.', 'woocommerce-for-japan' ) . "\n" . $jp4wc_framework->jp4wc_array_to_message( $main_data );
+					$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+					return new WP_REST_Response( $main_data, 200 );
+				} else {
+					$message = $notice_message . __( 'Exist [payment_id] and [order_ref]', 'woocommerce-for-japan' ) . "\n" . $jp4wc_framework->jp4wc_array_to_message( $main_data );
+					$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+				}
+
+				$order = wc_get_order( $main_data['order_ref'] );
+				if ( false === $order ) {
+					$message = $notice_message . __( 'The order with this order number does not exist in the store.', 'woocommerce-for-japan' ) . "\n" . 'Order# :' . $main_data['order_ref'];
+					$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+					return new WP_REST_Response( $main_data, 200 );
+				}
+				$status = $order->get_status();
+
+				$enable_authorize_success_statuses = apply_filters( 'paidy_endpoint_enable_authorize_statuses', array( 'pending', 'cancelled' ), $order );
+
+				if ( 'authorize_success' === $main_data['status'] && in_array( $status, $enable_authorize_success_statuses, true ) ) {
+					// Reduce stock levels.
+					wc_reduce_stock_levels( $main_data['order_ref'] );
+					if ( isset( $main_data['payment_id'] ) ) {
+						$order->payment_complete( $main_data['payment_id'] );
+					} else {
+						$order->payment_complete();
+					}
+					$order->add_order_note(
+						// Authorization status.
+						sprintf(
+							// translators: %s: status of the order.
+							__( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ),
+							__( 'authorization', 'woocommerce-for-japan' )
+						)
+					);
+				} elseif ( 'authorize_success' === $main_data['status'] && 'processing' === $status ) {
+					$order->add_order_note( __( 'This order status is processing, this site received authorize_success from the Paidy webhook.', 'woocommerce-for-japan' ) );
+				} elseif ( 'capture_success' === $main_data['status'] && 'completed' === $status ) {
+					$order->add_order_note(
+						// Completed status.
+						sprintf(
+							// translators: %s: status of the order.
+							__( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ),
+							__( 'completed', 'woocommerce-for-japan' )
+						)
+					);
+				} elseif ( 'close_success' === $main_data['status'] && 'cancelled' === $status ) {
+					$order->add_order_note(
+						// Cancelled status.
+						sprintf(
+							// translators: %s: status of the order.
+							__( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ),
+							__( 'cancelled', 'woocommerce-for-japan' )
+						)
+					);
+				} elseif ( 'close_success' === $main_data['status'] && 'completed' === $status ) {
+					$order->add_order_note(
+						// Close status.
+						sprintf(
+							// translators: %s: status of the order.
+							__( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ),
+							__( 'close', 'woocommerce-for-japan' )
+						)
+					);
+				} elseif ( 'refund_success' === $main_data['status'] && 'refunded' === $status ) {
+					$order->add_order_note(
+						// Refunded status.
+						sprintf(
+							// translators: %s: status of the order.
+							__( 'It succeeded to check the %s of the order in Paidy Webhook.', 'woocommerce-for-japan' ),
+							__( 'refunded', 'woocommerce-for-japan' )
+						)
+					);
+				} else {
+					// translators: %s: status of the order.
+					$order->add_order_note( sprintf( __( 'The system received a notification for order %s via Paidy Webhook.', 'woocommerce-for-japan' ), $main_data['status'] ) );
+				}
+				return new WP_REST_Response( $main_data, 200 );
+			} else {
+				// Debug.
+				$message = $notice_message . __( 'Payment_id exist but order_id. Payment_id : ', 'woocommerce-for-japan' ) . $main_data['payment_id'] . '; Status : ' . $main_data['status'];
+				$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+				return new WP_Error( 'no_order_id', $message, array( 'status' => 404 ) );
+			}
+		} else {
+			// Debug.
+			$message = '[no_payment_id]' . $jp4wc_framework->jp4wc_array_to_message( $main_data );
+			$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+			return new WP_Error( 'no_payment_id', 'Invalid author', array( 'status' => 404 ) );
+		}
+	}
+
+	/**
+	 * Callback. Register WebHook route to get data from paidy.artws.info.
+	 */
+	public function paidy_check_regist_webhook() {
+		// POST /wp-json/paidy/v1/check .
+		register_rest_route(
+			'paidy/v1',
+			'/check',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'paidy_regist_webhook' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+	}
+
+	/**
+	 * Paidy WebHook registration check.
+	 *
+	 * @param object $data Request data.
+	 * @return WP_REST_Response | WP_Error Response for the webhook registration check.
+	 */
+	public function paidy_regist_webhook( $data ) {
+		$jp4wc_framework = new Framework\JP4WC_Framework();
+		$paidy           = new WC_Gateway_Paidy();
+		$debug           = $paidy->debug;
+		$body_data       = (array) $data->get_body();
+		$main_data       = json_decode( $body_data[0], true );
+		if ( empty( $data ) ) {
+			return new WP_Error( 'no_data', 'Invalid author', array( 'status' => 404 ) );
+		} elseif ( isset( $main_data['webhook_url'] ) && isset( $main_data['status'] ) ) {
+			if ( 'success' === $main_data['status'] ) {
+				return new WP_REST_Response( $main_data, 200 );
+			} else {
+				return new WP_Error( 'no_webhook_url', 'Invalid author', array( 'status' => 404 ) );
+			}
+		} else {
+			return new WP_Error( 'no_webhook_url', 'Invalid author', array( 'status' => 404 ) );
+		}
+	}
 }
-

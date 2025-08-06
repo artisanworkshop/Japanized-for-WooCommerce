@@ -82,7 +82,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 	 */
 	public function enqueue_scripts_frontend() {
 		if ( ! is_checkout() || ! jp4wc_is_using_checkout_blocks() ) {
-			// return;
+			return;
 		}
 
 		$min = ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ? '.min' : '';

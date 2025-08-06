@@ -1,0 +1,156 @@
+div#adminmenuwrap, div#adminmenuback {
+    display: none;
+}
+#wpcontent{
+    margin-left: 0;
+    .woocommerce-layout__header {
+        width: 100%;
+    }
+}
+.wrap{
+    .woocommerce-layout__main{
+        width: 900px;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+  .paidy-on-boarding{
+    display: flex;
+    flex-wrap: wrap;
+    .paidy-on-boarding__img{
+      width: 50%;
+      img{
+        width: 100%;
+      }
+    }
+    .paidy-on-boarding__content{
+        width: 50%;
+        margin: auto;
+    }
+    ol {
+      li{
+        font-size: 1.2em;
+        margin-bottom: 10px;
+        text-align: left;
+      }
+      ul{
+        list-style: disc;
+        li{
+          font-size: 1.2em;
+          margin-bottom: 10px;
+          margin-left: 15px;
+        }
+      }
+    }
+    .paidy-heading{
+      width: 100%;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    div.paidy-save{
+      width: 100%;
+    }
+    .paidy-basic-info{
+      width: 80%;
+      margin: 0 10% 20px;
+      text-align: left;
+      label, legend{
+        font-size: 1.2em;
+      }
+      fieldset.components-radio-control{
+        margin-bottom: 10px;
+      }
+      .paidy-readonly-field{
+        padding: 10px;
+      }
+
+    }
+    .paidy-security-survey{
+      width: 80%;
+      margin: 0 10% 20px;
+      text-align: left;
+      label{
+        font-size: 1.2em;
+      }
+      ul{
+        list-style: disc;
+        li{
+          font-size: 1.2em;
+          margin-bottom: 10px;
+          margin-left: 30px;
+        }
+      }
+      .components-radio-control__group-wrapper {
+        display: flex;
+        flex-direction: row;
+        font-size: small;
+        justify-content: flex-start;
+        gap: 20px;
+        padding-bottom: 15px;
+      }
+      .components-radio-control__option {
+        display: flex;
+        align-items: left;
+        gap: 5px;
+      }
+      legend.components-base-control__label{
+        font-size: 1.2em;
+      }
+      .unauthorized_logins_message{
+        font-size: 1.2em;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+    }
+    .paidy-agreement-text{
+      text-align: left;
+      font-size: 1.2em;
+    }
+    .paidy-completed-message, .paidy-rejected-message, .paidy-approved-message, .paidy-setting-sandbox-message, .paidy-setting-completed-message{
+      margin: 20px auto;
+      font-size: 1.2em;
+      h3{
+        color: #E5258C;
+      }
+      ul.paidy-approved-list{
+        text-align: left;
+        width: 60%;
+        margin: 0 auto;
+      }
+      .paidy-enabled-button{
+        button.test-button{
+          margin-bottom: 20px;
+        }
+      }
+    }
+  .paidy-on-boarding_bottom{
+    text-align: left;
+  }
+  .paidy-approved-message{
+    .paidy-enabled-button{
+      button.test-button{
+        margin-bottom: 15px;
+      }
+    }
+  }
+  }
+  .paidy-on-boarding__description{
+    text-align: left;
+    p{
+      font-size:16px;
+    }
+    a{margin-left: 5px;}
+  }
+  button.paidy-button{
+    font-size:2em;
+    padding: 30px;
+    background: linear-gradient(90deg, #E5258C 0%, #863BD4 96.36%);
+    border-radius: 28px;
+  }
+.footer{
+    position: fixed;
+    padding: 8px;
+    bottom: 0;
+    background-color: #f0f0f1;
+  }
+}
+}
