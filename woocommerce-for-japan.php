@@ -177,7 +177,8 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 		$paidy_payment_method = new WC_Gateway_Paidy();
 		if ( get_option( 'paidy_do_activation_redirect', false ) ) {
 			$jp4wc_security_class = new JP4WC_Admin_Notices();
-			if ( 'yes' !== $paidy_payment_method->enabled && $jp4wc_security_class->has_orders_in_last_5_days() ) {
+			$first_installing     = get_option( 'jp4wc–first-installing', 'no' );
+			if ( 'yes' !== $paidy_payment_method->enabled && ( $jp4wc_security_class->has_orders_in_last_5_days() || 'yes' === $first_installing ) ) {
 				$paidy_payment_method->update_option( 'enabled', 'yes' );
 				// Check if the user is an admin and has the capability to manage options.
 				delete_option( 'paidy_do_activation_redirect' );

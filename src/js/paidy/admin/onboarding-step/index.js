@@ -46,7 +46,7 @@ export const OnBoardingStep = () => {
             <div className="paidy-on-boarding">
                 <div className="paidy-on-boarding__img">
                 <a href={paidyAdUrl} target="_blank" rel="noreferrer">
-                <img src="/wp-content/plugins/paidy-wc/assets/images/paidy_logo_w800.png" alt="Paidy" />
+                <img src="/wp-content/plugins/woocommerce-for-japan/assets/images/paidy_logo_w800.png" alt="Paidy" />
                 </a>
                 </div>
                 <div className="paidy-on-boarding__content">

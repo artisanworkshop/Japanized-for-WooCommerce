@@ -1523,7 +1523,7 @@ const OnBoardingStep = () => {
             target: "_blank",
             rel: "noreferrer",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("img", {
-              src: "/wp-content/plugins/paidy-wc/assets/images/paidy_logo_w800.png",
+              src: "/wp-content/plugins/woocommerce-for-japan/assets/images/paidy_logo_w800.png",
               alt: "Paidy"
             })
           })
