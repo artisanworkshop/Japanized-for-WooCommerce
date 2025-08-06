@@ -7,7 +7,7 @@
  * @author      ArtisanWorkshop
  */
 
-use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
+use ArtisanWorkshop\PluginFramework\v2_0_13 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,7 +50,7 @@ class JP4WC_Admin_Product_Meta {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->jp4wc_plugin = new Framework\JP4WC_Plugin();
+		$this->jp4wc_plugin = new Framework\JP4WC_Framework();
 		$this->prefix       = 'wc4jp-';
 		if ( class_exists( 'WC_Subscriptions' ) ) {
 			// Add subscription pricing fields on edit product page.

@@ -1,22 +1,30 @@
 <?php
 /**
  * Framework Name: Artisan Workshop FrameWork for WooCommerce
- * Framework Version : 2.0.12
+ * Framework Version : 2.0.13
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
  *
+ * @package JP4WC_Framework
  * @category JP4WC_Framework
  * @author Artisan Workshop
  */
 
-namespace ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12;
+namespace ArtisanWorkshop\PluginFramework\v2_0_13;
 
-use WP_Error;if ( ! defined( 'ABSPATH' ) ) {
+use WP_Error;
+
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\JP4WC_Plugin' ) ) :
-	class JP4WC_Plugin {
+if ( ! class_exists( '\\ArtisanWorkshop\\PluginFramework\\v2_0_13\\JP4WC_Framework' ) ) :
+	/**
+	 * Class JP4WC_Framework
+	 *
+	 * This class provides various utility functions for the JP4WC framework.
+	 */
+	class JP4WC_Framework {
 		/**
 		 * Text to be translated by the framework
 		 *
@@ -25,7 +33,7 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		public $text_array;
 
 		/**
-		 * allowed html tag setting.
+		 * Allowed html tag setting.
 		 *
 		 * @var array
 		 */
@@ -50,34 +58,35 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create checkbox input form to compliant Setting API.
+		 * Create checkbox input form to compliant Setting API.
 		 *
-		 * @param array setting args
-		 * @param string description
-		 * @param string option key
+		 * @param array  $args setting args.
+		 * @param string $description frontend description.
+		 * @param string $option_key option key.
+		 * @return mixed
 		 */
 		public function jp4wc_setting_input_checkbox( $args, $description, $option_key ) {
 			$options = get_option( $option_key );
 			?>
 			<label for="<?php echo esc_attr( $args['label_for'] ); ?>">
 			<input type="checkbox" id="woocommerce_input_<?php echo esc_attr( $args['slug'] ); ?>" name="wc_sbp_options[<?php echo esc_attr( $args['slug'] ); ?>]" value="1" 
-																	<?php
-																	if ( isset( $options[ $args['slug'] ] ) ) {
-																		checked( $options[ $args['slug'] ], 1 );}
-																	?>
-																	>
+			<?php
+			if ( isset( $options[ $args['slug'] ] ) ) {
+				checked( $options[ $args['slug'] ], 1 ); }
+			?>
+			>
 			<?php
 			if ( isset( $description ) ) {
 				echo esc_attr( $description );}
 			echo '</label>';
 		}
 		/**
-		 * create input text form to compliant Setting API.
+		 * Create input text form to compliant Setting API.
 		 *
-		 * @param array args
-		 * @param string description
-		 * @param string option key
-		 * @param string default value
+		 * @param array  $args setting args.
+		 * @param string $description frontend description.
+		 * @param string $option_key option key.
+		 * @param string $default_value default value.
 		 */
 		public function jp4wc_setting_input_text( $args, $description, $option_key, $default_value = null ) {
 			$options = get_option( $option_key );
@@ -93,19 +102,19 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create option setting.
+		 * Create option setting.
 		 *
-		 * @param string slug
-		 * @param string plugin prefix
-		 * @param string array_name
-		 * @param string ENCRYPT password
+		 * @param string      $slug slug.
+		 * @param string      $prefix DB's prefix.
+		 * @param string|null $array_name setting array name.
+		 * @param string      $password ENCRYPT password.
 		 *
 		 * @return array
 		 */
 		public function jp4wc_option_setting( $slug, $prefix, $array_name = null, $password = null ) {
 			$jp4wc_options_setting = null;
 			$jp4wc_meta_name       = $prefix . $slug;
-			if ( get_option( $jp4wc_meta_name ) || '0' === get_option( $jp4wc_meta_name ) ) {
+			if ( get_option( $jp4wc_meta_name ) ) {
 				if ( isset( $password ) ) {
 					$jp4wc_options_setting = self::decrypt( get_option( $jp4wc_meta_name ), $password );
 				} else {
@@ -123,22 +132,17 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * crypt AES 256
+		 * Change crypt AES 256
 		 *
-		 * @param string data
-		 * @param string password
+		 * @param string $set_data encrypted data.
+		 * @param string $password password.
 		 * @return mixed encrypted data
 		 */
 		public function encrypt( $set_data, $password ) {
-			// Set a random salt
-			$salt   = openssl_random_pseudo_bytes( 16 );
-			$salted = '';
-			$dx     = '';
-			// Salt the key(32) and iv(16) = 48
-			while ( strlen( $salted ) < 48 ) {
-				$dx      = hash( 'sha256', $dx . $password . $salt, true );
-				$salted .= $dx;
-			}
+			// Set a random salt.
+			$salt           = openssl_random_pseudo_bytes( 16 );
+			$dx             = hash( 'sha256', $dx . $password . $salt, true );
+			$salted         = $dx;
 			$key            = substr( $salted, 0, 32 );
 			$iv             = substr( $salted, 32, 16 );
 			$encrypted_data = openssl_encrypt( $set_data, 'AES-256-CBC', $key, 0, $iv );
@@ -148,15 +152,15 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		/**
 		 * Complex: AES 256
 		 *
-		 * @param string Encrypted BASE64 character string
-		 * @param string password
+		 * @param string $set_data Encrypted BASE64 character string.
+		 * @param string $password password.
 		 * @return string
 		 */
 		public function decrypt( $set_data, $password ) {
 			$data    = base64_decode( $set_data );
 			$salt    = substr( $data, 0, 16 );
 			$ct      = substr( $data, 16 );
-			$rounds  = 3; // depends on key length
+			$rounds  = 3; // depends on key length.
 			$data00  = $password . $salt;
 			$hash    = array();
 			$hash[0] = hash( 'sha256', $data00, true );
@@ -172,12 +176,14 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 
 
 		/**
-		 * create checkbox input form.
+		 * Create checkbox input form.
 		 *
-		 * @param string slug
-		 * @param string description
-		 * @param string prefix
-		 * @param string array name
+		 * @param string $slug slug.
+		 * @param string $description frontend description.
+		 * @param string $prefix DB's prefix.
+		 * @param string $array_name setting array name.
+		 *
+		 * @return mixed
 		 */
 		public function jp4wc_input_checkbox( $slug, $description, $prefix, $array_name = null ) {
 			?>
@@ -195,13 +201,15 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 			}
 		}
 		/**
-		 * create input select form.
+		 * Create input select form.
 		 *
-		 * @param string slug
-		 * @param string description
-		 * @param array  select options
-		 * @param string prefix
-		 * @param string array name
+		 * @param string      $slug slug.
+		 * @param string      $description frontend description.
+		 * @param array       $select_options select options.
+		 * @param string      $prefix DB's prefix.
+		 * @param string|null $array_name setting array name.
+		 *
+		 * @return mixed
 		 */
 		public function jp4wc_input_select( $slug, $description, $select_options, $prefix, $array_name = null ) {
 			?>
@@ -211,10 +219,10 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 				echo '<select id="woocommerce_input_' . esc_attr( $slug ) . '" name="' . esc_attr( $slug ) . '">';
 				foreach ( $select_options as $key => $value ) {
 					$checked = '';
-					if ( $jp4wc_options_setting == $key ) {
+					if ( $jp4wc_options_setting === $key ) {
 						$checked = ' selected="selected"';
 					}
-					echo '<option value="' . esc_attr( $key ) . '"' . $checked . '>' . esc_attr( $value ) . '</option>';
+					echo '<option value="' . esc_attr( $key ) . '"' . esc_attr( $checked ) . '>' . esc_attr( $value ) . '</option>';
 				}
 				echo '</select><br />';
 				echo wp_kses( $description, $this->allowed_html );
@@ -224,15 +232,17 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 			<?php
 		}
 		/**
-		 * create input text form.
+		 * Create input text form.
 		 *
-		 * @param string slug
-		 * @param string description
-		 * @param number num
-		 * @param string default value
-		 * @param string prefix
-		 * @param string array name
-		 * @param string password
+		 * @param string      $slug slug.
+		 * @param string      $description frontend description.
+		 * @param number      $num input size.
+		 * @param string      $default_value default value.
+		 * @param string      $prefix DB's prefix.
+		 * @param string|null $array_name setting array name.
+		 * @param string|null $password ENCRYPT password.
+		 *
+		 * @return mixed
 		 */
 		public function jp4wc_input_text( $slug, $description, $num, $default_value, $prefix, $array_name = null, $password = null ) {
 			$jp4wc_options_setting = $this->jp4wc_option_setting( $slug, $prefix, $array_name, $password );
@@ -246,15 +256,16 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 			</label>
 			<?php
 		}
+
 		/**
-		 * create input textarea form.
+		 * Create input textarea form.
 		 *
-		 * @param string slug
-		 * @param string description
-		 * @param string default value
-		 * @param string prefix
-		 * @param array input size array
-		 * @param string array name
+		 * @param string $slug slug.
+		 * @param string $description frontend description.
+		 * @param string $default_value default value.
+		 * @param string $prefix DB's prefix.
+		 * @param array  $size_array input size array.
+		 * @param string $array_name setting array name.
 		 */
 		public function jp4wc_input_textarea( $slug, $description, $default_value, $prefix, $size_array = array(
 			'cols' => 55,
@@ -263,7 +274,7 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 			$jp4wc_options_setting = $this->jp4wc_option_setting( $slug, $prefix, $array_name );
 			$size_text             = '';
 			foreach ( $size_array as $key => $value ) {
-				$size_text .= $key . '=' . $value . ' ';
+				$size_text .= $key . '="' . $value . '" ';
 			}
 			if ( $jp4wc_options_setting ) {
 				$default_value = $jp4wc_options_setting;
@@ -275,18 +286,19 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 			</label>
 			<?php
 		}
+
 		/**
-		 * create input number form.
+		 * Create input number form.
 		 *
-		 * @param string slug
-		 * @param string description
-		 * @param string default value
-		 * @param string prefix
-		 * @param string array name
+		 * @param string $slug slug.
+		 * @param string $description frontend description.
+		 * @param string $default_value default value.
+		 * @param string $prefix DB's prefix.
+		 * @param string $array_name setting array name.
 		 */
 		public function jp4wc_input_number( $slug, $description, $default_value, $prefix, $array_name = null ) {
 			$jp4wc_options_setting = $this->jp4wc_option_setting( $slug, $prefix, $array_name );
-			if ( $jp4wc_options_setting || '0' === $jp4wc_options_setting ) {
+			if ( $jp4wc_options_setting ) {
 				$default_value = $jp4wc_options_setting;
 			}
 			?>
@@ -297,12 +309,12 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 			<?php
 		}
 		/**
-		 * create input time.
+		 * Create input time.
 		 *
-		 * @param string slug
-		 * @param string description
-		 * @param string default_value
-		 * @param string prefix
+		 * @param string $slug slug.
+		 * @param string $description frontend description.
+		 * @param string $default_value default value.
+		 * @param string $prefix DB's prefix.
 		 */
 		public function jp4wc_input_time( $slug, $description, $default_value, $prefix ) {
 			?>
@@ -322,12 +334,12 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create date time.
+		 * Create date time.
 		 *
-		 * @param array start_date
-		 * @param array end_date
-		 * @param string description
-		 * @param string prefix
+		 * @param array  $start_date start date.
+		 * @param array  $end_date end date.
+		 * @param string $description description.
+		 * @param string $prefix DB's prefix.
 		 */
 		public function jp4wc_input_date_term( $start_date, $end_date, $description, $prefix ) {
 			?>
@@ -351,10 +363,10 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create input text form.
+		 * Create input text form.
 		 *
-		 * @param string slug
-		 * @param string description
+		 * @param string $slug slug.
+		 * @param string $description frontend description.
 		 */
 		public function jp4wc_display_message( $slug, $description ) {
 			?>
@@ -365,10 +377,10 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create description for check pattern.
+		 * Create description for check pattern.
 		 *
-		 * @param string title
-		 * @return string description
+		 * @param string $title title.
+		 * @return string $description description.
 		 */
 		public function jp4wc_description_check_pattern( $title ) {
 			$description = sprintf( $this->text_array['description_check_pattern'], $title );
@@ -376,10 +388,10 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create description for payment pattern.
+		 * Create description for payment pattern.
 		 *
-		 * @param string title
-		 * @return string $description
+		 * @param string $title title.
+		 * @return string $description description.
 		 */
 		public function jp4wc_description_payment_pattern( $title ) {
 			$description = sprintf( $this->text_array['description_payment_pattern'], $title );
@@ -387,10 +399,10 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create description for input pattern.
+		 * Create description for input pattern.
 		 *
-		 * @param string title
-		 * @return string description
+		 * @param string $title title.
+		 * @return string $description description.
 		 */
 		public function jp4wc_description_input_pattern( $title ) {
 			$description = sprintf( $this->text_array['description_input_pattern'], $title );
@@ -398,10 +410,10 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create description for input pattern.
+		 * Create description for input pattern.
 		 *
-		 * @param string title
-		 * @return string description
+		 * @param string $title title.
+		 * @return string $description description.
 		 */
 		public function jp4wc_description_select_pattern( $title ) {
 			$description = sprintf( $this->text_array['description_select_pattern'], $title );
@@ -409,21 +421,21 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * save option.
+		 * Save option.
 		 *
-		 * @param array add_methods
-		 * @param string plugin prefix
-		 * @param string ENCRYPT password
+		 * @param array  $add_methods add methods.
+		 * @param string $prefix plugin prefix name.
+		 * @param string $password ENCRYPT password.
 		 * @return mixed
 		 */
 		public function jp4wc_save_methods( $add_methods, $prefix, $password = null ) {
 			foreach ( $add_methods as $add_method ) {
-				if ( isset( $_POST[ $add_method ] ) && $_POST[ $add_method ] ) {
+				if ( isset( $_POST['jp4wc_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['jp4wc_nonce'] ) ), 'jp4wc_save_methods' ) && isset( $_POST[ $add_method ] ) ) {
 					if ( isset( $password ) ) {
-						$post_add_method = sanitize_text_field( $_POST[ $add_method ] );
+						$post_add_method = sanitize_text_field( wp_unslash( $_POST[ $add_method ] ) );
 						update_option( $prefix . $add_method, self::encrypt( $post_add_method, $password ) );
 					} else {
-						$post_add_method = sanitize_text_field( $_POST[ $add_method ] );
+						$post_add_method = sanitize_text_field( wp_unslash( $_POST[ $add_method ] ) );
 						update_option( $prefix . $add_method, $post_add_method );
 					}
 				} else {
@@ -435,26 +447,26 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		/**
 		 * Sidebar Support notice html
 		 *
-		 * @param string support form url
+		 * @param string $support_form_url support form url.
 		 */
 		public function jp4wc_support_notice( $support_form_url ) {
 			?>
-			<h4 class="inner"><?php echo $this->text_array['support_notice_01']; ?></h4>
-			<p class="inner"><?php printf( $this->text_array['support_notice_02'], esc_url( $support_form_url ) . '?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=top-support' ); ?></p>
-			<p class="inner"><?php printf( $this->text_array['support_notice_03'], 'https://wc.artws.info/product-category/setting-support/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=setting-support', 'https://wc.artws.info/product-category/maintenance-support/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=maintenance-support' ); ?></p>
+			<h4 class="inner"><?php echo esc_html( $this->text_array['support_notice_01'] ); ?></h4>
+			<p class="inner"><?php echo esc_html( sprintf( $this->text_array['support_notice_02'], esc_url( $support_form_url ) . '?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=top-support' ) ); ?></p>
+			<p class="inner"><?php echo esc_html( sprintf( $this->text_array['support_notice_03'], 'https://wc.artws.info/product-category/setting-support/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=setting-support', 'https://wc.artws.info/product-category/maintenance-support/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=maintenance-support' ) ); ?></p>
 			<?php
 		}
 
 		/**
 		 * Sidebar Pro version notice html
 		 *
-		 * @param string jp4wc_pro_url
+		 * @param string $jp4wc_pro_url pro version url.
 		 */
 		public function jp4wc_pro_notice( $jp4wc_pro_url ) {
 			?>
-			<h4 class="inner"><?php echo $this->text_array['pro_notice_01']; ?></h4>
-			<p class="inner"><?php printf( $this->text_array['pro_notice_02'], esc_url( $jp4wc_pro_url ) . '?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=top-pro' ); ?></p>
-			<p class="inner"><?php echo $this->text_array['pro_notice_03']; ?></p>
+			<h4 class="inner"><?php echo esc_html( $this->text_array['pro_notice_01'] ); ?></h4>
+			<p class="inner"><?php echo wp_kses_post( sprintf( $this->text_array['pro_notice_02'], esc_url( $jp4wc_pro_url ) . '?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=top-pro' ) ); ?></p>
+			<p class="inner"><?php echo esc_html( $this->text_array['pro_notice_03'] ); ?></p>
 			<?php
 		}
 
@@ -463,9 +475,8 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		 */
 		public function jp4wc_update_notice() {
 			?>
-			<h4 class="inner"><?php echo $this->text_array['update_notice_01']; ?></h4>
-			<p class="inner"><?php printf( $this->text_array['update_notice_02'], 'https://wc.artws.info/shop/maintenance-support/woocommerce-professional-support-subscription/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=maintenance-support' ); ?>
-			</p>
+			<h4 class="inner"><?php echo esc_html( $this->text_array['update_notice_01'] ); ?></h4>
+			<p class="inner"><?php echo esc_html( sprintf( $this->text_array['update_notice_02'], 'https://wc.artws.info/shop/maintenance-support/woocommerce-professional-support-subscription/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=maintenance-support' ) ); ?></p>
 			<?php
 		}
 
@@ -474,10 +485,10 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		 */
 		public function jp4wc_community_info() {
 			?>
-			<h4 class="inner"><?php echo $this->text_array['community_info_01']; ?></h4>
-			<p class="inner"><?php printf( $this->text_array['community_info_02'], 'http://meetup.com/ja-JP/Tokyo-WooCommerce-Meetup/?' ); ?><br />
-				<?php printf( $this->text_array['community_info_03'], 'http://meetup.com/ja-JP/Kansai-WooCommerce-Meetup/' ); ?><br />
-				<?php echo $this->text_array['community_info_04']; ?>
+			<h4 class="inner"><?php echo esc_html( $this->text_array['community_info_01'] ); ?></h4>
+			<p class="inner"><?php echo wp_kses_post( sprintf( $this->text_array['community_info_02'], 'http://meetup.com/ja-JP/Tokyo-WooCommerce-Meetup/?' ) ); ?><br />
+				<?php echo wp_kses_post( sprintf( $this->text_array['community_info_03'], 'http://meetup.com/ja-JP/Kansai-WooCommerce-Meetup/' ) ); ?><br />
+				<?php echo esc_html( $this->text_array['community_info_04'] ); ?>
 			</p>
 			<?php
 		}
@@ -485,12 +496,18 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		/**
 		 * Sidebar Footer Author information html
 		 *
-		 * @param string plugin url
+		 * @param string $plugin_url plugin url.
 		 */
 		public function jp4wc_author_info( $plugin_url ) {
 			?>
-			<p class="jp4wc-link inner"><?php echo $this->text_array['author_info_01']; ?> <a href="https://wc.artws.info/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=created-by" target="_blank" title="Artisan Workshop"><img src="<?php echo esc_url( $plugin_url ); ?>assets/images/woo-logo.png" title="Artsain Workshop" alt="Artsain Workshop" class="jp4wc-logo" /></a><br />
-				<a href="https://docs.artws.info/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=created-by" target="_blank"><?php echo $this->text_array['author_info_02']; ?></a>
+			<p class="jp4wc-link inner">
+				<?php echo esc_html( $this->text_array['author_info_01'] ); ?> 
+				<a href="https://wc.artws.info/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=created-by" target="_blank" title="Artisan Workshop">
+					<img src="<?php echo esc_url( $plugin_url ); ?>assets/images/woo-logo.png" title="Artsain Workshop" alt="Artsain Workshop" class="jp4wc-logo" />
+				</a><br />
+				<a href="https://docs.artws.info/?utm_source=jp4wc-settings&utm_medium=link&utm_campaign=created-by" target="_blank">
+					<?php echo esc_html( $this->text_array['author_info_02'] ); ?>
+				</a>
 			</p>
 			<?php
 		}
@@ -503,7 +520,7 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		 *
 		 * @since 1.2
 		 *
-		 * @param string Slug title of the admin page who's settings fields you want to show.
+		 * @param string $page Slug title of the admin page who's settings fields you want to show.
 		 */
 		public function do_settings_sections( $page ) {
 			global $wp_settings_sections, $wp_settings_fields;
@@ -533,25 +550,25 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create debug log as each plugin.
+		 * Create debug log as each plugin.
 		 *
-		 * @param string message
-		 * @param boolean as flag
-		 * @param string slug
-		 * @param string start time
-		 * @param string end time
+		 * @param string  $message debug message.
+		 * @param boolean $flag debug flag.
+		 * @param string  $slug plugin slug.
+		 * @param string  $start_time start time.
+		 * @param string  $end_time end time.
 		 *
 		 * @return mixed $log
 		 */
 		public function jp4wc_debug_log( $message, $flag, $slug, $start_time = null, $end_time = null ) {
 			if ( apply_filters( 'wc_jp4wc_logging', true, $message ) ) {
 				$logger = wc_get_logger();
-				if ( $flag != 'yes' ) {
+				if ( 'yes' !== $flag ) {
 					return;
 				}
 				if ( ! is_null( $start_time ) && is_numeric( $end_time ) && is_numeric( $start_time ) ) {
 					$formatted_start_time = date_i18n( get_option( 'date_format' ) . ' g:ia', $start_time );
-					$end_time             = is_null( $end_time ) ? current_time( 'timestamp' ) : $end_time;
+					$end_time             = is_null( $end_time ) ? time() : $end_time;
 					$formatted_end_time   = date_i18n( get_option( 'date_format' ) . ' g:ia', $end_time );
 					$elapsed_time         = round( abs( $end_time - $start_time ) / 60, 2 );
 
@@ -567,15 +584,15 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create debug log as each plugin.
+		 * Create debug log as each plugin.
 		 *
-		 * @param array message array
+		 * @param array $data message array.
 		 * @return string message
 		 */
-		public function jp4wc_array_to_message( $array ) {
-			if ( is_array( $array ) ) {
+		public function jp4wc_array_to_message( $data ) {
+			if ( is_array( $data ) ) {
 				$message = '';
-				foreach ( $array as $key => $value ) {
+				foreach ( $data as $key => $value ) {
 					if ( is_array( $value ) ) {
 						$message .= $key . ' : ' . "\n";
 						foreach ( $value as $key1 => $value1 ) {
@@ -602,9 +619,9 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		}
 
 		/**
-		 * create debug log as each plugin.
+		 * Create debug log as each plugin.
 		 *
-		 * @param string url_encode
+		 * @param string $url_encode url encode.
 		 * @return array array
 		 */
 		public function jp4wc_url_to_array( $url_encode ) {
@@ -622,12 +639,33 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		/**
 		 * Finds an Order ID based on an order key.
 		 *
-		 * @param string (transaction_id) An order key has generated by.
+		 * @param string $transaction_id An order key has generated by.
 		 * @return int The ID of an order, or 0 if the order could not be found
 		 */
 		public function get_order_id_by_transaction_id( $transaction_id ) {
 			global $wpdb;
-			return $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '_transaction_id' AND meta_value = %s", $transaction_id ) );
+
+			$cache_key = 'order_id_' . $transaction_id;
+			$order_id  = wp_cache_get( $cache_key, 'orders' );
+
+			if ( false === $order_id ) {
+				$query     = new \WC_Order_Query(
+					array(
+						'transaction_id' => $transaction_id,
+						'limit'          => 1,
+						'return'         => 'ids',
+					)
+				);
+				$order_ids = $query->get_orders();
+				$order_id  = ! empty( $order_ids ) ? $order_ids[0] : false;
+				wp_cache_set( $cache_key, $order_id, 'orders', 3600 );
+			}
+
+			if ( $order_id ) {
+				return $order_id;
+			} else {
+				return false;
+			}
 		}
 
 		/**
@@ -635,87 +673,87 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		 *
 		 * @return boolean
 		 */
-		public function isSmartPhone() {
-			$ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '';
-			if ( stripos( $ua, 'iphone' ) !== false || // iphone
-				stripos( $ua, 'ipod' ) !== false || // ipod
-				( stripos( $ua, 'android' ) !== false && stripos( $ua, 'mobile' ) !== false ) || // android
-				( stripos( $ua, 'windows' ) !== false && stripos( $ua, 'mobile' ) !== false ) || // windows phone
-				( stripos( $ua, 'firefox' ) !== false && stripos( $ua, 'mobile' ) !== false ) || // firefox phone
-				( stripos( $ua, 'bb10' ) !== false && stripos( $ua, 'mobile' ) !== false ) || // blackberry 10
-				( stripos( $ua, 'blackberry' ) !== false ) // blackberry
+		public function is_smart_phone() {
+			$ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
+			if ( stripos( $ua, 'iphone' ) !== false || // iphone.
+				stripos( $ua, 'ipod' ) !== false || // ipod.
+				( stripos( $ua, 'android' ) !== false && stripos( $ua, 'mobile' ) !== false ) || // android.
+				( stripos( $ua, 'windows' ) !== false && stripos( $ua, 'mobile' ) !== false ) || // windows phone.
+				( stripos( $ua, 'firefox' ) !== false && stripos( $ua, 'mobile' ) !== false ) || // firefox phone.
+				( stripos( $ua, 'bb10' ) !== false && stripos( $ua, 'mobile' ) !== false ) || // blackberry 10.
+				( stripos( $ua, 'blackberry' ) !== false ) // blackberry.
 			) {
-				$isSmartPhone = true;
+				$is_smart_phone = true;
 			} else {
-				$isSmartPhone = false;
+				$is_smart_phone = false;
 			}
 
-			return $isSmartPhone;
+			return $is_smart_phone;
 		}
 
 		/**
 		 * Function that determines whether all text is Hiragana
 		 *
-		 * @param string text
+		 * @param string $text text.
 		 * @return boolean
 		 */
-		public function isHiragana( $text ) {
+		public function is_hiragana( $text ) {
 			if ( mb_ereg( '^[ぁ-ん]+$', $text ) ) {
-				$isHiragana = true;
+				$is_hiragana = true;
 			} else {
-				$isHiragana = false;
+				$is_hiragana = false;
 			}
 
-			return $isHiragana;
+			return $is_hiragana;
 		}
 
 		/**
 		 * Function that determines whether all text is Katakana
 		 *
-		 * @param string text
+		 * @param string $text text.
 		 * @return boolean
 		 */
-		public function isKatakana( $text ) {
+		public function is_katakana( $text ) {
 			if ( mb_ereg( '^[ァ-ヶー]+$', $text ) ) {
-				$isKatakana = true;
+				$is_katakana = true;
 			} else {
-				$isKatakana = false;
+				$is_katakana = false;
 			}
 
-			return $isKatakana;
+			return $is_katakana;
 		}
 
 		/**
 		 * Add a message.
 		 *
-		 * @param string text
-		 * @param object message object
+		 * @param string $text message text.
+		 * @param object $obj message object.
 		 */
-		public function add_message( $text, $object ) {
-			$object->messages[] = $text;
+		public function add_message( $text, $obj ) {
+			$obj->messages[] = $text;
 		}
 
 		/**
 		 * Add an error.
 		 *
-		 * @param string text
-		 * @param object message object
+		 * @param string $text error text.
+		 * @param object $obj message object.
 		 */
-		public function add_error( $text, $object ) {
-			$object->errors[] = $text;
+		public function add_error( $text, $obj ) {
+			$obj->errors[] = $text;
 		}
 
 		/**
 		 * Output messages + errors.
 		 *
-		 * @param object object
+		 * @param object $obj message object.
 		 */
-		public function show_messages( $object ) {
-			if ( sizeof( $object->errors ) > 0 ) {
-				foreach ( $object->errors as $error ) {
+		public function show_messages( $obj ) {
+			if ( count( $obj->errors ) > 0 ) {
+				foreach ( $obj->errors as $error ) {
 					echo '<div id="message" class="error inline"><p><strong>' . esc_html( $error ) . '</strong></p></div>';
 				}
-			} elseif ( sizeof( $object->messages ) > 0 ) {
+			} elseif ( count( $object->messages ) > 0 ) {
 				foreach ( $object->messages as $message ) {
 					echo '<div id="message" class="updated inline"><p><strong>' . esc_html( $message ) . '</strong></p></div>';
 				}
@@ -725,17 +763,17 @@ if ( ! class_exists( '\\ArtisanWorkshop\\WooCommerce\\PluginFramework\\v2_0_12\\
 		/**
 		 * Display numbers (price) according to WooCommerce settings.
 		 *
-		 * @param float number
-		 * @param string round or round_up or round_down
-		 * @return false|float|WP_Error WP_Error and number
+		 * @param float  $num number.
+		 * @param string $round round or round_up or round_down.
+		 * @return false|float|WP_Error WP_Error and number.
 		 */
 		public function jp4wc_price_round_cal( $num, $round = 'round' ) {
 			$num_decimals = get_option( 'woocommerce_price_num_decimals' );
-			if ( $round == 'round' ) {
+			if ( 'round' === $round ) {
 				return round( $num, $num_decimals );
-			} elseif ( $round == 'round_up' ) {
+			} elseif ( 'round_up' === $round ) {
 				return ceil( $num, $num_decimals );
-			} elseif ( $round == 'round_down' ) {
+			} elseif ( 'round_down' === $round ) {
 				return floor( $num, $num_decimals );
 			} else {
 				return new WP_Error( 'round_type_error', 'Round Type Error' );

@@ -218,7 +218,7 @@ class JP4WC_Address_Fields {
 		}
 
 		// PayPal Payment compatible.
-		if ( isset( $_GET['woo-paypal-return'] ) && true === $_GET['woo-paypal-return'] && isset( $_GET['token'] ) ) {
+		if ( isset( $_GET['woo-paypal-return'] ) && true === $_GET['woo-paypal-return'] && isset( $_GET['token'] ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$set_yomigana = '';
 		} else {
 			$set_yomigana = "\n{yomigana_last_name} {yomigana_first_name}";

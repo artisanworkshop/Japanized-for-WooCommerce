@@ -1,0 +1,1 @@
+export { FirstMainPage } from './first-main-page';

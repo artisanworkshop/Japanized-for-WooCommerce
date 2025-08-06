@@ -9,7 +9,7 @@
  * @since 1.0.0
  */
 
-use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
+use ArtisanWorkshop\PluginFramework\v2_0_13 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -64,7 +64,7 @@ class JP4WC_Admin_Screen {
 		add_action( 'admin_menu', array( $this, 'jp4wc_admin_menu' ), 60 );
 		add_action( 'admin_init', array( $this, 'jp4wc_setting_init' ) );
 		add_action( 'wp_dashboard_setup', array( __CLASS__, 'jp4wc_dashboard_widget' ), 1 );
-		$this->jp4wc_plugin = new Framework\JP4WC_Plugin();
+		$this->jp4wc_plugin = new Framework\JP4WC_Framework();
 		$this->prefix       = 'wc4jp-';
 	}
 
@@ -640,8 +640,8 @@ class JP4WC_Admin_Screen {
 				$time_zones = array();
 				if ( isset( $_POST['start_time'] ) && isset( $_POST['end_time'] ) ) {
 
-					$start_times = array_map( 'wc_clean', wp_unslash( $_POST['start_time'] ) );
-					$end_times   = array_map( 'wc_clean', wp_unslash( $_POST['end_time'] ) );
+					$start_times = array_map( 'wc_clean', array_map( 'sanitize_text_field', wp_unslash( $_POST['start_time'] ) ) );
+					$end_times   = array_map( 'wc_clean', array_map( 'sanitize_text_field', wp_unslash( $_POST['end_time'] ) ) );
 
 					foreach ( $start_times as $i => $start_time ) {
 						if ( ! isset( $start_times[ $i ] ) ) {
@@ -731,6 +731,16 @@ class JP4WC_Admin_Screen {
 	 * @param array $add_methods Add methods.
 	 */
 	public function jp4wc_save_methods( $add_methods ) {
+		// Check if nonce is verified (this function should only be called after nonce verification).
+		if ( ! isset( $_POST['_wpnonce'] ) || ! isset( $_POST['option_page'] ) ) {
+			return;
+		}
+
+		// Verify nonce for security.
+		if ( ! wp_verify_nonce( sanitize_key( $_POST['_wpnonce'] ), sanitize_key( $_POST['option_page'] ) . '-options' ) ) {
+			return;
+		}
+
 		foreach ( $add_methods as $add_method ) {
 			if ( isset( $_POST[ $add_method ] ) ) {
 				$post_add_method = sanitize_text_field( wp_unslash( $_POST[ $add_method ] ) );
@@ -1406,31 +1416,44 @@ class JP4WC_Admin_Screen {
 	 * Plugins information display.
 	 */
 	public function jp4wc_informations_plugins() {
-		/* translators: %s: Setting URL */
-		printf( __( '<a href="%s" target="_blank" title="Paygent Payment">Paygent Payment</a> :  You can handle Credit Card payment and Convini payment, etc<br >', 'woocommerce-for-japan' ), 'https://wc.artws.info/shop/wordpress-official/paygent-for-woocommerce/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=plugins-information' );
-		/* translators: %s: Setting URL */
-		printf( __( '<a href="%s" target="_blank" title="WooCommerce Subscriptions">WooCommerce Subscriptions</a> : You can handle Subscriptions.<br >', 'woocommerce-for-japan' ), 'https://wc.artws.info/shop/woothemes-official/woocommerce-subscriptions/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=plugins-information' );
+		printf(
+			/* translators: %s: Plugin URL */
+			wp_kses_post( __( '<a href="%s" target="_blank" title="Paygent Payment">Paygent Payment</a> :  You can handle Credit Card payment and Convini payment, etc<br >', 'woocommerce-for-japan' ) ),
+			esc_url( 'https://wc.artws.info/shop/wordpress-official/paygent-for-woocommerce/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=plugins-information' )
+		);
+		printf(
+			/* translators: %s: Plugin URL */
+			wp_kses_post( __( '<a href="%s" target="_blank" title="WooCommerce Subscriptions">WooCommerce Subscriptions</a> : You can handle Subscriptions.<br >', 'woocommerce-for-japan' ) ),
+			esc_url( 'https://wc.artws.info/shop/woothemes-official/woocommerce-subscriptions/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=plugins-information' )
+		);
 	}
 
 	/**
 	 * Services information display.
 	 */
 	public function jp4wc_informations_services() {
-		/* translators: %s: Setting URL */
-		printf( __( '<a href="%s" target="_blank" title="Payment Setting Support">Payment Setting Support</a> :  We support Payment Plugins Setting.<br >', 'woocommerce-for-japan' ), 'https://wc.artws.info/shop/setting-support/payment-support/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information' );
-		/* translators: %s: Setting URL */
-		printf( __( '<a href="%s" target="_blank" title="Maintenance Support">Maintenance Support</a> : We support your WordPress and WooCommmerce site, update or somethings.<br >', 'woocommerce-for-japan' ), 'https://wc4jp-pro.work/product/site-security-for-woo/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information' );
+		printf(
+			/* translators: %s: Setting URL */
+			wp_kses_post( __( '<a href="%s" target="_blank" title="Payment Setting Support">Payment Setting Support</a> :  We support Payment Plugins Setting.<br >', 'woocommerce-for-japan' ) ),
+			esc_url( 'https://wc.artws.info/shop/setting-support/payment-support/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information' )
+		);
+		printf(
+			/* translators: %s: Setting URL */
+			wp_kses_post( __( '<a href="%s" target="_blank" title="Maintenance Support">Maintenance Support</a> : We support your WordPress and WooCommmerce site, update or somethings.<br >', 'woocommerce-for-japan' ) ),
+			esc_url( 'https://wc4jp-pro.work/product/site-security-for-woo/?utm_source=wc4jp-settings&utm_medium=link&utm_campaign=services-information' )
+		);
 	}
 
 	/**
 	 * Enqueue admin scripts and styles.
 	 *
-	 * @param $page
+	 * @param string $page The current admin page.
+	 * @return void
 	 */
 	public function admin_enqueue_scripts( $page ) {
 		wp_register_style( 'custom_jp4wc_admin_css', JP4WC_URL_PATH . 'includes/admin/views/css/admin-jp4wc.css', false, JP4WC_VERSION );
 		wp_enqueue_style( 'custom_jp4wc_admin_css' );
-		if ( $page === 'woocommerce_page_wc4jp-options' ) {
+		if ( 'woocommerce_page_wc4jp-options' === $page ) {
 			wp_enqueue_script( 'jp4wc-admin-script', JP4WC_URL_PATH . 'includes/admin/views/js/admin-settings.js', array( 'jquery', 'jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-slider', 'jquery-ui-button' ), JP4WC_VERSION );
 			wp_enqueue_script( 'postbox' );
 			wp_enqueue_script( 'jp4wc-tooltip', plugins_url( '/', WC_PLUGIN_FILE ) . 'assets/js/jquery-tiptip/jquery.tipTip.min.js', array( 'jquery' ) );
@@ -1440,8 +1463,8 @@ class JP4WC_Admin_Screen {
 	/**
 	 * Get a setting from the settings API.
 	 *
-	 * @param mixed  $option_name
-	 * @param string $default
+	 * @param mixed  $option_name The name of the option to retrieve.
+	 * @param string $default Default value to return if option doesn't exist.
 	 * @return string
 	 */
 	public function get_option( $option_name, $default = '' ) {
@@ -1475,9 +1498,17 @@ class JP4WC_Admin_Screen {
 			$option_value = stripslashes( $option_value );
 		}
 
-		return $option_value === null ? $default : $option_value;
+		return null === $option_value ? $default : $option_value;
 	}
 
+	/**
+	 * Check if the dashboard widget should be active.
+	 *
+	 * Determines whether the Japanized for WooCommerce dashboard widget
+	 * should be displayed based on the current locale.
+	 *
+	 * @return bool True if dashboard widget should be active, false otherwise.
+	 */
 	public static function is_dashboard_active() {
 		$flag = false;
 		if ( 'ja' == get_locale() ) {
@@ -1487,7 +1518,7 @@ class JP4WC_Admin_Screen {
 	}
 
 	/**
-	 * admin _ Dashboard Widget
+	 * Admin Dashboard Widget
 	 */
 	public static function jp4wc_dashboard_widget() {
 		if ( self::is_dashboard_active() ) {
@@ -1503,10 +1534,10 @@ class JP4WC_Admin_Screen {
 	 * Dashboard Widget body
 	 */
 	public static function jp4wc_dashboard_widget_body() {
-		if ( 'ja' == get_locale() ) {
-			echo self::jp4wc_get_news_body();
+		if ( 'ja' === get_locale() ) {
+			echo wp_kses_post( self::jp4wc_get_news_body() );
 		}
-		echo self::jp4wc_get_admin_banner();
+		echo wp_kses_post( self::jp4wc_get_admin_banner() );
 	}
 
 	/**
