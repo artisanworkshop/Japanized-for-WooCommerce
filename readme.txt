@@ -2,9 +2,9 @@
 Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
-Requires at least: 5.0.0
-Tested up to: 6.8.1
-Stable tag: 2.6.43
+Requires at least: 6.7.0
+Tested up to: 6.8.2
+Stable tag: 2.7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,9 +33,9 @@ This plugin is an additional feature plugin that makes WooCommerce easier to use
 
 = Minimum Requirements =
 
-* WordPress 5.0 or greater
-* WooCommerce 4.0 or greater
-* PHP version 7.3 or greater
+* WordPress 6.0 or greater
+* WooCommerce 8.0 or greater
+* PHP version 8.1 or greater
 * MySQL version 5.6 or greater
 * WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
@@ -58,123 +58,18 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.6.43 - 2025-05-23 =
-* Fixed - Preview Email Bugs.
-
-= 2.6.42 - 2025-05-07 =
-* Fixed - Cross Site Request Forgery (CSRF) vulnerability.
-
-= 2.6.40 - 2025-04-28 =
-* Fixed - Class JP4WC_Usage_Tracking Bugs
-* Updated - Updated warning text.
-
-= 2.6.39 - 2025-04-24 =
-* Fixed - Company input bug.
-* Fixed - Class JP4WC_Usage_Tracking Bugs
-* Updated - PHP Version check.
-* Updated - Security Notice.
-
-= 2.6.36 - 2025-04-15 =
-* Fixed - Delivery date culcuration.
-* Fixed - PayPal Plugin confriction.
-* Fixed - Fixed a bug COD js code at Checkout Block.
-
-= 2.6.35 - 2025-03-16 =
-* Fixed - Fixed a bug where address display.
-
-= 2.6.33 - 2025-03-14 =
-* Fixed - Fixed a bug where the company name was not displayed.
-* Fixed - Security Check Function to check external files.
-
-= 2.6.32 - 2025-03-13 =
-* Add - Security Check page for Japanese Credit Card Security Guide line.
-
-= 2.6.26 & 2.6.27 - 2025-03-03 =
-* Fixed - Address Fields at checkout block bug fixed.
-* Add - Security notice change words and bug fixed.
-
-= 2.6.24 - 2025-02-26 =
-* Fixed - Address Fields at checkout block bug fixed.
-* Fixed - Cod bug fixed.
-* Add - Security notice change words.
-
-= 2.6.23 - 2025-02-21 =
-* Fixed - Address Fields at checkout block bug fixed.
-* Fixed - Cod bug fixed.
-
-= 2.6.22 - 2025-02-20 =
-* Add - Supports checkout block for cash on delivery calculation.
-* Fixed - Address Fields bug fixed.
-* Fixed - Some code has been adapted to the official WordPress coding standards.
-
-= 2.6.21 - 2025-02-19 =
-* Add - Credit Card Security list notice.
-* Fixed - JP4WC_Usage_Tracking bugs.
-* Fixed - Some code has been adapted to the official WordPress coding standards.
-* Change - Delete LINE PAY functions.
-
-= 2.6.17 - 2024-08-06 =
-* Change - Add LINE PAY End notice.
-
-= 2.6.16 - 2024-07-16 =
-*Fixed -fatal error at php file rquired. 
-
-= 2.6.15 - 2024-07-11 =
-* Fixed - Fixed PHP warning bug on multisite.
-* Fixed - Error handling in older WC versions.
-* Tweak - Bank and postal transfer processing.
-* Dev - Change in display position of bank transfer and postal transfer.
-
-= 2.6.14 - 2024-05-15 =
-* Fixed - Coupon bugs for Paidy Payment.
-
-= 2.6.13 - 2024-05-10 =
-* Fixed - Coupon bugs for Paidy Payment.
-
-= 2.6.12 - 2024-05-09 =
-* Dev - Warning display for PHP version sites whose support has expired.
-* Fixed - Some bugs for AtStore Payment gateway.
-
-= 2.6.11 - 2024-05-01 =
-* Fixed - Some bugs for some Payment gateway.
-
-= 2.6.10 - 2024-02-05 =
-* Fixed - Some bugs for notice.
-
-= 2.6.9 - 2024-01-26 =
-* Dev - Compatible checkout block for Paidy payments.
-
-= 2.6.8 - 2024-01-23 =
-* Dev - Compatible checkout block for at-store, bank-jp, postal office bank payments.
-
-= 2.6.7 - 2024-01-19 =
-* Fixed - Payment gateway warnign bugs.
-* Dev - Add JP4WC Tracker
-
-= 2.6.6 - 2023-11-28 =
-* Fixed - Update order on-hold email template.
-
-= 2.6.5 - 2023-10-27 =
-* Fixed - Input postalcode for iPhone behavior.
-* Dev - Remove peachPay plugin
-
-= 2.6.4 - 2023-09-26 =
-* Fixed - The bug of New Order at Admin.
-* Fixed - the label CSS at delivery time and date.
-* Fixed - Yahoo! API endpoint bug.
-
-= 2.6.1 & 2.6.2 & 2.6.3 - 2023-08-10 =
-* Fixed - The bug of display shipping phone at email.
-* Fixed - Order post meta display bug for shipping date and term.
-
-= 2.6.0 - 2023-08-03 =
-* Update - Compatible HPOS
-* Update - Changed the required version of WooCommerce to 6.0 or higher.
-* Fixed - Some bugs
+= 2.7.0 - 2025-09-03 =
+* Update - Updated update requirements to match the latest version of WooCommerce(10.1.2).
+* Update - Paidy Payment gateway.
+* Dev - Update and Install wizard for Paidy Payments. 
 
 [more older](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
 == Upgrade Notice ==
+
+= 2.7 =
+2.7 is a minor update, but add Paidy payment method. Make a full site backup, update your theme and extensions.
+There is no change in the database saved by this plug-in.
 
 = 2.1 =
 2.1 is a minor update, but add Paidy payment method. Make a full site backup, update your theme and extensions.
