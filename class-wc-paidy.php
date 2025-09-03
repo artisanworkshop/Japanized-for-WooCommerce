@@ -63,6 +63,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 			// WC4JP Framework version.
 			define( 'JP4WC_PAIDY_FRAMEWORK_VERSION', $this->framework_version );
 			// Paidy for WooCommerce plugin url.
+			define( 'WC_PAIDY_REST_URL', get_rest_url() );
 			define( 'WC_PAIDY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 			define( 'WC_PAIDY_ASSETS_URL', WC_PAIDY_PLUGIN_URL . 'assets/' );
 			define( 'WC_PAIDY_BLOCKS_URL', WC_PAIDY_PLUGIN_URL . 'assets/js/build/paidy/' ); // Paidy for WooCommerce blocks assets.

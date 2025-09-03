@@ -753,8 +753,8 @@ if ( ! class_exists( '\\ArtisanWorkshop\\PluginFramework\\v2_0_13\\JP4WC_Framewo
 				foreach ( $obj->errors as $error ) {
 					echo '<div id="message" class="error inline"><p><strong>' . esc_html( $error ) . '</strong></p></div>';
 				}
-			} elseif ( count( $object->messages ) > 0 ) {
-				foreach ( $object->messages as $message ) {
+			} elseif ( count( $obj->messages ) > 0 ) {
+				foreach ( $obj->messages as $message ) {
 					echo '<div id="message" class="updated inline"><p><strong>' . esc_html( $message ) . '</strong></p></div>';
 				}
 			}

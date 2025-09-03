@@ -20,6 +20,8 @@ class WC_Paidy_Endpoint {
 		add_action( 'rest_api_init', array( $this, 'paidy_register_routes' ) );
 		// WebHook to get data from paidy.artws.info.
 		add_action( 'rest_api_init', array( $this, 'paidy_check_regist_webhook' ) );
+		$this->paidy           = new WC_Gateway_Paidy();
+		$this->jp4wc_framework = new Framework\JP4WC_Framework();
 	}
 
 	/**
@@ -46,33 +48,31 @@ class WC_Paidy_Endpoint {
 	 * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
 	 */
 	public function paidy_check_webhook( $data ) {
-		$jp4wc_framework = new Framework\JP4WC_Framework();
-		$paidy           = new WC_Gateway_Paidy();
-		$debug           = $paidy->debug;
-		$body_data       = (array) $data->get_body();
-		$main_data       = json_decode( $body_data[0], true );
-		$notice_message  = __( 'Paidy Webhook received. ', 'woocommerce-for-japan' );
+		$debug          = $this->paidy->debug;
+		$body_data      = (array) $data->get_body();
+		$main_data      = json_decode( $body_data[0], true );
+		$notice_message = __( 'Paidy Webhook received. ', 'woocommerce-for-japan' );
 		if ( empty( $data ) ) {
 			$message = $notice_message . 'no_data';
-			$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+			$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
 
 			return new WP_Error( 'no_data', 'Invalid author', array( 'status' => 404 ) );
 		} elseif ( isset( $main_data['payment_id'] ) && isset( $main_data['order_ref'] ) ) {
 			if ( is_numeric( $main_data['order_ref'] ) ) {
 				// Debug.
 				if ( 'pay_0000000000000001' === $main_data['payment_id'] ) {
-					$message = $notice_message . __( 'This notification is a test request from Paidy.', 'woocommerce-for-japan' ) . "\n" . $jp4wc_framework->jp4wc_array_to_message( $main_data );
-					$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+					$message = $notice_message . __( 'This notification is a test request from Paidy.', 'woocommerce-for-japan' ) . "\n" . $this->jp4wc_framework->jp4wc_array_to_message( $main_data );
+					$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
 					return new WP_REST_Response( $main_data, 200 );
 				} else {
-					$message = $notice_message . __( 'Exist [payment_id] and [order_ref]', 'woocommerce-for-japan' ) . "\n" . $jp4wc_framework->jp4wc_array_to_message( $main_data );
-					$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+					$message = $notice_message . __( 'Exist [payment_id] and [order_ref]', 'woocommerce-for-japan' ) . "\n" . $this->jp4wc_framework->jp4wc_array_to_message( $main_data );
+					$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
 				}
 
 				$order = wc_get_order( $main_data['order_ref'] );
 				if ( false === $order ) {
 					$message = $notice_message . __( 'The order with this order number does not exist in the store.', 'woocommerce-for-japan' ) . "\n" . 'Order# :' . $main_data['order_ref'];
-					$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+					$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
 					return new WP_REST_Response( $main_data, 200 );
 				}
 				$status = $order->get_status();
@@ -141,13 +141,13 @@ class WC_Paidy_Endpoint {
 			} else {
 				// Debug.
 				$message = $notice_message . __( 'Payment_id exist but order_id. Payment_id : ', 'woocommerce-for-japan' ) . $main_data['payment_id'] . '; Status : ' . $main_data['status'];
-				$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+				$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
 				return new WP_Error( 'no_order_id', $message, array( 'status' => 404 ) );
 			}
 		} else {
 			// Debug.
-			$message = '[no_payment_id]' . $jp4wc_framework->jp4wc_array_to_message( $main_data );
-			$jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+			$message = '[no_payment_id]' . $this->jp4wc_framework->jp4wc_array_to_message( $main_data );
+			$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
 			return new WP_Error( 'no_payment_id', 'Invalid author', array( 'status' => 404 ) );
 		}
 	}
@@ -175,11 +175,9 @@ class WC_Paidy_Endpoint {
 	 * @return WP_REST_Response | WP_Error Response for the webhook registration check.
 	 */
 	public function paidy_regist_webhook( $data ) {
-		$jp4wc_framework = new Framework\JP4WC_Framework();
-		$paidy           = new WC_Gateway_Paidy();
-		$debug           = $paidy->debug;
-		$body_data       = (array) $data->get_body();
-		$main_data       = json_decode( $body_data[0], true );
+		$debug     = $this->paidy->debug;
+		$body_data = (array) $data->get_body();
+		$main_data = json_decode( $body_data[0], true );
 		if ( empty( $data ) ) {
 			return new WP_Error( 'no_data', 'Invalid author', array( 'status' => 404 ) );
 		} elseif ( isset( $main_data['webhook_url'] ) && isset( $main_data['status'] ) ) {

@@ -18,7 +18,7 @@ add_action(
 
 /**
  * Yahoo API Postal Code Webhook response.
- * Version: 2.6.4
+ * Version: 2.7.1
  *
  * @param object $request post data.
  * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
@@ -72,7 +72,7 @@ function yahoo_api_postcode( $request ) {
 					$set_prefecture_name = $value;
 				}
 			}
-			if ( $set_prefecture_code === 0 ) {
+			if ( 0 === $set_prefecture_code ) {
 				return new WP_Error( 'no_address', 'No match address', array( 'status' => 404 ) );
 			} else {
 				$postcode_result = array(

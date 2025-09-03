@@ -310,7 +310,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			'webhook'             => array(
 				'title'       => __( 'About Webhook', 'woocommerce-for-japan' ),
 				'type'        => 'title',
-				'description' => __( 'The webhooks set in the Paidy management screen are as follows. <br />', 'woocommerce-for-japan' ) . '<strong>' . get_rest_url() . '/wp-json/paidy/v1/order/</strong>',
+				'description' => __( 'The webhooks set in the Paidy management screen are as follows. <br />', 'woocommerce-for-japan' ) . '<strong>' . WC_PAIDY_REST_URL . 'wp-json/paidy/v1/order/</strong>',
 			),
 		);
 	}

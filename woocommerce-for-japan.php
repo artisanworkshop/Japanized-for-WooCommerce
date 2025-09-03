@@ -5,7 +5,7 @@
  * Description: Woocommerce toolkit for Japanese use.
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
- * Version: 2.7.0
+ * Version: 2.7.1
  * Requires PHP: 8.1
  * Requires Plugins: woocommerce
  * Requires at least: 6.7
@@ -122,7 +122,7 @@ function wc4jp_display_shipping( $shipping ) {
 }
 
 if ( ! class_exists( 'WC_Paidy' ) ) :
-	// WooCommerce For Softbank Payment Gateways version.
+	// Paidy Payment Gateways version.
 	define( 'WC_PAIDY_VERSION', '1.5.1' );
 
 	require_once 'class-wc-paidy.php';
@@ -130,13 +130,13 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	/**
 	 * Load plugin functions.
 	 */
-	add_action( 'plugins_loaded', 'wc_paidy_plugin', 0 );
+	add_action( 'init', 'wc_paidy_plugin', 0 );
 
 	/**
 	 * Initialize the Paidy plugin.
 	 */
 	function wc_paidy_plugin() {
-		if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
+		if ( is_woocommerce_active() && class_exists( 'WooCommerce' ) ) {
 			WC_Paidy::get_instance();
 		}
 	}
@@ -167,7 +167,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 		new WC_Paidy_Admin_Notices();
 	}
 
-	// Redirect when the plugin is activated.
+	// Redirect when the plugin is activated or updated.
 	add_action( 'admin_init', 'paidy_redirect_to_wizard' );
 
 	/**
