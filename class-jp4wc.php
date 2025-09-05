@@ -3,7 +3,7 @@
  * Main class file for Japanized for WooCommerce
  *
  * @package Japanized for WooCommerce
- * @since 2.7.3
+ * @since 2.7.4
  */
 
 if ( ! class_exists( 'JP4WC' ) ) :
@@ -21,7 +21,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '2.7.3';
+		public $version = '2.7.4';
 
 		/**
 		 * Japanized for WooCommerce Framework version.
