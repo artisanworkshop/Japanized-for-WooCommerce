@@ -65,7 +65,7 @@ add_action( 'plugins_loaded', 'jp4wc_plugin' );
  */
 function jp4wc_plugin() {
 	if ( is_woocommerce_active() && class_exists( 'WooCommerce' ) ) {
-		JP4WC::instance()->init();
+		JP4WC::instance();
 	} else {
 		add_action( 'admin_notices', 'jp4wc_fallback_notice' );
 	}
@@ -122,10 +122,10 @@ function wc4jp_display_shipping( $shipping ) {
 }
 
 if ( ! class_exists( 'WC_Paidy' ) ) :
+
 	// Paidy Payment Gateways version.
 	define( 'WC_PAIDY_VERSION', '1.5.1' );
-
-	require_once 'class-wc-paidy.php';
+	require_once __DIR__ . '/class-wc-paidy.php';
 
 	/**
 	 * Load plugin functions.

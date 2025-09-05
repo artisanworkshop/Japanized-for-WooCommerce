@@ -58,7 +58,7 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.7.0 & 2.7.1 - 2025-09-04 =
+= 2.7.0 & 2.7.1 - 2025-09-05 =
 * Update - Updated update requirements to match the latest version of WooCommerce(10.1.2).
 * Update - Paidy Payment gateway.
 * Dev - Update and Install wizard for Paidy Payments. 

@@ -3,7 +3,7 @@
  * Main class file for Japanized for WooCommerce
  *
  * @package Japanized for WooCommerce
- * @since 2.7.0
+ * @since 2.7.1
  */
 
 if ( ! class_exists( 'JP4WC' ) ) :
@@ -21,7 +21,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '2.7.0';
+		public $version = '2.7.1';
 
 		/**
 		 * Japanized for WooCommerce Framework version.
@@ -43,6 +43,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 * @access public
 		 */
 		public function __construct() {
+			$this->init();
 			// change paypal checkout for japan.
 			add_filter( 'woocommerce_paypal_express_checkout_paypal_locale', array( &$this, 'jp4wc_paypal_locale' ) );
 			add_filter( 'woocommerce_paypal_express_checkout_request_body', array( &$this, 'jp4wc_paypal_button_source' ) );
@@ -77,7 +78,8 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 */
 		public function init() {
 			$this->define_constants();
-			add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ), 20 );
+			$this->includes();
+			add_action( 'init', array( $this, 'on_plugins_loaded' ), 20 );
 			add_action( 'woocommerce_blocks_loaded', array( $this, 'jp4wc_blocks_support' ) );
 			if ( ! get_transient( 'jp4wc_first_installing' ) ) {
 				// First time installing.
@@ -93,7 +95,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 */
 		public function on_plugins_loaded() {
 			$this->load_plugin_textdomain();
-			$this->includes();
 		}
 
 		/**

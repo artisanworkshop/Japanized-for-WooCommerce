@@ -51,6 +51,16 @@ if ( ! class_exists( '\\ArtisanWorkshop\\PluginFramework\\v2_0_13\\JP4WC_Framewo
 		 * Constructor for the config class.
 		 */
 		public function __construct() {
+			add_action( 'init', array( $this, 'init_framework' ), 5 );
+		}
+
+		/**
+		 * Initialize the framework.
+		 *
+		 * Loads the text array from config file and sanitizes the values.
+		 */
+		public function init_framework() {
+			// Initialize the framework.
 			$this->text_array = require 'config-jp4wc-framework.php';
 			foreach ( $this->text_array as $key => $value ) {
 				$this->text_array[ $key ] = wp_kses( $value, $this->allowed_html );

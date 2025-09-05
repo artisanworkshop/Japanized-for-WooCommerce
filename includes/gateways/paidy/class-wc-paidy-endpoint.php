@@ -11,6 +11,19 @@ use ArtisanWorkshop\PluginFramework\v2_0_13 as Framework;
  * WC_Paidy_Endpoint class.
  */
 class WC_Paidy_Endpoint {
+	/**
+	 * Paidy gateway instance.
+	 *
+	 * @var WC_Gateway_Paidy
+	 */
+	public $paidy;
+
+	/**
+	 * JP4WC Framework instance.
+	 *
+	 * @var Framework\JP4WC_Framework
+	 */
+	public $jp4wc_framework;
 
 	/**
 	 * Constructor.
