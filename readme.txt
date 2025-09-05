@@ -58,7 +58,10 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.7.0 & 2.7.1 & 2.7.2 & 2.7.3- 2025-09-05 =
+= 2.7.4 - 2025-09-05 =
+* Fixed - Paidy Wizard bug Fixed.
+
+= 2.7.0 & 2.7.1 & 2.7.2 & 2.7.3 - 2025-09-05 =
 * Update - Updated update requirements to match the latest version of WooCommerce(10.1.2).
 * Update - Paidy Payment gateway.
 * Fixed - Class bugs(2.7.1& 2.7.2)

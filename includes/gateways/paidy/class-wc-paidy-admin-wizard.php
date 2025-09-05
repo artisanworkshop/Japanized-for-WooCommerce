@@ -497,7 +497,6 @@ class WC_Paidy_Admin_Wizard {
 			&& ! empty( $this->paidy_settings['api_public_key'] )
 			&& ! empty( $this->paidy_settings['test_api_public_key'] )
 			&& isset( $this->paidy_settings['environment'] )
-			&& 'live' === $this->paidy_settings['environment']
 			) {
 				return $description;
 			}
