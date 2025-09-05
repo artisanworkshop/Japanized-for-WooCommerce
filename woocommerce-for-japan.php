@@ -5,7 +5,7 @@
  * Description: Woocommerce toolkit for Japanese use.
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
- * Version: 2.7.2
+ * Version: 2.7.3
  * Requires PHP: 8.1
  * Requires Plugins: woocommerce
  * Requires at least: 6.7
@@ -174,10 +174,11 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	 * Redirects to the Paidy wizard after plugin activation.
 	 */
 	function paidy_redirect_to_wizard() {
-		$paidy_payment_method = new WC_Gateway_Paidy();
+		$paidy_payment_method      = new WC_Gateway_Paidy();
+		$jp4wc_admin_notices_class = new JP4WC_Admin_Notices();
 		if ( get_option( 'paidy_do_activation_redirect', false ) ) {
 			$first_installing = get_option( 'jp4wc-first-installing', 'no' );
-			if ( 'yes' !== $paidy_payment_method->enabled && ( $jp4wc_security_class->has_orders_in_last_5_days() || 'yes' === $first_installing ) ) {
+			if ( 'yes' !== $paidy_payment_method->enabled && ( $jp4wc_admin_notices_class->has_orders_in_last_5_days() || 'yes' === $first_installing ) ) {
 				$paidy_payment_method->update_option( 'enabled', 'yes' );
 				// Check if the user is an admin and has the capability to manage options.
 				delete_option( 'paidy_do_activation_redirect' );
