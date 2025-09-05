@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that represents admin notices.
  *
- * @version 2.6.37
+ * @version 2.7.1
  * @since 2.3.4
  */
 class JP4WC_Admin_Notices {
@@ -211,7 +211,7 @@ class JP4WC_Admin_Notices {
 	}
 
 	/**
-	 * Check if there are any orders in the last 48 hours.
+	 * Check if there are any orders in the last 5 days.
 	 *
 	 * @since 2.6.8
 	 * @return bool True if orders exist, false otherwise.

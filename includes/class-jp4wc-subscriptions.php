@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Handles WooCommerce subscription functionality for Japanese market.
  *
- * @since 2.6.0
+ * @since 2.7.1
  */
 class JP4WC_Subscriptions {
 
@@ -41,7 +41,7 @@ class JP4WC_Subscriptions {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->jp4wc_plugin = new Framework\JP4WC_Plugin();
+		$this->jp4wc_plugin = new Framework\JP4WC_Framework();
 		$this->prefix       = 'wc4jp-';
 		// Add subscription pricing fields on edit product page.
 		add_filter( 'woocommerce_subscriptions_product_price_string', array( $this, 'jp4wc_subscription_price_string' ), 10, 2 );

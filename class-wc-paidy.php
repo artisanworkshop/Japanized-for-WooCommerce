@@ -73,8 +73,6 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 			$this->init();
 			// Include required files.
 			$this->includes();
-			// Set up localisation.
-			add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 		}
 
 		/**
@@ -93,7 +91,6 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 				require_once __DIR__ . '/includes/gateways/paidy/class-wc-paidy-endpoint.php';
 				new WC_Paidy_Endpoint();
 			}
-			require_once __DIR__ . '/includes/gateways/paidy/class-wc-paidy-endpoint.php';
 
 			// Admin dashboard.
 			if ( ! class_exists( 'WC_Paidy_Apply_Admin_Dashboard' ) ) {
@@ -105,20 +102,11 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 		/**
 		 * Init Paidy for WooCommerce when WordPress Initialises.
 		 */
-		public static function init() {
+		public function init() {
+			// WooCommerce Blocks support.
 			add_action( 'woocommerce_blocks_loaded', array( __CLASS__, 'wc_paidy_blocks_support' ) );
 			// handle New futures compatibility.
 			add_action( 'before_woocommerce_init', array( __CLASS__, 'wc_paidy_handle_new_feature_compatibility' ) );
-		}
-
-		/**
-		 * Load Localisation files.
-		 *
-		 * Note: the first-loaded translation file overrides any following ones if the same translation is present
-		 */
-		public function load_plugin_textdomain() {
-			// Load plugin text domain.
-			load_plugin_textdomain( 'woocommerce-for-japan', false, basename( __DIR__ ) . '/i18n' );
 		}
 
 		/**
