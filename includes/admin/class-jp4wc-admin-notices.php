@@ -374,7 +374,6 @@ class JP4WC_Admin_Notices {
 				 */
 				wp_schedule_event( time() + 10, apply_filters( 'jp4wc_tracker_event_recurrence', 'weekly' ), 'jp4wc_tracker_send_event' );
 		}
-		$tracking = get_option( 'wc4jp-tracking' );
 	}
 }
 
