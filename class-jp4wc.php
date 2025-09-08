@@ -84,7 +84,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			if ( ! get_transient( 'jp4wc_first_installing' ) ) {
 				// First time installing.
 				set_transient( 'jp4wc_first_installing', 'yes', 180 * DAY_IN_SECONDS );
-				update_option( 'wc4jp-tracking', true );
 			}
 		}
 

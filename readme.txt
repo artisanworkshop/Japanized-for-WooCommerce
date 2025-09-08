@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.8.2
-Stable tag: 2.7.3
+Stable tag: 2.7.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,7 +58,7 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.7.4 - 2025-09-05 =
+= 2.7.5 - 2025-09-08 =
 * Fixed - Paidy Wizard bug Fixed.
 
 = 2.7.0 & 2.7.1 & 2.7.2 & 2.7.3 - 2025-09-05 =
