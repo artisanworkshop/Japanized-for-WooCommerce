@@ -51,15 +51,6 @@ if ( ! class_exists( '\\ArtisanWorkshop\\PluginFramework\\v2_0_14\\JP4WC_Framewo
 		 * Constructor for the config class.
 		 */
 		public function __construct() {
-			add_action( 'init', array( $this, 'init_framework' ), 5 );
-		}
-
-		/**
-		 * Initialize the framework.
-		 *
-		 * Loads the text array from config file and sanitizes the values.
-		 */
-		public function init_framework() {
 			// Initialize the framework.
 			$this->text_array = require 'config-jp4wc-framework.php';
 			foreach ( $this->text_array as $key => $value ) {
@@ -794,14 +785,14 @@ if ( ! class_exists( '\\ArtisanWorkshop\\PluginFramework\\v2_0_14\\JP4WC_Framewo
 		 * Create a URL with GET parameters from an array.
 		 *
 		 * @param string $url Base URL.
-		 * @param array  $array Parameters to add as GET variables.
+		 * @param array  $params Parameters to add as GET variables.
 		 * @return string The URL with added GET parameters.
 		 */
-		public function jp4wc_make_add_get_url( $url, $array ) {
+		public function jp4wc_make_add_get_url( $url, $params ) {
 			if ( substr( $url, -1 ) === '/' ) {
-				$add_url = '?' . http_build_query( $array );
+				$add_url = '?' . http_build_query( $params );
 			} else {
-				$add_url = '&' . http_build_query( $array );
+				$add_url = '&' . http_build_query( $params );
 			}
 			return $url . $add_url;
 		}
