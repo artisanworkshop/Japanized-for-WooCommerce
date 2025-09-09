@@ -9,7 +9,7 @@
  * @since 1.0.0
  */
 
-use ArtisanWorkshop\PluginFramework\v2_0_13 as Framework;
+use ArtisanWorkshop\PluginFramework\v2_0_14 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

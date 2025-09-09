@@ -28,7 +28,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 *
 		 * @var string
 		 */
-		public $framework_version = '2.0.13';
+		public $framework_version = '2.0.14';
 
 		/**
 		 * The single instance of the class.
