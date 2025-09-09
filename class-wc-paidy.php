@@ -22,7 +22,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 		 *
 		 * @var string
 		 */
-		public $framework_version = '2.0.13';
+		public $framework_version = '2.0.14';
 
 		/**
 		 * The reference to the *Singleton* instance of this class.

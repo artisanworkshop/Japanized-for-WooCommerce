@@ -1,5 +1,5 @@
 <?php
-use ArtisanWorkshop\PluginFramework\v2_0_13 as Framework;
+use ArtisanWorkshop\PluginFramework\v2_0_14 as Framework;
 
 add_action(
 	'rest_api_init',
