@@ -36,6 +36,8 @@ class JP4WC_Admin_Notices {
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', array( $this, 'admin_jp4wc_security_checklist' ) );
+		add_action( 'wp_loaded', array( $this, 'jp4wc_hide_notices' ) );
+
 		add_action( 'wp_ajax_jp4wc_pr_dismiss_prompt', array( $this, 'jp4wc_dismiss_review_prompt' ) );
 		add_action( 'jp4wc_save_methods_tracking', array( $this, 'jp4wc_save_methods_tracking' ) );
 	}
@@ -114,6 +116,9 @@ class JP4WC_Admin_Notices {
 		}
 
 		// Notification display content.
+		if ( get_option( 'jp4wc_hide_security_check_notice', 0 ) ) {
+			return;
+		}
 		$this->jp4wc_security_checklist_display();
 	}
 
@@ -126,6 +131,7 @@ class JP4WC_Admin_Notices {
 		$check_link = '/wp-admin/admin.php?page=wc-admin&path=%2Fjp4wc-security-check';
 		?>
 		<div class="notice notice-warning jp4wc-security-check" id="pr_jp4wc" style="background-color: #002F6C; color: #D1C1FF;">
+		<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'jp4wc-hide-notice', 'security' ), 'jp4wc_hide_notices_nonce', '_jp4wc_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0 9px 9px;text-decoration:none;"></a>
 		<div id="jp4wc-security-check">
 			<p>
 		<?php
@@ -373,6 +379,28 @@ class JP4WC_Admin_Notices {
 				 * @since 2.6.0
 				 */
 				wp_schedule_event( time() + 10, apply_filters( 'jp4wc_tracker_event_recurrence', 'weekly' ), 'jp4wc_tracker_send_event' );
+		}
+	}
+
+	/**
+	 * Hides the security checklist notice when the user opts to dismiss it.
+	 *
+	 * This function checks for a specific GET parameter and nonce to securely
+	 * update the option that controls the visibility of the security checklist notice.
+	 *
+	 * @since 2.7.1
+	 * @return void
+	 */
+	public function jp4wc_hide_notices() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['jp4wc-hide-notice'] ) && 'security' === sanitize_text_field( wp_unslash( $_GET['jp4wc-hide-notice'] ) ) ) {
+			if ( ! isset( $_GET['_jp4wc_notice_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_jp4wc_notice_nonce'] ) ), 'jp4wc_hide_notices_nonce' ) ) {
+				return;
+			}
+			update_option( 'jp4wc_hide_security_check_notice', 1 );
+		}
+		if ( get_option( 'jp4wc_hide_security_check_notice', 0 ) ) {
+			return;
 		}
 	}
 }
