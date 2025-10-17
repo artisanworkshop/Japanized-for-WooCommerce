@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.8.3
-Stable tag: 2.7.7
+Stable tag: 2.7.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,7 +58,8 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.7.7 - 2025-10-17 =
+= 2.7.7 & 2.7.8 - 2025-10-17 =
+* Fixed - Paidy add_action hook orders Fixed.
 * Dev - I created a link that can be set manually without using Paidy's wizard.
 * Dev - Security warnings can now be dismissed with one click.
 
