@@ -5,13 +5,13 @@
  * Description: Woocommerce toolkit for Japanese use.
  * Author: Artisan Workshop
  * Author URI: https://wc.artws.info/
- * Version: 2.7.6
+ * Version: 2.7.7
  * Requires PHP: 8.1
  * Requires Plugins: woocommerce
  * Requires at least: 6.7
- * Tested up to: 6.8.2
+ * Tested up to: 6.8.3
  * WC requires at least: 8.0
- * WC tested up to: 10.1.2
+ * WC tested up to: 10.2.2
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
