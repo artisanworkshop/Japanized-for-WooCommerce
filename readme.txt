@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
-Tested up to: 6.8.2
-Stable tag: 2.7.6
+Tested up to: 6.8.3
+Stable tag: 2.7.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -57,6 +57,10 @@ The manual installation method involves downloading and uploading our plugin to 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.7.7 - 2025-10-17 =
+* Dev - I created a link that can be set manually without using Paidy's wizard.
+* Dev - Security warnings can now be dismissed with one click.
 
 = 2.7.6 - 2025-09-09 =
 * Fixed - Update JP4WC Framework and bug Fixed.
