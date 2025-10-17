@@ -52,6 +52,7 @@ class WC_Paidy_Admin_Wizard {
 			add_filter( 'woocommerce_gateway_method_description', array( $this, 'paidy_method_description' ), 20, 2 );
 			add_action( 'woocommerce_settings_tabs_checkout', array( $this, 'paidy_after_settings_checkout' ) );
 		}
+		add_action( 'admin_init', array( $this, 'paidy_handle_wizard_false_redirect' ) );
 	}
 
 	/**
@@ -133,9 +134,10 @@ class WC_Paidy_Admin_Wizard {
 			$handle,
 			'paidyForWcSettings',
 			array(
-				'restUrl'    => $rest_url,
-				'paidyAdUrl' => $paidy_ad_url,
-				'pluginName' => $plugin_name,
+				'restUrl'      => $rest_url,
+				'paidyAdUrl'   => $paidy_ad_url,
+				'nonWizardUrl' => admin_url( 'admin.php?page=wc-settings&tab=checkout&section=paidy&wizard=false' ),
+				'pluginName'   => $plugin_name,
 			)
 		);
 	}
@@ -494,8 +496,7 @@ class WC_Paidy_Admin_Wizard {
 		if ( $payment_object->id === $this->id ) {
 			if ( isset( $this->paidy_settings['api_public_key'] )
 			&& isset( $this->paidy_settings['test_api_public_key'] )
-			&& ! empty( $this->paidy_settings['api_public_key'] )
-			&& ! empty( $this->paidy_settings['test_api_public_key'] )
+			&& ( ! empty( $this->paidy_settings['api_public_key'] ) || ! empty( $this->paidy_settings['test_api_public_key'] ) )
 			&& isset( $this->paidy_settings['environment'] )
 			) {
 				return $description;
@@ -518,5 +519,71 @@ class WC_Paidy_Admin_Wizard {
 				echo '</div>';
 			}
 		}
+	}
+
+	/**
+	 * Handles redirect when wizard=false parameter is present.
+	 * Updates test_api_public_key with pk_test_ prefix and redirects to Paidy settings page.
+	 */
+	public function paidy_handle_wizard_false_redirect() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['page'] ) || 'wc-settings' !== $_GET['page'] ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['tab'] ) || 'checkout' !== $_GET['tab'] ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['section'] ) || $this->id !== $_GET['section'] ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( ! isset( $_GET['wizard'] ) || 'false' !== $_GET['wizard'] ) {
+			return;
+		}
+
+		// Check user capability.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		// Update test_api_public_key with pk_test_ prefix if not already present.
+		$paidy_settings = get_option( 'woocommerce_' . $this->id . '_settings' );
+
+		if ( ! is_array( $paidy_settings ) ) {
+			$paidy_settings = array();
+		}
+
+		// If test_api_public_key exists, add pk_test_ prefix if not already present.
+		if ( isset( $paidy_settings['test_api_public_key'] ) ) {
+			$current_key = $paidy_settings['test_api_public_key'];
+
+			// Add prefix if not already present.
+			if ( 0 !== strpos( $current_key, 'pk_test_' ) ) {
+				$paidy_settings['test_api_public_key'] = 'pk_test_' . $current_key;
+				update_option( 'woocommerce_' . $this->id . '_settings', $paidy_settings );
+			}
+		} else {
+			// If test_api_public_key does not exist, set it to pk_test_.
+			$paidy_settings['test_api_public_key'] = 'pk_test_';
+			update_option( 'woocommerce_' . $this->id . '_settings', $paidy_settings );
+		}
+
+		// Redirect to Paidy settings page (remove wizard=false parameter).
+		$redirect_url = add_query_arg(
+			array(
+				'page'    => 'wc-settings',
+				'tab'     => 'checkout',
+				'section' => $this->id,
+			),
+			admin_url( 'admin.php' )
+		);
+
+		wp_safe_redirect( $redirect_url );
+		exit;
 	}
 }

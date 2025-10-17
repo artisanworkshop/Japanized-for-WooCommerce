@@ -6,8 +6,8 @@ msgstr ""
 "release)\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Japanized-for-"
 "WooCommerce\n"
-"POT-Creation-Date: 2025-08-06T06:41:51+00:00\n"
-"PO-Revision-Date: 2025-08-06 16:47+0900\n"
+"POT-Creation-Date: 2025-10-16T09:26:38+00:00\n"
+"PO-Revision-Date: 2025-10-16 18:30+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja_JP\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.8\n"
 
 #. Plugin Name of the plugin
 #: woocommerce-for-japan.php
@@ -44,7 +44,7 @@ msgid "https://wc.artws.info/"
 msgstr "https://wc.artws.info/"
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:270
+#: class-jp4wc.php:261
 #, php-format
 msgid ""
 "If you like <strong>Japanized for WooCommerce</strong> please leave us a "
@@ -55,11 +55,11 @@ msgstr ""
 "す !"
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:270
+#: class-jp4wc.php:261
 msgid "Thanks :)"
 msgstr "ありがとうございます :)"
 
-#: class-jp4wc.php:280
+#: class-jp4wc.php:271
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr "Japanized for WooCommerce を利用していただきありがとうございます。"
 
@@ -337,9 +337,8 @@ msgstr "支払い方法"
 #: includes/admin/class-jp4wc-admin-screen.php:355
 #: includes/admin/class-jp4wc-admin-screen.php:1111
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:95
-#: assets/js/build/frontend/blocks/bank-jp.js:1504
+#: assets/js/build/frontend/blocks/bank-jp.js:1
 #: src/js/jp4wc/frontend/blocks/bank-jp/index.js:9
-#: assets/js/build/frontend/blocks/bank-jp.js:1405
 msgid "BANK PAYMENT IN JAPAN"
 msgstr "銀行振込 (日本国内向け)"
 
@@ -347,9 +346,8 @@ msgstr "銀行振込 (日本国内向け)"
 #: includes/admin/class-jp4wc-admin-screen.php:1119
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:86
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:139
-#: assets/js/build/frontend/blocks/postofficebank.js:1504
+#: assets/js/build/frontend/blocks/postofficebank.js:1
 #: src/js/jp4wc/frontend/blocks/postofficebank/index.js:9
-#: assets/js/build/frontend/blocks/postofficebank.js:1405
 msgid "Postal transfer"
 msgstr "郵便振替"
 
@@ -834,19 +832,13 @@ msgid "Please check it if you want to use input field for %s"
 msgstr "%s の項目を使う場合は、チェックしてください"
 
 #: includes/admin/class-jp4wc-admin-screen.php:1410
-#: assets/js/build/admin/security.js:1844
-#: assets/js/build/paidy/admin/paidy.js:1787
-#: assets/js/build/paidy/admin/paidy.js:2102
-#: assets/js/build/paidy/wizard/paidy.js:1598
-#: assets/js/build/paidy/wizard/paidy.js:1913
+#: assets/js/build/admin/security.js:1 assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/admin/paidy.js:3
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/jp4wc/admin/security/hooks/use-settings.js:36
 #: src/js/paidy/main-hooks/form-info.jsx:193
 #: src/js/paidy/main-hooks/on-boarding-settings.js:172
-#: assets/js/build/admin/security.js:1751
-#: assets/js/build/paidy/admin/paidy.js:1686
-#: assets/js/build/paidy/admin/paidy.js:1974
-#: assets/js/build/paidy/wizard/paidy.js:1535
-#: assets/js/build/paidy/wizard/paidy.js:1823
 msgid "Settings saved."
 msgstr "設定を保存しました。"
 
@@ -1081,12 +1073,9 @@ msgstr ""
 "を確認し、最適な対策をご提案します。"
 
 #: includes/admin/views/html-admin-setting-screen.php:63
-#: assets/js/build/admin/security.js:1636
-#: assets/js/build/admin/security.js:1645
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:257
 #: src/js/jp4wc/admin/security/components/controls.jsx:267
-#: assets/js/build/admin/security.js:1599
-#: assets/js/build/admin/security.js:1609
 msgid "Security measures for WooCommerce"
 msgstr "セキュリティー対策 for WooCommerce"
 
@@ -1404,9 +1393,8 @@ msgid "This controls the title which the user sees during checkout."
 msgstr "支払い時の決済タイトルをここで設定します。"
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:87
-#: assets/js/build/frontend/blocks/atstore.js:1504
+#: assets/js/build/frontend/blocks/atstore.js:1
 #: src/js/jp4wc/frontend/blocks/atstore/index.js:9
-#: assets/js/build/frontend/blocks/atstore.js:1405
 msgid "At Store Payment"
 msgstr "店頭支払い"
 
@@ -1633,9 +1621,9 @@ msgstr "%s でお支払い"
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:141
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:223
 #: includes/gateways/paidy/class-wc-payments-paidy-blocks-support.php:105
-#: assets/js/build/paidy/frontend/paidy.js:1540
+#: assets/js/build/paidy/frontend/paidy.js:1
 #: includes/gateways/paidy/assets/js/frontend/paidy.js:1
-#: src/js/paidy/paidy/index.js:16 assets/js/build/paidy/frontend/paidy.js:1415
+#: src/js/paidy/paidy/index.js:16
 msgid "Paidy"
 msgstr "Paidy"
 
@@ -2047,41 +2035,41 @@ msgstr "操作に失敗しました。ページを再読み込みし、もう一
 msgid "Cheatin&#8217; huh?"
 msgstr "間違えましたか ?"
 
-#: includes/gateways/paidy/class-wc-paidy-admin-wizard.php:76
+#: includes/gateways/paidy/class-wc-paidy-admin-wizard.php:77
 msgid "Paidy On Boarding"
 msgstr "Paidy オンボーディング"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:54
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:67
 msgid "Paidy Webhook received. "
 msgstr "Paidy Webhookを受信しました。"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:64
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:77
 msgid "This notification is a test request from Paidy."
 msgstr "この通知はPaidyからのテストリクエストです。"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:68
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:81
 msgid "Exist [payment_id] and [order_ref]"
 msgstr "[payment_id]と[order_ref]が存在する"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:74
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:87
 msgid "The order with this order number does not exist in the store."
 msgstr "この注文番号の注文はストアに存在しません。"
 
 #. translators: %s: status of the order.
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:94
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:105
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:114
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:123
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:132
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:107
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:118
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:127
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:136
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:145
 #, php-format
 msgid "It succeeded to check the %s of the order in Paidy Webhook."
 msgstr "Paidy Webhook で注文の %s を確認することに成功しました。"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:95
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:108
 msgid "authorization"
 msgstr "承認"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:99
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:112
 msgid ""
 "This order status is processing, this site received authorize_success from "
 "the Paidy webhook."
@@ -2089,29 +2077,29 @@ msgstr ""
 "この注文ステータスは処理中です。このサイトは、Paidy webhook から "
 "authorize_success を受け取りました。"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:106
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:119
 msgid "completed"
 msgstr "完了"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:115
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:128
 msgid "cancelled"
 msgstr "キャンセル"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:124
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:137
 msgid "close"
 msgstr "クローズ"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:133
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:146
 msgid "refunded"
 msgstr "払い戻し"
 
 #. translators: %s: status of the order.
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:138
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:151
 #, php-format
 msgid "The system received a notification for order %s via Paidy Webhook."
 msgstr "システムは、Paidy Webhook 経由で注文 %s の通知を受信しました。"
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:143
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:156
 msgid "Payment_id exist but order_id. Payment_id : "
 msgstr "Payment_idは存在しますが、order_idがありません。Payment_id: "
 
@@ -2949,15 +2937,10 @@ msgstr "販売者保護"
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:163
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:169
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:180
-#: assets/js/build/paidy/wizard/paidy.js:2200
-#: assets/js/build/paidy/wizard/paidy.js:2287
-#: assets/js/build/paidy/wizard/paidy.js:2304
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:157
 #: src/js/paidy/wizard/components/controls.jsx:249
 #: src/js/paidy/wizard/components/controls.jsx:269
-#: assets/js/build/paidy/wizard/paidy.js:2060
-#: assets/js/build/paidy/wizard/paidy.js:2152
-#: assets/js/build/paidy/wizard/paidy.js:2172
 msgid "Yes"
 msgstr "はい"
 
@@ -7705,7 +7688,7 @@ msgid ""
 "reference:"
 msgstr "%sでのご注文は返金されました。 参考までに、以下に詳細があります:"
 
-#: woocommerce-for-japan.php:59
+#: woocommerce-for-japan.php:83
 msgid ""
 "Japanized for WooCommerce is enabled but not effective. It requires "
 "WooCommerce in order to work."
@@ -7713,15 +7696,13 @@ msgstr ""
 "Japanized for WooCommerce は利用可能ですが、動いておりません。WooCommerce を"
 "インストールして、アクティブにする必要があります。"
 
-#: assets/js/build/admin/security.js:1395
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:15
-#: assets/js/build/admin/security.js:1357
 msgid "About Credit Card Security Guidelines"
 msgstr "クレジットカードのセキュリティ・ガイドラインについて"
 
-#: assets/js/build/admin/security.js:1399
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:18
-#: assets/js/build/admin/security.js:1360
 msgid ""
 "Ministry of Economy, Trade and Industry has established the \"Credit Card "
 "Security Guidelines\" to prevent unauthorized use of credit card "
@@ -7733,56 +7714,47 @@ msgstr ""
 "ガイドラインに準拠しているかどうかを簡易版として簡単にチェックすることができ"
 "ます。"
 
-#: assets/js/build/admin/security.js:1402
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:21
-#: assets/js/build/admin/security.js:1363
 msgid "Credit Card Security Guidelines[6.0](2025/3/5 updated)"
 msgstr "クレジットカードセキュリティガイドライン[6.0](2025/3/5更新)"
 
-#: assets/js/build/admin/security.js:1406
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:25
-#: assets/js/build/admin/security.js:1367
 msgid ""
 "Security Measures for E-Commerce Affiliates: Implementation Guide [Appendix "
 "20][PDF]"
 msgstr "EC 加盟店におけるセキュリティ対策 導入ガイド【附属文書20】[PDF]"
 
-#: assets/js/build/admin/security.js:1410
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:29
-#: assets/js/build/admin/security.js:1371
 msgid ""
 "[Appendix 20, Appendix c] Declaration of the status of security measures "
 "implemented by EC sites (example)[Excel]"
 msgstr ""
 "【附属文書20 別紙c】ECサイトのセキュリティ対策実施状況申告書（例）[Excel]"
 
-#: assets/js/build/admin/security.js:1414
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:33
-#: assets/js/build/admin/security.js:1375
 msgid "Related Documents"
 msgstr "関連ドキュメント"
 
-#: assets/js/build/admin/security.js:1429
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:46
-#: assets/js/build/admin/security.js:1388
 msgid ""
 "Basic authentication or IP restrictions are not set for the administrator "
 "login URL."
 msgstr "管理者ログイン URL に Basic 認証または IP 制限が設定されていません。"
 
-#: assets/js/build/admin/security.js:1432
-#: assets/js/build/paidy/wizard/paidy.js:2509
+#: assets/js/build/admin/security.js:1 assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/jp4wc/admin/security/components/controls.jsx:49
 #: src/js/paidy/wizard/components/first-main-page.jsx:231
-#: assets/js/build/admin/security.js:1391
-#: assets/js/build/paidy/wizard/paidy.js:2433
 msgid ""
 "Administrator screen access restrictions and administrator ID/PW management"
 msgstr "管理者画面のアクセス制限と管理者 ID/PW 管理"
 
-#: assets/js/build/admin/security.js:1435
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:52
-#: assets/js/build/admin/security.js:1394
 msgid ""
 "Please check this box if you have implemented security measures for your "
 "admin screen."
@@ -7790,12 +7762,9 @@ msgstr ""
 "管理画面のセキュリティ対策を実施している場合は、このボックスにチェックを入れ"
 "てください。"
 
-#: assets/js/build/admin/security.js:1436
-#: assets/js/build/admin/security.js:1472
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:53
 #: src/js/jp4wc/admin/security/components/controls.jsx:87
-#: assets/js/build/admin/security.js:1395
-#: assets/js/build/admin/security.js:1429
 msgid ""
 "If a warning message appears below, it is possible that your security "
 "measures are not in line with the credit card security guidelines."
@@ -7803,39 +7772,27 @@ msgstr ""
 "下記に警告メッセージが表示された場合は、お客様のセキュリティ対策がクレジット"
 "カードのセキュリティガイドラインに沿っていない可能性があります。"
 
-#: assets/js/build/admin/security.js:1445
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:62
-#: assets/js/build/admin/security.js:1404
 msgid "Basic authentication or IP restrictions Check result"
 msgstr "基本認証または IP 制限 チェック結果"
 
-#: assets/js/build/admin/security.js:1445
-#: assets/js/build/admin/security.js:1454
-#: assets/js/build/admin/security.js:1481
-#: assets/js/build/admin/security.js:1505
-#: assets/js/build/admin/security.js:1514
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:62
 #: src/js/jp4wc/admin/security/components/controls.jsx:70
 #: src/js/jp4wc/admin/security/components/controls.jsx:96
 #: src/js/jp4wc/admin/security/components/controls.jsx:120
 #: src/js/jp4wc/admin/security/components/controls.jsx:128
-#: assets/js/build/admin/security.js:1404
-#: assets/js/build/admin/security.js:1412
-#: assets/js/build/admin/security.js:1438
-#: assets/js/build/admin/security.js:1462
-#: assets/js/build/admin/security.js:1470
 msgid "[Warning]"
 msgstr "【警告】"
 
-#: assets/js/build/admin/security.js:1454
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:70
-#: assets/js/build/admin/security.js:1412
 msgid "Two-factor authentication Check result"
 msgstr "二要素認証 チェック結果"
 
-#: assets/js/build/admin/security.js:1456
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:71
-#: assets/js/build/admin/security.js:1413
 msgid ""
 "There is no two-step authentication plugin installed. You need to check "
 "whether other plugins support two-step authentication for administrator "
@@ -7844,29 +7801,25 @@ msgstr ""
 "二段階認証プラグインがインストールされていません。他のプラグインなどで管理者"
 "アカウントの二段階認証をサポートしているかどうかを確認する必要があります。"
 
-#: assets/js/build/admin/security.js:1468
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:83
-#: assets/js/build/admin/security.js:1425
 msgid "Security plugin installation"
 msgstr "セキュリティプラグインのインストール"
 
-#: assets/js/build/admin/security.js:1471
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:86
-#: assets/js/build/admin/security.js:1428
 msgid "Please check this box if you have installed a security plugin."
 msgstr ""
 "セキュリティプラグインをインストールしている場合は、このボックスにチェックを"
 "入れてください。"
 
-#: assets/js/build/admin/security.js:1481
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:96
-#: assets/js/build/admin/security.js:1438
 msgid "Security plugin Check result"
 msgstr "セキュリティプラグイン チェック結果"
 
-#: assets/js/build/admin/security.js:1483
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:97
-#: assets/js/build/admin/security.js:1439
 msgid ""
 "There is no security plugin installed. You need to check whether other "
 "plugins support security measures."
@@ -7874,15 +7827,13 @@ msgstr ""
 "セキュリティプラグインがインストールされていないようです。他のプラグインがセ"
 "キュリティ対策に対応しているかどうかを確認する必要があります。"
 
-#: assets/js/build/admin/security.js:1496
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:113
-#: assets/js/build/admin/security.js:1455
 msgid "Vulnerability Assessment"
 msgstr "脆弱性診断"
 
-#: assets/js/build/admin/security.js:1499
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:115
-#: assets/js/build/admin/security.js:1457
 msgid ""
 "If you see the following warning message, your system may not be protected "
 "from vulnerabilities. Please check the details."
@@ -7890,47 +7841,35 @@ msgstr ""
 "以下に警告メッセージが表示された場合は、システムが脆弱性から保護されていない"
 "可能性があります。詳細をご確認ください。"
 
-#: assets/js/build/admin/security.js:1505
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:120
-#: assets/js/build/admin/security.js:1462
 msgid "PHP version Check result"
 msgstr "PHPバージョンチェック結果"
 
-#: assets/js/build/admin/security.js:1514
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:128
-#: assets/js/build/admin/security.js:1470
 msgid "Update Check result"
 msgstr "更新チェック結果"
 
-#: assets/js/build/admin/security.js:1546
-#: src/js/jp4wc/admin/security/components/controls.jsx:161
-#: assets/js/build/admin/security.js:1503
-msgid "Scan start failed: "
-msgstr "スキャンの開始に失敗しました: "
-
-#: assets/js/build/admin/security.js:1565
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:180
-#: assets/js/build/admin/security.js:1522
 msgid "Scan progress error: "
 msgstr "スキャン進行エラー: "
 
-#: assets/js/build/admin/security.js:1574
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:190
-#: assets/js/build/admin/security.js:1532
 msgid "Malware security quick check (PHP files only)"
 msgstr "マルウェアセキュリティー簡易チェック(PHP ファイルのみ)"
 
-#: assets/js/build/admin/security.js:1577
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:192
-#: assets/js/build/admin/security.js:1534
 msgid "Check for suspicious PHP files in the wp-content folder in WordPress."
 msgstr ""
 "WordPress の wp-content フォルダに不審な PHP ファイルがないかを簡易に確認しま"
 "す。"
 
-#: assets/js/build/admin/security.js:1577
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:193
-#: assets/js/build/admin/security.js:1535
 msgid ""
 "This is a simple test, but if you have never checked your server for malware "
 "before, please try it. It may take a few minutes to process, so please do "
@@ -7940,9 +7879,8 @@ msgstr ""
 "ぜひお試しください。処理に数分かかる場合がありますので、ページから移動しない"
 "でください。"
 
-#: assets/js/build/admin/security.js:1577
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:194
-#: assets/js/build/admin/security.js:1536
 msgid ""
 "Suspicious files are judged based on whether the following codes are "
 "embedded in them: "
@@ -7950,57 +7888,53 @@ msgstr ""
 "この簡易チェックでは、不審なファイルを以下のコードが埋め込まれているかどうか"
 "で判断されます: "
 
-#: assets/js/build/admin/security.js:1577
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:196
-#: assets/js/build/admin/security.js:1538
 msgid "Note: Ideally, you should check all files, not just PHP files."
 msgstr "注意: 本来は、PHP ファイルだけでなくすべてのファイルの確認が必要です。"
 
-#: assets/js/build/admin/security.js:1588
+#: assets/js/build/admin/security.js:1
+#: src/js/jp4wc/admin/security/components/controls.jsx:161
+msgid "Scan start failed: "
+msgstr "スキャンの開始に失敗しました: "
+
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:201
-#: assets/js/build/admin/security.js:1543
 msgid "Start Scan"
 msgstr "スキャンの開始"
 
-#: assets/js/build/admin/security.js:1591
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:205
-#: assets/js/build/admin/security.js:1547
 msgid "Scanning: "
 msgstr "スキャン: "
 
-#: assets/js/build/admin/security.js:1599
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:212
-#: assets/js/build/admin/security.js:1554
 msgid "Scan Complete!"
 msgstr "スキャンが完了しました !"
 
-#: assets/js/build/admin/security.js:1603
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:215
-#: assets/js/build/admin/security.js:1557
 msgid "Suspicious files:"
 msgstr "不審が疑われるファイル:"
 
-#: assets/js/build/admin/security.js:1608
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:221
-#: assets/js/build/admin/security.js:1563
 msgid "Detected pattern:"
 msgstr "検出されたパターン:"
 
-#: assets/js/build/admin/security.js:1608
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:222
-#: assets/js/build/admin/security.js:1564
 msgid "Line#:"
 msgstr "ライン番号:"
 
-#: assets/js/build/admin/security.js:1608
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:223
-#: assets/js/build/admin/security.js:1565
 msgid "Line:"
 msgstr "行:"
 
-#: assets/js/build/admin/security.js:1612
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:232
-#: assets/js/build/admin/security.js:1574
 msgid ""
 "The number and line number within the file will be displayed so you can "
 "verify that the contents are safe."
@@ -8008,65 +7942,56 @@ msgstr ""
 "ファイル内の番号と行番号が表示されるので、内容が安全であることを確認してくだ"
 "さい。"
 
-#: assets/js/build/admin/security.js:1612
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:233
-#: assets/js/build/admin/security.js:1575
 msgid ""
 "If a line is longer than 100 characters, only the first 100 characters are "
 "displayed."
 msgstr "行が100文字を超える場合、最初の100文字だけが表示されます。"
 
-#: assets/js/build/admin/security.js:1612
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:234
-#: assets/js/build/admin/security.js:1576
 msgid "If you have any questions, please contact the developer."
 msgstr ""
 "ご不明な点がございましたら、サイト、および各プラグインやテーマの開発者までお"
 "問い合わせください。"
 
-#: assets/js/build/admin/security.js:1616
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:237
-#: assets/js/build/admin/security.js:1579
 msgid "No suspicious files were found."
 msgstr "不審なファイルは見つかりませんでした。"
 
-#: assets/js/build/admin/security.js:1626
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:249
-#: assets/js/build/admin/security.js:1591
 msgid "🚀✨[Limited time offer! Safe and secure professional support]✨🚀"
 msgstr "🚀✨【今だけ限定！安心・安全のプロフェッショナルサポート】✨🚀"
 
-#: assets/js/build/admin/security.js:1629
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:251
-#: assets/js/build/admin/security.js:1593
 msgid "🔒 If you're worried about security measures, this is a must-see!"
 msgstr "🔒 セキュリティ対策でお悩みの皆様、必見です！"
 
-#: assets/js/build/admin/security.js:1629
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:252
-#: assets/js/build/admin/security.js:1594
 msgid "Our experts will do their best to protect your business💼."
 msgstr "弊社の専門家が、あなたのビジネスを全力で守ります💼。"
 
-#: assets/js/build/admin/security.js:1639
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:262
-#: assets/js/build/admin/security.js:1604
 msgid ""
 "💰 Exclusive for stores aiming to achieve their dream of 1 million yen in "
 "monthly sales! 💰"
 msgstr "💰 夢の月商100万円達成を目指す店舗様専用！ 💰"
 
-#: assets/js/build/admin/security.js:1640
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:263
-#: assets/js/build/admin/security.js:1605
 msgid ""
 "🎉 In addition, this special service is only available on a limited number "
 "of sites! 🎉"
 msgstr "🎉 さらに、この特別サービスは 数量限定サイト でのみご提供中！ 🎉"
 
-#: assets/js/build/admin/security.js:1640
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:264
-#: assets/js/build/admin/security.js:1606
 msgid ""
 "🔮 As a smart investment for the future, you can achieve reliable security "
 "measures for only 1,000 yen per month for the first year 💪!"
@@ -8074,35 +7999,30 @@ msgstr ""
 "🔮 将来を見据えた賢い投資として、1年目は月額たったの1000円 で、安心のセキュリ"
 "ティ対策を実現💪！"
 
-#: assets/js/build/admin/security.js:1640
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:265
-#: assets/js/build/admin/security.js:1607
 msgid ""
 "🔥 Don't miss this chance to take your store operations to the next level "
 "right now! 🔥"
 msgstr "🔥 今すぐ、あなたの店舗運営を飛躍させるチャンスをお見逃しなく！ 🔥"
 
-#: assets/js/build/admin/security.js:1645
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/controls.jsx:267
-#: assets/js/build/admin/security.js:1609
 msgid "Starter Plan: "
 msgstr "スタータープラン:"
 
-#: assets/js/build/admin/security.js:1735
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/security-page.jsx:22
-#: assets/js/build/admin/security.js:1668
 msgid "Credit Card Security Guidelines Check"
 msgstr "クレジットカードセキュリティガイドライン"
 
-#: assets/js/build/admin/security.js:1746
+#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/security-page.jsx:31
-#: src/js/paidy/wizard/button.js:14 assets/js/build/admin/security.js:1677
+#: src/js/paidy/wizard/button.js:14
 msgid "Save"
 msgstr "保存"
 
-#: assets/js/build/admin/security.js:2047
-#: src/js/jp4wc/admin/security/index.js:16
-#: assets/js/build/admin/security.js:1843
+#: assets/js/build/admin/security.js:1 src/js/jp4wc/admin/security/index.js:16
 msgid ""
 "Simple check to comply with credit card security guidelines (established by "
 "the Ministry of Economy, Trade and Industry)"
@@ -8110,37 +8030,27 @@ msgstr ""
 "クレジットカードセキュリティガイドライン(経済産業省策定)に準拠した簡易チェッ"
 "ク"
 
-#: assets/js/build/paidy/admin/paidy.js:1387
+#: assets/js/build/paidy/admin/paidy.js:1
 #: src/js/paidy/admin/components/index.js:9
-#: assets/js/build/paidy/admin/paidy.js:1351
 msgid "Easy Paidy payment setup"
 msgstr "ペイディ決済らくらく設定"
 
-#: assets/js/build/paidy/admin/paidy.js:1402
+#: assets/js/build/paidy/admin/paidy.js:1
 #: src/js/paidy/admin/components/index.js:24
-#: assets/js/build/paidy/admin/paidy.js:1366
 msgid "Start easy Paidy payment setup"
 msgstr "今すぐ始める"
 
-#: assets/js/build/paidy/admin/paidy.js:1410
-#: assets/js/build/paidy/admin/paidy.js:1656
-#: assets/js/build/paidy/wizard/paidy.js:1467
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:33
 #: src/js/paidy/main-hooks/form-info.jsx:60
-#: assets/js/build/paidy/admin/paidy.js:1375
-#: assets/js/build/paidy/admin/paidy.js:1553
-#: assets/js/build/paidy/wizard/paidy.js:1402
 msgid "Status: Under review"
 msgstr "ステータス: 審査中です"
 
-#: assets/js/build/paidy/admin/paidy.js:1412
-#: assets/js/build/paidy/admin/paidy.js:1658
-#: assets/js/build/paidy/wizard/paidy.js:1469
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:35
 #: src/js/paidy/main-hooks/form-info.jsx:62
-#: assets/js/build/paidy/admin/paidy.js:1377
-#: assets/js/build/paidy/admin/paidy.js:1555
-#: assets/js/build/paidy/wizard/paidy.js:1404
 msgid ""
 "Thank you for your application. We will notify you of the results via email "
 "and dashboard."
@@ -8148,68 +8058,107 @@ msgstr ""
 "お申し込みありがとうございました。審査結果はメールおよびダッシュボードにて通"
 "知いたします。"
 
-#: assets/js/build/paidy/admin/paidy.js:1415
-#: assets/js/build/paidy/admin/paidy.js:1661
-#: assets/js/build/paidy/wizard/paidy.js:1472
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:37
 #: src/js/paidy/main-hooks/form-info.jsx:64
-#: assets/js/build/paidy/admin/paidy.js:1379
-#: assets/js/build/paidy/admin/paidy.js:1557
-#: assets/js/build/paidy/wizard/paidy.js:1406
 msgid "The review process may take up to 5 business days."
 msgstr "審査には最大5営業日かかることがございます。"
 
-#: assets/js/build/paidy/admin/paidy.js:1417
-#: assets/js/build/paidy/admin/paidy.js:1663
-#: assets/js/build/paidy/wizard/paidy.js:1474
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:38
 #: src/js/paidy/main-hooks/form-info.jsx:65
-#: assets/js/build/paidy/admin/paidy.js:1380
-#: assets/js/build/paidy/admin/paidy.js:1558
-#: assets/js/build/paidy/wizard/paidy.js:1407
 msgid "Inquiries regarding screening: sales@paidy.com"
 msgstr "審査に関するお問い合わせ：sales@paidy.com"
 
-#: assets/js/build/paidy/admin/paidy.js:1428
-#: src/js/paidy/admin/components/index.js:49
-#: assets/js/build/paidy/admin/paidy.js:1391
-msgid "Status: Approved"
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:75
+msgid "Status: The review was rejected"
+msgstr "ステータス: 審査は否決されました"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/admin/components/index.js:69
+#: src/js/paidy/main-hooks/form-info.jsx:78
+msgid ""
+"After careful and repeated review, we regret to inform you that we have "
+"decided to postpone the transaction at this time."
+msgstr ""
+"慎重に審査を重ねました結果、誠に申し訳ございませんが、今回はお取引を見送らせ"
+"ていただくこととなりました。"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/admin/components/index.js:70
+#: src/js/paidy/main-hooks/form-info.jsx:79
+msgid "We sincerely apologize for not being able to meet your expectations."
+msgstr "このたびはご希望に添えない結果となり、誠に申し訳ございません。"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/admin/components/index.js:71
+#: src/js/paidy/main-hooks/form-info.jsx:80
+msgid ""
+"Please understand that we cannot provide details about the content of the "
+"review."
+msgstr "審査内容の詳細については、お答えいたしかねますのでご了承ください。"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:115
+msgid "Now test mode"
+msgstr "現在テストモードです"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:124
+msgid "Enable test mode"
+msgstr "テストモードを有効化する"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:199
+#: src/js/paidy/main-hooks/form-info.jsx:221
+msgid "Error enabling Paidy"
+msgstr "Paidyの有効化時にエラー"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:235
+#: src/js/paidy/main-hooks/form-info.jsx:267
+msgid "Enable production mode"
+msgstr "本番モードで公開する"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:248
+msgid "Status: The review approved"
 msgstr "ステータス: 審査は承認されました"
 
-#: assets/js/build/paidy/admin/paidy.js:1430
-#: assets/js/build/paidy/admin/paidy.js:1840
-#: assets/js/build/paidy/wizard/paidy.js:1651
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:51
 #: src/js/paidy/main-hooks/form-info.jsx:250
-#: assets/js/build/paidy/admin/paidy.js:1393
-#: assets/js/build/paidy/admin/paidy.js:1743
-#: assets/js/build/paidy/wizard/paidy.js:1592
 msgid ""
 "The review has been completed and the merchant agreement has been concluded."
 msgstr "審査が完了し、加盟店契約が成立いたしました。"
 
-#: assets/js/build/paidy/admin/paidy.js:1432
-#: assets/js/build/paidy/admin/paidy.js:1840
-#: assets/js/build/paidy/wizard/paidy.js:1651
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:52
 #: src/js/paidy/main-hooks/form-info.jsx:251
-#: assets/js/build/paidy/admin/paidy.js:1394
-#: assets/js/build/paidy/admin/paidy.js:1744
-#: assets/js/build/paidy/wizard/paidy.js:1593
 msgid ""
 "For terms of use, please check the terms and conditions notification email "
 "sent by Paidy Inc."
 msgstr ""
 "ご利用条件は株式会社 Paidy から送信されるメールの条件通知書をご確認ください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1435
-#: assets/js/build/paidy/admin/paidy.js:1844
-#: assets/js/build/paidy/wizard/paidy.js:1655
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:54
 #: src/js/paidy/main-hooks/form-info.jsx:253
-#: assets/js/build/paidy/admin/paidy.js:1396
-#: assets/js/build/paidy/admin/paidy.js:1746
-#: assets/js/build/paidy/wizard/paidy.js:1595
 msgid ""
 "We recommend setting the Webhook URL in the Paidy merchant management screen "
 "before publishing in production mode. Set the Webhook URL to the following "
@@ -8218,84 +8167,187 @@ msgstr ""
 "本番モードで公開前にWebhook URLをペイディ加盟店管理画面へ設定することを推奨し"
 "ます。Webhook URLには次の値を設定してください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1437
-#: assets/js/build/paidy/admin/paidy.js:1846
-#: assets/js/build/paidy/wizard/paidy.js:1657
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:55
 #: src/js/paidy/main-hooks/form-info.jsx:254
-#: assets/js/build/paidy/admin/paidy.js:1397
-#: assets/js/build/paidy/admin/paidy.js:1747
-#: assets/js/build/paidy/wizard/paidy.js:1596
 msgid "[Common for test and production]"
 msgstr "[テスト・本番共通]"
 
-#: assets/js/build/paidy/admin/paidy.js:1439
-#: assets/js/build/paidy/admin/paidy.js:1850
-#: assets/js/build/paidy/wizard/paidy.js:1661
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:56
 #: src/js/paidy/main-hooks/form-info.jsx:256
-#: assets/js/build/paidy/admin/paidy.js:1398
-#: assets/js/build/paidy/admin/paidy.js:1749
-#: assets/js/build/paidy/wizard/paidy.js:1598
 msgid ""
 "Please refer to the manual for information on the Paidy merchant management "
 "screen."
 msgstr "ペイディ加盟店管理画面についてはマニュアルをご覧ください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1449
-#: src/js/paidy/admin/components/index.js:66
-#: assets/js/build/paidy/admin/paidy.js:1408
-msgid "Status: Rejected"
-msgstr "ステータス: 審査は否決されました"
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:259
+msgid "Please click one of the buttons below."
+msgstr "下記のいずれかのボタンをクリックしてください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1452
-#: assets/js/build/paidy/admin/paidy.js:1676
-#: assets/js/build/paidy/wizard/paidy.js:1487
-#: src/js/paidy/admin/components/index.js:69
-#: src/js/paidy/main-hooks/form-info.jsx:78
-#: assets/js/build/paidy/admin/paidy.js:1411
-#: assets/js/build/paidy/admin/paidy.js:1571
-#: assets/js/build/paidy/wizard/paidy.js:1420
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:279
+msgid "Paidy test payments enabled"
+msgstr "ペイディのテスト決済が有効化されました"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:282
+msgid "You can now test Paidy payments."
+msgstr "Paidy の支払いをテストできるようになりました。"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:283
+msgid "Please check the test payment flow."
+msgstr "テスト決済フローをご確認ください。"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:284
+msgid "Paidy test payment flow"
+msgstr "Paidy テスト決済フロー"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:285
+msgid "After confirming the test payment, please switch to production mode."
+msgstr "テストが完了後、以下のボタンから本番モードで公開してください。"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:295
+msgid "Paidy Payments is now live"
+msgstr "ペイディ決済が公開されました"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/on-boarding-settings.js:65
+#: src/js/paidy/wizard/components/controls.jsx:12
+msgid "Trade name / Store name"
+msgstr "商号/屋号"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/on-boarding-settings.js:66
+#: src/js/paidy/wizard/components/controls.jsx:24
+msgid "Your EC site name"
+msgstr "貴社の EC サイト名"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/on-boarding-settings.js:67
+#: src/js/paidy/wizard/components/controls.jsx:37
+msgid "Store URL"
+msgstr "貴社の EC サイト URL"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/on-boarding-settings.js:68
+#: src/js/paidy/wizard/components/controls.jsx:49
+msgid "Email address for registering Paidy"
+msgstr "ペイディ登録用メールアドレス"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/on-boarding-settings.js:69
+#: src/js/paidy/wizard/components/controls.jsx:59
+msgid "Contact phone number"
+msgstr "ご担当窓口電話番号"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/on-boarding-settings.js:70
+#: src/js/paidy/wizard/components/controls.jsx:70
+msgid "Representative (last name)"
+msgstr "代表者（姓）"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/on-boarding-settings.js:71
+#: src/js/paidy/wizard/components/controls.jsx:80
+msgid "Representative (first name)"
+msgstr "代表者（名）"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/admin/paidy.js:2
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:2
+#: src/js/paidy/main-hooks/on-boarding-settings.js:72
+#: src/js/paidy/main-hooks/on-boarding-settings.js:90
+#: src/js/paidy/wizard/components/controls.jsx:90
+msgid "Representative (last name kana)"
+msgstr "代表者カナ（セイ）"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/admin/paidy.js:2
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:2
+#: src/js/paidy/main-hooks/on-boarding-settings.js:73
+#: src/js/paidy/main-hooks/on-boarding-settings.js:91
+#: src/js/paidy/wizard/components/controls.jsx:101
+msgid "Representative (first name kana)"
+msgstr "代表者カナ（メイ）"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/on-boarding-settings.js:74
+#: src/js/paidy/wizard/components/controls.jsx:112
+msgid "Representative's date of birth (Gregorian calendar)"
+msgstr "代表者生年月日（西暦）"
+
+#. translators: %s: field label name
+#: assets/js/build/paidy/admin/paidy.js:2
+#: assets/js/build/paidy/wizard/paidy.js:2
+#: src/js/paidy/main-hooks/on-boarding-settings.js:80
+msgid "%s is a required field. Please enter it."
+msgstr "%sは必須フィールドです。入力してください。"
+
+#. translators: %s: field label name
+#: assets/js/build/paidy/admin/paidy.js:3
+#: assets/js/build/paidy/wizard/paidy.js:3
+#: src/js/paidy/main-hooks/on-boarding-settings.js:97
+msgid "%s must be in full-width katakana. Please confirm."
+msgstr "%sは全角カタカナで入力してください。確認してください。"
+
+#: assets/js/build/paidy/admin/paidy.js:3
+#: assets/js/build/paidy/wizard/paidy.js:3
+#: src/js/paidy/main-hooks/on-boarding-settings.js:107
 msgid ""
-"After careful and repeated review, we regret to inform you that we have "
-"decided to postpone the transaction at this time."
+"When selecting \"No\" for the security survey question, please provide "
+"additional details in the text field."
 msgstr ""
-"慎重に審査を重ねました結果、誠に申し訳ございませんが、今回はお取引を見送らせ"
-"ていただくこととなりました。"
+"【カード会員データの漏えい対策】に「いいえ」と回答された場合は場合、代替策を"
+"記入してください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1454
-#: assets/js/build/paidy/admin/paidy.js:1678
-#: assets/js/build/paidy/wizard/paidy.js:1489
-#: src/js/paidy/admin/components/index.js:70
-#: src/js/paidy/main-hooks/form-info.jsx:79
-#: assets/js/build/paidy/admin/paidy.js:1412
-#: assets/js/build/paidy/admin/paidy.js:1572
-#: assets/js/build/paidy/wizard/paidy.js:1421
-msgid "We sincerely apologize for not being able to meet your expectations."
-msgstr "このたびはご希望に添えない結果となり、誠に申し訳ございません。"
-
-#: assets/js/build/paidy/admin/paidy.js:1456
-#: assets/js/build/paidy/admin/paidy.js:1680
-#: assets/js/build/paidy/wizard/paidy.js:1491
-#: src/js/paidy/admin/components/index.js:71
-#: src/js/paidy/main-hooks/form-info.jsx:80
-#: assets/js/build/paidy/admin/paidy.js:1413
-#: assets/js/build/paidy/admin/paidy.js:1573
-#: assets/js/build/paidy/wizard/paidy.js:1422
+#: assets/js/build/paidy/admin/paidy.js:3
+#: assets/js/build/paidy/wizard/paidy.js:3
+#: src/js/paidy/main-hooks/on-boarding-settings.js:120
 msgid ""
-"Please understand that we cannot provide details about the content of the "
-"review."
-msgstr "審査内容の詳細については、お答えいたしかねますのでご了承ください。"
+"Since none of the security measures are implemented, please provide details "
+"about your security approach in the additional information field."
+msgstr ""
+"【不正ログイン対策】のいずれにも「はい」に✅がない場合は代替策を記入してくだ"
+"さい。"
 
-#: assets/js/build/paidy/admin/paidy.js:1533
-#: src/js/paidy/admin/onboarding-step/index.js:53
-#: assets/js/build/paidy/admin/paidy.js:1480
+#: assets/js/build/paidy/admin/paidy.js:3
+#: assets/js/build/paidy/wizard/paidy.js:3
+#: src/js/paidy/main-hooks/on-boarding-settings.js:128
+msgid "Please fill in all the fields."
+msgstr "すべてのフィールドに入力してください。"
+
+#: assets/js/build/paidy/admin/paidy.js:3
+#: src/js/paidy/admin/onboarding-step/index.js:54
 msgid "Applying for and setting up Paidy is easy."
 msgstr "ペイディの新規申し込みと設定が簡単に行えます。"
 
-#: assets/js/build/paidy/admin/paidy.js:1539
-#: src/js/paidy/admin/onboarding-step/index.js:59
-#: assets/js/build/paidy/admin/paidy.js:1486
+#: assets/js/build/paidy/admin/paidy.js:3
+#: src/js/paidy/admin/onboarding-step/index.js:60
 msgid ""
 "There is no setup cost, payment fees start from 3.5%, and if you apply via "
 "this service, you will receive a one-month trial with no payment fees!"
@@ -8303,28 +8355,25 @@ msgstr ""
 "導入コスト0円、決済手数料3.5％～、本経由申込で、なんとお試し1か月決済手数料無"
 "料！"
 
-#: assets/js/build/paidy/admin/paidy.js:1543
-#: assets/js/build/paidy/wizard/paidy.js:2624
-#: src/js/paidy/admin/onboarding-step/index.js:60
+#: assets/js/build/paidy/admin/paidy.js:3
+#: assets/js/build/paidy/wizard/paidy.js:4
+#: src/js/paidy/admin/onboarding-step/index.js:61
 #: src/js/paidy/wizard/components/first-main-page.jsx:362
-#: assets/js/build/paidy/admin/paidy.js:1487
-#: assets/js/build/paidy/wizard/paidy.js:2564
 msgid "Learn more about Paidy"
 msgstr "詳細はこちらから"
 
-#: assets/js/build/paidy/admin/paidy.js:1593
-#: assets/js/build/paidy/wizard/paidy.js:1404
+#: assets/js/build/paidy/admin/paidy.js:3
+#: src/js/paidy/admin/onboarding-step/index.js:64
+msgid "Enter the information manually without using the wizard."
+msgstr "ウィザードを使用せず、手動で情報を入力する。"
+
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:16
-#: assets/js/build/paidy/admin/paidy.js:1509
-#: assets/js/build/paidy/wizard/paidy.js:1358
 msgid "Application flow"
 msgstr "申し込みフロー"
 
-#: assets/js/build/paidy/admin/paidy.js:1597
-#: assets/js/build/paidy/wizard/paidy.js:1408
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:19
-#: assets/js/build/paidy/admin/paidy.js:1512
-#: assets/js/build/paidy/wizard/paidy.js:1361
 msgid ""
 "Please fill in all the fields on this application screen and click the "
 "\"Agree to the above and apply\" button at the bottom of the screen."
@@ -8332,11 +8381,8 @@ msgstr ""
 "本申込み画面の項目を全て記入し、画面下の「上記へ同意して申込み」ボタンをク"
 "リックしてください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1599
-#: assets/js/build/paidy/wizard/paidy.js:1410
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:20
-#: assets/js/build/paidy/admin/paidy.js:1513
-#: assets/js/build/paidy/wizard/paidy.js:1362
 msgid ""
 "Paidy Co., Ltd. will review your application information and may take up to "
 "5 business days."
@@ -8344,103 +8390,67 @@ msgstr ""
 "申込情報をもとに株式会社Paidyにて加盟店審査を行います。最大5営業日かかること"
 "がございます。"
 
-#: assets/js/build/paidy/admin/paidy.js:1601
-#: assets/js/build/paidy/wizard/paidy.js:1412
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:21
-#: assets/js/build/paidy/admin/paidy.js:1514
-#: assets/js/build/paidy/wizard/paidy.js:1363
 msgid "The results will be notified via email and dashboard."
 msgstr "審査結果はメールおよびダッシュボードにて通知いたします。"
 
-#: assets/js/build/paidy/admin/paidy.js:1603
-#: assets/js/build/paidy/wizard/paidy.js:1414
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:22
-#: assets/js/build/paidy/admin/paidy.js:1515
-#: assets/js/build/paidy/wizard/paidy.js:1364
 msgid ""
 "If your application is approved, you will be able to activate Paidy from "
 "your dashboard."
 msgstr "審査承認時は、ダッシュボードからペイディを有効化できます。"
 
-#: assets/js/build/paidy/admin/paidy.js:1603
-#: assets/js/build/paidy/wizard/paidy.js:1414
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:23
-#: assets/js/build/paidy/admin/paidy.js:1516
-#: assets/js/build/paidy/wizard/paidy.js:1365
 msgid "If your application is rejected, you will not be able to use Paidy."
 msgstr "審査否決時は、ペイディをご利用いただくことはできません。"
 
-#: assets/js/build/paidy/admin/paidy.js:1614
-#: assets/js/build/paidy/wizard/paidy.js:1425
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:34
-#: assets/js/build/paidy/admin/paidy.js:1527
-#: assets/js/build/paidy/wizard/paidy.js:1376
 msgid "Agreement"
 msgstr "同意事項"
 
-#: assets/js/build/paidy/admin/paidy.js:1620
-#: assets/js/build/paidy/wizard/paidy.js:1431
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:39
-#: assets/js/build/paidy/admin/paidy.js:1532
-#: assets/js/build/paidy/wizard/paidy.js:1381
 msgid "Please confirm and agree to the following contents."
 msgstr "下記の内容についてご確認・ご同意ください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1626
-#: assets/js/build/paidy/wizard/paidy.js:1437
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:42
-#: assets/js/build/paidy/admin/paidy.js:1535
-#: assets/js/build/paidy/wizard/paidy.js:1384
 msgid "Paidy Merchant Terms and Conditions"
 msgstr "ペイディ加盟店規約"
 
-#: assets/js/build/paidy/admin/paidy.js:1629
-#: assets/js/build/paidy/wizard/paidy.js:1440
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:43
-#: assets/js/build/paidy/admin/paidy.js:1536
-#: assets/js/build/paidy/wizard/paidy.js:1385
 msgid "Agreement on handling of affiliated store information"
 msgstr "加盟店情報の取扱いに関する同意条項"
 
-#: assets/js/build/paidy/admin/paidy.js:1631
-#: assets/js/build/paidy/wizard/paidy.js:1442
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:44
-#: assets/js/build/paidy/admin/paidy.js:1537
-#: assets/js/build/paidy/wizard/paidy.js:1386
 msgid ""
 "Add the notation specified by our company to the notation based on the "
 "Specified Commercial Transactions Act."
 msgstr "特定商取引法に基づく表記に弊社所定の表記を追加すること。"
 
-#: assets/js/build/paidy/admin/paidy.js:1634
-#: assets/js/build/paidy/wizard/paidy.js:1445
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:45
-#: assets/js/build/paidy/admin/paidy.js:1538
-#: assets/js/build/paidy/wizard/paidy.js:1387
 msgid "Display sample based on the Specified Commercial Transactions Act"
 msgstr "特商法に基づく表示サンプル"
 
-#: assets/js/build/paidy/admin/paidy.js:1637
-#: assets/js/build/paidy/wizard/paidy.js:1448
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:46
-#: assets/js/build/paidy/admin/paidy.js:1539
-#: assets/js/build/paidy/wizard/paidy.js:1388
 msgid "Add the specified notation to the privacy policy page."
 msgstr "プライバシーポリシーページに弊社所定の表記を追加すること。"
 
-#: assets/js/build/paidy/admin/paidy.js:1640
-#: assets/js/build/paidy/wizard/paidy.js:1451
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:47
-#: assets/js/build/paidy/admin/paidy.js:1540
-#: assets/js/build/paidy/wizard/paidy.js:1389
 msgid "Example of a privacy policy"
 msgstr "プライバシーポリシーの記入例"
 
-#: assets/js/build/paidy/admin/paidy.js:1643
-#: assets/js/build/paidy/wizard/paidy.js:1454
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:48
-#: assets/js/build/paidy/admin/paidy.js:1541
-#: assets/js/build/paidy/wizard/paidy.js:1390
 msgid ""
 "Paidy Inc. will set up the API key on your e-commerce site via WooCommerce "
 "on your behalf."
@@ -8448,11 +8458,8 @@ msgstr ""
 "株式会社 Paidy が、WooCommerce を介して貴社に代わり、EC サイトへ API キーの設"
 "定を行うこと。"
 
-#: assets/js/build/paidy/admin/paidy.js:1645
-#: assets/js/build/paidy/wizard/paidy.js:1456
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:49
-#: assets/js/build/paidy/admin/paidy.js:1542
-#: assets/js/build/paidy/wizard/paidy.js:1391
 msgid ""
 "Our company (Shokunin Kobo LLC) will provide personal information to third "
 "parties when disclosing such information for purposes such as member store "
@@ -8461,344 +8468,49 @@ msgstr ""
 "当社（職人工房　合同会社）は、決済会社での加盟店審査等のために個人情報を開示"
 "する場合に、個人情報を第三者に提供いたします。"
 
-#: assets/js/build/paidy/admin/paidy.js:1673
-#: assets/js/build/paidy/wizard/paidy.js:1484
-#: src/js/paidy/main-hooks/form-info.jsx:75
-#: assets/js/build/paidy/admin/paidy.js:1568
-#: assets/js/build/paidy/wizard/paidy.js:1417
-msgid "Status: The review was rejected"
-msgstr "ステータス: 審査は否決されました"
-
-#: assets/js/build/paidy/admin/paidy.js:1715
-#: assets/js/build/paidy/wizard/paidy.js:1526
-#: src/js/paidy/main-hooks/form-info.jsx:115
-#: assets/js/build/paidy/admin/paidy.js:1608
-#: assets/js/build/paidy/wizard/paidy.js:1457
-msgid "Now test mode"
-msgstr "現在テストモードです"
-
-#: assets/js/build/paidy/admin/paidy.js:1721
-#: assets/js/build/paidy/wizard/paidy.js:1532
-#: src/js/paidy/main-hooks/form-info.jsx:124
-#: assets/js/build/paidy/admin/paidy.js:1617
-#: assets/js/build/paidy/wizard/paidy.js:1466
-msgid "Enable test mode"
-msgstr "テストモードを有効化する"
-
-#: assets/js/build/paidy/admin/paidy.js:1791
-#: assets/js/build/paidy/admin/paidy.js:1812
-#: assets/js/build/paidy/wizard/paidy.js:1602
-#: assets/js/build/paidy/wizard/paidy.js:1623
-#: src/js/paidy/main-hooks/form-info.jsx:199
-#: src/js/paidy/main-hooks/form-info.jsx:221
-#: assets/js/build/paidy/admin/paidy.js:1692
-#: assets/js/build/paidy/admin/paidy.js:1714
-#: assets/js/build/paidy/wizard/paidy.js:1541
-#: assets/js/build/paidy/wizard/paidy.js:1563
-msgid "Error enabling Paidy"
-msgstr "Paidyの有効化時にエラー"
-
-#: assets/js/build/paidy/admin/paidy.js:1827
-#: assets/js/build/paidy/admin/paidy.js:1862
-#: assets/js/build/paidy/wizard/paidy.js:1638
-#: assets/js/build/paidy/wizard/paidy.js:1673
-#: src/js/paidy/main-hooks/form-info.jsx:235
-#: src/js/paidy/main-hooks/form-info.jsx:267
-#: assets/js/build/paidy/admin/paidy.js:1728
-#: assets/js/build/paidy/admin/paidy.js:1760
-#: assets/js/build/paidy/wizard/paidy.js:1577
-#: assets/js/build/paidy/wizard/paidy.js:1609
-msgid "Enable production mode"
-msgstr "本番モードで公開する"
-
-#: assets/js/build/paidy/admin/paidy.js:1838
-#: assets/js/build/paidy/wizard/paidy.js:1649
-#: src/js/paidy/main-hooks/form-info.jsx:248
-#: assets/js/build/paidy/admin/paidy.js:1741
-#: assets/js/build/paidy/wizard/paidy.js:1590
-msgid "Status: The review approved"
-msgstr "ステータス: 審査は承認されました"
-
-#: assets/js/build/paidy/admin/paidy.js:1855
-#: assets/js/build/paidy/wizard/paidy.js:1666
-#: src/js/paidy/main-hooks/form-info.jsx:259
-#: assets/js/build/paidy/admin/paidy.js:1752
-#: assets/js/build/paidy/wizard/paidy.js:1601
-msgid "Please click one of the buttons below."
-msgstr "下記のいずれかのボタンをクリックしてください。"
-
-#: assets/js/build/paidy/admin/paidy.js:1873
-#: assets/js/build/paidy/wizard/paidy.js:1684
-#: src/js/paidy/main-hooks/form-info.jsx:279
-#: assets/js/build/paidy/admin/paidy.js:1772
-#: assets/js/build/paidy/wizard/paidy.js:1621
-msgid "Paidy test payments enabled"
-msgstr "ペイディのテスト決済が有効化されました"
-
-#: assets/js/build/paidy/admin/paidy.js:1875
-#: assets/js/build/paidy/wizard/paidy.js:1686
-#: src/js/paidy/main-hooks/form-info.jsx:282
-#: assets/js/build/paidy/admin/paidy.js:1775
-#: assets/js/build/paidy/wizard/paidy.js:1624
-msgid "You can now test Paidy payments."
-msgstr "Paidy の支払いをテストできるようになりました。"
-
-#: assets/js/build/paidy/admin/paidy.js:1875
-#: assets/js/build/paidy/wizard/paidy.js:1686
-#: src/js/paidy/main-hooks/form-info.jsx:283
-#: assets/js/build/paidy/admin/paidy.js:1776
-#: assets/js/build/paidy/wizard/paidy.js:1625
-msgid "Please check the test payment flow."
-msgstr "テスト決済フローをご確認ください。"
-
-#: assets/js/build/paidy/admin/paidy.js:1878
-#: assets/js/build/paidy/wizard/paidy.js:1689
-#: src/js/paidy/main-hooks/form-info.jsx:284
-#: assets/js/build/paidy/admin/paidy.js:1777
-#: assets/js/build/paidy/wizard/paidy.js:1626
-msgid "Paidy test payment flow"
-msgstr "Paidy テスト決済フロー"
-
-#: assets/js/build/paidy/admin/paidy.js:1879
-#: assets/js/build/paidy/wizard/paidy.js:1690
-#: src/js/paidy/main-hooks/form-info.jsx:285
-#: assets/js/build/paidy/admin/paidy.js:1778
-#: assets/js/build/paidy/wizard/paidy.js:1627
-msgid "After confirming the test payment, please switch to production mode."
-msgstr "テストが完了後、以下のボタンから本番モードで公開してください。"
-
-#: assets/js/build/paidy/admin/paidy.js:1888
-#: assets/js/build/paidy/wizard/paidy.js:1699
-#: src/js/paidy/main-hooks/form-info.jsx:295
-#: assets/js/build/paidy/admin/paidy.js:1788
-#: assets/js/build/paidy/wizard/paidy.js:1637
-msgid "Paidy Payments is now live"
-msgstr "ペイディ決済が公開されました"
-
-#: assets/js/build/paidy/admin/paidy.js:1981
-#: assets/js/build/paidy/wizard/paidy.js:1792
-#: assets/js/build/paidy/wizard/paidy.js:2049
-#: src/js/paidy/main-hooks/on-boarding-settings.js:65
-#: src/js/paidy/wizard/components/controls.jsx:12
-#: assets/js/build/paidy/admin/paidy.js:1867
-#: assets/js/build/paidy/wizard/paidy.js:1716
-#: assets/js/build/paidy/wizard/paidy.js:1915
-msgid "Trade name / Store name"
-msgstr "商号/屋号"
-
-#: assets/js/build/paidy/admin/paidy.js:1984
-#: assets/js/build/paidy/wizard/paidy.js:1795
-#: assets/js/build/paidy/wizard/paidy.js:2061
-#: src/js/paidy/main-hooks/on-boarding-settings.js:66
-#: src/js/paidy/wizard/components/controls.jsx:24
-#: assets/js/build/paidy/admin/paidy.js:1868
-#: assets/js/build/paidy/wizard/paidy.js:1717
-#: assets/js/build/paidy/wizard/paidy.js:1927
-msgid "Your EC site name"
-msgstr "貴社の EC サイト名"
-
-#: assets/js/build/paidy/admin/paidy.js:1987
-#: assets/js/build/paidy/wizard/paidy.js:1798
-#: assets/js/build/paidy/wizard/paidy.js:2075
-#: src/js/paidy/main-hooks/on-boarding-settings.js:67
-#: src/js/paidy/wizard/components/controls.jsx:37
-#: assets/js/build/paidy/admin/paidy.js:1869
-#: assets/js/build/paidy/wizard/paidy.js:1718
-#: assets/js/build/paidy/wizard/paidy.js:1940
-msgid "Store URL"
-msgstr "貴社の EC サイト URL"
-
-#: assets/js/build/paidy/admin/paidy.js:1990
-#: assets/js/build/paidy/wizard/paidy.js:1801
-#: assets/js/build/paidy/wizard/paidy.js:2087
-#: src/js/paidy/main-hooks/on-boarding-settings.js:68
-#: src/js/paidy/wizard/components/controls.jsx:49
-#: assets/js/build/paidy/admin/paidy.js:1870
-#: assets/js/build/paidy/wizard/paidy.js:1719
-#: assets/js/build/paidy/wizard/paidy.js:1952
-msgid "Email address for registering Paidy"
-msgstr "ペイディ登録用メールアドレス"
-
-#: assets/js/build/paidy/admin/paidy.js:1993
-#: assets/js/build/paidy/wizard/paidy.js:1804
-#: assets/js/build/paidy/wizard/paidy.js:2097
-#: src/js/paidy/main-hooks/on-boarding-settings.js:69
-#: src/js/paidy/wizard/components/controls.jsx:59
-#: assets/js/build/paidy/admin/paidy.js:1871
-#: assets/js/build/paidy/wizard/paidy.js:1720
-#: assets/js/build/paidy/wizard/paidy.js:1962
-msgid "Contact phone number"
-msgstr "ご担当窓口電話番号"
-
-#: assets/js/build/paidy/admin/paidy.js:1996
-#: assets/js/build/paidy/wizard/paidy.js:1807
-#: assets/js/build/paidy/wizard/paidy.js:2108
-#: src/js/paidy/main-hooks/on-boarding-settings.js:70
-#: src/js/paidy/wizard/components/controls.jsx:70
-#: assets/js/build/paidy/admin/paidy.js:1872
-#: assets/js/build/paidy/wizard/paidy.js:1721
-#: assets/js/build/paidy/wizard/paidy.js:1973
-msgid "Representative (last name)"
-msgstr "代表者（姓）"
-
-#: assets/js/build/paidy/admin/paidy.js:1999
-#: assets/js/build/paidy/wizard/paidy.js:1810
-#: assets/js/build/paidy/wizard/paidy.js:2118
-#: src/js/paidy/main-hooks/on-boarding-settings.js:71
-#: src/js/paidy/wizard/components/controls.jsx:80
-#: assets/js/build/paidy/admin/paidy.js:1873
-#: assets/js/build/paidy/wizard/paidy.js:1722
-#: assets/js/build/paidy/wizard/paidy.js:1983
-msgid "Representative (first name)"
-msgstr "代表者（名）"
-
-#: assets/js/build/paidy/admin/paidy.js:2002
-#: assets/js/build/paidy/admin/paidy.js:2025
-#: assets/js/build/paidy/wizard/paidy.js:1813
-#: assets/js/build/paidy/wizard/paidy.js:1836
-#: assets/js/build/paidy/wizard/paidy.js:2128
-#: src/js/paidy/main-hooks/on-boarding-settings.js:72
-#: src/js/paidy/main-hooks/on-boarding-settings.js:90
-#: src/js/paidy/wizard/components/controls.jsx:90
-#: assets/js/build/paidy/admin/paidy.js:1874
-#: assets/js/build/paidy/admin/paidy.js:1892
-#: assets/js/build/paidy/wizard/paidy.js:1723
-#: assets/js/build/paidy/wizard/paidy.js:1741
-#: assets/js/build/paidy/wizard/paidy.js:1993
-msgid "Representative (last name kana)"
-msgstr "代表者カナ（セイ）"
-
-#: assets/js/build/paidy/admin/paidy.js:2005
-#: assets/js/build/paidy/admin/paidy.js:2028
-#: assets/js/build/paidy/wizard/paidy.js:1816
-#: assets/js/build/paidy/wizard/paidy.js:1839
-#: assets/js/build/paidy/wizard/paidy.js:2139
-#: src/js/paidy/main-hooks/on-boarding-settings.js:73
-#: src/js/paidy/main-hooks/on-boarding-settings.js:91
-#: src/js/paidy/wizard/components/controls.jsx:101
-#: assets/js/build/paidy/admin/paidy.js:1875
-#: assets/js/build/paidy/admin/paidy.js:1893
-#: assets/js/build/paidy/wizard/paidy.js:1724
-#: assets/js/build/paidy/wizard/paidy.js:1742
-#: assets/js/build/paidy/wizard/paidy.js:2004
-msgid "Representative (first name kana)"
-msgstr "代表者カナ（メイ）"
-
-#: assets/js/build/paidy/admin/paidy.js:2008
-#: assets/js/build/paidy/wizard/paidy.js:1819
-#: assets/js/build/paidy/wizard/paidy.js:2150
-#: src/js/paidy/main-hooks/on-boarding-settings.js:74
-#: src/js/paidy/wizard/components/controls.jsx:112
-#: assets/js/build/paidy/admin/paidy.js:1876
-#: assets/js/build/paidy/wizard/paidy.js:1725
-#: assets/js/build/paidy/wizard/paidy.js:2015
-msgid "Representative's date of birth (Gregorian calendar)"
-msgstr "代表者生年月日（西暦）"
-
-#. translators: %s: field label name
-#: assets/js/build/paidy/admin/paidy.js:2013
-#: assets/js/build/paidy/wizard/paidy.js:1824
-#: src/js/paidy/main-hooks/on-boarding-settings.js:80
-#: assets/js/build/paidy/admin/paidy.js:1882
-#: assets/js/build/paidy/wizard/paidy.js:1731
-msgid "%s is a required field. Please enter it."
-msgstr "%sは必須フィールドです。入力してください。"
-
-#. translators: %s: field label name
-#: assets/js/build/paidy/admin/paidy.js:2033
-#: assets/js/build/paidy/wizard/paidy.js:1844
-#: src/js/paidy/main-hooks/on-boarding-settings.js:97
-#: assets/js/build/paidy/admin/paidy.js:1899
-#: assets/js/build/paidy/wizard/paidy.js:1748
-msgid "%s must be in full-width katakana. Please confirm."
-msgstr "%sは全角カタカナで入力してください。確認してください。"
-
-#: assets/js/build/paidy/admin/paidy.js:2043
-#: assets/js/build/paidy/wizard/paidy.js:1854
-#: src/js/paidy/main-hooks/on-boarding-settings.js:107
-#: assets/js/build/paidy/admin/paidy.js:1909
-#: assets/js/build/paidy/wizard/paidy.js:1758
-msgid ""
-"When selecting \"No\" for the security survey question, please provide "
-"additional details in the text field."
-msgstr ""
-"【カード会員データの漏えい対策】に「いいえ」と回答された場合は場合、代替策を"
-"記入してください。"
-
-#: assets/js/build/paidy/admin/paidy.js:2052
-#: assets/js/build/paidy/wizard/paidy.js:1863
-#: src/js/paidy/main-hooks/on-boarding-settings.js:120
-#: assets/js/build/paidy/admin/paidy.js:1922
-#: assets/js/build/paidy/wizard/paidy.js:1771
-msgid ""
-"Since none of the security measures are implemented, please provide details "
-"about your security approach in the additional information field."
-msgstr ""
-"【不正ログイン対策】のいずれにも「はい」に✅がない場合は代替策を記入してくだ"
-"さい。"
-
-#: assets/js/build/paidy/admin/paidy.js:2060
-#: assets/js/build/paidy/wizard/paidy.js:1871
-#: src/js/paidy/main-hooks/on-boarding-settings.js:128
-#: assets/js/build/paidy/admin/paidy.js:1930
-#: assets/js/build/paidy/wizard/paidy.js:1779
-msgid "Please fill in all the fields."
-msgstr "すべてのフィールドに入力してください。"
-
-#: assets/js/build/paidy/wizard/paidy.js:2129
-#: assets/js/build/paidy/wizard/paidy.js:2140
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:91
 #: src/js/paidy/wizard/components/controls.jsx:102
-#: assets/js/build/paidy/wizard/paidy.js:1994
-#: assets/js/build/paidy/wizard/paidy.js:2005
 msgid "Please enter in full-width katakana."
 msgstr "全角カタカナで入力してください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2151
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:113
-#: assets/js/build/paidy/wizard/paidy.js:2016
 msgid "Please select a date from the calendar icon on the far right."
 msgstr "右端のカレンダーアイコンから日付をお選びください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2162
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:124
-#: assets/js/build/paidy/wizard/paidy.js:2027
 msgid "Annual gross merchandise value"
 msgstr "年間流通総額"
 
-#: assets/js/build/paidy/wizard/paidy.js:2165
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:127
-#: assets/js/build/paidy/wizard/paidy.js:2030
 msgid "Less than 10 million yen"
 msgstr "1億円未満"
 
-#: assets/js/build/paidy/wizard/paidy.js:2168
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:128
-#: assets/js/build/paidy/wizard/paidy.js:2031
 msgid "10 million yen or more"
 msgstr "1億円以上"
 
-#: assets/js/build/paidy/wizard/paidy.js:2179
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:138
-#: assets/js/build/paidy/wizard/paidy.js:2041
 msgid "Average purchase amount per order"
 msgstr "ご注文あたりの平均購入額"
 
-#: assets/js/build/paidy/wizard/paidy.js:2182
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:141
-#: assets/js/build/paidy/wizard/paidy.js:2044
 msgid "Less than 50,000 yen"
 msgstr "5万円未満"
 
-#: assets/js/build/paidy/wizard/paidy.js:2185
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:142
-#: assets/js/build/paidy/wizard/paidy.js:2045
 msgid "Over 50,000 yen"
 msgstr "5万円以上"
 
-#: assets/js/build/paidy/wizard/paidy.js:2196
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:152
-#: assets/js/build/paidy/wizard/paidy.js:2055
 msgid ""
 "Do you use two-step or two-factor authentication to prevent compromised "
 "accounts?"
@@ -8806,39 +8518,30 @@ msgstr ""
 "取得されたアカウントを不正使用されないよう二段階認証または二要素認証を採用し"
 "ていますか ?"
 
-#: assets/js/build/paidy/wizard/paidy.js:2203
-#: assets/js/build/paidy/wizard/paidy.js:2284
-#: assets/js/build/paidy/wizard/paidy.js:2301
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:161
 #: src/js/paidy/wizard/components/controls.jsx:245
 #: src/js/paidy/wizard/components/controls.jsx:265
-#: assets/js/build/paidy/wizard/paidy.js:2064
-#: assets/js/build/paidy/wizard/paidy.js:2148
-#: assets/js/build/paidy/wizard/paidy.js:2168
 msgid "No"
 msgstr "いいえ"
 
-#: assets/js/build/paidy/wizard/paidy.js:2206
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:165
-#: assets/js/build/paidy/wizard/paidy.js:2068
 msgid "Unknown"
 msgstr "わからない"
 
-#: assets/js/build/paidy/wizard/paidy.js:2216
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:176
-#: assets/js/build/paidy/wizard/paidy.js:2079
 msgid "If the answer is \"no\", please provide an alternative."
 msgstr "回答が「いいえ」の場合、代替策を記入してください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2226
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:186
-#: assets/js/build/paidy/wizard/paidy.js:2089
 msgid "Restricting access from suspicious IP addresses"
 msgstr "不審なIP アドレスからのアクセス制限"
 
-#: assets/js/build/paidy/wizard/paidy.js:2228
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:188
-#: assets/js/build/paidy/wizard/paidy.js:2091
 msgid ""
 "This refers to restricting access from suspicious IP addresses, such as "
 "those from overseas, using firewalls, WAFs, apps, etc."
@@ -8846,15 +8549,13 @@ msgstr ""
 "ファイアウォールやWAF、アプリ等によって、海外等の不審なIPアドレスからのアクセ"
 "ス制限を行うことを指します。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2237
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:197
-#: assets/js/build/paidy/wizard/paidy.js:2100
 msgid "Identity verification using two-factor authentication, etc."
 msgstr "二要素認証等による本人確認など。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2239
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:199
-#: assets/js/build/paidy/wizard/paidy.js:2102
 msgid ""
 "This refers to increasing security strength by combining multiple levels or "
 "elements of authentication, such as biometric authentication using "
@@ -8865,15 +8566,13 @@ msgstr ""
 "段階または要素の認証を組み合わせることで、セキュリティ強度を高めることを指し"
 "ます。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2248
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:208
-#: assets/js/build/paidy/wizard/paidy.js:2111
 msgid "Fraud detection system (Fraud service)"
 msgstr "不正検知システム（Fraud サービス）"
 
-#: assets/js/build/paidy/wizard/paidy.js:2250
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:210
-#: assets/js/build/paidy/wizard/paidy.js:2113
 msgid ""
 "It is a security technology that constantly monitors communications on the "
 "network and detects fraudulent transactions in advance, such as the use of "
@@ -8882,15 +8581,13 @@ msgstr ""
 "ネットワーク上の通信を常時監視し、第三者によるクレジットカードの利用やなりす"
 "ましなど、不正な取引を事前に検知するセキュリティ技術の一つです。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2259
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:219
-#: assets/js/build/paidy/wizard/paidy.js:2122
 msgid "Device fingerprinting, etc."
 msgstr "デバイスフィンガープリント等。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2260
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:220
-#: assets/js/build/paidy/wizard/paidy.js:2123
 msgid ""
 "This technology tracks online behavior by using the characteristics of the "
 "operating environment of the user's device as a kind of fingerprint."
@@ -8898,25 +8595,22 @@ msgstr ""
 "ユーザーが使うデバイス（端末）の動作環境の特徴を、フィンガープリント（指紋）"
 "のように手掛かりにして、ネット上の行動を追跡する技術です。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2270
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:230
-#: assets/js/build/paidy/wizard/paidy.js:2133
 msgid ""
 "If there is more than one question with a \"yes\" answer, please provide an "
 "alternative solution."
 msgstr "「はい」が１つ以上つかない設問がある場合、代替策を記入してください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2280
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:240
-#: assets/js/build/paidy/wizard/paidy.js:2143
 msgid ""
 "Have you received any administrative disposition under the Specified "
 "Commercial Transactions Act in the past five years?"
 msgstr "直近5年間に特定商取引法による行政処分を受けたことがありますか？"
 
-#: assets/js/build/paidy/wizard/paidy.js:2297
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:260
-#: assets/js/build/paidy/wizard/paidy.js:2163
 msgid ""
 "Have you ever been sued in a civil lawsuit for violating the Consumer "
 "Contract Act and lost the case?"
@@ -8924,47 +8618,40 @@ msgstr ""
 "消費者契約法違反の行為を理由とした民事上の訴訟を提起され、敗訴判決を受けたこ"
 "とがありますか？"
 
-#: assets/js/build/paidy/wizard/paidy.js:2345
-#: assets/js/build/paidy/wizard/paidy.js:2851
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:5
 #: src/js/paidy/wizard/components/first-main-page.jsx:50
-#: src/js/paidy/wizard/index.js:29 assets/js/build/paidy/wizard/paidy.js:2252
-#: assets/js/build/paidy/wizard/paidy.js:2684
+#: src/js/paidy/wizard/index.js:29
 msgid "Easy setup for Paidy payment"
 msgstr "ペイディ決済らくらく設定"
 
-#: assets/js/build/paidy/wizard/paidy.js:2351
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/first-main-page.jsx:58
-#: assets/js/build/paidy/wizard/paidy.js:2260
 msgid "Paidy application"
 msgstr "ペイディ申し込み"
 
-#: assets/js/build/paidy/wizard/paidy.js:2360
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/first-main-page.jsx:66
-#: assets/js/build/paidy/wizard/paidy.js:2268
 msgid "Get started now"
 msgstr "今すぐ始める"
 
-#: assets/js/build/paidy/wizard/paidy.js:2371
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/first-main-page.jsx:75
-#: assets/js/build/paidy/wizard/paidy.js:2277
 msgid "I agree to the above and apply"
 msgstr "上記内容で申し込む"
 
-#: assets/js/build/paidy/wizard/paidy.js:2445
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:149
-#: assets/js/build/paidy/wizard/paidy.js:2351
 msgid "Basic information"
 msgstr "基本情報"
 
-#: assets/js/build/paidy/wizard/paidy.js:2489
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:203
-#: assets/js/build/paidy/wizard/paidy.js:2405
 msgid "Security survey"
 msgstr "セキュリティアンケート"
 
-#: assets/js/build/paidy/wizard/paidy.js:2491
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:206
-#: assets/js/build/paidy/wizard/paidy.js:2408
 msgid ""
 "Based on requests from the Ministry of Economy, Trade and Industry and the "
 "Japan Consumer Credit Association, all e-commerce affiliates are required to "
@@ -8975,18 +8662,16 @@ msgstr ""
 "時に自らのセキュリティ対策の措置状況の申告が必要となるため、以下の設問にご回"
 "答をお願いします。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2493
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:210
-#: assets/js/build/paidy/wizard/paidy.js:2412
 msgid ""
 "For details, please refer to <link>the Security Measures Status Declaration "
 "Form FAQ.</link>"
 msgstr ""
 "詳細は<link>セキュリティ対策状況申告フォームFAQ</link>をご参照ください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2501
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:223
-#: assets/js/build/paidy/wizard/paidy.js:2425
 msgid ""
 "*If the system has not yet been built, please declare the check items for "
 "each security measure on the assumption that they will be satisfied once the "
@@ -8995,123 +8680,106 @@ msgstr ""
 "※システム未構築の場合は、各セキュリティ対策のチェック項目について、構築完了し"
 "た時点で充足することを前提に申告してください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2507
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:228
-#: assets/js/build/paidy/wizard/paidy.js:2430
 msgid "[Measures to prevent leakage of cardholder data]"
 msgstr "【カード会員データの漏えい対策】"
 
-#: assets/js/build/paidy/wizard/paidy.js:2518
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:243
-#: assets/js/build/paidy/wizard/paidy.js:2445
 msgid "[Countermeasures against unauthorized logins]"
 msgstr "【不正ログイン対策】"
 
-#: assets/js/build/paidy/wizard/paidy.js:2520
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:246
-#: assets/js/build/paidy/wizard/paidy.js:2448
 msgid ""
 "*At least one \"Yes\" is required. If any are missing, we will contact you."
 msgstr ""
 "※「はい」が１つ以上必要です。不足がある場合、弊社からご連絡いたします。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2523
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:249
-#: assets/js/build/paidy/wizard/paidy.js:2451
 msgid ""
 "Do you take the following measures to prevent unauthorized logins when "
 "changing a user's attributes?"
 msgstr "ユーザーの『属性変更時』に以下の不正ログイン対策を行っていますか ?"
 
-#: assets/js/build/paidy/wizard/paidy.js:2541
+#: assets/js/build/paidy/wizard/paidy.js:3
 #: src/js/paidy/wizard/components/first-main-page.jsx:272
-#: assets/js/build/paidy/wizard/paidy.js:2474
 msgid "Questionnaire"
 msgstr "アンケート"
 
 #. translators: %s: plugin name
-#: assets/js/build/paidy/wizard/paidy.js:2595
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:341
-#: assets/js/build/paidy/wizard/paidy.js:2543
 msgid "Easy Paidy setup now available with %s!"
 msgstr "%sでペイディ決済らくらく設定、はじまりました !"
 
-#: assets/js/build/paidy/wizard/paidy.js:2595
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:343
-#: assets/js/build/paidy/wizard/paidy.js:2545
 msgid "Right now, we are offering a one-month trial with no payment fees!"
 msgstr "今なら、なんとお試し1か月決済手数料無料！"
 
-#: assets/js/build/paidy/wizard/paidy.js:2620
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:358
-#: assets/js/build/paidy/wizard/paidy.js:2560
 msgid "What is Paidy?"
 msgstr "ペイディって？"
 
-#: assets/js/build/paidy/wizard/paidy.js:2620
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:359
-#: assets/js/build/paidy/wizard/paidy.js:2561
 msgid ""
 "Paidy is a deferred payment service that can be used without the need for a "
 "credit card."
 msgstr "Paidyは、クレジットカード不要で使える“あと払い”決済です。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2620
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:360
-#: assets/js/build/paidy/wizard/paidy.js:2562
 msgid ""
 "Customers can make purchases with just their mobile phone number and email "
 "address."
 msgstr "購入者は、携帯番号とメールアドレスだけでお買い物。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2620
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:361
-#: assets/js/build/paidy/wizard/paidy.js:2563
 msgid ""
 "Payment can be made from the following month onwards via convenience store, "
 "bank or direct debit."
 msgstr "支払いは翌月以降に、コンビニ・銀行・口座振替でOK。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2620
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:362
-#: assets/js/build/paidy/wizard/paidy.js:2564
 msgid "We respond to the desire to \"buy now.\""
 msgstr "「今すぐ買いたい」気持ちにこたえます。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2628
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:365
-#: assets/js/build/paidy/wizard/paidy.js:2567
 msgid "Benefits of implementation (for EC businesses)"
 msgstr "導入のメリット（EC事業者向け）"
 
-#: assets/js/build/paidy/wizard/paidy.js:2628
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:366
-#: assets/js/build/paidy/wizard/paidy.js:2568
 msgid ""
 "No credit card registration is required, making it easy for new customers to "
 "make purchases with confidence."
 msgstr "クレカ登録なしでOKだから、新規のお客様が安心して購入しやすくなります。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2628
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:367
-#: assets/js/build/paidy/wizard/paidy.js:2569
 msgid ""
 "Installment payments are also supported, which is expected to increase the "
 "success rate of high-priced products."
 msgstr "分割払いにも対応しているため、高単価商品の成約率アップが期待できます。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2628
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:368
-#: assets/js/build/paidy/wizard/paidy.js:2570
 msgid ""
 "*Free installment fees only apply when paying by direct debit or bank "
 "transfer. Identity verification and app download required."
 msgstr ""
 "※分割手数料無料は口座振替・銀行払い時のみ。本人認証とアプリDLが必要です。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2628
+#: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/wizard/components/first-main-page.jsx:369
-#: assets/js/build/paidy/wizard/paidy.js:2571
 msgid ""
 "Currently used on over 700,000 websites nationwide, including Amazon. "
 "Industry-leading track record."
@@ -9119,42 +8787,44 @@ msgstr ""
 "Amazonをはじめ、全国70万以上のサイトで利用中。 業界トップクラスの実績。"
 
 #. translators: %s: plugin name
-#: assets/js/build/paidy/wizard/paidy.js:2632
+#: assets/js/build/paidy/wizard/paidy.js:5
 #: src/js/paidy/wizard/components/first-main-page.jsx:374
-#: assets/js/build/paidy/wizard/paidy.js:2576
 msgid "%s * Paidy"
 msgstr "%s × Paidy"
 
-#: assets/js/build/paidy/wizard/paidy.js:2632
+#: assets/js/build/paidy/wizard/paidy.js:5
 #: src/js/paidy/wizard/components/first-main-page.jsx:376
-#: assets/js/build/paidy/wizard/paidy.js:2578
 msgid ""
 "With this update, Paidy can now be installed in as little as 30 seconds!"
 msgstr "今回のアップデートで、Paidyが最短30秒で導入可能に！"
 
-#: assets/js/build/paidy/wizard/paidy.js:2632
+#: assets/js/build/paidy/wizard/paidy.js:5
 #: src/js/paidy/wizard/components/first-main-page.jsx:377
-#: assets/js/build/paidy/wizard/paidy.js:2579
 msgid "No initial or monthly fees."
 msgstr "初期費用・月額費用ゼロ。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2632
+#: assets/js/build/paidy/wizard/paidy.js:5
 #: src/js/paidy/wizard/components/first-main-page.jsx:378
-#: assets/js/build/paidy/wizard/paidy.js:2580
 msgid ""
 "The review process is completed in as little as 1-2 days, and setup is easy."
 msgstr "審査も最短1〜2日で完了、設定もカンタンです。"
 
-#: assets/js/build/paidy/wizard/paidy.js:2643
+#: assets/js/build/paidy/wizard/paidy.js:5
 #: src/js/paidy/wizard/components/first-main-page.jsx:386
-#: assets/js/build/paidy/wizard/paidy.js:2588
 msgid "pass this time"
 msgstr "今回は見送る"
 
-#: assets/js/build/paidy/wizard/paidy.js:2838 src/js/paidy/wizard/index.js:10
-#: assets/js/build/paidy/wizard/paidy.js:2665
+#: assets/js/build/paidy/wizard/paidy.js:5 src/js/paidy/wizard/index.js:10
 msgid "Back to Paidy settings"
 msgstr "Paidy の設定に戻る"
+
+#: src/js/paidy/admin/components/index.js:49
+msgid "Status: Approved"
+msgstr "ステータス: 審査は承認されました"
+
+#: src/js/paidy/admin/components/index.js:66
+msgid "Status: Rejected"
+msgstr "ステータス: 審査は否決されました"
 
 #: src/js/paidy/wizard/button.js:6
 msgid "Next"

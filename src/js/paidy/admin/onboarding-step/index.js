@@ -17,6 +17,7 @@ export const OnBoardingStep = () => {
         currentStep
     } = useOnBoardingSettings();
 	const paidyAdUrl = window.paidyForWcSettings?.paidyAdUrl || 'https://paidy.com/campaign/merchant/202404_WW';
+    const nonWizardUrl = window.paidyForWcSettings?.nonWizardUrl || '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=paidy&wizard=false';
 
 	if ( currentStep === 2 ) {
         return (
@@ -58,6 +59,9 @@ export const OnBoardingStep = () => {
                 <p>
                     { __( 'There is no setup cost, payment fees start from 3.5%, and if you apply via this service, you will receive a one-month trial with no payment fees!', 'woocommerce-for-japan' ) }
                      <a href={paidyAdUrl} target="_blank" rel="noreferrer">{ __( 'Learn more about Paidy', 'woocommerce-for-japan' ) }</a>
+                </p>
+                <p>
+                    <a href={nonWizardUrl} rel="noreferrer">{ __( 'Enter the information manually without using the wizard.', 'woocommerce-for-japan' ) }</a>
                 </p>
             </div>
             </>

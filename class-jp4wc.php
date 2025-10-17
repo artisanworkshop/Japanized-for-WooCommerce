@@ -52,8 +52,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// rated appeal.
 			add_action( 'wp_ajax_wc4jp_rated', array( __CLASS__, 'jp4wc_rated' ) );
 			add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
-			// handle HPOS compatibility.
-			add_action( 'before_woocommerce_init', array( $this, 'jp4wc_handle_hpos_compatibility' ) );
 			// Add COD gateway for fee.
 			add_filter( 'woocommerce_payment_gateways', array( $this, 'add_jp4wc_custom_cod_gateway' ) );
 		}
@@ -319,20 +317,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 						}
 					);
 				}
-			}
-		}
-
-		/**
-		 * Declares HPOS compatibility if the plugin is compatible with HPOS.
-		 *
-		 * @internal
-		 *
-		 * @since 2.6.0
-		 */
-		public function jp4wc_handle_hpos_compatibility() {
-			if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-				$slug = dirname( plugin_basename( __FILE__ ) );
-				\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', trailingslashit( $slug ) . $slug . '.php', true );
 			}
 		}
 
