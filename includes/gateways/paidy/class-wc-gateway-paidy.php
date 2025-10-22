@@ -179,7 +179,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		add_action( 'woocommerce_order_status_processing_to_cancelled', array( $this, 'paidy_order_paidy_status_processing_to_cancelled' ) );
 		add_action( 'woocommerce_order_status_completed_to_cancelled', array( $this, 'paidy_order_paidy_status_completed_to_cancelled' ) );
 
-		add_action( 'admin_print_footer_scripts', array( $this, 'paidy_remove_refund_button_for_processing' ), 99 );
+		add_action( 'admin_print_footer_scripts', array( $this, 'paidy_remove_refund_button_for_processing' ), 10 );
 	}
 
 	/**
@@ -847,11 +847,19 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 */
 	public function paidy_remove_refund_button_for_processing() {
 		global $post;
+		print_r( $post );
 		if ( ! $post || 'shop_order' !== get_post_type( $post->ID ) ) {
-			return;
+			if ( isset($_GET['id']) && 'shop_order' === get_post_type( $_GET['id'] ) ) { // phpcs:ignore
+				$order_id = intval( $_GET['id'] ); // phpcs:ignore
+			} else {
+				return;
+			}
 		}
 
-		$order = wc_get_order( $post->ID );
+		if ( ! isset( $order_id ) ) {
+			$order_id = $post->ID;
+		}
+		$order = wc_get_order( $order_id );
 		if ( ! $order ) {
 			return;
 		}
