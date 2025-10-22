@@ -855,6 +855,12 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		if ( ! $order ) {
 			return;
 		}
+
+		// Check if the payment method is Paidy.
+		if ( $this->id !== $order->get_payment_method() ) {
+			return;
+		}
+
 		if ( 'processing' === $order->get_status() ) :
 			?>
 			<script>
