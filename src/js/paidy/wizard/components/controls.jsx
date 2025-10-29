@@ -237,17 +237,17 @@ const SecuritySurvey10TextAreaControl = ( { value, onChange } ) => {
 const SecuritySurvey08RadioControl = ( { value, onChange } ) => {
     return (
         <RadioControl
-            label={ __( 'Have you received any administrative disposition under the Specified Commercial Transactions Act in the past five years?', 'woocommerce-for-japan' ) }
+            label={ __( 'We have not received any administrative penalties under the Specified Commercial Transactions Law in the past five years.', 'woocommerce-for-japan' ) }
             selected={ value }
             onChange={ onChange }
             options={[
                 {
-                    label: __( 'No', 'woocommerce-for-japan' ),
-                    value: 'no'
-                },
-                {
                     label: __( 'Yes', 'woocommerce-for-japan' ),
                     value: 'yes'
+                },
+                {
+                    label: __( 'No', 'woocommerce-for-japan' ),
+                    value: 'no'
                 },
             ]}
         />
@@ -257,17 +257,17 @@ const SecuritySurvey08RadioControl = ( { value, onChange } ) => {
 const SecuritySurvey09RadioControl = ( { value, onChange } ) => {
     return (
         <RadioControl
-            label={ __( 'Have you ever been sued in a civil lawsuit for violating the Consumer Contract Act and lost the case?', 'woocommerce-for-japan' ) }
+            label={ __( 'I have never been sued in a civil lawsuit or received an unfavorable judgment based on actions that violated the Consumer Contract Act.', 'woocommerce-for-japan' ) }
             selected={ value }
             onChange={ onChange }
             options={[
                 {
-                    label: __( 'No', 'woocommerce-for-japan' ),
-                    value: 'no'
-                },
-                {
                     label: __( 'Yes', 'woocommerce-for-japan' ),
                     value: 'yes'
+                },
+                {
+                    label: __( 'No', 'woocommerce-for-japan' ),
+                    value: 'no'
                 },
             ]}
         />
