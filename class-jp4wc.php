@@ -17,13 +17,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 	class JP4WC {
 
 		/**
-		 * Japanized for WooCommerce version.
-		 *
-		 * @var string
-		 */
-		public $version = '2.7.9';
-
-		/**
 		 * Japanized for WooCommerce Framework version.
 		 *
 		 * @var string
@@ -102,7 +95,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			define( 'JP4WC_ABSPATH', __DIR__ . '/' );
 			define( 'JP4WC_INCLUDES_PATH', JP4WC_ABSPATH . 'includes/' );
 			define( 'JP4WC_PLUGIN_FILE', __FILE__ );
-			define( 'JP4WC_VERSION', $this->version );
 			define( 'JP4WC_FRAMEWORK_VERSION', $this->framework_version );
 		}
 
