@@ -161,8 +161,8 @@ class WC_Paidy_Admin_Wizard {
 			'securitySurvey13CheckControl'    => false,
 			'securitySurvey14CheckControl'    => false,
 			'securitySurvey10TextAreaControl' => '',
-			'securitySurvey08RadioControl'    => 'no',
-			'securitySurvey09RadioControl'    => 'no',
+			'securitySurvey08RadioControl'    => 'yes',
+			'securitySurvey09RadioControl'    => 'yes',
 		);
 		$schema  = array(
 			'type'       => 'object',

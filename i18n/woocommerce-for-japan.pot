@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Japanized for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Japanized for WooCommerce 2.7.6\n"
+"Project-Id-Version: Japanized for WooCommerce 2.7.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Japanized-for-WooCommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-16T09:26:38+00:00\n"
+"POT-Creation-Date: 2025-10-29T02:45:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -40,85 +40,85 @@ msgid "https://wc.artws.info/"
 msgstr ""
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:261
+#: class-jp4wc.php:259
 #, php-format
 msgid "If you like <strong>Japanized for WooCommerce</strong> please leave us a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. A huge thanks in advance!"
 msgstr ""
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:261
+#: class-jp4wc.php:259
 msgid "Thanks :)"
 msgstr ""
 
-#: class-jp4wc.php:271
+#: class-jp4wc.php:269
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:133
+#: includes/admin/class-jp4wc-admin-notices.php:139
 msgid "Credit Card Security Guidelines Quick Check"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:137
+#: includes/admin/class-jp4wc-admin-notices.php:143
 msgid "Please check the PHP version. The PHP currently used on this site is not supported for security reasons."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:142
+#: includes/admin/class-jp4wc-admin-notices.php:148
 msgid "Please check the WordPress version. The version of WordPress is outdated."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:147
+#: includes/admin/class-jp4wc-admin-notices.php:153
 msgid "Please check the WooCommerce version. The version of WooCommerce is outdated."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:153
+#: includes/admin/class-jp4wc-admin-notices.php:159
 msgid "This site is currently in violation of the security guidelines due to the above content. Immediate action is required."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:159
+#: includes/admin/class-jp4wc-admin-notices.php:165
 msgid "Get 2,200 yen/month and cashback now! Click here for your chance to switch to a secure server."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:163
+#: includes/admin/class-jp4wc-admin-notices.php:169
 msgid "30-day money back guarantee! Click here for details on the security-enabled server migration campaign."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:167
+#: includes/admin/class-jp4wc-admin-notices.php:173
 msgid "Get a cashback on all your current server costs! Click here for a safe and economical migration."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:171
+#: includes/admin/class-jp4wc-admin-notices.php:177
 msgid "Fully secure! Migration + cashback for just 2,200 yen per month [Click here for details]."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:175
+#: includes/admin/class-jp4wc-admin-notices.php:181
 msgid "Migration is also safe. 30-day money back guarantee! Click here for security-enabled servers."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:179
+#: includes/admin/class-jp4wc-admin-notices.php:185
 msgid "If you're worried about server migration, check out SoftStepsEC for Pressable!"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:183
+#: includes/admin/class-jp4wc-admin-notices.php:189
 msgid "Now is your chance to switch! Check out the ¥2,200/month + cashback campaign."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:187
+#: includes/admin/class-jp4wc-admin-notices.php:193
 msgid "[Hurry] Check out the details of this safe and affordable server migration campaign now!"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:193
+#: includes/admin/class-jp4wc-admin-notices.php:199
 msgid "We recommend you do a quick check on the following page."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:195
+#: includes/admin/class-jp4wc-admin-notices.php:201
 msgid "The above warning will no longer be displayed, and once you have checked the page problems, addressed them, checked and saved, this message will disappear."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:197
+#: includes/admin/class-jp4wc-admin-notices.php:203
 msgid "Check the security checklist"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:200
+#: includes/admin/class-jp4wc-admin-notices.php:206
 msgid "[Introducing servers that comply with credit card guidelines]"
 msgstr ""
 
@@ -155,7 +155,7 @@ msgid "Notice"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:139
-#: includes/admin/class-jp4wc-admin-screen.php:778
+#: includes/admin/class-jp4wc-admin-screen.php:853
 msgid "Name Yomigana"
 msgstr ""
 
@@ -168,14 +168,14 @@ msgid "Honorific suffix(Sama)"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:160
-#: includes/admin/class-jp4wc-admin-screen.php:804
+#: includes/admin/class-jp4wc-admin-screen.php:879
 #: includes/class-jp4wc-address-fields.php:132
 #: includes/class-jp4wc-address-fields.php:167
 msgid "Company Name"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:167
-#: includes/admin/class-jp4wc-admin-screen.php:873
+#: includes/admin/class-jp4wc-admin-screen.php:948
 msgid "Automatic zip code entry"
 msgstr ""
 
@@ -188,7 +188,7 @@ msgid "No Japanese Address"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:188
-#: includes/admin/class-jp4wc-admin-screen.php:813
+#: includes/admin/class-jp4wc-admin-screen.php:888
 msgid "Free Shipping Display"
 msgstr ""
 
@@ -213,7 +213,7 @@ msgid "Tracking"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:235
-#: includes/admin/class-jp4wc-admin-screen.php:900
+#: includes/admin/class-jp4wc-admin-screen.php:975
 msgid "Delivery date designation"
 msgstr ""
 
@@ -243,7 +243,7 @@ msgid "Date format"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:283
-#: includes/admin/class-jp4wc-admin-screen.php:950
+#: includes/admin/class-jp4wc-admin-screen.php:1025
 msgid "Display day of week"
 msgstr ""
 
@@ -264,7 +264,7 @@ msgid "Delivery Time designation"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:319
-#: includes/admin/class-jp4wc-admin-screen.php:1049
+#: includes/admin/class-jp4wc-admin-screen.php:1124
 msgid "Delivery time zone"
 msgstr ""
 
@@ -285,7 +285,7 @@ msgid "Payment Method"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:355
-#: includes/admin/class-jp4wc-admin-screen.php:1111
+#: includes/admin/class-jp4wc-admin-screen.php:1186
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:95
 #: assets/js/build/frontend/blocks/bank-jp.js:1
 #: src/js/jp4wc/frontend/blocks/bank-jp/index.js:9
@@ -293,7 +293,7 @@ msgid "BANK PAYMENT IN JAPAN"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:362
-#: includes/admin/class-jp4wc-admin-screen.php:1119
+#: includes/admin/class-jp4wc-admin-screen.php:1194
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:86
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:139
 #: assets/js/build/frontend/blocks/postofficebank.js:1
@@ -302,17 +302,17 @@ msgid "Postal transfer"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:369
-#: includes/admin/class-jp4wc-admin-screen.php:1127
+#: includes/admin/class-jp4wc-admin-screen.php:1202
 msgid "Pay at store"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:376
-#: includes/admin/class-jp4wc-admin-screen.php:1136
+#: includes/admin/class-jp4wc-admin-screen.php:1211
 msgid "COD for Subscriptions"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:383
-#: includes/admin/class-jp4wc-admin-screen.php:1145
+#: includes/admin/class-jp4wc-admin-screen.php:1220
 #: includes/gateways/paypal/modules/ppcp-compat/services.php:20
 #: includes/gateways/paypal/modules/ppcp-session/src/Cancellation/CancelView.php:61
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:418
@@ -327,414 +327,525 @@ msgstr ""
 msgid "PayPal"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:392
+#: includes/admin/class-jp4wc-admin-screen.php:391
+#: includes/class-jp4wc-cod-fee.php:100
+msgid "Extra charge for COD method"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:397
+#: includes/class-jp4wc-cod-fee.php:104
+msgid "Fee name"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:404
+#: includes/class-jp4wc-cod-fee.php:110
+msgid "Extra charge amount"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:411
+#: includes/class-jp4wc-cod-fee.php:115
+msgid "Maximum cart value to which adding fee"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:418
+#: includes/class-jp4wc-cod-fee.php:121
+msgid "Includes taxes"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:425
+msgid "Tax Class"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:432
+msgid "Charge amount of details"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:441
 #: includes/admin/views/html-admin-screen.php:15
 msgid "Specified Commercial Transaction Law"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:398
+#: includes/admin/class-jp4wc-admin-screen.php:447
 #: includes/class-jp4wc-shortcodes.php:64
 msgid "Shop Name"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:405
+#: includes/admin/class-jp4wc-admin-screen.php:454
 #: includes/class-jp4wc-shortcodes.php:65
 msgid "Sales company name (company name)"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:412
+#: includes/admin/class-jp4wc-admin-screen.php:461
 #: includes/class-jp4wc-shortcodes.php:66
 msgid "Owner Name"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:419
+#: includes/admin/class-jp4wc-admin-screen.php:468
 #: includes/class-jp4wc-shortcodes.php:67
 #: includes/class-jp4wc-shortcodes.php:90
 msgid "Manager Name"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:426
+#: includes/admin/class-jp4wc-admin-screen.php:475
 #: includes/class-jp4wc-shortcodes.php:68
 msgid "Location"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:433
+#: includes/admin/class-jp4wc-admin-screen.php:482
 #: includes/class-jp4wc-shortcodes.php:69
 msgid "Contact"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:440
+#: includes/admin/class-jp4wc-admin-screen.php:489
 #: includes/class-jp4wc-shortcodes.php:70
 #: includes/class-jp4wc-shortcodes.php:90
 msgid "Telephone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:447
+#: includes/admin/class-jp4wc-admin-screen.php:496
 #: includes/class-jp4wc-shortcodes.php:71
 msgid "Selling price"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:454
+#: includes/admin/class-jp4wc-admin-screen.php:503
 #: includes/class-jp4wc-shortcodes.php:72
 msgid "Payment method"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:461
+#: includes/admin/class-jp4wc-admin-screen.php:510
 #: includes/class-jp4wc-shortcodes.php:73
 msgid "Product purchase method"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:468
+#: includes/admin/class-jp4wc-admin-screen.php:517
 #: includes/class-jp4wc-shortcodes.php:74
 msgid "Product delivery time"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:475
+#: includes/admin/class-jp4wc-admin-screen.php:524
 #: includes/class-jp4wc-shortcodes.php:75
 msgid "Costs other than product charges"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:482
+#: includes/admin/class-jp4wc-admin-screen.php:531
 #: includes/class-jp4wc-shortcodes.php:76
 msgid "Returns / Cancellations"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:489
+#: includes/admin/class-jp4wc-admin-screen.php:538
 #: includes/class-jp4wc-shortcodes.php:77
 #: includes/class-jp4wc-shortcodes.php:90
 msgid "Special conditions"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:496
+#: includes/admin/class-jp4wc-admin-screen.php:545
 msgid "Setting method"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:505
+#: includes/admin/class-jp4wc-admin-screen.php:554
 #: includes/admin/views/html-admin-screen.php:16
 #: includes/admin/views/html-admin-setting-screen.php:21
 msgid "Affiliate Setting"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:512
+#: includes/admin/class-jp4wc-admin-screen.php:561
 msgid "A8.net Setting"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:520
+#: includes/admin/class-jp4wc-admin-screen.php:569
 msgid "felmat Setting"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:534
+#: includes/admin/class-jp4wc-admin-screen.php:583
 msgid "Plugins Information"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:540
+#: includes/admin/class-jp4wc-admin-screen.php:589
 msgid "Featured Plugins"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:549
+#: includes/admin/class-jp4wc-admin-screen.php:598
 msgid "Professional services Information"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:555
+#: includes/admin/class-jp4wc-admin-screen.php:604
 msgid "Featured Services"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:582
-#: includes/admin/class-jp4wc-admin-screen.php:612
-#: includes/admin/class-jp4wc-admin-screen.php:657
-#: includes/admin/class-jp4wc-admin-screen.php:678
-#: includes/admin/class-jp4wc-admin-screen.php:690
+#: includes/admin/class-jp4wc-admin-screen.php:631
+#: includes/admin/class-jp4wc-admin-screen.php:687
+#: includes/admin/class-jp4wc-admin-screen.php:732
+#: includes/admin/class-jp4wc-admin-screen.php:753
+#: includes/admin/class-jp4wc-admin-screen.php:765
 msgid "Your settings have been saved."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:771
+#: includes/admin/class-jp4wc-admin-screen.php:846
 msgid "Regarding this setting, etc., we do not yet support block shopping carts or purchase procedures. Please use the shortcode to use this feature."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:787
+#: includes/admin/class-jp4wc-admin-screen.php:862
 msgid "Check if you want to require yomigana."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:795
+#: includes/admin/class-jp4wc-admin-screen.php:870
 msgid "Honorific Suffix(Sama)"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:822
+#: includes/admin/class-jp4wc-admin-screen.php:897
 msgid "This process has no hooks, so it overwrites the template files in /emails/. If you have customized the email template, please refer to the 12 files in the folder below and add them to your customization.<br/>woocommerce-for-japan/templates/emails/"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:823
+#: includes/admin/class-jp4wc-admin-screen.php:898
 msgid "Please check it if you want to change customer name display.( from first name to full name )"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:832
+#: includes/admin/class-jp4wc-admin-screen.php:907
 msgid "Postcode / ZIP"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:833
+#: includes/admin/class-jp4wc-admin-screen.php:908
 msgid "Prefecture"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:834
+#: includes/admin/class-jp4wc-admin-screen.php:909
 msgid "Town / City"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:835
+#: includes/admin/class-jp4wc-admin-screen.php:910
 msgid "Street address"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:836
+#: includes/admin/class-jp4wc-admin-screen.php:911
 msgid "Apartment, suite, unit, etc. (optional)"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:837
+#: includes/admin/class-jp4wc-admin-screen.php:912
 #: includes/class-jp4wc-address-fields.php:474
 #: includes/class-jp4wc-address-fields.php:543
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:339
 msgid "Phone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:849
+#: includes/admin/class-jp4wc-admin-screen.php:924
 msgid "Check the address input field to hide in the virtual order."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:865
+#: includes/admin/class-jp4wc-admin-screen.php:940
 msgid "Enable usage tracking"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:882
+#: includes/admin/class-jp4wc-admin-screen.php:957
 msgid "Yahoo! APP ID"
 msgstr ""
 
 #. translators: %s: Setting title
-#: includes/admin/class-jp4wc-admin-screen.php:884
+#: includes/admin/class-jp4wc-admin-screen.php:959
 #, php-format
 msgid "If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input %s here. Please get it from <a href=\"https://e.developer.yahoo.co.jp/dashboard/\" target=\"_blank\">here</a>."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:892
+#: includes/admin/class-jp4wc-admin-screen.php:967
 msgid "Eliminate the order of addresses for Japan."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:909
+#: includes/admin/class-jp4wc-admin-screen.php:984
 msgid "Check here if you want to specify the delivery date as a required."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:917
+#: includes/admin/class-jp4wc-admin-screen.php:992
 msgid "Please enter the number of days until the first day you can receive the delivery date / time. If you enter 0 you can specify delivery from today."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:925
+#: includes/admin/class-jp4wc-admin-screen.php:1000
 msgid "Please enter the number of days for which you can accept the delivery reservation. Please enter 1 or more."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:933
+#: includes/admin/class-jp4wc-admin-screen.php:1008
 msgid "Please enter the sentence when you do not need to specify the delivery date."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:934
+#: includes/admin/class-jp4wc-admin-screen.php:1009
 msgid "No specified date"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:941
+#: includes/admin/class-jp4wc-admin-screen.php:1016
 msgid "Please enter the format when you want to save the data by format. Use PHP format type."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:942
+#: includes/admin/class-jp4wc-admin-screen.php:1017
 msgid "Check from here."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:959
+#: includes/admin/class-jp4wc-admin-screen.php:1034
 msgid "Please enter the time delivery deadline of your store."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:969
+#: includes/admin/class-jp4wc-admin-screen.php:1044
 msgid "Sunday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:974
+#: includes/admin/class-jp4wc-admin-screen.php:1049
 msgid "Moday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:978
+#: includes/admin/class-jp4wc-admin-screen.php:1053
 msgid "Tuesday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:982
+#: includes/admin/class-jp4wc-admin-screen.php:1057
 msgid "Wednesday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:986
+#: includes/admin/class-jp4wc-admin-screen.php:1061
 msgid "Thursday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:990
+#: includes/admin/class-jp4wc-admin-screen.php:1065
 msgid "Friday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:994
+#: includes/admin/class-jp4wc-admin-screen.php:1069
 msgid "Saturday"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1022
+#: includes/admin/class-jp4wc-admin-screen.php:1097
 msgid "Please check the days of the week that you do not ship. In case of continuous, we will correspond up to three days."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1030
+#: includes/admin/class-jp4wc-admin-screen.php:1105
 msgid "Holiday Start Date"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1036
+#: includes/admin/class-jp4wc-admin-screen.php:1111
 msgid "Holiday End Date"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1041
+#: includes/admin/class-jp4wc-admin-screen.php:1116
 msgid "Please enter the date term long holiday of your store."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1058
+#: includes/admin/class-jp4wc-admin-screen.php:1133
 msgid "Check here if you want to specify the delivery time zone as a required item."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1066
+#: includes/admin/class-jp4wc-admin-screen.php:1141
 msgid "Please enter the sentence when you do not need to specify the delivery time."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1067
+#: includes/admin/class-jp4wc-admin-screen.php:1142
 msgid "No designated time zone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1154
-msgid "Please enter the shop name."
+#: includes/admin/class-jp4wc-admin-screen.php:1229
+msgid "Please enter the COD fee name."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1162
-msgid "Please enter the company name."
+#: includes/admin/class-jp4wc-admin-screen.php:1230
+msgid "COD Fee"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1170
-msgid "Please enter the owner name."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1178
-msgid "Please enter the Manager name."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1186
-msgid "Please enter the location."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1200
-msgid "Please enter the contact rule."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1201
-msgid "Please contact us from the inquiry form."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1218
-msgid "Please enter the telephone number."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1226
-msgid "Please enter the Selling price rules."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1227
-msgid "The product price is displayed on each product screen."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1235
-msgid "Please enter the Payment methods rules."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1236
-msgid "Payment methods are limited to various credit cards."
-msgstr ""
-
-#: includes/admin/class-jp4wc-admin-screen.php:1244
-msgid "Please enter the purchase rules."
+#: includes/admin/class-jp4wc-admin-screen.php:1237
+msgid "Please enter the COD charge amount."
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:1245
-msgid "Put the product you want to purchase in the cart, proceed to purchase, pay with credit card and purchase."
+msgid "Please enter the maximum COD charge amount."
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:1253
+msgid "Please select the tax status for COD fee."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1255
+#: includes/class-jp4wc-cod-fee.php:124
+msgid "Do not calculate taxes"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1256
+#: includes/class-jp4wc-cod-fee.php:125
+msgid "The fee is taxes included"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1257
+#: includes/class-jp4wc-cod-fee.php:126
+msgid "The fee is taxes excluded"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1266
+msgid "Please select the tax class for COD fee."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1268
+#: includes/jp4wc-common-functions.php:26
+msgid "Not Required"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1269
+#: includes/jp4wc-common-functions.php:27
+msgid "Standard"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1270
+msgid "Reduced Rate"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1285
+#: includes/class-jp4wc-cod-fee.php:165
+msgid "Charge amount of COD"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1286
+#: includes/class-jp4wc-cod-fee.php:166
+msgid "Max"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1307
+#: includes/class-jp4wc-cod-fee.php:187
+msgid "+ Add Charge amount"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1307
+#: includes/class-jp4wc-cod-fee.php:187
+msgid "Remove selected Charge amount(s)"
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1327
+#: includes/class-jp4wc-cod-fee.php:208
+msgid "Note : This function is only available to PRO purchasers."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1335
+msgid "Please enter the shop name."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1343
+msgid "Please enter the company name."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1351
+msgid "Please enter the owner name."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1359
+msgid "Please enter the Manager name."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1367
+msgid "Please enter the location."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1381
+msgid "Please enter the contact rule."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1382
+msgid "Please contact us from the inquiry form."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1399
+msgid "Please enter the telephone number."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1407
+msgid "Please enter the Selling price rules."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1408
+msgid "The product price is displayed on each product screen."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1416
+msgid "Please enter the Payment methods rules."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1417
+msgid "Payment methods are limited to various credit cards."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1425
+msgid "Please enter the purchase rules."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1426
+msgid "Put the product you want to purchase in the cart, proceed to purchase, pay with credit card and purchase."
+msgstr ""
+
+#: includes/admin/class-jp4wc-admin-screen.php:1434
 msgid "Please enter the product delivery time rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1254
+#: includes/admin/class-jp4wc-admin-screen.php:1435
 msgid "The shipping date of the product is listed on each product page."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1262
+#: includes/admin/class-jp4wc-admin-screen.php:1443
 msgid "Please enter the cost rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1263
+#: includes/admin/class-jp4wc-admin-screen.php:1444
 msgid "A separate shipping fee will be added to the purchase price."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1271
+#: includes/admin/class-jp4wc-admin-screen.php:1452
 msgid "Please enter the return and cancellation rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1272
+#: includes/admin/class-jp4wc-admin-screen.php:1453
 msgid "We will not accept returns or exchanges other than mistakes at the time of delivery on our company side."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1280
+#: includes/admin/class-jp4wc-admin-screen.php:1461
 msgid "Please enter the Special rules."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1288
+#: includes/admin/class-jp4wc-admin-screen.php:1469
 msgid "It will be displayed if you put [jp4wc_law] shortcode on a page or post."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1295
+#: includes/admin/class-jp4wc-admin-screen.php:1476
 msgid "A8.net tracking settings"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1299
+#: includes/admin/class-jp4wc-admin-screen.php:1480
 msgid "Please enter your A8.net Advertising ID."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1302
+#: includes/admin/class-jp4wc-admin-screen.php:1483
 msgid "A8.net test mode"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1311
+#: includes/admin/class-jp4wc-admin-screen.php:1492
 msgid "felmat tracking settings"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1315
+#: includes/admin/class-jp4wc-admin-screen.php:1496
 msgid "Please enter your felmat Advertising ID."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1344
+#: includes/admin/class-jp4wc-admin-screen.php:1525
 msgid "Delivery time zone start time"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1346
+#: includes/admin/class-jp4wc-admin-screen.php:1527
 msgid "Delivery time zone end time"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1351
+#: includes/admin/class-jp4wc-admin-screen.php:1532
 msgid "+ Add Time Zone"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1351
+#: includes/admin/class-jp4wc-admin-screen.php:1532
 msgid "Remove selected Time Zone"
 msgstr ""
 
 #. translators: %s: Setting title
-#: includes/admin/class-jp4wc-admin-screen.php:1399
+#: includes/admin/class-jp4wc-admin-screen.php:1580
 #, php-format
 msgid "Please check it if you want to use input field for %s"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1410
+#: includes/admin/class-jp4wc-admin-screen.php:1591
 #: assets/js/build/admin/security.js:1
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/admin/paidy.js:3
@@ -747,30 +858,30 @@ msgid "Settings saved."
 msgstr ""
 
 #. translators: %s: Plugin URL
-#: includes/admin/class-jp4wc-admin-screen.php:1421
+#: includes/admin/class-jp4wc-admin-screen.php:1602
 #, php-format
 msgid "<a href=\"%s\" target=\"_blank\" title=\"Paygent Payment\">Paygent Payment</a> :  You can handle Credit Card payment and Convini payment, etc<br >"
 msgstr ""
 
 #. translators: %s: Plugin URL
-#: includes/admin/class-jp4wc-admin-screen.php:1426
+#: includes/admin/class-jp4wc-admin-screen.php:1607
 #, php-format
 msgid "<a href=\"%s\" target=\"_blank\" title=\"WooCommerce Subscriptions\">WooCommerce Subscriptions</a> : You can handle Subscriptions.<br >"
 msgstr ""
 
 #. translators: %s: Setting URL
-#: includes/admin/class-jp4wc-admin-screen.php:1437
+#: includes/admin/class-jp4wc-admin-screen.php:1618
 #, php-format
 msgid "<a href=\"%s\" target=\"_blank\" title=\"Payment Setting Support\">Payment Setting Support</a> :  We support Payment Plugins Setting.<br >"
 msgstr ""
 
 #. translators: %s: Setting URL
-#: includes/admin/class-jp4wc-admin-screen.php:1442
+#: includes/admin/class-jp4wc-admin-screen.php:1623
 #, php-format
 msgid "<a href=\"%s\" target=\"_blank\" title=\"Maintenance Support\">Maintenance Support</a> : We support your WordPress and WooCommmerce site, update or somethings.<br >"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-screen.php:1527
+#: includes/admin/class-jp4wc-admin-screen.php:1708
 msgid "Japanized for WooCommerce Information"
 msgstr ""
 
@@ -1009,44 +1120,12 @@ msgstr ""
 msgid "Shibuya Ku"
 msgstr ""
 
-#: includes/class-jp4wc-cod-fee.php:100
-msgid "Extra charge for COD method"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:104
-msgid "Fee name"
-msgstr ""
-
 #: includes/class-jp4wc-cod-fee.php:107
 msgid "COD Payment method fee"
 msgstr ""
 
-#: includes/class-jp4wc-cod-fee.php:110
-msgid "Extra charge amount"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:115
-msgid "Maximum cart value to which adding fee"
-msgstr ""
-
 #: includes/class-jp4wc-cod-fee.php:118
 msgid "If you dont need this setting, please set empty, 0."
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:121
-msgid "Includes taxes"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:124
-msgid "Do not calculate taxes"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:125
-msgid "The fee is taxes included"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:126
-msgid "The fee is taxes excluded"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:148
@@ -1055,26 +1134,6 @@ msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:158
 msgid "Charge amount of details:"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:165
-msgid "Charge amount of COD"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:166
-msgid "Max"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:187
-msgid "+ Add Charge amount"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:187
-msgid "Remove selected Charge amount(s)"
-msgstr ""
-
-#: includes/class-jp4wc-cod-fee.php:208
-msgid "Note : This function is only available to PRO purchasers."
 msgstr ""
 
 #: includes/class-jp4wc-delivery.php:94
@@ -1641,124 +1700,124 @@ msgstr ""
 msgid "Cancelled processing has not been completed due to a Paidy error. Please check Paidy admin."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:900
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:914
 msgid "This is capture data."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:908
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:922
 msgid "In the payment completion process, the amount and ID match were confirmed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:911
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:925
 msgid "In the payment completion process, the amount and ID did not match. Check on the Paidy admin."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:926
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1027
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:940
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1041
 msgid "There was no status in the notification from Paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:929
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:943
 msgid "Status Change from Processing to completed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:945
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:959
 msgid "You have made a forbidden request."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:945
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:948
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:951
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:954
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:957
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:959
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:962
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:965
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:968
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:971
 msgid "Please go to your Paidy dashboard and check."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:948
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:962
 msgid "You have made an unauthorized request."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:951
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:965
 msgid "You have made a conflict request."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:954
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:968
 msgid "The requested resource could not be found."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:957
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:971
 msgid "The request failed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:960
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:974
 msgid "I received a notification from Paidy stating that the status was unexpected."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:997
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1011
 msgid "Refund is not possible because Paidy has not completed processing."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1013
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1027
 msgid "Completion refunding has been completed at Paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1065
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1079
 msgid "[WooCommerce] Notice of error occurrence in Paidy payment linkage"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1082
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1096
 msgid "An error has occurred in the Paidy payment linkage when changing the status of WooCommerce."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1083
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1097
 msgid "Please check the status of Paidy payment and respond accordingly."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1084
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1098
 msgid "Order number:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1085
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1099
 msgid "Order details URL:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1086
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1100
 msgid "Paidy payment ID:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1087
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1101
 msgid "Error occurrence time:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1088
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1090
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1102
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1104
 msgid "Error situation:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1092
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1106
 msgid "* This e-mail is for sending only, so you cannot reply directly to this e-mail."
 msgstr ""
 
 #. translators: %s: URL of the image.
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1148
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1162
 #, php-format
 msgid "Already using URL as image: %s"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1156
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1170
 msgid "Select a image to upload"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1157
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1171
 msgid "Use this image"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1158
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1161
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1172
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1175
 msgid "Add image"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1169
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1183
 msgid "Remove image"
 msgstr ""
 
@@ -2623,8 +2682,8 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:180
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:157
-#: src/js/paidy/wizard/components/controls.jsx:249
-#: src/js/paidy/wizard/components/controls.jsx:269
+#: src/js/paidy/wizard/components/controls.jsx:245
+#: src/js/paidy/wizard/components/controls.jsx:265
 msgid "Yes"
 msgstr ""
 
@@ -6717,14 +6776,6 @@ msgstr ""
 msgid "Awaiting Post Office BANK payment"
 msgstr ""
 
-#: includes/jp4wc-common-functions.php:26
-msgid "Not Required"
-msgstr ""
-
-#: includes/jp4wc-common-functions.php:27
-msgid "Standard"
-msgstr ""
-
 #. Translators: %s is the name of the feature to be checked.
 #: includes/jp4wc-framework/config-jp4wc-framework.php:23
 #, php-format
@@ -7597,8 +7648,8 @@ msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:161
-#: src/js/paidy/wizard/components/controls.jsx:245
-#: src/js/paidy/wizard/components/controls.jsx:265
+#: src/js/paidy/wizard/components/controls.jsx:249
+#: src/js/paidy/wizard/components/controls.jsx:269
 msgid "No"
 msgstr ""
 
@@ -7659,12 +7710,12 @@ msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:240
-msgid "Have you received any administrative disposition under the Specified Commercial Transactions Act in the past five years?"
+msgid "We have not received any administrative penalties under the Specified Commercial Transactions Law in the past five years."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:260
-msgid "Have you ever been sued in a civil lawsuit for violating the Consumer Contract Act and lost the case?"
+msgid "I have never been sued in a civil lawsuit or received an unfavorable judgment based on actions that violated the Consumer Contract Act."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1

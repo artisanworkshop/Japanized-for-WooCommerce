@@ -25,8 +25,8 @@ const useOnBoardingSettings = () => {
 	const [ securitySurvey13CheckControl, setSecuritySurvey13CheckControl ] = useState();
 	const [ securitySurvey14CheckControl, setSecuritySurvey14CheckControl ] = useState();
 	const [ securitySurvey10TextAreaControl, setSecuritySurvey10TextAreaControl ] = useState('');
-	const [ securitySurvey08RadioControl, setSecuritySurvey08RadioControl ] = useState('no');
-	const [ securitySurvey09RadioControl, setSecuritySurvey09RadioControl ] = useState('no');
+	const [ securitySurvey08RadioControl, setSecuritySurvey08RadioControl ] = useState('yes');
+	const [ securitySurvey09RadioControl, setSecuritySurvey09RadioControl ] = useState('yes');
 
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 
@@ -54,8 +54,8 @@ const useOnBoardingSettings = () => {
 			setSecuritySurvey13CheckControl( onBoardingSettings.securitySurvey13CheckControl );
 			setSecuritySurvey14CheckControl( onBoardingSettings.securitySurvey14CheckControl );
 			setSecuritySurvey10TextAreaControl( onBoardingSettings.securitySurvey10TextAreaControl || '' );
-			setSecuritySurvey08RadioControl( onBoardingSettings.securitySurvey08RadioControl || 'no' );
-			setSecuritySurvey09RadioControl( onBoardingSettings.securitySurvey09RadioControl || 'no' );
+			setSecuritySurvey08RadioControl( onBoardingSettings.securitySurvey08RadioControl || 'yes' );
+			setSecuritySurvey09RadioControl( onBoardingSettings.securitySurvey09RadioControl || 'yes' );
 		} );
 	}, [] );
 
