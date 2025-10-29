@@ -252,7 +252,7 @@ const ReviewApprovedMessage = () => {
             <ul className="paidy-approved-list">
                 <li>{ __( 'We recommend setting the Webhook URL in the Paidy merchant management screen before publishing in production mode. Set the Webhook URL to the following value.', 'woocommerce-for-japan' ) }</li>
                 <li>{ __( '[Common for test and production]', 'woocommerce-for-japan' ) }</li>
-                <li>{restUrl}wp-json/paidy/v1/order/</li>
+                <li>{restUrl}/wp-json/paidy/v1/order/</li>
                 <li>{ __( 'Please refer to the manual for information on the Paidy merchant management screen.', 'woocommerce-for-japan') }</li>
             </ul>
             <div className="paidy-enabled-button">
