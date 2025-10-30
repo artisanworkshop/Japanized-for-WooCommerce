@@ -30,6 +30,17 @@ class WC_Addons_Gateway_COD2 extends WC_Gateway_COD2 {
 	 */
 	public function __construct() {
 		parent::__construct();
+		$this->supports = array_merge(
+			$this->supports,
+			array(
+				'subscriptions',
+				'subscription_cancellation',
+				'subscription_reactivation',
+				'subscription_suspension',
+				'subscription_date_changes',
+			)
+		);
+
 		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
 			add_action( 'woocommerce_scheduled_subscription_payment_cod2', array( $this, 'scheduled_subscription_payment' ), 10, 2 );
 		}

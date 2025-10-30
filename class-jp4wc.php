@@ -309,6 +309,15 @@ if ( ! class_exists( 'JP4WC' ) ) :
 						}
 					);
 				}
+				if ( get_option( 'wc4jp-cod2' ) ) {
+					add_action(
+						'woocommerce_blocks_payment_method_type_registration',
+						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+							require_once 'includes/blocks/class-wc-payments-cod2-blocks-support.php';
+							$payment_method_registry->register( new WC_Payments_Cod2_Blocks_Support() );
+						}
+					);
+				}
 			}
 		}
 
@@ -325,18 +334,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 				$key       = array_search( 'WC_Gateway_COD', $methods, true );
 				if ( false !== $key ) {
 					unset( $methods[ $key ] );
-				}
-			}
-
-			// Add the COD2 gateway.
-			if ( get_option( 'wc4jp-cod2' ) ) {
-				if ( class_exists( 'WC_Subscriptions_Order' ) && function_exists( 'wcs_create_renewal_order' ) ) {
-					$subscription_support_enabled = true;
-				}
-				if ( isset( $subscription_support_enabled ) ) {
-					$methods[] = 'WC_Addons_Gateway_COD2';
-				} else {
-					$methods[] = 'WC_Gateway_COD2';
 				}
 			}
 

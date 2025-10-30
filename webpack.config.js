@@ -32,6 +32,7 @@ module.exports = {
 		'frontend/blocks/atstore': '/src/js/jp4wc/frontend/blocks/atstore/index.js',
 		'frontend/blocks/bank-jp': '/src/js/jp4wc/frontend/blocks/bank-jp/index.js',
 		'frontend/blocks/postofficebank': '/src/js/jp4wc/frontend/blocks/postofficebank/index.js',
+		'frontend/blocks/cod2': '/src/js/jp4wc/frontend/blocks/cod2/index.js',
 		'paidy/wizard/paidy': '/src/js/paidy/wizard/index.js',
 		'paidy/frontend/paidy': '/src/js/paidy/paidy/index.js',
 		'paidy/admin/paidy': '/src/js/paidy/admin/index.js',
