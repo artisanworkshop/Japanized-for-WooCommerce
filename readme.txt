@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.8.3
-Stable tag: 2.7.10
+Stable tag: 2.7.11
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -57,6 +57,9 @@ The manual installation method involves downloading and uploading our plugin to 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.7.11 - 2025-10-31 =
+* Dev - Make COD2 available in the Checkout Block.
 
 = 2.7.10 - 2025-10-29 =
 * Fixed - Fixed Paidy webhook URL bug.
