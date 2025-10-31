@@ -847,7 +847,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 */
 	public function paidy_remove_refund_button_for_processing() {
 		global $post;
-		print_r( $post );
 		if ( ! $post || 'shop_order' !== get_post_type( $post->ID ) ) {
 			if ( isset($_GET['id']) && 'shop_order' === get_post_type( $_GET['id'] ) ) { // phpcs:ignore
 				$order_id = intval( $_GET['id'] ); // phpcs:ignore
