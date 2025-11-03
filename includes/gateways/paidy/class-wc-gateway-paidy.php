@@ -421,8 +421,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 
 		// Get products and coupons information from order.
 		$order_items  = apply_filters( 'jp4wc_paidy_order_items', $order->get_items( 'line_item' ) );
-		$items_count  = 0;
-		$cart_total   = 0;
 		$fees         = $order->get_fees();
 		$items        = '';
 		$paidy_amount = 0;
@@ -462,8 +460,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 				$items .= '},
                     ';
 			}
-			$items_count += $coupon->get_quantity();
-			$cart_total  += $coupon->get_subtotal();
 		}
 
 		if ( isset( $fees ) ) {
