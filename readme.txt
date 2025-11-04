@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.8.3
-Stable tag: 2.7.13
+Stable tag: 2.7.14
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,7 +58,7 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.7.13 - 2025-11-04 =
+= 2.7.13 & 2.7.14 - 2025-11-04 =
 * Bug - Fixed Paidy Payment at using coupon bug.
 * Tweat - Change support announce.
 
