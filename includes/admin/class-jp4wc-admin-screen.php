@@ -386,55 +386,6 @@ class JP4WC_Admin_Screen {
 			'jp4wc_payments'
 		);
 
-		add_settings_section(
-			'jp4wc_cod_setting',
-			__( 'Extra charge for COD method', 'woocommerce-for-japan' ),
-			'',
-			'jp4wc_payment'
-		);
-		add_settings_field(
-			'jp4wc_cod_fee_name',
-			__( 'Fee name', 'woocommerce-for-japan' ),
-			array( $this, 'jp4wc_cod_fee_name' ),
-			'jp4wc_payment',
-			'jp4wc_cod_setting'
-		);
-		add_settings_field(
-			'jp4wc_cod_charge_amount',
-			__( 'Extra charge amount', 'woocommerce-for-japan' ),
-			array( $this, 'jp4wc_cod_charge_amount' ),
-			'jp4wc_payment',
-			'jp4wc_cod_setting'
-		);
-		add_settings_field(
-			'jp4wc_cod_max_charge_amount',
-			__( 'Maximum cart value to which adding fee', 'woocommerce-for-japan' ),
-			array( $this, 'jp4wc_cod_max_charge_amount' ),
-			'jp4wc_payment',
-			'jp4wc_cod_setting'
-		);
-		add_settings_field(
-			'jp4wc_cod_tax_status',
-			__( 'Includes taxes', 'woocommerce-for-japan' ),
-			array( $this, 'jp4wc_cod_tax_status' ),
-			'jp4wc_payment',
-			'jp4wc_cod_setting'
-		);
-		add_settings_field(
-			'jp4wc_cod_tax_class',
-			__( 'Tax Class', 'woocommerce-for-japan' ),
-			array( $this, 'jp4wc_cod_tax_class' ),
-			'jp4wc_payment',
-			'jp4wc_cod_setting'
-		);
-		add_settings_field(
-			'jp4wc_cod_charge_amount_details',
-			__( 'Charge amount of details', 'woocommerce-for-japan' ),
-			array( $this, 'jp4wc_cod_charge_amount_details' ),
-			'jp4wc_payment',
-			'jp4wc_cod_setting'
-		);
-
 		// Display of Specified Commercial Transaction Law.
 		add_settings_section(
 			'jp4wc_laws',
@@ -658,32 +609,6 @@ class JP4WC_Admin_Screen {
 						do_action( 'jp4wc_save_methods_deactivation', $payment_method );
 					}
 				}
-				// Save COD extra charge setting.
-				$add_methods     = array(
-					'extra_charge_name',
-					'extra_charge_amount',
-					'extra_charge_max_cart_value',
-					'extra_charge_calc_taxes',
-					'extra_charge_tax_class',
-				);
-				$wc_cod_settings = get_option( 'woocommerce_cod_settings' );
-				foreach ( $add_methods as $add_method ) {
-					if ( isset( $_POST[ $add_method ] ) && ! empty( $_POST[ $add_method ] ) ) {
-						$value                          = sanitize_text_field( wp_unslash( $_POST[ $add_method ] ) );
-						$wc_cod_settings[ $add_method ] = $value;
-						update_option( 'woocommerce_cod_settings', $wc_cod_settings );
-						update_option( $this->prefix . $add_method, $value );
-					} elseif ( 'extra_charge_amount' === $add_method || 'extra_charge_max_cart_value' === $add_method ) {
-							$wc_cod_settings[ $add_method ] = '0';
-							update_option( 'woocommerce_cod_settings', $wc_cod_settings );
-							update_option( $this->prefix . $add_method, '0' );
-					} else {
-						$wc_cod_settings[ $add_method ] = '';
-						update_option( 'woocommerce_cod_settings', $wc_cod_settings );
-						update_option( $this->prefix . $add_method, '' );
-					}
-				}
-
 				self::add_message( __( 'Your settings have been saved.', 'woocommerce-for-japan' ) );
 			}
 			if ( isset( $_GET['tab'] ) && 'shipment' === $_GET['tab'] ) {
@@ -1223,112 +1148,6 @@ class JP4WC_Admin_Screen {
 	}
 
 	/**
-	 * COD fee name option.
-	 */
-	public function jp4wc_cod_fee_name() {
-		$description = __( 'Please enter the COD fee name.', 'woocommerce-for-japan' );
-		$this->jp4wc_plugin->jp4wc_input_text( 'extra_charge_name', $description, 30, __( 'COD Fee', 'woocommerce-for-japan' ), $this->prefix );
-	}
-
-	/**
-	 * COD charge amount option.
-	 */
-	public function jp4wc_cod_charge_amount() {
-		$description = __( 'Please enter the COD charge amount.', 'woocommerce-for-japan' );
-		$this->jp4wc_plugin->jp4wc_input_number( 'extra_charge_amount', $description, 5, $this->prefix );
-	}
-
-	/**
-	 * COD max charge amount option.
-	 */
-	public function jp4wc_cod_max_charge_amount() {
-		$description = __( 'Please enter the maximum COD charge amount.', 'woocommerce-for-japan' );
-		$this->jp4wc_plugin->jp4wc_input_number( 'extra_charge_max_cart_value', $description, 7, $this->prefix );
-	}
-
-	/**
-	 * COD tax status option.
-	 */
-	public function jp4wc_cod_tax_status() {
-		$description = __( 'Please select the tax status for COD fee.', 'woocommerce-for-japan' );
-		$options     = array(
-			'no-tax'   => __( 'Do not calculate taxes', 'woocommerce-for-japan' ),
-			'tax-incl' => __( 'The fee is taxes included', 'woocommerce-for-japan' ),
-			'tax-excl' => __( 'The fee is taxes excluded', 'woocommerce-for-japan' ),
-		);
-		$this->jp4wc_plugin->jp4wc_input_select( 'extra_charge_calc_taxes', $description, $options, $this->prefix );
-	}
-
-	/**
-	 * COD tax class option.
-	 */
-	public function jp4wc_cod_tax_class() {
-		$description = __( 'Please select the tax class for COD fee.', 'woocommerce-for-japan' );
-		$options     = array(
-			'not-required' => __( 'Not Required', 'woocommerce-for-japan' ),
-			'standard'     => __( 'Standard', 'woocommerce-for-japan' ),
-			'reduced-rate' => __( 'Reduced Rate', 'woocommerce-for-japan' ),
-		);
-		$this->jp4wc_plugin->jp4wc_input_select( 'extra_charge_tax_class', $description, $options, $this->prefix );
-	}
-
-	/**
-	 * COD charge amount details option.
-	 */
-	public function jp4wc_cod_charge_amount_details() {
-		?>
-		<div class="wc_input_table_wrapper" id="cod_charge_amount_details">
-			<table class="widefat wc_input_table sortable" cellspacing="0">
-				<thead>
-				<tr>
-					<th class="sort"></th>
-					<th><?php esc_html_e( 'Charge amount of COD', 'woocommerce-for-japan' ); ?></th>
-					<th><?php esc_html_e( 'Max', 'woocommerce-for-japan' ); ?></th>
-				</tr>
-				</thead>
-				<tbody class="accounts">
-				<?php
-				$i = -1;
-				if ( $this->extra_charge_terms_of_use ) {
-					foreach ( $this->extra_charge_terms_of_use as $cod_fee ) {
-						++$i;
-
-						echo '<tr class="account">
-								<td class="sort"></td>
-								<td><input type="text" value="' . esc_attr( wp_unslash( $cod_fee['cod_fee'] ) ) . '" name="cod_fee[' . esc_attr( $i ) . ']" /></td>
-								<td><input type="text" value="' . esc_attr( wp_unslash( $cod_fee['cod_max'] ) ) . '" name="cod_max[' . esc_attr( $i ) . ']" /></td>
-							</tr>';
-					}
-				}
-				?>
-				</tbody>
-				<tfoot>
-				<tr>
-					<th colspan="7"><a href="#" class="add button"><?php esc_html_e( '+ Add Charge amount', 'woocommerce-for-japan' ); ?></a> <a href="#" class="remove_rows button"><?php esc_html_e( 'Remove selected Charge amount(s)', 'woocommerce-for-japan' ); ?></a></th>
-				</tr>
-				</tfoot>
-			</table>
-		</div>
-		<script type="text/javascript">
-			jQuery(function() {
-				jQuery('#cod_charge_amount_details').on( 'click', 'a.add', function(){
-
-					var size = jQuery('#cod_charge_amount_details').find('tbody .account').length;
-
-					jQuery('<tr class="account">\
-							<td class="sort"></td>\
-							<td><input type="text" name="cod_fee[' + size + ']" /></td>\
-							<td><input type="text" name="cod_max[' + size + ']" /></td>\
-							</tr>').appendTo('#cod_charge_amount_details table tbody');
-					return false;
-				});
-			});
-		</script>
-		<p class="cod-charge-note"><?php esc_html_e( 'Note : This function is only available to PRO purchasers.', 'woocommerce-for-japan' ); ?></p>
-		<?php
-	}
-
-	/**
 	 * Shop Name option.
 	 */
 	public function jp4wc_law_shop_name() {
@@ -1587,7 +1406,7 @@ class JP4WC_Admin_Screen {
 	 * @return array
 	 */
 	public function validate_options( $input ) {
-		if ( isset( $_POST['save_wc4jp_options'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		if ( isset( $_POST['save_wc4jp_options'] ) ) {
 			add_settings_error( 'wc4jp_settings_errors', 'wc4jp_settings_saved', __( 'Settings saved.', 'woocommerce-for-japan' ), 'updated' );
 		}
 		return $input;
