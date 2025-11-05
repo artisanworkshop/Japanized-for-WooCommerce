@@ -328,13 +328,11 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 * @return array $methods Payment methods.
 		 */
 		public function add_jp4wc_custom_cod_gateway( $methods ) {
-			if ( version_compare( WC()->version, '8.9.0', '<' ) ) {
-				// Add the COD gateway for Fee.
-				$methods[] = 'JP4WC_COD_Fee';
-				$key       = array_search( 'WC_Gateway_COD', $methods, true );
-				if ( false !== $key ) {
-					unset( $methods[ $key ] );
-				}
+			// Add the COD gateway for Fee.
+			$methods[] = 'JP4WC_COD_Fee';
+			$key       = array_search( 'WC_Gateway_COD', $methods, true );
+			if ( false !== $key ) {
+				unset( $methods[ $key ] );
 			}
 
 			return $methods;

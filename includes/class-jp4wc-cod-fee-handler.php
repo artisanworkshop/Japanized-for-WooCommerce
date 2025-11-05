@@ -83,7 +83,7 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		 * @return void
 		 */
 		public static function jp4wc_block_external_js_files() {
-			if ( ! is_checkout() ) {
+			if ( ! is_checkout() || ! jp4wc_is_using_checkout_blocks() ) {
 				return;
 			}
 			$enqueue_array = array(
