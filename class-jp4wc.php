@@ -3,7 +3,7 @@
  * Main class file for Japanized for WooCommerce
  *
  * @package Japanized for WooCommerce
- * @since 2.7.9
+ * @since 2.7.15
  */
 
 if ( ! class_exists( 'JP4WC' ) ) :

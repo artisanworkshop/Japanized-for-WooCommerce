@@ -7,7 +7,7 @@
  * @package woocommerce-for-japan
  * @category Admin
  * @author Shohei Tanaka
- * @since 1.0.0
+ * @since 2.3.4
  * @license GPL-2.0+
  */
 
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that represents admin notices.
  *
- * @version 2.7.1
+ * @version 2.7.15
  * @since 2.3.4
  */
 class JP4WC_Admin_Notices {
