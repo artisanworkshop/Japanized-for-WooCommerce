@@ -85,3 +85,23 @@ if ( ! function_exists( 'jp4wc_is_using_checkout_blocks' ) ) {
 		return $has_checkout_block;
 	}
 }
+
+if ( ! function_exists( 'jp4wc_has_orders_in_last_5_days' ) ) {
+	/**
+	 * Check if there are any orders in the last 5 days.
+	 *
+	 * @since 2.6.8
+	 * @return bool True if orders exist, false otherwise.
+	 */
+	function jp4wc_has_orders_in_last_5_days() {
+		$args = array(
+			'limit'        => 1,
+			'status'       => array( 'wc-processing', 'wc-completed', 'wc-on-hold', 'wc-pending', 'wc-refunded' ),
+			'date_created' => '>' . ( time() - ( 5 * DAY_IN_SECONDS ) ),
+		);
+
+		$orders = wc_get_orders( $args );
+
+		return ! empty( $orders );
+	}
+}
