@@ -35,7 +35,7 @@ if ( ! function_exists( 'jp4wc_get_fee_tax_classes' ) ) {
 		/**
 		 * This hook is used to alter the tax classes.
 		 *
-		 * @since 5.3.0
+		 * @since 2.6.0
 		 * @param array $tax_class Tax classes.
 		 */
 		return apply_filters( 'jp4wc_tax_classes', $tax_class );
@@ -90,7 +90,7 @@ if ( ! function_exists( 'jp4wc_has_orders_in_last_5_days' ) ) {
 	/**
 	 * Check if there are any orders in the last 5 days.
 	 *
-	 * @since 2.6.8
+	 * @since 2.7.15
 	 * @return bool True if orders exist, false otherwise.
 	 */
 	function jp4wc_has_orders_in_last_5_days() {

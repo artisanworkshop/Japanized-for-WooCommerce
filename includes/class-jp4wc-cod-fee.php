@@ -4,7 +4,7 @@
  *
  * @class       JP4WC_COD_Fee
  * @extends     WC_Gateway_COD
- * @version     2.6.22
+ * @version     2.7.15
  * @package     WooCommerce/Classes/Payment
  * @author      Artisan Workshop
  */
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class       JP4WC_COD_Fee
  * @extends     WC_Gateway_COD
- * @version     2.6.22
+ * @version     2.7.15
  * @package     WooCommerce/Classes/Payment
  * @author      Artisan Workshop
  */
