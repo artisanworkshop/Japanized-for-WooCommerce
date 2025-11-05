@@ -23,11 +23,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class JP4WC_Admin_Notices {
 	/**
+	 * The single instance of the class
+	 *
+	 * @var JP4WC_Admin_Notices
+	 */
+	protected static $instance = null;
+
+	/**
 	 * Notices (array)
 	 *
 	 * @var array
 	 */
 	public $notices = array();
+
+	/**
+	 * Get the singleton instance
+	 *
+	 * @return JP4WC_Admin_Notices
+	 */
+	public static function get_instance() {
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
 
 	/**
 	 * Constructor
@@ -36,10 +55,25 @@ class JP4WC_Admin_Notices {
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', array( $this, 'admin_jp4wc_security_checklist' ) );
+		add_action( 'admin_notices', array( $this, 'admin_jp4wc_ecbuddy' ) );
 		add_action( 'wp_loaded', array( $this, 'jp4wc_hide_notices' ) );
 
 		add_action( 'wp_ajax_jp4wc_pr_dismiss_prompt', array( $this, 'jp4wc_dismiss_review_prompt' ) );
 		add_action( 'jp4wc_save_methods_tracking', array( $this, 'jp4wc_save_methods_tracking' ) );
+	}
+
+	/**
+	 * Prevent cloning of the instance
+	 */
+	private function __clone() {}
+
+	/**
+	 * Prevent unserializing of the instance
+	 *
+	 * @throws Exception When trying to unserialize the singleton instance.
+	 */
+	public function __wakeup() {
+		throw new Exception( 'Cannot unserialize singleton' );
 	}
 
 	/**
@@ -83,7 +117,13 @@ class JP4WC_Admin_Notices {
 			return;
 		}
 
-		if ( ! $this->has_orders_in_last_5_days() ) {
+		// Notification display content.
+		if ( get_option( 'jp4wc_hide_security_check_notice', 0 ) ) {
+			return;
+		}
+
+		// Check if the user has placed orders in the last 5 days.
+		if ( ! jp4wc_has_orders_in_last_5_days() ) {
 			return;
 		}
 
@@ -115,10 +155,6 @@ class JP4WC_Admin_Notices {
 			return;
 		}
 
-		// Notification display content.
-		if ( get_option( 'jp4wc_hide_security_check_notice', 0 ) ) {
-			return;
-		}
 		$this->jp4wc_security_checklist_display();
 	}
 
@@ -217,21 +253,64 @@ class JP4WC_Admin_Notices {
 	}
 
 	/**
-	 * Check if there are any orders in the last 5 days.
+	 * Display ECBuddy notice for WooCommerce admins.
 	 *
-	 * @since 2.6.8
-	 * @return bool True if orders exist, false otherwise.
+	 * Shows a notice to promote ECBuddy plugin if it's not already installed
+	 * and the admin hasn't dismissed the notice.
+	 *
+	 * @since 2.7.1
+	 * @return void
 	 */
-	public function has_orders_in_last_5_days() {
-		$args = array(
-			'limit'        => 1,
-			'status'       => array( 'wc-processing', 'wc-completed', 'wc-on-hold', 'wc-pending', 'wc-refunded' ),
-			'date_created' => '>' . ( time() - ( 5 * DAY_IN_SECONDS ) ),
-		);
+	public function admin_jp4wc_ecbuddy() {
+		// Only show to WooCommerce admins.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+		// Only show to WooCommerce admins.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
 
-		$orders = wc_get_orders( $args );
+		// Notification display content.
+		if ( get_option( 'jp4wc_hide_ecbuddy_notice', 0 ) ) {
+			return;
+		}
 
-		return ! empty( $orders );
+		// Check if the user has placed orders in the last 5 days.
+		if ( ! jp4wc_has_orders_in_last_5_days() ) {
+			return;
+		}
+
+		self::jp4wc_ecbuddy_display();
+	}
+
+	/**
+	 * Display the ECBuddy notice.
+	 *
+	 * @since 2.7.1
+	 */
+	public static function jp4wc_ecbuddy_display() {
+		$ecbuddy_link = 'https://ssec.shop/ec-buddy-personal-training/?utm_source=jp4wc&utm_medium=plugin&utm_campaign=ecbuddy_notice';
+		?>
+		<div class="notice notice-info jp4wc-ecbuddy-notice" id="pr_jp4wc_ecbuddy" style="background-color: #1E73BE; color: #EEEEEE;">
+		<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'jp4wc-hide-notice', 'ecbuddy' ), 'jp4wc_hide_notices_nonce', '_jp4wc_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0 9px 9px;text-decoration:none;"></a>
+		<div id="jp4wc-ecbuddy-notice-content">
+			<p>
+		<?php
+			$catch_copy = __( 'Enhance Your WooCommerce Store with ECBuddy!', 'woocommerce-for-japan' );
+			echo '<h2 style="color:#fff;">' . esc_html( $catch_copy ) . '</h2>';
+			esc_html_e( 'EC Buddy is a service that focuses on providing guidance and practical support to help your company increase sales. Ultimately, our goal is to support you until you are able to operate independently.', 'woocommerce-for-japan' );
+			echo '<br />';
+			esc_html_e( 'Although only three months have passed since the service was launched (August 2025), it has already been adopted by five companies, and sales are steadily increasing.', 'woocommerce-for-japan' );
+			echo '<br />';
+			echo '<a href="' . esc_url( $ecbuddy_link ) . '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; border: 2px solid #3498db; border-radius: 12px; text-decoration: none; background-color: #FFFFFF; color: #1E73BE; font-weight:bold;margin: 15px 0 5px;">';
+			esc_html_e( 'Learn More About ECBuddy', 'woocommerce-for-japan' );
+			echo '</a>';
+		?>
+			</p>
+		</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -399,10 +478,21 @@ class JP4WC_Admin_Notices {
 			}
 			update_option( 'jp4wc_hide_security_check_notice', 1 );
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['jp4wc-hide-notice'] ) && 'ecbuddy' === sanitize_text_field( wp_unslash( $_GET['jp4wc-hide-notice'] ) ) ) {
+			if ( ! isset( $_GET['_jp4wc_notice_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_jp4wc_notice_nonce'] ) ), 'jp4wc_hide_notices_nonce' ) ) {
+				return;
+			}
+			update_option( 'jp4wc_hide_ecbuddy_notice', 1 );
+		}
 		if ( get_option( 'jp4wc_hide_security_check_notice', 0 ) ) {
+			return;
+		}
+		if ( get_option( 'jp4wc_hide_ecbuddy_notice', 0 ) ) {
 			return;
 		}
 	}
 }
 
-new JP4WC_Admin_Notices();
+// Initialize the singleton instance.
+JP4WC_Admin_Notices::get_instance();
