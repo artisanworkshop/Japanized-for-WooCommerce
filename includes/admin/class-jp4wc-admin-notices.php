@@ -290,24 +290,23 @@ class JP4WC_Admin_Notices {
 	 * @since 2.7.1
 	 */
 	public static function jp4wc_ecbuddy_display() {
-		$ecbuddy_link = 'https://ssec.shop/ec-buddy-personal-training/?utm_source=jp4wc&utm_medium=plugin&utm_campaign=ecbuddy_notice';
+		$ecbuddy_link        = 'https://ssec.shop/ec-buddy-personal-training/?utm_source=jp4wc&utm_medium=plugin&utm_campaign=ecbuddy_notice';
+		$catch_copy          = __( 'Enhance Your WooCommerce Store with ECBuddy!', 'woocommerce-for-japan' );
+		$ecbuddy_text1       = __( 'EC Buddy is a service that focuses on providing guidance and practical support to help your company increase sales. Ultimately, our goal is to support you until you are able to operate independently.', 'woocommerce-for-japan' );
+		$ecbuddy_text2       = __( 'Although only three months have passed since the service was launched (August 2025), it has already been adopted by five companies, and sales are steadily increasing.', 'woocommerce-for-japan' );
+		$ecbuddy_button_text = __( 'Learn More About ECBuddy', 'woocommerce-for-japan' );
 		?>
 		<div class="notice notice-info jp4wc-ecbuddy-notice" id="pr_jp4wc_ecbuddy" style="background-color: #1E73BE; color: #EEEEEE;">
 		<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'jp4wc-hide-notice', 'ecbuddy' ), 'jp4wc_hide_notices_nonce', '_jp4wc_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0 9px 9px;text-decoration:none;"></a>
 		<div id="jp4wc-ecbuddy-notice-content">
+			<h2 style="color: #fff; margin-top: 20px;"><?php echo esc_html( $catch_copy ); ?></h2>
 			<p>
-		<?php
-			$catch_copy = __( 'Enhance Your WooCommerce Store with ECBuddy!', 'woocommerce-for-japan' );
-			echo '<h2 style="color:#fff;">' . esc_html( $catch_copy ) . '</h2>';
-			esc_html_e( 'EC Buddy is a service that focuses on providing guidance and practical support to help your company increase sales. Ultimately, our goal is to support you until you are able to operate independently.', 'woocommerce-for-japan' );
-			echo '<br />';
-			esc_html_e( 'Although only three months have passed since the service was launched (August 2025), it has already been adopted by five companies, and sales are steadily increasing.', 'woocommerce-for-japan' );
-			echo '<br />';
-			echo '<a href="' . esc_url( $ecbuddy_link ) . '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; border: 2px solid #3498db; border-radius: 12px; text-decoration: none; background-color: #FFFFFF; color: #1E73BE; font-weight:bold;margin: 15px 0 5px;">';
-			esc_html_e( 'Learn More About ECBuddy', 'woocommerce-for-japan' );
-			echo '</a>';
-		?>
+				<?php echo esc_html( $ecbuddy_text1 ); ?><br />
+				<?php echo esc_html( $ecbuddy_text2 ); ?><br />
 			</p>
+			<a href="<?php echo esc_url( $ecbuddy_link ); ?>" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; border: 2px solid #3498db; border-radius: 12px; text-decoration: none; background-color: #FFFFFF; color: #1E73BE; font-weight:bold; margin: 15px 0 20px;">
+				<?php echo esc_html( $ecbuddy_button_text ); ?>
+			</a>
 		</div>
 		</div>
 		<?php
