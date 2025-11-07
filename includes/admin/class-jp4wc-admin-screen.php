@@ -683,6 +683,25 @@ class JP4WC_Admin_Screen {
 						update_option( $this->prefix . $add_method, '' );
 					}
 				}
+
+				if ( isset( $_POST['cod_fee'] ) && isset( $_POST['cod_max'] ) ) {
+					$fees     = array();
+					$cod_fees = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod_fee'] ) ) );
+					$cod_maxs = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod_max'] ) ) );
+
+					foreach ( $cod_fees as $i => $name ) {
+						if ( ! isset( $cod_fees[ $i ] ) ) {
+							continue;
+						}
+
+						$fees[] = array(
+							'cod_fee' => $cod_fees[ $i ],
+							'cod_max' => $cod_maxs[ $i ],
+						);
+					}
+					update_option( 'woocommerce_cod_fees', $fees );
+				}
+
 				self::add_message( __( 'Your settings have been saved.', 'woocommerce-for-japan' ) );
 			}
 			if ( isset( $_GET['tab'] ) && 'shipment' === $_GET['tab'] ) {
@@ -1277,19 +1296,20 @@ class JP4WC_Admin_Screen {
 	public function jp4wc_cod_charge_amount_details() {
 		?>
 		<div class="wc_input_table_wrapper" id="cod_charge_amount_details">
-			<table class="widefat wc_input_table sortable" cellspacing="0">
+			<table class="widefat wc_input_table sortable" id="delivery_time_zone" cellspacing="0">
 				<thead>
 				<tr>
-					<th class="sort"></th>
+					<th class="sort" style="width: 10px;"></th>
 					<th><?php esc_html_e( 'Charge amount of COD', 'woocommerce-for-japan' ); ?></th>
 					<th><?php esc_html_e( 'Max', 'woocommerce-for-japan' ); ?></th>
 				</tr>
 				</thead>
 				<tbody class="accounts">
 				<?php
-				$i = -1;
-				if ( $this->extra_charge_terms_of_use ) {
-					foreach ( $this->extra_charge_terms_of_use as $cod_fee ) {
+				$i                         = -1;
+				$extra_charge_terms_of_use = get_option( 'woocommerce_cod_fees' );
+				if ( $extra_charge_terms_of_use ) {
+					foreach ( $extra_charge_terms_of_use as $cod_fee ) {
 						++$i;
 
 						echo '<tr class="account">
