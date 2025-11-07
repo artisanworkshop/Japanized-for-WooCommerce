@@ -1,4 +1,10 @@
 <?php
+/**
+ * Yahoo API endpoint for postal code lookup.
+ *
+ * @package Japanized_For_WooCommerce
+ */
+
 use ArtisanWorkshop\PluginFramework\v2_0_14 as Framework;
 
 add_action(
@@ -18,7 +24,7 @@ add_action(
 
 /**
  * Yahoo API Postal Code Webhook response.
- * Version: 2.7.1
+ * Version: 2.7.17
  *
  * @param object $request post data.
  * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
@@ -39,7 +45,8 @@ function yahoo_api_postcode( $request ) {
 			'appid'  => $yahoo_app_id,
 			'output' => 'json',
 		);
-		$url               = $yahoo_api_zip_url . '?' . http_build_query( $param );
+
+		$url = $yahoo_api_zip_url . '?' . http_build_query( $param );
 
 		// Open a connection.
 		$conn = curl_init();
@@ -67,7 +74,13 @@ function yahoo_api_postcode( $request ) {
 			$set_prefecture_code = 0;
 			$set_prefecture_name = 0;
 			foreach ( $states['JP'] as $key => $value ) {
-				if ( mb_substr( $value, 0, 3 ) === mb_substr( $postcode_address, 0, 3 ) ) {
+				$test_value = $value;
+				// if WPML is active and current language is not JA.
+				if ( defined( 'ICL_SITEPRESS_VERSION' ) && apply_filters( 'wpml_current_language', null ) !== 'ja' ) {
+					$test_value = apply_filters( 'wpml_translate_single_string', $value, 'woocommerce', $value, 'ja' );
+				}
+
+				if ( mb_substr( $test_value, 0, 3 ) === mb_substr( $postcode_address, 0, 3 ) ) {
 					$set_prefecture_code = $key;
 					$set_prefecture_name = $value;
 				}
