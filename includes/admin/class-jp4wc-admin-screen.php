@@ -343,6 +343,21 @@ class JP4WC_Admin_Screen {
 			'jp4wc_delivery_time'
 		);
 
+		// Delivery notification.
+		add_settings_section(
+			'jp4wc_delivery_notification',
+			__( 'Notification of missing required fields', 'woocommerce-for-japan' ),
+			'',
+			'jp4wc_shipment'
+		);
+		add_settings_field(
+			'jp4wc_delivery_notification_email',
+			__( 'Notification email address', 'woocommerce-for-japan' ),
+			array( $this, 'jp4wc_delivery_notification_email' ),
+			'jp4wc_shipment',
+			'jp4wc_delivery_notification'
+		);
+
 		// Payment Method.
 		add_settings_section(
 			'jp4wc_payments',
@@ -727,6 +742,7 @@ class JP4WC_Admin_Screen {
 					'unspecified-time',
 					'date-format',
 					'day-of-week',
+					'delivery-notification-email',
 				);
 				$this->jp4wc_save_methods( $add_methods );
 				// Save timezones setting.
@@ -1195,6 +1211,20 @@ class JP4WC_Admin_Screen {
 			),
 		);
 		$this->jp4wc_input_time_zone_html( $time_zone_details );
+	}
+
+	/**
+	 * Delivery notification email option.
+	 *
+	 * Displays input field for delivery notification email address setting.
+	 * This email will receive notifications when customers specify delivery
+	 * date and time preferences.
+	 *
+	 * @return void
+	 */
+	public function jp4wc_delivery_notification_email() {
+		$description = __( 'Please enter the email address where you would like to receive notifications when a customer fails to enter the required delivery date and time.', 'woocommerce-for-japan' );
+		$this->jp4wc_plugin->jp4wc_input_text( 'delivery-notification-email', $description, 60, '', $this->prefix );
 	}
 
 	/**
