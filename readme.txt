@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.8.3
-Stable tag: 2.7.16
+Stable tag: 2.7.17
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -57,6 +57,10 @@ The manual installation method involves downloading and uploading our plugin to 
 5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
 
 == Changelog ==
+
+= 2.7.17 - 2025-11-12 =
+* Bug - Strengthened verification of required fields for expected delivery date.
+* Add - Added a notification email function if the required item for the expected delivery date is missing.
 
 = 2.7.16 - 2025-11-07 =
 * Bug - COD additional fee settings bug.
