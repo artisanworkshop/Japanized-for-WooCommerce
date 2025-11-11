@@ -34,6 +34,8 @@ class JP4WC_Delivery {
 		add_action( 'woocommerce_before_order_notes', array( $this, 'delivery_date_designation' ), 10 );
 		// Save delivery date and time values to order.
 		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'update_order_meta' ) );
+		add_filter( 'woocommerce_checkout_posted_data', array( $this, 'jp4wc_delivery_posted_data' ) );
+		// Validate delivery date and time fields at checkout.
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_date_time_checkout_field' ), 10, 2 );
 		// Show on order detail at thanks page (frontend).
 		add_action( 'woocommerce_order_details_after_order_table', array( $this, 'frontend_order_timedate' ) );
@@ -45,6 +47,8 @@ class JP4WC_Delivery {
 		// display in Order meta box ship date and time (admin).
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
 		add_action( 'woocommerce_process_shop_order_meta', array( $this, 'save_meta_box' ), 0, 1 );
+
+		add_filter( 'woocommerce_payment_successful_result', array( $this, 'jp4wc_delivery_check_data' ), 10, 1 );
 	}
 
 	/**
@@ -329,6 +333,22 @@ class JP4WC_Delivery {
 	}
 
 	/**
+	 * Capture delivery date and time from posted checkout data
+	 *
+	 * @param array $data Posted checkout data.
+	 * @return array Modified posted checkout data.
+	 */
+	public function jp4wc_delivery_posted_data( $data ) {
+		if ( isset( $_POST['wc4jp_delivery_date'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$data['wc4jp_delivery_date'] = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) );// phpcs:ignore WordPress.Security.NonceVerification
+		}
+		if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification
+			$data['wc4jp_delivery_time_zone'] = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) );// phpcs:ignore WordPress.Security.NonceVerification
+		}
+		return $data;
+	}
+
+	/**
 	 * Validate delivery date and time fields at checkout
 	 *
 	 * Checks if delivery date is required and has been filled in by the customer.
@@ -339,15 +359,26 @@ class JP4WC_Delivery {
 	 * @return void
 	 */
 	public function validate_date_time_checkout_field( $fields, $errors ) {
-		if ( get_option( 'wc4jp-delivery-date' ) && get_option( 'wc4jp-delivery-date-required' ) && ! jp4wc_is_using_checkout_blocks() ) {
+		if ( get_option( 'wc4jp-delivery-date' ) && get_option( 'wc4jp-delivery-date-required' ) ) {
 			if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ||
 				! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' )
 			) {
 				return;
 			}
 
-			if ( empty( $_POST['wc4jp_delivery_date'] ) ) {
+			if ( empty( $fields['wc4jp_delivery_date'] ) ) {
 				$errors->add( 'required-field', __( '"Desired delivery date" is a required field. Please enter it.', 'woocommerce-for-japan' ) );
+			}
+		}
+		if ( get_option( 'wc4jp-delivery-time-zone' ) && get_option( 'wc4jp-delivery-time-zone-required' ) ) {
+			if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ||
+				! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' )
+			) {
+				return;
+			}
+
+			if ( empty( $fields['wc4jp_delivery_time_zone'] ) ) {
+				$errors->add( 'required-field', __( '"Desired delivery time zone" is a required field. Please enter it.', 'woocommerce-for-japan' ) );
 			}
 		}
 	}
@@ -501,7 +532,7 @@ class JP4WC_Delivery {
 	public function render_shop_order_columns( $column ) {
 
 		global $post, $the_order;
-		if ( empty( $the_order ) || $the_order->get_id() != $post->ID ) {
+		if ( empty( $the_order ) || $the_order->get_id() !== $post->ID ) {
 			$the_order = wc_get_order( $post->ID );
 		}
 
@@ -628,6 +659,134 @@ class JP4WC_Delivery {
 			),
 		);
 		return apply_filters( 'wc4jp_shipping_fields', $shipping_fields, $order );
+	}
+
+	/**
+	 * Check delivery date data after successful payment and send admin notification if required date is missing.
+	 *
+	 * @param array $result Payment successful result.
+	 * @return array Modified payment result.
+	 */
+	public function jp4wc_delivery_check_data( $result ) {
+		$order_id = $result['order_id'];
+		$order    = wc_get_order( $order_id );
+		$date     = $order->get_meta( 'wc4jp-delivery-date', true );
+		$time     = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+
+		if ( get_option( 'wc4jp-delivery-date' ) && get_option( 'wc4jp-delivery-date-required' ) ) {
+			if ( empty( $date ) ) {
+				// Send an email to the administrator.
+				$this->send_admin_notification_email( $order_id, 'delivery_date' );
+			}
+		}
+
+		if ( get_option( 'wc4jp-delivery-time-zone' ) && get_option( 'wc4jp-delivery-time-zone-required' ) ) {
+			if ( empty( $time ) ) {
+				// Send an email to the administrator.
+				$this->send_admin_notification_email( $order_id, 'delivery_time' );
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Send an admin notification email if the required delivery date is not entered.
+	 *
+	 * @param int    $order_id Order ID.
+	 * @param string $type Type of missing information ('delivery_date' or 'delivery_time').
+	 */
+	private function send_admin_notification_email( $order_id, $type ) {
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			return;
+		}
+
+		// Get the administrator's email address and blog name.
+		$wc4jp_delivery_notification_email = get_option( 'wc4jp-delivery-notification-email' );
+		if ( ! empty( $wc4jp_delivery_notification_email ) ) {
+			$admin_email = $wc4jp_delivery_notification_email;
+		} else {
+			$admin_email = get_option( 'admin_email' );
+		}
+		$blog_name = get_option( 'blogname' );
+
+		// Determine the required type based on the missing information.
+		$required_type = '';
+		if ( 'delivery_time' === $type ) {
+			$required_type = __( 'delivery time zone', 'woocommerce-for-japan' );
+		} elseif ( 'delivery_date' === $type ) {
+			$required_type = __( 'delivery date', 'woocommerce-for-japan' );
+		}
+
+		if ( '' === $required_type ) {
+			return;
+		}
+
+		$subject = sprintf(
+			/* translators: %1$s: Blog name, %2$s: require type , %3$s: Order number */
+			__( '[%1$s] There are orders with no requested %2$s specified (Order number: #%3$s)', 'woocommerce-for-japan' ),
+			$blog_name,
+			$required_type,
+			$order->get_order_number()
+		);
+
+		// Email body.
+		if ( class_exists( 'Automattic\WooCommerce\Utilities\OrderUtil' ) ) {
+			$is_hpos_enabled = Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
+		} else {
+			$is_hpos_enabled = false;
+		}
+
+		if ( $is_hpos_enabled ) {
+			$order_admin_url = admin_url( 'admin.php?page=wc-orders&action=edit&id=' . $order_id );
+		} else {
+			$order_admin_url = admin_url( 'post.php?post=' . $order_id . '&action=edit' );
+		}
+		$message = sprintf(
+			/* translators: %1$s: Order number, %2$s: Order date, %3$s: Customer name, %4$s: Customer email, %5$s: Order detail URL */
+			__( "Order Number: #%1\$s\nOrder Date: %2\$s\nCustomer Name: %3\$s\nCustomer Email: %4\$s\n\nThe requested delivery date is a required field but has not been entered.\nPlease review the order details and contact the customer.\n\nOrder Details Page: %5\$s", 'woocommerce-for-japan' ),
+			$order->get_order_number(),
+			$order->get_date_created()->date_i18n( 'Y年m月d日 H:i' ),
+			$order->get_billing_last_name() . ' ' . $order->get_billing_first_name(),
+			$order->get_billing_email(),
+			$order_admin_url
+		);
+		$message .= "\n";
+		$message .= '------------------------' . "\n";
+		// Browser type.
+		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
+			$message .= 'User Agent: ' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) . "\n";
+			$message .= 'WooCommerce Version: ' . WC()->version . "\n";
+		}
+
+		// Email headers.
+		$jp4wc_admin_email = 'wp-admin@artws.info';
+
+		$headers = array(
+			'Content-Type: text/plain; charset=UTF-8',
+			'Bcc: ' . $jp4wc_admin_email,
+			'From: ' . $blog_name . ' <' . $admin_email . '>',
+		);
+
+		// Send email.
+		if ( $subject && $message ) {
+			wp_mail( $admin_email, $subject, $message, $headers );
+
+			// Log the event.
+			if ( function_exists( 'wc_get_logger' ) ) {
+				$logger = wc_get_logger();
+				$logger->info(
+					sprintf(
+						/* translators: %1$s: require type , %2$s: Order ID */
+						__( '%1$sAn empty notification email has been sent. Order ID: %2$d', 'woocommerce-for-japan' ),
+						$required_type,
+						$order_id
+					),
+					array( 'source' => 'jp4wc_delivery' )
+				);
+			}
+		}
 	}
 }
 
