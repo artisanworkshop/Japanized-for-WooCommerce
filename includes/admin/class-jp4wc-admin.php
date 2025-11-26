@@ -30,7 +30,6 @@ class JP4WC_Admin {
 	public function includes() {
 		require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-screen.php';
 		require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
-		require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-settings.php';
 	}
 
 	/**

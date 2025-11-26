@@ -33,10 +33,11 @@ class JP4WC_Admin_Settings {
 	 * Add settings page to WordPress admin.
 	 */
 	public function add_settings_page() {
+		$menu_title = __( 'JP4WC Settings', 'woocommerce-for-japan' );
 		add_submenu_page(
 			'woocommerce',
 			__( 'JP4WC Settings (Block)', 'woocommerce-for-japan' ),
-			__( 'JP4WC Settings', 'woocommerce-for-japan' ),
+			$menu_title,
 			'manage_woocommerce',
 			'jp4wc-settings',
 			array( $this, 'render_settings_page' )

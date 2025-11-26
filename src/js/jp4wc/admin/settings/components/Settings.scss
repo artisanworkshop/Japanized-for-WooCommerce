@@ -196,3 +196,36 @@
 		margin-bottom: 30px;
 	}
 }
+
+// Info Footer Styles
+.jp4wc-settings-info-footer {
+	margin-top: 40px;
+	padding-top: 30px;
+	border-top: 2px solid #ddd;
+
+	.jp4wc-consultation-notice {
+		background: #f8f9fa;
+		border: 1px solid #ddd;
+		border-left: 4px solid #8E24AA;
+		padding: 20px;
+		border-radius: 4px;
+
+		h3 {
+			margin-top: 0;
+			margin-bottom: 15px;
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		p {
+			margin-bottom: 20px;
+			line-height: 1.6;
+			color: #555;
+		}
+
+		.jp4wc-consultation-button {
+			margin-top: 15px;
+		}
+	}
+}

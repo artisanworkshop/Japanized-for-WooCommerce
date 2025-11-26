@@ -6,8 +6,8 @@ msgstr ""
 "release)\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Japanized-for-"
 "WooCommerce\n"
-"POT-Creation-Date: 2025-11-25T21:09:08+00:00\n"
-"PO-Revision-Date: 2025-11-26 09:39+0900\n"
+"POT-Creation-Date: 2025-11-26T01:11:37+00:00\n"
+"PO-Revision-Date: 2025-11-26 10:36+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja_JP\n"
@@ -44,7 +44,7 @@ msgid "https://wc.artws.info/"
 msgstr "https://wc.artws.info/"
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:251
+#: class-jp4wc.php:252
 #, php-format
 msgid ""
 "If you like <strong>Japanized for WooCommerce</strong> please leave us a "
@@ -55,11 +55,11 @@ msgstr ""
 "す !"
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:251
+#: class-jp4wc.php:252
 msgid "Thanks :)"
 msgstr "ありがとうございます :)"
 
-#: class-jp4wc.php:261
+#: class-jp4wc.php:262
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr "Japanized for WooCommerce を利用していただきありがとうございます。"
 
@@ -79,7 +79,7 @@ msgstr ""
 msgid ""
 "Please check the WordPress version. The version of WordPress is outdated."
 msgstr ""
-"WordPressのバージョンを確認してください。WordPressのバージョンが古いようで"
+"WordPress のバージョンを確認してください。WordPressのバージョンが古いようで"
 "す。"
 
 #: includes/admin/class-jp4wc-admin-notices.php:189
@@ -305,13 +305,13 @@ msgstr "住所入力時に非表示"
 
 #: includes/admin/class-jp4wc-admin-screen.php:219
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:159
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:150
 msgid "Usage tracking"
 msgstr "使用状況の追跡"
 
 #: includes/admin/class-jp4wc-admin-screen.php:226
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:162
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:153
 msgid "Tracking"
 msgstr "追跡"
 
@@ -379,50 +379,50 @@ msgstr "未出荷曜日"
 
 #: includes/admin/class-jp4wc-admin-screen.php:304
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:166
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:168
 msgid "Holiday term"
 msgstr "祝日期間"
 
 #: includes/admin/class-jp4wc-admin-screen.php:313
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:183
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:191
 msgid "Delivery Time designation"
 msgstr "配達時間設定"
 
 #: includes/admin/class-jp4wc-admin-screen.php:319
 #: includes/admin/class-jp4wc-admin-screen.php:1158
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:186
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:194
 msgid "Delivery time zone"
 msgstr "配達時間帯"
 
 #: includes/admin/class-jp4wc-admin-screen.php:326
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:195
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:203
 msgid "Delivery time zone required"
 msgstr "配達時間指定必須"
 
 #: includes/admin/class-jp4wc-admin-screen.php:333
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:204
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:212
 msgid "Unspecified Time description"
 msgstr "指定されていない時間の説明"
 
 #: includes/admin/class-jp4wc-admin-screen.php:340
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:213
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:221
 msgid "Delivery time zone management"
 msgstr "配達時間帯管理"
 
 #: includes/admin/class-jp4wc-admin-screen.php:349
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:244
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:258
 msgid "Notification of missing required fields"
 msgstr "必須項目の未入力に関する通知"
 
 #: includes/admin/class-jp4wc-admin-screen.php:355
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:247
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:261
 msgid "Notification email address"
 msgstr "通知メールアドレス"
 
@@ -707,31 +707,31 @@ msgstr "チェックすると顧客名の表示を変えます。（名のみか
 
 #: includes/admin/class-jp4wc-admin-screen.php:941
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:111
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:116
 msgid "Postcode / ZIP"
 msgstr "郵便番号"
 
 #: includes/admin/class-jp4wc-admin-screen.php:942
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:120
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:121
 msgid "Prefecture"
 msgstr "都道府県"
 
 #: includes/admin/class-jp4wc-admin-screen.php:943
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:128
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:126
 msgid "Town / City"
 msgstr "市区町村"
 
 #: includes/admin/class-jp4wc-admin-screen.php:944
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:136
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:131
 msgid "Street address"
 msgstr "番地"
 
 #: includes/admin/class-jp4wc-admin-screen.php:945
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:144
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:136
 msgid "Apartment, suite, unit, etc. (optional)"
 msgstr "アパート名、棟名、部屋番号など(オプション)"
 
@@ -740,7 +740,7 @@ msgstr "アパート名、棟名、部屋番号など(オプション)"
 #: includes/class-jp4wc-address-fields.php:543
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:339
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:152
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:141
 msgid "Phone"
 msgstr "電話番号"
 
@@ -750,7 +750,7 @@ msgstr "非表示にしたい住所の入力項目にチェックしてくださ
 
 #: includes/admin/class-jp4wc-admin-screen.php:974
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:163
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:154
 msgid "Enable usage tracking"
 msgstr "使用状況の追跡を有効にする"
 
@@ -1163,13 +1163,13 @@ msgstr ""
 msgid "Japanized for WooCommerce Information"
 msgstr "Japanized for WooCommerce 情報"
 
-#: includes/admin/class-jp4wc-admin-settings.php:32
-msgid "JP4WC Settings (Block)"
-msgstr "JP4WC設定（ブロック）"
-
-#: includes/admin/class-jp4wc-admin-settings.php:33
+#: includes/admin/class-jp4wc-admin-settings.php:36
 msgid "JP4WC Settings"
 msgstr "JP4WC 設定"
+
+#: includes/admin/class-jp4wc-admin-settings.php:39
+msgid "JP4WC Settings (Block)"
+msgstr "JP4WC設定（ブロック）"
 
 #: includes/admin/class-jp4wc-check-security.php:47
 #: includes/admin/class-jp4wc-check-security.php:48
@@ -1350,17 +1350,21 @@ msgid "The URL for this page is incorrect."
 msgstr "このページの URL が正しくありません。"
 
 #: includes/admin/views/html-admin-setting-screen.php:40
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/Settings.js:224
 msgid "For those who are having trouble with WooCommerce"
-msgstr "WooCommerceでお困りの方へ"
+msgstr "WooCommerce でお困りの方へ"
 
 #: includes/admin/views/html-admin-setting-screen.php:41
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/Settings.js:226
 msgid ""
 "We are currently offering 30-minute paid Zoom consultations. A professional "
 "from Woo Agency will assess your current situation and suggest the best "
 "course of action."
 msgstr ""
-"現在、30分間の有料Zoom相談を提供しております。Woo Agencyの専門家が現状を評価"
-"し、最適な対応策をご提案いたします。"
+"現在、30分間の有料 Zoom 相談を提供しております。Woo Agency の専門家が現状を評"
+"価し、最適な対応策をご提案いたします。"
 
 #: includes/admin/views/html-admin-setting-screen.php:62
 #: assets/js/build/admin/security.js:1
@@ -1464,37 +1468,37 @@ msgid "Delivery request date and time"
 msgstr "配達希望日時"
 
 #: includes/class-jp4wc-delivery.php:123 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:157
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:158
 msgid "Sun"
 msgstr "日"
 
 #: includes/class-jp4wc-delivery.php:124 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:127
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:128
 msgid "Mon"
 msgstr "月"
 
 #: includes/class-jp4wc-delivery.php:125 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:132
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:133
 msgid "Tue"
 msgstr "火"
 
 #: includes/class-jp4wc-delivery.php:126 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:137
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:138
 msgid "Wed"
 msgstr "水"
 
 #: includes/class-jp4wc-delivery.php:127 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:142
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:143
 msgid "Thr"
 msgstr "木"
 
 #: includes/class-jp4wc-delivery.php:128 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:147
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:148
 msgid "Fri"
 msgstr "金"
 
 #: includes/class-jp4wc-delivery.php:129 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:152
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:153
 msgid "Sat"
 msgstr "土"
 
@@ -8392,25 +8396,25 @@ msgid "Check it if you want to display free shipping message."
 msgstr "送料無料のメッセージを表示したい場合はチェックしてください。"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:112
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:110
 msgid "Check to hide address input field in virtual orders"
 msgstr "バーチャル商品の注文における住所入力欄を非表示にする"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:76
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:177
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:168
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:149
 #: src/js/jp4wc/admin/settings/components/PaymentSettings.js:131
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:263
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:277
 msgid "Saving..."
 msgstr "保存中…"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:76
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:177
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:168
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:149
 #: src/js/jp4wc/admin/settings/components/PaymentSettings.js:131
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:263
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:277
 msgid "Save Settings"
 msgstr "設定を保存"
 
@@ -8445,52 +8449,52 @@ msgid "Time format: HH:MM:SS (e.g., 14:00:00)"
 msgstr "時刻形式: HH:MM:SS (例: 14:00:00)"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:168
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:172
 msgid "Holiday start date"
 msgstr "休暇開始日"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:174
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:180
 msgid "Holiday end date"
 msgstr "休暇終了日"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:187
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:195
 msgid "Check it if you want to use delivery time zone."
 msgstr "配達時間帯を利用したい場合はチェックしてください。"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:196
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:204
 msgid "Check if delivery time zone is required field."
 msgstr "配送先のタイムゾーンが必須項目かどうかを確認してください。"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:205
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:213
 msgid "Text to display when time is not specified"
 msgstr "時間が指定されていない場合に表示するテキスト"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:217
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:226
 msgid "Start Time"
 msgstr "開始時間"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:223
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:234
 msgid "End Time"
 msgstr "終了時間"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:233
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:246
 msgid "Remove"
 msgstr "削除"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:238
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:252
 msgid "Add Time Zone"
 msgstr "タイムゾーンを追加"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:248
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:262
 msgid "Email address to notify when required delivery fields are missing"
 msgstr "必須の配送情報が不足している場合に通知するメールアドレス"
 
@@ -8603,52 +8607,52 @@ msgid "Enter your felmat PID"
 msgstr "felmat (フェルマ) PID を入力してください"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:38
+#: src/js/jp4wc/admin/settings/components/Settings.js:79
 msgid "Failed to load settings"
 msgstr "設定を読み込めませんでした"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:57
+#: src/js/jp4wc/admin/settings/components/Settings.js:98
 msgid "Settings saved successfully."
 msgstr "設定が正常に保存されました."
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:62
+#: src/js/jp4wc/admin/settings/components/Settings.js:103
 msgid "Failed to save settings"
 msgstr "設定の保存に失敗しました"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:79
+#: src/js/jp4wc/admin/settings/components/Settings.js:120
 msgid "Loading settings..."
 msgstr "設定を読み込み中..."
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:87
+#: src/js/jp4wc/admin/settings/components/Settings.js:128
 msgid "General Settings"
 msgstr "一般設定"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:92
+#: src/js/jp4wc/admin/settings/components/Settings.js:133
 msgid "Shipment Settings"
 msgstr "配送方法設定"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:97
+#: src/js/jp4wc/admin/settings/components/Settings.js:138
 msgid "Payment Settings"
 msgstr "支払方法設定"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:102
+#: src/js/jp4wc/admin/settings/components/Settings.js:143
 msgid "Commercial Law"
 msgstr "特定商取引法"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:107
+#: src/js/jp4wc/admin/settings/components/Settings.js:148
 msgid "Affiliate"
 msgstr "アフィリエイト"
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:115
+#: src/js/jp4wc/admin/settings/components/Settings.js:156
 msgid "Japanized for WooCommerce Settings"
 msgstr "Japanized for WooCommerce 設定"
 

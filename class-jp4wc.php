@@ -128,7 +128,8 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// Install.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
 			// Admin Setting Screen.
-			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin.php';
+			// require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin.php';.
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-settings.php';
 			// Admin Security Screen.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-check-security.php';
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-malware-check.php';
@@ -245,7 +246,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 				$current_screen = get_current_screen();
 				$wc4jp_pages    = 'woocommerce_page_wc4jp-options';
 				// Check to make sure we're on a WooCommerce admin page.
-				if ( isset( $current_screen->id ) && $current_screen->id == $wc4jp_pages ) {
+				if ( isset( $current_screen->id ) && $current_screen->id === $wc4jp_pages ) {
 					if ( ! get_option( 'wc4jp_admin_footer_text_rated' ) ) {
 						/* translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating. */
 						$footer_text = sprintf( __( 'If you like <strong>Japanized for WooCommerce</strong> please leave us a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. A huge thanks in advance!', 'woocommerce-for-japan' ), '<a href="https://wordpress.org/support/plugin/woocommerce-for-japan/reviews?rate=5#new-post" target="_blank" class="wc4jp-rating-link" data-rated="' . esc_attr__( 'Thanks :)', 'woocommerce-for-japan' ) . '">', '</a>' );

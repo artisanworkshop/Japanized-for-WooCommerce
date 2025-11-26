@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-25T21:55:51+00:00\n"
+"POT-Creation-Date: 2025-11-26T01:11:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -40,17 +40,17 @@ msgid "https://wc.artws.info/"
 msgstr ""
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:251
+#: class-jp4wc.php:252
 #, php-format
 msgid "If you like <strong>Japanized for WooCommerce</strong> please leave us a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. A huge thanks in advance!"
 msgstr ""
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:251
+#: class-jp4wc.php:252
 msgid "Thanks :)"
 msgstr ""
 
-#: class-jp4wc.php:261
+#: class-jp4wc.php:262
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr ""
 
@@ -244,13 +244,13 @@ msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:219
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:159
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:150
 msgid "Usage tracking"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:226
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:162
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:153
 msgid "Tracking"
 msgstr ""
 
@@ -319,50 +319,50 @@ msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:304
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:166
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:168
 msgid "Holiday term"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:313
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:183
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:191
 msgid "Delivery Time designation"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:319
 #: includes/admin/class-jp4wc-admin-screen.php:1158
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:186
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:194
 msgid "Delivery time zone"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:326
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:195
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:203
 msgid "Delivery time zone required"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:333
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:204
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:212
 msgid "Unspecified Time description"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:340
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:213
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:221
 msgid "Delivery time zone management"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:349
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:244
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:258
 msgid "Notification of missing required fields"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:355
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:247
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:261
 msgid "Notification email address"
 msgstr ""
 
@@ -652,31 +652,31 @@ msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:941
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:111
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:116
 msgid "Postcode / ZIP"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:942
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:120
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:121
 msgid "Prefecture"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:943
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:128
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:126
 msgid "Town / City"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:944
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:136
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:131
 msgid "Street address"
 msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:945
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:144
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:136
 msgid "Apartment, suite, unit, etc. (optional)"
 msgstr ""
 
@@ -685,7 +685,7 @@ msgstr ""
 #: includes/class-jp4wc-address-fields.php:543
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:339
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:152
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:141
 msgid "Phone"
 msgstr ""
 
@@ -695,7 +695,7 @@ msgstr ""
 
 #: includes/admin/class-jp4wc-admin-screen.php:974
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:163
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:154
 msgid "Enable usage tracking"
 msgstr ""
 
@@ -1055,12 +1055,12 @@ msgstr ""
 msgid "Japanized for WooCommerce Information"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-settings.php:32
-msgid "JP4WC Settings (Block)"
+#: includes/admin/class-jp4wc-admin-settings.php:36
+msgid "JP4WC Settings"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-settings.php:33
-msgid "JP4WC Settings"
+#: includes/admin/class-jp4wc-admin-settings.php:39
+msgid "JP4WC Settings (Block)"
 msgstr ""
 
 #: includes/admin/class-jp4wc-check-security.php:47
@@ -1227,10 +1227,14 @@ msgid "The URL for this page is incorrect."
 msgstr ""
 
 #: includes/admin/views/html-admin-setting-screen.php:40
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/Settings.js:224
 msgid "For those who are having trouble with WooCommerce"
 msgstr ""
 
 #: includes/admin/views/html-admin-setting-screen.php:41
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/Settings.js:226
 msgid "We are currently offering 30-minute paid Zoom consultations. A professional from Woo Agency will assess your current situation and suggest the best course of action."
 msgstr ""
 
@@ -1328,43 +1332,43 @@ msgstr ""
 
 #: includes/class-jp4wc-delivery.php:123
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:157
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:158
 msgid "Sun"
 msgstr ""
 
 #: includes/class-jp4wc-delivery.php:124
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:127
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:128
 msgid "Mon"
 msgstr ""
 
 #: includes/class-jp4wc-delivery.php:125
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:132
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:133
 msgid "Tue"
 msgstr ""
 
 #: includes/class-jp4wc-delivery.php:126
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:137
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:138
 msgid "Wed"
 msgstr ""
 
 #: includes/class-jp4wc-delivery.php:127
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:142
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:143
 msgid "Thr"
 msgstr ""
 
 #: includes/class-jp4wc-delivery.php:128
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:147
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:148
 msgid "Fri"
 msgstr ""
 
 #: includes/class-jp4wc-delivery.php:129
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:152
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:153
 msgid "Sat"
 msgstr ""
 
@@ -7516,25 +7520,25 @@ msgid "Check it if you want to display free shipping message."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:112
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:110
 msgid "Check to hide address input field in virtual orders"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:76
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:177
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:168
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:149
 #: src/js/jp4wc/admin/settings/components/PaymentSettings.js:131
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:263
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:277
 msgid "Saving..."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:76
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:177
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:168
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:149
 #: src/js/jp4wc/admin/settings/components/PaymentSettings.js:131
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:263
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:277
 msgid "Save Settings"
 msgstr ""
 
@@ -7569,52 +7573,52 @@ msgid "Time format: HH:MM:SS (e.g., 14:00:00)"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:168
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:172
 msgid "Holiday start date"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:174
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:180
 msgid "Holiday end date"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:187
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:195
 msgid "Check it if you want to use delivery time zone."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:196
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:204
 msgid "Check if delivery time zone is required field."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:205
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:213
 msgid "Text to display when time is not specified"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:217
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:226
 msgid "Start Time"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:223
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:234
 msgid "End Time"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:233
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:246
 msgid "Remove"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:238
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:252
 msgid "Add Time Zone"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:248
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:262
 msgid "Email address to notify when required delivery fields are missing"
 msgstr ""
 
@@ -7728,52 +7732,52 @@ msgid "Enter your felmat PID"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:38
+#: src/js/jp4wc/admin/settings/components/Settings.js:79
 msgid "Failed to load settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:57
+#: src/js/jp4wc/admin/settings/components/Settings.js:98
 msgid "Settings saved successfully."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:62
+#: src/js/jp4wc/admin/settings/components/Settings.js:103
 msgid "Failed to save settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:79
+#: src/js/jp4wc/admin/settings/components/Settings.js:120
 msgid "Loading settings..."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:87
+#: src/js/jp4wc/admin/settings/components/Settings.js:128
 msgid "General Settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:92
+#: src/js/jp4wc/admin/settings/components/Settings.js:133
 msgid "Shipment Settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:97
+#: src/js/jp4wc/admin/settings/components/Settings.js:138
 msgid "Payment Settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:102
+#: src/js/jp4wc/admin/settings/components/Settings.js:143
 msgid "Commercial Law"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:107
+#: src/js/jp4wc/admin/settings/components/Settings.js:148
 msgid "Affiliate"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:115
+#: src/js/jp4wc/admin/settings/components/Settings.js:156
 msgid "Japanized for WooCommerce Settings"
 msgstr ""
 
