@@ -1,17 +1,15 @@
-;(function ( $, window, document ) {
+( function ( $, window, document ) {
 	'use strict';
 
 	var uploadField = {
 		frames: [],
-		init: function() {
-			$( 'button.image_upload' )
-				.on( 'click', this.onClickUploadButton );
+		init: function () {
+			$( 'button.image_upload' ).on( 'click', this.onClickUploadButton );
 
-			$( 'button.image_remove' )
-				.on( 'click', this.removeProductImage );
+			$( 'button.image_remove' ).on( 'click', this.removeProductImage );
 		},
 
-		onClickUploadButton: function( event ) {
+		onClickUploadButton: function ( event ) {
 			event.preventDefault();
 
 			var data = $( event.target ).data();
@@ -27,9 +25,9 @@
 			uploadField.frames[ data.fieldId ] = wp.media( {
 				title: data.mediaFrameTitle,
 				button: {
-					text: data.mediaFrameButton
+					text: data.mediaFrameButton,
 				},
-				multiple: false // Set to true to allow multiple files to be selected
+				multiple: false, // Set to true to allow multiple files to be selected
 			} );
 
 			// When an image is selected, run a callback.
@@ -37,14 +35,17 @@
 				fieldId: data.fieldId,
 			};
 
-			uploadField.frames[ data.fieldId ]
-				.on( 'select', uploadField.onSelectAttachment, context );
+			uploadField.frames[ data.fieldId ].on(
+				'select',
+				uploadField.onSelectAttachment,
+				context
+			);
 
 			// Finally, open the modal.
 			uploadField.frames[ data.fieldId ].open();
 		},
 
-		onSelectAttachment: function() {
+		onSelectAttachment: function () {
 			// We set multiple to false so only get one image from the uploader.
 			var attachment = uploadField.frames[ this.fieldId ]
 				.state()
@@ -53,18 +54,19 @@
 				.toJSON();
 
 			var $field = $( '#' + this.fieldId );
-			var $img = $( '<img />' )
-				.attr( 'src', getAttachmentUrl( attachment ) );
+			var $img = $( '<img />' ).attr(
+				'src',
+				getAttachmentUrl( attachment )
+			);
 
-			$field.siblings( '.image-preview-wrapper' )
-				.html( $img );
+			$field.siblings( '.image-preview-wrapper' ).html( $img );
 
 			$field.val( attachment.id );
 			$field.siblings( 'button.image_remove' ).show();
 			$field.siblings( 'button.image_upload' ).hide();
 		},
 
-		removeProductImage: function( event ) {
+		removeProductImage: function ( event ) {
 			event.preventDefault();
 			var $button = $( event.target );
 			var data = $button.data();
@@ -93,4 +95,4 @@
 	}
 
 	$( run );
-}( jQuery ) );
+} )( jQuery );

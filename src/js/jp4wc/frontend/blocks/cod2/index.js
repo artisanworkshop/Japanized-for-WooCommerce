@@ -5,17 +5,14 @@ import { getSetting } from '@woocommerce/settings';
 
 const settings = getSetting( 'cod2_data', {} );
 
-const defaultLabel = __(
-    'Cash on Delivery',
-    'woocommerce-for-japan',
-);
+const defaultLabel = __( 'Cash on Delivery', 'woocommerce-for-japan' );
 
 const label = decodeEntities( settings.title ) || defaultLabel;
 /**
  * Content component
  */
 const Content = () => {
-    return decodeEntities( settings.description || '' );
+	return decodeEntities( settings.description || '' );
 };
 /**
  * Label component
@@ -23,23 +20,23 @@ const Content = () => {
  * @param {*} props Props from payment API.
  */
 const Label = ( props ) => {
-    const { PaymentMethodLabel } = props.components;
-    return <PaymentMethodLabel text={ label } />;
+	const { PaymentMethodLabel } = props.components;
+	return <PaymentMethodLabel text={ label } />;
 };
 
 /**
  * cod2 payment method config object.
  */
 const Cod2 = {
-    name: "cod2",
-    label: <Label />,
-    content: <Content />,
-    edit: <Content />,
-    canMakePayment: () => true,
-    ariaLabel: label,
-    supports: {
-        features: settings.supports,
-    },
+	name: 'cod2',
+	label: <Label />,
+	content: <Content />,
+	edit: <Content />,
+	canMakePayment: () => true,
+	ariaLabel: label,
+	supports: {
+		features: settings.supports,
+	},
 };
 
 registerPaymentMethod( Cod2 );

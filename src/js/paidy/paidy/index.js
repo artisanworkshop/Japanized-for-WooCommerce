@@ -27,14 +27,14 @@ const Content = () => {
 
 /**
  * Get Web Money icons
- * 	
+ *
  * @return {Array} Array of Web Money icons.
- * 
+ *
  */
 const getPaidyIcons = () => {
-    const [[id, { src, alt }]] = Object.entries(icons);
-    return [{ id, src, alt }];
-}
+	const [ [ id, { src, alt } ] ] = Object.entries( icons );
+	return [ { id, src, alt } ];
+};
 
 /**
  * Label component
@@ -45,9 +45,9 @@ const Label = ( props ) => {
 	const { PaymentMethodLabel, PaymentMethodIcons } = props.components;
 	const paidyIcons = getPaidyIcons();
 	return (
-		<div style={{ display: 'flex', alignItems: 'center' }}>
+		<div style={ { display: 'flex', alignItems: 'center' } }>
 			<PaymentMethodLabel text={ label } />
-			<PaymentMethodIcons icons={ paidyIcons } align="left"/>
+			<PaymentMethodIcons icons={ paidyIcons } align="left" />
 		</div>
 	);
 };

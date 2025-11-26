@@ -5,7 +5,7 @@
 		"https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip",
 		"https://downloads.wordpress.org/plugin/wp-mail-logging.latest-stable.zip",
 		"https://downloads.wordpress.org/plugin/plugin-check.latest-stable.zip",
-        "https://downloads.wordpress.org/plugin/wp-crontrol.latest-stable.zip",
+		"https://downloads.wordpress.org/plugin/wp-crontrol.latest-stable.zip",
 		"https://downloads.wordpress.org/plugin/debug-bar.latest-stable.zip",
 		"."
 	],
@@ -16,7 +16,7 @@
 		"WP_DEBUG_DISPLAY": false,
 		"SCRIPT_DEBUG": true,
 		"ALTERNATE_WP_CRON": false
-    },
+	},
 	"env": {
 		"development": {
 			"phpmyadminPort": 9001

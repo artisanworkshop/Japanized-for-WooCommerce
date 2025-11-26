@@ -1,57 +1,69 @@
 class MessageRenderer {
+	constructor( config ) {
+		this.config = config;
+	}
 
-    constructor(config) {
-        this.config = config;
-    }
+	render() {
+		if ( ! this.shouldRender() ) {
+			return;
+		}
 
-    render() {
-        if (! this.shouldRender()) {
-            return;
-        }
+		paypal
+			.Messages( {
+				amount: this.config.amount,
+				placement: this.config.placement,
+				style: this.config.style,
+			} )
+			.render( this.config.wrapper );
 
-        paypal.Messages({
-            amount: this.config.amount,
-            placement: this.config.placement,
-            style: this.config.style
-        }).render(this.config.wrapper);
+		jQuery( document.body ).on( 'updated_cart_totals', () => {
+			paypal
+				.Messages( {
+					amount: this.config.amount,
+					placement: this.config.placement,
+					style: this.config.style,
+				} )
+				.render( this.config.wrapper );
+		} );
+	}
 
-        jQuery(document.body).on('updated_cart_totals', () => {
-            paypal.Messages({
-                amount: this.config.amount,
-                placement: this.config.placement,
-                style: this.config.style
-            }).render(this.config.wrapper);
-        });
-    }
+	renderWithAmount( amount ) {
+		if ( ! this.shouldRender() ) {
+			return;
+		}
 
-    renderWithAmount(amount) {
+		const newWrapper = document.createElement( 'div' );
+		newWrapper.setAttribute( 'id', this.config.wrapper.replace( '#', '' ) );
 
-        if (! this.shouldRender()) {
-            return;
-        }
+		const sibling = document.querySelector(
+			this.config.wrapper
+		).nextSibling;
+		document
+			.querySelector( this.config.wrapper )
+			.parentElement.removeChild(
+				document.querySelector( this.config.wrapper )
+			);
+		sibling.parentElement.insertBefore( newWrapper, sibling );
+		paypal
+			.Messages( {
+				amount,
+				placement: this.config.placement,
+				style: this.config.style,
+			} )
+			.render( this.config.wrapper );
+	}
 
-        const newWrapper = document.createElement('div');
-        newWrapper.setAttribute('id', this.config.wrapper.replace('#', ''));
-
-        const sibling = document.querySelector(this.config.wrapper).nextSibling;
-        document.querySelector(this.config.wrapper).parentElement.removeChild(document.querySelector(this.config.wrapper));
-        sibling.parentElement.insertBefore(newWrapper, sibling);
-        paypal.Messages({
-            amount,
-            placement: this.config.placement,
-            style: this.config.style
-        }).render(this.config.wrapper);
-    }
-
-    shouldRender() {
-
-        if (typeof paypal.Messages === 'undefined' || typeof this.config.wrapper === 'undefined' ) {
-            return false;
-        }
-        if (! document.querySelector(this.config.wrapper)) {
-            return false;
-        }
-        return true;
-    }
+	shouldRender() {
+		if (
+			typeof paypal.Messages === 'undefined' ||
+			typeof this.config.wrapper === 'undefined'
+		) {
+			return false;
+		}
+		if ( ! document.querySelector( this.config.wrapper ) ) {
+			return false;
+		}
+		return true;
+	}
 }
 export default MessageRenderer;

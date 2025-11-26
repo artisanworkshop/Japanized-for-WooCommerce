@@ -2,32 +2,32 @@
 # git push origin --tags
 name: Deploy and Release Plugin
 on:
-  push:
-    tags:
-    - "*"
+    push:
+        tags:
+            - '*'
 jobs:
-  tag:
-    name: New tag
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@master
-    - name: Install SVN ( Subversion )
-      run: |
-        sudo apt-get update
-        sudo apt-get install subversion
-    - name: WordPress Plugin Deploy
-      id: deploy
-      uses: 10up/action-wordpress-plugin-deploy@stable
-      with:
-        generate-zip: true
-      env:
-        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-        SLUG: "woocommerce-for-japan"
-    - name: Create GitHub release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: ${{github.workspace}}/${{ github.event.repository.name }}.zip
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    tag:
+        name: New tag
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@master
+            - name: Install SVN ( Subversion )
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install subversion
+            - name: WordPress Plugin Deploy
+              id: deploy
+              uses: 10up/action-wordpress-plugin-deploy@stable
+              with:
+                  generate-zip: true
+              env:
+                  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+                  SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+                  SLUG: 'woocommerce-for-japan'
+            - name: Create GitHub release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: ${{github.workspace}}/${{ github.event.repository.name }}.zip
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,6 @@
 /**
  * Admin Settings Page
- * 
+ *
  * Gutenberg block based settings page for Japanized for WooCommerce
  */
 
@@ -16,12 +16,11 @@ import './index.scss';
 /**
  * Render the settings page
  */
-document.addEventListener('DOMContentLoaded', () => {
-	const settingsRoot = document.getElementById('jp4wc-admin-settings-root');
+document.addEventListener( 'DOMContentLoaded', () => {
+	const settingsRoot = document.getElementById( 'jp4wc-admin-settings-root' );
 
-	if (settingsRoot) {
-		const root = createRoot(settingsRoot);
-		root.render(<Settings />);
+	if ( settingsRoot ) {
+		const root = createRoot( settingsRoot );
+		root.render( <Settings /> );
 	}
-});
-
+} );
