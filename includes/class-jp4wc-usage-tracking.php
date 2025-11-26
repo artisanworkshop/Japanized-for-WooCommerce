@@ -37,6 +37,42 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		 */
 		public static function init() { // phpcs:ignore WooCommerce.Functions.InternalInjectionMethod.MissingFinal, WooCommerce.Functions.InternalInjectionMethod.MissingInternalTag -- Not an injection.
 			add_action( 'jp4wc_tracker_send_event', array( __CLASS__, 'jp4wc_send_tracking_data' ) );
+			add_action( 'jp4wc_installed', array( __CLASS__, 'send_tracking_on_install' ) );
+			add_action( 'jp4wc_updated', array( __CLASS__, 'send_tracking_on_update' ) );
+		}
+
+		/**
+		 * Send tracking data on plugin installation.
+		 *
+		 * @param string $previous_version Previous version of the plugin.
+		 */
+		public static function send_tracking_on_install( $previous_version ) {
+			// Only send if tracking is enabled.
+			if ( 'yes' !== get_option( 'wc4jp-tracking' ) ) {
+				return;
+			}
+
+			// Send tracking data immediately on first install.
+			if ( empty( $previous_version ) ) {
+				self::jp4wc_send_tracking_data( true );
+			}
+		}
+
+		/**
+		 * Send tracking data on plugin update.
+		 *
+		 * @param string $previous_version Previous version of the plugin.
+		 */
+		public static function send_tracking_on_update( $previous_version ) {
+			// Only send if tracking is enabled.
+			if ( 'yes' !== get_option( 'wc4jp-tracking' ) ) {
+				return;
+			}
+
+			// Send tracking data on updates.
+			if ( ! empty( $previous_version ) ) {
+				self::jp4wc_send_tracking_data( true );
+			}
 		}
 
 		/**
@@ -80,12 +116,25 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 					'timeout'     => 45,
 					'redirection' => 5,
 					'httpversion' => '1.0',
-					'blocking'    => false,
-					'headers'     => array( 'user-agent' => 'JP4WCTracker/' . md5( esc_url_raw( home_url( '/' ) ) ) . ';' ),
+					'blocking'    => true,
+					'headers'     => array(
+						'user-agent'   => 'JP4WCTracker/' . md5( esc_url_raw( home_url( '/' ) ) ) . ';',
+						'Content-Type' => 'application/json',
+					),
 					'body'        => wp_json_encode( $params ),
 					'cookies'     => array(),
 				)
 			);
+
+			// Check for WP_Error.
+			if ( is_wp_error( $response ) ) {
+				wc_get_logger()->error(
+					'Tracking request failed: ' . $response->get_error_message(),
+					array( 'source' => 'jp4wc-tracker' )
+				);
+				return;
+			}
+
 			// Get HTTP status code.
 			$http_code = wp_remote_retrieve_response_code( $response );
 
