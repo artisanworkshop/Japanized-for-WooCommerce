@@ -1,0 +1,299 @@
+{
+	"translation-revision-date": "2025-11-26 10:36+0900",
+	"generator": "WP-CLI/2.12.0",
+	"source": "assets/js/build/admin/settings.js",
+	"domain": "messages",
+	"locale_data": {
+		"messages": {
+			"": {
+				"domain": "messages",
+				"lang": "ja_JP",
+				"plural-forms": "nplurals=1; plural=0;"
+			},
+			"Address Display Setting": [
+				"\u9867\u5ba2\u5165\u529b\u9805\u76ee\u8a2d\u5b9a"
+			],
+			"Name Yomigana": [ "\u540d\u524d (\u3088\u307f\u304c\u306a)" ],
+			"Required Name Yomigana": [
+				"\u6c0f\u540d\u306e\u3088\u307f\u304c\u306a\u5fc5\u9808"
+			],
+			"Honorific suffix(Sama)": [ "\u656c\u79f0 (\u69d8)" ],
+			"Company Name": [ "\u4f1a\u793e\u540d" ],
+			"Automatic zip code entry": [
+				"\u90f5\u4fbf\u756a\u53f7\u81ea\u52d5\u4f4f\u6240\u5165\u529b"
+			],
+			"Yahoo APP ID": [ "Yahoo! APP ID" ],
+			"No Japanese Address": [
+				"\u65e5\u672c\u975e\u5bfe\u5fdc\u4f4f\u6240"
+			],
+			"Free Shipping Display": [ "\u9001\u6599\u7121\u6599\u8868\u793a" ],
+			"Custamize Email template at customer name": [
+				"\u30e1\u30fc\u30eb\u30c6\u30f3\u30d7\u30ec\u30fc\u30c8\u306e\u9867\u5ba2\u540d\u5909\u66f4"
+			],
+			"Virtual order Setting": [
+				"\u30d0\u30fc\u30c1\u30e3\u30eb\u5546\u54c1\u6ce8\u6587\u6642\u306e\u8a2d\u5b9a"
+			],
+			"Usage tracking": [ "\u4f7f\u7528\u72b6\u6cc1\u306e\u8ffd\u8de1" ],
+			"Tracking": [ "\u8ffd\u8de1" ],
+			"Delivery date designation": [ "\u914d\u9054\u65e5\u6307\u5b9a" ],
+			"Preferred delivery date": [ "\u914d\u9054\u5e0c\u671b\u65e5" ],
+			"Preferred delivery date required": [
+				"\u914d\u9054\u65e5\u6307\u5b9a\u5fc5\u9808"
+			],
+			"Start Date": [
+				"\u914d\u9054\u4e88\u7d04\u53ef\u80fd\u958b\u59cb\u65e5"
+			],
+			"Delivery Term": [
+				"\u914d\u9054\u4e88\u7d04\u53ef\u80fd\u671f\u9593"
+			],
+			"Unspecified date description": [
+				"\u6307\u5b9a\u3055\u308c\u3066\u3044\u306a\u3044\u65e5\u306e\u8aac\u660e"
+			],
+			"Date format": [
+				"\u65e5\u4ed8\u30d5\u30a9\u30fc\u30de\u30c3\u30c8"
+			],
+			"Display day of week": [ "\u66dc\u65e5\u306e\u8868\u793a" ],
+			"Delivery deadline": [ "\u6700\u7d42\u96c6\u8377\u6642\u9593" ],
+			"No delivery weekday": [ "\u672a\u51fa\u8377\u66dc\u65e5" ],
+			"Holiday term": [ "\u795d\u65e5\u671f\u9593" ],
+			"Delivery Time designation": [
+				"\u914d\u9054\u6642\u9593\u8a2d\u5b9a"
+			],
+			"Delivery time zone": [ "\u914d\u9054\u6642\u9593\u5e2f" ],
+			"Delivery time zone required": [
+				"\u914d\u9054\u6642\u9593\u6307\u5b9a\u5fc5\u9808"
+			],
+			"Unspecified Time description": [
+				"\u6307\u5b9a\u3055\u308c\u3066\u3044\u306a\u3044\u6642\u9593\u306e\u8aac\u660e"
+			],
+			"Delivery time zone management": [
+				"\u914d\u9054\u6642\u9593\u5e2f\u7ba1\u7406"
+			],
+			"Notification of missing required fields": [
+				"\u5fc5\u9808\u9805\u76ee\u306e\u672a\u5165\u529b\u306b\u95a2\u3059\u308b\u901a\u77e5"
+			],
+			"Notification email address": [
+				"\u901a\u77e5\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9"
+			],
+			"Payment Method": [ "\u652f\u6255\u3044\u65b9\u6cd5" ],
+			"BANK PAYMENT IN JAPAN": [
+				"\u9280\u884c\u632f\u8fbc (\u65e5\u672c\u56fd\u5185\u5411\u3051)"
+			],
+			"Postal transfer": [ "\u90f5\u4fbf\u632f\u66ff" ],
+			"Pay at store": [ "\u5e97\u982d\u652f\u6255\u3044" ],
+			"COD for Subscriptions": [
+				"\u5b9a\u671f\u8cfc\u5165\u5bfe\u5fdc\u4ee3\u91d1\u5f15\u63db"
+			],
+			"PayPal": [ "PayPal" ],
+			"Extra charge for COD method": [
+				"\u4ee3\u5f15\u304d\u624b\u6570\u6599\u8a2d\u5b9a"
+			],
+			"Fee name": [ "\u624b\u6570\u6599\u8868\u8a18\u540d" ],
+			"Extra charge amount": [ "\u624b\u6570\u6599\u91d1\u984d" ],
+			"Maximum cart value to which adding fee": [
+				"\u624b\u6570\u6599\u7121\u6599\u8a2d\u5b9a\u91d1\u984d"
+			],
+			"Includes taxes": [
+				"\u624b\u6570\u6599\u306e\u6d88\u8cbb\u7a0e\u51e6\u7406"
+			],
+			"Tax Class": [ "\u7a0e\u30af\u30e9\u30b9" ],
+			"Specified Commercial Transaction Law": [
+				"\u7279\u5b9a\u5546\u53d6\u5f15\u6cd5"
+			],
+			"Shop Name": [ "\u30b7\u30e7\u30c3\u30d7\u540d" ],
+			"Sales company name (company name)": [
+				"\u8ca9\u58f2\u4e8b\u696d\u8005\u540d"
+			],
+			"Owner Name": [ "\u4ee3\u8868\u8005\u540d" ],
+			"Manager Name": [ "\u62c5\u5f53\u8005\u540d" ],
+			"Location": [ "\u6240\u5728\u5730" ],
+			"Contact": [ "\u304a\u554f\u3044\u5408\u308f\u305b" ],
+			"Telephone": [ "\u96fb\u8a71\u756a\u53f7" ],
+			"Selling price": [ "\u5546\u54c1\u306e\u8ca9\u58f2\u4fa1\u683c" ],
+			"Payment method": [ "\u652f\u6255\u3044\u65b9\u6cd5" ],
+			"Product purchase method": [
+				"\u5546\u54c1\u306e\u8cfc\u5165\u65b9\u6cd5"
+			],
+			"Product delivery time": [
+				"\u5546\u54c1\u306e\u5f15\u6e21\u3057\u6642\u671f"
+			],
+			"Costs other than product charges": [
+				"\u5546\u54c1\u4ee5\u5916\u306e\u8cbb\u7528"
+			],
+			"Returns / Cancellations": [
+				"\u8fd4\u54c1\u30fb\u30ad\u30e3\u30f3\u30bb\u30eb\u306b\u3064\u3044\u3066\u306e\u7279\u7d04\u4e8b\u9805"
+			],
+			"Special conditions": [ "\u7279\u5225\u6761\u4ef6" ],
+			"A8.net Setting": [ "A8.net \u8a2d\u5b9a" ],
+			"felmat Setting": [ "felmat \u8a2d\u5b9a" ],
+			"Regarding this setting, etc., we do not yet support block shopping carts or purchase procedures. Please use the shortcode to use this feature.": [
+				"\u3053\u306e\u8a2d\u5b9a\u7b49\u306b\u3064\u304d\u307e\u3057\u3066\u306f\u3001\u30b7\u30e7\u30c3\u30d4\u30f3\u30b0\u30ab\u30fc\u30c8\u3084\u8cfc\u5165\u624b\u7d9a\u304d\u306e\u30d6\u30ed\u30c3\u30af\u306b\u306f\u307e\u3060\u5bfe\u5fdc\u3057\u3066\u304a\u308a\u307e\u305b\u3093\u3002 \u3053\u306e\u6a5f\u80fd\u3092\u4f7f\u7528\u3059\u308b\u306b\u306f\u30b7\u30e7\u30fc\u30c8\u30b3\u30fc\u30c9\u3092\u4f7f\u7528\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check if you want to require yomigana.": [
+				"\u3088\u307f\u304c\u306a\u3092\u5fc5\u9808\u306b\u3059\u308b\u5834\u5408\u306f\u30c1\u30a7\u30c3\u30af\u3057\u307e\u3059\u3002"
+			],
+			"Please check it if you want to change customer name display.( from first name to full name )": [
+				"\u30c1\u30a7\u30c3\u30af\u3059\u308b\u3068\u9867\u5ba2\u540d\u306e\u8868\u793a\u3092\u5909\u3048\u307e\u3059\u3002\uff08\u540d\u306e\u307f\u304b\u3089\u30d5\u30eb\u30cd\u30fc\u30e0\u3078\uff09"
+			],
+			"Postcode / ZIP": [ "\u90f5\u4fbf\u756a\u53f7" ],
+			"Prefecture": [ "\u90fd\u9053\u5e9c\u770c" ],
+			"Town / City": [ "\u5e02\u533a\u753a\u6751" ],
+			"Street address": [ "\u756a\u5730" ],
+			"Apartment, suite, unit, etc. (optional)": [
+				"\u30a2\u30d1\u30fc\u30c8\u540d\u3001\u68df\u540d\u3001\u90e8\u5c4b\u756a\u53f7\u306a\u3069(\u30aa\u30d7\u30b7\u30e7\u30f3)"
+			],
+			"Phone": [ "\u96fb\u8a71\u756a\u53f7" ],
+			"Enable usage tracking": [
+				"\u4f7f\u7528\u72b6\u6cc1\u306e\u8ffd\u8de1\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"Standard": [ "\u6a19\u6e96" ],
+			"For those who are having trouble with WooCommerce": [
+				"WooCommerce \u3067\u304a\u56f0\u308a\u306e\u65b9\u3078"
+			],
+			"We are currently offering 30-minute paid Zoom consultations. A professional from Woo Agency will assess your current situation and suggest the best course of action.": [
+				"\u73fe\u5728\u300130\u5206\u9593\u306e\u6709\u6599 Zoom \u76f8\u8ac7\u3092\u63d0\u4f9b\u3057\u3066\u304a\u308a\u307e\u3059\u3002Woo Agency \u306e\u5c02\u9580\u5bb6\u304c\u73fe\u72b6\u3092\u8a55\u4fa1\u3057\u3001\u6700\u9069\u306a\u5bfe\u5fdc\u7b56\u3092\u3054\u63d0\u6848\u3044\u305f\u3057\u307e\u3059\u3002"
+			],
+			"Sun": [ "\u65e5" ],
+			"Mon": [ "\u6708" ],
+			"Tue": [ "\u706b" ],
+			"Wed": [ "\u6c34" ],
+			"Thr": [ "\u6728" ],
+			"Fri": [ "\u91d1" ],
+			"Sat": [ "\u571f" ],
+			"Yes": [ "\u306f\u3044" ],
+			"Check it if you want to add Yomigana(furigana) input at cart, checkout and my account page.": [
+				"\u304a\u8cb7\u3044\u7269\u30ab\u30b4\u3001\u8cfc\u5165\u624b\u7d9a\u304d\u3001\u30de\u30a4\u30a2\u30ab\u30a6\u30f3\u30c8\u30da\u30fc\u30b8\u306b\u8aad\u307f\u4eee\u540d\uff08\u3075\u308a\u304c\u306a\uff09\u5165\u529b\u6a5f\u80fd\u3092\u8ffd\u52a0\u3057\u305f\u3044\u5834\u5408\u306f\u30c1\u30a7\u30c3\u30af\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check it if you want to add honorific suffix(Sama) at cart, checkout and my account page.": [
+				"\u304a\u8cb7\u3044\u7269\u30ab\u30b4\u3001\u8cfc\u5165\u624b\u7d9a\u304d\u3001\u30de\u30a4\u30a2\u30ab\u30a6\u30f3\u30c8\u30da\u30fc\u30b8\u3067\u656c\u79f0\u63a5\u5c3e\u8f9e\uff08\u69d8\uff09\u3092\u8ffd\u52a0\u3057\u305f\u3044\u5834\u5408\u306f\u30c1\u30a7\u30c3\u30af\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check it if you want to add Company name input at cart, checkout and my account page.": [
+				"\u304a\u8cb7\u3044\u7269\u30ab\u30b4\u3001\u8cfc\u5165\u624b\u7d9a\u304d\u3001\u30de\u30a4\u30a2\u30ab\u30a6\u30f3\u30c8\u30da\u30fc\u30b8\u306b\u4f1a\u793e\u540d\u5165\u529b\u6b04\u3092\u8ffd\u52a0\u3057\u305f\u3044\u5834\u5408\u306f\u30c1\u30a7\u30c3\u30af\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check it if you want to use automatic zip code entry.": [
+				"\u81ea\u52d5\u90f5\u4fbf\u756a\u53f7\u5165\u529b\u3092\u4f7f\u7528\u3059\u308b\u5834\u5408\u306f\u30c1\u30a7\u30c3\u30af\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input Yahoo APP ID here.": [
+				"\u30c6\u30b9\u30c8\u76ee\u7684\u3067\u5c11\u3057\u3060\u3051\u4f7f\u7528\u3059\u308b\u5834\u5408\u306f\u3001\u3053\u3053\u306b\u767b\u9332\u3059\u308b\u5fc5\u8981\u306f\u3042\u308a\u307e\u305b\u3093\u3002\u305f\u3060\u3057\u3001\u81ea\u52d5\u90f5\u4fbf\u756a\u53f7\u5165\u529b\u6a5f\u80fd\u3092\u5229\u7528\u3057\u305f\u3044\u5834\u5408\u306f\u3001\u5fc5\u305aYahoo!\u30a2\u30d7\u30eaID\u3092\u53d6\u5f97\u3057\u3001\u3053\u3053\u306b\u767b\u9332\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check it if you eliminate the order of addresses.": [
+				"\u30a2\u30c9\u30ec\u30b9\u306e\u9806\u5e8f\u3092\u524a\u9664\u3057\u305f\u5834\u5408\u306b\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check it if you want to display free shipping message.": [
+				"\u9001\u6599\u7121\u6599\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u8868\u793a\u3057\u305f\u3044\u5834\u5408\u306f\u30c1\u30a7\u30c3\u30af\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check to hide address input field in virtual orders": [
+				"\u30d0\u30fc\u30c1\u30e3\u30eb\u5546\u54c1\u306e\u6ce8\u6587\u306b\u304a\u3051\u308b\u4f4f\u6240\u5165\u529b\u6b04\u3092\u975e\u8868\u793a\u306b\u3059\u308b"
+			],
+			"Saving...": [ "\u4fdd\u5b58\u4e2d\u2026" ],
+			"Save Settings": [ "\u8a2d\u5b9a\u3092\u4fdd\u5b58" ],
+			"Check it if you want to use delivery date designation.": [
+				"\u914d\u9054\u65e5\u6307\u5b9a\u3092\u5229\u7528\u3057\u305f\u3044\u5834\u5408\u306f\u30c1\u30a7\u30c3\u30af\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check if delivery date is required field.": [
+				"\u914d\u9001\u65e5\u304c\u5fc5\u8981\u9805\u76ee\u304b\u3069\u3046\u304b\u3092\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Number of days from today to start accepting orders": [
+				"\u672c\u65e5\u3088\u308a\u6ce8\u6587\u53d7\u4ed8\u958b\u59cb\u307e\u3067\u306e\u65e5\u6570"
+			],
+			"Number of days to accept delivery date": [
+				"\u914d\u9001\u65e5\u3092\u53d7\u3051\u5165\u308c\u308b\u307e\u3067\u306e\u65e5\u6570"
+			],
+			"Text to display when date is not specified": [
+				"\u65e5\u4ed8\u304c\u6307\u5b9a\u3055\u308c\u3066\u3044\u306a\u3044\u5834\u5408\u306b\u8868\u793a\u3059\u308b\u30c6\u30ad\u30b9\u30c8"
+			],
+			"Time format: HH:MM:SS (e.g., 14:00:00)": [
+				"\u6642\u523b\u5f62\u5f0f: HH:MM:SS (\u4f8b: 14:00:00)"
+			],
+			"Holiday start date": [ "\u4f11\u6687\u958b\u59cb\u65e5" ],
+			"Holiday end date": [ "\u4f11\u6687\u7d42\u4e86\u65e5" ],
+			"Check it if you want to use delivery time zone.": [
+				"\u914d\u9054\u6642\u9593\u5e2f\u3092\u5229\u7528\u3057\u305f\u3044\u5834\u5408\u306f\u30c1\u30a7\u30c3\u30af\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Check if delivery time zone is required field.": [
+				"\u914d\u9001\u5148\u306e\u30bf\u30a4\u30e0\u30be\u30fc\u30f3\u304c\u5fc5\u9808\u9805\u76ee\u304b\u3069\u3046\u304b\u3092\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+			],
+			"Text to display when time is not specified": [
+				"\u6642\u9593\u304c\u6307\u5b9a\u3055\u308c\u3066\u3044\u306a\u3044\u5834\u5408\u306b\u8868\u793a\u3059\u308b\u30c6\u30ad\u30b9\u30c8"
+			],
+			"Start Time": [ "\u958b\u59cb\u6642\u9593" ],
+			"End Time": [ "\u7d42\u4e86\u6642\u9593" ],
+			"Remove": [ "\u524a\u9664" ],
+			"Add Time Zone": [
+				"\u30bf\u30a4\u30e0\u30be\u30fc\u30f3\u3092\u8ffd\u52a0"
+			],
+			"Email address to notify when required delivery fields are missing": [
+				"\u5fc5\u9808\u306e\u914d\u9001\u60c5\u5831\u304c\u4e0d\u8db3\u3057\u3066\u3044\u308b\u5834\u5408\u306b\u901a\u77e5\u3059\u308b\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9"
+			],
+			"Enable bank payment method": [
+				"\u9280\u884c\u632f\u8fbc\u306e\u652f\u6255\u3044\u65b9\u6cd5\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"Enable postal transfer payment method": [
+				"\u90f5\u4fbf\u632f\u66ff\u306b\u3088\u308b\u652f\u6255\u3044\u65b9\u6cd5\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"Enable pay at store payment method": [
+				"\u5e97\u982d\u652f\u6255\u3044\u65b9\u6cd5\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"Enable COD for subscription orders": [
+				"\u5b9a\u671f\u8cfc\u5165\u6ce8\u6587\u3067\u4ee3\u91d1\u5f15\u63db\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"Enable PayPal payment method": [
+				"PayPal\u306e\u652f\u6255\u3044\u65b9\u6cd5\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"Name of the COD fee": [
+				"\u4ee3\u91d1\u5f15\u63db\u624b\u6570\u6599\u306e\u540d\u79f0"
+			],
+			"Amount to charge for COD": [
+				"\u4ee3\u91d1\u5f15\u63db\u624b\u6570\u6599"
+			],
+			"Maximum cart value for COD fee application": [
+				"\u4ee3\u91d1\u5f15\u63db\u624b\u6570\u6599\u9069\u7528\u306b\u304a\u3051\u308b\u6700\u5927\u30ab\u30fc\u30c8\u91d1\u984d"
+			],
+			"No": [ "\u3044\u3044\u3048" ],
+			"Reduced rate": [ "\u8efd\u6e1b\u7387" ],
+			"Zero rate": [ "\u975e\u8ab2\u7a0e" ],
+			"Enable A8.net": [ "A8.net \u3092\u6709\u52b9\u306b\u3059\u308b" ],
+			"Enable A8.net affiliate tracking": [
+				"A8.net \u306e\u30a2\u30d5\u30a3\u30ea\u30a8\u30a4\u30c8\u30c8\u30e9\u30c3\u30ad\u30f3\u30b0\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"Test Mode": [ "\u30c6\u30b9\u30c8\u30e2\u30fc\u30c9" ],
+			"Enable test mode for A8.net": [
+				"A8.net \u306e\u30c6\u30b9\u30c8\u30e2\u30fc\u30c9\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"A8.net PID": [ "A8.net PID" ],
+			"Enter your A8.net PID": [
+				"A8.net \u306e PID \u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"
+			],
+			"Enable felmat": [
+				"felmat (\u30d5\u30a7\u30eb\u30de)\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"Enable felmat affiliate tracking": [
+				"felmat (\u30d5\u30a7\u30eb\u30de)\u306e\u30a2\u30d5\u30a3\u30ea\u30a8\u30a4\u30c8\u8ffd\u8de1\u3092\u6709\u52b9\u306b\u3059\u308b"
+			],
+			"felmat PID": [ "felmat (\u30d5\u30a7\u30eb\u30de) PID" ],
+			"Enter your felmat PID": [
+				"felmat (\u30d5\u30a7\u30eb\u30de) PID \u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"
+			],
+			"Failed to load settings": [
+				"\u8a2d\u5b9a\u3092\u8aad\u307f\u8fbc\u3081\u307e\u305b\u3093\u3067\u3057\u305f"
+			],
+			"Settings saved successfully.": [
+				"\u8a2d\u5b9a\u304c\u6b63\u5e38\u306b\u4fdd\u5b58\u3055\u308c\u307e\u3057\u305f."
+			],
+			"Failed to save settings": [
+				"\u8a2d\u5b9a\u306e\u4fdd\u5b58\u306b\u5931\u6557\u3057\u307e\u3057\u305f"
+			],
+			"Loading settings...": [
+				"\u8a2d\u5b9a\u3092\u8aad\u307f\u8fbc\u307f\u4e2d..."
+			],
+			"General Settings": [ "\u4e00\u822c\u8a2d\u5b9a" ],
+			"Shipment Settings": [ "\u914d\u9001\u65b9\u6cd5\u8a2d\u5b9a" ],
+			"Payment Settings": [ "\u652f\u6255\u65b9\u6cd5\u8a2d\u5b9a" ],
+			"Commercial Law": [ "\u7279\u5b9a\u5546\u53d6\u5f15\u6cd5" ],
+			"Affiliate": [ "\u30a2\u30d5\u30a3\u30ea\u30a8\u30a4\u30c8" ],
+			"Japanized for WooCommerce Settings": [
+				"Japanized for WooCommerce \u8a2d\u5b9a"
+			]
+		}
+	}
+}

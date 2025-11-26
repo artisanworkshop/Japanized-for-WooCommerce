@@ -8,18 +8,21 @@ import {
 import { useSettings } from '../hooks';
 import { Notices } from './notices';
 import {
-    ExplainCSG,
-    CheckAdminLogin,
-    CheckSeucirytPluigns,
-    VulnerabilityAssessment,
-    CheckMalwareScanner,
-    PromotionSecurity,
+	ExplainCSG,
+	CheckAdminLogin,
+	CheckSeucirytPluigns,
+	VulnerabilityAssessment,
+	CheckMalwareScanner,
+	PromotionSecurity,
 } from './controls';
 
 const SettingsTitle = () => {
 	return (
 		<Heading level={ 1 }>
-			{ __( 'Credit Card Security Guidelines Check', 'woocommerce-for-japan' ) }
+			{ __(
+				'Credit Card Security Guidelines Check',
+				'woocommerce-for-japan'
+			) }
 		</Heading>
 	);
 };
@@ -27,41 +30,44 @@ const SettingsTitle = () => {
 const SaveButton = ( { onClick } ) => {
 	return (
 		<div className="jp4wc-save">
-		<Button className="jp4wc-save jp4wc-button is-primary" onClick={ onClick }>
-			{ __( 'Save', 'woocommerce-for-japan' ) }
-		</Button>
+			<Button
+				className="jp4wc-save jp4wc-button is-primary"
+				onClick={ onClick }
+			>
+				{ __( 'Save', 'woocommerce-for-japan' ) }
+			</Button>
 		</div>
 	);
 };
 
 const SecurityPage = () => {
-    const {
-        checkAdminLogin,
-        setCheckAdminLogin,
-        checkSeucirytPluigns,
-        setCheckSeucirytPluigns,
-        saveSettings,
-    } = useSettings();
-    return (
+	const {
+		checkAdminLogin,
+		setCheckAdminLogin,
+		checkSeucirytPluigns,
+		setCheckSeucirytPluigns,
+		saveSettings,
+	} = useSettings();
+	return (
 		<>
 			<SettingsTitle />
-            <Notices />
-            <Panel>
-                <ExplainCSG />
-                <PromotionSecurity />
-                <CheckAdminLogin 
-    				value={ checkAdminLogin }
-	    			onChange={ ( value ) => setCheckAdminLogin( value ) }
-                />
-                <CheckSeucirytPluigns
-                    value={ checkSeucirytPluigns }
-                    onChange={ ( value ) => setCheckSeucirytPluigns( value ) }
-                />
-                <VulnerabilityAssessment />
-                <CheckMalwareScanner />
-            </Panel>
-            <SaveButton onClick={ saveSettings } />
-        </>
-    );
+			<Notices />
+			<Panel>
+				<ExplainCSG />
+				<PromotionSecurity />
+				<CheckAdminLogin
+					value={ checkAdminLogin }
+					onChange={ ( value ) => setCheckAdminLogin( value ) }
+				/>
+				<CheckSeucirytPluigns
+					value={ checkSeucirytPluigns }
+					onChange={ ( value ) => setCheckSeucirytPluigns( value ) }
+				/>
+				<VulnerabilityAssessment />
+				<CheckMalwareScanner />
+			</Panel>
+			<SaveButton onClick={ saveSettings } />
+		</>
+	);
 };
 export { SecurityPage };

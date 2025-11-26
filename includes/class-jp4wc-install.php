@@ -25,18 +25,31 @@ class JP4WC_Install {
 	 * This check is done on all requests and runs if the versions do not match.
 	 */
 	public static function check_version() {
-		$wc_version      = get_option( 'jp4wc_version' );
-		$requires_update = version_compare( $wc_version, JP4WC_VERSION, '<' );
-		if ( $requires_update ) {
+		$previous_version = get_option( 'jp4wc_version' );
+		$is_new_install   = empty( $previous_version );
+		$requires_update  = ! $is_new_install && version_compare( $previous_version, JP4WC_VERSION, '<' );
+
+		if ( $is_new_install || $requires_update ) {
 			self::install();
-			/**
-			 * Run after WooCommerce has been updated.
-			 *
-			 * @since 2.6.0
-			 */
-			do_action( 'jp4wc_updated', $wc_version );
+
+			if ( $is_new_install ) {
+				/**
+				 * Run after Japanized for WooCommerce has been installed for the first time.
+				 *
+				 * @since 2.6.0
+				 * @param string $previous_version Previous version of the plugin (empty for new installs).
+				 */
+				do_action( 'jp4wc_installed', $previous_version );
+			} elseif ( $requires_update ) {
+				/**
+				 * Run after Japanized for WooCommerce has been updated.
+				 *
+				 * @since 2.6.0
+				 * @param string $previous_version Previous version of the plugin.
+				 */
+				do_action( 'jp4wc_updated', $previous_version );
+			}
 		}
-		do_action( 'jp4wc_install', $wc_version );
 	}
 
 	/**
@@ -98,11 +111,6 @@ class JP4WC_Install {
 		$paidy_do_activation_redirect = get_option( 'paidy_do_activation_redirect', false );
 		if ( ! $paidy_do_activation_redirect ) {
 			update_option( 'paidy_do_activation_redirect', true );
-		}
-		if ( class_exists( 'JP4WC_Usage_Tracking' ) || ! get_option( 'wc4jp-tracking' ) ) {
-			if ( ! wp_next_scheduled( 'jp4wc_tracker_send_event' ) ) {
-				JP4WC_Usage_Tracking::jp4wc_send_tracking_data( true );
-			}
 		}
 	}
 }

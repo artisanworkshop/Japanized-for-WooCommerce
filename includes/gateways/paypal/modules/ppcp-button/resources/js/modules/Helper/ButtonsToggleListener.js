@@ -4,36 +4,33 @@
  */
 
 class ButtonsToggleListener {
-    constructor(element, showCallback, hideCallback)
-    {
-        this.element = element;
-        this.showCallback = showCallback;
-        this.hideCallback = hideCallback;
-        this.observer = null;
-    }
+	constructor( element, showCallback, hideCallback ) {
+		this.element = element;
+		this.showCallback = showCallback;
+		this.hideCallback = hideCallback;
+		this.observer = null;
+	}
 
-    init()
-    {
-        if (!this.element) {
-            return;
-        }
-        const config = { attributes : true };
-        const callback = () => {
-            if (this.element.classList.contains('disabled')) {
-                this.hideCallback();
-                return;
-            }
-            this.showCallback();
-        }
-        this.observer = new MutationObserver(callback);
-        this.observer.observe(this.element, config);
-        callback();
-    }
+	init() {
+		if ( ! this.element ) {
+			return;
+		}
+		const config = { attributes: true };
+		const callback = () => {
+			if ( this.element.classList.contains( 'disabled' ) ) {
+				this.hideCallback();
+				return;
+			}
+			this.showCallback();
+		};
+		this.observer = new MutationObserver( callback );
+		this.observer.observe( this.element, config );
+		callback();
+	}
 
-    disconnect()
-    {
-        this.observer.disconnect();
-    }
+	disconnect() {
+		this.observer.disconnect();
+	}
 }
 
 export default ButtonsToggleListener;
