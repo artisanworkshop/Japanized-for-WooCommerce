@@ -127,6 +127,8 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
 			// Admin Setting Screen.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-settings.php';
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
+
 			// Admin Security Screen.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-check-security.php';
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-malware-check.php';
@@ -317,14 +319,21 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					);
 				}
 			}
-		}
 
-		/**
-		 * Add the gateway to WooCommerce
-		 *
-		 * @param array $methods Payment methods.
-		 * @return array $methods Payment methods.
-		 */
+			// Register delivery fields block integration.
+			add_action(
+				'woocommerce_blocks_checkout_block_registration',
+				function ( $integration_registry ) {
+					require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
+					$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+				}
+			);
+		}       /**
+				 * Add the gateway to WooCommerce
+				 *
+				 * @param array $methods Payment methods.
+				 * @return array $methods Payment methods.
+				 */
 		public function add_jp4wc_custom_cod_gateway( $methods ) {
 			// Add the COD gateway for Fee.
 			$methods[] = 'JP4WC_COD_Fee';

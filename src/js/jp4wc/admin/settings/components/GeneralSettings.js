@@ -128,7 +128,9 @@ const GeneralSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Yahoo APP ID', 'woocommerce-for-japan' ) }
 						help={ __(
 							'If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input Yahoo APP ID here.',

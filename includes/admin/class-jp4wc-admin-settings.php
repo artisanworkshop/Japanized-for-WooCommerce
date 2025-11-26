@@ -27,6 +27,7 @@ class JP4WC_Admin_Settings {
 		add_action( 'admin_menu', array( $this, 'add_settings_page' ), 99 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+		add_action( 'current_screen', array( $this, 'conditional_includes' ), 1 );
 	}
 
 	/**
@@ -116,6 +117,24 @@ class JP4WC_Admin_Settings {
 		require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-settings-api.php';
 		$controller = new JP4WC_Settings_API();
 		$controller->register_routes();
+	}
+
+	/**
+	 * Include admin files conditionally.
+	 */
+	public function conditional_includes() {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return;
+		}
+
+		switch ( $screen->id ) {
+			case 'dashboard':
+			case 'dashboard-network':
+				include __DIR__ . '/class-jp4wc-admin-php-notice.php';
+				break;
+		}
 	}
 }
 

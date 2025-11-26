@@ -4,10 +4,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Plugins - Japanized For WooCommerce - Stable (latest "
 "release)\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Japanized-for-"
-"WooCommerce\n"
-"POT-Creation-Date: 2025-11-26T01:11:37+00:00\n"
-"PO-Revision-Date: 2025-11-26 10:36+0900\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/japanized-for-"
+"woocommerce\n"
+"POT-Creation-Date: 2025-11-26T21:17:11+00:00\n"
+"PO-Revision-Date: 2025-11-27 06:21+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja_JP\n"
@@ -44,7 +44,7 @@ msgid "https://wc.artws.info/"
 msgstr "https://wc.artws.info/"
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:252
+#: class-jp4wc.php:251
 #, php-format
 msgid ""
 "If you like <strong>Japanized for WooCommerce</strong> please leave us a "
@@ -55,11 +55,11 @@ msgstr ""
 "す !"
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:252
+#: class-jp4wc.php:251
 msgid "Thanks :)"
 msgstr "ありがとうございます :)"
 
-#: class-jp4wc.php:262
+#: class-jp4wc.php:261
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr "Japanized for WooCommerce を利用していただきありがとうございます。"
 
@@ -224,8 +224,7 @@ msgid "For Japanese"
 msgstr "日本対応"
 
 #: includes/admin/class-jp4wc-admin-screen.php:126
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:25
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:34
 msgid "Address Display Setting"
 msgstr "顧客入力項目設定"
 
@@ -235,20 +234,17 @@ msgstr "注意事項"
 
 #: includes/admin/class-jp4wc-admin-screen.php:139
 #: includes/admin/class-jp4wc-admin-screen.php:887
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:28
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:43
 msgid "Name Yomigana"
 msgstr "名前 (よみがな)"
 
 #: includes/admin/class-jp4wc-admin-screen.php:146
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:37
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:58
 msgid "Required Name Yomigana"
 msgstr "氏名のよみがな必須"
 
 #: includes/admin/class-jp4wc-admin-screen.php:153
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:46
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:79
 msgid "Honorific suffix(Sama)"
 msgstr "敬称 (様)"
 
@@ -256,46 +252,39 @@ msgstr "敬称 (様)"
 #: includes/admin/class-jp4wc-admin-screen.php:913
 #: includes/class-jp4wc-address-fields.php:132
 #: includes/class-jp4wc-address-fields.php:167
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:55
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:100
 msgid "Company Name"
 msgstr "会社名"
 
 #: includes/admin/class-jp4wc-admin-screen.php:167
 #: includes/admin/class-jp4wc-admin-screen.php:982
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:64
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:115
 msgid "Automatic zip code entry"
 msgstr "郵便番号自動住所入力"
 
 #: includes/admin/class-jp4wc-admin-screen.php:174
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:73
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:134
 msgid "Yahoo APP ID"
 msgstr "Yahoo! APP ID"
 
 #: includes/admin/class-jp4wc-admin-screen.php:181
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:82
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:149
 msgid "No Japanese Address"
 msgstr "日本非対応住所"
 
 #: includes/admin/class-jp4wc-admin-screen.php:188
 #: includes/admin/class-jp4wc-admin-screen.php:922
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:91
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:167
 msgid "Free Shipping Display"
 msgstr "送料無料表示"
 
 #: includes/admin/class-jp4wc-admin-screen.php:195
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:100
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:185
 msgid "Custamize Email template at customer name"
 msgstr "メールテンプレートの顧客名変更"
 
 #: includes/admin/class-jp4wc-admin-screen.php:204
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:108
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:207
 msgid "Virtual order Setting"
 msgstr "バーチャル商品注文時の設定"
 
@@ -304,141 +293,122 @@ msgid "Hide address input"
 msgstr "住所入力時に非表示"
 
 #: includes/admin/class-jp4wc-admin-screen.php:219
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:150
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:312
 msgid "Usage tracking"
 msgstr "使用状況の追跡"
 
 #: includes/admin/class-jp4wc-admin-screen.php:226
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:153
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:318
 msgid "Tracking"
 msgstr "追跡"
 
 #: includes/admin/class-jp4wc-admin-screen.php:235
 #: includes/admin/class-jp4wc-admin-screen.php:1009
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:44
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:50
 msgid "Delivery date designation"
 msgstr "配達日指定"
 
 #: includes/admin/class-jp4wc-admin-screen.php:241
-#: includes/class-jp4wc-delivery.php:133 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:47
+#: includes/class-jp4wc-delivery.php:148
+#: src/js/blocks/delivery-block-editor.js:35
+#: src/js/blocks/delivery-block-frontend.js:107
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:59
 msgid "Preferred delivery date"
 msgstr "配達希望日"
 
 #: includes/admin/class-jp4wc-admin-screen.php:248
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:56
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:77
 msgid "Preferred delivery date required"
 msgstr "配達日指定必須"
 
 #: includes/admin/class-jp4wc-admin-screen.php:255
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:65
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:100
 msgid "Start Date"
 msgstr "配達予約可能開始日"
 
 #: includes/admin/class-jp4wc-admin-screen.php:262
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:75
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:116
 msgid "Delivery Term"
 msgstr "配達予約可能期間"
 
 #: includes/admin/class-jp4wc-admin-screen.php:269
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:85
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:133
 msgid "Unspecified date description"
 msgstr "指定されていない日の説明"
 
 #: includes/admin/class-jp4wc-admin-screen.php:276
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:94
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:152
 msgid "Date format"
 msgstr "日付フォーマット"
 
 #: includes/admin/class-jp4wc-admin-screen.php:283
 #: includes/admin/class-jp4wc-admin-screen.php:1059
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:108
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:169
 msgid "Display day of week"
 msgstr "曜日の表示"
 
 #: includes/admin/class-jp4wc-admin-screen.php:290
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:116
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:184
 msgid "Delivery deadline"
 msgstr "最終集荷時間"
 
 #: includes/admin/class-jp4wc-admin-screen.php:297
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:125
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:202
 msgid "No delivery weekday"
 msgstr "未出荷曜日"
 
 #: includes/admin/class-jp4wc-admin-screen.php:304
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:168
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:277
 msgid "Holiday term"
 msgstr "祝日期間"
 
 #: includes/admin/class-jp4wc-admin-screen.php:313
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:191
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:326
 msgid "Delivery Time designation"
 msgstr "配達時間設定"
 
 #: includes/admin/class-jp4wc-admin-screen.php:319
 #: includes/admin/class-jp4wc-admin-screen.php:1158
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:194
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:74
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:335
 msgid "Delivery time zone"
 msgstr "配達時間帯"
 
 #: includes/admin/class-jp4wc-admin-screen.php:326
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:203
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:356
 msgid "Delivery time zone required"
 msgstr "配達時間指定必須"
 
 #: includes/admin/class-jp4wc-admin-screen.php:333
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:212
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:380
 msgid "Unspecified Time description"
 msgstr "指定されていない時間の説明"
 
 #: includes/admin/class-jp4wc-admin-screen.php:340
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:221
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:398
 msgid "Delivery time zone management"
 msgstr "配達時間帯管理"
 
 #: includes/admin/class-jp4wc-admin-screen.php:349
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:258
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:477
 msgid "Notification of missing required fields"
 msgstr "必須項目の未入力に関する通知"
 
 #: includes/admin/class-jp4wc-admin-screen.php:355
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:261
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:487
 msgid "Notification email address"
 msgstr "通知メールアドレス"
 
 #: includes/admin/class-jp4wc-admin-screen.php:364
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:21
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:27
 msgid "Payment Method"
 msgstr "支払い方法"
 
 #: includes/admin/class-jp4wc-admin-screen.php:370
 #: includes/admin/class-jp4wc-admin-screen.php:1234
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:95
-#: assets/js/build/admin/settings.js:1
-#: assets/js/build/frontend/blocks/bank-jp.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:24
-#: src/js/jp4wc/frontend/blocks/bank-jp/index.js:9
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:33
+#: src/js/jp4wc/frontend/blocks/bank-jp/index.js:8
 msgid "BANK PAYMENT IN JAPAN"
 msgstr "銀行振込 (日本国内向け)"
 
@@ -446,24 +416,20 @@ msgstr "銀行振込 (日本国内向け)"
 #: includes/admin/class-jp4wc-admin-screen.php:1242
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:86
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:139
-#: assets/js/build/admin/settings.js:1
-#: assets/js/build/frontend/blocks/postofficebank.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:33
-#: src/js/jp4wc/frontend/blocks/postofficebank/index.js:9
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:51
+#: src/js/jp4wc/frontend/blocks/postofficebank/index.js:8
 msgid "Postal transfer"
 msgstr "郵便振替"
 
 #: includes/admin/class-jp4wc-admin-screen.php:384
 #: includes/admin/class-jp4wc-admin-screen.php:1250
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:42
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:69
 msgid "Pay at store"
 msgstr "店頭支払い"
 
 #: includes/admin/class-jp4wc-admin-screen.php:391
 #: includes/admin/class-jp4wc-admin-screen.php:1259
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:51
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:84
 msgid "COD for Subscriptions"
 msgstr "定期購入対応代金引換"
 
@@ -480,44 +446,42 @@ msgstr "定期購入対応代金引換"
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:564
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:704
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Settings.php:107
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:60
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:102
 msgid "PayPal"
 msgstr "PayPal"
 
 #: includes/admin/class-jp4wc-admin-screen.php:406
-#: includes/class-jp4wc-cod-fee.php:104 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:68
+#: includes/class-jp4wc-cod-fee.php:104
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:116
 msgid "Extra charge for COD method"
 msgstr "代引き手数料設定"
 
 #: includes/admin/class-jp4wc-admin-screen.php:412
-#: includes/class-jp4wc-cod-fee.php:108 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:71
+#: includes/class-jp4wc-cod-fee.php:108
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:126
 msgid "Fee name"
 msgstr "手数料表記名"
 
 #: includes/admin/class-jp4wc-admin-screen.php:419
-#: includes/class-jp4wc-cod-fee.php:114 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:80
+#: includes/class-jp4wc-cod-fee.php:114
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:142
 msgid "Extra charge amount"
 msgstr "手数料金額"
 
 #: includes/admin/class-jp4wc-admin-screen.php:426
-#: includes/class-jp4wc-cod-fee.php:119 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:90
+#: includes/class-jp4wc-cod-fee.php:119
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:162
 msgid "Maximum cart value to which adding fee"
 msgstr "手数料無料設定金額"
 
 #: includes/admin/class-jp4wc-admin-screen.php:433
-#: includes/class-jp4wc-cod-fee.php:125 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:100
+#: includes/class-jp4wc-cod-fee.php:125
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:185
 msgid "Includes taxes"
 msgstr "手数料の消費税処理"
 
 #: includes/admin/class-jp4wc-admin-screen.php:440
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:112
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:210
 msgid "Tax Class"
 msgstr "税クラス"
 
@@ -527,95 +491,94 @@ msgstr "料金詳細"
 
 #: includes/admin/class-jp4wc-admin-screen.php:456
 #: includes/admin/views/html-admin-screen.php:15
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:20
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:21
 msgid "Specified Commercial Transaction Law"
 msgstr "特定商取引法"
 
 #: includes/admin/class-jp4wc-admin-screen.php:462
-#: includes/class-jp4wc-shortcodes.php:64 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:23
+#: includes/class-jp4wc-shortcodes.php:64
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:31
 msgid "Shop Name"
 msgstr "ショップ名"
 
 #: includes/admin/class-jp4wc-admin-screen.php:469
-#: includes/class-jp4wc-shortcodes.php:65 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:31
+#: includes/class-jp4wc-shortcodes.php:65
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:43
 msgid "Sales company name (company name)"
 msgstr "販売事業者名"
 
 #: includes/admin/class-jp4wc-admin-screen.php:476
-#: includes/class-jp4wc-shortcodes.php:66 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:39
+#: includes/class-jp4wc-shortcodes.php:66
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:58
 msgid "Owner Name"
 msgstr "代表者名"
 
 #: includes/admin/class-jp4wc-admin-screen.php:483
 #: includes/class-jp4wc-shortcodes.php:67
-#: includes/class-jp4wc-shortcodes.php:90 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:47
+#: includes/class-jp4wc-shortcodes.php:90
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:70
 msgid "Manager Name"
 msgstr "担当者名"
 
 #: includes/admin/class-jp4wc-admin-screen.php:490
-#: includes/class-jp4wc-shortcodes.php:68 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:55
+#: includes/class-jp4wc-shortcodes.php:68
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:81
 msgid "Location"
 msgstr "所在地"
 
 #: includes/admin/class-jp4wc-admin-screen.php:497
-#: includes/class-jp4wc-shortcodes.php:69 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:64
+#: includes/class-jp4wc-shortcodes.php:69
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:94
 msgid "Contact"
 msgstr "お問い合わせ"
 
 #: includes/admin/class-jp4wc-admin-screen.php:504
 #: includes/class-jp4wc-shortcodes.php:70
-#: includes/class-jp4wc-shortcodes.php:90 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:72
+#: includes/class-jp4wc-shortcodes.php:90
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:106
 msgid "Telephone"
 msgstr "電話番号"
 
 #: includes/admin/class-jp4wc-admin-screen.php:511
-#: includes/class-jp4wc-shortcodes.php:71 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:80
+#: includes/class-jp4wc-shortcodes.php:71
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:117
 msgid "Selling price"
 msgstr "商品の販売価格"
 
 #: includes/admin/class-jp4wc-admin-screen.php:518
-#: includes/class-jp4wc-shortcodes.php:72 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:89
+#: includes/class-jp4wc-shortcodes.php:72
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:129
 msgid "Payment method"
 msgstr "支払い方法"
 
 #: includes/admin/class-jp4wc-admin-screen.php:525
-#: includes/class-jp4wc-shortcodes.php:73 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:98
+#: includes/class-jp4wc-shortcodes.php:73
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:144
 msgid "Product purchase method"
 msgstr "商品の購入方法"
 
 #: includes/admin/class-jp4wc-admin-screen.php:532
-#: includes/class-jp4wc-shortcodes.php:74 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:107
+#: includes/class-jp4wc-shortcodes.php:74
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:159
 msgid "Product delivery time"
 msgstr "商品の引渡し時期"
 
 #: includes/admin/class-jp4wc-admin-screen.php:539
-#: includes/class-jp4wc-shortcodes.php:75 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:116
+#: includes/class-jp4wc-shortcodes.php:75
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:174
 msgid "Costs other than product charges"
 msgstr "商品以外の費用"
 
 #: includes/admin/class-jp4wc-admin-screen.php:546
-#: includes/class-jp4wc-shortcodes.php:76 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:125
+#: includes/class-jp4wc-shortcodes.php:76
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:189
 msgid "Returns / Cancellations"
 msgstr "返品・キャンセルについての特約事項"
 
 #: includes/admin/class-jp4wc-admin-screen.php:553
 #: includes/class-jp4wc-shortcodes.php:77
-#: includes/class-jp4wc-shortcodes.php:90 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:134
+#: includes/class-jp4wc-shortcodes.php:90
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:204
 msgid "Special conditions"
 msgstr "特別条件"
 
@@ -630,14 +593,12 @@ msgid "Affiliate Setting"
 msgstr "アフィリエイト設定"
 
 #: includes/admin/class-jp4wc-admin-screen.php:576
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:20
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:26
 msgid "A8.net Setting"
 msgstr "A8.net 設定"
 
 #: includes/admin/class-jp4wc-admin-screen.php:584
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:49
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:80
 msgid "felmat Setting"
 msgstr "felmat 設定"
 
@@ -666,8 +627,7 @@ msgid "Your settings have been saved."
 msgstr "設定を保存しました。"
 
 #: includes/admin/class-jp4wc-admin-screen.php:880
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:22
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:27
 msgid ""
 "Regarding this setting, etc., we do not yet support block shopping carts or "
 "purchase procedures. Please use the shortcode to use this feature."
@@ -676,8 +636,7 @@ msgstr ""
 "応しておりません。 この機能を使用するにはショートコードを使用してください。"
 
 #: includes/admin/class-jp4wc-admin-screen.php:896
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:38
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:62
 msgid "Check if you want to require yomigana."
 msgstr "よみがなを必須にする場合はチェックします。"
 
@@ -698,49 +657,41 @@ msgstr ""
 ">woocommerce-for-japan/templates/emails/"
 
 #: includes/admin/class-jp4wc-admin-screen.php:932
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:101
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:189
 msgid ""
 "Please check it if you want to change customer name display.( from first "
 "name to full name )"
 msgstr "チェックすると顧客名の表示を変えます。（名のみからフルネームへ）"
 
 #: includes/admin/class-jp4wc-admin-screen.php:941
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:116
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:227
 msgid "Postcode / ZIP"
 msgstr "郵便番号"
 
 #: includes/admin/class-jp4wc-admin-screen.php:942
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:121
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:241
 msgid "Prefecture"
 msgstr "都道府県"
 
 #: includes/admin/class-jp4wc-admin-screen.php:943
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:126
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:255
 msgid "Town / City"
 msgstr "市区町村"
 
 #: includes/admin/class-jp4wc-admin-screen.php:944
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:131
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:269
 msgid "Street address"
 msgstr "番地"
 
 #: includes/admin/class-jp4wc-admin-screen.php:945
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:136
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:283
 msgid "Apartment, suite, unit, etc. (optional)"
 msgstr "アパート名、棟名、部屋番号など(オプション)"
 
 #: includes/admin/class-jp4wc-admin-screen.php:946
 #: includes/class-jp4wc-address-fields.php:474
 #: includes/class-jp4wc-address-fields.php:543
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:339
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:141
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:297
 msgid "Phone"
 msgstr "電話番号"
 
@@ -749,8 +700,7 @@ msgid "Check the address input field to hide in the virtual order."
 msgstr "非表示にしたい住所の入力項目にチェックしてください。"
 
 #: includes/admin/class-jp4wc-admin-screen.php:974
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:154
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:319
 msgid "Enable usage tracking"
 msgstr "使用状況の追跡を有効にする"
 
@@ -886,6 +836,8 @@ msgid ""
 "Please enter the email address where you would like to receive notifications "
 "when a customer fails to enter the required delivery date and time."
 msgstr ""
+"お客様が必要な配達日時を入力しなかった場合に通知を受け取りたいメールアドレス"
+"を入力してください。"
 
 #: includes/admin/class-jp4wc-admin-screen.php:1277
 msgid "Please enter the COD fee name."
@@ -932,8 +884,8 @@ msgid "Not Required"
 msgstr "不要"
 
 #: includes/admin/class-jp4wc-admin-screen.php:1317
-#: includes/jp4wc-common-functions.php:27 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:115
+#: includes/jp4wc-common-functions.php:27
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:214
 msgid "Standard"
 msgstr "標準"
 
@@ -1105,13 +1057,9 @@ msgid "Please check it if you want to use input field for %s"
 msgstr "%s の項目を使う場合は、チェックしてください"
 
 #: includes/admin/class-jp4wc-admin-screen.php:1640
-#: assets/js/build/admin/security.js:1 assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/admin/paidy.js:3
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/jp4wc/admin/security/hooks/use-settings.js:36
-#: src/js/paidy/main-hooks/form-info.jsx:193
-#: src/js/paidy/main-hooks/on-boarding-settings.js:172
+#: src/js/jp4wc/admin/security/hooks/use-settings.js:38
+#: src/js/paidy/main-hooks/form-info.jsx:326
+#: src/js/paidy/main-hooks/on-boarding-settings.js:308
 msgid "Settings saved."
 msgstr "設定を保存しました。"
 
@@ -1163,11 +1111,11 @@ msgstr ""
 msgid "Japanized for WooCommerce Information"
 msgstr "Japanized for WooCommerce 情報"
 
-#: includes/admin/class-jp4wc-admin-settings.php:36
+#: includes/admin/class-jp4wc-admin-settings.php:37
 msgid "JP4WC Settings"
 msgstr "JP4WC 設定"
 
-#: includes/admin/class-jp4wc-admin-settings.php:39
+#: includes/admin/class-jp4wc-admin-settings.php:40
 msgid "JP4WC Settings (Block)"
 msgstr "JP4WC設定（ブロック）"
 
@@ -1350,14 +1298,12 @@ msgid "The URL for this page is incorrect."
 msgstr "このページの URL が正しくありません。"
 
 #: includes/admin/views/html-admin-setting-screen.php:40
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:224
+#: src/js/jp4wc/admin/settings/components/Settings.js:250
 msgid "For those who are having trouble with WooCommerce"
 msgstr "WooCommerce でお困りの方へ"
 
 #: includes/admin/views/html-admin-setting-screen.php:41
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:226
+#: src/js/jp4wc/admin/settings/components/Settings.js:256
 msgid ""
 "We are currently offering 30-minute paid Zoom consultations. A professional "
 "from Woo Agency will assess your current situation and suggest the best "
@@ -1367,9 +1313,8 @@ msgstr ""
 "価し、最適な対応策をご提案いたします。"
 
 #: includes/admin/views/html-admin-setting-screen.php:62
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:257
-#: src/js/jp4wc/admin/security/components/controls.jsx:267
+#: src/js/jp4wc/admin/security/components/controls.jsx:472
+#: src/js/jp4wc/admin/security/components/controls.jsx:508
 msgid "Security measures for WooCommerce"
 msgstr "セキュリティー対策 for WooCommerce"
 
@@ -1399,6 +1344,69 @@ msgstr "5つ星評価"
 #: includes/admin/views/html-admin-setting-screen.php:76
 msgid "on WordPress.org"
 msgstr "on WordPress.org"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:69
+msgid "Delivery date"
+msgstr "配送日"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:261
+#: includes/class-jp4wc-delivery.php:138
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:264
+msgid "Sun"
+msgstr "日"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:262
+#: includes/class-jp4wc-delivery.php:139
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:216
+msgid "Mon"
+msgstr "月"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:263
+#: includes/class-jp4wc-delivery.php:140
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:224
+msgid "Tue"
+msgstr "火"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:264
+#: includes/class-jp4wc-delivery.php:141
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:232
+msgid "Wed"
+msgstr "水"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:265
+#: includes/class-jp4wc-delivery.php:142
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:240
+msgid "Thr"
+msgstr "木"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:266
+#: includes/class-jp4wc-delivery.php:143
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:248
+msgid "Fri"
+msgstr "金"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:267
+#: includes/class-jp4wc-delivery.php:144
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:256
+msgid "Sat"
+msgstr "土"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:273
+#: includes/class-jp4wc-delivery.php:157
+msgid "Y/m/d"
+msgstr "Y年n月j日"
+
+#. translators: %s: Week name
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:278
+#: includes/class-jp4wc-delivery.php:161
+#, php-format
+msgid "(%s)"
+msgstr "(%s)"
+
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:314
+#: includes/class-jp4wc-delivery.php:293
+msgid "-"
+msgstr "-"
 
 #: includes/class-jp4wc-address-fields.php:102
 msgid "Last Name ( Yomigana )"
@@ -1463,125 +1471,96 @@ msgstr "税クラス:"
 msgid "Charge amount of details:"
 msgstr "詳細の請求額:"
 
-#: includes/class-jp4wc-delivery.php:98
+#: includes/class-jp4wc-delivery.php:110
+#: src/js/blocks/delivery-block-editor.js:26
+#: src/js/blocks/delivery-block-frontend.js:98
 msgid "Delivery request date and time"
 msgstr "配達希望日時"
 
-#: includes/class-jp4wc-delivery.php:123 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:158
-msgid "Sun"
-msgstr "日"
-
-#: includes/class-jp4wc-delivery.php:124 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:128
-msgid "Mon"
-msgstr "月"
-
-#: includes/class-jp4wc-delivery.php:125 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:133
-msgid "Tue"
-msgstr "火"
-
-#: includes/class-jp4wc-delivery.php:126 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:138
-msgid "Wed"
-msgstr "水"
-
-#: includes/class-jp4wc-delivery.php:127 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:143
-msgid "Thr"
-msgstr "木"
-
-#: includes/class-jp4wc-delivery.php:128 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:148
-msgid "Fri"
-msgstr "金"
-
-#: includes/class-jp4wc-delivery.php:129 assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:153
-msgid "Sat"
-msgstr "土"
-
-#: includes/class-jp4wc-delivery.php:142
-msgid "Y/m/d"
-msgstr "Y年n月j日"
-
-#. translators: %s: Week name
-#: includes/class-jp4wc-delivery.php:146
-#, php-format
-msgid "(%s)"
-msgstr "(%s)"
-
-#: includes/class-jp4wc-delivery.php:271
+#: includes/class-jp4wc-delivery.php:286
+#: src/js/blocks/delivery-block-editor.js:56
+#: src/js/blocks/delivery-block-frontend.js:123
 msgid "Delivery Time Zone"
 msgstr "配達時間帯"
 
-#: includes/class-jp4wc-delivery.php:278
-msgid "-"
-msgstr "-"
-
-#: includes/class-jp4wc-delivery.php:370
+#: includes/class-jp4wc-delivery.php:390 includes/class-jp4wc-delivery.php:416
+#: includes/class-jp4wc-delivery.php:443 includes/class-jp4wc-delivery.php:503
 msgid "\"Desired delivery date\" is a required field. Please enter it."
 msgstr "「お届け希望日」は必須項目です。入力してください。"
 
-#: includes/class-jp4wc-delivery.php:381
+#: includes/class-jp4wc-delivery.php:396 includes/class-jp4wc-delivery.php:423
+#: includes/class-jp4wc-delivery.php:450 includes/class-jp4wc-delivery.php:509
 msgid "\"Desired delivery time zone\" is a required field. Please enter it."
 msgstr "「希望の配達時間帯」は必須項目です。入力してください。"
 
-#: includes/class-jp4wc-delivery.php:430 includes/class-jp4wc-delivery.php:446
+#: includes/class-jp4wc-delivery.php:588 includes/class-jp4wc-delivery.php:604
 msgid "Scheduled Delivery date and time"
 msgstr "配達予定日時"
 
-#: includes/class-jp4wc-delivery.php:434 includes/class-jp4wc-delivery.php:450
+#: includes/class-jp4wc-delivery.php:592 includes/class-jp4wc-delivery.php:608
 msgid "Scheduled Delivery Date"
 msgstr "配達予定日"
 
-#: includes/class-jp4wc-delivery.php:438 includes/class-jp4wc-delivery.php:454
+#: includes/class-jp4wc-delivery.php:596 includes/class-jp4wc-delivery.php:612
 msgid "Scheduled Time Zone"
 msgstr "配達予定時間"
 
-#: includes/class-jp4wc-delivery.php:521
+#: includes/class-jp4wc-delivery.php:679
 msgid "Delivery"
 msgstr "配達"
 
-#: includes/class-jp4wc-delivery.php:565
+#: includes/class-jp4wc-delivery.php:723
 msgid "Shipping Detail"
 msgstr "配達詳細"
 
-#: includes/class-jp4wc-delivery.php:639
+#: includes/class-jp4wc-delivery.php:797
 msgid "Delivery Date"
 msgstr "配達日"
 
-#: includes/class-jp4wc-delivery.php:640
+#: includes/class-jp4wc-delivery.php:798
 msgid "Date on which the customer wished delivery."
 msgstr "お客様が配達を希望した日付。"
 
-#: includes/class-jp4wc-delivery.php:647
+#: includes/class-jp4wc-delivery.php:805
 msgid "Time Zone"
 msgstr "タイムゾーン"
 
-#: includes/class-jp4wc-delivery.php:648
+#: includes/class-jp4wc-delivery.php:806
 msgid "Time Zone on which the customer wished delivery."
 msgstr "お客様が配達を希望した時間帯。"
 
-#: includes/class-jp4wc-delivery.php:655
+#: includes/class-jp4wc-delivery.php:813
 msgid "Tracking Ship Date"
 msgstr "出荷日"
 
-#: includes/class-jp4wc-delivery.php:656
+#: includes/class-jp4wc-delivery.php:814
 msgid "Actually shipped to date"
 msgstr "実際の納品日"
 
-#: includes/class-jp4wc-delivery.php:717
+#: includes/class-jp4wc-delivery.php:840
+msgid "Order failed: Required delivery date was not provided."
+msgstr "注文が失敗しました：指定された配達日が入力されていません。"
+
+#: includes/class-jp4wc-delivery.php:851
+msgid "Order failed: Required delivery time zone was not provided."
+msgstr "注文失敗：指定された配送時間帯が提供されていません。"
+
+#: includes/class-jp4wc-delivery.php:860
+msgid ""
+"Required delivery information is missing. Please contact the store for "
+"assistance."
+msgstr "必要な配送情報が不足しています。店舗までお問い合わせください。"
+
+#: includes/class-jp4wc-delivery.php:890
 msgid "delivery time zone"
 msgstr "配送時間帯"
 
-#: includes/class-jp4wc-delivery.php:719
+#: includes/class-jp4wc-delivery.php:892
 msgid "delivery date"
 msgstr "配送日"
 
 #. translators: %1$s: Blog name, %2$s: require type , %3$s: Order number
-#: includes/class-jp4wc-delivery.php:728
+#: includes/class-jp4wc-delivery.php:901
 #, php-format
 msgid ""
 "[%1$s] There are orders with no requested %2$s specified (Order number: "
@@ -1590,7 +1569,7 @@ msgstr ""
 "[%1$s] 要求された%2$sが指定されていない注文があります（注文番号：#%3$s）"
 
 #. translators: %1$s: Order number, %2$s: Order date, %3$s: Customer name, %4$s: Customer email, %5$s: Order detail URL
-#: includes/class-jp4wc-delivery.php:748
+#: includes/class-jp4wc-delivery.php:921
 #, php-format
 msgid ""
 "Order Number: #%1$s\n"
@@ -1608,18 +1587,10 @@ msgstr ""
 "い。注文詳細ページ: %5$s"
 
 #. translators: %1$s: require type , %2$s: Order ID
-#: includes/class-jp4wc-delivery.php:782
+#: includes/class-jp4wc-delivery.php:955
 #, php-format
 msgid "%1$sAn empty notification email has been sent. Order ID: %2$d"
 msgstr "%1$s空の通知メールが送信されました。注文ID: %2$d"
-
-#: includes/class-jp4wc-security.php:57
-msgid ""
-"<strong>ERROR</strong>: This user has reached the maximum number of login "
-"attempts. Please try again later."
-msgstr ""
-"<strong>ERROR</strong>: このユーザーはログイン試行回数の上限に達しました。後"
-"で再試行してください。"
 
 #: includes/class-jp4wc-shortcodes.php:105
 msgid " and "
@@ -1677,8 +1648,6 @@ msgstr "タイトル"
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:86
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:153
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:199
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:414
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:445
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:243
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:150
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:186
@@ -1687,8 +1656,7 @@ msgid "This controls the title which the user sees during checkout."
 msgstr "支払い時の決済タイトルをここで設定します。"
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:87
-#: assets/js/build/frontend/blocks/atstore.js:1
-#: src/js/jp4wc/frontend/blocks/atstore/index.js:9
+#: src/js/jp4wc/frontend/blocks/atstore/index.js:8
 msgid "At Store Payment"
 msgstr "店頭支払い"
 
@@ -1864,7 +1832,6 @@ msgid "Enable Cash on Delivery"
 msgstr "代金引換を有効"
 
 #: includes/gateways/cod/class-wc-gateway-cod2.php:110
-#: assets/js/build/frontend/blocks/cod2.js:1
 #: src/js/jp4wc/frontend/blocks/cod2/index.js:8
 msgid "Cash on Delivery"
 msgstr "代金引換"
@@ -1906,29 +1873,6 @@ msgstr "バーチャル商品の注文を受け付ける"
 msgid "Accept COD if the order is virtual"
 msgstr "バーチャル商品の注文でも代金引換を受け付ける"
 
-#. Translators: %1$s shipping method name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:259
-#, php-format
-msgid "Any &quot;%1$s&quot; method"
-msgstr "任意の &quot;%1$s&quot; の方法"
-
-#. Translators: %1$s shipping method title, %2$s shipping method id.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:274
-#, php-format
-msgid "%1$s (#%2$s)"
-msgstr "%1$s (#%2$s)"
-
-#. Translators: %1$s zone name, %2$s shipping method instance name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:277
-#, php-format
-msgid "%1$s &ndash; %2$s"
-msgstr "%1$s &ndash; %2$s"
-
-#. Translators: %1$s zone name, %2$s shipping method instance name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:277
-msgid "Other locations"
-msgstr "その他の場所"
-
 #. translators: %s: Payment method name.
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:141
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:223
@@ -1940,8 +1884,6 @@ msgstr "%s でお支払い"
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:141
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:223
 #: includes/gateways/paidy/class-wc-payments-paidy-blocks-support.php:105
-#: assets/js/build/paidy/frontend/paidy.js:1
-#: includes/gateways/paidy/assets/js/frontend/paidy.js:1
 #: src/js/paidy/paidy/index.js:16
 msgid "Paidy"
 msgstr "Paidy"
@@ -1986,7 +1928,6 @@ msgid "Order Button Text"
 msgstr "注文ボタンの文字"
 
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:221
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:463
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:250
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:157
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:193
@@ -2422,93 +2363,10 @@ msgstr "システムは、Paidy Webhook 経由で注文 %s の通知を受信し
 msgid "Payment_id exist but order_id. Payment_id : "
 msgstr "Payment_idは存在しますが、order_idがありません。Payment_id: "
 
-#: includes/gateways/paypal/lib/packages/Dhii/Container/CachingContainer.php:64
-#, php-format
-msgid "Key \"%1$s\" not found in inner container"
-msgstr "キー”%1$s”がインナーコンテナ内に存在しない"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/CachingContainer.php:67
-#, php-format
-msgid "Could not retrieve value for key \"%1$s from inner container"
-msgstr "内側コンテナからキー\"%1$sの値を取得できませんでした"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/CachingContainer.php:96
-#, php-format
-msgid "Could not check cache for key \"%1$s\""
-msgstr "キー \"%1$s\" のキャッシュをチェックできませんでした。"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/CachingContainer.php:105
-#, php-format
-msgid "Could not check inner container for key \"%1$s\""
-msgstr "キー\"%1$s\"の内部コンテナをチェックできませんでした。"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/CompositeContainer.php:57
-#, php-format
-msgid ""
-"Failed to retrieve value for key \"%1$s\" from container at index \"%2$s\""
-msgstr ""
-"インデックス\"%2$s\"のコンテナからキー\"%1$s\"の値を取得するのに失敗しまし"
-"た。"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/CompositeContainer.php:63
-#: includes/gateways/paypal/lib/packages/Dhii/Container/CompositeContainer.php:94
-#, php-format
-msgid "Failed check for key \"%1$s\" on container at index \"%2$s\""
-msgstr "インデックス\"%2$s\"のコンテナでキー\"%1$s\"のチェックに失敗しました。"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/CompositeContainer.php:71
-#, php-format
-msgid "Key \"%1$s\" not found in any of the containers"
-msgstr "キー”%1$s”がどのコンテナにも存在しない"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/DelegatingContainer.php:47
-#, php-format
-msgid "Service not found for key \"%1$s\""
-msgstr "キー\"%1$s\"のサービスが見つかりませんでした。"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/DelegatingContainer.php:59
-#, php-format
-msgid "Could not create service \"%1$s\""
-msgstr "サービス\"%1$s\"を作成できませんでした。"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/DelegatingContainer.php:77
-#, php-format
-msgid "Could not extend service \"%1$s\""
-msgstr "サービス\"%1$s\"を拡張できませんでした。"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/DelegatingContainer.php:110
-#: includes/gateways/paypal/lib/packages/Dhii/Container/DelegatingContainer.php:137
-msgid "Factory could not be invoked"
-msgstr "ファクトリーを呼び出すことができなかった"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/Dictionary.php:43
-#, php-format
-msgid "Dictionary does not have key \"%1$s\""
-msgstr "辞書にキー「%1$s」がない。"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/Dictionary.php:119
-#, php-format
-msgid "Key at index %1$d is not a string"
-msgstr "インデックス%1$dのキーは文字列ではない"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/MaskingContainer.php:67
-#, php-format
-msgid "Inner key \"%1$s\" is not exposed"
-msgstr "インナーキー「%1$s」が公開されていない"
-
-#: includes/gateways/paypal/lib/packages/Dhii/Container/ProxyContainer.php:41
-#: includes/gateways/paypal/lib/packages/Dhii/Container/ProxyContainer.php:54
-msgid "Inner container not set"
-msgstr "インナーコンテナ未設定"
-
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Authentication/PayPalBearer.php:137
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/LoginSeller.php:161
 msgid "Could not create token."
 msgstr "トークンを作成できませんでした。"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/IdentityToken.php:121
-msgid "Could not create identity token."
-msgstr "ID トークンを作成できませんでした。"
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/LoginSeller.php:92
 msgid "Could not fetch credentials."
@@ -2538,10 +2396,6 @@ msgid ""
 "Payment provider declined the payment, please use a different payment method."
 msgstr "決済事業者が決済を拒否したため、別の決済方法をご利用ください。"
 
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/OrderEndpoint.php:385
-msgid "Could not authorize order."
-msgstr "注文を許可することができませんでした。"
-
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/OrderEndpoint.php:456
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/OrderEndpoint.php:466
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/OrderEndpoint.php:544
@@ -2555,10 +2409,6 @@ msgstr "リファラルを作成できませんでした。"
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PartnerReferrals.php:123
 msgid "Action URL not found."
 msgstr "アクションの URL が見つかりません。"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PartnersEndpoint.php:114
-msgid "Could not fetch sellers status."
-msgstr "販売者ステータスを取得できませんでした。"
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/PaymentsEndpoint.php:113
 msgid "Could not get authorized payment info."
@@ -2595,12 +2445,6 @@ msgstr "Webhook イベントを確認できません。"
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/WebhookEndpoint.php:338
 msgid "Not a valid webhook to verify."
 msgstr "検証するための有効な Webhook ではありません。"
-
-#. translators: %s is the headers key.
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Endpoint/WebhookEndpoint.php:367
-#, php-format
-msgid "Not a valid webhook event. Header %s is missing"
-msgstr "有効な webhook イベントではありません。ヘッダ %s がありません"
 
 #. translators: %s is the current status.
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Entity/AuthorizationStatus.php:66
@@ -2694,204 +2538,9 @@ msgstr "%sは有効な税種ではありません。"
 msgid "Not a valid payment source type."
 msgstr "有効な支払元タイプではありません。"
 
-#. translators: %1$d - HTTP status code number (404, 500, ...)
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Exception/PayPalApiException.php:44
-#, php-format
-msgid "Unknown error while connecting to PayPal. Status code: %1$d."
-msgstr ""
-"PayPal への接続中に不明なエラーが発生しました。ステータスコードです。%1$d."
-
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Exception/PayPalApiException.php:52
 msgid "Error"
 msgstr "エラー"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:23
-msgid "Hokkaido"
-msgstr "北海道"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:24
-msgid "Aomori"
-msgstr "青森県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:25
-msgid "Iwate"
-msgstr "岩手県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:26
-msgid "Miyagi"
-msgstr "宮城県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:27
-msgid "Akita"
-msgstr "秋田県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:28
-msgid "Yamagata"
-msgstr "山形県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:29
-msgid "Fukushima"
-msgstr "福島県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:30
-msgid "Ibaraki"
-msgstr "茨城県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:31
-msgid "Tochigi"
-msgstr "栃木県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:32
-msgid "Gunma"
-msgstr "群馬県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:33
-msgid "Saitama"
-msgstr "埼玉県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:34
-msgid "Chiba"
-msgstr "千葉県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:35
-msgid "Tokyo"
-msgstr "東京都"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:36
-msgid "Kanagawa"
-msgstr "神奈川県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:37
-msgid "Niigata"
-msgstr "新潟県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:38
-msgid "Toyama"
-msgstr "富山県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:39
-msgid "Ishikawa"
-msgstr "石川県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:40
-msgid "Fukui"
-msgstr "福井県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:41
-msgid "Yamanashi"
-msgstr "山梨県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:42
-msgid "Nagano"
-msgstr "長野県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:43
-msgid "Gifu"
-msgstr "岐阜県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:44
-msgid "Shizuoka"
-msgstr "静岡県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:45
-msgid "Aichi"
-msgstr "愛知県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:46
-msgid "Mie"
-msgstr "三重県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:47
-msgid "Shiga"
-msgstr "滋賀県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:48
-msgid "Kyoto"
-msgstr "京都府"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:49
-msgid "Osaka"
-msgstr "大阪府"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:50
-msgid "Hyogo"
-msgstr "兵庫県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:51
-msgid "Nara"
-msgstr "奈良県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:52
-msgid "Wakayama"
-msgstr "和歌山県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:53
-msgid "Tottori"
-msgstr "鳥取県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:54
-msgid "Shimane"
-msgstr "島根県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:55
-msgid "Okayama"
-msgstr "岡山県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:56
-msgid "Hiroshima"
-msgstr "広島県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:57
-msgid "Yamaguchi"
-msgstr "山口県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:58
-msgid "Tokushima"
-msgstr "徳島県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:59
-msgid "Kagawa"
-msgstr "香川県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:60
-msgid "Ehime"
-msgstr "愛媛県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:61
-msgid "Kochi"
-msgstr "高知県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:62
-msgid "Fukuoka"
-msgstr "福岡県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:63
-msgid "Saga"
-msgstr "佐賀県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:64
-msgid "Nagasaki"
-msgstr "長崎県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:65
-msgid "Kumamoto"
-msgstr "熊本県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:66
-msgid "Oita"
-msgstr "大分県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:67
-msgid "Miyazaki"
-msgstr "宮崎県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:68
-msgid "Kagoshima"
-msgstr "鹿児島県"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AddressFactory.php:69
-msgid "Okinawa"
-msgstr "沖縄県"
 
 #. translators: %s is the current breakdown key.
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/AmountFactory.php:222
@@ -2940,11 +2589,6 @@ msgstr "注文にステータスは含まれません。"
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/OrderFactory.php:132
 msgid "Order does not contain intent."
 msgstr "注文には意図が含まれていない。"
-
-#: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/PayerFactory.php:199
-#, php-format
-msgid "%s is not a valid email address."
-msgstr "%s は有効なメールアドレスではありません。"
 
 #: includes/gateways/paypal/modules/ppcp-api-client/src/Factory/PaymentTokenFactory.php:31
 msgid "No id for payment token given"
@@ -3005,32 +2649,9 @@ msgstr "または、保存されたクレジットカード決済を選択"
 msgid "Choose a saved payment"
 msgstr "保存された支払い方法を選択する"
 
-#. translators: %1$s - email, %2$s, %3$s - HTML tags for a link.
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:341
-#, php-format
-msgid "Using %2$s%1$s%3$s PayPal."
-msgstr "%2$s%1$s%3$s PayPalを使用する。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:694
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoice.php:352
-msgid "Place order"
-msgstr "注文する"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:694
-msgid "Pay for order"
-msgstr "注文の支払い"
-
 #: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:859
 msgid "MM/YY"
 msgstr "MM/YY"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:860
-msgid "Unfortunately, your credit card details are not valid."
-msgstr "残念ながら、お客様のクレジットカード情報は有効ではありません。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:864
-msgid "Unfortunately, we do not support your credit card."
-msgstr "残念ながら、クレジットカードには対応しておりません。"
 
 #: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:868
 msgid ""
@@ -3040,59 +2661,9 @@ msgstr ""
 "カード名義人の姓と名は必須です。チェックアウトフォームの必須項目にご記入くだ"
 "さい。"
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:876
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:239
-msgid ""
-"Something went wrong. Please try again or choose another payment source."
-msgstr ""
-"何か問題が発生しました。再度お試しいただくか、他の支払い方法をお選びくださ"
-"い。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:881
-msgid "Required form fields are not filled."
-msgstr "フォームの必須項目が埋まっていない。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:886
-#, php-format
-msgid "%s is a required field."
-msgstr "%s は必須フィールドです。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:888
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/CreateOrderEndpoint.php:540
-msgid ""
-"Please read and accept the terms and conditions to proceed with your order."
-msgstr "お申込み手続きを進めるには、利用規約を読んで同意してください。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:897
-#, php-format
-msgctxt "checkout-validation"
-msgid "Billing %s"
-msgstr "お客様欄の%s"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Assets/SmartButton.php:899
-#, php-format
-msgctxt "checkout-validation"
-msgid "Shipping %s"
-msgstr "送料 %s"
-
 #: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:141
 msgid "No order id given"
 msgstr "注文 ID が与えられていない"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:157
-msgid "Unfortunately, we do not accept this card."
-msgstr "残念ながら、このカードはご利用いただけません。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:168
-msgid "Something went wrong. Please try again."
-msgstr "原因不明のエラー発生。もう一度お試し下さい."
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:176
-msgid ""
-"Unfortunately, we can't accept your card. Please choose a different payment "
-"method."
-msgstr ""
-"残念ながら、カードはご利用いただけません。他のお支払い方法をお選びください。"
 
 #. translators: %s is the id of the order.
 #: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ApproveOrderEndpoint.php:189
@@ -3100,70 +2671,24 @@ msgstr ""
 msgid "Order %s is not ready for processing yet."
 msgstr "注文%sはまだ処理する準備ができていません。"
 
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ChangeCartEndpoint.php:141
-msgid "Necessary fields not defined. Action aborted."
-msgstr "必要なフィールドが定義されていません。アクションは中止されました。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/ChangeCartEndpoint.php:180
-msgid "Something went wrong. Action aborted"
-msgstr "何か問題が発生しました。アクションが中止された"
-
 #: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/CreateOrderEndpoint.php:221
 msgid "Order not found"
 msgstr "注文が見つかりません"
 
+#: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/CreateOrderEndpoint.php:540
+msgid ""
+"Please read and accept the terms and conditions to proceed with your order."
+msgstr "お申込み手続きを進めるには、利用規約を読んで同意してください。"
+
 #: includes/gateways/paypal/modules/ppcp-button/src/Endpoint/RequestData.php:51
 msgid "Could not validate nonce."
 msgstr "nonce を検証できませんでした。"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Validation/CheckoutFormValidator.php:69
-msgid ""
-"An account is already registered with your email address. <a href=\"#\" "
-"class=\"showlogin\">Please log in.</a>"
-msgstr ""
-"アカウント登録済みのメールアドレスです。<a href=\"#\" class=\"showlogin\">ロ"
-"グインしてください。</a>"
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Validation/CheckoutFormValidator.php:81
-msgid "Please enter a valid account username."
-msgstr "有効なアカウントユーザー名を入力してください."
-
-#: includes/gateways/paypal/modules/ppcp-button/src/Validation/CheckoutFormValidator.php:89
-msgid ""
-"An account is already registered with that username. Please choose another."
-msgstr "そのユーザー名はすでに登録されています。別のユーザー名にしてください。"
 
 #. Translators: placeholder is the gateway name.
 #: includes/gateways/paypal/modules/ppcp-compat/services.php:23
 #, php-format
 msgid "%s (Legacy)"
 msgstr "%s (Legacy)"
-
-#: includes/gateways/paypal/modules/ppcp-compat/src/PPEC/DeactivateNote.php:51
-msgid ""
-"As of 1 Sept 2021, PayPal Checkout will be officially retired from "
-"WooCommerce.com, and support for this product will end as of 1 March 2022. "
-"PayPal Payments can now handle all your subscription renewals even if they "
-"were first created using PayPal Checkout. To fully switch over, all you need "
-"to do is deactivate and/or remove the PayPal Checkout plugin from your store."
-msgstr ""
-"2021年9月1日をもって、PayPal Checkout は WooCommerce.com から正式に終了し、こ"
-"の製品のサポートは2022年3月1日をもって終了となります。PayPal Payments は、最"
-"初に PayPal Checkout を使用して作成された場合でも、すべての購読の更新を処理で"
-"きるようになりました。完全に切り替えるには、あなたのストアから PayPal "
-"Checkout プラグインを非アクティブ化および/または削除する必要があります。"
-
-#: includes/gateways/paypal/modules/ppcp-compat/src/PPEC/DeactivateNote.php:56
-msgid ""
-"As of 1 Sept 2021, PayPal Checkout will be officially retired from "
-"WooCommerce.com, and support for this product will end as of 1 March 2022. "
-"To fully switch over, all you need to do is deactivate and/or remove the "
-"PayPal Checkout plugin from your store."
-msgstr ""
-"2021年9月1日をもって、PayPal Checkout は WooCommerce.com から正式に撤退し、こ"
-"の製品のサポートは2022年3月1日をもって終了します。完全に移行するには、あなた"
-"のストアから PayPal Checkout プラグインを無効化および/または削除する必要があ"
-"ります。"
 
 #: includes/gateways/paypal/modules/ppcp-compat/src/PPEC/DeactivateNote.php:67
 msgid "Action Required: Deactivate PayPal Checkout"
@@ -3256,11 +2781,10 @@ msgstr "販売者保護"
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:163
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:169
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:180
-#: assets/js/build/admin/settings.js:1 assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:104
-#: src/js/paidy/wizard/components/controls.jsx:157
-#: src/js/paidy/wizard/components/controls.jsx:245
-#: src/js/paidy/wizard/components/controls.jsx:265
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:196
+#: src/js/paidy/wizard/components/controls.jsx:212
+#: src/js/paidy/wizard/components/controls.jsx:333
+#: src/js/paidy/wizard/components/controls.jsx:356
 msgid "Yes"
 msgstr "はい"
 
@@ -3368,7 +2892,6 @@ msgstr "ビジネス"
 
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingOptionsRenderer.php:194
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:369
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:199
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:297
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SectionsRenderer.php:154
 msgid "Advanced Card Processing"
@@ -3390,11 +2913,6 @@ msgstr "PayPal を有効化"
 #: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingRenderer.php:124
 msgid "Test payments with PayPal sandbox"
 msgstr "PayPal サンドボックスで決済をテストする"
-
-#: includes/gateways/paypal/modules/ppcp-onboarding/src/Render/OnboardingRenderer.php:130
-msgid "We could not properly connect to PayPal. Try reloading the page."
-msgstr ""
-"PayPal に正しく接続できませんでした。ページを再読み込みしてみてください。"
 
 #: includes/gateways/paypal/modules/ppcp-order-tracking/carriers.php:18
 msgctxt "Name of carrier"
@@ -5307,16 +4825,6 @@ msgstr "キャリアを選択"
 msgid "Tracking Information"
 msgstr "追跡情報"
 
-#. translators: %3$ is funding source like "PayPal" or "Venmo", other placeholders are html tags for a link.
-#: includes/gateways/paypal/modules/ppcp-session/src/Cancellation/CancelView.php:64
-#, php-format
-msgid ""
-"You are currently paying with %3$s. If you want to cancel\n"
-"                            this process, please click %1$shere%2$s."
-msgstr ""
-"現在、%3$sでお支払い中です。キャンセルする場合は\n"
-"                            %1$sこちら%2$sをクリックしてください。"
-
 #: includes/gateways/paypal/modules/ppcp-status-report/src/StatusReportModule.php:79
 msgid "Onboarded"
 msgstr "オンボード"
@@ -5410,31 +4918,9 @@ msgstr "PayPal アカウントでトラッキングが有効になっている�
 msgid "WooCommerce PayPal Payments"
 msgstr "WooCommerce PayPal 決済"
 
-#. translators: %1$s is the payment token Id, %2$s is the error message.
-#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:186
-#, php-format
-msgid "Could not add token Id to subscription %1$s: %2$s"
-msgstr "トークン ID を定期購入 %1$s に追加できませんでした: %2$s"
-
-#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:222
-msgid ""
-"No PayPal payments saved, in order to use a saved payment you first need to "
-"create it through a purchase."
-msgstr ""
-"PayPal の支払いは保存されていません。保存された支払いを使用するには、まず購入"
-"によって支払いを作成する必要があります。"
-
 #: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:230
 msgid "Select a saved PayPal payment"
 msgstr "保存された PayPal 決済を選択する"
-
-#: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:276
-msgid ""
-"No Credit Card saved, in order to use a saved Credit Card you first need to "
-"create it through a purchase."
-msgstr ""
-"クレジットカードが保存されていない。保存されているクレジットカードを使用する"
-"には、まず購入時にクレジットカードを作成する必要がある。"
 
 #: includes/gateways/paypal/modules/ppcp-subscription/src/SubscriptionModule.php:285
 msgid "Select a saved Credit Card payment"
@@ -5490,14 +4976,6 @@ msgstr "プラグインデータのクリアに成功しました。"
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Status/Assets/WebhooksStatusPageAssets.php:107
 msgid "Operation failed. Check WooCommerce logs for more details."
 msgstr "操作に失敗しました。詳しくは WooCommerce のログをご確認ください。"
-
-#: includes/gateways/paypal/modules/ppcp-vaulting/src/CustomerApprovalListener.php:78
-msgid ""
-"This PayPal account is already saved on this site. Please check that you are "
-"logged in correctly."
-msgstr ""
-"この PayPal アカウントは、すでにこのサイトに保存されています。正しくログイン"
-"していることを確認してください。"
 
 #: includes/gateways/paypal/modules/ppcp-vaulting/src/PaymentTokenChecker.php:174
 msgid ""
@@ -5588,25 +5066,9 @@ msgstr "高度なカード決済を可能にする"
 msgid "Credit Cards"
 msgstr "クレジットカード"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:467
-msgid ""
-"Pay via PayPal; you can pay with your credit card if you don't have a PayPal "
-"account."
-msgstr ""
-"PayPal経由で支払う。 PayPalアカウントをお持ちでない場合は、クレジットカードで"
-"お支払いいただけます。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:479
 msgid "Intent"
 msgstr "インテント"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:485
-msgid ""
-"The intent to either capture payment immediately or authorize a payment for "
-"an order after order creation."
-msgstr ""
-"注文の作成後、すぐに支払いを捕捉するか、注文の支払いを承認するかのどちらかの"
-"意図。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:490
 msgid "Capture"
@@ -5621,25 +5083,9 @@ msgstr "与信決済"
 msgid "Capture On Status Change"
 msgstr "承認のステータス変更"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:505
-msgid ""
-"The transaction will be captured automatically when the order status changes "
-"to Processing or Completed."
-msgstr ""
-"注文のステータスが「処理中」または「完了」に変わると、自動的にトランザクショ"
-"ンが取得されます。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:518
 msgid "Capture Virtual-Only Orders "
 msgstr "バーチャル専用の注文を取り込む "
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:522
-msgid ""
-"If the order contains exclusively virtual items, enable this to immediately "
-"capture, rather than authorize, the transaction."
-msgstr ""
-"注文にバーチャル商品のみが含まれる場合、これを有効にすると、トランザクション"
-"を承認するのではなく、直ちに取り込むことができます。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:526
 msgid "Capture Virtual-Only Orders"
@@ -5649,18 +5095,6 @@ msgstr "バーチャル専用の注文を取り込む"
 msgid "Instant Payments "
 msgstr "即時支払い "
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:539
-msgid ""
-"If you enable this setting, PayPal will be instructed not to allow the buyer "
-"to use funding sources that take additional time to complete (for example, "
-"eChecks). Instead, the buyer will be required to use an instant funding "
-"source, such as an instant transfer, a credit/debit card, or Pay Later."
-msgstr ""
-"この設定を有効にすると、PayPal は、購入者が完了までにさらに時間がかかる資金源"
-"（たとえば、eCheck）を使用することを許可しないよう指示します。代わりに、購入"
-"者は即時送金、クレジットカード/デビットカード、Pay Later などの即時資金調達手"
-"段を使用することが要求されます。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:543
 msgid "Require Instant Payment"
 msgstr "即時支払いが必須"
@@ -5669,18 +5103,9 @@ msgstr "即時支払いが必須"
 msgid "Brand Name"
 msgstr "ブランド名"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:556
-msgid ""
-"Control the name of your shop, customers will see in the PayPal process."
-msgstr "ショップの名前を制御し、顧客が PayPal のプロセスで表示されます。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:568
 msgid "Landing Page"
 msgstr "ランディングページ"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:574
-msgid "Type of PayPal page to display."
-msgstr "表示する PayPal ページスタイル。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:579
 msgid "Login (PayPal account login)"
@@ -5805,57 +5230,42 @@ msgstr ""
 msgid "Disable specific credit cards"
 msgstr "特定のクレジットカードを使用不可にする"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:689
-msgid ""
-"By default all possible credit cards will be accepted. You can disable some "
-"cards, if you wish."
-msgstr ""
-"デフォルトでは、使用可能なすべてのクレジットカードが使用可能です。希望によ"
-"り、一部のカードを無効にすることができます。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:694
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:297
 msgctxt "Name of credit card"
 msgid "Visa"
 msgstr "Visa"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:695
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:302
 msgctxt "Name of credit card"
 msgid "Mastercard"
 msgstr "マスターカード"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:696
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:726
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:307
 msgctxt "Name of credit card"
 msgid "American Express"
 msgstr "American Express"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:697
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:727
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:312
 msgctxt "Name of credit card"
 msgid "Discover"
 msgstr "ディスカバー"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:698
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:728
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:317
 msgctxt "Name of credit card"
 msgid "JCB"
 msgstr "JCB"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:699
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:729
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:322
 msgctxt "Name of credit card"
 msgid "Elo"
 msgstr "Elo"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:700
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:730
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:327
 msgctxt "Name of credit card"
 msgid "Hiper"
 msgstr "Hiper"
@@ -5863,10 +5273,6 @@ msgstr "Hiper"
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:711
 msgid "Show logo of the following credit cards"
 msgstr "以下のクレジットカードのロゴを表示します"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:717
-msgid "Define which cards you want to display in your checkout."
-msgstr "購入支払い時に表示するカードを定義します。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:722
 msgctxt "Name of credit card"
@@ -5891,25 +5297,6 @@ msgstr "マスターカード（ダーク）"
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:741
 msgid "3D Secure"
 msgstr "3D セキュア"
-
-#. translators: %1$s and %2$s is a link tag.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:746
-#, php-format
-msgid ""
-"3D Secure benefits cardholders and merchants by providing\n"
-"                                  an additional layer of verification using "
-"Verified by Visa,\n"
-"                                  MasterCard SecureCode and American Express "
-"SafeKey.\n"
-"                                  %1$sLearn more about 3D Secure.%2$s"
-msgstr ""
-"3D セキュアは、カード会員と加盟店に次のようなメリットをもたらします。\n"
-"                                  Verified by Visa を使用した追加的な検証レイ"
-"ヤーを提供することで、カード会員にメリットをもたらします。\n"
-"                                  MasterCard SecureCode および American "
-"Express SafeKey を使用した追加的な検証を提供することで、カード会員にメリット"
-"をもたらします。\n"
-"                                  %1$s3Dセキュアについて詳しくはこちら。%2$s"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:769
 msgid "Contingency for 3D Secure"
@@ -6064,15 +5451,6 @@ msgstr ""
 "出品者保護機能のために、%1$s出荷追跡情報%2$sを PayPal に送信することを有効に"
 "する。"
 
-#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1196
-#, php-format
-msgid ""
-" To use tracking features, you must %1$senable tracking on your account%2$s."
-msgstr ""
-" トラッキング機能を利用するには、%1$sアカウントでトラッキングを有効にする%2$s"
-"必要があります。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1230
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/services.php:1263
 msgid "Status: Available"
@@ -6122,18 +5500,8 @@ msgid "Payment captured"
 msgstr "支払い売上"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/OrderTablePaymentStatusColumn.php:144
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/PaymentStatusOrderDetail.php:50
 msgid "Not captured"
 msgstr "売上処理されていません"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/PaymentStatusOrderDetail.php:54
-msgid "To capture the payment select capture action from the list below."
-msgstr ""
-"支払いを売上処理するには、以下のリストから売上処理アクションを選択します。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Admin/RenderAuthorizeAction.php:49
-msgid "Capture authorized PayPal payment"
-msgstr "PayPal決済の承認取得"
 
 #. translators: %s - Sofort, BLIK, iDeal, Mercado Pago, etc.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/FundingSource/FundingSourceRenderer.php:65
@@ -6148,8 +5516,6 @@ msgid "Pay via %s."
 msgstr "%sで支払う。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/FundingSource/FundingSourceRenderer.php:91
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:346
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Settings.php:108
 msgid "Pay via PayPal."
 msgstr "PayPal でお支払いください。"
 
@@ -6172,14 +5538,6 @@ msgstr "標準カードボタンのゲートウェイを有効にする"
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CardButtonGateway.php:236
 msgid "Enable/Disable the separate payment gateway with the card button."
 msgstr "カードボタンで分割払い決済ゲートウェイを有効/無効にする。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:203
-msgid ""
-"Accept debit and credit cards, and local payment methods with PayPal’s "
-"latest solution."
-msgstr ""
-"PayPal の最新ソリューションで、デビットカード、クレジットカード、ローカル決済"
-"に対応。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/CreditCardGateway.php:258
 msgid "CVV"
@@ -6209,10 +5567,6 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:166
 msgid "OXXO Voucher/Ticket"
 msgstr "OXXO バウチャー/チケット"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXO.php:243
-msgid "Required form fields are not filled or invalid."
-msgstr "フォームの必須項目が入力されていない、または無効である。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:104
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/OXXO/OXXOGateway.php:140
@@ -6268,10 +5622,6 @@ msgstr "PayPal ペイレイター"
 msgid "Pay upon Invoice"
 msgstr "請求書発行時に支払うを有効にする"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:323
-msgid "Accept debit and credit cards, and local payment methods."
-msgstr "デビットカード、クレジットカード、現地での支払い方法に対応しています。"
-
 #. translators: %1$s is </ br> HTML tag and %2$s, %3$s are the opening and closing of HTML <i> tag.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:332
 #, php-format
@@ -6284,10 +5634,6 @@ msgstr ""
 "で支払いを受けます。%1$sPayPal の後払いオプションは、加盟店のコンバージョン率"
 "を高め、カートサイズを39%%増加させています。%2$s(PayPal Q2 "
 "Earnings-2021.)%3$s"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:340
-msgid "Accept PayPal, Pay Later and alternative payment types."
-msgstr "PayPal、Pay Later、その他の支払い方法に対応しています。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayPalGateway.php:485
 msgid "Instrument declined."
@@ -6377,14 +5723,6 @@ msgstr "請求書払い決済の有効・無効を設定します。"
 msgid "Experience Context"
 msgstr "エクスペリエンスコンテキスト"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:198
-msgid ""
-"Specify brand name, logo and customer service instructions to be presented "
-"on Ratepay's payment instructions."
-msgstr ""
-"Ratepay の支払い指示書に提示するブランド名、ロゴ、顧客サービスの指示を指定す"
-"る。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Gateway/PayUponInvoice/PayUponInvoiceGateway.php:201
 msgid "Brand name"
 msgstr "ブランド名"
@@ -6415,52 +5753,11 @@ msgstr "Ratepay の支払い方法について提示される顧客サービス�
 msgid "Awaiting Pay upon Invoice payment."
 msgstr "インボイスの支払いに応じて支払いを待っている。"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:50
-msgid "Could not retrieve information. Try again later."
-msgstr "情報を取得できませんでした。後でもう一度試してみてください。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:57
-msgid "Payment already captured."
-msgstr "支払いはすでに売上処理されています。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:64
-msgid "Failed to capture. Try again later or checks the logs."
-msgstr "承認に失敗しました。後で再試行するか、ログを確認してください。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:71
-msgid "Cannot capture, no valid payment authorization."
-msgstr "承認できません、有効な支払い承認がありません。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:78
-msgid "Could not find payment to process."
-msgstr "処理するための支払いが見つかりませんでした。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/AuthorizeOrderActionNotice.php:85
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/AuthorizedPaymentsProcessor.php:184
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/AuthorizedPaymentsProcessor.php:209
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureCompleted.php:127
 msgid "Payment successfully captured."
 msgstr "売上決済が正常に行われました。"
-
-#. translators: %1$s the gateway name.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/ConnectAdminNotice.php:59
-#, php-format
-msgid ""
-"PayPal Payments is almost ready. To get started, <a href=\"%1$s\">connect "
-"your account</a>."
-msgstr ""
-"PayPal Payments の準備はほぼ完了しています。まずは、<a href=\"%1$s\">アカウン"
-"トを接続して</a>ください。"
-
-#. translators: %1$s the gateway name, %2$s URL.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Notice/GatewayWithoutPayPalAdminNotice.php:98
-#, php-format
-msgid ""
-"%1$s cannot be used without the PayPal gateway. <a href=\"%2$s\">Enable the "
-"PayPal gateway</a>."
-msgstr ""
-"%1$s は、PayPal ゲートウェイを使用しないと使用できません。<a "
-"href=\"%2$s\">PayPalゲートウェイを有効化</a>します。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:176
 msgid ""
@@ -6473,10 +5770,6 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:183
 msgid "Could not retrieve PayPal order."
 msgstr "PayPal の注文を取得できませんでした。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:192
-msgid "The payment is not ready for processing yet."
-msgstr "決済の準備がまだできていません。"
 
 #. translators: %s is the message of the error.
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Processor/OrderProcessor.php:200
@@ -6713,14 +6006,6 @@ msgid ""
 msgstr ""
 "予期せぬ動作のロギングを有効にします。これはプライベートなデータも記録するこ"
 "とができるので、開発またはステージ環境でのみ有効にする必要があります。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:31
-msgid ""
-"You have PayPal vaulting enabled, that's why Pay Later options are "
-"unavailable now. You cannot use both features at the same time."
-msgstr ""
-"PayPal の Vaulting が有効になっているため、後払いのオプションが使用できない状"
-"態になっています。両方の機能を同時に使用することはできません。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/pay-later-tab-fields.php:32
 msgid "Enabled"
@@ -7128,18 +6413,6 @@ msgstr "支払いメッセージの比率"
 msgid "PayPal Smart Buttons"
 msgstr "PayPal スマートボタン"
 
-#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:51
-#, php-format
-msgid ""
-"Customize the appearance of the PayPal smart buttons on the\n"
-"\t\t\t\t\t%1$sCheckout page%5$s, %2$sSingle Product Page%5$s, %3$sCart "
-"page%5$s or on %4$sMini Cart%5$s."
-msgstr ""
-"PayPalスマートボタンの外観をカスタマイズできます。\n"
-"\t\t\t\t\t%1$s購入手続きページ%5$s、%2$s単品ページ%5$s、%3$sお買い物カゴペー"
-"ジ%5$s、%4$sミニカート%5$sのいずれかでカスタマイズできます。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:64
 msgid "Smart Button Locations"
 msgstr "スマートボタン設置場所"
@@ -7163,18 +6436,6 @@ msgstr "スマートボタンのスタイルを場所ごとにカスタマイズ
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:651
 msgid "Button Layout"
 msgstr "ボタンレイアウト"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:91
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:237
-msgid ""
-"If additional funding sources are available to the buyer through PayPal, "
-"then multiple buttons are displayed in the space provided. Choose "
-"\"vertical\" for a dynamic list of alternative and local payment options, or "
-"\"horizontal\" when space is limited."
-msgstr ""
-"PayPal を通じて買い手が追加の資金源を利用できる場合、提供されるスペースに複数"
-"のボタンが表示されます。代替案や現地の支払方法をダイナミックに表示したい場合"
-"は「縦型」を、スペースが限られている場合は「横型」を選択してください。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:96
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:242
@@ -7208,18 +6469,6 @@ msgstr "タグライン"
 msgid "Enable tagline"
 msgstr "タグラインの有効化"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:112
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:258
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:398
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:538
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:678
-msgid ""
-"Add the tagline. This line will only show up, if you select a horizontal "
-"layout."
-msgstr ""
-"タグラインを追加します。この行は、横型レイアウトを選択した場合のみ表示されま"
-"す。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:124
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:270
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:410
@@ -7227,14 +6476,6 @@ msgstr ""
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:690
 msgid "Button Label"
 msgstr "ボタンのラベル"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:133
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:279
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:419
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:559
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:699
-msgid "This controls the label on the primary button."
-msgstr "主ボタンのラベルを制御します。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:139
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:285
@@ -7268,19 +6509,6 @@ msgstr "PayPal 決済"
 msgid "Color"
 msgstr "カラー"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:157
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:303
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:443
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:583
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:723
-msgid ""
-"Controls the background color of the primary button. Use \"Gold\" to "
-"leverage PayPal's recognition and preference, or change it to match your "
-"site design or aesthetic."
-msgstr ""
-"プライマリボタンの背景色を制御します。PayPal の認知度と好みに合わせて「ゴール"
-"ド」を使用するか、サイトのデザインや美観に合わせて変更してください。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:162
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:308
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:448
@@ -7305,20 +6533,6 @@ msgstr "シルバー"
 msgid "Shape"
 msgstr "形状"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:182
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:328
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:468
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:608
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:748
-msgid ""
-"The pill-shaped button's unique and powerful shape signifies PayPal in "
-"people's minds. Use the rectangular button as an alternative when pill-"
-"shaped buttons might pose design challenges."
-msgstr ""
-"錠剤型ボタンのユニークでパワフルな形状は、PayPal を連想させます。長方形のボタ"
-"ンは、錠剤型のボタンがデザイン上の問題を引き起こす可能性がある場合に、代替版"
-"として使用してください。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:187
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:333
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:473
@@ -7339,74 +6553,17 @@ msgstr "四角"
 msgid "Checkout Buttons"
 msgstr "支払いボタン"
 
-#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:212
-#, php-format
-msgid ""
-"Customize the appearance of the PayPal smart buttons on the %1$sCheckout "
-"page%2$s.\n"
-"\t\t\t\t\t%3$sCheckout Buttons must be enabled to display the PayPal gateway "
-"on the Checkout page.\n"
-"\t\t\t\t\t"
-msgstr ""
-"%1$s購入手続きページ%2$sの PayPal スマートボタンの外観をカスタマイズすること"
-"ができます。\n"
-"\t\t\t\t\t%3$s購入手続きページに PayPal ゲートウェイを表示するには、支払いボ"
-"タンを有効にする必要があります。\n"
-"\t\t\t\t\t"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:355
 msgid "Single Product Page Buttons"
 msgstr "商品ページボタン"
-
-#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:358
-#, php-format
-msgid ""
-"Customize the appearance of the PayPal smart buttons on the %1$sSingle "
-"Product Page%2$s."
-msgstr ""
-"%1$sシングル商品ページ%2$sの PayPal スマートボタンの外観をカスタマイズしま"
-"す。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:377
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:517
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:657
-msgid ""
-"If additional funding sources are available to the buyer through PayPal, "
-"such as Venmo, then multiple buttons are displayed in the space provided. "
-"Choose \"vertical\" for a dynamic list of alternative and local payment "
-"options, or \"horizontal\" when space is limited."
-msgstr ""
-"Venmo など、PayPal を通じて買い手が追加の資金調達手段を利用できる場合は、提供"
-"されるスペースに複数のボタンが表示されます。代替案や現地での支払い方法をダイ"
-"ナミックに一覧表示したい場合は「縦型」、スペースが限られている場合は「横型」"
-"を選択します。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:495
 msgid "Cart Buttons"
 msgstr "「お買い物カゴ」ボタン"
 
-#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:498
-#, php-format
-msgid ""
-"Customize the appearance of the PayPal smart buttons on the %1$sCart "
-"page%2$s."
-msgstr ""
-"%1$sお買い物カゴページ%2$sの PayPal スマートボタンの外観をカスタマイズする。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:635
 msgid "Mini Cart Buttons"
 msgstr "ミニカートボタン"
-
-#. translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:638
-#, php-format
-msgid ""
-"Customize the appearance of the PayPal smart buttons on the %1$sMini "
-"Cart%2$s."
-msgstr "%1$sミニカート%2$sの PayPal スマートボタンの外観をカスタマイズする。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Fields/paypal-smart-button-fields.php:764
 msgid "Button Height"
@@ -7439,40 +6596,10 @@ msgstr "機能をリクエストする"
 msgid "Submit a bug"
 msgstr "バグを送信"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/Settings.php:120
-msgid "Pay with your credit card."
-msgstr "クレジットカードでお支払いください。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:146
-msgid ""
-"We could not complete the onboarding process. Some features, such as card "
-"processing, will not be available. To fix this, please try again."
-msgstr ""
-"オンボーディングプロセスを完了することができませんでした。カード処理など、一"
-"部の機能が利用できません。これを修正するために、もう一度お試しください。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:499
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:520
 msgid "Onboarding"
 msgstr "オンボーディング"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:503
-msgid ""
-"Credit Card processing for your account has not yet been activated by "
-"PayPal. If your account is new, this can take some days. Otherwise, please "
-"get in contact with PayPal."
-msgstr ""
-"アカウントのクレジットカード処理は、まだ PayPal によって有効化されていませ"
-"ん。お客様のアカウントが新しい場合、これは数日かかることがあります。それ以外"
-"の場合は、PayPal と連絡を取ってください。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:524
-msgid ""
-"You need to complete your onboarding, before you can use the Advanced Card "
-"Processing option."
-msgstr ""
-"Advanced Card Processing オプションを使用する前に、オンボーディングを完了する"
-"必要があります。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:533
 msgid "Click here to complete your onboarding."
@@ -7481,17 +6608,6 @@ msgstr "こちらをクリックすると、オンボードが完了します。
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:547
 msgid "Card Processing not available"
 msgstr "カード決済はできません"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:551
-msgid ""
-"Unfortunately, the card processing option is not yet available in your "
-"country."
-msgstr ""
-"残念ながら、カード決済のオプションは、あなたの国ではまだ利用できません。"
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/Settings/SettingsRenderer.php:558
-msgid "Advanced credit and debit country and currency availability."
-msgstr "クレジットとデビットカードの国や通貨を利用できる。"
 
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:106
 msgid "Address Verification Result"
@@ -7527,29 +6643,9 @@ msgstr "ポスタルマッチ: %s"
 msgid "CVV2 Match: %s"
 msgstr "CVV2 一致: %s"
 
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:313
-msgid ""
-"Could not process WC order because PAYMENT.CAPTURE.COMPLETED webhook not "
-"received."
-msgstr ""
-"PAYMENT.CAPTURE.COMPLETED webhook を受信していないため、WC 注文を処理できませ"
-"んでした。"
-
 #: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:489
 msgid "Authentication with PayPal failed: "
 msgstr "PayPal との認証に失敗しました: "
-
-#: includes/gateways/paypal/modules/ppcp-wc-gateway/src/WCGatewayModule.php:491
-msgid ""
-"Please verify your API Credentials and try again to connect your PayPal "
-"business account. Visit the <a href=\"https://docs.woocommerce.com/document/"
-"woocommerce-paypal-payments/\" target=\"_blank\">plugin documentation</a> "
-"for more information about the setup."
-msgstr ""
-"API 認証情報を確認し、PayPal ビジネスアカウントに接続するためにもう一度やり直"
-"してください。セットアップの詳細については、<a href=\"https://"
-"docs.woocommerce.com/document/woocommerce-paypal-payments/\" "
-"target=\"_blank\">プラグインのドキュメント</a>をご覧ください。"
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/extensions.php:19
 msgid "Webhook Status"
@@ -7617,28 +6713,6 @@ msgstr "URL"
 msgid "Tracked events"
 msgstr "追跡されたイベント"
 
-#. translators: %s is the PayPal webhook Id.
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:100
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCapturePending.php:76
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureRefunded.php:78
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:80
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/RequestHandlerTrait.php:74
-#, php-format
-msgid "No order for webhook event %s was found."
-msgstr "Webhook イベント%sのオーダーが見つかりませんでした。"
-
-#. translators: %s is the PayPal webhook Id.
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:123
-#, php-format
-msgid "No paypal payment for webhook event %s was found."
-msgstr "webhook イベント%sに対する paypal の支払いは見つかりませんでした。"
-
-#. translators: %s is the PayPal webhook Id.
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:146
-#, php-format
-msgid "Could not capture payment for webhook event %s."
-msgstr "Webhook イベント%sの支払いをキャプチャできませんでした。"
-
 #. translators: %s is the PayPal order Id.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:178
 #, php-format
@@ -7648,20 +6722,6 @@ msgstr "PayPal 注文%sの注文が見つかりませんでした。"
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:205
 msgid "Payment can be captured."
 msgstr "支払いは捕捉できる。"
-
-#. translators: %s is the order ID.
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderApproved.php:212
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutOrderCompleted.php:97
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureCompleted.php:137
-#, php-format
-msgid "Order %s has been updated through PayPal"
-msgstr "PayPal で注文%sが更新されました"
-
-#. translators: %1$s is the order id.
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/CheckoutPaymentApprovalReversed.php:85
-#, php-format
-msgid "Failed to capture order %1$s through PayPal."
-msgstr "PayPal による注文%1$sの取り込みに失敗しました。"
 
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCapturePending.php:115
 msgid ""
@@ -7682,23 +6742,17 @@ msgstr "PayPal 払い戻し%sの注文が見つかりませんでした。"
 msgid "Order %s could not be refunded"
 msgstr "注文 %s は払い戻しできませんでした"
 
-#. translators: %1$s is the order id %2$s is the amount which has been refunded.
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureRefunded.php:152
-#, php-format
-msgid "Order %1$s has been refunded with %2$s through PayPal"
-msgstr "注文%1$sは PayPal を通じて%2$sで払い戻されました"
-
-#. translators: %1$s is the order id.
-#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:129
-#, php-format
-msgid "Order %1$s has been cancelled through PayPal"
-msgstr "ご注文%1$sは PayPal でキャンセルされました"
-
 #. translators: %1$s is the order id.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/PaymentCaptureReversed.php:136
 #, php-format
 msgid "Failed to cancel order %1$s through PayPal"
 msgstr "PayPal による注文%1$sのキャンセルに失敗しました"
+
+#. translators: %s is the PayPal webhook Id.
+#: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/RequestHandlerTrait.php:74
+#, php-format
+msgid "No order for webhook event %s was found."
+msgstr "Webhook イベント%sのオーダーが見つかりませんでした。"
 
 #. translators: %s is the PayPal order Id.
 #: includes/gateways/paypal/modules/ppcp-webhooks/src/Handler/RequestHandlerTrait.php:91
@@ -7907,99 +6961,6 @@ msgstr "作成者"
 msgid "WooCommerce Doc in Japanese"
 msgstr "WooCommerce の日本語ドキュメント"
 
-#. translators: %s: Customer full name
-#: templates/emails/customer-completed-order.php:28
-#: templates/emails/customer-invoice.php:30
-#: templates/emails/customer-note.php:28
-#: templates/emails/customer-on-hold-order.php:26
-#: templates/emails/customer-processing-order.php:28
-#: templates/emails/customer-refunded-order.php:26
-#: templates/emails/plain/customer-completed-order.php:25
-#: templates/emails/plain/customer-invoice.php:25
-#: templates/emails/plain/customer-note.php:25
-#: templates/emails/plain/customer-on-hold-order.php:25
-#: templates/emails/plain/customer-processing-order.php:25
-#: templates/emails/plain/customer-refunded-order.php:25
-#, php-format
-msgid "Hi %s,"
-msgstr "%s 様"
-
-#. translators: %s: Site title
-#: templates/emails/customer-completed-order.php:29
-#: templates/emails/plain/customer-completed-order.php:27
-msgid "We have finished processing your order."
-msgstr "ご注文の処理が完了しました。"
-
-#. translators: %1$s Site title, %2$s Order pay link
-#. translators: %1$s: Site title, %2$s: Order pay link
-#: templates/emails/customer-invoice.php:38
-#: templates/emails/plain/customer-invoice.php:31
-#, php-format
-msgid ""
-"An order has been created for you on %1$s. Your invoice is below, with a "
-"link to make payment when you’re ready: %2$s"
-msgstr ""
-"%1$sで注文が作成されました。 請求書は以下のとおりです。準備ができたら支払いを"
-"行うためのリンクがあります: %2$s"
-
-#: templates/emails/customer-invoice.php:46
-msgid "Pay for this order"
-msgstr "この注文の支払い"
-
-#. translators: %s Order date
-#. translators: %s: Order date
-#: templates/emails/customer-invoice.php:55
-#: templates/emails/plain/customer-invoice.php:39
-#, php-format
-msgid "Here are the details of your order placed on %s:"
-msgstr "%sでの注文の詳細は次のとおりです:"
-
-#: templates/emails/customer-note.php:29
-#: templates/emails/plain/customer-note.php:26
-msgid "The following note has been added to your order:"
-msgstr "次のメモが注文に追加されました:"
-
-#: templates/emails/customer-note.php:33
-#: templates/emails/plain/customer-note.php:34
-msgid "As a reminder, here are your order details:"
-msgstr "念のため、注文の詳細は次のとおりです:"
-
-#: templates/emails/customer-on-hold-order.php:27
-#: templates/emails/plain/customer-on-hold-order.php:26
-msgid ""
-"Thanks for your order. It’s on-hold until we confirm that payment has been "
-"received."
-msgstr ""
-"ご注文ありがとうございます。 お支払いをこちらで確認できるまで、ご注文は保留と"
-"なります。"
-
-#. translators: %s: Order number
-#: templates/emails/customer-processing-order.php:30
-#: templates/emails/plain/customer-processing-order.php:27
-#, php-format
-msgid ""
-"Just to let you know &mdash; we've received your order #%s, and it is now "
-"being processed:"
-msgstr "ご注文 #%s を承りました。現在処理中です:"
-
-#. translators: %s: Site title
-#: templates/emails/customer-refunded-order.php:32
-#: templates/emails/plain/customer-refunded-order.php:28
-#, php-format
-msgid ""
-"Your order on %s has been partially refunded. There are more details below "
-"for your reference:"
-msgstr "%sでのご注文は一部返金されました。 参考までに、以下に詳細があります:"
-
-#. translators: %s: Site title
-#: templates/emails/customer-refunded-order.php:35
-#: templates/emails/plain/customer-refunded-order.php:31
-#, php-format
-msgid ""
-"Your order on %s has been refunded. There are more details below for your "
-"reference:"
-msgstr "%sでのご注文は返金されました。 参考までに、以下に詳細があります:"
-
 #: woocommerce-for-japan.php:85
 msgid ""
 "Japanized for WooCommerce is enabled but not effective. It requires "
@@ -8008,13 +6969,16 @@ msgstr ""
 "Japanized for WooCommerce は利用可能ですが、動いておりません。WooCommerce を"
 "インストールして、アクティブにする必要があります。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:15
+#: src/js/blocks/delivery-block-editor.js:44
+#: src/js/blocks/delivery-block-editor.js:65
+msgid "This is a preview. The actual field will be shown on the frontend."
+msgstr "これはプレビューです。実際のフィールドはフロントエンドに表示されます。"
+
+#: src/js/jp4wc/admin/security/components/controls.jsx:16
 msgid "About Credit Card Security Guidelines"
 msgstr "クレジットカードのセキュリティ・ガイドラインについて"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:18
+#: src/js/jp4wc/admin/security/components/controls.jsx:23
 msgid ""
 "Ministry of Economy, Trade and Industry has established the \"Credit Card "
 "Security Guidelines\" to prevent unauthorized use of credit card "
@@ -8026,47 +6990,40 @@ msgstr ""
 "ガイドラインに準拠しているかどうかを簡易版として簡単にチェックすることができ"
 "ます。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:21
+#: src/js/jp4wc/admin/security/components/controls.jsx:33
 msgid "Credit Card Security Guidelines[6.0](2025/3/5 updated)"
 msgstr "クレジットカードセキュリティガイドライン[6.0](2025/3/5更新)"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:25
+#: src/js/jp4wc/admin/security/components/controls.jsx:43
 msgid ""
 "Security Measures for E-Commerce Affiliates: Implementation Guide [Appendix "
 "20][PDF]"
 msgstr "EC 加盟店におけるセキュリティ対策 導入ガイド【附属文書20】[PDF]"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:29
+#: src/js/jp4wc/admin/security/components/controls.jsx:53
 msgid ""
 "[Appendix 20, Appendix c] Declaration of the status of security measures "
 "implemented by EC sites (example)[Excel]"
 msgstr ""
 "【附属文書20 別紙c】ECサイトのセキュリティ対策実施状況申告書（例）[Excel]"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:33
+#: src/js/jp4wc/admin/security/components/controls.jsx:64
 msgid "Related Documents"
 msgstr "関連ドキュメント"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:46
+#: src/js/jp4wc/admin/security/components/controls.jsx:78
 msgid ""
 "Basic authentication or IP restrictions are not set for the administrator "
 "login URL."
 msgstr "管理者ログイン URL に Basic 認証または IP 制限が設定されていません。"
 
-#: assets/js/build/admin/security.js:1 assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/jp4wc/admin/security/components/controls.jsx:49
-#: src/js/paidy/wizard/components/first-main-page.jsx:231
+#: src/js/jp4wc/admin/security/components/controls.jsx:85
+#: src/js/paidy/wizard/components/first-main-page.jsx:261
 msgid ""
 "Administrator screen access restrictions and administrator ID/PW management"
 msgstr "管理者画面のアクセス制限と管理者 ID/PW 管理"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:52
+#: src/js/jp4wc/admin/security/components/controls.jsx:92
 msgid ""
 "Please check this box if you have implemented security measures for your "
 "admin screen."
@@ -8074,9 +7031,8 @@ msgstr ""
 "管理画面のセキュリティ対策を実施している場合は、このボックスにチェックを入れ"
 "てください。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:53
-#: src/js/jp4wc/admin/security/components/controls.jsx:87
+#: src/js/jp4wc/admin/security/components/controls.jsx:96
+#: src/js/jp4wc/admin/security/components/controls.jsx:156
 msgid ""
 "If a warning message appears below, it is possible that your security "
 "measures are not in line with the credit card security guidelines."
@@ -8084,27 +7040,23 @@ msgstr ""
 "下記に警告メッセージが表示された場合は、お客様のセキュリティ対策がクレジット"
 "カードのセキュリティガイドラインに沿っていない可能性があります。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:62
+#: src/js/jp4wc/admin/security/components/controls.jsx:109
 msgid "Basic authentication or IP restrictions Check result"
 msgstr "基本認証または IP 制限 チェック結果"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:62
-#: src/js/jp4wc/admin/security/components/controls.jsx:70
-#: src/js/jp4wc/admin/security/components/controls.jsx:96
-#: src/js/jp4wc/admin/security/components/controls.jsx:120
-#: src/js/jp4wc/admin/security/components/controls.jsx:128
+#: src/js/jp4wc/admin/security/components/controls.jsx:112
+#: src/js/jp4wc/admin/security/components/controls.jsx:125
+#: src/js/jp4wc/admin/security/components/controls.jsx:172
+#: src/js/jp4wc/admin/security/components/controls.jsx:217
+#: src/js/jp4wc/admin/security/components/controls.jsx:230
 msgid "[Warning]"
 msgstr "【警告】"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:70
+#: src/js/jp4wc/admin/security/components/controls.jsx:122
 msgid "Two-factor authentication Check result"
 msgstr "二要素認証 チェック結果"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:71
+#: src/js/jp4wc/admin/security/components/controls.jsx:128
 msgid ""
 "There is no two-step authentication plugin installed. You need to check "
 "whether other plugins support two-step authentication for administrator "
@@ -8113,25 +7065,21 @@ msgstr ""
 "二段階認証プラグインがインストールされていません。他のプラグインなどで管理者"
 "アカウントの二段階認証をサポートしているかどうかを確認する必要があります。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:83
+#: src/js/jp4wc/admin/security/components/controls.jsx:145
 msgid "Security plugin installation"
 msgstr "セキュリティプラグインのインストール"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:86
+#: src/js/jp4wc/admin/security/components/controls.jsx:152
 msgid "Please check this box if you have installed a security plugin."
 msgstr ""
 "セキュリティプラグインをインストールしている場合は、このボックスにチェックを"
 "入れてください。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:96
+#: src/js/jp4wc/admin/security/components/controls.jsx:169
 msgid "Security plugin Check result"
 msgstr "セキュリティプラグイン チェック結果"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:97
+#: src/js/jp4wc/admin/security/components/controls.jsx:175
 msgid ""
 "There is no security plugin installed. You need to check whether other "
 "plugins support security measures."
@@ -8139,13 +7087,11 @@ msgstr ""
 "セキュリティプラグインがインストールされていないようです。他のプラグインがセ"
 "キュリティ対策に対応しているかどうかを確認する必要があります。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:113
+#: src/js/jp4wc/admin/security/components/controls.jsx:200
 msgid "Vulnerability Assessment"
 msgstr "脆弱性診断"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:115
+#: src/js/jp4wc/admin/security/components/controls.jsx:204
 msgid ""
 "If you see the following warning message, your system may not be protected "
 "from vulnerabilities. Please check the details."
@@ -8153,35 +7099,33 @@ msgstr ""
 "以下に警告メッセージが表示された場合は、システムが脆弱性から保護されていない"
 "可能性があります。詳細をご確認ください。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:120
+#: src/js/jp4wc/admin/security/components/controls.jsx:214
 msgid "PHP version Check result"
 msgstr "PHPバージョンチェック結果"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:128
+#: src/js/jp4wc/admin/security/components/controls.jsx:227
 msgid "Update Check result"
 msgstr "更新チェック結果"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:180
+#: src/js/jp4wc/admin/security/components/controls.jsx:269
+msgid "Scan start failed: "
+msgstr "スキャンの開始に失敗しました: "
+
+#: src/js/jp4wc/admin/security/components/controls.jsx:294
 msgid "Scan progress error: "
 msgstr "スキャン進行エラー: "
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:190
+#: src/js/jp4wc/admin/security/components/controls.jsx:307
 msgid "Malware security quick check (PHP files only)"
 msgstr "マルウェアセキュリティー簡易チェック(PHP ファイルのみ)"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:192
+#: src/js/jp4wc/admin/security/components/controls.jsx:313
 msgid "Check for suspicious PHP files in the wp-content folder in WordPress."
 msgstr ""
 "WordPress の wp-content フォルダに不審な PHP ファイルがないかを簡易に確認しま"
 "す。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:193
+#: src/js/jp4wc/admin/security/components/controls.jsx:318
 msgid ""
 "This is a simple test, but if you have never checked your server for malware "
 "before, please try it. It may take a few minutes to process, so please do "
@@ -8191,8 +7135,7 @@ msgstr ""
 "ぜひお試しください。処理に数分かかる場合がありますので、ページから移動しない"
 "でください。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:194
+#: src/js/jp4wc/admin/security/components/controls.jsx:323
 msgid ""
 "Suspicious files are judged based on whether the following codes are "
 "embedded in them: "
@@ -8200,53 +7143,39 @@ msgstr ""
 "この簡易チェックでは、不審なファイルを以下のコードが埋め込まれているかどうか"
 "で判断されます: "
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:196
+#: src/js/jp4wc/admin/security/components/controls.jsx:329
 msgid "Note: Ideally, you should check all files, not just PHP files."
 msgstr "注意: 本来は、PHP ファイルだけでなくすべてのファイルの確認が必要です。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:161
-msgid "Scan start failed: "
-msgstr "スキャンの開始に失敗しました: "
-
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:201
+#: src/js/jp4wc/admin/security/components/controls.jsx:338
 msgid "Start Scan"
 msgstr "スキャンの開始"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:205
+#: src/js/jp4wc/admin/security/components/controls.jsx:344
 msgid "Scanning: "
 msgstr "スキャン: "
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:212
+#: src/js/jp4wc/admin/security/components/controls.jsx:356
 msgid "Scan Complete!"
 msgstr "スキャンが完了しました !"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:215
+#: src/js/jp4wc/admin/security/components/controls.jsx:365
 msgid "Suspicious files:"
 msgstr "不審が疑われるファイル:"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:221
+#: src/js/jp4wc/admin/security/components/controls.jsx:379
 msgid "Detected pattern:"
 msgstr "検出されたパターン:"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:222
+#: src/js/jp4wc/admin/security/components/controls.jsx:385
 msgid "Line#:"
 msgstr "ライン番号:"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:223
+#: src/js/jp4wc/admin/security/components/controls.jsx:391
 msgid "Line:"
 msgstr "行:"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:232
+#: src/js/jp4wc/admin/security/components/controls.jsx:409
 msgid ""
 "The number and line number within the file will be displayed so you can "
 "verify that the contents are safe."
@@ -8254,56 +7183,47 @@ msgstr ""
 "ファイル内の番号と行番号が表示されるので、内容が安全であることを確認してくだ"
 "さい。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:233
+#: src/js/jp4wc/admin/security/components/controls.jsx:414
 msgid ""
 "If a line is longer than 100 characters, only the first 100 characters are "
 "displayed."
 msgstr "行が100文字を超える場合、最初の100文字だけが表示されます。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:234
+#: src/js/jp4wc/admin/security/components/controls.jsx:419
 msgid "If you have any questions, please contact the developer."
 msgstr ""
 "ご不明な点がございましたら、サイト、および各プラグインやテーマの開発者までお"
 "問い合わせください。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:237
+#: src/js/jp4wc/admin/security/components/controls.jsx:427
 msgid "No suspicious files were found."
 msgstr "不審なファイルは見つかりませんでした。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:249
+#: src/js/jp4wc/admin/security/components/controls.jsx:446
 msgid "🚀✨[Limited time offer! Safe and secure professional support]✨🚀"
 msgstr "🚀✨【今だけ限定！安心・安全のプロフェッショナルサポート】✨🚀"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:251
+#: src/js/jp4wc/admin/security/components/controls.jsx:453
 msgid "🔒 If you're worried about security measures, this is a must-see!"
 msgstr "🔒 セキュリティ対策でお悩みの皆様、必見です！"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:252
+#: src/js/jp4wc/admin/security/components/controls.jsx:458
 msgid "Our experts will do their best to protect your business💼."
 msgstr "弊社の専門家が、あなたのビジネスを全力で守ります💼。"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:262
+#: src/js/jp4wc/admin/security/components/controls.jsx:481
 msgid ""
 "💰 Exclusive for stores aiming to achieve their dream of 1 million yen in "
 "monthly sales! 💰"
 msgstr "💰 夢の月商100万円達成を目指す店舗様専用！ 💰"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:263
+#: src/js/jp4wc/admin/security/components/controls.jsx:486
 msgid ""
 "🎉 In addition, this special service is only available on a limited number "
 "of sites! 🎉"
 msgstr "🎉 さらに、この特別サービスは 数量限定サイト でのみご提供中！ 🎉"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:264
+#: src/js/jp4wc/admin/security/components/controls.jsx:491
 msgid ""
 "🔮 As a smart investment for the future, you can achieve reliable security "
 "measures for only 1,000 yen per month for the first year 💪!"
@@ -8311,30 +7231,26 @@ msgstr ""
 "🔮 将来を見据えた賢い投資として、1年目は月額たったの1000円 で、安心のセキュリ"
 "ティ対策を実現💪！"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:265
+#: src/js/jp4wc/admin/security/components/controls.jsx:496
 msgid ""
 "🔥 Don't miss this chance to take your store operations to the next level "
 "right now! 🔥"
 msgstr "🔥 今すぐ、あなたの店舗運営を飛躍させるチャンスをお見逃しなく！ 🔥"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/controls.jsx:267
+#: src/js/jp4wc/admin/security/components/controls.jsx:507
 msgid "Starter Plan: "
 msgstr "スタータープラン:"
 
-#: assets/js/build/admin/security.js:1
 #: src/js/jp4wc/admin/security/components/security-page.jsx:22
 msgid "Credit Card Security Guidelines Check"
 msgstr "クレジットカードセキュリティガイドライン"
 
-#: assets/js/build/admin/security.js:1
-#: src/js/jp4wc/admin/security/components/security-page.jsx:31
+#: src/js/jp4wc/admin/security/components/security-page.jsx:37
 #: src/js/paidy/wizard/button.js:14
 msgid "Save"
 msgstr "保存"
 
-#: assets/js/build/admin/security.js:1 src/js/jp4wc/admin/security/index.js:16
+#: src/js/jp4wc/admin/security/index.js:15
 msgid ""
 "Simple check to comply with credit card security guidelines (established by "
 "the Ministry of Economy, Trade and Industry)"
@@ -8342,8 +7258,63 @@ msgstr ""
 "クレジットカードセキュリティガイドライン(経済産業省策定)に準拠した簡易チェッ"
 "ク"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:29
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:32
+msgid "Enable A8.net"
+msgstr "A8.net を有効にする"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:33
+msgid "Enable A8.net affiliate tracking"
+msgstr "A8.net のアフィリエイトトラッキングを有効にする"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:47
+msgid "Test Mode"
+msgstr "テストモード"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:48
+msgid "Enable test mode for A8.net"
+msgstr "A8.net のテストモードを有効にする"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:66
+msgid "A8.net PID"
+msgstr "A8.net PID"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:67
+msgid "Enter your A8.net PID"
+msgstr "A8.net の PID を入力してください"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:86
+msgid "Enable felmat"
+msgstr "felmat (フェルマ)を有効にする"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:87
+msgid "Enable felmat affiliate tracking"
+msgstr "felmat (フェルマ)のアフィリエイト追跡を有効にする"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:105
+msgid "felmat PID"
+msgstr "felmat (フェルマ) PID"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:106
+msgid "Enter your felmat PID"
+msgstr "felmat (フェルマ) PID を入力してください"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:126
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:339
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:225
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:250
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:517
+msgid "Saving..."
+msgstr "保存中…"
+
+#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:127
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:340
+#: src/js/jp4wc/admin/settings/components/LawSettings.js:226
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:251
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:518
+msgid "Save Settings"
+msgstr "設定を保存"
+
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:44
 msgid ""
 "Check it if you want to add Yomigana(furigana) input at cart, checkout and "
 "my account page."
@@ -8351,8 +7322,7 @@ msgstr ""
 "お買い物カゴ、購入手続き、マイアカウントページに読み仮名（ふりがな）入力機能"
 "を追加したい場合はチェックしてください。"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:47
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:83
 msgid ""
 "Check it if you want to add honorific suffix(Sama) at cart, checkout and my "
 "account page."
@@ -8360,8 +7330,7 @@ msgstr ""
 "お買い物カゴ、購入手続き、マイアカウントページで敬称接尾辞（様）を追加したい"
 "場合はチェックしてください。"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:56
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:101
 msgid ""
 "Check it if you want to add Company name input at cart, checkout and my "
 "account page."
@@ -8369,13 +7338,11 @@ msgstr ""
 "お買い物カゴ、購入手続き、マイアカウントページに会社名入力欄を追加したい場合"
 "はチェックしてください。"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:65
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:119
 msgid "Check it if you want to use automatic zip code entry."
 msgstr "自動郵便番号入力を使用する場合はチェックしてください。"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:74
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:135
 msgid ""
 "If you use it a bit for testing, you do not need to enter it here. But if "
 "you want to use Automatic zip code entry, you must get and input Yahoo APP "
@@ -8385,298 +7352,184 @@ msgstr ""
 "自動郵便番号入力機能を利用したい場合は、必ずYahoo!アプリIDを取得し、ここに登"
 "録してください。"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:83
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:153
 msgid "Check it if you eliminate the order of addresses."
 msgstr "アドレスの順序を削除した場合に確認してください。"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:92
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:171
 msgid "Check it if you want to display free shipping message."
 msgstr "送料無料のメッセージを表示したい場合はチェックしてください。"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:110
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:211
 msgid "Check to hide address input field in virtual orders"
 msgstr "バーチャル商品の注文における住所入力欄を非表示にする"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:76
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:168
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:149
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:131
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:277
-msgid "Saving..."
-msgstr "保存中…"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:76
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:168
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:149
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:131
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:277
-msgid "Save Settings"
-msgstr "設定を保存"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:48
-msgid "Check it if you want to use delivery date designation."
-msgstr "配達日指定を利用したい場合はチェックしてください。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:57
-msgid "Check if delivery date is required field."
-msgstr "配送日が必要項目かどうかを確認してください。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:66
-msgid "Number of days from today to start accepting orders"
-msgstr "本日より注文受付開始までの日数"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:76
-msgid "Number of days to accept delivery date"
-msgstr "配送日を受け入れるまでの日数"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:86
-msgid "Text to display when date is not specified"
-msgstr "日付が指定されていない場合に表示するテキスト"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:117
-msgid "Time format: HH:MM:SS (e.g., 14:00:00)"
-msgstr "時刻形式: HH:MM:SS (例: 14:00:00)"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:172
-msgid "Holiday start date"
-msgstr "休暇開始日"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:180
-msgid "Holiday end date"
-msgstr "休暇終了日"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:195
-msgid "Check it if you want to use delivery time zone."
-msgstr "配達時間帯を利用したい場合はチェックしてください。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:204
-msgid "Check if delivery time zone is required field."
-msgstr "配送先のタイムゾーンが必須項目かどうかを確認してください。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:213
-msgid "Text to display when time is not specified"
-msgstr "時間が指定されていない場合に表示するテキスト"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:226
-msgid "Start Time"
-msgstr "開始時間"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:234
-msgid "End Time"
-msgstr "終了時間"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:246
-msgid "Remove"
-msgstr "削除"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:252
-msgid "Add Time Zone"
-msgstr "タイムゾーンを追加"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:262
-msgid "Email address to notify when required delivery fields are missing"
-msgstr "必須の配送情報が不足している場合に通知するメールアドレス"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:25
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:37
 msgid "Enable bank payment method"
 msgstr "銀行振込の支払い方法を有効にする"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:34
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:55
 msgid "Enable postal transfer payment method"
 msgstr "郵便振替による支払い方法を有効にする"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:43
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:70
 msgid "Enable pay at store payment method"
 msgstr "店頭支払い方法を有効にする"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:52
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:88
 msgid "Enable COD for subscription orders"
 msgstr "定期購入注文で代金引換を有効にする"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:61
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:103
 msgid "Enable PayPal payment method"
 msgstr "PayPalの支払い方法を有効にする"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:72
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:127
 msgid "Name of the COD fee"
 msgstr "代金引換手数料の名称"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:81
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:146
 msgid "Amount to charge for COD"
 msgstr "代金引換手数料"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:91
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:166
 msgid "Maximum cart value for COD fee application"
 msgstr "代金引換手数料適用における最大カート金額"
 
-#: assets/js/build/admin/settings.js:1 assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:103
-#: src/js/paidy/wizard/components/controls.jsx:161
-#: src/js/paidy/wizard/components/controls.jsx:249
-#: src/js/paidy/wizard/components/controls.jsx:269
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:192
+#: src/js/paidy/wizard/components/controls.jsx:216
+#: src/js/paidy/wizard/components/controls.jsx:337
+#: src/js/paidy/wizard/components/controls.jsx:360
 msgid "No"
 msgstr "いいえ"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:116
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:221
 msgid "Reduced rate"
 msgstr "軽減率"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:117
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:228
 msgid "Zero rate"
 msgstr "非課税"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:23
-msgid "Enable A8.net"
-msgstr "A8.net を有効にする"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:24
-msgid "Enable A8.net affiliate tracking"
-msgstr "A8.net のアフィリエイトトラッキングを有効にする"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:32
-msgid "Test Mode"
-msgstr "テストモード"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:33
-msgid "Enable test mode for A8.net"
-msgstr "A8.net のテストモードを有効にする"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:41
-msgid "A8.net PID"
-msgstr "A8.net PID"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:42
-msgid "Enter your A8.net PID"
-msgstr "A8.net の PID を入力してください"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:52
-msgid "Enable felmat"
-msgstr "felmat (フェルマ)を有効にする"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:53
-msgid "Enable felmat affiliate tracking"
-msgstr "felmat (フェルマ)のアフィリエイト追跡を有効にする"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:61
-msgid "felmat PID"
-msgstr "felmat (フェルマ) PID"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:62
-msgid "Enter your felmat PID"
-msgstr "felmat (フェルマ) PID を入力してください"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:79
+#: src/js/jp4wc/admin/settings/components/Settings.js:85
 msgid "Failed to load settings"
 msgstr "設定を読み込めませんでした"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:98
+#: src/js/jp4wc/admin/settings/components/Settings.js:106
 msgid "Settings saved successfully."
 msgstr "設定が正常に保存されました."
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:103
+#: src/js/jp4wc/admin/settings/components/Settings.js:114
 msgid "Failed to save settings"
 msgstr "設定の保存に失敗しました"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:120
+#: src/js/jp4wc/admin/settings/components/Settings.js:132
 msgid "Loading settings..."
 msgstr "設定を読み込み中..."
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:128
+#: src/js/jp4wc/admin/settings/components/Settings.js:140
 msgid "General Settings"
 msgstr "一般設定"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:133
+#: src/js/jp4wc/admin/settings/components/Settings.js:145
 msgid "Shipment Settings"
 msgstr "配送方法設定"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:138
+#: src/js/jp4wc/admin/settings/components/Settings.js:150
 msgid "Payment Settings"
 msgstr "支払方法設定"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:143
+#: src/js/jp4wc/admin/settings/components/Settings.js:155
 msgid "Commercial Law"
 msgstr "特定商取引法"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:148
+#: src/js/jp4wc/admin/settings/components/Settings.js:160
 msgid "Affiliate"
 msgstr "アフィリエイト"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:156
+#: src/js/jp4wc/admin/settings/components/Settings.js:169
 msgid "Japanized for WooCommerce Settings"
 msgstr "Japanized for WooCommerce 設定"
 
-#: assets/js/build/paidy/admin/paidy.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:63
+msgid "Check it if you want to use delivery date designation."
+msgstr "配達日指定を利用したい場合はチェックしてください。"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:81
+msgid "Check if delivery date is required field."
+msgstr "配送日が必要項目かどうかを確認してください。"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:101
+msgid "Number of days from today to start accepting orders"
+msgstr "本日より注文受付開始までの日数"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:117
+msgid "Number of days to accept delivery date"
+msgstr "配送日を受け入れるまでの日数"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:137
+msgid "Text to display when date is not specified"
+msgstr "日付が指定されていない場合に表示するテキスト"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:188
+msgid "Time format: HH:MM:SS (e.g., 14:00:00)"
+msgstr "時刻形式: HH:MM:SS (例: 14:00:00)"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:284
+msgid "Holiday start date"
+msgstr "休暇開始日"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:304
+msgid "Holiday end date"
+msgstr "休暇終了日"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:339
+msgid "Check it if you want to use delivery time zone."
+msgstr "配達時間帯を利用したい場合はチェックしてください。"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:360
+msgid "Check if delivery time zone is required field."
+msgstr "配送先のタイムゾーンが必須項目かどうかを確認してください。"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:384
+msgid "Text to display when time is not specified"
+msgstr "時間が指定されていない場合に表示するテキスト"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:419
+msgid "Start Time"
+msgstr "開始時間"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:438
+msgid "End Time"
+msgstr "終了時間"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:461
+msgid "Remove"
+msgstr "削除"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:470
+msgid "Add Time Zone"
+msgstr "タイムゾーンを追加"
+
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:491
+msgid "Email address to notify when required delivery fields are missing"
+msgstr "必須の配送情報が不足している場合に通知するメールアドレス"
+
 #: src/js/paidy/admin/components/index.js:9
 msgid "Easy Paidy payment setup"
 msgstr "ペイディ決済らくらく設定"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: src/js/paidy/admin/components/index.js:24
+#: src/js/paidy/admin/components/index.js:27
 msgid "Start easy Paidy payment setup"
 msgstr "今すぐ始める"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:33
-#: src/js/paidy/main-hooks/form-info.jsx:60
+#: src/js/paidy/admin/components/index.js:36
+#: src/js/paidy/main-hooks/form-info.jsx:137
 msgid "Status: Under review"
 msgstr "ステータス: 審査中です"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:35
-#: src/js/paidy/main-hooks/form-info.jsx:62
+#: src/js/paidy/admin/components/index.js:39
+#: src/js/paidy/main-hooks/form-info.jsx:140
 msgid ""
 "Thank you for your application. We will notify you of the results via email "
 "and dashboard."
@@ -8684,107 +7537,36 @@ msgstr ""
 "お申し込みありがとうございました。審査結果はメールおよびダッシュボードにて通"
 "知いたします。"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:37
-#: src/js/paidy/main-hooks/form-info.jsx:64
+#: src/js/paidy/admin/components/index.js:46
+#: src/js/paidy/main-hooks/form-info.jsx:147
 msgid "The review process may take up to 5 business days."
 msgstr "審査には最大5営業日かかることがございます。"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:38
-#: src/js/paidy/main-hooks/form-info.jsx:65
+#: src/js/paidy/admin/components/index.js:52
+#: src/js/paidy/main-hooks/form-info.jsx:153
 msgid "Inquiries regarding screening: sales@paidy.com"
 msgstr "審査に関するお問い合わせ：sales@paidy.com"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:75
-msgid "Status: The review was rejected"
-msgstr "ステータス: 審査は否決されました"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:69
-#: src/js/paidy/main-hooks/form-info.jsx:78
-msgid ""
-"After careful and repeated review, we regret to inform you that we have "
-"decided to postpone the transaction at this time."
-msgstr ""
-"慎重に審査を重ねました結果、誠に申し訳ございませんが、今回はお取引を見送らせ"
-"ていただくこととなりました。"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:70
-#: src/js/paidy/main-hooks/form-info.jsx:79
-msgid "We sincerely apologize for not being able to meet your expectations."
-msgstr "このたびはご希望に添えない結果となり、誠に申し訳ございません。"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:71
-#: src/js/paidy/main-hooks/form-info.jsx:80
-msgid ""
-"Please understand that we cannot provide details about the content of the "
-"review."
-msgstr "審査内容の詳細については、お答えいたしかねますのでご了承ください。"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:115
-msgid "Now test mode"
-msgstr "現在テストモードです"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:124
-msgid "Enable test mode"
-msgstr "テストモードを有効化する"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:199
-#: src/js/paidy/main-hooks/form-info.jsx:221
-msgid "Error enabling Paidy"
-msgstr "Paidyの有効化時にエラー"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:235
-#: src/js/paidy/main-hooks/form-info.jsx:267
-msgid "Enable production mode"
-msgstr "本番モードで公開する"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:248
-msgid "Status: The review approved"
+#: src/js/paidy/admin/components/index.js:67
+msgid "Status: Approved"
 msgstr "ステータス: 審査は承認されました"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:51
-#: src/js/paidy/main-hooks/form-info.jsx:250
+#: src/js/paidy/admin/components/index.js:70
+#: src/js/paidy/main-hooks/form-info.jsx:403
 msgid ""
 "The review has been completed and the merchant agreement has been concluded."
 msgstr "審査が完了し、加盟店契約が成立いたしました。"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:52
-#: src/js/paidy/main-hooks/form-info.jsx:251
+#: src/js/paidy/admin/components/index.js:76
+#: src/js/paidy/main-hooks/form-info.jsx:408
 msgid ""
 "For terms of use, please check the terms and conditions notification email "
 "sent by Paidy Inc."
 msgstr ""
 "ご利用条件は株式会社 Paidy から送信されるメールの条件通知書をご確認ください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:54
-#: src/js/paidy/main-hooks/form-info.jsx:253
+#: src/js/paidy/admin/components/index.js:83
+#: src/js/paidy/main-hooks/form-info.jsx:415
 msgid ""
 "We recommend setting the Webhook URL in the Paidy merchant management screen "
 "before publishing in production mode. Set the Webhook URL to the following "
@@ -8793,187 +7575,48 @@ msgstr ""
 "本番モードで公開前にWebhook URLをペイディ加盟店管理画面へ設定することを推奨し"
 "ます。Webhook URLには次の値を設定してください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:55
-#: src/js/paidy/main-hooks/form-info.jsx:254
+#: src/js/paidy/admin/components/index.js:89
+#: src/js/paidy/main-hooks/form-info.jsx:421
 msgid "[Common for test and production]"
 msgstr "[テスト・本番共通]"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:56
-#: src/js/paidy/main-hooks/form-info.jsx:256
+#: src/js/paidy/admin/components/index.js:96
+#: src/js/paidy/main-hooks/form-info.jsx:428
 msgid ""
 "Please refer to the manual for information on the Paidy merchant management "
 "screen."
 msgstr "ペイディ加盟店管理画面についてはマニュアルをご覧ください。"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:259
-msgid "Please click one of the buttons below."
-msgstr "下記のいずれかのボタンをクリックしてください。"
+#: src/js/paidy/admin/components/index.js:110
+msgid "Status: Rejected"
+msgstr "ステータス: 審査は否決されました"
 
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:279
-msgid "Paidy test payments enabled"
-msgstr "ペイディのテスト決済が有効化されました"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:282
-msgid "You can now test Paidy payments."
-msgstr "Paidy の支払いをテストできるようになりました。"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:283
-msgid "Please check the test payment flow."
-msgstr "テスト決済フローをご確認ください。"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:284
-msgid "Paidy test payment flow"
-msgstr "Paidy テスト決済フロー"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:285
-msgid "After confirming the test payment, please switch to production mode."
-msgstr "テストが完了後、以下のボタンから本番モードで公開してください。"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:295
-msgid "Paidy Payments is now live"
-msgstr "ペイディ決済が公開されました"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:65
-#: src/js/paidy/wizard/components/controls.jsx:12
-msgid "Trade name / Store name"
-msgstr "商号/屋号"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:66
-#: src/js/paidy/wizard/components/controls.jsx:24
-msgid "Your EC site name"
-msgstr "貴社の EC サイト名"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:67
-#: src/js/paidy/wizard/components/controls.jsx:37
-msgid "Store URL"
-msgstr "貴社の EC サイト URL"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:68
-#: src/js/paidy/wizard/components/controls.jsx:49
-msgid "Email address for registering Paidy"
-msgstr "ペイディ登録用メールアドレス"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:69
-#: src/js/paidy/wizard/components/controls.jsx:59
-msgid "Contact phone number"
-msgstr "ご担当窓口電話番号"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:70
-#: src/js/paidy/wizard/components/controls.jsx:70
-msgid "Representative (last name)"
-msgstr "代表者（姓）"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:71
-#: src/js/paidy/wizard/components/controls.jsx:80
-msgid "Representative (first name)"
-msgstr "代表者（名）"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/admin/paidy.js:2
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:72
-#: src/js/paidy/main-hooks/on-boarding-settings.js:90
-#: src/js/paidy/wizard/components/controls.jsx:90
-msgid "Representative (last name kana)"
-msgstr "代表者カナ（セイ）"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/admin/paidy.js:2
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:73
-#: src/js/paidy/main-hooks/on-boarding-settings.js:91
-#: src/js/paidy/wizard/components/controls.jsx:101
-msgid "Representative (first name kana)"
-msgstr "代表者カナ（メイ）"
-
-#: assets/js/build/paidy/admin/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:74
-#: src/js/paidy/wizard/components/controls.jsx:112
-msgid "Representative's date of birth (Gregorian calendar)"
-msgstr "代表者生年月日（西暦）"
-
-#. translators: %s: field label name
-#: assets/js/build/paidy/admin/paidy.js:2
-#: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:80
-msgid "%s is a required field. Please enter it."
-msgstr "%sは必須フィールドです。入力してください。"
-
-#. translators: %s: field label name
-#: assets/js/build/paidy/admin/paidy.js:3
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:97
-msgid "%s must be in full-width katakana. Please confirm."
-msgstr "%sは全角カタカナで入力してください。確認してください。"
-
-#: assets/js/build/paidy/admin/paidy.js:3
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:107
+#: src/js/paidy/admin/components/index.js:114
+#: src/js/paidy/main-hooks/form-info.jsx:174
 msgid ""
-"When selecting \"No\" for the security survey question, please provide "
-"additional details in the text field."
+"After careful and repeated review, we regret to inform you that we have "
+"decided to postpone the transaction at this time."
 msgstr ""
-"【カード会員データの漏えい対策】に「いいえ」と回答された場合は場合、代替策を"
-"記入してください。"
+"慎重に審査を重ねました結果、誠に申し訳ございませんが、今回はお取引を見送らせ"
+"ていただくこととなりました。"
 
-#: assets/js/build/paidy/admin/paidy.js:3
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:120
+#: src/js/paidy/admin/components/index.js:120
+#: src/js/paidy/main-hooks/form-info.jsx:180
+msgid "We sincerely apologize for not being able to meet your expectations."
+msgstr "このたびはご希望に添えない結果となり、誠に申し訳ございません。"
+
+#: src/js/paidy/admin/components/index.js:126
+#: src/js/paidy/main-hooks/form-info.jsx:186
 msgid ""
-"Since none of the security measures are implemented, please provide details "
-"about your security approach in the additional information field."
-msgstr ""
-"【不正ログイン対策】のいずれにも「はい」に✅がない場合は代替策を記入してくだ"
-"さい。"
+"Please understand that we cannot provide details about the content of the "
+"review."
+msgstr "審査内容の詳細については、お答えいたしかねますのでご了承ください。"
 
-#: assets/js/build/paidy/admin/paidy.js:3
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:128
-msgid "Please fill in all the fields."
-msgstr "すべてのフィールドに入力してください。"
-
-#: assets/js/build/paidy/admin/paidy.js:3
 #: src/js/paidy/admin/onboarding-step/index.js:54
 msgid "Applying for and setting up Paidy is easy."
 msgstr "ペイディの新規申し込みと設定が簡単に行えます。"
 
-#: assets/js/build/paidy/admin/paidy.js:3
-#: src/js/paidy/admin/onboarding-step/index.js:60
+#: src/js/paidy/admin/onboarding-step/index.js:64
 msgid ""
 "There is no setup cost, payment fees start from 3.5%, and if you apply via "
 "this service, you will receive a one-month trial with no payment fees!"
@@ -8981,25 +7624,20 @@ msgstr ""
 "導入コスト0円、決済手数料3.5％～、本経由申込で、なんとお試し1か月決済手数料無"
 "料！"
 
-#: assets/js/build/paidy/admin/paidy.js:3
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/admin/onboarding-step/index.js:61
-#: src/js/paidy/wizard/components/first-main-page.jsx:362
+#: src/js/paidy/admin/onboarding-step/index.js:69
+#: src/js/paidy/wizard/components/first-main-page.jsx:462
 msgid "Learn more about Paidy"
 msgstr "詳細はこちらから"
 
-#: assets/js/build/paidy/admin/paidy.js:3
-#: src/js/paidy/admin/onboarding-step/index.js:64
+#: src/js/paidy/admin/onboarding-step/index.js:77
 msgid "Enter the information manually without using the wizard."
 msgstr "ウィザードを使用せず、手動で情報を入力する。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:16
 msgid "Application flow"
 msgstr "申し込みフロー"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:19
+#: src/js/paidy/main-hooks/form-info.jsx:20
 msgid ""
 "Please fill in all the fields on this application screen and click the "
 "\"Agree to the above and apply\" button at the bottom of the screen."
@@ -9007,8 +7645,7 @@ msgstr ""
 "本申込み画面の項目を全て記入し、画面下の「上記へ同意して申込み」ボタンをク"
 "リックしてください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:20
+#: src/js/paidy/main-hooks/form-info.jsx:26
 msgid ""
 "Paidy Co., Ltd. will review your application information and may take up to "
 "5 business days."
@@ -9016,67 +7653,55 @@ msgstr ""
 "申込情報をもとに株式会社Paidyにて加盟店審査を行います。最大5営業日かかること"
 "がございます。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:21
+#: src/js/paidy/main-hooks/form-info.jsx:32
 msgid "The results will be notified via email and dashboard."
 msgstr "審査結果はメールおよびダッシュボードにて通知いたします。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:22
+#: src/js/paidy/main-hooks/form-info.jsx:38
 msgid ""
 "If your application is approved, you will be able to activate Paidy from "
 "your dashboard."
 msgstr "審査承認時は、ダッシュボードからペイディを有効化できます。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:23
+#: src/js/paidy/main-hooks/form-info.jsx:43
 msgid "If your application is rejected, you will not be able to use Paidy."
 msgstr "審査否決時は、ペイディをご利用いただくことはできません。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:34
+#: src/js/paidy/main-hooks/form-info.jsx:58
 msgid "Agreement"
 msgstr "同意事項"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:39
+#: src/js/paidy/main-hooks/form-info.jsx:63
 msgid "Please confirm and agree to the following contents."
 msgstr "下記の内容についてご確認・ご同意ください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:42
+#: src/js/paidy/main-hooks/form-info.jsx:71
 msgid "Paidy Merchant Terms and Conditions"
 msgstr "ペイディ加盟店規約"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:43
+#: src/js/paidy/main-hooks/form-info.jsx:78
 msgid "Agreement on handling of affiliated store information"
 msgstr "加盟店情報の取扱いに関する同意条項"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:44
+#: src/js/paidy/main-hooks/form-info.jsx:84
 msgid ""
 "Add the notation specified by our company to the notation based on the "
 "Specified Commercial Transactions Act."
 msgstr "特定商取引法に基づく表記に弊社所定の表記を追加すること。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:45
+#: src/js/paidy/main-hooks/form-info.jsx:93
 msgid "Display sample based on the Specified Commercial Transactions Act"
 msgstr "特商法に基づく表示サンプル"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:46
+#: src/js/paidy/main-hooks/form-info.jsx:100
 msgid "Add the specified notation to the privacy policy page."
 msgstr "プライバシーポリシーページに弊社所定の表記を追加すること。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:47
+#: src/js/paidy/main-hooks/form-info.jsx:109
 msgid "Example of a privacy policy"
 msgstr "プライバシーポリシーの記入例"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:48
+#: src/js/paidy/main-hooks/form-info.jsx:116
 msgid ""
 "Paidy Inc. will set up the API key on your e-commerce site via WooCommerce "
 "on your behalf."
@@ -9084,8 +7709,7 @@ msgstr ""
 "株式会社 Paidy が、WooCommerce を介して貴社に代わり、EC サイトへ API キーの設"
 "定を行うこと。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:49
+#: src/js/paidy/main-hooks/form-info.jsx:122
 msgid ""
 "Our company (Shokunin Kobo LLC) will provide personal information to third "
 "parties when disclosing such information for purposes such as member store "
@@ -9094,49 +7718,178 @@ msgstr ""
 "当社（職人工房　合同会社）は、決済会社での加盟店審査等のために個人情報を開示"
 "する場合に、個人情報を第三者に提供いたします。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:91
-#: src/js/paidy/wizard/components/controls.jsx:102
+#: src/js/paidy/main-hooks/form-info.jsx:167
+msgid "Status: The review was rejected"
+msgstr "ステータス: 審査は否決されました"
+
+#: src/js/paidy/main-hooks/form-info.jsx:230
+msgid "Now test mode"
+msgstr "現在テストモードです"
+
+#: src/js/paidy/main-hooks/form-info.jsx:236
+msgid "Enable test mode"
+msgstr "テストモードを有効化する"
+
+#: src/js/paidy/main-hooks/form-info.jsx:335
+#: src/js/paidy/main-hooks/form-info.jsx:364
+msgid "Error enabling Paidy"
+msgstr "Paidyの有効化時にエラー"
+
+#: src/js/paidy/main-hooks/form-info.jsx:383
+#: src/js/paidy/main-hooks/form-info.jsx:449
+msgid "Enable production mode"
+msgstr "本番モードで公開する"
+
+#: src/js/paidy/main-hooks/form-info.jsx:397
+msgid "Status: The review approved"
+msgstr "ステータス: 審査は承認されました"
+
+#: src/js/paidy/main-hooks/form-info.jsx:436
+msgid "Please click one of the buttons below."
+msgstr "下記のいずれかのボタンをクリックしてください。"
+
+#: src/js/paidy/main-hooks/form-info.jsx:464
+msgid "Paidy test payments enabled"
+msgstr "ペイディのテスト決済が有効化されました"
+
+#: src/js/paidy/main-hooks/form-info.jsx:467
+msgid "You can now test Paidy payments."
+msgstr "Paidy の支払いをテストできるようになりました。"
+
+#: src/js/paidy/main-hooks/form-info.jsx:472
+msgid "Please check the test payment flow."
+msgstr "テスト決済フローをご確認ください。"
+
+#: src/js/paidy/main-hooks/form-info.jsx:481
+msgid "Paidy test payment flow"
+msgstr "Paidy テスト決済フロー"
+
+#: src/js/paidy/main-hooks/form-info.jsx:484
+msgid "After confirming the test payment, please switch to production mode."
+msgstr "テストが完了後、以下のボタンから本番モードで公開してください。"
+
+#: src/js/paidy/main-hooks/form-info.jsx:497
+msgid "Paidy Payments is now live"
+msgstr "ペイディ決済が公開されました"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:113
+#: src/js/paidy/wizard/components/controls.jsx:12
+msgid "Trade name / Store name"
+msgstr "商号/屋号"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:117
+#: src/js/paidy/wizard/components/controls.jsx:24
+msgid "Your EC site name"
+msgstr "貴社の EC サイト名"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:121
+#: src/js/paidy/wizard/components/controls.jsx:37
+msgid "Store URL"
+msgstr "貴社の EC サイト URL"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:125
+#: src/js/paidy/wizard/components/controls.jsx:47
+msgid "Email address for registering Paidy"
+msgstr "ペイディ登録用メールアドレス"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:132
+#: src/js/paidy/wizard/components/controls.jsx:60
+msgid "Contact phone number"
+msgstr "ご担当窓口電話番号"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:136
+#: src/js/paidy/wizard/components/controls.jsx:71
+msgid "Representative (last name)"
+msgstr "代表者（姓）"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:143
+#: src/js/paidy/wizard/components/controls.jsx:84
+msgid "Representative (first name)"
+msgstr "代表者（名）"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:150
+#: src/js/paidy/main-hooks/on-boarding-settings.js:196
+#: src/js/paidy/wizard/components/controls.jsx:97
+msgid "Representative (last name kana)"
+msgstr "代表者カナ（セイ）"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:157
+#: src/js/paidy/main-hooks/on-boarding-settings.js:203
+#: src/js/paidy/wizard/components/controls.jsx:114
+msgid "Representative (first name kana)"
+msgstr "代表者カナ（メイ）"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:164
+#: src/js/paidy/wizard/components/controls.jsx:131
+msgid "Representative's date of birth (Gregorian calendar)"
+msgstr "代表者生年月日（西暦）"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:175
+msgid "%s is a required field. Please enter it."
+msgstr "%sは必須フィールドです。入力してください。"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:214
+msgid "%s must be in full-width katakana. Please confirm."
+msgstr "%sは全角カタカナで入力してください。確認してください。"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:236
+msgid ""
+"When selecting \"No\" for the security survey question, please provide "
+"additional details in the text field."
+msgstr ""
+"【カード会員データの漏えい対策】に「いいえ」と回答された場合は場合、代替策を"
+"記入してください。"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:253
+msgid ""
+"Since none of the security measures are implemented, please provide details "
+"about your security approach in the additional information field."
+msgstr ""
+"【不正ログイン対策】のいずれにも「はい」に✅がない場合は代替策を記入してくだ"
+"さい。"
+
+#: src/js/paidy/main-hooks/on-boarding-settings.js:264
+msgid "Please fill in all the fields."
+msgstr "すべてのフィールドに入力してください。"
+
+#: src/js/paidy/wizard/button.js:6
+msgid "Next"
+msgstr "次へ"
+
+#: src/js/paidy/wizard/components/controls.jsx:101
+#: src/js/paidy/wizard/components/controls.jsx:118
 msgid "Please enter in full-width katakana."
 msgstr "全角カタカナで入力してください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:113
+#: src/js/paidy/wizard/components/controls.jsx:135
 msgid "Please select a date from the calendar icon on the far right."
 msgstr "右端のカレンダーアイコンから日付をお選びください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:124
+#: src/js/paidy/wizard/components/controls.jsx:149
 msgid "Annual gross merchandise value"
 msgstr "年間流通総額"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:127
+#: src/js/paidy/wizard/components/controls.jsx:156
 msgid "Less than 10 million yen"
 msgstr "1億円未満"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:128
+#: src/js/paidy/wizard/components/controls.jsx:163
 msgid "10 million yen or more"
 msgstr "1億円以上"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:138
+#: src/js/paidy/wizard/components/controls.jsx:178
 msgid "Average purchase amount per order"
 msgstr "ご注文あたりの平均購入額"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:141
+#: src/js/paidy/wizard/components/controls.jsx:185
 msgid "Less than 50,000 yen"
 msgstr "5万円未満"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:142
+#: src/js/paidy/wizard/components/controls.jsx:192
 msgid "Over 50,000 yen"
 msgstr "5万円以上"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:152
+#: src/js/paidy/wizard/components/controls.jsx:204
 msgid ""
 "Do you use two-step or two-factor authentication to prevent compromised "
 "accounts?"
@@ -9144,23 +7897,19 @@ msgstr ""
 "取得されたアカウントを不正使用されないよう二段階認証または二要素認証を採用し"
 "ていますか ?"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:165
+#: src/js/paidy/wizard/components/controls.jsx:220
 msgid "Unknown"
 msgstr "わからない"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:176
+#: src/js/paidy/wizard/components/controls.jsx:231
 msgid "If the answer is \"no\", please provide an alternative."
 msgstr "回答が「いいえ」の場合、代替策を記入してください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:186
+#: src/js/paidy/wizard/components/controls.jsx:244
 msgid "Restricting access from suspicious IP addresses"
 msgstr "不審なIP アドレスからのアクセス制限"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:188
+#: src/js/paidy/wizard/components/controls.jsx:249
 msgid ""
 "This refers to restricting access from suspicious IP addresses, such as "
 "those from overseas, using firewalls, WAFs, apps, etc."
@@ -9168,13 +7917,11 @@ msgstr ""
 "ファイアウォールやWAF、アプリ等によって、海外等の不審なIPアドレスからのアクセ"
 "ス制限を行うことを指します。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:197
+#: src/js/paidy/wizard/components/controls.jsx:261
 msgid "Identity verification using two-factor authentication, etc."
 msgstr "二要素認証等による本人確認など。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:199
+#: src/js/paidy/wizard/components/controls.jsx:266
 msgid ""
 "This refers to increasing security strength by combining multiple levels or "
 "elements of authentication, such as biometric authentication using "
@@ -9185,13 +7932,11 @@ msgstr ""
 "段階または要素の認証を組み合わせることで、セキュリティ強度を高めることを指し"
 "ます。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:208
+#: src/js/paidy/wizard/components/controls.jsx:278
 msgid "Fraud detection system (Fraud service)"
 msgstr "不正検知システム（Fraud サービス）"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:210
+#: src/js/paidy/wizard/components/controls.jsx:283
 msgid ""
 "It is a security technology that constantly monitors communications on the "
 "network and detects fraudulent transactions in advance, such as the use of "
@@ -9200,13 +7945,11 @@ msgstr ""
 "ネットワーク上の通信を常時監視し、第三者によるクレジットカードの利用やなりす"
 "ましなど、不正な取引を事前に検知するセキュリティ技術の一つです。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:219
+#: src/js/paidy/wizard/components/controls.jsx:295
 msgid "Device fingerprinting, etc."
 msgstr "デバイスフィンガープリント等。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:220
+#: src/js/paidy/wizard/components/controls.jsx:299
 msgid ""
 "This technology tracks online behavior by using the characteristics of the "
 "operating environment of the user's device as a kind of fingerprint."
@@ -9214,22 +7957,19 @@ msgstr ""
 "ユーザーが使うデバイス（端末）の動作環境の特徴を、フィンガープリント（指紋）"
 "のように手掛かりにして、ネット上の行動を追跡する技術です。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:230
+#: src/js/paidy/wizard/components/controls.jsx:312
 msgid ""
 "If there is more than one question with a \"yes\" answer, please provide an "
 "alternative solution."
 msgstr "「はい」が１つ以上つかない設問がある場合、代替策を記入してください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:240
+#: src/js/paidy/wizard/components/controls.jsx:325
 msgid ""
 "We have not received any administrative penalties under the Specified "
 "Commercial Transactions Law in the past five years."
 msgstr "直近5年間、特定商取引法に基づく行政処分を受けていない。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:260
+#: src/js/paidy/wizard/components/controls.jsx:348
 msgid ""
 "I have never been sued in a civil lawsuit or received an unfavorable "
 "judgment based on actions that violated the Consumer Contract Act."
@@ -9237,40 +7977,32 @@ msgstr ""
 "消費者契約法違反の行為を理由とした民事上の訴訟を提起され、敗訴判決を受けたこ"
 "とがない。"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:50
-#: src/js/paidy/wizard/index.js:29
+#: src/js/paidy/wizard/components/first-main-page.jsx:46
+#: src/js/paidy/wizard/index.js:30
 msgid "Easy setup for Paidy payment"
 msgstr "ペイディ決済らくらく設定"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/first-main-page.jsx:58
+#: src/js/paidy/wizard/components/first-main-page.jsx:54
 msgid "Paidy application"
 msgstr "ペイディ申し込み"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/first-main-page.jsx:66
+#: src/js/paidy/wizard/components/first-main-page.jsx:65
 msgid "Get started now"
 msgstr "今すぐ始める"
 
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/first-main-page.jsx:75
+#: src/js/paidy/wizard/components/first-main-page.jsx:77
 msgid "I agree to the above and apply"
 msgstr "上記内容で申し込む"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:149
+#: src/js/paidy/wizard/components/first-main-page.jsx:152
 msgid "Basic information"
 msgstr "基本情報"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:203
+#: src/js/paidy/wizard/components/first-main-page.jsx:221
 msgid "Security survey"
 msgstr "セキュリティアンケート"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:206
+#: src/js/paidy/wizard/components/first-main-page.jsx:224
 msgid ""
 "Based on requests from the Ministry of Economy, Trade and Industry and the "
 "Japan Consumer Credit Association, all e-commerce affiliates are required to "
@@ -9281,16 +8013,14 @@ msgstr ""
 "時に自らのセキュリティ対策の措置状況の申告が必要となるため、以下の設問にご回"
 "答をお願いします。"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:210
+#: src/js/paidy/wizard/components/first-main-page.jsx:231
 msgid ""
 "For details, please refer to <link>the Security Measures Status Declaration "
 "Form FAQ.</link>"
 msgstr ""
 "詳細は<link>セキュリティ対策状況申告フォームFAQ</link>をご参照ください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:223
+#: src/js/paidy/wizard/components/first-main-page.jsx:247
 msgid ""
 "*If the system has not yet been built, please declare the check items for "
 "each security measure on the assumption that they will be satisfied once the "
@@ -9299,155 +8029,886 @@ msgstr ""
 "※システム未構築の場合は、各セキュリティ対策のチェック項目について、構築完了し"
 "た時点で充足することを前提に申告してください。"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:228
+#: src/js/paidy/wizard/components/first-main-page.jsx:255
 msgid "[Measures to prevent leakage of cardholder data]"
 msgstr "【カード会員データの漏えい対策】"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:243
+#: src/js/paidy/wizard/components/first-main-page.jsx:280
 msgid "[Countermeasures against unauthorized logins]"
 msgstr "【不正ログイン対策】"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:246
+#: src/js/paidy/wizard/components/first-main-page.jsx:286
 msgid ""
 "*At least one \"Yes\" is required. If any are missing, we will contact you."
 msgstr ""
 "※「はい」が１つ以上必要です。不足がある場合、弊社からご連絡いたします。"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:249
+#: src/js/paidy/wizard/components/first-main-page.jsx:293
 msgid ""
 "Do you take the following measures to prevent unauthorized logins when "
 "changing a user's attributes?"
 msgstr "ユーザーの『属性変更時』に以下の不正ログイン対策を行っていますか ?"
 
-#: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:272
+#: src/js/paidy/wizard/components/first-main-page.jsx:329
 msgid "Questionnaire"
 msgstr "アンケート"
 
-#. translators: %s: plugin name
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:341
+#: src/js/paidy/wizard/components/first-main-page.jsx:411
 msgid "Easy Paidy setup now available with %s!"
 msgstr "%sでペイディ決済らくらく設定、はじまりました !"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:343
+#: src/js/paidy/wizard/components/first-main-page.jsx:419
 msgid "Right now, we are offering a one-month trial with no payment fees!"
 msgstr "今なら、なんとお試し1か月決済手数料無料！"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:358
+#: src/js/paidy/wizard/components/first-main-page.jsx:440
 msgid "What is Paidy?"
 msgstr "ペイディって？"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:359
+#: src/js/paidy/wizard/components/first-main-page.jsx:442
 msgid ""
 "Paidy is a deferred payment service that can be used without the need for a "
 "credit card."
 msgstr "Paidyは、クレジットカード不要で使える“あと払い”決済です。"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:360
+#: src/js/paidy/wizard/components/first-main-page.jsx:447
 msgid ""
 "Customers can make purchases with just their mobile phone number and email "
 "address."
 msgstr "購入者は、携帯番号とメールアドレスだけでお買い物。"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:361
+#: src/js/paidy/wizard/components/first-main-page.jsx:452
 msgid ""
 "Payment can be made from the following month onwards via convenience store, "
 "bank or direct debit."
 msgstr "支払いは翌月以降に、コンビニ・銀行・口座振替でOK。"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:362
+#: src/js/paidy/wizard/components/first-main-page.jsx:457
 msgid "We respond to the desire to \"buy now.\""
 msgstr "「今すぐ買いたい」気持ちにこたえます。"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:365
+#: src/js/paidy/wizard/components/first-main-page.jsx:471
 msgid "Benefits of implementation (for EC businesses)"
 msgstr "導入のメリット（EC事業者向け）"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:366
+#: src/js/paidy/wizard/components/first-main-page.jsx:476
 msgid ""
 "No credit card registration is required, making it easy for new customers to "
 "make purchases with confidence."
 msgstr "クレカ登録なしでOKだから、新規のお客様が安心して購入しやすくなります。"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:367
+#: src/js/paidy/wizard/components/first-main-page.jsx:481
 msgid ""
 "Installment payments are also supported, which is expected to increase the "
 "success rate of high-priced products."
 msgstr "分割払いにも対応しているため、高単価商品の成約率アップが期待できます。"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:368
+#: src/js/paidy/wizard/components/first-main-page.jsx:486
 msgid ""
 "*Free installment fees only apply when paying by direct debit or bank "
 "transfer. Identity verification and app download required."
 msgstr ""
 "※分割手数料無料は口座振替・銀行払い時のみ。本人認証とアプリDLが必要です。"
 
-#: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:369
+#: src/js/paidy/wizard/components/first-main-page.jsx:491
 msgid ""
 "Currently used on over 700,000 websites nationwide, including Amazon. "
 "Industry-leading track record."
 msgstr ""
 "Amazonをはじめ、全国70万以上のサイトで利用中。 業界トップクラスの実績。"
 
-#. translators: %s: plugin name
-#: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:374
+#: src/js/paidy/wizard/components/first-main-page.jsx:502
 msgid "%s * Paidy"
 msgstr "%s × Paidy"
 
-#: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:376
+#: src/js/paidy/wizard/components/first-main-page.jsx:507
 msgid ""
 "With this update, Paidy can now be installed in as little as 30 seconds!"
 msgstr "今回のアップデートで、Paidyが最短30秒で導入可能に！"
 
-#: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:377
+#: src/js/paidy/wizard/components/first-main-page.jsx:512
 msgid "No initial or monthly fees."
 msgstr "初期費用・月額費用ゼロ。"
 
-#: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:378
+#: src/js/paidy/wizard/components/first-main-page.jsx:517
 msgid ""
 "The review process is completed in as little as 1-2 days, and setup is easy."
 msgstr "審査も最短1〜2日で完了、設定もカンタンです。"
 
-#: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:386
+#: src/js/paidy/wizard/components/first-main-page.jsx:530
 msgid "pass this time"
 msgstr "今回は見送る"
 
-#: assets/js/build/paidy/wizard/paidy.js:5 src/js/paidy/wizard/index.js:10
+#: src/js/paidy/wizard/index.js:10
 msgid "Back to Paidy settings"
 msgstr "Paidy の設定に戻る"
 
-#: src/js/paidy/admin/components/index.js:49
-msgid "Status: Approved"
-msgstr "ステータス: 審査は承認されました"
+#~ msgid ""
+#~ "<strong>ERROR</strong>: This user has reached the maximum number of login "
+#~ "attempts. Please try again later."
+#~ msgstr ""
+#~ "<strong>ERROR</strong>: このユーザーはログイン試行回数の上限に達しました。"
+#~ "後で再試行してください。"
 
-#: src/js/paidy/admin/components/index.js:66
-msgid "Status: Rejected"
-msgstr "ステータス: 審査は否決されました"
+#, php-format
+#~ msgid "Any &quot;%1$s&quot; method"
+#~ msgstr "任意の &quot;%1$s&quot; の方法"
 
-#: src/js/paidy/wizard/button.js:6
-msgid "Next"
-msgstr "次へ"
+#, php-format
+#~ msgid "%1$s (#%2$s)"
+#~ msgstr "%1$s (#%2$s)"
+
+#, php-format
+#~ msgid "%1$s &ndash; %2$s"
+#~ msgstr "%1$s &ndash; %2$s"
+
+#~ msgid "Other locations"
+#~ msgstr "その他の場所"
+
+#, php-format
+#~ msgid "Key \"%1$s\" not found in inner container"
+#~ msgstr "キー”%1$s”がインナーコンテナ内に存在しない"
+
+#, php-format
+#~ msgid "Could not retrieve value for key \"%1$s from inner container"
+#~ msgstr "内側コンテナからキー\"%1$sの値を取得できませんでした"
+
+#, php-format
+#~ msgid "Could not check cache for key \"%1$s\""
+#~ msgstr "キー \"%1$s\" のキャッシュをチェックできませんでした。"
+
+#, php-format
+#~ msgid "Could not check inner container for key \"%1$s\""
+#~ msgstr "キー\"%1$s\"の内部コンテナをチェックできませんでした。"
+
+#, php-format
+#~ msgid ""
+#~ "Failed to retrieve value for key \"%1$s\" from container at index \"%2$s\""
+#~ msgstr ""
+#~ "インデックス\"%2$s\"のコンテナからキー\"%1$s\"の値を取得するのに失敗しまし"
+#~ "た。"
+
+#, php-format
+#~ msgid "Failed check for key \"%1$s\" on container at index \"%2$s\""
+#~ msgstr ""
+#~ "インデックス\"%2$s\"のコンテナでキー\"%1$s\"のチェックに失敗しました。"
+
+#, php-format
+#~ msgid "Key \"%1$s\" not found in any of the containers"
+#~ msgstr "キー”%1$s”がどのコンテナにも存在しない"
+
+#, php-format
+#~ msgid "Service not found for key \"%1$s\""
+#~ msgstr "キー\"%1$s\"のサービスが見つかりませんでした。"
+
+#, php-format
+#~ msgid "Could not create service \"%1$s\""
+#~ msgstr "サービス\"%1$s\"を作成できませんでした。"
+
+#, php-format
+#~ msgid "Could not extend service \"%1$s\""
+#~ msgstr "サービス\"%1$s\"を拡張できませんでした。"
+
+#~ msgid "Factory could not be invoked"
+#~ msgstr "ファクトリーを呼び出すことができなかった"
+
+#, php-format
+#~ msgid "Dictionary does not have key \"%1$s\""
+#~ msgstr "辞書にキー「%1$s」がない。"
+
+#, php-format
+#~ msgid "Key at index %1$d is not a string"
+#~ msgstr "インデックス%1$dのキーは文字列ではない"
+
+#, php-format
+#~ msgid "Inner key \"%1$s\" is not exposed"
+#~ msgstr "インナーキー「%1$s」が公開されていない"
+
+#~ msgid "Inner container not set"
+#~ msgstr "インナーコンテナ未設定"
+
+#~ msgid "Could not create identity token."
+#~ msgstr "ID トークンを作成できませんでした。"
+
+#~ msgid "Could not authorize order."
+#~ msgstr "注文を許可することができませんでした。"
+
+#~ msgid "Could not fetch sellers status."
+#~ msgstr "販売者ステータスを取得できませんでした。"
+
+#, php-format
+#~ msgid "Not a valid webhook event. Header %s is missing"
+#~ msgstr "有効な webhook イベントではありません。ヘッダ %s がありません"
+
+#, php-format
+#~ msgid "Unknown error while connecting to PayPal. Status code: %1$d."
+#~ msgstr ""
+#~ "PayPal への接続中に不明なエラーが発生しました。ステータスコードです。%1$d."
+
+#~ msgid "Hokkaido"
+#~ msgstr "北海道"
+
+#~ msgid "Aomori"
+#~ msgstr "青森県"
+
+#~ msgid "Iwate"
+#~ msgstr "岩手県"
+
+#~ msgid "Miyagi"
+#~ msgstr "宮城県"
+
+#~ msgid "Akita"
+#~ msgstr "秋田県"
+
+#~ msgid "Yamagata"
+#~ msgstr "山形県"
+
+#~ msgid "Fukushima"
+#~ msgstr "福島県"
+
+#~ msgid "Ibaraki"
+#~ msgstr "茨城県"
+
+#~ msgid "Tochigi"
+#~ msgstr "栃木県"
+
+#~ msgid "Gunma"
+#~ msgstr "群馬県"
+
+#~ msgid "Saitama"
+#~ msgstr "埼玉県"
+
+#~ msgid "Chiba"
+#~ msgstr "千葉県"
+
+#~ msgid "Tokyo"
+#~ msgstr "東京都"
+
+#~ msgid "Kanagawa"
+#~ msgstr "神奈川県"
+
+#~ msgid "Niigata"
+#~ msgstr "新潟県"
+
+#~ msgid "Toyama"
+#~ msgstr "富山県"
+
+#~ msgid "Ishikawa"
+#~ msgstr "石川県"
+
+#~ msgid "Fukui"
+#~ msgstr "福井県"
+
+#~ msgid "Yamanashi"
+#~ msgstr "山梨県"
+
+#~ msgid "Nagano"
+#~ msgstr "長野県"
+
+#~ msgid "Gifu"
+#~ msgstr "岐阜県"
+
+#~ msgid "Shizuoka"
+#~ msgstr "静岡県"
+
+#~ msgid "Aichi"
+#~ msgstr "愛知県"
+
+#~ msgid "Mie"
+#~ msgstr "三重県"
+
+#~ msgid "Shiga"
+#~ msgstr "滋賀県"
+
+#~ msgid "Kyoto"
+#~ msgstr "京都府"
+
+#~ msgid "Osaka"
+#~ msgstr "大阪府"
+
+#~ msgid "Hyogo"
+#~ msgstr "兵庫県"
+
+#~ msgid "Nara"
+#~ msgstr "奈良県"
+
+#~ msgid "Wakayama"
+#~ msgstr "和歌山県"
+
+#~ msgid "Tottori"
+#~ msgstr "鳥取県"
+
+#~ msgid "Shimane"
+#~ msgstr "島根県"
+
+#~ msgid "Okayama"
+#~ msgstr "岡山県"
+
+#~ msgid "Hiroshima"
+#~ msgstr "広島県"
+
+#~ msgid "Yamaguchi"
+#~ msgstr "山口県"
+
+#~ msgid "Tokushima"
+#~ msgstr "徳島県"
+
+#~ msgid "Kagawa"
+#~ msgstr "香川県"
+
+#~ msgid "Ehime"
+#~ msgstr "愛媛県"
+
+#~ msgid "Kochi"
+#~ msgstr "高知県"
+
+#~ msgid "Fukuoka"
+#~ msgstr "福岡県"
+
+#~ msgid "Saga"
+#~ msgstr "佐賀県"
+
+#~ msgid "Nagasaki"
+#~ msgstr "長崎県"
+
+#~ msgid "Kumamoto"
+#~ msgstr "熊本県"
+
+#~ msgid "Oita"
+#~ msgstr "大分県"
+
+#~ msgid "Miyazaki"
+#~ msgstr "宮崎県"
+
+#~ msgid "Kagoshima"
+#~ msgstr "鹿児島県"
+
+#~ msgid "Okinawa"
+#~ msgstr "沖縄県"
+
+#, php-format
+#~ msgid "%s is not a valid email address."
+#~ msgstr "%s は有効なメールアドレスではありません。"
+
+#, php-format
+#~ msgid "Using %2$s%1$s%3$s PayPal."
+#~ msgstr "%2$s%1$s%3$s PayPalを使用する。"
+
+#~ msgid "Place order"
+#~ msgstr "注文する"
+
+#~ msgid "Pay for order"
+#~ msgstr "注文の支払い"
+
+#~ msgid "Unfortunately, your credit card details are not valid."
+#~ msgstr "残念ながら、お客様のクレジットカード情報は有効ではありません。"
+
+#~ msgid "Unfortunately, we do not support your credit card."
+#~ msgstr "残念ながら、クレジットカードには対応しておりません。"
+
+#~ msgid ""
+#~ "Something went wrong. Please try again or choose another payment source."
+#~ msgstr ""
+#~ "何か問題が発生しました。再度お試しいただくか、他の支払い方法をお選びくださ"
+#~ "い。"
+
+#~ msgid "Required form fields are not filled."
+#~ msgstr "フォームの必須項目が埋まっていない。"
+
+#, php-format
+#~ msgid "%s is a required field."
+#~ msgstr "%s は必須フィールドです。"
+
+#, php-format
+#~ msgctxt "checkout-validation"
+#~ msgid "Billing %s"
+#~ msgstr "お客様欄の%s"
+
+#, php-format
+#~ msgctxt "checkout-validation"
+#~ msgid "Shipping %s"
+#~ msgstr "送料 %s"
+
+#~ msgid "Unfortunately, we do not accept this card."
+#~ msgstr "残念ながら、このカードはご利用いただけません。"
+
+#~ msgid "Something went wrong. Please try again."
+#~ msgstr "原因不明のエラー発生。もう一度お試し下さい."
+
+#~ msgid ""
+#~ "Unfortunately, we can't accept your card. Please choose a different "
+#~ "payment method."
+#~ msgstr ""
+#~ "残念ながら、カードはご利用いただけません。他のお支払い方法をお選びくださ"
+#~ "い。"
+
+#~ msgid "Necessary fields not defined. Action aborted."
+#~ msgstr "必要なフィールドが定義されていません。アクションは中止されました。"
+
+#~ msgid "Something went wrong. Action aborted"
+#~ msgstr "何か問題が発生しました。アクションが中止された"
+
+#~ msgid ""
+#~ "An account is already registered with your email address. <a href=\"#\" "
+#~ "class=\"showlogin\">Please log in.</a>"
+#~ msgstr ""
+#~ "アカウント登録済みのメールアドレスです。<a href=\"#\" class=\"showlogin\">"
+#~ "ログインしてください。</a>"
+
+#~ msgid "Please enter a valid account username."
+#~ msgstr "有効なアカウントユーザー名を入力してください."
+
+#~ msgid ""
+#~ "An account is already registered with that username. Please choose "
+#~ "another."
+#~ msgstr ""
+#~ "そのユーザー名はすでに登録されています。別のユーザー名にしてください。"
+
+#~ msgid ""
+#~ "As of 1 Sept 2021, PayPal Checkout will be officially retired from "
+#~ "WooCommerce.com, and support for this product will end as of 1 March "
+#~ "2022. PayPal Payments can now handle all your subscription renewals even "
+#~ "if they were first created using PayPal Checkout. To fully switch over, "
+#~ "all you need to do is deactivate and/or remove the PayPal Checkout plugin "
+#~ "from your store."
+#~ msgstr ""
+#~ "2021年9月1日をもって、PayPal Checkout は WooCommerce.com から正式に終了"
+#~ "し、この製品のサポートは2022年3月1日をもって終了となります。PayPal "
+#~ "Payments は、最初に PayPal Checkout を使用して作成された場合でも、すべての"
+#~ "購読の更新を処理できるようになりました。完全に切り替えるには、あなたのスト"
+#~ "アから PayPal Checkout プラグインを非アクティブ化および/または削除する必要"
+#~ "があります。"
+
+#~ msgid ""
+#~ "As of 1 Sept 2021, PayPal Checkout will be officially retired from "
+#~ "WooCommerce.com, and support for this product will end as of 1 March "
+#~ "2022. To fully switch over, all you need to do is deactivate and/or "
+#~ "remove the PayPal Checkout plugin from your store."
+#~ msgstr ""
+#~ "2021年9月1日をもって、PayPal Checkout は WooCommerce.com から正式に撤退"
+#~ "し、この製品のサポートは2022年3月1日をもって終了します。完全に移行するに"
+#~ "は、あなたのストアから PayPal Checkout プラグインを無効化および/または削除"
+#~ "する必要があります。"
+
+#~ msgid "We could not properly connect to PayPal. Try reloading the page."
+#~ msgstr ""
+#~ "PayPal に正しく接続できませんでした。ページを再読み込みしてみてください。"
+
+#, php-format
+#~ msgid ""
+#~ "You are currently paying with %3$s. If you want to cancel\n"
+#~ "                            this process, please click %1$shere%2$s."
+#~ msgstr ""
+#~ "現在、%3$sでお支払い中です。キャンセルする場合は\n"
+#~ "                            %1$sこちら%2$sをクリックしてください。"
+
+#, php-format
+#~ msgid "Could not add token Id to subscription %1$s: %2$s"
+#~ msgstr "トークン ID を定期購入 %1$s に追加できませんでした: %2$s"
+
+#~ msgid ""
+#~ "No PayPal payments saved, in order to use a saved payment you first need "
+#~ "to create it through a purchase."
+#~ msgstr ""
+#~ "PayPal の支払いは保存されていません。保存された支払いを使用するには、まず"
+#~ "購入によって支払いを作成する必要があります。"
+
+#~ msgid ""
+#~ "No Credit Card saved, in order to use a saved Credit Card you first need "
+#~ "to create it through a purchase."
+#~ msgstr ""
+#~ "クレジットカードが保存されていない。保存されているクレジットカードを使用す"
+#~ "るには、まず購入時にクレジットカードを作成する必要がある。"
+
+#~ msgid ""
+#~ "This PayPal account is already saved on this site. Please check that you "
+#~ "are logged in correctly."
+#~ msgstr ""
+#~ "この PayPal アカウントは、すでにこのサイトに保存されています。正しくログイ"
+#~ "ンしていることを確認してください。"
+
+#~ msgid ""
+#~ "Pay via PayPal; you can pay with your credit card if you don't have a "
+#~ "PayPal account."
+#~ msgstr ""
+#~ "PayPal経由で支払う。 PayPalアカウントをお持ちでない場合は、クレジットカー"
+#~ "ドでお支払いいただけます。"
+
+#~ msgid ""
+#~ "The intent to either capture payment immediately or authorize a payment "
+#~ "for an order after order creation."
+#~ msgstr ""
+#~ "注文の作成後、すぐに支払いを捕捉するか、注文の支払いを承認するかのどちらか"
+#~ "の意図。"
+
+#~ msgid ""
+#~ "The transaction will be captured automatically when the order status "
+#~ "changes to Processing or Completed."
+#~ msgstr ""
+#~ "注文のステータスが「処理中」または「完了」に変わると、自動的にトランザク"
+#~ "ションが取得されます。"
+
+#~ msgid ""
+#~ "If the order contains exclusively virtual items, enable this to "
+#~ "immediately capture, rather than authorize, the transaction."
+#~ msgstr ""
+#~ "注文にバーチャル商品のみが含まれる場合、これを有効にすると、トランザクショ"
+#~ "ンを承認するのではなく、直ちに取り込むことができます。"
+
+#~ msgid ""
+#~ "If you enable this setting, PayPal will be instructed not to allow the "
+#~ "buyer to use funding sources that take additional time to complete (for "
+#~ "example, eChecks). Instead, the buyer will be required to use an instant "
+#~ "funding source, such as an instant transfer, a credit/debit card, or Pay "
+#~ "Later."
+#~ msgstr ""
+#~ "この設定を有効にすると、PayPal は、購入者が完了までにさらに時間がかかる資"
+#~ "金源（たとえば、eCheck）を使用することを許可しないよう指示します。代わり"
+#~ "に、購入者は即時送金、クレジットカード/デビットカード、Pay Later などの即"
+#~ "時資金調達手段を使用することが要求されます。"
+
+#~ msgid ""
+#~ "Control the name of your shop, customers will see in the PayPal process."
+#~ msgstr "ショップの名前を制御し、顧客が PayPal のプロセスで表示されます。"
+
+#~ msgid "Type of PayPal page to display."
+#~ msgstr "表示する PayPal ページスタイル。"
+
+#~ msgid ""
+#~ "By default all possible credit cards will be accepted. You can disable "
+#~ "some cards, if you wish."
+#~ msgstr ""
+#~ "デフォルトでは、使用可能なすべてのクレジットカードが使用可能です。希望によ"
+#~ "り、一部のカードを無効にすることができます。"
+
+#~ msgid "Define which cards you want to display in your checkout."
+#~ msgstr "購入支払い時に表示するカードを定義します。"
+
+#, php-format
+#~ msgid ""
+#~ "3D Secure benefits cardholders and merchants by providing\n"
+#~ "                                  an additional layer of verification "
+#~ "using Verified by Visa,\n"
+#~ "                                  MasterCard SecureCode and American "
+#~ "Express SafeKey.\n"
+#~ "                                  %1$sLearn more about 3D Secure.%2$s"
+#~ msgstr ""
+#~ "3D セキュアは、カード会員と加盟店に次のようなメリットをもたらします。\n"
+#~ "                                  Verified by Visa を使用した追加的な検証"
+#~ "レイヤーを提供することで、カード会員にメリットをもたらします。\n"
+#~ "                                  MasterCard SecureCode および American "
+#~ "Express SafeKey を使用した追加的な検証を提供することで、カード会員にメリッ"
+#~ "トをもたらします。\n"
+#~ "                                  %1$s3Dセキュアについて詳しくはこちら。"
+#~ "%2$s"
+
+#, php-format
+#~ msgid ""
+#~ " To use tracking features, you must %1$senable tracking on your "
+#~ "account%2$s."
+#~ msgstr ""
+#~ " トラッキング機能を利用するには、%1$sアカウントでトラッキングを有効にす"
+#~ "る%2$s必要があります。"
+
+#~ msgid "To capture the payment select capture action from the list below."
+#~ msgstr ""
+#~ "支払いを売上処理するには、以下のリストから売上処理アクションを選択します。"
+
+#~ msgid "Capture authorized PayPal payment"
+#~ msgstr "PayPal決済の承認取得"
+
+#~ msgid ""
+#~ "Accept debit and credit cards, and local payment methods with PayPal’s "
+#~ "latest solution."
+#~ msgstr ""
+#~ "PayPal の最新ソリューションで、デビットカード、クレジットカード、ローカル"
+#~ "決済に対応。"
+
+#~ msgid "Required form fields are not filled or invalid."
+#~ msgstr "フォームの必須項目が入力されていない、または無効である。"
+
+#~ msgid "Accept debit and credit cards, and local payment methods."
+#~ msgstr ""
+#~ "デビットカード、クレジットカード、現地での支払い方法に対応しています。"
+
+#~ msgid "Accept PayPal, Pay Later and alternative payment types."
+#~ msgstr "PayPal、Pay Later、その他の支払い方法に対応しています。"
+
+#~ msgid ""
+#~ "Specify brand name, logo and customer service instructions to be "
+#~ "presented on Ratepay's payment instructions."
+#~ msgstr ""
+#~ "Ratepay の支払い指示書に提示するブランド名、ロゴ、顧客サービスの指示を指定"
+#~ "する。"
+
+#~ msgid "Could not retrieve information. Try again later."
+#~ msgstr "情報を取得できませんでした。後でもう一度試してみてください。"
+
+#~ msgid "Payment already captured."
+#~ msgstr "支払いはすでに売上処理されています。"
+
+#~ msgid "Failed to capture. Try again later or checks the logs."
+#~ msgstr "承認に失敗しました。後で再試行するか、ログを確認してください。"
+
+#~ msgid "Cannot capture, no valid payment authorization."
+#~ msgstr "承認できません、有効な支払い承認がありません。"
+
+#~ msgid "Could not find payment to process."
+#~ msgstr "処理するための支払いが見つかりませんでした。"
+
+#, php-format
+#~ msgid ""
+#~ "PayPal Payments is almost ready. To get started, <a href=\"%1$s\">connect "
+#~ "your account</a>."
+#~ msgstr ""
+#~ "PayPal Payments の準備はほぼ完了しています。まずは、<a href=\"%1$s\">アカ"
+#~ "ウントを接続して</a>ください。"
+
+#, php-format
+#~ msgid ""
+#~ "%1$s cannot be used without the PayPal gateway. <a href=\"%2$s\">Enable "
+#~ "the PayPal gateway</a>."
+#~ msgstr ""
+#~ "%1$s は、PayPal ゲートウェイを使用しないと使用できません。<a "
+#~ "href=\"%2$s\">PayPalゲートウェイを有効化</a>します。"
+
+#~ msgid "The payment is not ready for processing yet."
+#~ msgstr "決済の準備がまだできていません。"
+
+#~ msgid ""
+#~ "You have PayPal vaulting enabled, that's why Pay Later options are "
+#~ "unavailable now. You cannot use both features at the same time."
+#~ msgstr ""
+#~ "PayPal の Vaulting が有効になっているため、後払いのオプションが使用できな"
+#~ "い状態になっています。両方の機能を同時に使用することはできません。"
+
+#, php-format
+#~ msgid ""
+#~ "Customize the appearance of the PayPal smart buttons on the\n"
+#~ "\t\t\t\t\t%1$sCheckout page%5$s, %2$sSingle Product Page%5$s, %3$sCart "
+#~ "page%5$s or on %4$sMini Cart%5$s."
+#~ msgstr ""
+#~ "PayPalスマートボタンの外観をカスタマイズできます。\n"
+#~ "\t\t\t\t\t%1$s購入手続きページ%5$s、%2$s単品ページ%5$s、%3$sお買い物カゴ"
+#~ "ページ%5$s、%4$sミニカート%5$sのいずれかでカスタマイズできます。"
+
+#~ msgid ""
+#~ "If additional funding sources are available to the buyer through PayPal, "
+#~ "then multiple buttons are displayed in the space provided. Choose "
+#~ "\"vertical\" for a dynamic list of alternative and local payment options, "
+#~ "or \"horizontal\" when space is limited."
+#~ msgstr ""
+#~ "PayPal を通じて買い手が追加の資金源を利用できる場合、提供されるスペースに"
+#~ "複数のボタンが表示されます。代替案や現地の支払方法をダイナミックに表示した"
+#~ "い場合は「縦型」を、スペースが限られている場合は「横型」を選択してくださ"
+#~ "い。"
+
+#~ msgid ""
+#~ "Add the tagline. This line will only show up, if you select a horizontal "
+#~ "layout."
+#~ msgstr ""
+#~ "タグラインを追加します。この行は、横型レイアウトを選択した場合のみ表示され"
+#~ "ます。"
+
+#~ msgid "This controls the label on the primary button."
+#~ msgstr "主ボタンのラベルを制御します。"
+
+#~ msgid ""
+#~ "Controls the background color of the primary button. Use \"Gold\" to "
+#~ "leverage PayPal's recognition and preference, or change it to match your "
+#~ "site design or aesthetic."
+#~ msgstr ""
+#~ "プライマリボタンの背景色を制御します。PayPal の認知度と好みに合わせて"
+#~ "「ゴールド」を使用するか、サイトのデザインや美観に合わせて変更してくださ"
+#~ "い。"
+
+#~ msgid ""
+#~ "The pill-shaped button's unique and powerful shape signifies PayPal in "
+#~ "people's minds. Use the rectangular button as an alternative when pill-"
+#~ "shaped buttons might pose design challenges."
+#~ msgstr ""
+#~ "錠剤型ボタンのユニークでパワフルな形状は、PayPal を連想させます。長方形の"
+#~ "ボタンは、錠剤型のボタンがデザイン上の問題を引き起こす可能性がある場合に、"
+#~ "代替版として使用してください。"
+
+#, php-format
+#~ msgid ""
+#~ "Customize the appearance of the PayPal smart buttons on the %1$sCheckout "
+#~ "page%2$s.\n"
+#~ "\t\t\t\t\t%3$sCheckout Buttons must be enabled to display the PayPal "
+#~ "gateway on the Checkout page.\n"
+#~ "\t\t\t\t\t"
+#~ msgstr ""
+#~ "%1$s購入手続きページ%2$sの PayPal スマートボタンの外観をカスタマイズするこ"
+#~ "とができます。\n"
+#~ "\t\t\t\t\t%3$s購入手続きページに PayPal ゲートウェイを表示するには、支払い"
+#~ "ボタンを有効にする必要があります。\n"
+#~ "\t\t\t\t\t"
+
+#, php-format
+#~ msgid ""
+#~ "Customize the appearance of the PayPal smart buttons on the %1$sSingle "
+#~ "Product Page%2$s."
+#~ msgstr ""
+#~ "%1$sシングル商品ページ%2$sの PayPal スマートボタンの外観をカスタマイズしま"
+#~ "す。"
+
+#~ msgid ""
+#~ "If additional funding sources are available to the buyer through PayPal, "
+#~ "such as Venmo, then multiple buttons are displayed in the space provided. "
+#~ "Choose \"vertical\" for a dynamic list of alternative and local payment "
+#~ "options, or \"horizontal\" when space is limited."
+#~ msgstr ""
+#~ "Venmo など、PayPal を通じて買い手が追加の資金調達手段を利用できる場合は、"
+#~ "提供されるスペースに複数のボタンが表示されます。代替案や現地での支払い方法"
+#~ "をダイナミックに一覧表示したい場合は「縦型」、スペースが限られている場合は"
+#~ "「横型」を選択します。"
+
+#, php-format
+#~ msgid ""
+#~ "Customize the appearance of the PayPal smart buttons on the %1$sCart "
+#~ "page%2$s."
+#~ msgstr ""
+#~ "%1$sお買い物カゴページ%2$sの PayPal スマートボタンの外観をカスタマイズす"
+#~ "る。"
+
+#, php-format
+#~ msgid ""
+#~ "Customize the appearance of the PayPal smart buttons on the %1$sMini "
+#~ "Cart%2$s."
+#~ msgstr ""
+#~ "%1$sミニカート%2$sの PayPal スマートボタンの外観をカスタマイズする。"
+
+#~ msgid "Pay with your credit card."
+#~ msgstr "クレジットカードでお支払いください。"
+
+#~ msgid ""
+#~ "We could not complete the onboarding process. Some features, such as card "
+#~ "processing, will not be available. To fix this, please try again."
+#~ msgstr ""
+#~ "オンボーディングプロセスを完了することができませんでした。カード処理など、"
+#~ "一部の機能が利用できません。これを修正するために、もう一度お試しください。"
+
+#~ msgid ""
+#~ "Credit Card processing for your account has not yet been activated by "
+#~ "PayPal. If your account is new, this can take some days. Otherwise, "
+#~ "please get in contact with PayPal."
+#~ msgstr ""
+#~ "アカウントのクレジットカード処理は、まだ PayPal によって有効化されていませ"
+#~ "ん。お客様のアカウントが新しい場合、これは数日かかることがあります。それ以"
+#~ "外の場合は、PayPal と連絡を取ってください。"
+
+#~ msgid ""
+#~ "You need to complete your onboarding, before you can use the Advanced "
+#~ "Card Processing option."
+#~ msgstr ""
+#~ "Advanced Card Processing オプションを使用する前に、オンボーディングを完了"
+#~ "する必要があります。"
+
+#~ msgid ""
+#~ "Unfortunately, the card processing option is not yet available in your "
+#~ "country."
+#~ msgstr ""
+#~ "残念ながら、カード決済のオプションは、あなたの国ではまだ利用できません。"
+
+#~ msgid "Advanced credit and debit country and currency availability."
+#~ msgstr "クレジットとデビットカードの国や通貨を利用できる。"
+
+#~ msgid ""
+#~ "Could not process WC order because PAYMENT.CAPTURE.COMPLETED webhook not "
+#~ "received."
+#~ msgstr ""
+#~ "PAYMENT.CAPTURE.COMPLETED webhook を受信していないため、WC 注文を処理でき"
+#~ "ませんでした。"
+
+#~ msgid ""
+#~ "Please verify your API Credentials and try again to connect your PayPal "
+#~ "business account. Visit the <a href=\"https://docs.woocommerce.com/"
+#~ "document/woocommerce-paypal-payments/\" target=\"_blank\">plugin "
+#~ "documentation</a> for more information about the setup."
+#~ msgstr ""
+#~ "API 認証情報を確認し、PayPal ビジネスアカウントに接続するためにもう一度や"
+#~ "り直してください。セットアップの詳細については、<a href=\"https://"
+#~ "docs.woocommerce.com/document/woocommerce-paypal-payments/\" "
+#~ "target=\"_blank\">プラグインのドキュメント</a>をご覧ください。"
+
+#, php-format
+#~ msgid "No paypal payment for webhook event %s was found."
+#~ msgstr "webhook イベント%sに対する paypal の支払いは見つかりませんでした。"
+
+#, php-format
+#~ msgid "Could not capture payment for webhook event %s."
+#~ msgstr "Webhook イベント%sの支払いをキャプチャできませんでした。"
+
+#, php-format
+#~ msgid "Order %s has been updated through PayPal"
+#~ msgstr "PayPal で注文%sが更新されました"
+
+#, php-format
+#~ msgid "Failed to capture order %1$s through PayPal."
+#~ msgstr "PayPal による注文%1$sの取り込みに失敗しました。"
+
+#, php-format
+#~ msgid "Order %1$s has been refunded with %2$s through PayPal"
+#~ msgstr "注文%1$sは PayPal を通じて%2$sで払い戻されました"
+
+#, php-format
+#~ msgid "Order %1$s has been cancelled through PayPal"
+#~ msgstr "ご注文%1$sは PayPal でキャンセルされました"
+
+#, php-format
+#~ msgid "Hi %s,"
+#~ msgstr "%s 様"
+
+#~ msgid "We have finished processing your order."
+#~ msgstr "ご注文の処理が完了しました。"
+
+#, php-format
+#~ msgid ""
+#~ "An order has been created for you on %1$s. Your invoice is below, with a "
+#~ "link to make payment when you’re ready: %2$s"
+#~ msgstr ""
+#~ "%1$sで注文が作成されました。 請求書は以下のとおりです。準備ができたら支払"
+#~ "いを行うためのリンクがあります: %2$s"
+
+#~ msgid "Pay for this order"
+#~ msgstr "この注文の支払い"
+
+#, php-format
+#~ msgid "Here are the details of your order placed on %s:"
+#~ msgstr "%sでの注文の詳細は次のとおりです:"
+
+#~ msgid "The following note has been added to your order:"
+#~ msgstr "次のメモが注文に追加されました:"
+
+#~ msgid "As a reminder, here are your order details:"
+#~ msgstr "念のため、注文の詳細は次のとおりです:"
+
+#~ msgid ""
+#~ "Thanks for your order. It’s on-hold until we confirm that payment has "
+#~ "been received."
+#~ msgstr ""
+#~ "ご注文ありがとうございます。 お支払いをこちらで確認できるまで、ご注文は保"
+#~ "留となります。"
+
+#, php-format
+#~ msgid ""
+#~ "Just to let you know &mdash; we've received your order #%s, and it is now "
+#~ "being processed:"
+#~ msgstr "ご注文 #%s を承りました。現在処理中です:"
+
+#, php-format
+#~ msgid ""
+#~ "Your order on %s has been partially refunded. There are more details "
+#~ "below for your reference:"
+#~ msgstr ""
+#~ "%sでのご注文は一部返金されました。 参考までに、以下に詳細があります:"
+
+#, php-format
+#~ msgid ""
+#~ "Your order on %s has been refunded. There are more details below for your "
+#~ "reference:"
+#~ msgstr "%sでのご注文は返金されました。 参考までに、以下に詳細があります:"
 
 #, fuzzy
 #~| msgid ""
