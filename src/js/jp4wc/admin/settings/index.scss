@@ -1,0 +1,11 @@
+/**
+ * Admin Settings Styles
+ */
+
+// Import component styles
+@use './components/Settings.scss';
+
+// Global admin settings styles
+.jp4wc-admin-settings {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+}

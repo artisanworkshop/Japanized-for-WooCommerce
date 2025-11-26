@@ -29,6 +29,7 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		'admin/security': '/src/js/jp4wc/admin/security/index.js',
+		'admin/settings': '/src/js/jp4wc/admin/settings/index.js',
 		'frontend/blocks/atstore': '/src/js/jp4wc/frontend/blocks/atstore/index.js',
 		'frontend/blocks/bank-jp': '/src/js/jp4wc/frontend/blocks/bank-jp/index.js',
 		'frontend/blocks/postofficebank': '/src/js/jp4wc/frontend/blocks/postofficebank/index.js',

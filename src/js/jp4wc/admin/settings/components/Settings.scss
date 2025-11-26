@@ -1,0 +1,198 @@
+.jp4wc-settings-container {
+	max-width: 1200px;
+	margin: 20px auto;
+	padding: 20px;
+	background: #fff;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+	.jp4wc-settings-header {
+		margin-bottom: 30px;
+		padding-bottom: 20px;
+		border-bottom: 1px solid #ddd;
+
+		h1 {
+			margin: 0;
+			font-size: 24px;
+			font-weight: 600;
+		}
+	}
+
+	.jp4wc-settings-loading {
+		text-align: center;
+		padding: 60px 20px;
+
+		.components-spinner {
+			margin: 0 auto 20px;
+		}
+
+		p {
+			color: #666;
+			font-size: 16px;
+		}
+	}
+
+	.jp4wc-settings-tabs {
+		.components-tab-panel__tabs {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 30px;
+			border-bottom: 1px solid #ddd;
+			padding-bottom: 0;
+
+			button {
+				padding: 12px 20px;
+				background: transparent;
+				border: none;
+				border-bottom: 2px solid transparent;
+				cursor: pointer;
+				font-size: 14px;
+				font-weight: 500;
+				color: #666;
+				transition: all 0.2s ease;
+
+				&:hover {
+					color: #2271b1;
+				}
+
+				&.is-active {
+					color: #2271b1;
+					border-bottom-color: #2271b1;
+				}
+			}
+		}
+
+		.components-tab-panel__tab-content {
+			padding: 0;
+		}
+	}
+
+	.jp4wc-settings-tab-content {
+		.components-panel {
+			border: none;
+
+			.components-panel__body {
+				border: 1px solid #ddd;
+				margin-bottom: 20px;
+
+				&.is-opened {
+					.components-panel__body-title {
+						border-bottom: 1px solid #ddd;
+					}
+				}
+
+				.components-panel__body-title {
+					button {
+						padding: 16px;
+						font-size: 16px;
+						font-weight: 600;
+
+						&:hover {
+							background: #f0f0f0;
+						}
+					}
+				}
+
+				.components-panel__row {
+					padding: 16px;
+					border-bottom: 1px solid #f0f0f0;
+
+					&:last-child {
+						border-bottom: none;
+					}
+
+					.components-base-control {
+						width: 100%;
+					}
+
+					.components-toggle-control {
+						.components-base-control__field {
+							margin-bottom: 0;
+						}
+
+						.components-toggle-control__label {
+							font-weight: 500;
+						}
+					}
+				}
+			}
+		}
+
+		.components-notice {
+			margin: 0 0 20px 0;
+		}
+	}
+
+	.jp4wc-settings-footer {
+		margin-top: 30px;
+		padding-top: 20px;
+		border-top: 1px solid #ddd;
+		text-align: right;
+
+		.components-button {
+			padding: 10px 30px;
+			height: auto;
+			font-size: 14px;
+		}
+	}
+}
+
+// General Settings Specific Styles
+.jp4wc-general-settings {
+	.components-notice {
+		margin-bottom: 20px;
+	}
+}
+
+// Shipment Settings Specific Styles
+.jp4wc-shipment-settings {
+	.time-zone-item {
+		display: flex;
+		gap: 10px;
+		align-items: flex-end;
+		margin-bottom: 10px;
+		padding: 15px;
+		background: #f9f9f9;
+		border-radius: 4px;
+
+		.components-base-control {
+			flex: 1;
+		}
+	}
+}
+
+// Payment Settings Specific Styles
+.jp4wc-payment-settings {
+	.cod-fees-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-top: 10px;
+
+		th,
+		td {
+			padding: 10px;
+			text-align: left;
+			border: 1px solid #ddd;
+		}
+
+		th {
+			background: #f0f0f0;
+			font-weight: 600;
+		}
+	}
+}
+
+// Law Settings Specific Styles
+.jp4wc-law-settings {
+	.components-textarea-control {
+		textarea {
+			min-height: 100px;
+		}
+	}
+}
+
+// Affiliate Settings Specific Styles
+.jp4wc-affiliate-settings {
+	.affiliate-section {
+		margin-bottom: 30px;
+	}
+}
