@@ -1,7 +1,9 @@
+import { registerPlugin } from '@wordpress/plugins';
+import { ExperimentalOrderShippingPackages } from '@woocommerce/blocks-checkout';
 import { __ } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 
-const JP4WCDeliveryBlockEditor = () => {
+const DeliveryFieldsEditor = () => {
 	// Get script data from localized data
 	const scriptData = window.jp4wcDeliveryData || {};
 	const {
@@ -74,4 +76,15 @@ const JP4WCDeliveryBlockEditor = () => {
 	);
 };
 
-export default JP4WCDeliveryBlockEditor;
+const render = () => {
+	return (
+		<ExperimentalOrderShippingPackages>
+			<DeliveryFieldsEditor />
+		</ExperimentalOrderShippingPackages>
+	);
+};
+
+registerPlugin( 'jp4wc-delivery-block-editor', {
+	render,
+	scope: 'woocommerce-checkout',
+} );

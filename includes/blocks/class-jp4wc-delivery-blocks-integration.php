@@ -147,17 +147,17 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 			true
 		);
 
-		wp_set_script_translations(
-			'jp4wc-delivery-block-editor',
-			'woocommerce-for-japan',
-			plugin_dir_path( JP4WC_PLUGIN_FILE ) . 'i18n'
-		);
-
 		// Enqueue the script data for editor.
 		wp_localize_script(
 			'jp4wc-delivery-block-editor',
 			'jp4wcDeliveryData',
 			$this->get_script_data()
+		);
+
+		wp_set_script_translations(
+			'jp4wc-delivery-block-editor',
+			'woocommerce-for-japan',
+			plugin_dir_path( JP4WC_PLUGIN_FILE ) . 'i18n'
 		);
 	}
 
