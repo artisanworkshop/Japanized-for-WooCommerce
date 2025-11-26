@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.8.3
-Stable tag: 2.7.17
+Stable tag: 2.8.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,56 +58,18 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Changelog ==
 
-= 2.7.17 - 2025-11-12 =
-* Bug - Strengthened verification of required fields for expected delivery date.
-* Add - Added a notification email function if the required item for the expected delivery date is missing.
-
-= 2.7.16 - 2025-11-07 =
-* Bug - COD additional fee settings bug.
-
-= 2.7.15 - 2025-11-05 =
-* Bug - COD additional fee bug.
-* Tweat - Add dispaly ECBuddy service announce.
-
-= 2.7.13 & 2.7.14 - 2025-11-04 =
-* Bug - Fixed Paidy Payment at using coupon bug.
-* Tweat - Change support announce.
-
-= 2.7.11 & 2.7.12 - 2025-10-31 =
-* Bug - Fixed display Post debgug data.
-* Dev - Make COD2 available in the Checkout Block.
-
-= 2.7.10 - 2025-10-29 =
-* Fixed - Fixed Paidy webhook URL bug.
-* Tweat - Paidy Wizard message changed.
-
-= 2.7.9 - 2025-10-22 =
-* Fixed - Paidy remove refund button bug fixed.
-
-= 2.7.7 & 2.7.8 - 2025-10-17 =
-* Fixed - Paidy add_action hook orders Fixed.
-* Dev - I created a link that can be set manually without using Paidy's wizard.
-* Dev - Security warnings can now be dismissed with one click.
-
-= 2.7.6 - 2025-09-09 =
-* Fixed - Update JP4WC Framework and bug Fixed.
-
-= 2.7.5 - 2025-09-08 =
-* Fixed - Paidy Wizard bug Fixed.
-
-= 2.7.0 & 2.7.1 & 2.7.2 & 2.7.3 - 2025-09-05 =
-* Update - Updated update requirements to match the latest version of WooCommerce(10.1.2).
-* Update - Paidy Payment gateway.
-* Fixed - Class bugs(2.7.1& 2.7.2)
-* Fixed - Fixed double security warnings.
-* Dev - Update and Install wizard for Paidy Payments. 
+= 2.8.0 - 2025-11-26 =
+* Update - Setting Page to Block.
+* Update - Some bug and lint fixed.
+* Fixed - Fixed and Update Usage Tracking.
+* Dev - Delivery date and timezone for Checkout Block.
 
 [more older](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
 == Upgrade Notice ==
 
-= 2.7 =
-2.7 is a minor update, but add Paidy payment method. Make a full site backup, update your theme and extensions.
+= 2.8 =
+2.8 is a minor update, but change the setting page to block. Make a full site backup, update your theme and extensions.
 There is no change in the database saved by this plug-in.
 
 = 2.1 =
