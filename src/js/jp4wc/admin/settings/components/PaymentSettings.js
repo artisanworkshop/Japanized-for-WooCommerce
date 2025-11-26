@@ -120,7 +120,9 @@ const PaymentSettings = ( {
 				initialOpen={ false }
 			>
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Fee name', 'woocommerce-for-japan' ) }
 						help={ __(
 							'Name of the COD fee',
@@ -134,7 +136,9 @@ const PaymentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Extra charge amount',
 							'woocommerce-for-japan'
@@ -152,7 +156,9 @@ const PaymentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Maximum cart value to which adding fee',
 							'woocommerce-for-japan'
@@ -173,7 +179,9 @@ const PaymentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<SelectControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<SelectControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Includes taxes',
 							'woocommerce-for-japan'
@@ -196,7 +204,9 @@ const PaymentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<SelectControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<SelectControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Tax Class', 'woocommerce-for-japan' ) }
 						value={ settings?.extra_charge_tax_class || '' }
 						options={ [

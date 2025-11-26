@@ -60,7 +60,9 @@ const AffiliateSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'A8.net PID', 'woocommerce-for-japan' ) }
 						help={ __(
 							'Enter your A8.net PID',
@@ -97,7 +99,9 @@ const AffiliateSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'felmat PID', 'woocommerce-for-japan' ) }
 						help={ __(
 							'Enter your felmat PID',

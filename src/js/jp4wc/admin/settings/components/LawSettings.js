@@ -25,7 +25,9 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				initialOpen={ false }
 			>
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Shop Name', 'woocommerce-for-japan' ) }
 						value={ settings?.[ 'law-shop-name' ] || '' }
 						onChange={ ( value ) =>
@@ -35,7 +37,9 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Sales company name (company name)',
 							'woocommerce-for-japan'
@@ -48,7 +52,9 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Owner Name', 'woocommerce-for-japan' ) }
 						value={ settings?.[ 'law-owner-name' ] || '' }
 						onChange={ ( value ) =>
@@ -58,7 +64,9 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Manager Name', 'woocommerce-for-japan' ) }
 						value={ settings?.[ 'law-manager-name' ] || '' }
 						onChange={ ( value ) =>
@@ -68,7 +76,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextareaControl __nextHasNoMarginBottom={true}
+					<TextareaControl
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Location', 'woocommerce-for-japan' ) }
 						value={ settings?.[ 'law-location' ] || '' }
 						onChange={ ( value ) =>
@@ -79,7 +88,9 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Contact', 'woocommerce-for-japan' ) }
 						value={ settings?.[ 'law-contact' ] || '' }
 						onChange={ ( value ) =>
@@ -89,7 +100,9 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Telephone', 'woocommerce-for-japan' ) }
 						value={ settings?.[ 'law-tel' ] || '' }
 						onChange={ ( value ) =>
@@ -99,7 +112,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextareaControl __nextHasNoMarginBottom={true}
+					<TextareaControl
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Selling price', 'woocommerce-for-japan' ) }
 						value={ settings?.[ 'law-price' ] || '' }
 						onChange={ ( value ) =>
@@ -110,7 +124,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextareaControl __nextHasNoMarginBottom={true}
+					<TextareaControl
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Payment method',
 							'woocommerce-for-japan'
@@ -124,7 +139,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextareaControl __nextHasNoMarginBottom={true}
+					<TextareaControl
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Product purchase method',
 							'woocommerce-for-japan'
@@ -138,7 +154,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextareaControl __nextHasNoMarginBottom={true}
+					<TextareaControl
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Product delivery time',
 							'woocommerce-for-japan'
@@ -152,7 +169,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextareaControl __nextHasNoMarginBottom={true}
+					<TextareaControl
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Costs other than product charges',
 							'woocommerce-for-japan'
@@ -166,7 +184,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextareaControl __nextHasNoMarginBottom={true}
+					<TextareaControl
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Returns / Cancellations',
 							'woocommerce-for-japan'
@@ -180,7 +199,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 				</PanelRow>
 
 				<PanelRow>
-					<TextareaControl __nextHasNoMarginBottom={true}
+					<TextareaControl
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Special conditions',
 							'woocommerce-for-japan'

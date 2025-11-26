@@ -95,7 +95,8 @@ const ShipmentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<NumberControl __next40pxDefaultSize
+					<NumberControl
+						__next40pxDefaultSize
 						label={ __( 'Start Date', 'woocommerce-for-japan' ) }
 						help={ __(
 							'Number of days from today to start accepting orders',
@@ -110,7 +111,8 @@ const ShipmentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<NumberControl __next40pxDefaultSize
+					<NumberControl
+						__next40pxDefaultSize
 						label={ __( 'Delivery Term', 'woocommerce-for-japan' ) }
 						help={ __(
 							'Number of days to accept delivery date',
@@ -125,7 +127,9 @@ const ShipmentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Unspecified date description',
 							'woocommerce-for-japan'
@@ -142,7 +146,9 @@ const ShipmentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<SelectControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<SelectControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __( 'Date format', 'woocommerce-for-japan' ) }
 						value={ settings?.[ 'date-format' ] || 'Y-m-d' }
 						options={ [
@@ -172,7 +178,9 @@ const ShipmentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Delivery deadline',
 							'woocommerce-for-japan'
@@ -270,7 +278,9 @@ const ShipmentSettings = ( {
 						</h4>
 						<div style={ { display: 'flex', gap: '10px' } }>
 							<div style={ { flex: 1 } }>
-								<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+								<TextControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom={ true }
 									label={ __(
 										'Holiday start date',
 										'woocommerce-for-japan'
@@ -288,7 +298,9 @@ const ShipmentSettings = ( {
 								/>
 							</div>
 							<div style={ { flex: 1 } }>
-								<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+								<TextControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom={ true }
 									label={ __(
 										'Holiday end date',
 										'woocommerce-for-japan'
@@ -362,7 +374,9 @@ const ShipmentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Unspecified Time description',
 							'woocommerce-for-japan'
@@ -399,7 +413,9 @@ const ShipmentSettings = ( {
 								} }
 							>
 								<div style={ { flex: 1 } }>
-									<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+									<TextControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom={ true }
 										label={ __(
 											'Start Time',
 											'woocommerce-for-japan'
@@ -416,7 +432,9 @@ const ShipmentSettings = ( {
 									/>
 								</div>
 								<div style={ { flex: 1 } }>
-									<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+									<TextControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom={ true }
 										label={ __(
 											'End Time',
 											'woocommerce-for-japan'
@@ -463,7 +481,9 @@ const ShipmentSettings = ( {
 				initialOpen={ false }
 			>
 				<PanelRow>
-					<TextControl __next40pxDefaultSize __nextHasNoMarginBottom={true}
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'Notification email address',
 							'woocommerce-for-japan'
