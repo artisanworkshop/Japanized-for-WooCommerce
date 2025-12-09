@@ -61,6 +61,11 @@ class JP4WC_Delivery {
 	 * @return void
 	 */
 	public function delivery_date_designation() {
+		// Skip if using Checkout Block (additional fields are handled by the block integration).
+		if ( function_exists( 'jp4wc_is_using_checkout_blocks' ) && jp4wc_is_using_checkout_blocks() ) {
+			return;
+		}
+
 		// Use static variable to prevent multiple displays.
 		static $displayed = false;
 
@@ -307,24 +312,28 @@ class JP4WC_Delivery {
 		// Check if this is a block checkout request.
 		$is_block_checkout = did_action( 'woocommerce_store_api_checkout_update_order_from_request' ) > 0;
 
-		if ( ! $is_block_checkout ) {
-			if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ||
-				! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' )
-			) {
-				return;
-			}
+		// Skip if block checkout (handled by validate_delivery_fields_block_checkout).
+		if ( $is_block_checkout ) {
+			return;
 		}
 
-		$date  = false;
-		$time  = false;
+		if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ||
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' )
+		) {
+			return;
+		}
+
 		$order = wc_get_order( $order_id );
 
+		// Process delivery date.
 		if ( isset( $_POST['wc4jp_delivery_date'] ) ) {
 			$date = apply_filters( 'wc4jp_delivery_date', sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) ), $order_id );
-			if ( isset( $date ) && '0' !== $date ) {
+			if ( ! empty( $date ) && '0' !== $date ) {
 				if ( get_option( 'wc4jp-date-format' ) ) {
-					$date = strtotime( $date );
-					$date = date_i18n( get_option( 'wc4jp-date-format' ), $date );
+					$date_timestamp = strtotime( $date );
+					$formatted_date = date_i18n( get_option( 'wc4jp-date-format' ), $date_timestamp );
+					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $formatted_date ) ) );
+				} else {
 					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $date ) ) );
 				}
 			} else {
@@ -332,23 +341,26 @@ class JP4WC_Delivery {
 			}
 		}
 
+		// Process delivery time zone.
 		if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) {
 			$time = apply_filters( 'wc4jp_delivery_time_zone', sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) ), $order_id );
-		}
-		if ( ! empty( $time ) && '0' !== $time ) {
-			$order->update_meta_data( 'wc4jp-delivery-time-zone', esc_attr( htmlspecialchars( $time ) ) );
-		} else {
-			$order->delete_meta_data( 'wc4jp-delivery-time-zone' );
+			if ( ! empty( $time ) && '0' !== $time ) {
+				$order->update_meta_data( 'wc4jp-delivery-time-zone', esc_attr( htmlspecialchars( $time ) ) );
+			} else {
+				$order->delete_meta_data( 'wc4jp-delivery-time-zone' );
+			}
 		}
 
+		// Process tracking ship date.
 		if ( isset( $_POST['wc4jp-tracking-ship-date'] ) ) {
 			$ship_date = apply_filters( 'wc4jp_ship_date', sanitize_text_field( wp_unslash( $_POST['wc4jp-tracking-ship-date'] ) ), $order_id );
+			if ( ! empty( $ship_date ) && '0' !== $ship_date ) {
+				$order->update_meta_data( 'wc4jp-tracking-ship-date', esc_attr( htmlspecialchars( $ship_date ) ) );
+			} else {
+				$order->delete_meta_data( 'wc4jp-tracking-ship-date' );
+			}
 		}
-		if ( isset( $ship_date ) && '0' !== $ship_date ) {
-			$order->update_meta_data( 'wc4jp-tracking-ship-date', esc_attr( htmlspecialchars( $ship_date ) ) );
-		} else {
-			$order->delete_meta_data( 'wc4jp-tracking-ship-date' );
-		}
+
 		$order->save();
 	}
 
@@ -461,9 +473,12 @@ class JP4WC_Delivery {
 	 * @return void
 	 */
 	public function validate_delivery_fields_block_checkout( $order, $request ) {
-		$extensions = $request->get_param( 'extensions' );
+		// Check if we've already processed this order (prevent duplicate saves).
+		static $processed_orders = array();
+		$order_id                = $order->get_id();
+		$extensions              = $request->get_param( 'extensions' );
 
-		// Extract delivery data from extensions.
+		// Extract delivery data from extensions OR from POST data (fallback for hidden inputs).
 		$delivery_date = '';
 		$delivery_time = '';
 
@@ -473,6 +488,14 @@ class JP4WC_Delivery {
 			}
 			if ( isset( $extensions['jp4wc-delivery']['wc4jp_delivery_time_zone'] ) ) {
 				$delivery_time = $extensions['jp4wc-delivery']['wc4jp_delivery_time_zone'];
+			}
+		} else {
+			// Fallback: Try to get data from POST (for hidden inputs).
+			if ( isset( $_POST['wc4jp_delivery_date'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+				$delivery_date = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+			}
+			if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+				$delivery_time = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 			}
 		}
 
@@ -510,23 +533,11 @@ class JP4WC_Delivery {
 			}
 		}
 
-		// Save delivery data to order meta.
-		if ( get_option( 'wc4jp-delivery-date' ) && isset( $delivery_date ) && '0' !== $delivery_date ) {
-			if ( get_option( 'wc4jp-date-format' ) ) {
-				$date = strtotime( $delivery_date );
-				$date = date_i18n( get_option( 'wc4jp-date-format' ), $date );
-				$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $date ) ) );
-			} else {
-				$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $delivery_date ) ) );
-			}
-		}
+		// Note: Data is saved by capture_delivery_data_from_request filter hook
+		// This method only validates required fields.
 
-		if ( get_option( 'wc4jp-delivery-time-zone' ) && ! empty( $delivery_time ) && '0' !== $delivery_time ) {
-			$order->update_meta_data( 'wc4jp-delivery-time-zone', esc_attr( htmlspecialchars( $delivery_time ) ) );
-		}
-
-		// Save the order to persist meta data.
-		$order->save();
+		// Mark this order as processed.
+		$processed_orders[ $order_id ] = true;
 	}
 
 	/**
@@ -623,7 +634,6 @@ class JP4WC_Delivery {
 	 * @param bool   $plain_text Plain text.
 	 */
 	public function email_order_delivery_details( $order, $sent_to_admin, $plain_text ) {
-
 		if ( ! $this->has_date_or_time( $order ) ) {
 			return;
 		}
@@ -688,15 +698,29 @@ class JP4WC_Delivery {
 	 * @param string $column Column.
 	 */
 	public function render_shop_order_columns( $column ) {
+		// Use static variable to prevent multiple displays.
+		static $displayed_columns = array();
 
 		global $post, $the_order;
 		if ( empty( $the_order ) || $the_order->get_id() !== $post->ID ) {
 			$the_order = wc_get_order( $post->ID );
 		}
 
+		$order_id = $the_order->get_id();
+
+		// Create unique key for this order and column.
+		$display_key = $order_id . '_' . $column;
+
+		// Return if already displayed for this order and column.
+		if ( isset( $displayed_columns[ $display_key ] ) ) {
+			return;
+		}
+
 		switch ( $column ) {
 			case 'wc4jp_delivery':
 				$this->display_date_and_time_zone( $the_order );
+				// Mark as displayed.
+				$displayed_columns[ $display_key ] = true;
 
 				break;
 		}

@@ -3,9 +3,12 @@ import { ExperimentalOrderShippingPackages } from '@woocommerce/blocks-checkout'
 import { __ } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { CHECKOUT_STORE_KEY, VALIDATION_STORE_KEY } from '@woocommerce/block-data';
 import './delivery-block-frontend.scss';
+
+// Log that script is loaded
+console.log( '[JP4WC Delivery] Script loaded' );
 
 const DeliveryFieldsContent = () => {
 	// Get script data from localized data
@@ -51,19 +54,23 @@ const DeliveryFieldsContent = () => {
 	const [ deliveryDate, setDeliveryDate ] = useState( getInitialDateValue() );
 	const [ deliveryTime, setDeliveryTime ] = useState( getInitialTimeValue() );
 
-	// Get setExtensionData from checkout store
-	const { setExtensionData } = useDispatch( CHECKOUT_STORE_KEY );
+	// Get dispatch functions for both checkout and validation stores
+	const { setAdditionalFields } = useDispatch( CHECKOUT_STORE_KEY );
+	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
 
 	// Check if cart contains only virtual products
-	const isVirtualOnly = useSelect( ( select ) => {
-		const store = select( CHECKOUT_STORE_KEY );
-		const cartData = store.getCartData?.();
-		const items = cartData?.items || [];
-		return (
-			items.length > 0 &&
-			items.every( ( item ) => item.is_virtual === true )
-		);
-	}, [] );
+	const isVirtualOnly = useSelect(
+		( select ) => {
+			const store = select( CHECKOUT_STORE_KEY );
+			const cartData = store.getCartData?.();
+			const items = cartData?.items || [];
+			if ( items.length === 0 ) {
+				return false;
+			}
+			return items.every( ( item ) => item.is_virtual === true );
+		},
+		[]
+	);
 
 	// Don't show for virtual-only carts
 	if ( isVirtualOnly ) {
@@ -75,22 +82,34 @@ const DeliveryFieldsContent = () => {
 		return null;
 	}
 
-	// Update extension data when values change
+	// Update additional_fields when values change
 	useEffect( () => {
-		if ( setExtensionData ) {
-			const extensionData = {
-				wc4jp_delivery_date: deliveryDate,
-				wc4jp_delivery_time_zone: deliveryTime,
-			};
+		console.log(
+			'[JP4WC Delivery] Setting additional fields:',
+			{ deliveryDate, deliveryTime }
+		);
+		
+		if ( setAdditionalFields ) {
+			const additionalFieldsData = {};
+			
+			if ( isDateEnabled ) {
+				additionalFieldsData[ 'jp4wc/delivery-date' ] = deliveryDate;
+			}
+			
+			if ( isTimeEnabled ) {
+				additionalFieldsData[ 'jp4wc/delivery-time' ] = deliveryTime;
+			}
+			
+			setAdditionalFields( additionalFieldsData );
+			
 			console.log(
-				'[JP4WC Delivery] Setting extension data:',
-				extensionData
+				'[JP4WC Delivery] Additional fields set successfully',
+				additionalFieldsData
 			);
-			setExtensionData( 'jp4wc-delivery', extensionData );
 		} else {
-			console.error( '[JP4WC Delivery] setExtensionData not available' );
+			console.error( '[JP4WC Delivery] setAdditionalFields not available!' );
 		}
-	}, [ deliveryDate, deliveryTime, setExtensionData ] );
+	}, [ deliveryDate, deliveryTime, setAdditionalFields, isDateEnabled, isTimeEnabled ] );
 
 	return (
 		<div className="wc-block-components-checkout-step__container jp4wc-delivery-fields">
