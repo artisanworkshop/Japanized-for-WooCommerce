@@ -123,6 +123,15 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 	public function update_settings( $request ) {
 		$params = $request->get_params();
 
+		// Debug: Log received parameters
+		if ( function_exists( 'wc_get_logger' ) ) {
+			$logger = wc_get_logger();
+			$logger->debug( 'JP4WC Settings API - Received params: ' . wp_json_encode( $params ), array( 'source' => 'jp4wc-settings-api' ) );
+			if ( isset( $params['reception-period'] ) ) {
+				$logger->debug( 'JP4WC Settings API - reception-period value: ' . $params['reception-period'], array( 'source' => 'jp4wc-settings-api' ) );
+			}
+		}
+
 		// Save each setting.
 		foreach ( $params as $key => $value ) {
 			if ( 'timeZones' === $key ) {

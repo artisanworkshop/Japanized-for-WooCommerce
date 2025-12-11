@@ -137,7 +137,6 @@ class JP4WC_Delivery {
 			if ( isset( $setting['start-date'] ) ) {
 				$start_day = date_i18n( 'Y-m-d', strtotime( $start_day . ' ' . $setting['start-date'] . ' day' ) );
 			}
-
 			// Set Japanese Week name.
 			$week = array(
 				__( 'Sun', 'woocommerce-for-japan' ),
@@ -556,7 +555,8 @@ class JP4WC_Delivery {
 			return;
 		}
 
-		if ( ! $this->has_date_or_time( $order ) ) {
+		$has_date_or_time = $this->has_date_or_time( $order );
+		if ( ! $has_date_or_time || $has_date_or_time['is_block'] ) {
 			return;
 		}
 
@@ -576,7 +576,7 @@ class JP4WC_Delivery {
 
 		$date_time = $this->has_date_or_time( $order );
 
-		if ( ! $date_time ) {
+		if ( ! $date_time || $date_time['is_block'] ) {
 			return;
 		}
 		if ( '0' === $date_time['date'] ) {
@@ -634,7 +634,8 @@ class JP4WC_Delivery {
 	 * @param bool   $plain_text Plain text.
 	 */
 	public function email_order_delivery_details( $order, $sent_to_admin, $plain_text ) {
-		if ( ! $this->has_date_or_time( $order ) ) {
+		$has_date_or_time = $this->has_date_or_time( $order );
+		if ( ! $has_date_or_time || $has_date_or_time['is_block'] ) {
 			return;
 		}
 
@@ -657,9 +658,27 @@ class JP4WC_Delivery {
 			'time' => false,
 		);
 		$has_meta = false;
+		$is_block = false;
 
+		// Check both shortcode and Checkout Block meta keys for delivery date.
 		$date = $order->get_meta( 'wc4jp-delivery-date', true );
+		if ( empty( $date ) ) {
+			// Fallback to Checkout Block meta key.
+			$date = $order->get_meta( '_wc_other/namespace1/delivery-date', true );
+			if ( ! empty( $date ) ) {
+				$is_block = true;
+			}
+		}
+
+		// Check both shortcode and Checkout Block meta keys for delivery time.
 		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+		if ( empty( $time ) ) {
+			// Fallback to Checkout Block meta key.
+			$time = $order->get_meta( '_wc_other/namespace1/delivery-time', true );
+			if ( ! empty( $time ) ) {
+				$is_block = true;
+			}
+		}
 
 		if ( ( $date && '' !== $date ) ) {
 			$meta['date'] = $date;
@@ -671,12 +690,17 @@ class JP4WC_Delivery {
 			$has_meta     = true;
 		}
 
+		if ( $is_block ) {
+			$meta['is_block'] = true;
+		}
+
 		if ( $has_meta ) {
 			return $meta;
 		}
 
 		return false;
 	}
+
 	/**
 	 * Admin: Add Columns to orders tab
 	 *
@@ -790,9 +814,33 @@ class JP4WC_Delivery {
 		}
 		$order           = wc_get_order( $post_id );
 		$shipping_fields = $this->shipping_fields( $order );
+
 		foreach ( $shipping_fields as $field ) {
 			if ( isset( $_POST[ $field['id'] ] ) && 0 !== $_POST[ $field['id'] ] ) {
-				$order->update_meta_data( $field['id'], wc_clean( sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) ) ) );
+				$value = wc_clean( sanitize_text_field( wp_unslash( $_POST[ $field['id'] ] ) ) );
+
+				// For delivery date and time, check if this order was created via Checkout Block.
+				if ( 'wc4jp-delivery-date' === $field['id'] || 'wc4jp-delivery-time-zone' === $field['id'] ) {
+					// Check which meta key format this order uses,.
+					$has_block_meta = false;
+					if ( 'wc4jp-delivery-date' === $field['id'] ) {
+						$has_block_meta = ! empty( $order->get_meta( '_wc_other/namespace1/delivery-date', true ) );
+					} elseif ( 'wc4jp-delivery-time-zone' === $field['id'] ) {
+						$has_block_meta = ! empty( $order->get_meta( '_wc_other/namespace1/delivery-time', true ) );
+					}
+
+					// If order has block meta, update both the block meta and shortcode meta for consistency.
+					if ( $has_block_meta ) {
+						if ( 'wc4jp-delivery-date' === $field['id'] ) {
+							$order->update_meta_data( '_wc_other/namespace1/delivery-date', $value );
+						} elseif ( 'wc4jp-delivery-time-zone' === $field['id'] ) {
+							$order->update_meta_data( '_wc_other/namespace1/delivery-time', $value );
+						}
+					}
+				}
+
+				// Always update the standard meta key.
+				$order->update_meta_data( $field['id'], $value );
 				$order->save();
 			}
 		}
@@ -806,8 +854,18 @@ class JP4WC_Delivery {
 	 */
 	public function shipping_fields( $order ) {
 		if ( $order ) {
-			$date          = $order->get_meta( 'wc4jp-delivery-date', true );
-			$time          = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+			// Check both shortcode and Checkout Block meta keys for delivery date.
+			$date = $order->get_meta( 'wc4jp-delivery-date', true );
+			if ( empty( $date ) ) {
+				$date = $order->get_meta( '_wc_other/namespace1/delivery-date', true );
+			}
+
+			// Check both shortcode and Checkout Block meta keys for delivery time.
+			$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+			if ( empty( $time ) ) {
+				$time = $order->get_meta( '_wc_other/namespace1/delivery-time', true );
+			}
+
 			$delivery_date = $order->get_meta( 'wc4jp-tracking-ship-date', true );
 		} else {
 			$date          = '';
@@ -850,10 +908,21 @@ class JP4WC_Delivery {
 	 * @return array Modified payment result.
 	 */
 	public function jp4wc_delivery_check_data( $result ) {
-		$order_id  = $result['order_id'];
-		$order     = wc_get_order( $order_id );
-		$date      = $order->get_meta( 'wc4jp-delivery-date', true );
-		$time      = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+		$order_id = $result['order_id'];
+		$order    = wc_get_order( $order_id );
+
+		// Check both shortcode and Checkout Block meta keys for delivery date.
+		$date = $order->get_meta( 'wc4jp-delivery-date', true );
+		if ( empty( $date ) ) {
+			$date = $order->get_meta( '_wc_other/namespace1/delivery-date', true );
+		}
+
+		// Check both shortcode and Checkout Block meta keys for delivery time.
+		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+		if ( empty( $time ) ) {
+			$time = $order->get_meta( '_wc_other/namespace1/delivery-time', true );
+		}
+
 		$has_error = false;
 
 		if ( get_option( 'wc4jp-delivery-date' ) && '1' === get_option( 'wc4jp-delivery-date-required' ) ) {

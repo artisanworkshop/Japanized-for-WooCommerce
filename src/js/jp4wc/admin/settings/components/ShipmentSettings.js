@@ -22,6 +22,7 @@ const ShipmentSettings = ( {
 	const [ timeZones, setTimeZones ] = useState( settings?.timeZones || [] );
 
 	const handleSave = () => {
+		// Ensure timeZones are included in the save
 		const updatedSettings = {
 			...settings,
 			timeZones,

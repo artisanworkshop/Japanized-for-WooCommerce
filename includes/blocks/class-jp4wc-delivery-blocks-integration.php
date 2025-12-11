@@ -98,7 +98,7 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 					'type'          => 'select',
 					'options'       => $delivery_dates,
 					'required'      => get_option( 'wc4jp-delivery-date-required' ) === '1',
-					'show_in_order' => true,
+					'show_in_order' => false,
 				)
 			);
 
@@ -131,6 +131,8 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 
 	/**
 	 * Filter to set additional field value before saving to order.
+	 * For Checkout Block, we rely on WooCommerce's automatic saving to _wc_other/namespace1/* meta keys.
+	 * This filter is only used for validation and logging.
 	 *
 	 * @param mixed  $value The value to set.
 	 * @param string $key   The field key.
@@ -139,35 +141,17 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 	 * @return mixed The filtered value.
 	 */
 	public function set_additional_field_value( $value, $key, $group, $order ) {
-		$this->log_info( 'set_additional_field_value called - Key: ' . $key . ', Value: ' . $value . ', Group: ' . $group );
+		$this->log_info( 'set_additional_field_value called - Key: ' . $key . ', Value: ' . $value . ', Group: ' . $group . ', Order ID: ' . $order->get_id() );
 
-		// Handle delivery date formatting.
-		if ( 'namespace1/delivery-date' === $key && ! empty( $value ) && '0' !== $value ) {
-			// Apply date formatting if set.
-			if ( get_option( 'wc4jp-date-format' ) ) {
-				$date_timestamp = strtotime( $value );
-				$formatted_date = date_i18n( get_option( 'wc4jp-date-format' ), $date_timestamp );
-				$order->update_meta_data( 'wc4jp-delivery-date', $formatted_date );
-				$this->log_info( 'Set delivery date meta: ' . $formatted_date . ' (Order ID: ' . $order->get_id() . ')' );
-			} else {
-				$order->update_meta_data( 'wc4jp-delivery-date', $value );
-				$this->log_info( 'Set delivery date meta: ' . $value . ' (Order ID: ' . $order->get_id() . ')' );
-			}
-			$order->save();
-		}
-
-		// Handle delivery time.
-		if ( 'namespace1/delivery-time' === $key && ! empty( $value ) && '0' !== $value ) {
-			$order->update_meta_data( 'wc4jp-delivery-time-zone', $value );
-			$this->log_info( 'Set delivery time meta: ' . $value . ' (Order ID: ' . $order->get_id() . ')' );
-			$order->save();
-		}
-
+		// Just return the value - WooCommerce will automatically save it to _wc_other/namespace1/* meta keys
+		// The display logic will check both _wc_other/namespace1/* and wc4jp-* meta keys.
 		return $value;
 	}
 
 	/**
 	 * Save additional fields to order meta using Store API hook.
+	 * This method is kept for logging purposes only.
+	 * WooCommerce automatically saves additional fields to _wc_other/namespace1/* meta keys.
 	 *
 	 * @param WC_Order        $order   Order object.
 	 * @param WP_REST_Request $request Request object.
@@ -175,81 +159,26 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 	public function save_to_order_meta( $order, $request ) {
 		$this->log_info( 'save_to_order_meta called for Order ID: ' . $order->get_id() );
 
-		// Get additional_fields from request.
+		// Get additional_fields from request for logging.
 		$additional_fields = $request->get_param( 'additional_fields' );
 		$this->log_info( 'Additional fields from request: ' . wp_json_encode( $additional_fields ) );
 
-		// Check if data was already saved by set_additional_field_value filter.
-		$existing_date = $order->get_meta( 'wc4jp-delivery-date' );
-		$existing_time = $order->get_meta( 'wc4jp-delivery-time-zone' );
-
-		if ( ! empty( $existing_date ) || ! empty( $existing_time ) ) {
-			$this->log_info( 'Data already saved via filter: Date=' . $existing_date . ', Time=' . $existing_time );
-			return;
-		}
-
-		// Process additional_fields if available.
-		if ( ! empty( $additional_fields ) && is_array( $additional_fields ) ) {
-			$this->log_info( 'Processing additional fields: ' . wp_json_encode( $additional_fields ) );
-
-			// Save delivery date.
-			if ( isset( $additional_fields['namespace1/delivery-date'] ) ) {
-				$delivery_date = sanitize_text_field( $additional_fields['namespace1/delivery-date'] );
-
-				if ( ! empty( $delivery_date ) && '0' !== $delivery_date ) {
-					if ( get_option( 'wc4jp-date-format' ) ) {
-						$date_timestamp = strtotime( $delivery_date );
-						$formatted_date = date_i18n( get_option( 'wc4jp-date-format' ), $date_timestamp );
-						$order->update_meta_data( 'wc4jp-delivery-date', $formatted_date );
-						$this->log_info( 'Saved delivery date: ' . $formatted_date );
-					} else {
-						$order->update_meta_data( 'wc4jp-delivery-date', $delivery_date );
-						$this->log_info( 'Saved delivery date: ' . $delivery_date );
-					}
-				}
-			}
-
-			// Save delivery time.
-			if ( isset( $additional_fields['namespace1/delivery-time'] ) ) {
-				$delivery_time = sanitize_text_field( $additional_fields['namespace1/delivery-time'] );
-
-				if ( ! empty( $delivery_time ) && '0' !== $delivery_time ) {
-					$order->update_meta_data( 'wc4jp-delivery-time-zone', $delivery_time );
-					$this->log_info( 'Saved delivery time: ' . $delivery_time );
-				}
-			}
-
-			$order->save();
-			$this->log_info( 'Order saved with delivery data from additional_fields' );
-		} else {
-			$this->log_info( 'No additional_fields data available in request' );
-		}
+		// WooCommerce will automatically save these to:
+		// - _wc_other/namespace1/delivery-date
+		// - _wc_other/namespace1/delivery-time
+		// The display logic will check both these and wc4jp-* meta keys.
 	}
 
 	/**
 	 * Save delivery data from checkout session when order is created.
-	 * This is a fallback for when additional_fields is not populated.
+	 * This method is kept for logging purposes only.
 	 *
 	 * @param WC_Order $order Order object.
 	 * @param array    $data  Checkout data.
 	 */
 	public function save_from_session( $order, $data ) {
 		$this->log_info( 'save_from_session called for Order ID: ' . $order->get_id() );
-
-		// Check if data was already saved.
-		$existing_date = $order->get_meta( 'wc4jp-delivery-date' );
-		$existing_time = $order->get_meta( 'wc4jp-delivery-time-zone' );
-
-		if ( ! empty( $existing_date ) || ! empty( $existing_time ) ) {
-			$this->log_info( 'Data already exists, skipping: Date=' . $existing_date . ', Time=' . $existing_time );
-			return;
-		}
-
-		$this->log_info( 'No existing data, attempting to retrieve from checkout data' );
-		$this->log_info( 'Checkout data keys: ' . wp_json_encode( array_keys( $data ) ) );
-
-		// Log full data for debugging.
-		$this->log_info( 'Full checkout data: ' . wp_json_encode( $data ) );
+		// No action needed - WooCommerce handles the saving automatically.
 	}
 
 	/**
