@@ -7,8 +7,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { CHECKOUT_STORE_KEY, VALIDATION_STORE_KEY } from '@woocommerce/block-data';
 import './delivery-block-frontend.scss';
 
-// Log that script is loaded
-console.log( '[JP4WC Delivery] Script loaded' );
 
 const DeliveryFieldsContent = () => {
 	// Get script data from localized data
@@ -22,13 +20,6 @@ const DeliveryFieldsContent = () => {
 		isTimeRequired = false,
 	} = scriptData;
 
-	// Debug: Log the script data
-	console.log( '[JP4WC Delivery] Script data:', {
-		isDateEnabled,
-		isTimeEnabled,
-		deliveryDatesCount: deliveryDates.length,
-		timeZonesCount: timeZones.length,
-	} );
 
 	// Set initial values based on required state
 	const getInitialDateValue = () => {
@@ -84,11 +75,6 @@ const DeliveryFieldsContent = () => {
 
 	// Update additional_fields when values change
 	useEffect( () => {
-		console.log(
-			'[JP4WC Delivery] Setting additional fields:',
-			{ deliveryDate, deliveryTime }
-		);
-		
 		if ( setAdditionalFields ) {
 			const additionalFieldsData = {};
 			
@@ -102,10 +88,6 @@ const DeliveryFieldsContent = () => {
 			
 			setAdditionalFields( additionalFieldsData );
 			
-			console.log(
-				'[JP4WC Delivery] Additional fields set successfully',
-				additionalFieldsData
-			);
 		} else {
 			console.error( '[JP4WC Delivery] setAdditionalFields not available!' );
 		}

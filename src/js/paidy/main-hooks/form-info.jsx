@@ -253,7 +253,6 @@ const ReviewApprovedMessage = () => {
 					response.settings?.environment?.value ||
 					response.settings?.environment ||
 					'';
-				console.log( 'Current Environment:', currentEnvironment );
 				setEnvironment( currentEnvironment );
 
 				// environmentがsandboxまたはliveの場合、CSSを変更
@@ -266,9 +265,6 @@ const ReviewApprovedMessage = () => {
 					);
 					if ( paidySettingsElement ) {
 						paidySettingsElement.style.display = 'block';
-						console.log(
-							'CSS updated: #paidy-payment-settings display set to block'
-						);
 					} else {
 						console.warn(
 							'Element #paidy-payment-settings not found'
@@ -298,9 +294,6 @@ const ReviewApprovedMessage = () => {
 						);
 						if ( paidySettingsElement ) {
 							paidySettingsElement.style.display = 'block';
-							console.log(
-								'CSS updated (fallback): #paidy-payment-settings display set to block'
-							);
 						}
 					}
 				}

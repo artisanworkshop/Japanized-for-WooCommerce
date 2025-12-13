@@ -498,22 +498,6 @@ class JP4WC_Delivery {
 			}
 		}
 
-		// Debug log.
-		if ( function_exists( 'wc_get_logger' ) ) {
-			$logger = wc_get_logger();
-			$logger->debug(
-				'Block checkout delivery data: ' . wp_json_encode(
-					array(
-						'delivery_date'      => $delivery_date,
-						'delivery_time'      => $delivery_time,
-						'extensions'         => $extensions,
-						'all_request_params' => $request->get_params(),
-					)
-				),
-				array( 'source' => 'jp4wc_delivery_block' )
-			);
-		}
-
 		// Don't validate if not required or if fields are disabled.
 		if ( ! get_option( 'wc4jp-delivery-date' ) && ! get_option( 'wc4jp-delivery-time-zone' ) ) {
 			return;
@@ -664,7 +648,7 @@ class JP4WC_Delivery {
 		$date = $order->get_meta( 'wc4jp-delivery-date', true );
 		if ( empty( $date ) ) {
 			// Fallback to Checkout Block meta key.
-			$date = $order->get_meta( '_wc_other/namespace1/delivery-date', true );
+			$date = $order->get_meta( '_wc_other/jp4wc/delivery-date', true );
 			if ( ! empty( $date ) ) {
 				$is_block = true;
 			}
@@ -674,7 +658,7 @@ class JP4WC_Delivery {
 		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
 		if ( empty( $time ) ) {
 			// Fallback to Checkout Block meta key.
-			$time = $order->get_meta( '_wc_other/namespace1/delivery-time', true );
+			$time = $order->get_meta( '_wc_other/jp4wc/delivery-time', true );
 			if ( ! empty( $time ) ) {
 				$is_block = true;
 			}
@@ -824,17 +808,17 @@ class JP4WC_Delivery {
 					// Check which meta key format this order uses,.
 					$has_block_meta = false;
 					if ( 'wc4jp-delivery-date' === $field['id'] ) {
-						$has_block_meta = ! empty( $order->get_meta( '_wc_other/namespace1/delivery-date', true ) );
+						$has_block_meta = ! empty( $order->get_meta( '_wc_other/jp4wc/delivery-date', true ) );
 					} elseif ( 'wc4jp-delivery-time-zone' === $field['id'] ) {
-						$has_block_meta = ! empty( $order->get_meta( '_wc_other/namespace1/delivery-time', true ) );
+						$has_block_meta = ! empty( $order->get_meta( '_wc_other/jp4wc/delivery-time', true ) );
 					}
 
 					// If order has block meta, update both the block meta and shortcode meta for consistency.
 					if ( $has_block_meta ) {
 						if ( 'wc4jp-delivery-date' === $field['id'] ) {
-							$order->update_meta_data( '_wc_other/namespace1/delivery-date', $value );
+							$order->update_meta_data( '_wc_other/jp4wc/delivery-date', $value );
 						} elseif ( 'wc4jp-delivery-time-zone' === $field['id'] ) {
-							$order->update_meta_data( '_wc_other/namespace1/delivery-time', $value );
+							$order->update_meta_data( '_wc_other/jp4wc/delivery-time', $value );
 						}
 					}
 				}
@@ -857,13 +841,13 @@ class JP4WC_Delivery {
 			// Check both shortcode and Checkout Block meta keys for delivery date.
 			$date = $order->get_meta( 'wc4jp-delivery-date', true );
 			if ( empty( $date ) ) {
-				$date = $order->get_meta( '_wc_other/namespace1/delivery-date', true );
+				$date = $order->get_meta( '_wc_other/jp4wc/delivery-date', true );
 			}
 
 			// Check both shortcode and Checkout Block meta keys for delivery time.
 			$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
 			if ( empty( $time ) ) {
-				$time = $order->get_meta( '_wc_other/namespace1/delivery-time', true );
+				$time = $order->get_meta( '_wc_other/jp4wc/delivery-time', true );
 			}
 
 			$delivery_date = $order->get_meta( 'wc4jp-tracking-ship-date', true );
@@ -914,13 +898,13 @@ class JP4WC_Delivery {
 		// Check both shortcode and Checkout Block meta keys for delivery date.
 		$date = $order->get_meta( 'wc4jp-delivery-date', true );
 		if ( empty( $date ) ) {
-			$date = $order->get_meta( '_wc_other/namespace1/delivery-date', true );
+			$date = $order->get_meta( '_wc_other/jp4wc/delivery-date', true );
 		}
 
 		// Check both shortcode and Checkout Block meta keys for delivery time.
 		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
 		if ( empty( $time ) ) {
-			$time = $order->get_meta( '_wc_other/namespace1/delivery-time', true );
+			$time = $order->get_meta( '_wc_other/jp4wc/delivery-time', true );
 		}
 
 		$has_error = false;
