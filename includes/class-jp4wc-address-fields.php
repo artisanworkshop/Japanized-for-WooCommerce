@@ -249,9 +249,8 @@ class JP4WC_Address_Fields {
 		// Checks a specific page (by ID) to see if it contains the named block.
 		$has_block_cart     = $cart_page_id && has_block( 'woocommerce/cart', $cart_page_id );
 		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
-		if ( $has_block_checkout && is_checkout() ) {
-			$fields['JP'] = '〒{postcode} {state}{city}{address_1} {address_2} {country}';
-		}
+		// Note: Don't override the format for block checkout - use the same format as classic checkout.
+		// The format was already set above based on company and yomigana settings.
 		return $fields;
 	}
 
@@ -297,9 +296,16 @@ class JP4WC_Address_Fields {
 		if ( isset( $_GET['preview_woocommerce_mail'] ) || empty( $order ) ) {
 			return $fields;
 		}
+		// Try classic checkout format first, then fall back to block checkout format.
 		$fields['yomigana_first_name'] = $order->get_meta( '_billing_yomigana_first_name', true );
-		$fields['yomigana_last_name']  = $order->get_meta( '_billing_yomigana_last_name', true );
-		$fields['phone']               = $order->get_billing_phone();
+		if ( empty( $fields['yomigana_first_name'] ) ) {
+			$fields['yomigana_first_name'] = $order->get_meta( '_wc_other/jp4wc/yomigana_first_name', true );
+		}
+		$fields['yomigana_last_name'] = $order->get_meta( '_billing_yomigana_last_name', true );
+		if ( empty( $fields['yomigana_last_name'] ) ) {
+			$fields['yomigana_last_name'] = $order->get_meta( '_wc_other/jp4wc/yomigana_last_name', true );
+		}
+		$fields['phone'] = $order->get_billing_phone();
 
 		if ( '' === $fields['country'] ) {
 			$fields['country'] = 'JP';
@@ -324,9 +330,16 @@ class JP4WC_Address_Fields {
 				return $fields;
 			}
 
+			// Try classic checkout format first, then fall back to block checkout format.
 			$fields['yomigana_first_name'] = $order->get_meta( '_shipping_yomigana_first_name', true );
-			$fields['yomigana_last_name']  = $order->get_meta( '_shipping_yomigana_last_name', true );
-			$fields['phone']               = $order->get_shipping_phone();
+			if ( empty( $fields['yomigana_first_name'] ) ) {
+				$fields['yomigana_first_name'] = $order->get_meta( '_wc_other/jp4wc/yomigana_first_name', true );
+			}
+			$fields['yomigana_last_name'] = $order->get_meta( '_shipping_yomigana_last_name', true );
+			if ( empty( $fields['yomigana_last_name'] ) ) {
+				$fields['yomigana_last_name'] = $order->get_meta( '_wc_other/jp4wc/yomigana_last_name', true );
+			}
+			$fields['phone'] = $order->get_shipping_phone();
 			if ( '' === $fields['country'] ) {
 				$fields['country'] = 'JP';
 			}

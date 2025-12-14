@@ -330,7 +330,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					// Register fields immediately on woocommerce_init.
 					$integration->register_checkout_fields();
 				},
-				5 // Early priority
+				5 // Early priority.
 			);
 
 			// Register block integration for UI rendering.
@@ -339,6 +339,28 @@ if ( ! class_exists( 'JP4WC' ) ) :
 				function ( $integration_registry ) {
 					require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
 					$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+				}
+			);
+
+			// CRITICAL: Register yomigana fields EARLY on woocommerce_init.
+			// Additional Checkout Fields API requires registration before blocks are initialized.
+			add_action(
+				'woocommerce_init',
+				function () {
+					require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
+					$integration = new JP4WC_Yomigana_Blocks_Integration();
+					// Register fields immediately on woocommerce_init.
+					$integration->register_checkout_fields();
+				},
+				5 // Early priority.
+			);
+
+			// Register yomigana block integration for UI rendering.
+			add_action(
+				'woocommerce_blocks_checkout_block_registration',
+				function ( $integration_registry ) {
+					require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
+					$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
 				}
 			);
 		}       /**
