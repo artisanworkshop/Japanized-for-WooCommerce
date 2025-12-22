@@ -33,3 +33,6 @@ Thumbs.db
 
 # Ignore all map files
 *.map
+
+# PHPUnit cache
+.phpunit.result.cache

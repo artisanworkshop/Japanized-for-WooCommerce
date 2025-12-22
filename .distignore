@@ -8,12 +8,15 @@
 /vendor
 /src
 /docs
+/tests
 
 # Files
 .wp-env.json
 .gitattributes
 .distignore
 .gitignore
+.phpcs.xml.dist
+.phpunit.xml.dist
 composer.json
 composer.lock
 package-lock.json
