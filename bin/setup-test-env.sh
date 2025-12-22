@@ -87,6 +87,28 @@ install_wp() {
 	tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
 }
 
+install_woocommerce() {
+	local WC_DIR=$WP_CORE_DIR/wp-content/plugins/woocommerce
+	
+	if [ -d $WC_DIR ]; then
+		echo "WooCommerce already installed"
+		return;
+	fi
+	
+	echo "Installing WooCommerce..."
+	mkdir -p $WP_CORE_DIR/wp-content/plugins
+	
+	# Download latest WooCommerce
+	download https://downloads.wordpress.org/plugin/woocommerce.zip /tmp/woocommerce.zip
+	
+	if [ -f /tmp/woocommerce.zip ]; then
+		unzip -q /tmp/woocommerce.zip -d $WP_CORE_DIR/wp-content/plugins/
+		echo "WooCommerce installed successfully"
+	else
+		echo "Warning: Failed to download WooCommerce"
+	fi
+}
+
 install_test_suite() {
 	# portable in-place argument for both GNU sed and Mac OSX sed
 	if [[ $(uname -s) == 'Darwin' ]]; then
@@ -127,6 +149,7 @@ install_test_suite() {
 }
 
 install_wp
+install_woocommerce
 install_test_suite
 
 echo ""
