@@ -97,6 +97,16 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function add_yomigana_fields( $fields ) {
+		// Check if block checkout is being used.
+		$checkout_page_id   = wc_get_page_id( 'checkout' );
+		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+
+		// If block checkout is being used, skip adding classic checkout fields.
+		// The block checkout fields are handled by JP4WC_Yomigana_Blocks_Integration.
+		if ( $has_block_checkout ) {
+			return $fields;
+		}
+
 		if ( get_option( 'wc4jp-yomigana' ) ) {
 			$fields['yomigana_last_name']  = array(
 				'label'    => __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ),
@@ -183,16 +193,33 @@ class JP4WC_Address_Fields {
 	 * @since  1.2
 	 * @version 2.0.0
 	 * @param  array $fields The formatted address fields.
-	 * @param  array $args The order object.
+	 * @param  array $args The address data array.
 	 * @return array
 	 */
 	public function address_replacements( $fields, $args ) {
+		// Check if block checkout is being used.
+		$checkout_page_id   = wc_get_page_id( 'checkout' );
+		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+
+		// Ensure standard name fields are always set.
+		if ( ! isset( $fields['{first_name}'] ) && isset( $args['first_name'] ) ) {
+			$fields['{first_name}'] = $args['first_name'];
+		}
+		if ( ! isset( $fields['{last_name}'] ) && isset( $args['last_name'] ) ) {
+			$fields['{last_name}'] = $args['last_name'];
+		}
+
 		if ( get_option( 'wc4jp-yomigana' ) ) {
-			if ( isset( $args['yomigana_last_name'] ) ) {
-				$fields['{yomigana_last_name}'] = $args['yomigana_last_name'];
-			}
-			if ( isset( $args['yomigana_first_name'] ) ) {
-				$fields['{yomigana_first_name}'] = $args['yomigana_first_name'];
+			// For block checkout during checkout process, hide yomigana by setting to empty string.
+			// For classic checkout or thank you page, show yomigana if available.
+			if ( $has_block_checkout && ! is_order_received_page() ) {
+				// Block checkout - hide yomigana in address preview.
+				$fields['{yomigana_last_name}']  = '';
+				$fields['{yomigana_first_name}'] = '';
+			} else {
+				// Classic checkout or thank you page - show yomigana.
+				$fields['{yomigana_last_name}']  = isset( $args['yomigana_last_name'] ) ? $args['yomigana_last_name'] : '';
+				$fields['{yomigana_first_name}'] = isset( $args['yomigana_first_name'] ) ? $args['yomigana_first_name'] : '';
 			}
 		}
 		if ( is_order_received_page() && isset( $args['phone'] ) ) {
@@ -211,6 +238,21 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function address_formats( $fields ) {
+		// Check if block checkout is being used.
+		$checkout_page_id   = wc_get_page_id( 'checkout' );
+		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+
+		// Include yomigana placeholders if the option is enabled.
+		// For block checkout, these will be replaced with empty strings in address_replacements().
+		$include_yomigana = get_option( 'wc4jp-yomigana' );
+
+		if ( $has_block_checkout && ! is_order_received_page() ) {
+			if ( $include_yomigana && is_checkout() ) {
+				$fields['JP'] = $fields['JP'] . __( '(Please click "Edit" to check the pronunciation.)', 'woocommerce-for-japan' );
+			}
+			return $fields;
+		}
+
 		// honorific suffix.
 		$honorific_suffix = '';
 		if ( get_option( 'wc4jp-honorific-suffix' ) ) {
@@ -221,47 +263,30 @@ class JP4WC_Address_Fields {
 		if ( isset( $_GET['woo-paypal-return'] ) && true === $_GET['woo-paypal-return'] && isset( $_GET['token'] ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$set_yomigana = '';
 		} else {
-			$set_yomigana = "\n{yomigana_last_name} {yomigana_first_name}";
+			$set_yomigana = $include_yomigana ? "\n{yomigana_last_name} {yomigana_first_name}" : '';
 		}
-		if ( get_option( 'wc4jp-company-name' ) && get_option( 'wc4jp-yomigana' ) ) {
+
+		// Build format string based on settings.
+		if ( get_option( 'wc4jp-company-name' ) ) {
 			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
-		}
-		if ( get_option( 'wc4jp-company-name' ) && ! get_option( 'wc4jp-yomigana' ) ) {
-			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
-		}
-		if ( ! get_option( 'wc4jp-company-name' ) && get_option( 'wc4jp-yomigana' ) ) {
+		} else {
 			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
 		}
-		if ( ! get_option( 'wc4jp-company-name' ) && ! get_option( 'wc4jp-yomigana' ) ) {
-			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
-		}
+
 		if ( is_cart() ) {
 			$fields['JP'] = '〒{postcode}{state}{city}';
 		}
 		if ( is_order_received_page() ) {
 			$fields['JP'] = $fields['JP'] . "\n {phone}";
+			// On thank you page, include yomigana in the format even for block checkout.
+			if ( $has_block_checkout && get_option( 'wc4jp-yomigana' ) ) {
+				$yomigana_format = "\n{yomigana_last_name} {yomigana_first_name}";
+				// Insert yomigana before the name.
+				$fields['JP'] = str_replace( "\n{last_name} {first_name}", $yomigana_format . "\n{last_name} {first_name}", $fields['JP'] );
+			}
 		}
 
-		// Core page IDs.
-		$cart_page_id     = wc_get_page_id( 'cart' );
-		$checkout_page_id = wc_get_page_id( 'checkout' );
-
-		// Checks a specific page (by ID) to see if it contains the named block.
-		$has_block_cart     = $cart_page_id && has_block( 'woocommerce/cart', $cart_page_id );
-		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
-		// Note: Don't override the format for block checkout - use the same format as classic checkout.
-		// The format was already set above based on company and yomigana settings.
 		return $fields;
-	}
-
-	/**
-	 * Check if the current request is a block-based checkout request.
-	 */
-	public function is_block_checkout_request() {
-		$rest_route = isset( $_REQUEST['rest_route'] ) ? wp_unslash( $_REQUEST['rest_route'] ) : '';// phpcs:ignore 
-
-		// If it starts with /wc/store/, it is considered a block-based checkout.
-		return ( 0 === strpos( $rest_route, '/wc/store/' ) );
 	}
 
 	/**
@@ -293,7 +318,7 @@ class JP4WC_Address_Fields {
 	 */
 	public function jp4wc_billing_address( $fields, $args ) {
 		$order = wc_get_order( $args->get_id() );
-		if ( isset( $_GET['preview_woocommerce_mail'] ) || empty( $order ) ) {
+		if ( isset( $_GET['preview_woocommerce_mail'] ) || empty( $order ) ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $fields;
 		}
 		// Try classic checkout format first, then fall back to block checkout format.
@@ -326,7 +351,7 @@ class JP4WC_Address_Fields {
 	public function jp4wc_shipping_address( $fields, $args ) {
 		if ( isset( $fields['first_name'] ) ) {
 			$order = wc_get_order( $args->get_id() );
-			if ( isset( $_GET['preview_woocommerce_mail'] ) || empty( $order ) ) {
+			if ( isset( $_GET['preview_woocommerce_mail'] ) || empty( $order ) ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				return $fields;
 			}
 

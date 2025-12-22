@@ -43,10 +43,26 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'save_to_order_meta' ), 100, 2 );
 		// Hide WooCommerce's default display of additional fields (we use our own).
 		add_filter( 'woocommerce_order_get_formatted_meta_data', array( $this, 'hide_additional_fields_from_order_meta' ), 10, 2 );
+		// Enqueue CSS for field ordering.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_block_styles' ) );
 	}
 
 	/**
-	 * Returns an array of script handles to enqueue in the frontend context.
+	 * Enqueue CSS and JS for block checkout field ordering.
+	 */
+	public function enqueue_block_styles() {
+		if ( is_checkout() && get_option( 'wc4jp-yomigana' ) ) {
+			wp_enqueue_script(
+				'jp4wc-checkout-blocks-js',
+				plugins_url( 'assets/js/checkout-blocks-jp4wc.js', dirname( __DIR__ ) ),
+				array(),
+				'1.0.10',
+				true
+			);
+		}
+	}
+
+	/**  * Returns an array of script handles to enqueue in the frontend context.
 	 *
 	 * @return string[]
 	 */
@@ -121,6 +137,7 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		$is_required = get_option( 'wc4jp-yomigana-required' ) === '1';
 
 		// Register yomigana last name field (applies to both billing and shipping).
+		// Note: Field order is controlled via JavaScript (see checkout-blocks-jp4wc.js).
 		$field_config = array(
 			'id'            => 'jp4wc/yomigana_last_name',
 			'label'         => __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ),
@@ -143,6 +160,7 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		}
 
 		// Register yomigana first name field (applies to both billing and shipping).
+		// Note: Field order is controlled via JavaScript (see checkout-blocks-jp4wc.js).
 		$field_config = array(
 			'id'            => 'jp4wc/yomigana_first_name',
 			'label'         => __( 'First Name ( Yomigana )', 'woocommerce-for-japan' ),
@@ -235,8 +253,8 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 	public function validate_additional_field( $is_valid, $key, $value ) {
 		// Validate yomigana fields if required.
 		$yomigana_fields = array(
-			'jp4wc/yomigana_last_name',
-			'jp4wc/yomigana_first_name',
+			'_wc_billing/jp4wc/yomigana_first_name',
+			'_wc_billing/jp4wc/yomigana_last_name',
 		);
 
 		if ( in_array( $key, $yomigana_fields, true ) ) {
