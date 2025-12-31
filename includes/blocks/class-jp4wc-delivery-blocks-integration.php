@@ -16,6 +16,20 @@ defined( 'ABSPATH' ) || exit;
 class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 
 	/**
+	 * Prevent duplicate initialization.
+	 *
+	 * @var bool
+	 */
+	private $initialized = false;
+
+	/**
+	 * Prevent duplicate field registration.
+	 *
+	 * @var bool
+	 */
+	private $fields_registered = false;
+
+	/**
 	 * The name of the integration.
 	 *
 	 * @return string
@@ -29,6 +43,13 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 	 * NOTE: Field registration happens earlier in woocommerce_init hook (see class-jp4wc.php).
 	 */
 	public function initialize() {
+		// Prevent duplicate initialization.
+		if ( $this->initialized ) {
+			$this->log_info( 'Already initialized - skipping' );
+			return;
+		}
+		$this->initialized = true;
+
 		// Check if Additional Checkout Fields API is available (WooCommerce 9.3+).
 		if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
 			$this->log_info( 'Additional Checkout Fields API not available - skipping Block integration' );
@@ -37,10 +58,6 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 
 		// DO NOT register fields here - they are registered earlier in woocommerce_init hook.
 		// This ensures fields are available to the frontend before blocks are initialized.
-
-		add_filter( 'woocommerce_validate_additional_field', array( $this, 'validate_additional_field' ), 10, 3 );
-		// Use lower priority to ensure this runs after WooCommerce processes additional_fields.
-		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'save_to_order_meta' ), 100, 2 );
 
 		// Hide WooCommerce's default display of additional fields (we use our own).
 		add_filter( 'woocommerce_order_get_formatted_meta_data', array( $this, 'hide_additional_fields_from_order_meta' ), 10, 2 );
@@ -78,12 +95,7 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 	 * This automatically creates the UI in the checkout block.
 	 */
 	public function register_checkout_fields() {
-		// Prevent duplicate registration using static flag.
-		static $registered = false;
-		if ( $registered ) {
-			return;
-		}
-
+		// Prevent duplicate registration.
 		if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
 			$this->log_info( 'ERROR: woocommerce_register_additional_checkout_field function not found' );
 			return;
@@ -93,6 +105,7 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 		// If not, the CheckoutFields class won't be available yet.
 		$blocks_loaded = did_action( 'woocommerce_blocks_loaded' );
 		if ( ! $blocks_loaded ) {
+			$this->log_info( 'Blocks not loaded yet - adding hook to woocommerce_blocks_loaded' );
 			add_action(
 				'woocommerce_blocks_loaded',
 				array( $this, 'register_checkout_fields' ),
@@ -119,26 +132,23 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 
 		// Register delivery date field as select.
 		if ( get_option( 'wc4jp-delivery-date' ) && ! empty( $delivery_dates ) ) {
-			$field_config = array(
-				'id'            => 'jp4wc/delivery-date',
-				'label'         => __( 'Preferred delivery date', 'woocommerce-for-japan' ),
-				'location'      => 'order',
-				'type'          => 'select',
-				'options'       => $delivery_dates,
-				'required'      => get_option( 'wc4jp-delivery-date-required' ) === '1',
-				'show_in_order' => true,
-				'attributes'    => array(
-					'autocomplete' => 'off',
-				),
-			);
-
 			try {
-				$result = woocommerce_register_additional_checkout_field( $field_config );
-				if ( is_wp_error( $result ) ) {
-					$this->log_info( 'ERROR registering delivery date: ' . $result->get_error_message() );
-				}
+				woocommerce_register_additional_checkout_field(
+					array(
+						'id'            => 'jp4wc/delivery-date',
+						'label'         => __( 'Preferred delivery date', 'woocommerce-for-japan' ),
+						'location'      => 'order',
+						'type'          => 'select',
+						'options'       => $delivery_dates,
+						'required'      => get_option( 'wc4jp-delivery-date-required' ) === '1',
+						'show_in_order' => true,
+						'attributes'    => array(
+							'autoComplete' => 'off',
+						),
+					)
+				);
 			} catch ( \Exception $e ) {
-				$this->log_info( 'EXCEPTION registering delivery date: ' . $e->getMessage() );
+				$this->log_info( 'ERROR registering delivery date field: ' . $e->getMessage() );
 			}
 		} else {
 			$this->log_info( 'Delivery date field NOT registered. Option: ' . get_option( 'wc4jp-delivery-date' ) . ', Dates: ' . count( $delivery_dates ) );
@@ -146,57 +156,54 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 
 		// Register delivery time field as select.
 		if ( get_option( 'wc4jp-delivery-time-zone' ) && ! empty( $time_zones ) ) {
-			$field_config = array(
-				'id'            => 'jp4wc/delivery-time',
-				'label'         => __( 'Delivery Time Zone', 'woocommerce-for-japan' ),
-				'location'      => 'order',
-				'type'          => 'select',
-				'options'       => $time_zones,
-				'required'      => get_option( 'wc4jp-delivery-time-zone-required' ) === '1',
-				'show_in_order' => true,
-				'attributes'    => array(
-					'autocomplete' => 'off',
-				),
-			);
-
 			try {
-				$result = woocommerce_register_additional_checkout_field( $field_config );
-				if ( is_wp_error( $result ) ) {
-					$this->log_info( 'ERROR registering delivery time: ' . $result->get_error_message() );
-				}
+				woocommerce_register_additional_checkout_field(
+					array(
+						'id'            => 'jp4wc/delivery-time',
+						'label'         => __( 'Delivery Time Zone', 'woocommerce-for-japan' ),
+						'location'      => 'order',
+						'type'          => 'select',
+						'options'       => $time_zones,
+						'required'      => get_option( 'wc4jp-delivery-time-zone-required' ) === '1',
+						'show_in_order' => true,
+						'attributes'    => array(
+							'autoComplete' => 'off',
+						),
+					)
+				);
 			} catch ( \Exception $e ) {
-				$this->log_info( 'EXCEPTION registering delivery time: ' . $e->getMessage() );
+				$this->log_info( 'ERROR registering delivery time field: ' . $e->getMessage() );
 			}
 		} else {
 			$this->log_info( 'Delivery time field NOT registered. Option: ' . get_option( 'wc4jp-delivery-time-zone' ) . ', Zones: ' . count( $time_zones ) );
 		}
 
-		// Mark as registered to prevent duplicate calls.
-		$registered = true;
+		// Flag already set at the beginning of this method.
+		$this->fields_registered = true;
 	}
 
 	/**
-	 * Save additional fields to order meta using Store API hook.
-	 * This method is kept for logging purposes only.
-	 * WooCommerce automatically saves additional fields to _wc_other/namespace1/* meta keys.
+	 * Validate delivery fields on checkout for Store API.
+	 * Note: This hook is called during total calculation, not just final checkout.
+	 * We should NOT throw exceptions here as it causes 500 errors during intermediate updates.
 	 *
 	 * @param WC_Order        $order   Order object.
 	 * @param WP_REST_Request $request Request object.
 	 */
-	public function save_to_order_meta( $order, $request ) {
-		// Get additional_fields from request for logging.
+	public function validate_on_checkout( $order, $request ) {
+
+		// Get additional_fields from request.
 		$additional_fields = $request->get_param( 'additional_fields' );
 
-		// Check all request parameters.
-		$all_params = $request->get_params();
-
-		// Check if fields are already saved by WooCommerce.
-		$saved_date = $order->get_meta( '_wc_other/namespace1/delivery-date', true );
-		$saved_time = $order->get_meta( '_wc_other/namespace1/delivery-time', true );
+		if ( ! is_array( $additional_fields ) ) {
+			return;
+		}
 	}
 
 	/**
 	 * Validate additional field value.
+	 * NOTE: This is called during total calculations too, not just final checkout.
+	 * We need to check if this is a final checkout submission before validating.
 	 *
 	 * @param bool   $is_valid Whether the field is valid.
 	 * @param string $key      The field key.
@@ -204,32 +211,42 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 	 * @return bool|WP_Error True if valid, WP_Error if not.
 	 */
 	public function validate_additional_field( $is_valid, $key, $value ) {
+		// Check if this is a calc_totals request.
+		if ( isset( $_GET['__experimental_calc_totals'] ) || ( defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['_locale'] ) ) ) {
+			$this->log_info( 'Skipping validation - this is a calc_totals request' );
+			return $is_valid;
+		}
+
 		// Validate delivery date if required.
 		if ( 'jp4wc/delivery-date' === $key ) {
-			if ( get_option( 'wc4jp-delivery-date-required' ) === '1' ) {
-				if ( empty( $value ) || '0' === $value ) {
+			$is_required = get_option( 'wc4jp-delivery-date-required' ) === '1';
+
+			if ( $is_required ) {
+				// Check if value is null, empty string, or '0'.
+				if ( is_null( $value ) || '' === $value || '0' === $value ) {
+					$this->log_info( 'Delivery date validation FAILED - returning WP_Error' );
 					return new WP_Error(
 						'invalid_delivery_date',
 						__( 'Please select a delivery date.', 'woocommerce-for-japan' )
 					);
 				}
 			}
-			$this->log_info( 'Validated delivery date: ' . $value );
 		}
 
 		// Validate delivery time if required.
 		if ( 'jp4wc/delivery-time' === $key ) {
-			if ( get_option( 'wc4jp-delivery-time-zone-required' ) === '1' ) {
-				if ( empty( $value ) || '0' === $value ) {
+			$is_required = get_option( 'wc4jp-delivery-time-zone-required' ) === '1';
+
+			if ( $is_required ) {
+				// Check if value is null, empty string, or '0'.
+				if ( is_null( $value ) || '' === $value || '0' === $value ) {
 					return new WP_Error(
 						'invalid_delivery_time',
 						__( 'Please select a delivery time zone.', 'woocommerce-for-japan' )
 					);
 				}
 			}
-			$this->log_info( 'Validated delivery time: ' . $value );
 		}
-
 		return $is_valid;
 	}
 
@@ -240,8 +257,6 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 	 */
 	private function get_delivery_date_options() {
 		$options = array();
-
-		// Add unspecified option if not required.
 		if ( get_option( 'wc4jp-delivery-date-required' ) !== '1' ) {
 			$unspecified_date_label = get_option( 'wc4jp-unspecified-date' );
 			if ( empty( $unspecified_date_label ) ) {
@@ -281,7 +296,7 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 			__( 'Sat', 'woocommerce-for-japan' ),
 		);
 
-		// Generate date options.
+				// Generate date options.
 		for ( $i = 0; $i <= $reception_period; $i++ ) {
 			$timestamp    = strtotime( $start_day );
 			$value_date   = date_i18n( 'Y-m-d', $timestamp );

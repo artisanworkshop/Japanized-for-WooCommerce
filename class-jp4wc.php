@@ -322,13 +322,20 @@ if ( ! class_exists( 'JP4WC' ) ) :
 
 			// CRITICAL: Register delivery fields EARLY on woocommerce_init.
 			// Additional Checkout Fields API requires registration before blocks are initialized.
+
 			add_action(
 				'woocommerce_init',
 				function () {
+					global $jp4wc_delivery_init_done, $jp4wc_delivery_integration;
+					if ( $jp4wc_delivery_init_done ) {
+						return;
+					}
+					$jp4wc_delivery_init_done = true;
+
 					require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
-					$integration = new JP4WC_Delivery_Blocks_Integration();
+					$jp4wc_delivery_integration = new JP4WC_Delivery_Blocks_Integration();
 					// Register fields immediately on woocommerce_init.
-					$integration->register_checkout_fields();
+					$jp4wc_delivery_integration->register_checkout_fields();
 				},
 				5 // Early priority.
 			);
@@ -337,20 +344,34 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			add_action(
 				'woocommerce_blocks_checkout_block_registration',
 				function ( $integration_registry ) {
-					require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
-					$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+					global $jp4wc_delivery_integration;
+					// Reuse the same instance created in woocommerce_init hook.
+					if ( isset( $jp4wc_delivery_integration ) && $jp4wc_delivery_integration instanceof JP4WC_Delivery_Blocks_Integration ) {
+						$integration_registry->register( $jp4wc_delivery_integration );
+					} else {
+						// Fallback: create new instance if somehow the global wasn't set.
+						require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
+						$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+					}
 				}
 			);
 
 			// CRITICAL: Register yomigana fields EARLY on woocommerce_init.
 			// Additional Checkout Fields API requires registration before blocks are initialized.
+
 			add_action(
 				'woocommerce_init',
 				function () {
+					global $jp4wc_yomigana_init_done, $jp4wc_yomigana_integration;
+					if ( $jp4wc_yomigana_init_done ) {
+						return;
+					}
+					$jp4wc_yomigana_init_done = true;
+
 					require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
-					$integration = new JP4WC_Yomigana_Blocks_Integration();
+					$jp4wc_yomigana_integration = new JP4WC_Yomigana_Blocks_Integration();
 					// Register fields immediately on woocommerce_init.
-					$integration->register_checkout_fields();
+					$jp4wc_yomigana_integration->register_checkout_fields();
 				},
 				5 // Early priority.
 			);
@@ -359,16 +380,25 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			add_action(
 				'woocommerce_blocks_checkout_block_registration',
 				function ( $integration_registry ) {
-					require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
-					$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
+					global $jp4wc_yomigana_integration;
+					// Reuse the same instance created in woocommerce_init hook.
+					if ( isset( $jp4wc_yomigana_integration ) && $jp4wc_yomigana_integration instanceof JP4WC_Yomigana_Blocks_Integration ) {
+						$integration_registry->register( $jp4wc_yomigana_integration );
+					} else {
+						// Fallback: create new instance if somehow the global wasn't set.
+						require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
+						$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
+					}
 				}
 			);
-		}       /**
-				 * Add the gateway to WooCommerce
-				 *
-				 * @param array $methods Payment methods.
-				 * @return array $methods Payment methods.
-				 */
+		}
+
+		/**
+		 * Add the gateway to WooCommerce
+		 *
+		 * @param array $methods Payment methods.
+		 * @return array $methods Payment methods.
+		 */
 		public function add_jp4wc_custom_cod_gateway( $methods ) {
 			// Add the COD gateway for Fee.
 			$methods[] = 'JP4WC_COD_Fee';

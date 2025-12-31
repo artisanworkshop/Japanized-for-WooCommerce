@@ -93,11 +93,8 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 	 * This automatically creates the UI in the checkout block.
 	 */
 	public function register_checkout_fields() {
-		// Prevent duplicate registration using static flag.
-		static $registered = false;
-		if ( $registered ) {
-			return;
-		}
+		// Note: Duplicate prevention is handled in class-jp4wc.php via woocommerce_init hook
+		// This method should only be called once per page load from that hook
 
 		if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
 			$this->log_info( 'ERROR: woocommerce_register_additional_checkout_field function not found' );
@@ -146,7 +143,7 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 			'required'      => $is_required,
 			'show_in_order' => true,
 			'attributes'    => array(
-				'autocomplete' => 'family-name',
+				'autoComplete' => 'family-name',
 			),
 		);
 
@@ -169,7 +166,7 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 			'required'      => $is_required,
 			'show_in_order' => true,
 			'attributes'    => array(
-				'autocomplete' => 'given-name',
+				'autoComplete' => 'given-name',
 			),
 		);
 
@@ -181,9 +178,6 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		} catch ( \Exception $e ) {
 			$this->log_info( 'EXCEPTION registering yomigana first name: ' . $e->getMessage() );
 		}
-
-		// Mark as registered to prevent duplicate calls.
-		$registered = true;
 	}
 
 	/**

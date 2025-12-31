@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { CHECKOUT_STORE_KEY, VALIDATION_STORE_KEY } from '@woocommerce/block-data';
+import { CHECKOUT_STORE_KEY } from '@woocommerce/block-data';
 import './delivery-block-frontend.scss';
 
 
@@ -23,45 +23,56 @@ const DeliveryFieldsContent = () => {
 
 	// Set initial values based on required state
 	const getInitialDateValue = () => {
-		if ( isDateRequired && deliveryDates.length > 0 ) {
-			// If required, select first available date (skip '0' if it exists)
-			const firstDate = deliveryDates.find(
-				( date ) => date.value !== '0'
+		if ( deliveryDates.length > 0 ) {
+			// If required, select first valid date (skip '0' if it exists)
+			if ( isDateRequired ) {
+				const firstDate = deliveryDates.find(
+					( date ) => date.value !== '0'
+				);
+				return firstDate ? firstDate.value : deliveryDates[ 0 ].value;
+			}
+			// If not required, use '0' if available, otherwise first option
+			const defaultOption = deliveryDates.find(
+				( date ) => date.value === '0'
 			);
-			return firstDate ? firstDate.value : deliveryDates[ 0 ].value;
+			return defaultOption ? defaultOption.value : deliveryDates[ 0 ].value;
 		}
-		return '0';
+		return '';
 	};
 
 	const getInitialTimeValue = () => {
-		if ( isTimeRequired && timeZones.length > 0 ) {
-			// If required, select first available time (skip '0' if it exists)
-			const firstTime = timeZones.find( ( time ) => time.value !== '0' );
-			return firstTime ? firstTime.value : timeZones[ 0 ].value;
+		if ( timeZones.length > 0 ) {
+			// If required, select first valid time (skip '0' if it exists)
+			if ( isTimeRequired ) {
+				const firstTime = timeZones.find( ( time ) => time.value !== '0' );
+				return firstTime ? firstTime.value : timeZones[ 0 ].value;
+			}
+			// If not required, use '0' if available, otherwise first option
+			const defaultOption = timeZones.find(
+				( time ) => time.value === '0'
+			);
+			return defaultOption ? defaultOption.value : timeZones[ 0 ].value;
 		}
-		return '0';
+		return '';
 	};
 
 	const [ deliveryDate, setDeliveryDate ] = useState( getInitialDateValue() );
 	const [ deliveryTime, setDeliveryTime ] = useState( getInitialTimeValue() );
 
-	// Get dispatch functions for both checkout and validation stores
+	// Get dispatch function for checkout store only
 	const { setAdditionalFields } = useDispatch( CHECKOUT_STORE_KEY );
-	const { setValidationErrors } = useDispatch( VALIDATION_STORE_KEY );
 
 	// Check if cart contains only virtual products
-	const isVirtualOnly = useSelect(
+	const cartData = useSelect(
 		( select ) => {
 			const store = select( CHECKOUT_STORE_KEY );
-			const cartData = store.getCartData?.();
-			const items = cartData?.items || [];
-			if ( items.length === 0 ) {
-				return false;
-			}
-			return items.every( ( item ) => item.is_virtual === true );
+			return store.getCartData?.() || {};
 		},
 		[]
 	);
+
+	const items = cartData?.items || [];
+	const isVirtualOnly = items.length > 0 && items.every( ( item ) => item.is_virtual === true );
 
 	// Don't show for virtual-only carts
 	if ( isVirtualOnly ) {
@@ -74,6 +85,7 @@ const DeliveryFieldsContent = () => {
 	}
 
 	// Update additional_fields when values change
+	// WooCommerce handles validation automatically based on field 'required' property
 	useEffect( () => {
 		if ( setAdditionalFields ) {
 			const additionalFieldsData = {};
@@ -87,9 +99,6 @@ const DeliveryFieldsContent = () => {
 			}
 			
 			setAdditionalFields( additionalFieldsData );
-			
-		} else {
-			console.error( '[JP4WC Delivery] setAdditionalFields not available!' );
 		}
 	}, [ deliveryDate, deliveryTime, setAdditionalFields, isDateEnabled, isTimeEnabled ] );
 

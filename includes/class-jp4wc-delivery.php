@@ -35,9 +35,7 @@ class JP4WC_Delivery {
 		// Save delivery date and time values to order.
 		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'update_order_meta' ) );
 		add_filter( 'woocommerce_checkout_posted_data', array( $this, 'jp4wc_delivery_posted_data' ) );
-		// Validate delivery date and time fields at checkout (multiple hooks for reliability).
-		add_action( 'woocommerce_before_checkout_process', array( $this, 'validate_delivery_fields_before_checkout' ), 5 );
-		add_action( 'woocommerce_checkout_process', array( $this, 'validate_delivery_fields_on_checkout' ), 5 );
+		// Validate delivery date and time fields at checkout.
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_date_time_checkout_field' ), 10, 2 );
 		// Block checkout validation.
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'validate_delivery_fields_block_checkout' ), 10, 2 );
@@ -409,118 +407,25 @@ class JP4WC_Delivery {
 		}
 	}
 
-	/**
-	 * Early validation before checkout process starts
-	 *
-	 * @return void
-	 */
-	public function validate_delivery_fields_before_checkout() {
-		if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ||
-			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' )
-		) {
-			return;
-		}
 
-		if ( get_option( 'wc4jp-delivery-date' ) && '1' === get_option( 'wc4jp-delivery-date-required' ) ) {
-			$delivery_date = isset( $_POST['wc4jp_delivery_date'] ) ? sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) ) : '';
-			if ( empty( $delivery_date ) ) {
-				wc_add_notice( __( '"Desired delivery date" is a required field. Please enter it.', 'woocommerce-for-japan' ), 'error' );
-			}
-		}
 
-		if ( get_option( 'wc4jp-delivery-time-zone' ) && '1' === get_option( 'wc4jp-delivery-time-zone-required' ) ) {
-			$delivery_time = isset( $_POST['wc4jp_delivery_time_zone'] ) ? sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) ) : '';
-			if ( empty( $delivery_time ) ) {
-				wc_add_notice( __( '"Desired delivery time zone" is a required field. Please enter it.', 'woocommerce-for-japan' ), 'error' );
-			}
-		}
-	}
 
-	/**
-	 * Validate delivery fields during checkout process
-	 *
-	 * @return void
-	 */
-	public function validate_delivery_fields_on_checkout() {
-		if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ||
-			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' )
-		) {
-			return;
-		}
-
-		if ( get_option( 'wc4jp-delivery-date' ) && '1' === get_option( 'wc4jp-delivery-date-required' ) ) {
-			$delivery_date = isset( $_POST['wc4jp_delivery_date'] ) ? sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) ) : '';
-			if ( empty( $delivery_date ) ) {
-				wc_add_notice( __( '"Desired delivery date" is a required field. Please enter it.', 'woocommerce-for-japan' ), 'error' );
-			}
-		}
-
-		if ( get_option( 'wc4jp-delivery-time-zone' ) && '1' === get_option( 'wc4jp-delivery-time-zone-required' ) ) {
-			$delivery_time = isset( $_POST['wc4jp_delivery_time_zone'] ) ? sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) ) : '';
-			if ( empty( $delivery_time ) ) {
-				wc_add_notice( __( '"Desired delivery time zone" is a required field. Please enter it.', 'woocommerce-for-japan' ), 'error' );
-			}
-		}
-	}
 
 	/**
 	 * Validate delivery fields for block checkout
 	 *
+	 * NOTE: Validation for Checkout Block is now handled by class-jp4wc-delivery-blocks-integration.php
+	 * This method is kept for backward compatibility but does nothing as validation is performed
+	 * via the woocommerce_store_api_validate_additional_field filter hook.
+	 *
 	 * @param WC_Order        $order   Order object.
 	 * @param WP_REST_Request $request Request object.
-	 * @throws \Exception If required delivery fields are missing.
 	 * @return void
 	 */
 	public function validate_delivery_fields_block_checkout( $order, $request ) {
-		// Check if we've already processed this order (prevent duplicate saves).
-		static $processed_orders = array();
-		$order_id                = $order->get_id();
-		$extensions              = $request->get_param( 'extensions' );
-
-		// Extract delivery data from extensions OR from POST data (fallback for hidden inputs).
-		$delivery_date = '';
-		$delivery_time = '';
-
-		if ( isset( $extensions['jp4wc-delivery'] ) ) {
-			if ( isset( $extensions['jp4wc-delivery']['wc4jp_delivery_date'] ) ) {
-				$delivery_date = $extensions['jp4wc-delivery']['wc4jp_delivery_date'];
-			}
-			if ( isset( $extensions['jp4wc-delivery']['wc4jp_delivery_time_zone'] ) ) {
-				$delivery_time = $extensions['jp4wc-delivery']['wc4jp_delivery_time_zone'];
-			}
-		} else {
-			// Fallback: Try to get data from POST (for hidden inputs).
-			if ( isset( $_POST['wc4jp_delivery_date'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-				$delivery_date = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-			}
-			if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-				$delivery_time = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-			}
-		}
-
-		// Don't validate if not required or if fields are disabled.
-		if ( ! get_option( 'wc4jp-delivery-date' ) && ! get_option( 'wc4jp-delivery-time-zone' ) ) {
-			return;
-		}
-
-		// Validate required fields.
-		if ( get_option( 'wc4jp-delivery-date' ) && '1' === get_option( 'wc4jp-delivery-date-required' ) ) {
-			if ( empty( $delivery_date ) || '0' === $delivery_date ) {
-				throw new \Exception( esc_html__( '"Desired delivery date" is a required field. Please enter it.', 'woocommerce-for-japan' ) );
-			}
-		}
-
-		if ( get_option( 'wc4jp-delivery-time-zone' ) && '1' === get_option( 'wc4jp-delivery-time-zone-required' ) ) {
-			if ( empty( $delivery_time ) || '0' === $delivery_time ) {
-				throw new \Exception( esc_html__( '"Desired delivery time zone" is a required field. Please enter it.', 'woocommerce-for-japan' ) );
-			}
-		}
-
-		// Note: Data is saved by capture_delivery_data_from_request filter hook
-		// This method only validates required fields.
-
-		// Mark this order as processed.
-		$processed_orders[ $order_id ] = true;
+		// Validation is now handled by JP4WC_Delivery_Blocks_Integration::validate_additional_field()
+		// This method is intentionally left empty to avoid duplicate validation.
+		return;
 	}
 
 	/**
