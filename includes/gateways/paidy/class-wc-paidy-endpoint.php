@@ -48,9 +48,83 @@ class WC_Paidy_Endpoint {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'paidy_check_webhook' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this, 'paidy_webhook_permission_check' ),
 			)
 		);
+	}
+
+	/**
+	 * Permission callback for Paidy webhook endpoint.
+	 * Verifies the request is from Paidy by checking the signature header.
+	 *
+	 * @param WP_REST_Request $request The request object.
+	 * @return bool|WP_Error True if authorized, WP_Error otherwise.
+	 */
+	public function paidy_webhook_permission_check( $request ) {
+		// Get the signature from the header.
+		$signature = $request->get_header( 'x-paidy-signature' );
+
+		// If no signature header, check if this is from allowed IP (optional).
+		if ( empty( $signature ) ) {
+			// Allow filtering of IP whitelist.
+			$allowed_ips = apply_filters( 'paidy_webhook_allowed_ips', array() );
+
+			if ( ! empty( $allowed_ips ) ) {
+				$remote_ip = $this->get_remote_ip();
+				if ( ! in_array( $remote_ip, $allowed_ips, true ) ) {
+					return new WP_Error(
+						'paidy_unauthorized',
+						__( 'Unauthorized access to Paidy webhook.', 'woocommerce-for-japan' ),
+						array( 'status' => 403 )
+					);
+				}
+			}
+		}
+
+		// Verify the signature if present.
+		if ( ! empty( $signature ) ) {
+			$secret_key = $this->paidy->get_option( 'secret_key' );
+
+			if ( empty( $secret_key ) ) {
+				return new WP_Error(
+					'paidy_config_error',
+					__( 'Paidy secret key is not configured.', 'woocommerce-for-japan' ),
+					array( 'status' => 500 )
+				);
+			}
+
+			$body                 = $request->get_body();
+			$calculated_signature = hash_hmac( 'sha256', $body, $secret_key );
+
+			if ( ! hash_equals( $calculated_signature, $signature ) ) {
+				return new WP_Error(
+					'paidy_invalid_signature',
+					__( 'Invalid signature for Paidy webhook.', 'woocommerce-for-japan' ),
+					array( 'status' => 403 )
+				);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get the remote IP address from the request.
+	 *
+	 * @return string The remote IP address.
+	 */
+	private function get_remote_ip() {
+		$ip = '';
+
+		if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$ip = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
+			$ip = explode( ',', $ip );
+			$ip = trim( $ip[0] );
+		} elseif ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
+			$ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+		}
+
+		return $ip;
 	}
 
 	/**
@@ -88,6 +162,18 @@ class WC_Paidy_Endpoint {
 					$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
 					return new WP_REST_Response( $main_data, 200 );
 				}
+
+				// Security check: Verify the order is actually using Paidy payment method.
+				if ( $order->get_payment_method() !== 'paidy' ) {
+					$message = $notice_message . __( 'Order payment method is not Paidy. Possible unauthorized access attempt.', 'woocommerce-for-japan' ) . "\n" . 'Order# :' . $main_data['order_ref'] . ' Payment Method: ' . $order->get_payment_method();
+					$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+					return new WP_Error(
+						'invalid_payment_method',
+						__( 'Invalid payment method for this order.', 'woocommerce-for-japan' ),
+						array( 'status' => 403 )
+					);
+				}
+
 				$status = $order->get_status();
 
 				$enable_authorize_success_statuses = apply_filters( 'paidy_endpoint_enable_authorize_statuses', array( 'pending', 'cancelled' ), $order );
@@ -176,7 +262,7 @@ class WC_Paidy_Endpoint {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'paidy_regist_webhook' ),
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this, 'paidy_webhook_permission_check' ),
 			)
 		);
 	}
