@@ -9,8 +9,33 @@ import {
 	TextareaControl,
 	Button,
 } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
 
 const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
+	// Panel open state management
+	const [ panelStates, setPanelStates ] = useState( () => {
+		const saved = localStorage.getItem( 'jp4wc-law-panel-states' );
+		return saved
+			? JSON.parse( saved )
+			: {
+					commercialLaw: true,
+			  };
+	} );
+
+	useEffect( () => {
+		localStorage.setItem(
+			'jp4wc-law-panel-states',
+			JSON.stringify( panelStates )
+		);
+	}, [ panelStates ] );
+
+	const togglePanel = ( panelName ) => {
+		setPanelStates( ( prev ) => ( {
+			...prev,
+			[ panelName ]: ! prev[ panelName ],
+		} ) );
+	};
+
 	const handleSave = () => {
 		saveSettings( settings );
 	};
@@ -22,7 +47,8 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 					'Specified Commercial Transaction Law',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ true }
+				opened={ panelStates.commercialLaw }
+				onToggle={ () => togglePanel( 'commercialLaw' ) }
 			>
 				<PanelRow>
 					<TextControl

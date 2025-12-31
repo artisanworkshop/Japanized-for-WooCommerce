@@ -11,7 +11,7 @@ import {
 	SelectControl,
 	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 
 const ShipmentSettings = ( {
 	settings,
@@ -20,6 +20,32 @@ const ShipmentSettings = ( {
 	saving,
 } ) => {
 	const [ timeZones, setTimeZones ] = useState( settings?.timeZones || [] );
+
+	// Panel open state management
+	const [ panelStates, setPanelStates ] = useState( () => {
+		const saved = localStorage.getItem( 'jp4wc-shipment-panel-states' );
+		return saved
+			? JSON.parse( saved )
+			: {
+					deliveryDate: true,
+					deliveryTime: true,
+					notification: true,
+			  };
+	} );
+
+	useEffect( () => {
+		localStorage.setItem(
+			'jp4wc-shipment-panel-states',
+			JSON.stringify( panelStates )
+		);
+	}, [ panelStates ] );
+
+	const togglePanel = ( panelName ) => {
+		setPanelStates( ( prev ) => ( {
+			...prev,
+			[ panelName ]: ! prev[ panelName ],
+		} ) );
+	};
 
 	const handleSave = () => {
 		// Ensure timeZones are included in the save
@@ -52,7 +78,8 @@ const ShipmentSettings = ( {
 					'Delivery date designation',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ true }
+				opened={ panelStates.deliveryDate }
+				onToggle={ () => togglePanel( 'deliveryDate' ) }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -328,7 +355,8 @@ const ShipmentSettings = ( {
 					'Delivery Time designation',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ true }
+				opened={ panelStates.deliveryTime }
+				onToggle={ () => togglePanel( 'deliveryTime' ) }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -479,7 +507,8 @@ const ShipmentSettings = ( {
 					'Notification of missing required fields',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ true }
+				opened={ panelStates.notification }
+				onToggle={ () => togglePanel( 'notification' ) }
 			>
 				<PanelRow>
 					<TextControl
