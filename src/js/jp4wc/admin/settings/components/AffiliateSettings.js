@@ -24,7 +24,7 @@ const AffiliateSettings = ( {
 		<div className="jp4wc-affiliate-settings">
 			<PanelBody
 				title={ __( 'A8.net Setting', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -78,7 +78,7 @@ const AffiliateSettings = ( {
 
 			<PanelBody
 				title={ __( 'felmat Setting', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<ToggleControl

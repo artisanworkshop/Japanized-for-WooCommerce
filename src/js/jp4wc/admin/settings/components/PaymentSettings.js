@@ -25,7 +25,7 @@ const PaymentSettings = ( {
 		<div className="jp4wc-payment-settings">
 			<PanelBody
 				title={ __( 'Payment Method', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -117,7 +117,7 @@ const PaymentSettings = ( {
 					'Extra charge for COD method',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<TextControl

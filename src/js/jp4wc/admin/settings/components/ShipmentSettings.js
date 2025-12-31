@@ -52,7 +52,7 @@ const ShipmentSettings = ( {
 					'Delivery date designation',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -328,7 +328,7 @@ const ShipmentSettings = ( {
 					'Delivery Time designation',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -479,7 +479,7 @@ const ShipmentSettings = ( {
 					'Notification of missing required fields',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<TextControl

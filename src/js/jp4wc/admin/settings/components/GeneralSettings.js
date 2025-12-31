@@ -35,7 +35,7 @@ const GeneralSettings = ( {
 					'Address Display Setting',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -205,7 +205,7 @@ const GeneralSettings = ( {
 
 			<PanelBody
 				title={ __( 'Virtual order Setting', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<div style={ { marginBottom: '20px', marginTop: '10px' } }>
 					{ __(
@@ -310,7 +310,7 @@ const GeneralSettings = ( {
 
 			<PanelBody
 				title={ __( 'Usage tracking', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<ToggleControl
