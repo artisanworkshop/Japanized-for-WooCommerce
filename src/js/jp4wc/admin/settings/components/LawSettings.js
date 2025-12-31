@@ -22,7 +22,7 @@ const LawSettings = ( { settings, updateSetting, saveSettings, saving } ) => {
 					'Specified Commercial Transaction Law',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
 				<PanelRow>
 					<TextControl
