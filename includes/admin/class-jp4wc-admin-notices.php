@@ -59,7 +59,6 @@ class JP4WC_Admin_Notices {
 		add_action( 'wp_loaded', array( $this, 'jp4wc_hide_notices' ) );
 
 		add_action( 'wp_ajax_jp4wc_pr_dismiss_prompt', array( $this, 'jp4wc_dismiss_review_prompt' ) );
-		add_action( 'jp4wc_save_methods_tracking', array( $this, 'jp4wc_save_methods_tracking' ) );
 	}
 
 	/**
@@ -435,29 +434,6 @@ class JP4WC_Admin_Notices {
 
 		// Otherwise, the version is current enough.
 		return true;
-	}
-
-	/**
-	 * Handles tracking method settings.
-	 *
-	 * Saves the tracking preferences and schedules or clears the tracking event
-	 * based on user selection.
-	 *
-	 * @since 2.6.0
-	 * @param string $post The tracking preference value ('0' to disable tracking).
-	 * @return void
-	 */
-	public function jp4wc_save_methods_tracking( $post ) {
-		if ( empty( $post ) ) {
-			wp_clear_scheduled_hook( 'jp4wc_tracker_send_event' );
-		} elseif ( ! wp_next_scheduled( 'jp4wc_tracker_send_event' ) ) {
-				/**
-				 * How frequent to schedule the tracker send event.
-				 *
-				 * @since 2.6.0
-				 */
-				wp_schedule_event( time() + 10, apply_filters( 'jp4wc_tracker_event_recurrence', 'weekly' ), 'jp4wc_tracker_send_event' );
-		}
 	}
 
 	/**
