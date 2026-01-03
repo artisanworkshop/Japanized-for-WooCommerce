@@ -304,7 +304,7 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 
 			if ( $show_day_of_week ) {
 				$week_name = $week[ date_i18n( 'w', $timestamp ) ];
-				// translators: %s is the day of the week (e.g., Mon, Tue, Wed).
+				// translators: %s: The day of the week (e.g., Mon, Tue, Wed).
 				$display_date = $display_date . sprintf( __( '(%s)', 'woocommerce-for-japan' ), $week_name );
 			}
 

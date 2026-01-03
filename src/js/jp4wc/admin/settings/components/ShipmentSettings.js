@@ -107,7 +107,7 @@ const ShipmentSettings = ( {
 							'woocommerce-for-japan'
 						) }
 						help={ __(
-							'Check if delivery date is required field.',
+							'Please check if a delivery date is required.',
 							'woocommerce-for-japan'
 						) }
 						checked={
@@ -387,7 +387,7 @@ const ShipmentSettings = ( {
 							'woocommerce-for-japan'
 						) }
 						help={ __(
-							'Check if delivery time zone is required field.',
+							'Please check if a delivery time is required.',
 							'woocommerce-for-japan'
 						) }
 						checked={

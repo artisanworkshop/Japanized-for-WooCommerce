@@ -159,7 +159,7 @@ class JP4WC_Delivery {
 				$display_date[ $i ]  = get_date_from_gmt( $set_display_date, __( 'Y/m/d', 'woocommerce-for-japan' ) );
 				if ( $setting['day-of-week'] ) {
 					$week_name = $week[ date_i18n( 'w', $start_day_timestamp ) ];
-					/* translators: %s: Week name */
+					/* translators: %s: The day of the week (e.g., Mon, Tue, Wed). */
 					$display_date[ $i ] = $display_date[ $i ] . sprintf( __( '(%s)', 'woocommerce-for-japan' ), $week_name );
 				}
 				echo '<option value="' . esc_attr( $value_date[ $i ] ) . '">' . esc_html( $display_date[ $i ] ) . '</option>';

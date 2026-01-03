@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that represents admin notices.
  *
- * @version 2.7.15
+ * @version 2.8.0
  * @since 2.3.4
  */
 class JP4WC_Admin_Notices {
@@ -56,6 +56,7 @@ class JP4WC_Admin_Notices {
 	public function __construct() {
 		add_action( 'admin_notices', array( $this, 'admin_jp4wc_security_checklist' ) );
 		add_action( 'admin_notices', array( $this, 'admin_jp4wc_promotion' ) );
+		add_action( 'admin_notices', array( $this, 'admin_jp4wc_paypal_deprecation' ) );
 		add_action( 'wp_loaded', array( $this, 'jp4wc_hide_notices' ) );
 
 		add_action( 'wp_ajax_jp4wc_pr_dismiss_prompt', array( $this, 'jp4wc_dismiss_review_prompt' ) );
@@ -257,7 +258,7 @@ class JP4WC_Admin_Notices {
 	 * Shows a notice to promotion from Artisan Workshop
 	 * and the admin hasn't dismissed the notice.
 	 *
-	 * @since 2.7.1
+	 * @since 2.8.0
 	 * @return void
 	 */
 	public function admin_jp4wc_promotion() {
@@ -277,7 +278,7 @@ class JP4WC_Admin_Notices {
 	/**
 	 * Display the promotion notice.
 	 *
-	 * @since 2.7.1
+	 * @since 2.8.0
 	 */
 	public static function jp4wc_promotion_display() {
 		$set_promotion = array();
@@ -320,6 +321,86 @@ class JP4WC_Admin_Notices {
 		</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Display PayPal deprecation notice for WooCommerce admins.
+	 *
+	 * Shows a notice to inform that PayPal will be removed from the plugin
+	 * in updates after February 2026.
+	 *
+	 * @since 2.8.0
+	 * @return void
+	 */
+	public function admin_jp4wc_paypal_deprecation() {
+		// Only show to WooCommerce admins.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		// Check if already dismissed.
+		if ( get_option( 'jp4wc_hide_paypal_deprecation_notice', 0 ) ) {
+			return;
+		}
+
+		// Only show if current date is before February 2026.
+		$current_date = current_time( 'Y-m-d' );
+		if ( $current_date >= '2026-02-28' ) {
+			// Automatically dismiss if we're past February 2026.
+			update_option( 'jp4wc_hide_paypal_deprecation_notice', 1 );
+			return;
+		}
+
+		// Check if PayPal gateway is enabled.
+		if ( ! $this->is_paypal_gateway_enabled() ) {
+			return;
+		}
+
+		self::jp4wc_paypal_deprecation_display();
+	}
+
+	/**
+	 * Display the PayPal deprecation notice.
+	 *
+	 * @since 2.8.0
+	 */
+	public static function jp4wc_paypal_deprecation_display() {
+		?>
+		<div class="notice notice-warning jp4wc-paypal-deprecation-notice" id="jp4wc_paypal_deprecation" style="background-color: #fff3cd; color: #856404; border-left: 4px solid #ffc107;">
+		<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'jp4wc-hide-notice', 'paypal_deprecation' ), 'jp4wc_hide_notices_nonce', '_jp4wc_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0 9px 9px;text-decoration:none;"></a>
+		<div id="jp4wc-paypal-deprecation-content">
+			<h2 style="color:#856404;"><?php esc_html_e( '【Important Notice】PayPal Integration Removal', 'woocommerce-for-japan' ); ?></h2>
+			<p>
+				<?php esc_html_e( 'Starting with updates from February 2026, PayPal payment gateway will be removed from the Japanized for WooCommerce plugin.', 'woocommerce-for-japan' ); ?><br />
+				<?php esc_html_e( 'If you are currently using PayPal, please consider installing the official PayPal plugin or using an alternative payment method.', 'woocommerce-for-japan' ); ?><br />
+				<strong><?php esc_html_e( 'Please prepare for this change before the update.', 'woocommerce-for-japan' ); ?></strong>
+			</p>
+		</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Checks if PayPal payment gateway is enabled.
+	 *
+	 * @since 2.8.0
+	 * @return bool True if PayPal gateway is enabled, false otherwise.
+	 */
+	private function is_paypal_gateway_enabled() {
+		// Check if WooCommerce is active.
+		if ( ! function_exists( 'WC' ) ) {
+			return false;
+		}
+
+		// Get available payment gateways.
+		$payment_gateways = WC()->payment_gateways->payment_gateways();
+
+		// Check if PayPal gateway exists and is enabled.
+		if ( isset( $payment_gateways['paypal'] ) && 'yes' === $payment_gateways['paypal']->enabled ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -444,7 +525,7 @@ class JP4WC_Admin_Notices {
 	 */
 	public function is_safe_php_version() {
 		$php_ver = phpversion();
-		if ( version_compare( $php_ver, '8.1.0', '>=' ) ) {
+		if ( version_compare( $php_ver, '8.2.0', '>=' ) ) {
 			return true;
 		}
 		return false;
@@ -585,10 +666,20 @@ class JP4WC_Admin_Notices {
 			}
 			update_option( 'jp4wc_hide_ecbuddy_notice', 1 );
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['jp4wc-hide-notice'] ) && 'paypal_deprecation' === sanitize_text_field( wp_unslash( $_GET['jp4wc-hide-notice'] ) ) ) {
+			if ( ! isset( $_GET['_jp4wc_notice_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_jp4wc_notice_nonce'] ) ), 'jp4wc_hide_notices_nonce' ) ) {
+				return;
+			}
+			update_option( 'jp4wc_hide_paypal_deprecation_notice', 1 );
+		}
 		if ( get_option( 'jp4wc_hide_security_check_notice', 0 ) ) {
 			return;
 		}
 		if ( get_option( 'jp4wc_hide_ecbuddy_notice', 0 ) ) {
+			return;
+		}
+		if ( get_option( 'jp4wc_hide_paypal_deprecation_notice', 0 ) ) {
 			return;
 		}
 	}
