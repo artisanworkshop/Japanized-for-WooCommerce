@@ -85,6 +85,20 @@ class JP4WC_Delivery {
 		if ( $product_cnt === $virtual_cnt ) {
 			return;
 		}
+
+		// Log that delivery fields will be displayed.
+		if ( function_exists( 'wc_get_logger' ) ) {
+			$logger = wc_get_logger();
+			$logger->info(
+				sprintf(
+					'Delivery fields will be displayed. Physical products: %d, Virtual products: %d',
+					$product_cnt - $virtual_cnt,
+					$virtual_cnt
+				),
+				array( 'source' => 'jp4wc_delivery_display' )
+			);
+		}
+
 		// Display delivery date designation.
 		$setting_methods = array(
 			'delivery-date',
@@ -368,11 +382,29 @@ class JP4WC_Delivery {
 	 * @return array Modified posted checkout data.
 	 */
 	public function jp4wc_delivery_posted_data( $data ) {
+		$date_value = '';
+		$time_value = '';
+
 		if ( isset( $_POST['wc4jp_delivery_date'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			$data['wc4jp_delivery_date'] = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) );// phpcs:ignore WordPress.Security.NonceVerification
+			$date_value                  = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) );// phpcs:ignore WordPress.Security.NonceVerification
+			$data['wc4jp_delivery_date'] = $date_value;
 		}
 		if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification
-			$data['wc4jp_delivery_time_zone'] = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) );// phpcs:ignore WordPress.Security.NonceVerification
+			$time_value                       = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) );// phpcs:ignore WordPress.Security.NonceVerification
+			$data['wc4jp_delivery_time_zone'] = $time_value;
+		}
+
+		// Log the captured data.
+		if ( function_exists( 'wc_get_logger' ) ) {
+			$logger = wc_get_logger();
+			$logger->info(
+				sprintf(
+					'Posted data captured - Date: %s, Time: %s',
+					! empty( $date_value ) ? $date_value : '(empty)',
+					! empty( $time_value ) ? $time_value : '(empty)'
+				),
+				array( 'source' => 'jp4wc_delivery_posted_data' )
+			);
 		}
 		return $data;
 	}
@@ -391,18 +423,92 @@ class JP4WC_Delivery {
 		if ( ! isset( $_POST['woocommerce-process-checkout-nonce'] ) ||
 			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce-process-checkout-nonce'] ) ), 'woocommerce-process_checkout' )
 		) {
+			// Log nonce verification failure for debugging.
+			if ( function_exists( 'wc_get_logger' ) ) {
+				$logger = wc_get_logger();
+				$logger->warning(
+					'Delivery validation skipped: Nonce verification failed',
+					array( 'source' => 'jp4wc_delivery_validation' )
+				);
+			}
+			return;
+		}
+
+		// Check if we're dealing with virtual products only.
+		$has_physical = false;
+		if ( WC()->cart ) {
+			foreach ( WC()->cart->get_cart() as $cart_item ) {
+				$product = $cart_item['data'];
+				if ( ! $product->is_virtual() ) {
+					$has_physical = true;
+					break;
+				}
+			}
+		}
+
+		// Skip validation if only virtual products.
+		if ( ! $has_physical ) {
+			if ( function_exists( 'wc_get_logger' ) ) {
+				$logger = wc_get_logger();
+				$logger->info(
+					'Delivery validation skipped: Virtual products only',
+					array( 'source' => 'jp4wc_delivery_validation' )
+				);
+			}
 			return;
 		}
 
 		if ( get_option( 'wc4jp-delivery-date' ) && '1' === get_option( 'wc4jp-delivery-date-required' ) ) {
-			if ( empty( $fields['wc4jp_delivery_date'] ) ) {
+			// Check both $fields array and direct POST data.
+			$date_value = isset( $fields['wc4jp_delivery_date'] ) ? $fields['wc4jp_delivery_date'] : '';
+
+			// Fallback to POST if not in fields array.
+			if ( empty( $date_value ) && isset( $_POST['wc4jp_delivery_date'] ) ) {
+				$date_value = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) );
+			}
+
+			if ( empty( $date_value ) || '0' === $date_value ) {
 				$errors->add( 'wc4jp_delivery_date_required', __( '"Desired delivery date" is a required field. Please enter it.', 'woocommerce-for-japan' ), array( 'status' => 400 ) );
+
+				// Log validation failure.
+				if ( function_exists( 'wc_get_logger' ) ) {
+					$logger = wc_get_logger();
+					$logger->warning(
+						sprintf(
+							'Delivery date validation failed. Fields array: %s, POST data: %s',
+							isset( $fields['wc4jp_delivery_date'] ) ? 'exists' : 'missing',
+							isset( $_POST['wc4jp_delivery_date'] ) ? 'exists' : 'missing'
+						),
+						array( 'source' => 'jp4wc_delivery_validation' )
+					);
+				}
 			}
 		}
 
 		if ( get_option( 'wc4jp-delivery-time-zone' ) && '1' === get_option( 'wc4jp-delivery-time-zone-required' ) ) {
-			if ( empty( $fields['wc4jp_delivery_time_zone'] ) ) {
+			// Check both $fields array and direct POST data.
+			$time_value = isset( $fields['wc4jp_delivery_time_zone'] ) ? $fields['wc4jp_delivery_time_zone'] : '';
+
+			// Fallback to POST if not in fields array.
+			if ( empty( $time_value ) && isset( $_POST['wc4jp_delivery_time_zone'] ) ) {
+				$time_value = sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) );
+			}
+
+			if ( empty( $time_value ) || '0' === $time_value ) {
 				$errors->add( 'wc4jp_delivery_time_zone_required', __( '"Desired delivery time zone" is a required field. Please enter it.', 'woocommerce-for-japan' ), array( 'status' => 400 ) );
+
+				// Log validation failure.
+				if ( function_exists( 'wc_get_logger' ) ) {
+					$logger = wc_get_logger();
+					$logger->warning(
+						sprintf(
+							'Delivery time validation failed. Fields array: %s, POST data: %s',
+							isset( $fields['wc4jp_delivery_time_zone'] ) ? 'exists' : 'missing',
+							isset( $_POST['wc4jp_delivery_time_zone'] ) ? 'exists' : 'missing'
+						),
+						array( 'source' => 'jp4wc_delivery_validation' )
+					);
+				}
 			}
 		}
 	}
@@ -908,11 +1014,104 @@ class JP4WC_Delivery {
 			$order_admin_url
 		);
 		$message .= "\n";
-		$message .= '------------------------' . "\n";
-		// Browser type.
+		$message .= '========================' . "\n";
+		$message .= __( 'Diagnostic Information', 'woocommerce-for-japan' ) . "\n";
+		$message .= '========================' . "\n\n";
+
+		// Checkout type detection.
+		$message          .= '--- ' . __( 'Checkout Type', 'woocommerce-for-japan' ) . ' ---' . "\n";
+		$is_block_checkout = false;
+		$block_date        = $order->get_meta( '_wc_other/jp4wc/delivery-date', true );
+		$block_time        = $order->get_meta( '_wc_other/jp4wc/delivery-time', true );
+		$shortcode_date    = $order->get_meta( 'wc4jp-delivery-date', true );
+		$shortcode_time    = $order->get_meta( 'wc4jp-delivery-time-zone', true );
+
+		if ( ! empty( $block_date ) || ! empty( $block_time ) ) {
+			$is_block_checkout = true;
+		}
+
+		$message .= 'Type: ' . ( $is_block_checkout ? 'Block Checkout' : 'Shortcode Checkout' ) . "\n";
+		if ( function_exists( 'jp4wc_is_using_checkout_blocks' ) ) {
+			$message .= 'Page Using Blocks: ' . ( jp4wc_is_using_checkout_blocks() ? 'Yes' : 'No' ) . "\n";
+		}
+		$message .= "\n";
+
+		// Delivery date and time values.
+		$message .= '--- ' . __( 'Delivery Data', 'woocommerce-for-japan' ) . ' ---' . "\n";
+		$message .= 'Block Date Meta (_wc_other/jp4wc/delivery-date): ' . ( ! empty( $block_date ) ? $block_date : '(empty)' ) . "\n";
+		$message .= 'Block Time Meta (_wc_other/jp4wc/delivery-time): ' . ( ! empty( $block_time ) ? $block_time : '(empty)' ) . "\n";
+		$message .= 'Shortcode Date Meta (wc4jp-delivery-date): ' . ( ! empty( $shortcode_date ) ? $shortcode_date : '(empty)' ) . "\n";
+		$message .= 'Shortcode Time Meta (wc4jp-delivery-time-zone): ' . ( ! empty( $shortcode_time ) ? $shortcode_time : '(empty)' ) . "\n";
+		$message .= "\n";
+
+		// Plugin settings.
+		$message .= '--- ' . __( 'Plugin Settings', 'woocommerce-for-japan' ) . ' ---' . "\n";
+		$message .= 'Delivery Date Enabled: ' . ( get_option( 'wc4jp-delivery-date' ) ? 'Yes' : 'No' ) . "\n";
+		$message .= 'Delivery Date Required: ' . ( '1' === get_option( 'wc4jp-delivery-date-required' ) ? 'Yes' : 'No' ) . "\n";
+		$message .= 'Delivery Time Enabled: ' . ( get_option( 'wc4jp-delivery-time-zone' ) ? 'Yes' : 'No' ) . "\n";
+		$message .= 'Delivery Time Required: ' . ( '1' === get_option( 'wc4jp-delivery-time-zone-required' ) ? 'Yes' : 'No' ) . "\n";
+		$message .= "\n";
+
+		// POST data (if available and not block checkout).
+		if ( ! $is_block_checkout && ! empty( $_POST ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$message .= '--- ' . __( 'POST Data', 'woocommerce-for-japan' ) . ' ---' . "\n";
+			$message .= 'wc4jp_delivery_date: ';
+			if ( isset( $_POST['wc4jp_delivery_date'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				$message .= sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_date'] ) ) . "\n"; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			} else {
+				$message .= '(not set)' . "\n";
+			}
+			$message .= 'wc4jp_delivery_time_zone: ';
+			if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				$message .= sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) ) . "\n"; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			} else {
+				$message .= '(not set)' . "\n";
+			}
+			$message .= 'Nonce Present: ' . ( isset( $_POST['woocommerce-process-checkout-nonce'] ) ? 'Yes' : 'No' ) . "\n"; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$message .= "\n";
+		}
+
+		// Cart contents.
+		if ( WC()->cart ) {
+			$message       .= '--- ' . __( 'Cart Information', 'woocommerce-for-japan' ) . ' ---' . "\n";
+			$virtual_count  = 0;
+			$physical_count = 0;
+			foreach ( WC()->cart->get_cart() as $cart_item ) {
+				$product = $cart_item['data'];
+				if ( $product->is_virtual() ) {
+					++$virtual_count;
+				} else {
+					++$physical_count;
+				}
+			}
+			$message .= 'Virtual Products: ' . $virtual_count . "\n";
+			$message .= 'Physical Products: ' . $physical_count . "\n";
+			$message .= 'Should Show Delivery Fields: ' . ( $physical_count > 0 ? 'Yes' : 'No' ) . "\n";
+			$message .= "\n";
+		}
+
+		// Environment information.
+		$message .= '--- ' . __( 'Environment', 'woocommerce-for-japan' ) . ' ---' . "\n";
 		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
 			$message .= 'User Agent: ' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) . "\n";
-			$message .= 'WooCommerce Version: ' . WC()->version . "\n";
+		}
+		$message .= 'WordPress Version: ' . get_bloginfo( 'version' ) . "\n";
+		$message .= 'WooCommerce Version: ' . WC()->version . "\n";
+		$message .= 'PHP Version: ' . PHP_VERSION . "\n";
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			$message .= 'REST Request: Yes' . "\n";
+			if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+				$message .= 'Request URI: ' . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) . "\n";
+			}
+		} else {
+			$message .= 'REST Request: No' . "\n";
+		}
+		$message .= "\n";
+
+		// Check recent logs for validation issues.
+		if ( function_exists( 'wc_get_logger' ) ) {
+			$message .= '--- ' . __( 'Note', 'woocommerce-for-japan' ) . ' ---' . "\n";
+			$message .= __( 'Please check WooCommerce logs (jp4wc_delivery_validation) for detailed validation information.', 'woocommerce-for-japan' ) . "\n";
 		}
 
 		// Email headers.
