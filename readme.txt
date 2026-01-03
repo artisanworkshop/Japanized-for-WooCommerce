@@ -97,11 +97,13 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Screenshots ==
 
-1. Billing Address Input Form
-2. Admin Panel Payment Gateways
-3. Admin Panel WooCommerce for Japan Setting Screen for Address Form.
-4. Admin Panel WooCommerce for Japan Setting Screen for Shipping date.
-5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
+1. General Settings - Configure name reading (Yomigana) fields, address display options, honorific titles, and usage tracking preferences.
+2. Shipment Settings - Set up delivery date designation, delivery time zones, holidays, and shipping notification options.
+3. Payment Settings - Enable and configure Japanese payment methods including bank transfer, postal transfer, pay at store, and extra charge settings.
+4. Law Settings - Configure Specified Commercial Transaction Law (特定商取引法) information including shop name, company details, owner information, and legal notices.
+5. Affiliate Settings - Set up affiliate tracking for Japanese affiliate networks including A8.net, Felmat (ValueCommerce), and Access Trade.
+6. Checkout Block - WooCommerce Blocks checkout page displaying Japanese address format, name reading fields, and delivery date/time selection.
+7. Classic Checkout - Traditional WooCommerce checkout page with Japanese localization features including address fields and delivery options.
 
 == Frequently Asked Questions ==
 
