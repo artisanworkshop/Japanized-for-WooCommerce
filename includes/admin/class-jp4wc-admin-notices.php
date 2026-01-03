@@ -396,7 +396,7 @@ class JP4WC_Admin_Notices {
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
 
 		// Check if PayPal gateway exists and is enabled.
-		if ( isset( $payment_gateways['paypal'] ) && 'yes' === $payment_gateways['paypal']->enabled ) {
+		if ( isset( $payment_gateways['paypal'] ) && 'yes' === $payment_gateways['paypal']->enabled && get_option( 'wc4jp-paypal' ) ) {
 			return true;
 		}
 
