@@ -55,7 +55,7 @@ class JP4WC_Admin_Notices {
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', array( $this, 'admin_jp4wc_security_checklist' ) );
-		add_action( 'admin_notices', array( $this, 'admin_jp4wc_ecbuddy' ) );
+		add_action( 'admin_notices', array( $this, 'admin_jp4wc_promotion' ) );
 		add_action( 'wp_loaded', array( $this, 'jp4wc_hide_notices' ) );
 
 		add_action( 'wp_ajax_jp4wc_pr_dismiss_prompt', array( $this, 'jp4wc_dismiss_review_prompt' ) );
@@ -252,26 +252,17 @@ class JP4WC_Admin_Notices {
 	}
 
 	/**
-	 * Display ECBuddy notice for WooCommerce admins.
+	 * Display promotion notice for WooCommerce admins.
 	 *
-	 * Shows a notice to promote ECBuddy plugin if it's not already installed
+	 * Shows a notice to promotion from Artisan Workshop
 	 * and the admin hasn't dismissed the notice.
 	 *
 	 * @since 2.7.1
 	 * @return void
 	 */
-	public function admin_jp4wc_ecbuddy() {
+	public function admin_jp4wc_promotion() {
 		// Only show to WooCommerce admins.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			return;
-		}
-		// Only show to WooCommerce admins.
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			return;
-		}
-
-		// Notification display content.
-		if ( get_option( 'jp4wc_hide_ecbuddy_notice', 0 ) ) {
 			return;
 		}
 
@@ -280,35 +271,169 @@ class JP4WC_Admin_Notices {
 			return;
 		}
 
-		self::jp4wc_ecbuddy_display();
+		self::jp4wc_promotion_display();
 	}
 
 	/**
-	 * Display the ECBuddy notice.
+	 * Display the promotion notice.
 	 *
 	 * @since 2.7.1
 	 */
-	public static function jp4wc_ecbuddy_display() {
-		$ecbuddy_link        = 'https://ssec.shop/ec-buddy-personal-training/?utm_source=jp4wc&utm_medium=plugin&utm_campaign=ecbuddy_notice';
-		$catch_copy          = __( 'Enhance Your WooCommerce Store with ECBuddy!', 'woocommerce-for-japan' );
-		$ecbuddy_text1       = __( 'EC Buddy is a service that focuses on providing guidance and practical support to help your company increase sales. Ultimately, our goal is to support you until you are able to operate independently.', 'woocommerce-for-japan' );
-		$ecbuddy_text2       = __( 'Although only three months have passed since the service was launched (August 2025), it has already been adopted by five companies, and sales are steadily increasing.', 'woocommerce-for-japan' );
-		$ecbuddy_button_text = __( 'Learn More About ECBuddy', 'woocommerce-for-japan' );
+	public static function jp4wc_promotion_display() {
+		$set_promotion = array();
+		$set_promotion = self::get_promotion_content();
+
+		// No promotion content available.
+		if ( empty( $set_promotion ) ) {
+			return;
+		}
+
+		$notice_css = ! empty( $set_promotion['css'] ) ? $set_promotion['css'] : '';
+		$notice_key = ! empty( $set_promotion['key'] ) ? $set_promotion['key'] : '';
+
+		// Notification display content.
+		if ( get_option( 'jp4wc_hide_' . $notice_key . '_notice', 0 ) ) {
+			return;
+		}
+
+		$catch_copy     = ! empty( $set_promotion['catch_copy'] ) ? $set_promotion['catch_copy'] : '';
+		$catch_copy_css = ! empty( $set_promotion['catch_copy_css'] ) ? $set_promotion['catch_copy_css'] : '';
+
+		$promotion_text1 = ! empty( $set_promotion['text1'] ) ? $set_promotion['text1'] : '';
+		$promotion_text2 = ! empty( $set_promotion['text2'] ) ? $set_promotion['text2'] : '';
+
+		$promotion_button_css  = ! empty( $set_promotion['button_css'] ) ? $set_promotion['button_css'] : '';
+		$promotion_button_text = ! empty( $set_promotion['button_text'] ) ? $set_promotion['button_text'] : '';
+		$promotion_link        = ! empty( $set_promotion['URL'] ) ? $set_promotion['URL'] : '';
 		?>
-		<div class="notice notice-info jp4wc-ecbuddy-notice" id="pr_jp4wc_ecbuddy" style="background-color: #1E73BE; color: #EEEEEE;">
-		<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'jp4wc-hide-notice', 'ecbuddy' ), 'jp4wc_hide_notices_nonce', '_jp4wc_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0 9px 9px;text-decoration:none;"></a>
-		<div id="jp4wc-ecbuddy-notice-content">
-			<h2 style="color: #fff; margin-top: 20px;"><?php echo esc_html( $catch_copy ); ?></h2>
+		<div class="notice notice-info jp4wc-promotion-notice" id="pr_jp4wc_promotion" style="<?php echo esc_attr( $notice_css ); ?>">
+		<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'jp4wc-hide-notice', $notice_key ), 'jp4wc_hide_notices_nonce', '_jp4wc_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0 9px 9px;text-decoration:none;"></a>
+		<div id="jp4wc-promotion-notice-content">
+			<h2 style="<?php echo esc_attr( $catch_copy_css ); ?>"><?php echo esc_html( $catch_copy ); ?></h2>
 			<p>
-				<?php echo esc_html( $ecbuddy_text1 ); ?><br />
-				<?php echo esc_html( $ecbuddy_text2 ); ?><br />
+				<?php echo esc_html( $promotion_text1 ); ?><br />
+				<?php echo esc_html( $promotion_text2 ); ?><br />
 			</p>
-			<a href="<?php echo esc_url( $ecbuddy_link ); ?>" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; border: 2px solid #3498db; border-radius: 12px; text-decoration: none; background-color: #FFFFFF; color: #1E73BE; font-weight:bold; margin: 15px 0 20px;">
-				<?php echo esc_html( $ecbuddy_button_text ); ?>
+			<a href="<?php echo esc_url( $promotion_link ); ?>" target="_blank" rel="noopener noreferrer" style="<?php echo esc_attr( $promotion_button_css ); ?>">
+				<?php echo esc_html( $promotion_button_text ); ?>
 			</a>
 		</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Fetches promotion content from remote JSON endpoint and converts it to an array.
+	 *
+	 * Retrieves promotion data from https://wc.artws.info/jp4wc-promotion-notices.json endpoint and decodes
+	 * the JSON response into a PHP array. Filters promotions by current locale and randomly selects one to display.
+	 * Handles errors gracefully by returning an empty array on failure.
+	 *
+	 * Expected JSON format:
+	 * [
+	 *   {
+	 *     "locale": "ja",
+	 *     "key": "2026_new_year_campaign",
+	 *     "css": "background-color: #002F6C; color: #D1C1FF;",
+	 *     "catch_copy": "新年キャンペーン2026！",
+	 *     "catch_copy_css": "color:#fff;",
+	 *     "text1": "WooCommerce Japanユーザー特別割引！",
+	 *     "text2": "1月31日まで全てのプレミアム拡張機能が30%オフ。",
+	 *     "button_css": "display: inline-block; padding: 10px 20px; background-color: #3498db; color: #fff; border-radius: 5px; text-decoration: none; font-weight: bold;",
+	 *     "button_text": "キャンペーン詳細を見る",
+	 *     "URL": "https://example.com/new-year-campaign"
+	 *   },
+	 *   {
+	 *     "locale": "en",
+	 *     "key": "spring_sale_2026",
+	 *     "css": "background-color: #f0f8ff; color: #333;",
+	 *     "catch_copy": "Spring Sale Now On!",
+	 *     "catch_copy_css": "color:#2c3e50;",
+	 *     "text1": "Refresh your store with our spring updates.",
+	 *     "text2": "Limited time offer - save up to 50% on selected products.",
+	 *     "button_css": "display: inline-block; padding: 10px 20px; background-color: #27ae60; color: #fff; border-radius: 5px; text-decoration: none; font-weight: bold;",
+	 *     "button_text": "Shop Now",
+	 *     "URL": "https://example.com/spring-sale"
+	 *   }
+	 * ]
+	 *
+	 * @since 2.7.15
+	 * @return array Array of promotion data, or empty array on failure.
+	 */
+	private static function get_promotion_content() {
+		$promotion_url = 'https://wc.artws.info/jp4wc-promotion-notices.json';
+
+		// Make remote request to fetch JSON data.
+		$response = wp_remote_get(
+			$promotion_url,
+			array(
+				'timeout' => 10,
+				'headers' => array(
+					'Accept' => 'application/json',
+				),
+			)
+		);
+
+		// Check for errors in the response.
+		if ( is_wp_error( $response ) ) {
+			return array();
+		}
+
+		// Get the response body.
+		$body = wp_remote_retrieve_body( $response );
+
+		// Decode JSON to array.
+		$promotions = json_decode( $body, true );
+
+		// Return empty array if JSON decode fails or result is not an array.
+		if ( ! is_array( $promotions ) || empty( $promotions ) ) {
+			return array();
+		}
+
+		// Get current locale (e.g., "ja", "en_US").
+		$current_locale = get_locale();
+
+		// Extract language code from locale (e.g., "ja" from "ja" or "ja_JP").
+		$current_language = substr( $current_locale, 0, 2 );
+
+		// Filter promotions by current language.
+		$filtered_promotions = array_filter(
+			$promotions,
+			function ( $promotion ) use ( $current_language ) {
+				// If locale field doesn't exist, include it for backward compatibility.
+				if ( ! isset( $promotion['locale'] ) ) {
+					return true;
+				}
+				// Match the language code.
+				return $current_language === $promotion['locale'];
+			}
+		);
+
+		// If no promotions match current language, try fallback to English or all promotions.
+		if ( empty( $filtered_promotions ) ) {
+			// Try to get English promotions as fallback.
+			$filtered_promotions = array_filter(
+				$promotions,
+				function ( $promotion ) {
+					return isset( $promotion['locale'] ) && 'en' === $promotion['locale'];
+				}
+			);
+
+			// If still empty, use all promotions.
+			if ( empty( $filtered_promotions ) ) {
+				$filtered_promotions = $promotions;
+			}
+		}
+
+		// Return empty array if no promotions available after filtering.
+		if ( empty( $filtered_promotions ) ) {
+			return array();
+		}
+
+		// Randomly select one promotion to display.
+		$random_key = array_rand( $filtered_promotions );
+
+		return $filtered_promotions[ $random_key ];
 	}
 
 	/**
@@ -353,7 +478,7 @@ class JP4WC_Admin_Notices {
 		$latest_parts  = explode( '.', $latest_version );
 		$current_parts = explode( '.', $current_version );
 
-		if ( isset( $latest_parts[0] ) && isset( $current_parts[0] ) && $latest_parts[0] !== $current_parts[0] ) {
+		if ( isset( $latest_parts[0] ) && isset( $current_parts[0] ) && $current_parts[0] !== $latest_parts[0] ) {
 			return false;
 		}
 
@@ -424,11 +549,11 @@ class JP4WC_Admin_Notices {
 		// Compare major versions.
 		if ( $current_parts[0] < $latest_parts[0] ) {
 			// If major version is behind, check if minor version is at least 2 versions behind.
-			return ( $latest_parts[1] - $current_parts[1] >= 2 ) ? false : true;
+			return ( 2 <= $latest_parts[1] - $current_parts[1] ) ? false : true;
 		}
 
 		// If major versions are the same, check if minor version is at least 2 versions behind.
-		if ( $current_parts[0] === $latest_parts[0] && ( $latest_parts[1] - $current_parts[1] >= 2 ) ) {
+		if ( $latest_parts[0] === $current_parts[0] && ( 2 <= $latest_parts[1] - $current_parts[1] ) ) {
 			return false;
 		}
 

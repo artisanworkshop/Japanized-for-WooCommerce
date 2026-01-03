@@ -1,3 +1,8 @@
+# Git Attributes Configuration for WooCommerce for Japan
+# This file specifies files and directories that should be excluded from Git archive exports.
+# Files marked with 'export-ignore' will not be included when creating distribution packages.
+# This helps keep production releases clean by excluding development-only files.
+
 .gitattributes export-ignore
 .gitmodules export-ignore
 .gitignore export-ignore
@@ -21,3 +26,4 @@ vendor/* export-ignore
 tests/* export-ignore
 .phpcs.xml.dist export-ignore
 .phpunit.xml.dist export-ignore
+promotion-json/* export-ignore
