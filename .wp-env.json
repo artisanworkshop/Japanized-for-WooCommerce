@@ -7,6 +7,7 @@
 		"https://downloads.wordpress.org/plugin/plugin-check.latest-stable.zip",
 		"https://downloads.wordpress.org/plugin/wp-crontrol.latest-stable.zip",
 		"https://downloads.wordpress.org/plugin/debug-bar.latest-stable.zip",
+		"https://downloads.wordpress.org/plugin/query-monitor.latest-stable.zip",
 		"."
 	],
 	"config": {

@@ -94,7 +94,7 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 	 */
 	public function register_checkout_fields() {
 		// Note: Duplicate prevention is handled in class-jp4wc.php via woocommerce_init hook
-		// This method should only be called once per page load from that hook
+		// This method should only be called once per page load from that hook.
 
 		if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
 			$this->log_info( 'ERROR: woocommerce_register_additional_checkout_field function not found' );

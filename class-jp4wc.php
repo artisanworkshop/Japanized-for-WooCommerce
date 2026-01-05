@@ -84,13 +84,16 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 * @return void
 		 */
 		public function on_plugins_loaded() {
-			$this->load_plugin_textdomain();
+			// Textdomain is loaded earlier in woocommerce-for-japan.php
+			// Initialize admin settings.
+			// Must be initialized for both admin and frontend to register REST API routes.
+			new JP4WC_Admin_Settings();
 		}
 
 		/**
-		 * Define Constants.
+		 * Define plugin constants.
 		 */
-		protected function define_constants() {
+		public function define_constants() {
 			define( 'JP4WC_URL_PATH', plugins_url( '/', __FILE__ ) );
 			define( 'JP4WC_ABSPATH', __DIR__ . '/' );
 			define( 'JP4WC_INCLUDES_PATH', JP4WC_ABSPATH . 'includes/' );

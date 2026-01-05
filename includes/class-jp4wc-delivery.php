@@ -86,19 +86,6 @@ class JP4WC_Delivery {
 			return;
 		}
 
-		// Log that delivery fields will be displayed.
-		if ( function_exists( 'wc_get_logger' ) ) {
-			$logger = wc_get_logger();
-			$logger->info(
-				sprintf(
-					'Delivery fields will be displayed. Physical products: %d, Virtual products: %d',
-					$product_cnt - $virtual_cnt,
-					$virtual_cnt
-				),
-				array( 'source' => 'jp4wc_delivery_display' )
-			);
-		}
-
 		// Display delivery date designation.
 		$setting_methods = array(
 			'delivery-date',
@@ -394,18 +381,6 @@ class JP4WC_Delivery {
 			$data['wc4jp_delivery_time_zone'] = $time_value;
 		}
 
-		// Log the captured data.
-		if ( function_exists( 'wc_get_logger' ) ) {
-			$logger = wc_get_logger();
-			$logger->info(
-				sprintf(
-					'Posted data captured - Date: %s, Time: %s',
-					! empty( $date_value ) ? $date_value : '(empty)',
-					! empty( $time_value ) ? $time_value : '(empty)'
-				),
-				array( 'source' => 'jp4wc_delivery_posted_data' )
-			);
-		}
 		return $data;
 	}
 

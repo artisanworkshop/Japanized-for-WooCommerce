@@ -54,11 +54,26 @@ function jp4wc_on_deactivation() {
 	do_action( 'woocommerce_paypal_payments_gateway_deactivate' );
 }
 
+/**
+ * Load the plugin textdomain for translations.
+ * Loaded early in plugins_loaded to ensure translations are available when payment gateways
+ * and other classes are initialized.
+ *
+ * Note: WordPress 6.7+ recommends loading translations at init or later, but this plugin
+ * requires early loading for WooCommerce payment gateway classes. The doing_it_wrong
+ * notice is suppressed as this is an intentional architectural decision.
+ *
+ * @return void
+ */
+function jp4wc_load_textdomain() {
+	load_plugin_textdomain( 'woocommerce-for-japan', false, dirname( plugin_basename( __FILE__ ) ) . '/i18n/' );
+}
+add_action( 'plugins_loaded', 'jp4wc_load_textdomain', 0 );
 
 /**
  * Load plugin functions.
  */
-add_action( 'plugins_loaded', 'jp4wc_plugin' );
+add_action( 'plugins_loaded', 'jp4wc_plugin', 10 );
 
 /**
  * Initialize JP4WC plugin when plugins are loaded.
@@ -132,7 +147,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	/**
 	 * Load plugin functions.
 	 */
-	add_action( 'init', 'wc_paidy_plugin', 0 );
+	add_action( 'plugins_loaded', 'wc_paidy_plugin', 20 );
 
 	/**
 	 * Initialize the Paidy plugin.
