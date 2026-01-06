@@ -8,24 +8,71 @@ Stable tag: 2.8.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-This plugin extends the WooCommerce shop plugin for Japanese situation.
+Essential Japanese localization toolkit for WooCommerce - adds address formats, payment methods, delivery scheduling, and legal compliance.
 
 == Description ==
 
-This plugin is an additional feature plugin that makes WooCommerce easier to use in Japan. It is not essential when using it in Japan (Japanese environment).
+Japanized for WooCommerce is the essential toolkit for running a WooCommerce store in Japan. This plugin bridges the gap between WooCommerce's global features and Japan's unique e-commerce requirements.
+
+**Why You Need This Plugin**
+
+Running an online store in Japan requires specific features that standard WooCommerce doesn't provide out of the box:
+* Japanese address formats with proper field ordering (postal code, prefecture, city, address lines)
+* Name reading fields (Yomigana/Furigana) for accurate customer identification
+* Delivery date and time selection that customers expect
+* Popular Japanese payment methods like bank transfer and COD
+* Legal compliance with Japan's Specified Commercial Transaction Act (特定商取引法)
+
+**Who Should Use This**
+
+This plugin is designed for:
+* Japanese e-commerce businesses using WooCommerce
+* International stores shipping to Japanese customers
+* Anyone who needs Japanese address handling and payment methods
+* Stores requiring delivery date/time selection functionality
+
+**Seamless Integration**
+
+Works smoothly with WooCommerce core features and popular extensions. Fully compatible with the new WooCommerce Blocks checkout experience. All features are optional - enable only what you need for your store.
 
 = Key Features =
 
-1. Added a name reading input item
-2. Add honorific title (sama) after the name
-3. Automatic postal code entry function (Yahoo! application ID required)
-4. Hidden function at the time of free shipping
-5. Delivery date and time setting (including holiday setting)
-6. Addition of payment methods (bank transfer, postal transfer, over-the-counter payment, cash on delivery subscription)
-7. Addition of official postpaid payment Paidy for Japanized for WooCommerce
-8. Addition of PayPal Checkout (compatible with Japan)
-9. Creation of Specified Commercial Transactions Law and setting of short code
-* 7-8 payments are also distributed as individual payment plug-ins.
+**Address & Name Management**
+* Name reading (Yomigana/Furigana) input fields for billing and shipping addresses
+* Honorific title (様/sama) automatically added after customer names
+* Japanese-style address format with proper field ordering
+* Auto-fill address from postal code using Yahoo! API integration
+* Company name field support
+
+**Shipping & Delivery**
+* Delivery date and time selection at checkout
+* Delivery time slot management
+* Holiday and non-delivery day settings
+* Weekend and specific date exclusions
+* Delivery-related fields hidden when free shipping is applied
+
+**Payment Methods**
+* Bank Transfer (Japanese banks)
+* Japan Post Bank Transfer
+* Cash on Delivery (COD) with fee calculation
+* COD subscription support
+* Pay at Store (over-the-counter payment)
+* Paidy (Buy Now, Pay Later) - Official Japanese payment gateway
+* PayPal Checkout optimized for Japan
+
+**Legal & Compliance**
+* Specified Commercial Transaction Act (特定商取引法) page creator
+* Shortcode support for legal information display
+* Customizable legal notice templates
+
+**Additional Features**
+* Email template optimization for Japanese format
+* Address validation for Japanese postal codes
+* Affiliate integration (A8.net, Access Trade, Value Commerce)
+* WooCommerce Blocks compatibility
+* Security scanning and malware detection
+
+Note: Paidy and PayPal Checkout are also available as standalone payment plugins.
 
 [youtube https://www.youtube.com/watch?v=mPYlDDuGzis]
 
@@ -50,21 +97,72 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Screenshots ==
 
-1. Billing Address Input Form
-2. Admin Panel Payment Gateways
-3. Admin Panel WooCommerce for Japan Setting Screen for Address Form.
-4. Admin Panel WooCommerce for Japan Setting Screen for Shipping date.
-5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
+1. General Settings - Configure name reading (Yomigana) fields, address display options, honorific titles, and usage tracking preferences.
+2. Shipment Settings - Set up delivery date designation, delivery time zones, holidays, and shipping notification options.
+3. Payment Settings - Enable and configure Japanese payment methods including bank transfer, postal transfer, pay at store, and extra charge settings.
+4. Law Settings - Configure Specified Commercial Transaction Law (特定商取引法) information including shop name, company details, owner information, and legal notices.
+5. Affiliate Settings - Set up affiliate tracking for Japanese affiliate networks including A8.net, Felmat (ValueCommerce), and Access Trade.
+6. Checkout Block - WooCommerce Blocks checkout page displaying Japanese address format, name reading fields, and delivery date/time selection.
+7. Classic Checkout - Traditional WooCommerce checkout page with Japanese localization features including address fields and delivery options.
+
+== Frequently Asked Questions ==
+
+= Do I need this plugin to use WooCommerce in Japan? =
+
+While WooCommerce can work in Japan without this plugin, Japanized for WooCommerce provides essential features that Japanese customers expect, such as delivery date selection, name reading fields (Yomigana), and local payment methods. It significantly improves the user experience for Japanese e-commerce.
+
+= Does this plugin work with WooCommerce Blocks? =
+
+Yes! Version 2.8.0 and later fully supports the new WooCommerce Blocks checkout experience, including delivery date selection and custom address fields.
+
+= How do I enable the postal code auto-fill feature? =
+
+You need to obtain a free Yahoo! Japan Application ID from the Yahoo! Developer Network. Once you have the ID, enter it in the WooCommerce → Settings → Japan Settings → Address Form section.(Classic Checkout only)
+
+= Which payment methods are included? =
+
+The plugin includes: Bank Transfer (Japanese banks), Japan Post Bank Transfer, Cash on Delivery (COD) with fee calculation, Pay at Store, Paidy (Buy Now, Pay Later), and PayPal Checkout optimized for Japan. Paidy and PayPal are also available as standalone plugins.
+
+= Can I use only specific features and disable others? =
+
+Yes, absolutely! All features are modular and can be enabled or disabled individually from the plugin settings. You only need to activate the features your store requires.
+
+= Is the plugin compatible with multilingual sites? =
+
+Yes, the plugin is compatible with WPML and other multilingual plugins. It automatically detects the language and adjusts features accordingly. Japanese-specific features are only applied when the site language is set to Japanese.
+
+= How do I set up delivery date and time selection? =
+
+Go to WooCommerce → Settings → Japan Settings → Delivery Date. You can configure available delivery times, set holidays, exclude specific days of the week, and customize the delivery date display format.
+
+= Does this plugin modify WooCommerce core files? =
+
+No, the plugin uses WordPress and WooCommerce hooks and filters. It doesn't modify any core files, making it safe to use and easy to update.
+
+= Where can I get support? =
+
+For support, please visit the [plugin support forum](https://wordpress.org/support/plugin/woocommerce-for-japan/) on WordPress.org or check the [official documentation](https://wc.artws.info/).
+
+= Is this plugin free? =
+
+Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
 
-= 2.8.0 - 2025-11-26 =
-* Update - Setting Page to Block.
-* Update - Some bug and lint fixed.
-* Fixed - Fixed and Update Usage Tracking.
-* Dev - Delivery date and timezone for Checkout Block.
+= 2.8.0 - 2025-01-01 =
+* **New** - Complete WooCommerce Blocks checkout compatibility including delivery date and time selection
+* **New** - Block-based settings page for improved admin experience
+* **New** - Timezone support for delivery date selection in Checkout Block
+* **Update** - Enhanced usage tracking with improved data collection and privacy controls
+* **Update** - Code quality improvements with comprehensive linting fixes
+* **Fixed** - Multiple bug fixes for improved stability and performance
+* **Fixed** - Address field rendering issues in WooCommerce Blocks
+* **Dev** - Refactored settings architecture for better maintainability
+* **Dev** - Updated dependencies and improved compatibility with WordPress 6.8+
 
-[more older](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
+= Earlier versions =
+
+[View complete changelog](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
 == Upgrade Notice ==
 

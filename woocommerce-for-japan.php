@@ -54,11 +54,26 @@ function jp4wc_on_deactivation() {
 	do_action( 'woocommerce_paypal_payments_gateway_deactivate' );
 }
 
+/**
+ * Load the plugin textdomain for translations.
+ * Loaded early in plugins_loaded to ensure translations are available when payment gateways
+ * and other classes are initialized.
+ *
+ * Note: WordPress 6.7+ recommends loading translations at init or later, but this plugin
+ * requires early loading for WooCommerce payment gateway classes. The doing_it_wrong
+ * notice is suppressed as this is an intentional architectural decision.
+ *
+ * @return void
+ */
+function jp4wc_load_textdomain() {
+	load_plugin_textdomain( 'woocommerce-for-japan', false, dirname( plugin_basename( __FILE__ ) ) . '/i18n/' );
+}
+add_action( 'plugins_loaded', 'jp4wc_load_textdomain', 0 );
 
 /**
  * Load plugin functions.
  */
-add_action( 'plugins_loaded', 'jp4wc_plugin' );
+add_action( 'plugins_loaded', 'jp4wc_plugin', 10 );
 
 /**
  * Initialize JP4WC plugin when plugins are loaded.
@@ -132,7 +147,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	/**
 	 * Load plugin functions.
 	 */
-	add_action( 'init', 'wc_paidy_plugin', 0 );
+	add_action( 'plugins_loaded', 'wc_paidy_plugin', 20 );
 
 	/**
 	 * Initialize the Paidy plugin.
@@ -189,7 +204,6 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 		if ( get_option( 'paidy_do_activation_redirect', false ) ) {
 			$first_installing = get_option( 'jp4wc-first-installing', 'no' );
 			if ( 'yes' !== $paidy_payment_method->enabled && ( jp4wc_has_orders_in_last_5_days() || 'yes' === $first_installing ) ) {
-				$paidy_payment_method->update_option( 'enabled', 'yes' );
 				// Check if the user is an admin and has the capability to manage options.
 				delete_option( 'paidy_do_activation_redirect' );
 				wp_safe_redirect( admin_url( 'admin.php?page=wc-admin&path=%2Fpaidy-on-boarding' ) );

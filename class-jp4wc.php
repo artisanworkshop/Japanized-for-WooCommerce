@@ -84,13 +84,16 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 * @return void
 		 */
 		public function on_plugins_loaded() {
-			$this->load_plugin_textdomain();
+			// Textdomain is loaded earlier in woocommerce-for-japan.php
+			// Initialize admin settings.
+			// Must be initialized for both admin and frontend to register REST API routes.
+			new JP4WC_Admin_Settings();
 		}
 
 		/**
-		 * Define Constants.
+		 * Define plugin constants.
 		 */
-		protected function define_constants() {
+		public function define_constants() {
 			define( 'JP4WC_URL_PATH', plugins_url( '/', __FILE__ ) );
 			define( 'JP4WC_ABSPATH', __DIR__ . '/' );
 			define( 'JP4WC_INCLUDES_PATH', JP4WC_ABSPATH . 'includes/' );
@@ -320,20 +323,85 @@ if ( ! class_exists( 'JP4WC' ) ) :
 				}
 			}
 
-			// Register delivery fields block integration.
+			// CRITICAL: Register delivery fields EARLY on woocommerce_init.
+			// Additional Checkout Fields API requires registration before blocks are initialized.
+
+			add_action(
+				'woocommerce_init',
+				function () {
+					global $jp4wc_delivery_init_done, $jp4wc_delivery_integration;
+					if ( $jp4wc_delivery_init_done ) {
+						return;
+					}
+					$jp4wc_delivery_init_done = true;
+
+					require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
+					$jp4wc_delivery_integration = new JP4WC_Delivery_Blocks_Integration();
+					// Register fields immediately on woocommerce_init.
+					$jp4wc_delivery_integration->register_checkout_fields();
+				},
+				5 // Early priority.
+			);
+
+			// Register block integration for UI rendering.
 			add_action(
 				'woocommerce_blocks_checkout_block_registration',
 				function ( $integration_registry ) {
-					require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
-					$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+					global $jp4wc_delivery_integration;
+					// Reuse the same instance created in woocommerce_init hook.
+					if ( isset( $jp4wc_delivery_integration ) && $jp4wc_delivery_integration instanceof JP4WC_Delivery_Blocks_Integration ) {
+						$integration_registry->register( $jp4wc_delivery_integration );
+					} else {
+						// Fallback: create new instance if somehow the global wasn't set.
+						require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
+						$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+					}
 				}
 			);
-		}       /**
-				 * Add the gateway to WooCommerce
-				 *
-				 * @param array $methods Payment methods.
-				 * @return array $methods Payment methods.
-				 */
+
+			// CRITICAL: Register yomigana fields EARLY on woocommerce_init.
+			// Additional Checkout Fields API requires registration before blocks are initialized.
+
+			add_action(
+				'woocommerce_init',
+				function () {
+					global $jp4wc_yomigana_init_done, $jp4wc_yomigana_integration;
+					if ( $jp4wc_yomigana_init_done ) {
+						return;
+					}
+					$jp4wc_yomigana_init_done = true;
+
+					require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
+					$jp4wc_yomigana_integration = new JP4WC_Yomigana_Blocks_Integration();
+					// Register fields immediately on woocommerce_init.
+					$jp4wc_yomigana_integration->register_checkout_fields();
+				},
+				5 // Early priority.
+			);
+
+			// Register yomigana block integration for UI rendering.
+			add_action(
+				'woocommerce_blocks_checkout_block_registration',
+				function ( $integration_registry ) {
+					global $jp4wc_yomigana_integration;
+					// Reuse the same instance created in woocommerce_init hook.
+					if ( isset( $jp4wc_yomigana_integration ) && $jp4wc_yomigana_integration instanceof JP4WC_Yomigana_Blocks_Integration ) {
+						$integration_registry->register( $jp4wc_yomigana_integration );
+					} else {
+						// Fallback: create new instance if somehow the global wasn't set.
+						require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
+						$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
+					}
+				}
+			);
+		}
+
+		/**
+		 * Add the gateway to WooCommerce
+		 *
+		 * @param array $methods Payment methods.
+		 * @return array $methods Payment methods.
+		 */
 		public function add_jp4wc_custom_cod_gateway( $methods ) {
 			// Add the COD gateway for Fee.
 			$methods[] = 'JP4WC_COD_Fee';

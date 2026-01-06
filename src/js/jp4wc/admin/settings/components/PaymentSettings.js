@@ -10,6 +10,7 @@ import {
 	Button,
 	SelectControl,
 } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
 
 const PaymentSettings = ( {
 	settings,
@@ -17,6 +18,31 @@ const PaymentSettings = ( {
 	saveSettings,
 	saving,
 } ) => {
+	// Panel open state management
+	const [ panelStates, setPanelStates ] = useState( () => {
+		const saved = localStorage.getItem( 'jp4wc-payment-panel-states' );
+		return saved
+			? JSON.parse( saved )
+			: {
+					paymentMethod: true,
+					extraCharge: true,
+			  };
+	} );
+
+	useEffect( () => {
+		localStorage.setItem(
+			'jp4wc-payment-panel-states',
+			JSON.stringify( panelStates )
+		);
+	}, [ panelStates ] );
+
+	const togglePanel = ( panelName ) => {
+		setPanelStates( ( prev ) => ( {
+			...prev,
+			[ panelName ]: ! prev[ panelName ],
+		} ) );
+	};
+
 	const handleSave = () => {
 		saveSettings( settings );
 	};
@@ -25,7 +51,8 @@ const PaymentSettings = ( {
 		<div className="jp4wc-payment-settings">
 			<PanelBody
 				title={ __( 'Payment Method', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				opened={ panelStates.paymentMethod }
+				onToggle={ () => togglePanel( 'paymentMethod' ) }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -117,7 +144,8 @@ const PaymentSettings = ( {
 					'Extra charge for COD method',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ false }
+				opened={ panelStates.extraCharge }
+				onToggle={ () => togglePanel( 'extraCharge' ) }
 			>
 				<PanelRow>
 					<TextControl

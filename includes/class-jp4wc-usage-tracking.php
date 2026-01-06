@@ -47,11 +47,6 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		 * @param string $previous_version Previous version of the plugin.
 		 */
 		public static function send_tracking_on_install( $previous_version ) {
-			// Only send if tracking is enabled.
-			if ( 'yes' !== get_option( 'wc4jp-tracking' ) ) {
-				return;
-			}
-
 			// Send tracking data immediately on first install.
 			if ( empty( $previous_version ) ) {
 				self::jp4wc_send_tracking_data( true );
@@ -64,11 +59,6 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		 * @param string $previous_version Previous version of the plugin.
 		 */
 		public static function send_tracking_on_update( $previous_version ) {
-			// Only send if tracking is enabled.
-			if ( 'yes' !== get_option( 'wc4jp-tracking' ) ) {
-				return;
-			}
-
 			// Send tracking data on updates.
 			if ( ! empty( $previous_version ) ) {
 				self::jp4wc_send_tracking_data( true );
@@ -92,6 +82,11 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			 * @since 2.3.0
 			 */
 			if ( ! apply_filters( 'jp4wc_tracker_send_override', $override ) ) {
+				// Check if tracking is enabled.
+				if ( 'yes' !== get_option( 'wc4jp-tracking' ) ) {
+					return;
+				}
+
 				// Send a maximum of once per week by default.
 				$last_send = self::get_last_send_time();
 				if ( $last_send && $last_send > apply_filters( 'jp4wc_tracker_last_send_interval', strtotime( '-1 week' ) ) ) { // phpcs:ignore

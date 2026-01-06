@@ -12,7 +12,8 @@
 		"phpcompatibility/php-compatibility": "^9.3",
 		"wp-coding-standards/wpcs": "^2.3",
 		"sirbrillig/phpcs-variable-analysis": "^2.11",
-		"wp-phpunit/wp-phpunit": "^5.8"
+		"wp-phpunit/wp-phpunit": "^6.3",
+		"yoast/phpunit-polyfills": "^1.0"
 	},
 	"authors": [
 		{
@@ -23,6 +24,13 @@
 	"autoload": {},
 	"scripts": {
 		"format": "phpcbf --standard=./.phpcs.xml.dist --report-summary --report-source",
-		"lint": "phpcs --standard=./.phpcs.xml.dist"
+		"lint": "phpcs --standard=./.phpcs.xml.dist",
+		"test": "phpunit",
+		"test-install": "bash bin/setup-test-env.sh wordpress_test root root 127.0.0.1 3306 latest"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	}
 }

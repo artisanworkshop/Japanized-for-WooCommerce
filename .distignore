@@ -1,3 +1,8 @@
+# Distribution Ignore Configuration for WooCommerce for Japan
+# This file specifies files and directories that should be excluded from WordPress.org distribution packages.
+# Files and directories listed here will not be included when deploying to the WordPress plugin repository.
+# This ensures that only production-ready files are distributed to end users.
+
 # Directories
 /.wordpress-org
 /.vscode
@@ -8,12 +13,16 @@
 /vendor
 /src
 /docs
+/tests
+/promotion-json
 
 # Files
 .wp-env.json
 .gitattributes
 .distignore
 .gitignore
+.phpcs.xml.dist
+.phpunit.xml.dist
 composer.json
 composer.lock
 package-lock.json

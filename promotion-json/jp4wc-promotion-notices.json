@@ -1,0 +1,26 @@
+[
+  {
+    "locale": "ja",
+    "key": "ecbuddy",
+    "css": "background-color: #1E73BE; color: #EEEEEE;",
+    "catch_copy": "EC BuddyでWooCommerceストアを強化しましょう！",
+    "catch_copy_css": "color:#fff;",
+    "text1": "EC Buddyは、貴社の売上向上を目的とした指導と実践的なサポートに特化したサービスです。最終的には、自立して運営できるようになるまでサポートすることが私たちの目標です。",
+    "text2": "サービス開始（2025年8月）からまだ3ヶ月しか経っていませんが、既に5社に採用され、着実に売上が増加しています。",
+    "button_css": "display: inline-block; padding: 10px 20px; border: 2px solid #3498db; border-radius: 12px; text-decoration: none; background-color: #FFFFFF; color: #1E73BE; font-weight:bold; margin: 15px 0 5px;",
+    "button_text": "EC Buddyについて詳しく見る",
+    "URL": "https://ssec.shop/ec-buddy-personal-training/?utm_source=jp4wc&utm_medium=plugin&utm_campaign=ecbuddy_notice"
+  },
+  {
+    "locale": "en",
+    "key": "ecbuddy",
+    "css": "background-color: #1E73BE; color: #EEEEEE;",
+    "catch_copy": "Enhance Your WooCommerce Store with ECBuddy!",
+    "catch_copy_css": "color:#fff;",
+    "text1": "EC Buddy is a service that focuses on providing guidance and practical support to help your company increase sales. Ultimately, our goal is to support you until you are able to operate independently.",
+    "text2": "Although only three months have passed since the service was launched (August 2025), it has already been adopted by five companies, and sales are steadily increasing.",
+    "button_css": "display: inline-block; padding: 10px 20px; border: 2px solid #3498db; border-radius: 12px; text-decoration: none; background-color: #FFFFFF; color: #1E73BE; font-weight:bold; margin: 15px 0 5px;",
+    "button_text": "Learn More About ECBuddy",
+    "URL": "https://ssec.shop/ec-buddy-personal-training/?utm_source=jp4wc&utm_medium=plugin&utm_campaign=ecbuddy_notice"
+  }
+]

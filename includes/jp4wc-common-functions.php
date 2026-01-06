@@ -50,9 +50,19 @@ if ( ! function_exists( 'jp4wc_is_using_checkout_blocks' ) ) {
 	 * @return bool true if you are using Checkout Block, false if not.
 	 */
 	function jp4wc_is_using_checkout_blocks() {
+		// Check if WooCommerce Blocks is active.
+		if ( ! class_exists( 'Automattic\WooCommerce\Blocks\Package' ) ) {
+			return false;
+		}
+
 		// Block-based checkout only available on WooCommerce 6.9.0 and above.
 		if ( version_compare( WC()->version, '6.9.0', '<' ) ) {
 			return false;
+		}
+
+		// Check if we're in a REST API request (Checkout Block uses Store API).
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return true;
 		}
 
 		// Get the checkout page ID from your WooCommerce settings.
@@ -69,20 +79,19 @@ if ( ! function_exists( 'jp4wc_is_using_checkout_blocks' ) ) {
 			return false;
 		}
 
-		// Check if you are using a checkout block.
-		// Check the block checkout identifier.
-		$has_checkout_block = false;
-
-		// Check if woocommerce/checkout block exists.
-		if ( has_block( 'woocommerce/checkout', $checkout_post->post_content ) ) {
-			$has_checkout_block = true;
+		// Check if the checkout page contains the checkout block.
+		if ( function_exists( 'has_block' ) ) {
+			if ( has_block( 'woocommerce/checkout', $checkout_post ) ) {
+				return true;
+			}
 		}
 
+		// Fallback: Check for block comment in content.
 		if ( strpos( $checkout_post->post_content, '<!-- wp:woocommerce/checkout' ) !== false ) {
-			$has_checkout_block = true;
+			return true;
 		}
 
-		return $has_checkout_block;
+		return false;
 	}
 }
 

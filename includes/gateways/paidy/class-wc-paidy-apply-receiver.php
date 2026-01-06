@@ -115,8 +115,6 @@ class WC_Paidy_Apply_Receiver {
 				$filtered_params,
 				array_intersect_key( $decrypted, $filtered_params )
 			);
-			$logger          = wc_get_logger( 'paidy' );
-			$logger->info( 'Paidy recieved result data: ' . json_encode( $filtered_params ) );
 
 			if ( isset( $filtered_params['paidy_status'] ) ) {
 				$paidy_status         = $filtered_params['paidy_status'];

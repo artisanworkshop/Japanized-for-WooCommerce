@@ -10,6 +10,7 @@ import {
 	Button,
 	Notice,
 } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
 
 const GeneralSettings = ( {
 	settings,
@@ -17,25 +18,45 @@ const GeneralSettings = ( {
 	saveSettings,
 	saving,
 } ) => {
+	// Panel open state management
+	const [ panelStates, setPanelStates ] = useState( () => {
+		const saved = localStorage.getItem( 'jp4wc-general-panel-states' );
+		return saved
+			? JSON.parse( saved )
+			: {
+					addressDisplay: true,
+					virtualOrder: true,
+					usageTracking: true,
+			  };
+	} );
+
+	useEffect( () => {
+		localStorage.setItem(
+			'jp4wc-general-panel-states',
+			JSON.stringify( panelStates )
+		);
+	}, [ panelStates ] );
+
+	const togglePanel = ( panelName ) => {
+		setPanelStates( ( prev ) => ( {
+			...prev,
+			[ panelName ]: ! prev[ panelName ],
+		} ) );
+	};
+
 	const handleSave = () => {
 		saveSettings( settings );
 	};
 
 	return (
 		<div className="jp4wc-general-settings">
-			<Notice status="info" isDismissible={ false }>
-				{ __(
-					'Regarding this setting, etc., we do not yet support block shopping carts or purchase procedures. Please use the shortcode to use this feature.',
-					'woocommerce-for-japan'
-				) }
-			</Notice>
-
 			<PanelBody
 				title={ __(
 					'Address Display Setting',
 					'woocommerce-for-japan'
 				) }
-				initialOpen={ false }
+				opened={ panelStates.addressDisplay }
+				onToggle={ () => togglePanel( 'addressDisplay' ) }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -97,7 +118,17 @@ const GeneralSettings = ( {
 				<PanelRow>
 					<ToggleControl
 						__nextHasNoMarginBottom={ true }
-						label={ __( 'Company Name', 'woocommerce-for-japan' ) }
+						label={
+							__(
+								'Company Name',
+								'woocommerce-for-japan'
+							) +
+							' ' +
+							__(
+								'(Classic Checkout only)',
+								'woocommerce-for-japan'
+							)
+						}
 						help={ __(
 							'Check it if you want to add Company name input at cart, checkout and my account page.',
 							'woocommerce-for-japan'
@@ -112,10 +143,17 @@ const GeneralSettings = ( {
 				<PanelRow>
 					<ToggleControl
 						__nextHasNoMarginBottom={ true }
-						label={ __(
-							'Automatic zip code entry',
-							'woocommerce-for-japan'
-						) }
+						label={
+							__(
+								'Automatic zip code entry',
+								'woocommerce-for-japan'
+							) +
+							' ' +
+							__(
+								'(Classic Checkout only)',
+								'woocommerce-for-japan'
+							)
+						}
 						help={ __(
 							'Check it if you want to use automatic zip code entry.',
 							'woocommerce-for-japan'
@@ -164,10 +202,17 @@ const GeneralSettings = ( {
 				<PanelRow>
 					<ToggleControl
 						__nextHasNoMarginBottom={ true }
-						label={ __(
-							'Free Shipping Display',
-							'woocommerce-for-japan'
-						) }
+						label={
+							__(
+								'Free Shipping Display',
+								'woocommerce-for-japan'
+							) +
+							' ' +
+							__(
+								'(Classic Checkout only)',
+								'woocommerce-for-japan'
+							)
+						}
 						help={ __(
 							'Check it if you want to display free shipping message.',
 							'woocommerce-for-japan'
@@ -205,7 +250,8 @@ const GeneralSettings = ( {
 
 			<PanelBody
 				title={ __( 'Virtual order Setting', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				opened={ panelStates.virtualOrder }
+				onToggle={ () => togglePanel( 'virtualOrder' ) }
 			>
 				<div style={ { marginBottom: '20px', marginTop: '10px' } }>
 					{ __(
@@ -310,7 +356,8 @@ const GeneralSettings = ( {
 
 			<PanelBody
 				title={ __( 'Usage tracking', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				opened={ panelStates.usageTracking }
+				onToggle={ () => togglePanel( 'usageTracking' ) }
 			>
 				<PanelRow>
 					<ToggleControl

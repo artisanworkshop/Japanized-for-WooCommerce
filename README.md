@@ -220,11 +220,96 @@ REST APIエンドポイント：
 
 ## テスト
 
+### PHPユニットテスト
+
+このプラグインでは、WordPress + WooCommerceの統合テスト環境を使用しています。
+
+#### 必要要件
+
+- Docker Desktop（MySQLコンテナ用）
+- Composer
+- Subversion（svn）
+
+#### テスト環境のセットアップ
+
+初回のみ、以下のコマンドでテスト環境をセットアップします：
+
 ```bash
-# PHPユニットテスト
+composer test-install
+```
+
+このコマンドは以下を自動で実行します：
+
+1. DockerでMySQL 8.0コンテナを起動
+2. データベース `wordpress_test` を作成
+3. WordPressのテストライブラリをダウンロード
+4. WooCommerceをダウンロードしてインストール
+
+#### テストの実行
+
+```bash
+# 全てのテストを実行
 composer test
 
-# E2Eテスト
+# 特定のテストファイルのみ実行
+./vendor/bin/phpunit tests/Unit/test-jp4wc-address.php
+
+# 特定のテストメソッドのみ実行
+./vendor/bin/phpunit --filter test_jp4wc_address_fields_class_exists
+```
+
+#### Docker環境の管理
+
+```bash
+# MySQLコンテナの状態確認
+docker ps | grep jp4wc-mysql-test
+
+# MySQLコンテナの停止
+docker stop jp4wc-mysql-test
+
+# MySQLコンテナの起動
+docker start jp4wc-mysql-test
+
+# MySQLコンテナの削除（再セットアップが必要になります）
+docker rm jp4wc-mysql-test
+
+# データベースに直接接続（デバッグ用）
+docker exec -it jp4wc-mysql-test mysql -uroot -proot wordpress_test
+```
+
+#### テスト環境の詳細
+
+- **WordPress**: `/tmp/wordpress/` に最新版がインストールされます
+- **WooCommerce**: WordPress内のプラグインディレクトリにインストールされます
+- **MySQL**: localhost:3306（Dockerコンテナ）
+  - データベース名: `wordpress_test`
+  - ユーザー名: `root`
+  - パスワード: `root`
+
+#### トラブルシューティング
+
+**テストが失敗する場合：**
+
+```bash
+# テスト環境をクリーンアップして再セットアップ
+docker rm -f jp4wc-mysql-test
+rm -rf /tmp/wordpress /tmp/wordpress-tests-lib
+composer test-install
+```
+
+**MySQLコンテナが起動しない場合：**
+
+```bash
+# Dockerが起動しているか確認
+docker ps
+
+# Docker Desktopを再起動
+```
+
+### E2Eテスト
+
+```bash
+# E2Eテスト（準備中）
 npm run test:e2e
 ```
 

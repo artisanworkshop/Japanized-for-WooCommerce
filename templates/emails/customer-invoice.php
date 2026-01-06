@@ -34,7 +34,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 	<?php
 	printf(
 		wp_kses(
-			/* translators: %1$s Site title, %2$s Order pay link */
+			/* translators: %1$s: Site title, %2$s: Order pay link */
 			__( 'An order has been created for you on %1$s. Your invoice is below, with a link to make payment when you’re ready: %2$s', 'woocommerce' ),
 			array(
 				'a' => array(
@@ -51,7 +51,7 @@ do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 <?php } else { ?>
 	<p>
 	<?php
-	/* translators: %s Order date */
+	/* translators: %s: Order date */
 	printf( esc_html__( 'Here are the details of your order placed on %s:', 'woocommerce' ), esc_html( wc_format_datetime( $order->get_date_created() ) ) );
 	?>
 	</p>

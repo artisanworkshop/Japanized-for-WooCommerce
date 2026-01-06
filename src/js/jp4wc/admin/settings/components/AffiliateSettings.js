@@ -9,6 +9,7 @@ import {
 	TextControl,
 	Button,
 } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
 
 const AffiliateSettings = ( {
 	settings,
@@ -16,6 +17,31 @@ const AffiliateSettings = ( {
 	saveSettings,
 	saving,
 } ) => {
+	// Panel open state management
+	const [ panelStates, setPanelStates ] = useState( () => {
+		const saved = localStorage.getItem( 'jp4wc-affiliate-panel-states' );
+		return saved
+			? JSON.parse( saved )
+			: {
+					a8net: true,
+					felmat: true,
+			  };
+	} );
+
+	useEffect( () => {
+		localStorage.setItem(
+			'jp4wc-affiliate-panel-states',
+			JSON.stringify( panelStates )
+		);
+	}, [ panelStates ] );
+
+	const togglePanel = ( panelName ) => {
+		setPanelStates( ( prev ) => ( {
+			...prev,
+			[ panelName ]: ! prev[ panelName ],
+		} ) );
+	};
+
 	const handleSave = () => {
 		saveSettings( settings );
 	};
@@ -24,7 +50,8 @@ const AffiliateSettings = ( {
 		<div className="jp4wc-affiliate-settings">
 			<PanelBody
 				title={ __( 'A8.net Setting', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				opened={ panelStates.a8net }
+				onToggle={ () => togglePanel( 'a8net' ) }
 			>
 				<PanelRow>
 					<ToggleControl
@@ -78,7 +105,8 @@ const AffiliateSettings = ( {
 
 			<PanelBody
 				title={ __( 'felmat Setting', 'woocommerce-for-japan' ) }
-				initialOpen={ false }
+				opened={ panelStates.felmat }
+				onToggle={ () => togglePanel( 'felmat' ) }
 			>
 				<PanelRow>
 					<ToggleControl
