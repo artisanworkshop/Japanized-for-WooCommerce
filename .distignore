@@ -28,3 +28,6 @@ composer.lock
 package-lock.json
 package.json
 README.md
+SECURITY-FIX-PAIDY.md
+SHORTCODE-CHECKOUT-VALIDATION-REPORT.md
+

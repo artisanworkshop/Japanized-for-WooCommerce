@@ -3,7 +3,7 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
-Tested up to: 6.8.3
+Tested up to: 6.9.0
 Stable tag: 2.8.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -149,16 +149,28 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Changelog ==
 
-= 2.8.0 - 2025-01-01 =
+= 2.8.0 - 2026-01-06 =
 * **New** - Complete WooCommerce Blocks checkout compatibility including delivery date and time selection
 * **New** - Block-based settings page for improved admin experience
 * **New** - Timezone support for delivery date selection in Checkout Block
+* **New** - Webhook security measures with signature verification and IP whitelist
+* **New** - PHP Unit test framework initialization
 * **Update** - Enhanced usage tracking with improved data collection and privacy controls
 * **Update** - Code quality improvements with comprehensive linting fixes
+* **Update** - Japanese translations and PayPal gateway integration
+* **Update** - Admin notices and translations with PayPal deprecation notice
+* **Update** - Enhanced promotion notices and distribution configurations
 * **Fixed** - Multiple bug fixes for improved stability and performance
 * **Fixed** - Address field rendering issues in WooCommerce Blocks
+* **Fixed** - Delivery date and time validation for shortcode checkouts
+* **Fixed** - Yomigana feature for Checkout Block
+* **Fixed** - Setting screen issues for Classic Block
+* **Fixed** - Paidy payment method auto-enable on install/update
+* **Fixed** - Tracking settings configuration
+* **Fixed** - Removed deprecated admin classes, styles, and scripts
 * **Dev** - Refactored settings architecture for better maintainability
 * **Dev** - Updated dependencies and improved compatibility with WordPress 6.8+
+* **Dev** - Added detailed logging and diagnostic information
 
 = Earlier versions =
 
