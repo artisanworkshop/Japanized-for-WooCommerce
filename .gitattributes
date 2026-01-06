@@ -10,7 +10,7 @@
 .wp-env.json export-ignore
 .distignore export-ignore
 *.log export-ignore
-README.md export-ignore
+*.md export-ignore
 package.json export-ignore
 composer.json export-ignore
 webpack.config.js export-ignore
