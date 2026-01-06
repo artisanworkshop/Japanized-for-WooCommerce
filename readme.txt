@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.9.0
-Stable tag: 2.8.0
+Stable tag: 2.8.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -148,6 +148,12 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.8.1 - 2026-01-06 =
+* **Fixed** - Delivery date and time data not being saved properly to orders in WooCommerce Blocks checkout
+* **Fixed** - Delivery date field validation and required field handling in checkout block
+* **Fixed** - Delivery time slot display and selection issues
+* **Update** - Code quality and performance enhancements
 
 = 2.8.0 - 2026-01-06 =
 * **New** - Complete WooCommerce Blocks checkout compatibility including delivery date and time selection

@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.6.4
+ * @version     2.8.1
  * @package     Admin Screen
  * @author      ArtisanWorkshop
  */
@@ -33,6 +33,7 @@ class JP4WC_Delivery {
 		// Show delivery date and time at checkout page.
 		add_action( 'woocommerce_before_order_notes', array( $this, 'delivery_date_designation' ), 10 );
 		// Save delivery date and time values to order.
+		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_delivery_data_to_order' ), 10, 2 );
 		add_action( 'woocommerce_checkout_update_order_meta', array( $this, 'update_order_meta' ) );
 		add_filter( 'woocommerce_checkout_posted_data', array( $this, 'jp4wc_delivery_posted_data' ) );
 		// Validate delivery date and time fields at checkout.
@@ -297,6 +298,56 @@ class JP4WC_Delivery {
 			}
 			echo '</select>';
 			echo '</p>';
+		}
+	}
+
+	/**
+	 * Save delivery data to order during order creation
+	 *
+	 * This method is called during woocommerce_checkout_create_order hook,
+	 * which ensures the data is saved even when guest creates an account during checkout.
+	 *
+	 * @param WC_Order $order The order object.
+	 * @param array    $data  The posted checkout data.
+	 * @return void
+	 */
+	public function save_delivery_data_to_order( $order, $data ) {
+		// Check if this is a block checkout request.
+		$is_block_checkout = did_action( 'woocommerce_store_api_checkout_update_order_from_request' ) > 0;
+
+		// Skip if block checkout (handled by validate_delivery_fields_block_checkout).
+		if ( $is_block_checkout ) {
+			return;
+		}
+
+		// Process delivery date.
+		if ( isset( $data['wc4jp_delivery_date'] ) ) {
+			$date = apply_filters( 'wc4jp_delivery_date', $data['wc4jp_delivery_date'], $order->get_id() );
+			if ( ! empty( $date ) && '0' !== $date ) {
+				if ( get_option( 'wc4jp-date-format' ) ) {
+					$date_timestamp = strtotime( $date );
+					$formatted_date = date_i18n( get_option( 'wc4jp-date-format' ), $date_timestamp );
+					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $formatted_date ) ) );
+				} else {
+					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $date ) ) );
+				}
+			}
+		}
+
+		// Process delivery time zone.
+		if ( isset( $data['wc4jp_delivery_time_zone'] ) ) {
+			$time = apply_filters( 'wc4jp_delivery_time_zone', $data['wc4jp_delivery_time_zone'], $order->get_id() );
+			if ( ! empty( $time ) && '0' !== $time ) {
+				$order->update_meta_data( 'wc4jp-delivery-time-zone', esc_attr( htmlspecialchars( $time ) ) );
+			}
+		}
+
+		// Process tracking ship date.
+		if ( isset( $data['wc4jp-tracking-ship-date'] ) ) {
+			$ship_date = apply_filters( 'wc4jp_ship_date', $data['wc4jp-tracking-ship-date'], $order->get_id() );
+			if ( ! empty( $ship_date ) && '0' !== $ship_date ) {
+				$order->update_meta_data( 'wc4jp-tracking-ship-date', esc_attr( htmlspecialchars( $ship_date ) ) );
+			}
 		}
 	}
 
