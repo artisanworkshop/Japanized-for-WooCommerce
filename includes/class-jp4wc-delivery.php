@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.8.1
+ * @version     2.8.2
  * @package     Admin Screen
  * @author      ArtisanWorkshop
  */
@@ -597,7 +597,7 @@ class JP4WC_Delivery {
 
 		$date_time = $this->has_date_or_time( $order );
 
-		if ( ! $date_time || $date_time['is_block'] ) {
+		if ( ! $date_time || ( isset( $date_time['is_block'] ) && $date_time['is_block'] ) ) {
 			return;
 		}
 		if ( '0' === $date_time['date'] ) {
