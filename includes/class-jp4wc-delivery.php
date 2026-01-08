@@ -2,7 +2,7 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.8.1
+ * @version     2.8.2
  * @package     Admin Screen
  * @author      ArtisanWorkshop
  */
