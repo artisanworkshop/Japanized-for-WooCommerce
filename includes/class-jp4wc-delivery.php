@@ -656,7 +656,7 @@ class JP4WC_Delivery {
 	 */
 	public function email_order_delivery_details( $order, $sent_to_admin, $plain_text ) {
 		$has_date_or_time = $this->has_date_or_time( $order );
-		if ( ! $has_date_or_time || $has_date_or_time['is_block'] ) {
+		if ( ! $has_date_or_time || isset( $has_date_or_time['is_block'] ) ) {
 			return;
 		}
 
