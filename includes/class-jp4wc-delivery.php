@@ -577,7 +577,7 @@ class JP4WC_Delivery {
 		}
 
 		$has_date_or_time = $this->has_date_or_time( $order );
-		if ( ! $has_date_or_time || $has_date_or_time['is_block'] ) {
+		if ( ! $has_date_or_time || ( isset( $has_date_or_time['is_block'] ) && $has_date_or_time['is_block'] ) ) {
 			return;
 		}
 
