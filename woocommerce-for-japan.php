@@ -202,9 +202,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	function paidy_redirect_to_wizard() {
 		$paidy_payment_method = new WC_Gateway_Paidy();
 		if ( get_option( 'paidy_do_activation_redirect', false ) ) {
-			$first_installing = get_option( 'jp4wc-first-installing', 'no' );
-			if ( 'yes' !== $paidy_payment_method->enabled && ( jp4wc_has_orders_in_last_5_days() || 'yes' === $first_installing ) ) {
-				// Check if the user is an admin and has the capability to manage options.
+			if ( 'yes' !== $paidy_payment_method->enabled && jp4wc_has_orders_in_last_5_days() ) {
 				delete_option( 'paidy_do_activation_redirect' );
 				wp_safe_redirect( admin_url( 'admin.php?page=wc-admin&path=%2Fpaidy-on-boarding' ) );
 				exit;
