@@ -43,14 +43,14 @@ class WC_Paidy_Admin_Wizard {
 	public function __construct() {
 		$this->paidy_settings             = get_option( 'woocommerce_' . $this->id . '_settings' );
 		$this->paidy_on_boarding_settings = get_option( 'woocommerce_paidy_on_boarding_settings' );
+		add_action( 'admin_menu', array( $this, 'paidy_on_boarding_add_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'wc_admin_paidy_on_boarding_scripts' ) );
+		add_action( 'init', array( $this, 'paidy_on_boarding_settings' ) );
+		add_filter( 'woocommerce_gateway_method_description', array( $this, 'paidy_method_description' ), 20, 2 );
+		add_action( 'woocommerce_settings_tabs_checkout', array( $this, 'paidy_after_settings_checkout' ) );
 		if ( isset( $this->paidy_settings['api_public_key'] ) && isset( $this->paidy_settings['test_api_public_key'] ) ) {
-			add_action( 'admin_menu', array( $this, 'paidy_on_boarding_add_menu' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'wc_admin_paidy_on_boarding_scripts' ) );
-			add_action( 'init', array( $this, 'paidy_on_boarding_settings' ) );
 			add_action( 'updated_option', array( $this, 'change_paidy_on_boarding_settings' ), 10, 3 );
 			add_action( 'add_option', array( $this, 'add_paidy_on_boarding_settings' ), 10, 2 );
-			add_filter( 'woocommerce_gateway_method_description', array( $this, 'paidy_method_description' ), 20, 2 );
-			add_action( 'woocommerce_settings_tabs_checkout', array( $this, 'paidy_after_settings_checkout' ) );
 		}
 		add_action( 'admin_init', array( $this, 'paidy_handle_wizard_false_redirect' ) );
 	}
@@ -130,6 +130,14 @@ class WC_Paidy_Admin_Wizard {
 		$rest_url     = get_rest_url();
 		$paidy_ad_url = 'https://paidy.com/campaign/merchant/202404_WW';
 		$plugin_name  = 'Japanized for WooCommerce'; // Translated plugin name.
+		$has_api_keys = isset( $this->paidy_settings['api_public_key'] )
+			&& ! empty( $this->paidy_settings['api_public_key'] )
+			&& isset( $this->paidy_settings['api_secret_key'] )
+			&& ! empty( $this->paidy_settings['api_secret_key'] )
+			&& isset( $this->paidy_settings['test_api_public_key'] )
+			&& ! empty( $this->paidy_settings['test_api_public_key'] )
+			&& isset( $this->paidy_settings['test_api_secret_key'] )
+			&& ! empty( $this->paidy_settings['test_api_secret_key'] );
 		wp_localize_script(
 			$handle,
 			'paidyForWcSettings',
@@ -138,6 +146,7 @@ class WC_Paidy_Admin_Wizard {
 				'paidyAdUrl'   => $paidy_ad_url,
 				'nonWizardUrl' => admin_url( 'admin.php?page=wc-settings&tab=checkout&section=paidy&wizard=false' ),
 				'pluginName'   => $plugin_name,
+				'hasApiKeys'   => $has_api_keys,
 			)
 		);
 	}
