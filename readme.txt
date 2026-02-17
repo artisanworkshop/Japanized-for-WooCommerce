@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
-Tested up to: 6.9.0
-Stable tag: 2.8.2
+Tested up to: 6.9.1
+Stable tag: 2.8.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -148,6 +148,12 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.8.3 - 2026-02-17 =
+* **Fixed** - Conditional check for block status in has_date_or_time method to prevent undefined array key warnings
+* **Fixed** - Undefined array key warnings in email_order_delivery_details method
+* **Update** - Deprecated email template overrides removed and replaced with billing name retrieval filter for Japanese localization
+* **Update** - Simplified activation redirect logic in paidy_redirect_to_wizard function
 
 = 2.8.2 - 2026-01-08 =
 * **Fixed** - Conditional check for delivery date block status to prevent undefined array key warnings
