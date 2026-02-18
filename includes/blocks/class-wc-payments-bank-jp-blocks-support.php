@@ -10,6 +10,10 @@ use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodTyp
 
 defined( 'ABSPATH' ) || exit;
 
+if ( ! class_exists( 'AbstractPaymentMethodType' ) ) {
+	return;
+}
+
 /**
  * WC_Payments_BANK_JP_Blocks_Support class.
  *

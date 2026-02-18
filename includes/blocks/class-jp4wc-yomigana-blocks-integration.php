@@ -9,6 +9,10 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 
 defined( 'ABSPATH' ) || exit;
 
+if ( ! class_exists( 'IntegrationInterface' ) ) {
+	return;
+}
+
 /**
  * Class for integrating yomigana (name reading) fields with WooCommerce Blocks.
  * Uses WooCommerce Additional Checkout Fields API (no custom React components needed).

@@ -9,6 +9,10 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 
 defined( 'ABSPATH' ) || exit;
 
+if ( ! class_exists( 'IntegrationInterface' ) ) {
+	return;
+}
+
 /**
  * Class for integrating delivery date and time fields with WooCommerce Blocks.
  * Uses WooCommerce Additional Checkout Fields API (no custom React components needed).
