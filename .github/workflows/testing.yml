@@ -8,11 +8,14 @@ on:
 
 jobs:
   phpunit:
-    name: Run tests
+    name: PHP ${{ matrix.php-version }} / WP ${{ matrix.wp-version }} / WC ${{ matrix.wc-version }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        php-version: ['8.2', '8.0', '7.4']
+        php-version: ['8.4', '8.2', '8.0', '7.4']
+        wp-version: ['latest', '6.8', '6.7', '6.6']
+        wc-version: ['latest', '10.4', '10.3', '10.2']
     services:
       database:
         image: mysql:latest
@@ -35,13 +38,18 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y subversion
 
       - name: Setup tests
-        run: bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
+        run: bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 ${{ matrix.wp-version }} true
 
       - name: Install WooCommerce
         run: |
           mkdir -p /tmp/wordpress/wp-content/plugins
           cd /tmp/wordpress/wp-content/plugins
-          curl -sL https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip -o woocommerce.zip
+          if [ "${{ matrix.wc-version }}" = "latest" ]; then
+            WC_URL="https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip"
+          else
+            WC_URL="https://downloads.wordpress.org/plugin/woocommerce.${{ matrix.wc-version }}.zip"
+          fi
+          curl -fsSL "$WC_URL" -o woocommerce.zip
           unzip -q woocommerce.zip
           rm woocommerce.zip
 
