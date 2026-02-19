@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.9.1
-Stable tag: 2.8.4
+Stable tag: 2.8.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -149,7 +149,8 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Changelog ==
 
-= 2.8.4 - 2026-02-19 =
+= 2.8.4 & 2.8.5- 2026-02-19 =
+* **Fixed** - Improve webhook permission checks for Paidy integration
 * **Fixed** - Added class existence checks to prevent fatal errors in block integrations (delivery, yomigana, and payment method blocks)
 * **Fixed** - Added function existence check for Store API callback registration in COD fee handler
 * **Fixed** - Removed unnecessary empty string return in billing full name method

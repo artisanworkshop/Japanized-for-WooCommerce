@@ -78,7 +78,16 @@ class WC_Paidy_Endpoint {
 						array( 'status' => 403 )
 					);
 				}
+				// IP validation passed.
+				return true;
 			}
+
+			// No signature AND no IP whitelist configured - REJECT.
+			return new WP_Error(
+				'paidy_unauthorized',
+				__( 'Missing signature header for Paidy webhook.', 'woocommerce-for-japan' ),
+				array( 'status' => 403 )
+			);
 		}
 
 		// Verify the signature if present.
@@ -103,9 +112,16 @@ class WC_Paidy_Endpoint {
 					array( 'status' => 403 )
 				);
 			}
+			// Signature validation passed.
+			return true;
 		}
 
-		return true;
+		// Should never reach here, but reject by default.
+		return new WP_Error(
+			'paidy_unauthorized',
+			__( 'Unauthorized access to Paidy webhook.', 'woocommerce-for-japan' ),
+			array( 'status' => 403 )
+		);
 	}
 
 	/**
