@@ -34,6 +34,14 @@ jobs:
       - name: Install subversion
         run: sudo apt-get update && sudo apt-get install -y subversion
 
+      - name: Install WooCommerce
+        run: |
+          mkdir -p /tmp/wordpress/wp-content/plugins
+          cd /tmp/wordpress/wp-content/plugins
+          curl -sL https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip -o woocommerce.zip
+          unzip -q woocommerce.zip
+          rm woocommerce.zip
+
       - name: Setup tests
         run: bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 latest true
 
