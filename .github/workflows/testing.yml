@@ -49,7 +49,7 @@ jobs:
           else
             WC_URL="https://downloads.wordpress.org/plugin/woocommerce.${{ matrix.wc-version }}.zip"
           fi
-          curl -sL "$WC_URL" -o woocommerce.zip
+          curl -fsSL "$WC_URL" -o woocommerce.zip
           unzip -q woocommerce.zip
           rm woocommerce.zip
 
