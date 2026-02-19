@@ -39,6 +39,7 @@ jobs:
 
       - name: Install WooCommerce
         run: |
+          mkdir -p /tmp/wordpress/wp-content/plugins
           cd /tmp/wordpress/wp-content/plugins
           curl -sL https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip -o woocommerce.zip
           unzip -q woocommerce.zip
