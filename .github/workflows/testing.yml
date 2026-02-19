@@ -14,8 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         php-version: ['8.4', '8.2', '8.0', '7.4']
-        wp-version: ['latest', '6.8', '6.7', '6.6']
-        wc-version: ['latest', '10.4', '10.3', '10.2']
+        wp-version: ['latest', '6.8', '6.7']
+        wc-version: ['latest', '10.4', '10.3']
     services:
       database:
         image: mysql:latest
