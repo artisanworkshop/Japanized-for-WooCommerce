@@ -3,7 +3,7 @@
  * Japanized for WooCommerce
  *
  * @package     JP4WC
- * @version     2.8.3
+ * @version     2.8.4
  * @category    Email Customize for Japan
  * @author      Artisan Workshop
  */
@@ -48,7 +48,6 @@ class JP4WC_Custom_Email {
 					return $last_name . ' ' . $first_name;
 				}
 			}
-			return '';
 		}
 		return $first_name;
 	}

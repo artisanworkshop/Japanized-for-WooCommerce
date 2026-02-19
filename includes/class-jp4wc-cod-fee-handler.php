@@ -44,6 +44,9 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		 * @since 2.6.0
 		 */
 		public static function jp4wc_register_wc_blocks() {
+			if ( ! function_exists( 'woocommerce_store_api_register_update_callback' ) ) {
+				return;
+			}
 			woocommerce_store_api_register_update_callback(
 				array(
 					'namespace' => 'jp4wc-add-gateway-fee',

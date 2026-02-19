@@ -336,6 +336,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					$jp4wc_delivery_init_done = true;
 
 					require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
+					if ( ! class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
+						return;
+					}
 					$jp4wc_delivery_integration = new JP4WC_Delivery_Blocks_Integration();
 					// Register fields immediately on woocommerce_init.
 					$jp4wc_delivery_integration->register_checkout_fields();
@@ -354,7 +357,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					} else {
 						// Fallback: create new instance if somehow the global wasn't set.
 						require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
-						$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+						if ( class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
+							$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+						}
 					}
 				}
 			);
@@ -372,6 +377,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					$jp4wc_yomigana_init_done = true;
 
 					require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
+					if ( ! class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
+						return;
+					}
 					$jp4wc_yomigana_integration = new JP4WC_Yomigana_Blocks_Integration();
 					// Register fields immediately on woocommerce_init.
 					$jp4wc_yomigana_integration->register_checkout_fields();
@@ -390,7 +398,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					} else {
 						// Fallback: create new instance if somehow the global wasn't set.
 						require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
-						$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
+						if ( class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
+							$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
+						}
 					}
 				}
 			);
