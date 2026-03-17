@@ -534,13 +534,14 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		 * @return array
 		 */
 		private static function get_orders() {
-			$order_dates    = self::get_order_dates();
-			$order_counts   = self::get_order_counts();
-			$order_totals   = self::get_order_totals();
-			$order_gateways = self::get_orders_by_gateway();
-			$order_origin   = self::get_orders_origins();
+			$order_dates      = self::get_order_dates();
+			$order_counts     = self::get_order_counts();
+			$order_totals     = self::get_order_totals();
+			$order_last_month = self::get_last_month_order_totals();
+			$order_gateways   = self::get_orders_by_gateway();
+			$order_origin     = self::get_orders_origins();
 
-			return array_merge( $order_dates, $order_counts, $order_totals, $order_gateways, $order_origin );
+			return array_merge( $order_dates, $order_counts, $order_totals, $order_last_month, $order_gateways, $order_origin );
 		}
 
 		/**
@@ -552,7 +553,7 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		private static function get_order_totals() {
 			global $wpdb;
 
-			$orders_table  = OrdersTableDataStore::get_orders_table_name();
+			$orders_table  = esc_sql( OrdersTableDataStore::get_orders_table_name() );
 			$one_month_ago = date_i18n( 'Y-m-d H:i:s', strtotime( '-1 month' ) );
 
 			// Define cache key.
@@ -562,15 +563,16 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			// Try to get data from cache.
 			$gross_total = wp_cache_get( $cache_key, $cache_group );
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orders_table is escaped with esc_sql().
 				$gross_total = $wpdb->get_var(
 					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE status in ('wc-completed', 'wc-refunded');
-			"
+					SELECT SUM(total_amount) 
+					AS 'gross_total' 
+					FROM %i
+					WHERE status in ('wc-completed', 'wc-refunded')
+					",
+					$orders_table
 				);
-				// phpcs:enable
 			} else {
 				$gross_total = $wpdb->get_var(
 					"
@@ -591,16 +593,8 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			}
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$monthly_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE date_created_gmt > '$one_month_ago'
-                    AND status in ('wc-completed', 'wc-refunded');
-			"
-				);
-				// phpcs:enable
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orders_table is escaped with esc_sql().
+				$monthly_gross_total = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(total_amount) AS 'gross_total' FROM $orders_table WHERE date_created_gmt > %s AND status in ('wc-completed', 'wc-refunded')", $one_month_ago ) );
 			} else {
 				$monthly_gross_total = $wpdb->get_var(
 					$wpdb->prepare(
@@ -624,15 +618,8 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			}
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$processing_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE status = 'wc-processing';
-			"
-				);
-				// phpcs:enable
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orders_table is escaped with esc_sql().
+				$processing_gross_total = $wpdb->get_var( "SELECT SUM(total_amount) AS 'gross_total' FROM $orders_table WHERE status = 'wc-processing'" );
 			} else {
 				$processing_gross_total = $wpdb->get_var(
 					"
@@ -652,16 +639,8 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			}
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$monthly_processing_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE date_created_gmt > '$one_month_ago'
-                    AND status = 'wc-processing';
-			"
-				);
-				// phpcs:enable
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orders_table is escaped with esc_sql().
+				$monthly_processing_gross_total = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(total_amount) AS 'gross_total' FROM $orders_table WHERE date_created_gmt > %s AND status = 'wc-processing'", $one_month_ago ) );
 			} else {
 				$monthly_processing_gross_total = $wpdb->get_var(
 					$wpdb->prepare(
@@ -693,28 +672,33 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		}
 
 		/**
-		 * Get order totals.
+		 * Get latest one month order totals.
 		 *
 		 * @since 5.4.0
 		 * @return array
 		 */
-		public static function get_last_month_order_totals() {
+		public static function get_one_month_order_totals() {
 			global $wpdb;
 
-			$orders_table  = OrdersTableDataStore::get_orders_table_name();
+			$orders_table  = esc_sql( OrdersTableDataStore::get_orders_table_name() );
 			$one_month_ago = date_i18n( 'Y-m-d H:i:s', strtotime( '-1 month' ) );
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$monthly_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE date_created_gmt > '$one_month_ago'
-                    AND status in ('wc-completed', 'wc-refunded');
-			"
+					$wpdb->prepare(
+						"
+						SELECT SUM(total_amount) 
+							AS 'gross_total' 
+						FROM %i
+						WHERE date_created_gmt > %s 
+						AND status in ('wc-completed', 'wc-refunded')
+						",
+						array(
+							$orders_table,
+							$one_month_ago,
+						)
+					)
 				);
-				// phpcs:enable
 			} else {
 				$monthly_gross_total = $wpdb->get_var(
 					$wpdb->prepare(
@@ -778,6 +762,96 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			);
 		}
 
+		/**
+		 * Get last month order totals.
+		 *
+		 * @return array
+		 */
+		public static function get_last_month_order_totals() {
+			$last_month_start = date_i18n( 'Y-m-d H:i:s', strtotime( 'first day of last month' ) );
+			$last_month_end   = date_i18n( 'Y-m-d H:i:s', strtotime( 'last day of last month' ) );
+			$last_month       = date_i18n( 'Y-m', strtotime( 'first day of last month' ) );
+
+			$last_month_gross_total = 0;
+			$last_month_processing  = 0;
+			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+				$last_month_gross_total = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+						SELECT SUM(total_amount) 
+							AS 'gross_total' 
+						FROM %i
+						WHERE date_created_gmt >= %s 
+						AND date_created_gmt <= %s
+						AND status in ('wc-completed', 'wc-refunded')
+						",
+						array(
+							OrdersTableDataStore::get_orders_table_name(),
+							$last_month_start,
+							$last_month_end,
+						)
+					)
+				);
+				$last_month_processing  = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+						SELECT SUM(total_amount) 
+							AS 'gross_total' 
+						FROM %i
+						WHERE date_created_gmt >= %s 
+						AND date_created_gmt <= %s
+						AND status = 'wc-processing'
+						",
+						array(
+							OrdersTableDataStore::get_orders_table_name(),
+							$last_month_start,
+							$last_month_end,
+						)
+					)
+				);
+			} else {
+				$last_month_gross_total = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+						SELECT
+							SUM( order_meta.meta_value ) AS 'gross_total'
+						FROM {$wpdb->prefix}posts AS orders
+						LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+						WHERE order_meta.meta_key = '_order_total'
+							AND orders.post_date_gmt >= %s
+							AND orders.post_date_gmt <= %s
+							AND orders.post_status in ( 'wc-completed', 'wc-refunded' )
+						GROUP BY order_meta.meta_key
+						",
+						$last_month_start,
+						$last_month_end
+					)
+				);
+				$last_month_processing  = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+						SELECT
+							SUM( order_meta.meta_value ) AS 'gross_total'
+						FROM {$wpdb->prefix}posts AS orders
+						LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+						WHERE order_meta.meta_key = '_order_total'
+							AND orders.post_date_gmt >= %s
+							AND orders.post_date_gmt <= %s
+							AND orders.post_status = 'wc-processing'
+						GROUP BY order_meta.meta_key
+						",
+						$last_month_start,
+						$last_month_end
+					)
+				);
+			}
+
+			return array(
+				'last_month'             => $last_month,
+				'last_month_gross_total' => $last_month_gross_total,
+				'last_month_processing'  => $last_month_processing,
+			);
+		}
 		/**
 		 * Get last order date.
 		 *
