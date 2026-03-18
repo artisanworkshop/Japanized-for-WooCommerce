@@ -130,24 +130,33 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 			return;
 		}
 
-		// Get delivery date options.
-		$delivery_dates = $this->get_delivery_date_options();
-		$time_zones     = $this->get_time_zone_options();
+		// Get delivery date options (excludes the "unspecified" entry — that is passed as placeholder).
+		$delivery_dates          = $this->get_delivery_date_options();
+		$delivery_date_placeholder = $this->get_unspecified_date_label();
+		$time_zones              = $this->get_time_zone_options();
+		$delivery_time_placeholder = $this->get_unspecified_time_label();
 
 		// Register delivery date field as select.
 		if ( get_option( 'wc4jp-delivery-date' ) && ! empty( $delivery_dates ) ) {
+			$date_required = get_option( 'wc4jp-delivery-date-required' ) === '1';
+			$date_args     = array(
+				'id'            => 'jp4wc/delivery-date',
+				'label'         => __( 'Preferred delivery date', 'woocommerce-for-japan' ),
+				'location'      => 'order',
+				'type'          => 'select',
+				'options'       => $delivery_dates,
+				'required'      => $date_required,
+				'show_in_order' => true,
+			);
+			// When not required, use the admin-configured "unspecified" text as the WC placeholder
+			// (WooCommerce always prepends { value: '', label: placeholder } to the options list).
+			// Setting default '' means that placeholder option is pre-selected on page load.
+			if ( ! $date_required ) {
+				$date_args['placeholder'] = $delivery_date_placeholder;
+				$date_args['default']     = '';
+			}
 			try {
-				woocommerce_register_additional_checkout_field(
-					array(
-						'id'            => 'jp4wc/delivery-date',
-						'label'         => __( 'Preferred delivery date', 'woocommerce-for-japan' ),
-						'location'      => 'order',
-						'type'          => 'select',
-						'options'       => $delivery_dates,
-						'required'      => get_option( 'wc4jp-delivery-date-required' ) === '1',
-						'show_in_order' => true,
-					)
-				);
+				woocommerce_register_additional_checkout_field( $date_args );
 			} catch ( \Exception $e ) {
 				$this->log_info( 'ERROR registering delivery date field: ' . $e->getMessage() );
 			}
@@ -157,18 +166,23 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 
 		// Register delivery time field as select.
 		if ( get_option( 'wc4jp-delivery-time-zone' ) && ! empty( $time_zones ) ) {
+			$time_required = get_option( 'wc4jp-delivery-time-zone-required' ) === '1';
+			$time_args     = array(
+				'id'            => 'jp4wc/delivery-time',
+				'label'         => __( 'Delivery Time Zone', 'woocommerce-for-japan' ),
+				'location'      => 'order',
+				'type'          => 'select',
+				'options'       => $time_zones,
+				'required'      => $time_required,
+				'show_in_order' => true,
+			);
+			// When not required, use the admin-configured "unspecified" text as the WC placeholder.
+			if ( ! $time_required ) {
+				$time_args['placeholder'] = $delivery_time_placeholder;
+				$time_args['default']     = '';
+			}
 			try {
-				woocommerce_register_additional_checkout_field(
-					array(
-						'id'            => 'jp4wc/delivery-time',
-						'label'         => __( 'Delivery Time Zone', 'woocommerce-for-japan' ),
-						'location'      => 'order',
-						'type'          => 'select',
-						'options'       => $time_zones,
-						'required'      => get_option( 'wc4jp-delivery-time-zone-required' ) === '1',
-						'show_in_order' => true,
-					)
-				);
+				woocommerce_register_additional_checkout_field( $time_args );
 			} catch ( \Exception $e ) {
 				$this->log_info( 'ERROR registering delivery time field: ' . $e->getMessage() );
 			}
@@ -255,16 +269,9 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 	 */
 	private function get_delivery_date_options() {
 		$options = array();
-		if ( get_option( 'wc4jp-delivery-date-required' ) !== '1' ) {
-			$unspecified_date_label = get_option( 'wc4jp-unspecified-date' );
-			if ( empty( $unspecified_date_label ) ) {
-				$unspecified_date_label = __( 'Not specified', 'woocommerce-for-japan' );
-			}
-			$options[] = array(
-				'value' => '0',
-				'label' => $unspecified_date_label,
-			);
-		}
+		// Note: the "unspecified" option is NOT added here.
+		// It is passed as the `placeholder` parameter to woocommerce_register_additional_checkout_field,
+		// so WooCommerce renders it as the pre-selected first option with value ''.
 
 		// Get delivery settings.
 		$delivery_deadline  = get_option( 'wc4jp-delivery-deadline' );
@@ -330,17 +337,8 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 			return $options;
 		}
 
-		// Add unspecified option if not required.
-		if ( get_option( 'wc4jp-delivery-time-zone-required' ) !== '1' ) {
-			$unspecified_time_label = get_option( 'wc4jp-unspecified-time' );
-			if ( empty( $unspecified_time_label ) ) {
-				$unspecified_time_label = __( 'Not specified', 'woocommerce-for-japan' );
-			}
-			$options[] = array(
-				'value' => '0',
-				'label' => $unspecified_time_label,
-			);
-		}
+		// Note: the "unspecified" option is NOT added here.
+		// It is passed as the `placeholder` parameter to woocommerce_register_additional_checkout_field.
 
 		// Add time zone options.
 		foreach ( $time_zone_setting as $time_zone ) {
@@ -358,6 +356,26 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 		}
 
 		return $options;
+	}
+
+	/**
+	 * Get the "unspecified date" label configured in admin settings.
+	 *
+	 * @return string
+	 */
+	private function get_unspecified_date_label() {
+		$label = get_option( 'wc4jp-unspecified-date' );
+		return ! empty( $label ) ? $label : __( 'Not specified', 'woocommerce-for-japan' );
+	}
+
+	/**
+	 * Get the "unspecified time" label configured in admin settings.
+	 *
+	 * @return string
+	 */
+	private function get_unspecified_time_label() {
+		$label = get_option( 'wc4jp-unspecified-time' );
+		return ! empty( $label ) ? $label : __( 'Not specified', 'woocommerce-for-japan' );
 	}
 
 	/**
