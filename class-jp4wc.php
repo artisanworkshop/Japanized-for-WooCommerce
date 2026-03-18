@@ -169,22 +169,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-custom-email.php';
 			// Add Payments setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-payments.php';
-			// Add PayPal Checkout(New from 2023/05 ).
-			if ( ! function_exists( 'is_plugin_active' ) ) {
-				include_once ABSPATH . 'wp-admin/includes/plugin.php';
-			}
-			if ( ! is_plugin_active( 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' ) &&
-				! isset( $_GET['action'] ) &&
-				! isset( $_REQUEST['plugin'] ) &&
-				! ( isset( $_REQUEST['action'] ) &&
-					isset( $_REQUEST['_wpnonce'] ) &&
-					wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'activate-plugin_' . sanitize_text_field( wp_unslash( $_REQUEST['plugin'] ?? '' ) ) ) &&
-					'activate' === sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) &&
-					isset( $_REQUEST['plugin'] ) &&
-					false !== strpos( sanitize_text_field( wp_unslash( $_REQUEST['plugin'] ) ), 'woocommerce-paypal-payments/woocommerce-paypal-payments.php' ) ) ) {
-				require_once JP4WC_INCLUDES_PATH . 'gateways/paypal/woocommerce-paypal-payments.php';
-			}
-
 			// Add affiliates setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-affiliate.php';
 			// Add Subscriptions setting.

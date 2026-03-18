@@ -194,7 +194,6 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'postofficebank',
 			'atstore',
 			'cod2',
-			'jp4wc-paypal',
 			'extra_charge_name',
 			'extra_charge_amount',
 			'extra_charge_max_cart_value',

@@ -51,7 +51,6 @@ function jp4wc_activation_redirect() {
 function jp4wc_on_deactivation() {
 	add_option( 'paidy_do_activation_redirect', true );
 	flush_rewrite_rules();
-	do_action( 'woocommerce_paypal_payments_gateway_deactivate' );
 }
 
 /**
