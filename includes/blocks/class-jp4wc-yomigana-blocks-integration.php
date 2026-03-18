@@ -9,7 +9,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'IntegrationInterface' ) ) {
+if ( ! interface_exists( 'Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface' ) ) {
 	return;
 }
 
@@ -146,9 +146,6 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 			'type'          => 'text',
 			'required'      => $is_required,
 			'show_in_order' => true,
-			'attributes'    => array(
-				'autoComplete' => 'family-name',
-			),
 		);
 
 		try {
@@ -169,9 +166,6 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 			'type'          => 'text',
 			'required'      => $is_required,
 			'show_in_order' => true,
-			'attributes'    => array(
-				'autoComplete' => 'given-name',
-			),
 		);
 
 		try {

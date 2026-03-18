@@ -9,7 +9,7 @@ use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'IntegrationInterface' ) ) {
+if ( ! interface_exists( 'Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface' ) ) {
 	return;
 }
 
@@ -146,9 +146,6 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 						'options'       => $delivery_dates,
 						'required'      => get_option( 'wc4jp-delivery-date-required' ) === '1',
 						'show_in_order' => true,
-						'attributes'    => array(
-							'autoComplete' => 'off',
-						),
 					)
 				);
 			} catch ( \Exception $e ) {
@@ -170,9 +167,6 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 						'options'       => $time_zones,
 						'required'      => get_option( 'wc4jp-delivery-time-zone-required' ) === '1',
 						'show_in_order' => true,
-						'attributes'    => array(
-							'autoComplete' => 'off',
-						),
 					)
 				);
 			} catch ( \Exception $e ) {
