@@ -84,7 +84,10 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 * @return void
 		 */
 		public function on_plugins_loaded() {
-			// Textdomain is loaded earlier in woocommerce-for-japan.php
+			// Textdomain is loaded at init priority 1 (woocommerce-for-japan.php).
+			// Load admin product meta here (init priority 20) so __() calls in the
+			// framework config execute after the textdomain is already loaded.
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
 			// Initialize admin settings.
 			// Must be initialized for both admin and frontend to register REST API routes.
 			new JP4WC_Admin_Settings();
@@ -99,13 +102,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			define( 'JP4WC_INCLUDES_PATH', JP4WC_ABSPATH . 'includes/' );
 			define( 'JP4WC_PLUGIN_FILE', __FILE__ );
 			define( 'JP4WC_FRAMEWORK_VERSION', $this->framework_version );
-		}
-
-		/**
-		 * Load Localisation files.
-		 */
-		protected function load_plugin_textdomain() {
-			load_plugin_textdomain( 'woocommerce-for-japan', false, basename( __DIR__ ) . '/i18n' );
 		}
 
 		/**
@@ -130,7 +126,8 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
 			// Admin Setting Screen.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-settings.php';
-			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
+			// Note: class-jp4wc-admin-product-meta.php is loaded in on_plugins_loaded() (init priority 20)
+			// to ensure load_plugin_textdomain() has run before __() calls in the framework config.
 
 			// Admin Security Screen.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-check-security.php';

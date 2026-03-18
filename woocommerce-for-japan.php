@@ -55,19 +55,16 @@ function jp4wc_on_deactivation() {
 
 /**
  * Load the plugin textdomain for translations.
- * Loaded early in plugins_loaded to ensure translations are available when payment gateways
- * and other classes are initialized.
- *
- * Note: WordPress 6.7+ recommends loading translations at init or later, but this plugin
- * requires early loading for WooCommerce payment gateway classes. The doing_it_wrong
- * notice is suppressed as this is an intentional architectural decision.
+ * Loaded at init priority 1 to comply with WordPress 6.7+ requirements.
+ * WooCommerce payment gateway classes are initialized during woocommerce_init (init priority 10+),
+ * so loading at init priority 1 ensures translations are available in time.
  *
  * @return void
  */
 function jp4wc_load_textdomain() {
 	load_plugin_textdomain( 'woocommerce-for-japan', false, dirname( plugin_basename( __FILE__ ) ) . '/i18n/' );
 }
-add_action( 'plugins_loaded', 'jp4wc_load_textdomain', 0 );
+add_action( 'init', 'jp4wc_load_textdomain', 1 );
 
 /**
  * Load plugin functions.
