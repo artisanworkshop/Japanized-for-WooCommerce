@@ -5,6 +5,10 @@
  * @package WooCommerce\Gateways
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use ArtisanWorkshop\PluginFramework\v2_0_14 as Framework;
 
 /**
