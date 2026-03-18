@@ -3,6 +3,7 @@
  * Main class file for Japanized for WooCommerce
  *
  * @package Japanized for WooCommerce
+ * @version 2.9.0
  * @since 2.7.15
  */
 

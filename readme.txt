@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
-Tested up to: 6.9.1
-Stable tag: 2.8.5
+Tested up to: 6.9.4
+Stable tag: 2.9.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -58,7 +58,6 @@ Works smoothly with WooCommerce core features and popular extensions. Fully comp
 * COD subscription support
 * Pay at Store (over-the-counter payment)
 * Paidy (Buy Now, Pay Later) - Official Japanese payment gateway
-* PayPal Checkout optimized for Japan
 
 **Legal & Compliance**
 * Specified Commercial Transaction Act (特定商取引法) page creator
@@ -72,7 +71,7 @@ Works smoothly with WooCommerce core features and popular extensions. Fully comp
 * WooCommerce Blocks compatibility
 * Security scanning and malware detection
 
-Note: Paidy and PayPal Checkout are also available as standalone payment plugins.
+Note: Paidy Checkout are also available as standalone payment plugins.
 
 [youtube https://www.youtube.com/watch?v=mPYlDDuGzis]
 
@@ -149,49 +148,17 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Changelog ==
 
-= 2.8.4 & 2.8.5- 2026-02-19 =
-* **Fixed** - Improve webhook permission checks for Paidy integration
-* **Fixed** - Added class existence checks to prevent fatal errors in block integrations (delivery, yomigana, and payment method blocks)
-* **Fixed** - Added function existence check for Store API callback registration in COD fee handler
-* **Fixed** - Removed unnecessary empty string return in billing full name method
-
-= 2.8.3 - 2026-02-17 =
-* **Fixed** - Conditional check for block status in has_date_or_time method to prevent undefined array key warnings
-* **Fixed** - Undefined array key warnings in email_order_delivery_details method
-* **Update** - Deprecated email template overrides removed and replaced with billing name retrieval filter for Japanese localization
-* **Update** - Simplified activation redirect logic in paidy_redirect_to_wizard function
-
-= 2.8.2 - 2026-01-08 =
-* **Fixed** - Conditional check for delivery date block status to prevent undefined array key warnings
-
-= 2.8.1 - 2026-01-06 =
-* **Fixed** - Delivery date and time data not being saved properly to orders in WooCommerce Blocks checkout
-* **Fixed** - Delivery date field validation and required field handling in checkout block
-* **Fixed** - Delivery time slot display and selection issues
-* **Update** - Code quality and performance enhancements
-
-= 2.8.0 - 2026-01-06 =
-* **New** - Complete WooCommerce Blocks checkout compatibility including delivery date and time selection
-* **New** - Block-based settings page for improved admin experience
-* **New** - Timezone support for delivery date selection in Checkout Block
-* **New** - Webhook security measures with signature verification and IP whitelist
-* **New** - PHP Unit test framework initialization
-* **Update** - Enhanced usage tracking with improved data collection and privacy controls
-* **Update** - Code quality improvements with comprehensive linting fixes
-* **Update** - Japanese translations and PayPal gateway integration
-* **Update** - Admin notices and translations with PayPal deprecation notice
-* **Update** - Enhanced promotion notices and distribution configurations
-* **Fixed** - Multiple bug fixes for improved stability and performance
-* **Fixed** - Address field rendering issues in WooCommerce Blocks
-* **Fixed** - Delivery date and time validation for shortcode checkouts
-* **Fixed** - Yomigana feature for Checkout Block
-* **Fixed** - Setting screen issues for Classic Block
-* **Fixed** - Paidy payment method auto-enable on install/update
-* **Fixed** - Tracking settings configuration
-* **Fixed** - Removed deprecated admin classes, styles, and scripts
-* **Dev** - Refactored settings architecture for better maintainability
-* **Dev** - Updated dependencies and improved compatibility with WordPress 6.8+
-* **Dev** - Added detailed logging and diagnostic information
+= 2.9.0 - 2026-03-18 =
+* **Fixed** - COD fee not calculating in Classic Checkout due to `is_admin()` returning true for admin-ajax.php requests
+* **Fixed** - COD fee showing for non-COD payment methods in Classic Checkout (stale session value)
+* **Fixed** - COD fee incorrectly displayed on cart page (now checkout-only)
+* **Fixed** - Delivery date/time fields not appearing in Checkout Block (changed `class_exists` to `interface_exists` for IntegrationInterface)
+* **Fixed** - Delivery select placeholder showing WooCommerce auto-generated text instead of admin-configured label
+* **Fixed** - Paidy order completion hook firing multiple times (added `paidy_capture_id` guard)
+* **Fixed** - `_load_textdomain_just_in_time` warning in WordPress 6.7+ by deferring translations to after `init`
+* **Fixed** - `JP4WC_Framework` config strings now lazy-loaded at `init` priority 2 to prevent early textdomain calls
+* **Fixed** - `WC_Paidy_Endpoint` instantiation deferred to `init` priority 11 to prevent early `WC_Gateway_Paidy` construction
+* **Removed** - PayPal settings removed from admin settings UI and API
 
 = Earlier versions =
 
@@ -199,14 +166,18 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Upgrade Notice ==
 
+= 2.9 =
+2.9 is a minor update, but delete PayPal Payment Gateway. Make a full site backup, update your theme and extensions.
+There is no change in the database saved by this plugin.
+
 = 2.8 =
 2.8 is a minor update, but change the setting page to block. Make a full site backup, update your theme and extensions.
-There is no change in the database saved by this plug-in.
+There is no change in the database saved by this plugin.
 
 = 2.1 =
 2.1 is a minor update, but add Paidy payment method. Make a full site backup, update your theme and extensions.
-There is no change in the database saved by this plug-in.
+There is no change in the database saved by this plugin.
 
 = 2.0 =
 2.0 is a major update. Make a full site backup, update your theme and extensions.
-There is no change in the database saved by this plug-in.
+There is no change in the database saved by this plugin.
