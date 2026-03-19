@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.9.4
-Stable tag: 2.9.2
+Stable tag: 2.9.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -148,7 +148,7 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Changelog ==
 
-= 2.9.0 & 2.9.2 - 2026-03-19 =
+= 2.9.0 & 2.9.3 - 2026-03-19 =
 * **Fixed** - COD fee not calculating in Classic Checkout due to `is_admin()` returning true for admin-ajax.php requests
 * **Fixed** - COD fee showing for non-COD payment methods in Classic Checkout (stale session value)
 * **Fixed** - COD fee incorrectly displayed on cart page (now checkout-only)
