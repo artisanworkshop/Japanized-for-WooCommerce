@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.4', '8.2', '8.0']
+        php-version: ['8.4', '8.2', '8.1']
         wp-version: ['latest', '6.8', '6.7']
         wc-version: ['latest', '10.4.3', '10.3.7']
     services:
