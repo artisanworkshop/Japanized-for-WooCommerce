@@ -768,6 +768,8 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		 * @return array
 		 */
 		public static function get_last_month_order_totals() {
+			global $wpdb;
+
 			$last_month_start = date_i18n( 'Y-m-d H:i:s', strtotime( 'first day of last month' ) );
 			$last_month_end   = date_i18n( 'Y-m-d H:i:s', strtotime( 'last day of last month' ) );
 			$last_month       = date_i18n( 'Y-m', strtotime( 'first day of last month' ) );
