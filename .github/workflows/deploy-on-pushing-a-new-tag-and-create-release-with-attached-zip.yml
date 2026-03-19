@@ -16,6 +16,24 @@ jobs:
               run: |
                   sudo apt-get update
                   sudo apt-get install subversion
+            - name: Remove PayPal gateway from SVN trunk
+              env:
+                  SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+                  SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+              run: |
+                  SVN_URL="https://plugins.svn.wordpress.org/woocommerce-for-japan/trunk/includes/gateways/paypal"
+                  if svn ls "$SVN_URL" \
+                      --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
+                      --no-auth-cache --non-interactive 2>/dev/null; then
+                      echo "PayPal gateway found in SVN trunk. Removing..."
+                      svn delete "$SVN_URL" \
+                          -m "Remove PayPal gateway from plugin distribution" \
+                          --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
+                          --no-auth-cache --non-interactive
+                      echo "PayPal gateway removed from SVN trunk."
+                  else
+                      echo "PayPal gateway not found in SVN trunk. Skipping."
+                  fi
             - name: Remove nested .git directories from vendor packages
               run: find . -mindepth 2 -name '.git' -type d -exec rm -rf '{}' + 2>/dev/null || true
             - name: WordPress Plugin Deploy
