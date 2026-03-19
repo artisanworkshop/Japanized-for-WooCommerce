@@ -16,6 +16,8 @@ jobs:
               run: |
                   sudo apt-get update
                   sudo apt-get install subversion
+            - name: Remove nested .git directories from vendor packages
+              run: find . -mindepth 2 -name '.git' -type d -exec rm -rf '{}' + 2>/dev/null || true
             - name: WordPress Plugin Deploy
               id: deploy
               uses: 10up/action-wordpress-plugin-deploy@stable
