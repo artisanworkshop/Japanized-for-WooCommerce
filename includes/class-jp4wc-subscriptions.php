@@ -2,13 +2,11 @@
 /**
  * Japanized for WooCommerce
  *
- * @version     2.6.0
+ * @version     2.9.0
  * @package     Japanized_For_WooCommerce
  * @category    WooCommerce Subscriptions for Japan
  * @author      Artisan Workshop
  */
-
-use ArtisanWorkshop\PluginFramework\v2_0_14 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,25 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JP4WC_Subscriptions {
 
 	/**
-	 * Japanized for WooCommerce Framework.
-	 *
-	 * @var object
-	 */
-	public $jp4wc_plugin;
-
-	/**
-	 * Prefix for plugin settings.
-	 *
-	 * @var string
-	 */
-	public $prefix;
-
-	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->jp4wc_plugin = new Framework\JP4WC_Framework();
-		$this->prefix       = 'wc4jp-';
 		// Add subscription pricing fields on edit product page.
 		add_filter( 'woocommerce_subscriptions_product_price_string', array( $this, 'jp4wc_subscription_price_string' ), 10, 2 );
 	}

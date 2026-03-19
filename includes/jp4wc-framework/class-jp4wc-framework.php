@@ -49,11 +49,29 @@ if ( ! class_exists( '\\ArtisanWorkshop\\PluginFramework\\v2_0_14\\JP4WC_Framewo
 
 		/**
 		 * Constructor for the config class.
+		 * Config (translated strings) is loaded lazily after init to avoid
+		 * triggering _load_textdomain_just_in_time warnings in WordPress 6.7+.
 		 */
 		public function __construct() {
-			// Initialize the framework.
-			$this->text_array = require 'config-jp4wc-framework.php';
-			foreach ( $this->text_array as $key => $value ) {
+			if ( did_action( 'init' ) || doing_action( 'init' ) ) {
+				$this->load_text_config();
+			} else {
+				add_action( 'init', array( $this, 'load_text_config' ), 2 );
+			}
+		}
+
+		/**
+		 * Load translated config strings. Called at init priority 2 (after textdomain
+		 * loads at priority 1) or immediately if init has already fired.
+		 *
+		 * @return void
+		 */
+		public function load_text_config() {
+			if ( null !== $this->text_array ) {
+				return;
+			}
+			$raw_config = require __DIR__ . '/config-jp4wc-framework.php';
+			foreach ( $raw_config as $key => $value ) {
 				$this->text_array[ $key ] = wp_kses( $value, $this->allowed_html );
 			}
 		}

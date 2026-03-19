@@ -426,13 +426,13 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$paidy_amount = 0;
 		foreach ( $order_items as $key => $item ) {
 			if ( $item->get_product_id() ) {
-				$item_name     = str_replace( '"', '\"', $item->get_name() );
+				$item_name     = esc_js( $item->get_name() );
 				$unit_price    = round( $item->get_subtotal() / $item->get_quantity(), 0 );
 				$items        .= '{
-                    "id":"' . $item->get_product_id() . '",
-                    "quantity":' . $item->get_quantity() . ',
+                    "id":"' . esc_js( $item->get_product_id() ) . '",
+                    "quantity":' . (int) $item->get_quantity() . ',
                     "title":"' . $item_name . '",
-                    "unit_price":' . $unit_price;
+                    "unit_price":' . (float) $unit_price;
 				$paidy_amount += $item->get_quantity() * $unit_price;
 			}
 			if ( end( $order_items ) === $item && ( ! isset( $fees ) ) ) {
@@ -447,10 +447,10 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		foreach ( $order_coupons as $key => $coupon ) {
 			if ( $coupon->get_discount() ) {
 				$items        .= '{
-                    "id":"' . $coupon->get_code() . '",
+                    "id":"' . esc_js( $coupon->get_code() ) . '",
                     "quantity":1,
-                    "title":"' . $coupon->get_name() . '",
-                    "unit_price":-' . $coupon->get_discount();
+                    "title":"' . esc_js( $coupon->get_name() ) . '",
+                    "unit_price":-' . (float) $coupon->get_discount();
 				$paidy_amount -= $coupon->get_discount();
 			}
 			if ( end( $order_items ) === $coupon && ( ! isset( $fees ) ) ) {
@@ -573,7 +573,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 						if(callbackData.status === "rejected"){
 							window.location.href = "<?php echo esc_url( wc_get_checkout_url() . '?status=' ) . '" + callbackData.status + "&order_id=' . esc_js( $order_id ); ?>";
 						}else if(callbackData.status === "authorized"){
-							window.location.href = "<?php echo $this->get_return_url( $order ) . '&transaction_id=';//phpcs:ignore ?>" + callbackData.id;
+							window.location.href = "<?php echo esc_url( $this->get_return_url( $order ) ) . '&transaction_id='; ?>" + callbackData.id;
 						}else{
 							window.location.href = "<?php echo esc_url( wc_get_checkout_url() ) . '?status='; ?>" + callbackData.status + "&order_id=<?php echo esc_js( $order_id ); ?>";
 						}
@@ -605,7 +605,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 						},
 						"order": {
 							"items": [
-						<?php echo $items;// phpcs:ignore ?>
+						<?php echo $items; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $items is JSON for a JS array; string values are escaped with esc_js() during construction above. ?>
 							],
 							"order_ref": "<?php echo esc_js( $paidy_order_ref ); ?>",
 					<?php
@@ -887,6 +887,11 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$order                = wc_get_order( $order_id );
 		$order_payment_method = $order->get_payment_method();
 		if ( $order_payment_method === $this->id ) {
+			// Prevent duplicate capture calls when the action fires multiple times
+			// (e.g. when WooCommerce instantiates the gateway class more than once).
+			if ( $order->get_meta( 'paidy_capture_id' ) ) {
+				return;
+			}
 			$transaction_id = $order->get_transaction_id();
 			$send_url       = 'https://api.paidy.com/payments/' . $transaction_id . '/captures';
 			$args           = array(
@@ -913,7 +918,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 					$order->update_meta_data( 'paidy_capture_id', $capture_array['captures'][0]['id'] );
 					$order->save_meta_data();
 				}
-				if ( (float) $capture_array['amount'] === $order->get_total() && $transaction_id === $capture_array['id'] ) {
+				if ( (float) $capture_array['amount'] === (float) $order->get_total() && $transaction_id === $capture_array['id'] ) {
 					$order->add_order_note( __( 'In the payment completion process, the amount and ID match were confirmed.', 'woocommerce-for-japan' ) );
 					return true;
 				} else {
@@ -923,7 +928,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 				$message = $capture->get_error_message();
 				$order->add_order_note( $message );
 			} else {
-				$message = $this->jp4wc_framework->jp4wc_array_to_message( $capture_array ) . 'This is capture data.';
+				$message = $this->jp4wc_framework->jp4wc_array_to_message( $capture_array ) . __( 'This is capture data.', 'woocommerce-for-japan' );
 				$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
 
 				if ( isset( $capture_array['status'] ) ) {
@@ -946,27 +951,29 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	/**
 	 * Check the response status from Paidy and add an order note if there is an error.
 	 *
-	 * @param int      $status The response status code.
+	 * @param string   $status The response status code.
 	 * @param WC_Order $order The WooCommerce order object.
 	 */
 	public function paidy_check_response( $status, $order ) {
-		if ( 403 === $status ) {// Forbidden.
+		if ( '403' === $status ) {// Forbidden.
 			$message = __( 'You have made a forbidden request.', 'woocommerce-for-japan' ) . __( 'Please go to your Paidy dashboard and check.', 'woocommerce-for-japan' );
 			$order->add_order_note( $message );
-		} elseif ( 401 === $status ) {// Unauthorized.
+		} elseif ( '401' === $status ) {// Unauthorized.
 			$message = __( 'You have made an unauthorized request.', 'woocommerce-for-japan' ) . __( 'Please go to your Paidy dashboard and check.', 'woocommerce-for-japan' );
 			$order->add_order_note( $message );
-		} elseif ( 409 === $status ) {// Conflict.
+		} elseif ( '409' === $status ) {// Conflict.
 			$message = __( 'You have made a conflict request.', 'woocommerce-for-japan' ) . __( 'Please go to your Paidy dashboard and check.', 'woocommerce-for-japan' );
 			$order->add_order_note( $message );
-		} elseif ( 404 === $status ) {// Not Found.
+		} elseif ( '404' === $status ) {// Not Found.
 			$message = __( 'The requested resource could not be found.', 'woocommerce-for-japan' ) . __( 'Please go to your Paidy dashboard and check.', 'woocommerce-for-japan' );
 			$order->add_order_note( $message );
-		} elseif ( 400 === $status ) {// Bad Request.
+		} elseif ( '400' === $status ) {// Bad Request.
 			$message = __( 'The request failed.', 'woocommerce-for-japan' ) . __( 'Please go to your Paidy dashboard and check.', 'woocommerce-for-japan' );
 			$order->add_order_note( $message );
+		} elseif ( '200' === $status ) {// Good Request.
+			$order->add_order_note( __( 'I received a notification from Paidy and the status was successful.', 'woocommerce-for-japan' ) );
 		} else {
-			$order->add_order_note( __( 'I received a notification from Paidy stating that the status was unexpected.', 'woocommerce-for-japan' ) );
+			$order->add_order_note( __( 'I received a notification from Paidy stating that the status was unexpected.', 'woocommerce-for-japan' ) . ' Status:' . $status );
 		}
 	}
 
@@ -984,6 +991,11 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$order_payment_method = $order->get_payment_method();
 		$capture_id           = $order->get_meta( 'paidy_capture_id', true );
 		if ( $order_payment_method === $this->id ) {
+			// Prevent duplicate capture calls when the action fires multiple times
+			// (e.g. when WooCommerce instantiates the gateway class more than once).
+			if ( $order->get_meta( 'paidy_refund_id' ) ) {
+				return;
+			}
 			$transaction_id = $order->get_transaction_id();
 			$post_data      = '{"capture_id":"' . $capture_id . '","amount":"' . $amount . '","metadata" : {"Platform" : "WooCommerce"}}';
 			$send_url       = 'https://api.paidy.com/payments/' . $transaction_id . '/refunds';
@@ -1022,12 +1034,12 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 				$order->add_order_note( __( 'Completion refunding has been completed at Paidy.', 'woocommerce-for-japan' ) );
 				return true;
 			} else {
-				$message = $this->jp4wc_framework->jp4wc_array_to_message( $refund_array ) . 'This is refund data.';
+				$message = $this->jp4wc_framework->jp4wc_array_to_message( $refund_array ) . __( 'This is refund data.', 'woocommerce-for-japan' );
 				$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
 
 				if ( isset( $refund_array['status'] ) ) {
 					$this->paidy_check_response( $refund_array['status'], $order );
-					if ( 403 === $refund_array['status'] ) {
+					if ( '403' === $refund_array['status'] ) {
 						$paidy_info = $this->paidy_get_payment_data( $transaction_id );
 						if ( isset( $paidy_info ) && isset( $paidy_info['refund'] ) ) {
 							return true;

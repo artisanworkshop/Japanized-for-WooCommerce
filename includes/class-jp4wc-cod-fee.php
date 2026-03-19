@@ -4,7 +4,7 @@
  *
  * @class       JP4WC_COD_Fee
  * @extends     WC_Gateway_COD
- * @version     2.7.15
+ * @version     2.9.0
  * @package     WooCommerce/Classes/Payment
  * @author      Artisan Workshop
  */
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class       JP4WC_COD_Fee
  * @extends     WC_Gateway_COD
- * @version     2.7.15
+ * @version     2.9.0
  * @package     WooCommerce/Classes/Payment
  * @author      Artisan Workshop
  */
@@ -241,7 +241,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			}
 
 			if ( isset( $_POST['jp4wc_tax_class_for_cod'] ) ) {
-				update_option( 'jp4wc_tax_class_for_cod', $_POST['jp4wc_tax_class_for_cod'] );// phpcs:ignore
+				update_option( 'jp4wc_tax_class_for_cod', sanitize_text_field( wp_unslash( $_POST['jp4wc_tax_class_for_cod'] ) ) );
 			}
 		}
 		update_option( 'woocommerce_cod_fees', $fees );
@@ -255,11 +255,25 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 	 * @return mixed
 	 */
 	public function jp4wc_calculate_order_totals( $cart ) {
-		if ( is_admin() || 0 === $cart->get_cart_contents_count() ) {
+		// Allow AJAX requests (e.g. classic checkout's update_order_review via admin-ajax.php)
+		// because is_admin() returns true for all admin-ajax.php calls regardless of origin.
+		if ( ( is_admin() && ! wp_doing_ajax() ) || 0 === $cart->get_cart_contents_count() ) {
 			return;
 		}
-		$current_gateway = WC()->session->get( 'jp4wc_gateway_id' );
-		$current_gateway = empty( $current_gateway ) ? WC()->session->get( 'chosen_payment_method' ) : $current_gateway;
+		// Only calculate fees during checkout (page load, Classic Checkout AJAX, or Block Checkout REST).
+		// Prevents fee from appearing on the cart page.
+		if ( ! is_checkout() && ! wp_doing_ajax() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			return;
+		}
+		// For Classic Checkout AJAX, use chosen_payment_method (updated by WC AJAX handler).
+		// For Block Checkout REST, use jp4wc_gateway_id (updated by extensionCartUpdate).
+		// This prevents stale jp4wc_gateway_id from overriding the current selection in Classic Checkout.
+		if ( wp_doing_ajax() ) {
+			$current_gateway = WC()->session->get( 'chosen_payment_method' );
+		} else {
+			$current_gateway = WC()->session->get( 'jp4wc_gateway_id' );
+			$current_gateway = empty( $current_gateway ) ? WC()->session->get( 'chosen_payment_method' ) : $current_gateway;
+		}
 
 		if ( empty( $current_gateway ) ) {
 			return;
@@ -272,21 +286,24 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			return;
 		}
 
-		$available_gateways = WC()->payment_gateways->get_available_payment_gateways();
+		// Save the gateway ID string before $current_gateway is potentially overwritten with a gateway object.
+		// In block checkout, jp4wc_gateway_id is set via extensionCartUpdate but chosen_payment_method
+		// is only set during checkout processing, so we must use the already-resolved $current_gateway value.
+		$current_gateway_id = $current_gateway;
+
+		$available_gateways = WC()->payment_gateways ? WC()->payment_gateways->get_available_payment_gateways() : array();
 		$subtotal           = $cart->cart_contents_total;
 
 		if ( ! empty( $available_gateways ) ) {
-			// Get the current gateway.
-			if ( isset( $current_gateway ) && isset( $available_gateways[ $current_gateway ] ) ) {
-				$current_gateway = $available_gateways[ $current_gateway ];
+			// Get the current gateway object for use in filters.
+			if ( isset( $available_gateways[ $current_gateway_id ] ) ) {
+				$current_gateway = $available_gateways[ $current_gateway_id ];
 			} elseif ( isset( $available_gateways[ get_option( 'woocommerce_default_gateway' ) ] ) ) {
 				$current_gateway = $available_gateways[ get_option( 'woocommerce_default_gateway' ) ];
 			} else {
 				$current_gateway = current( $available_gateways );
 			}
 		}
-		$current_gateway_id = WC()->session->get( 'chosen_payment_method' );
-		$current_gateway_id = empty( $current_gateway_id ) ? WC()->session->get( 'chosen_payment_method' ) : $current_gateway_id;
 
 		$cod_setting = get_option( 'woocommerce_cod_settings' );
 		if ( isset( $cod_setting['extra_charge_max_cart_value'] ) ) {
@@ -329,10 +346,10 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 				}
 			}
 
-			$extra_charge_amount = apply_filters( 'jp4wc_' . $current_gateway->id . '_amount', $extra_charge_amount, $subtotal, $current_gateway );
+			$extra_charge_amount = apply_filters( 'jp4wc_' . $current_gateway_id . '_amount', $extra_charge_amount, $subtotal, $current_gateway );
 			$do_apply            = 0 !== $extra_charge_amount;
 			$do_apply            = apply_filters( 'jp4wc_apply', $do_apply, $extra_charge_amount, $subtotal, $current_gateway, $cart );
-			$do_apply            = apply_filters( 'jp4wc_apply_for_' . $current_gateway->id, $do_apply, $extra_charge_amount, $subtotal, $current_gateway );
+			$do_apply            = apply_filters( 'jp4wc_apply_for_' . $current_gateway_id, $do_apply, $extra_charge_amount, $subtotal, $current_gateway );
 
 			if ( $do_apply ) {
 
@@ -347,6 +364,9 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 				}
 
 				$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
+				if ( false === $tax_class ) {
+					$tax_class = get_option( 'wc4jp-extra_charge_tax_class' );
+				}
 				$tax_class = empty( $tax_class ) ? 'standard' : $tax_class;
 
 				if ( ! $already_exists ) {

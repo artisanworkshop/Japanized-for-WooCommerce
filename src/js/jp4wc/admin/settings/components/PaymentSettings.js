@@ -123,20 +123,6 @@ const PaymentSettings = ( {
 					/>
 				</PanelRow>
 
-				<PanelRow>
-					<ToggleControl
-						__nextHasNoMarginBottom={ true }
-						label={ __( 'PayPal', 'woocommerce-for-japan' ) }
-						help={ __(
-							'Enable PayPal payment method',
-							'woocommerce-for-japan'
-						) }
-						checked={ settings?.[ 'jp4wc-paypal' ] === '1' }
-						onChange={ ( value ) =>
-							updateSetting( 'jp4wc-paypal', value ? '1' : '' )
-						}
-					/>
-				</PanelRow>
 			</PanelBody>
 
 			<PanelBody

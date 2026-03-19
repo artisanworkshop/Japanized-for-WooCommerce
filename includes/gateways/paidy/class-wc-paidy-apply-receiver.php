@@ -10,6 +10,10 @@
  * @since 1.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Paidy Receiver Plugin Class.
  * REST API endpoint class for WordPress plugin.
@@ -40,15 +44,44 @@ class WC_Paidy_Apply_Receiver {
 	}
 
 	/**
-	 * Check permissions.
-	 * Add authentication logic as needed.
+	 * Check permissions for the Paidy receiver endpoint.
+	 * Verifies site hash is configured and application_id format is valid.
 	 *
 	 * @param WP_REST_Request $request request object.
-	 * @return bool
+	 * @return bool|WP_Error
 	 */
 	public function check_permissions( $request ) {
-		// Basic example: Allow all requests.
-		// Implement proper authentication according to your security requirements.
+		// Require paidy_site_hash to be configured before accepting any data.
+		$site_hash = get_option( 'paidy_site_hash' );
+		if ( empty( $site_hash ) ) {
+			return new WP_Error(
+				'paidy_not_configured',
+				__( 'Paidy onboarding is not configured.', 'woocommerce-for-japan' ),
+				array( 'status' => 403 )
+			);
+		}
+
+		// Validate application_id format (alphanumeric, hyphens, underscores only).
+		$application_id = $request->get_param( 'application_id' );
+		if ( empty( $application_id ) || ! preg_match( '/^[a-zA-Z0-9_\-]+$/', $application_id ) ) {
+			return new WP_Error(
+				'paidy_invalid_request',
+				__( 'Invalid application ID format.', 'woocommerce-for-japan' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		// Verify onboarding state token to ensure request is from expected Paidy flow.
+		$expected_token = get_transient( 'paidy_onboarding_state_' . $application_id );
+		$request_token  = $request->get_param( 'state' );
+		if ( ! empty( $expected_token ) && ( empty( $request_token ) || ! hash_equals( $expected_token, $request_token ) ) ) {
+			return new WP_Error(
+				'paidy_invalid_state',
+				__( 'Invalid state token for Paidy onboarding.', 'woocommerce-for-japan' ),
+				array( 'status' => 403 )
+			);
+		}
+
 		return true;
 	}
 

@@ -38,32 +38,35 @@ function yahoo_api_postcode( $request ) {
 
 		return new WP_Error( 'no_data', 'Invalid author', array( 'status' => 404 ) );
 	} elseif ( isset( $request['post_code'] ) ) {
-		$yahoo_app_id      = $request['yahoo_app_id'] ?? 'dj0zaiZpPWZ3VWp4elJ2MXRYUSZzPWNvbnN1bWVyc2VjcmV0Jng9MmY-';
+		// Use server-side stored App ID only; never accept from client request params.
+		$yahoo_app_id = get_option( 'wc4jp-yahoo-app-id' );
+		if ( empty( $yahoo_app_id ) ) {
+			$yahoo_app_id = 'dj0zaiZpPWZ3VWp4elJ2MXRYUSZzPWNvbnN1bWVyc2VjcmV0Jng9MmY-';
+		}
+		$post_code         = sanitize_text_field( $request['post_code'] );
 		$yahoo_api_zip_url = 'https://map.yahooapis.jp/search/zip/V1/zipCodeSearch';
 		$param             = array(
-			'query'  => $request['post_code'],
+			'query'  => $post_code,
 			'appid'  => $yahoo_app_id,
 			'output' => 'json',
 		);
 
 		$url = $yahoo_api_zip_url . '?' . http_build_query( $param );
 
-		// Open a connection.
-		$conn = curl_init();
+		// Use WordPress HTTP API instead of direct curl calls.
+		$response = wp_remote_get(
+			$url,
+			array(
+				'timeout'   => 10,
+				'sslverify' => apply_filters( 'jp4wc_yahoo_api_sslverify', true ),
+			)
+		);
 
-		// It does not verify the server certificate.
-		curl_setopt( $conn, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $conn, CURLOPT_SSL_VERIFYHOST, false );
+		if ( is_wp_error( $response ) ) {
+			return new WP_Error( 'api_error', $response->get_error_message(), array( 'status' => 502 ) );
+		}
 
-		// Set so that the execution result of curl_exec can be obtained as a character string.
-		curl_setopt( $conn, CURLOPT_RETURNTRANSFER, true );
-
-		// Specify the contact url.
-		curl_setopt( $conn, CURLOPT_URL, $url );
-
-		// Make an inquiry, get the result and disconnect.
-		$result = curl_exec( $conn );
-		curl_close( $conn );
+		$result = wp_remote_retrieve_body( $response );
 
 		// Convert from json to associative array.
 		$result_array = json_decode( $result, true );

@@ -121,10 +121,15 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function update_settings( $request ) {
-		$params = $request->get_params();
+		$params         = $request->get_params();
+		$allowed_keys   = $this->get_all_setting_keys();
+		$allowed_keys[] = 'timeZones';
 
-		// Save each setting.
+		// Save each setting — only allow whitelisted keys.
 		foreach ( $params as $key => $value ) {
+			if ( ! in_array( $key, $allowed_keys, true ) ) {
+				continue;
+			}
 			if ( 'timeZones' === $key ) {
 				// Handle time zones separately.
 				update_option( 'wc4jp_time_zone_details', $value );
@@ -189,7 +194,6 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'postofficebank',
 			'atstore',
 			'cod2',
-			'jp4wc-paypal',
 			'extra_charge_name',
 			'extra_charge_amount',
 			'extra_charge_max_cart_value',
