@@ -16,6 +16,11 @@
 /tests
 /promotion-json
 
+# PayPal gateway is managed directly in SVN and not tracked in git.
+# Excluding it here prevents rsync from deleting it from the SVN working copy,
+# which would corrupt SVN metadata and cause E155007 errors during deployment.
+includes/gateways/paypal
+
 # Files
 .wp-env.json
 .gitattributes
