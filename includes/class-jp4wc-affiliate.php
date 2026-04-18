@@ -6,6 +6,7 @@
  * @package     Affiliate Setting
  * @author      ArtisanWorkshop
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -13,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Affiliate tracking integrations for A8.net and Felmat.
  */
-class JP4WC_Affiliates {
+class JP4WC_Affiliate {
 
 	/**
 	 * Constructor.
@@ -131,4 +132,4 @@ class JP4WC_Affiliates {
 	}
 }
 
-new JP4WC_Affiliates();
+new JP4WC_Affiliate();
