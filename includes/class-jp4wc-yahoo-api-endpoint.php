@@ -23,6 +23,42 @@ add_action(
 );
 
 /**
+ * Rate limit check for the Yahoo postal code endpoint.
+ *
+ * Allows up to JP4WC_POSTCODE_RATE_LIMIT requests per JP4WC_POSTCODE_RATE_WINDOW
+ * seconds per remote IP. Uses WordPress transients for storage.
+ *
+ * @return WP_Error|true WP_Error with status 429 when limit exceeded, true otherwise.
+ */
+function jp4wc_postcode_check_rate_limit() {
+	$limit  = defined( 'JP4WC_POSTCODE_RATE_LIMIT' ) ? JP4WC_POSTCODE_RATE_LIMIT : 10;
+	$window = defined( 'JP4WC_POSTCODE_RATE_WINDOW' ) ? JP4WC_POSTCODE_RATE_WINDOW : 60;
+
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- REMOTE_ADDR is server-set
+	$ip  = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'unknown';
+	$key = 'jp4wc_rl_' . md5( $ip );
+
+	$count = (int) get_transient( $key );
+
+	if ( $count >= $limit ) {
+		return new WP_Error(
+			'rate_limit_exceeded',
+			__( 'Too many requests. Please try again later.', 'woocommerce-for-japan' ),
+			array( 'status' => 429 )
+		);
+	}
+
+	if ( 0 === $count ) {
+		set_transient( $key, 1, $window );
+	} else {
+		// Preserve remaining TTL by incrementing without resetting the window.
+		set_transient( $key, $count + 1, $window );
+	}
+
+	return true;
+}
+
+/**
  * Yahoo API Postal Code Webhook response.
  * Version: 2.7.17
  *
@@ -30,6 +66,11 @@ add_action(
  * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
  */
 function yahoo_api_postcode( $request ) {
+	$rate_limit_result = jp4wc_postcode_check_rate_limit();
+	if ( is_wp_error( $rate_limit_result ) ) {
+		return $rate_limit_result;
+	}
+
 	$jp4wc_framework = new Framework\JP4WC_Framework();
 	$debug           = true;
 	if ( empty( $request ) ) {

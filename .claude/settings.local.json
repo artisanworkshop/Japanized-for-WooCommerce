@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(composer phpcs *)",
-      "Bash(grep -rn '\\\\$_POST\\\\|\\\\$_GET\\\\|\\\\$_REQUEST\\\\|\\\\$_COOKIE' includes/ '--include=*.php')"
+      "Bash(grep -rn '\\\\$_POST\\\\|\\\\$_GET\\\\|\\\\$_REQUEST\\\\|\\\\$_COOKIE' includes/ '--include=*.php')",
+      "Bash(grep -rn '\\\\$wpdb->' includes/ '--include=*.php')"
     ]
   }
 }
