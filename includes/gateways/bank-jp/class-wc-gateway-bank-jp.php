@@ -275,7 +275,6 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 			&& isset( $_POST['bankjp_bank_type'] )
 			&& isset( $_POST['bankjp_bank_branch'] )
 			&& isset( $_POST['bankjp_bank_name'] ) ) {
-
 			$account_names   = wc_clean( wp_unslash( $_POST['bankjp_account_name'] ) );// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$account_numbers = wc_clean( wp_unslash( $_POST['bankjp_account_number'] ) );// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$bank_types      = wc_clean( wp_unslash( $_POST['bankjp_bank_type'] ) );// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -369,7 +368,6 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 			$name_label   = __( 'Account Name', 'woocommerce-for-japan' );
 			$html        .= '<ul class="order_details bankjp_details" style="margin-bottom: 18px;">' . "\n";
 			foreach ( $bankjp_accounts as $bankjp_account ) {
-
 				$bankjp_account = (object) $bankjp_account;
 
 				// BANK account fields shown on the thanks page and in emails.
@@ -390,7 +388,6 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 				$html .= '<li class="account_info">' . "\n" . '<strong>' . implode( ' - ', array_filter( array( esc_attr( $account_field['account_info']['bank_name'] ), esc_attr( $account_field['account_info']['bank_branch'] ), esc_attr( $account_field['account_info']['bank_type'] ) ) ) ) . '</strong><br/>';
 				$html .= $number_label . ': <strong>' . wptexturize( $account_field['account_info']['value'] ) . '</strong><br/>';
 				$html .= $name_label . ': <strong>' . wptexturize( $account_field['account_info']['account_name'] ) . '</strong>' . "\n" . '</li>';
-
 			}
 			$html .= '</ul>';
 			return apply_filters( 'jp4wc_bank_details', $html, $bankjp_accounts, $order_id );

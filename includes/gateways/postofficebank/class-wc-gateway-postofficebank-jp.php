@@ -249,8 +249,11 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 	public function save_account_details() {
 		$accounts = array();
 
-		if ( isset( $_POST['postofficebankjp_account_name'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification
-
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- nonce is verified upstream by WC_Admin_Settings::save()
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- wc_clean() sanitizes the values
+		if ( isset( $_POST['postofficebankjp_account_name'] )
+			&& isset( $_POST['postofficebankjp_account_number'] )
+			&& isset( $_POST['postofficebankjp_bank_symbol'] ) ) {
 			$account_names   = wc_clean( wp_unslash( $_POST['postofficebankjp_account_name'] ) );
 			$account_numbers = wc_clean( wp_unslash( $_POST['postofficebankjp_account_number'] ) );
 			$bank_symbol     = wc_clean( wp_unslash( $_POST['postofficebankjp_bank_symbol'] ) );
@@ -267,6 +270,7 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 				);
 			}
 		}
+		// phpcs:enable
 		update_option( 'woocommerce_postofficebankjp_accounts', $accounts );
 	}
 
@@ -341,7 +345,6 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 			$html  = '<h2>' . __( 'Post Office Bank Account Details', 'woocommerce-for-japan' ) . '</h2>' . PHP_EOL;
 			$html .= '<ul class="order_details postofficebankjp_details">' . PHP_EOL;
 			foreach ( $postofficebankjp_accounts as $postofficebankjp_account ) {
-
 				$postofficebankjp_account = (object) $postofficebankjp_account;
 
 				// BANK account fields shown on the thanks page and in emails.
@@ -383,7 +386,6 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
 		if ( ! empty( $postofficebankjp_accounts ) ) {
 			$text = __( 'Post Office Bank Account Details', 'woocommerce-for-japan' ) . "\n" . PHP_EOL;
 			foreach ( $postofficebankjp_accounts as $postofficebankjp_account ) {
-
 				$postofficebankjp_account = (object) $postofficebankjp_account;
 
 				// BANK account fields shown on the thanks page and in emails.

@@ -131,9 +131,9 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 		}
 
 		// Get delivery date options (excludes the "unspecified" entry — that is passed as placeholder).
-		$delivery_dates          = $this->get_delivery_date_options();
+		$delivery_dates            = $this->get_delivery_date_options();
 		$delivery_date_placeholder = $this->get_unspecified_date_label();
-		$time_zones              = $this->get_time_zone_options();
+		$time_zones                = $this->get_time_zone_options();
 		$delivery_time_placeholder = $this->get_unspecified_time_label();
 
 		// Register delivery date field as select.

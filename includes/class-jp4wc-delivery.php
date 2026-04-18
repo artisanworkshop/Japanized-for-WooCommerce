@@ -613,7 +613,6 @@ class JP4WC_Delivery {
 		$html = '';
 
 		if ( $plain_text ) {
-
 			$html = "\n\n==========\n\n";
 
 			if ( $show_title ) {
@@ -629,9 +628,7 @@ class JP4WC_Delivery {
 			}
 
 			$html .= "\n\n==========\n\n";
-
 		} else {
-
 			if ( $show_title ) {
 				$html .= sprintf( '<h2>%s</h2>', apply_filters( 'wc4jp_delivery_details_text', __( 'Scheduled Delivery date and time', 'woocommerce-for-japan' ), $order ) );
 			}

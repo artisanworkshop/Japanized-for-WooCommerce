@@ -252,18 +252,15 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 
 		$options = array();
 		foreach ( WC()->shipping()->load_shipping_methods() as $method ) {
-
 			$options[ $method->get_method_title() ] = array();
 
 			// Translators: %1$s shipping method name.
-			$options[ $method->get_method_title() ][ $method->id ] = sprintf( __( 'Any &quot;%1$s&quot; method', 'woocommerce' ), $method->get_method_title() );
+			$options[ $method->get_method_title() ][ $method->id ] = sprintf( __( 'Any &quot;%1$s&quot; method', 'woocommerce' ), $method->get_method_title() ); // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- WooCommerce core string, intentionally using woocommerce domain
 
 			foreach ( $zones as $zone ) {
-
 				$shipping_method_instances = $zone->get_shipping_methods();
 
 				foreach ( $shipping_method_instances as $shipping_method_instance_id => $shipping_method_instance ) {
-
 					if ( $shipping_method_instance->id !== $method->id ) {
 						continue;
 					}
@@ -271,10 +268,10 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 					$option_id = $shipping_method_instance->get_rate_id();
 
 					// Translators: %1$s shipping method title, %2$s shipping method id.
-					$option_instance_title = sprintf( __( '%1$s (#%2$s)', 'woocommerce' ), $shipping_method_instance->get_title(), $shipping_method_instance_id );
+					$option_instance_title = sprintf( __( '%1$s (#%2$s)', 'woocommerce' ), $shipping_method_instance->get_title(), $shipping_method_instance_id ); // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- WooCommerce core string
 
 					// Translators: %1$s zone name, %2$s shipping method instance name.
-					$option_title = sprintf( __( '%1$s &ndash; %2$s', 'woocommerce' ), $zone->get_id() ? $zone->get_zone_name() : __( 'Other locations', 'woocommerce' ), $option_instance_title );
+					$option_title = sprintf( __( '%1$s &ndash; %2$s', 'woocommerce' ), $zone->get_id() ? $zone->get_zone_name() : __( 'Other locations', 'woocommerce' ), $option_instance_title ); // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- WooCommerce core string
 
 					$options[ $method->get_method_title() ][ $option_id ] = $option_title;
 				}

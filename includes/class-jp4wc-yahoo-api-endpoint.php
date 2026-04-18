@@ -15,7 +15,7 @@ add_action(
 			'/postcode/',
 			array(
 				'methods'             => 'POST',
-				'callback'            => 'yahoo_api_postcode',
+				'callback'            => 'jp4wc_yahoo_api_postcode',
 				'permission_callback' => '__return_true',
 			)
 		);
@@ -62,10 +62,10 @@ function jp4wc_postcode_check_rate_limit() {
  * Yahoo API Postal Code Webhook response.
  * Version: 2.7.17
  *
- * @param object $request post data.
- * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
+ * @param WP_REST_Request $request Request object.
+ * @return WP_REST_Response|WP_Error
  */
-function yahoo_api_postcode( $request ) {
+function jp4wc_yahoo_api_postcode( $request ) {
 	$rate_limit_result = jp4wc_postcode_check_rate_limit();
 	if ( is_wp_error( $rate_limit_result ) ) {
 		return $rate_limit_result;
@@ -120,8 +120,9 @@ function yahoo_api_postcode( $request ) {
 			foreach ( $states['JP'] as $key => $value ) {
 				$test_value = $value;
 				// if WPML is active and current language is not JA.
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- calling WPML's own hooks
 				if ( defined( 'ICL_SITEPRESS_VERSION' ) && apply_filters( 'wpml_current_language', null ) !== 'ja' ) {
-					$test_value = apply_filters( 'wpml_translate_single_string', $value, 'woocommerce', $value, 'ja' );
+					$test_value = apply_filters( 'wpml_translate_single_string', $value, 'woocommerce', $value, 'ja' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 				}
 
 				if ( mb_substr( $test_value, 0, 3 ) === mb_substr( $postcode_address, 0, 3 ) ) {
