@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.9.4
-Stable tag: 2.9.4
+Stable tag: 2.9.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,15 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.5 - 2026-04-20 =
+* **Fixed** - White screen on frontend caused by fatal error in Paidy blocks support when gateway is not registered
+* **Fixed** - `WC_Gateway_Paidy not found` fatal error on admin pages when WooCommerce is installed with a non-standard path (e.g. wp-env)
+* **Fixed** - `jp4wc_has_orders_in_last_5_days` undefined function error caused by `is_woocommerce_active()` returning false in non-standard install paths
+* **Fixed** - Google Calendar consultation button not displaying on some hosting environments (Xserver) due to CSP/WAF blocking external script injection; replaced with a plain link
+* **Added** - `jp4wc_allowed_setting_keys` filter to allow add-on plugins to register their own setting keys with the REST API
+* **Added** - `jp4wc_setting_option_map` filter to allow add-on plugins to map REST keys to their existing WordPress option names
+* **Added** - `jp4wc.settings.tabs` and `jp4wc.settings.tabContent` JS filters via `@wordpress/hooks` to allow add-on plugins to inject tabs into the React settings UI
 
 = 2.9.0 & 2.9.4 - 2026-03-19 =
 * **Fixed** - COD fee not calculating in Classic Checkout due to `is_admin()` returning true for admin-ajax.php requests
