@@ -225,7 +225,6 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 
 		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
 		if ( isset( $_POST['cod_fee'] ) && isset( $_POST['cod_max'] ) && wp_verify_nonce( $nonce, 'woocommerce-settings' ) ) {
-
 			$cod_fees = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod_fee'] ) ) );
 			$cod_maxs = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod_max'] ) ) );
 
@@ -319,7 +318,6 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		}
 		// Add charges to cart totals.
 		if ( ! empty( $current_gateway_id ) && ( empty( $extra_charge_max_cart_value ) || $extra_charge_max_cart_value >= $subtotal ) && 'cod' === $current_gateway_id ) {
-
 			if ( isset( $cod_setting['extra_charge_name'] ) ) {
 				$extra_charge_name = $cod_setting['extra_charge_name'];
 			}
@@ -352,7 +350,6 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			$do_apply            = apply_filters( 'jp4wc_apply_for_' . $current_gateway_id, $do_apply, $extra_charge_amount, $subtotal, $current_gateway );
 
 			if ( $do_apply ) {
-
 				$already_exists = false;
 				$fees           = $cart->get_fees();
 				$fees_count     = count( $fees );

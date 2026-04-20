@@ -101,11 +101,12 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 	 */
 	public function get_settings( $request ) {
 		$settings_keys = $this->get_all_setting_keys();
+		$option_map    = $this->get_option_map();
 		$settings      = array();
 
 		foreach ( $settings_keys as $key ) {
-			$value            = get_option( $this->prefix . $key, '' );
-			$settings[ $key ] = $value;
+			$option_name      = isset( $option_map[ $key ] ) ? $option_map[ $key ] : $this->prefix . $key;
+			$settings[ $key ] = get_option( $option_name, '' );
 		}
 
 		// Get time zones separately.
@@ -124,6 +125,7 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 		$params         = $request->get_params();
 		$allowed_keys   = $this->get_all_setting_keys();
 		$allowed_keys[] = 'timeZones';
+		$option_map     = $this->get_option_map();
 
 		// Save each setting — only allow whitelisted keys.
 		foreach ( $params as $key => $value ) {
@@ -134,8 +136,8 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 				// Handle time zones separately.
 				update_option( 'wc4jp_time_zone_details', $value );
 			} else {
-				// Save other settings.
-				update_option( $this->prefix . $key, $value );
+				$option_name = isset( $option_map[ $key ] ) ? $option_map[ $key ] : $this->prefix . $key;
+				update_option( $option_name, $value );
 			}
 		}
 
@@ -144,12 +146,32 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get the option name map for keys that use a non-default WP option name.
+	 *
+	 * Add-on plugins can use the `jp4wc_setting_option_map` filter to map
+	 * their REST key (e.g. 'pro-cod') to their existing WP option name
+	 * (e.g. 'jp4wc_pro_cod'), preserving backward compatibility.
+	 *
+	 * @since 2.9.5
+	 * @return array Map of key => full WP option name.
+	 */
+	private function get_option_map() {
+		/**
+		 * Filters the map of REST setting keys to WordPress option names.
+		 *
+		 * @since 2.9.5
+		 * @param array $map Associative array of key => wp_option_name.
+		 */
+		return apply_filters( 'jp4wc_setting_option_map', array() );
+	}
+
+	/**
 	 * Get all setting keys.
 	 *
 	 * @return array
 	 */
 	private function get_all_setting_keys() {
-		return array(
+		$keys = array(
 			// General settings.
 			'yomigana',
 			'yomigana-required',
@@ -221,5 +243,16 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'affiliate-felmat',
 			'affiliate-felmat-pid',
 		);
+
+		/**
+		 * Filters the list of allowed setting keys for the REST API.
+		 *
+		 * Add-on plugins (e.g. jp4wc-pro) can use this filter to register
+		 * additional setting keys so they are accepted by GET/POST /jp4wc/v1/settings.
+		 *
+		 * @since 2.9.5
+		 * @param array $keys Whitelisted setting key suffixes (without the 'wc4jp-' prefix).
+		 */
+		return apply_filters( 'jp4wc_allowed_setting_keys', $keys );
 	}
 }

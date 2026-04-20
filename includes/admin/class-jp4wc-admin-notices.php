@@ -89,12 +89,16 @@ class JP4WC_Admin_Notices {
 	 */
 	public function jp4wc_dismiss_review_prompt() {
 
-		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'jp4wc_pr_dismiss_prompt' ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( -1, 403 );
+		}
+
+		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'jp4wc_pr_dismiss_prompt' ) ) {
 			die( 'Failed' );
 		}
 
 		if ( ! empty( $_POST['type'] ) ) {
-			if ( 'remove' === $_POST['type'] ) {
+			if ( 'remove' === sanitize_text_field( wp_unslash( $_POST['type'] ) ) ) {
 				update_option( 'jp4wc_2025031pr_hide_notice', date_i18n( 'Y-m-d H:i:s' ) );
 				wp_send_json_success(
 					array(

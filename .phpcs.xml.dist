@@ -1,47 +1,84 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards based custom ruleset for your plugin">
-	<description>Generally-applicable sniffs for WordPress plugins.</description>
+<ruleset name="Japanized for WooCommerce Coding Standards">
+	<description>WordPress Coding Standards ruleset for Japanized for WooCommerce plugin.</description>
 
 	<!-- What to scan -->
 	<file>.</file>
 	<exclude-pattern>/vendor/</exclude-pattern>
 	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/tests/</exclude-pattern>
 
 	<!-- How to scan -->
-	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
-	<!-- Annotated ruleset: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
-	<arg value="sp"/> <!-- Show sniff and progress -->
-	<arg name="basepath" value="./"/><!-- Strip the file paths down to the relevant bit -->
+	<arg value="sp"/>
+	<arg name="basepath" value="./"/>
 	<arg name="colors"/>
 	<arg name="extensions" value="php"/>
-	<arg name="parallel" value="8"/><!-- Enables parallel processing when available for faster results. -->
+	<arg name="parallel" value="8"/>
 
-	<!-- Rules: Check PHP version compatibility -->
-	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="5.6-"/>
-	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
+	<!-- PHP version compatibility: PHP 8.1+ (matches plugin requirements) -->
+	<config name="testVersion" value="8.1-"/>
 	<rule ref="PHPCompatibilityWP"/>
 
-	<!-- Rules: WordPress Coding Standards -->
-	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards -->
-	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
-	<config name="minimum_supported_wp_version" value="4.6"/>
+	<!-- WordPress Coding Standards -->
+	<config name="minimum_supported_wp_version" value="6.7"/>
 	<rule ref="WordPress"/>
+
+	<!--
+		Plugin-specific prefix rules.
+		WooCommerce payment gateway classes intentionally use the WC_Gateway_ prefix
+		(required by WooCommerce conventions), so gateway files are excluded.
+	-->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-			<property name="prefixes" type="array" value="my-plugin"/>
+			<property name="prefixes" type="array">
+				<element value="jp4wc_"/>
+				<element value="JP4WC_"/>
+				<element value="JP4WC"/>
+				<element value="wc4jp_"/>
+			</property>
 		</properties>
+		<exclude-pattern>/includes/gateways/</exclude-pattern>
+		<!-- WooCommerce Blocks integration classes follow WC naming conventions (WC_Payments_*_Blocks_Support). -->
+		<exclude-pattern>/includes/blocks/</exclude-pattern>
 	</rule>
+
+	<!--
+		Hook name prefix rule: exclude gateway files that hook into WooCommerce
+		core filters (e.g. woocommerce_payment_gateways) which should NOT be
+		prefixed with jp4wc_.
+	-->
+	<rule ref="WordPress.NamingConventions.ValidHookName">
+		<exclude-pattern>/includes/gateways/</exclude-pattern>
+		<exclude-pattern>/includes/blocks/</exclude-pattern>
+	</rule>
+
+	<!-- Text domain -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<!-- Value: replace the text domain used. -->
-			<property name="text_domain" type="array" value="my-plugin"/>
+			<property name="text_domain" type="array">
+				<element value="woocommerce-for-japan"/>
+			</property>
 		</properties>
 	</rule>
+
+	<!-- Control structure spacing -->
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
 		<properties>
 			<property name="blank_line_check" value="true"/>
+		</properties>
+	</rule>
+
+	<!--
+		manage_woocommerce is a valid WooCommerce capability; suppress the
+		"unknown capability" warning for it project-wide.
+	-->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_woocommerce"/>
+				<element value="edit_shop_orders"/>
+				<element value="manage_woocommerce_options"/>
+			</property>
 		</properties>
 	</rule>
 </ruleset>

@@ -18,9 +18,11 @@
 		"SCRIPT_DEBUG": true,
 		"ALTERNATE_WP_CRON": false
 	},
+	"port": 8890,
+	"testsPort": 8891,
 	"env": {
 		"development": {
-			"phpmyadminPort": 9001
+			"phpmyadminPort": 9002
 		}
 	}
 }

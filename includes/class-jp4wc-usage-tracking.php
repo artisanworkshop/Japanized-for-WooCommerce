@@ -10,6 +10,9 @@
  * @package JP4WC\Classes
  */
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Usage tracking requires direct DB queries for statistics; caching is handled per-method via wp_cache_get/wp_cache_set.
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Calls to WooCommerce core hooks (woocommerce_tracker_*, woocommerce_admin_disabled, etc.) that must use their original names.
+
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Utilities\{ FeaturesUtil, OrderUtil, PluginUtil };
@@ -165,7 +168,6 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 					'http_code'     => $http_code,
 					'response_body' => $response_body,
 				);
-
 			} elseif ( $http_code >= 500 ) {
 				// Server error (5xx series).
 				wc_get_logger()->error( "Server Error {$http_code}: {$response_body}", array( 'source' => 'jp4wc-tracker' ) );
@@ -177,7 +179,6 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 					'http_code'     => $http_code,
 					'response_body' => $response_body,
 				);
-
 			} else {
 				// Unexpected HTTP status code.
 				wc_get_logger()->error( "Unexpected HTTP Code {$http_code}: {$response_body}", array( 'source' => 'jp4wc-tracker' ) );

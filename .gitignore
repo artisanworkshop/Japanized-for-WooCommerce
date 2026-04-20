@@ -36,3 +36,6 @@ Thumbs.db
 
 # PHPUnit cache
 .phpunit.result.cache
+
+# claude settings
+.claude/settings.local.json

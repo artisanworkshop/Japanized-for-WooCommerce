@@ -133,7 +133,6 @@ class WC_Paidy_Admin_Notices {
 			} elseif (
 					( ! empty( $api_public_key ) && ! preg_match( '/^pk_live_/', $api_public_key ) )
 					|| ( ! empty( $api_secret_key ) && ! preg_match( '/^sk_live_/', $api_secret_key ) ) ) {
-
 					$setting_link = $this->get_setting_link();
 					/* translators: 1) setting link */
 					$this->add_admin_notice( 'keys', 'notice notice-error', sprintf( __( 'Paidy is in live mode however your test keys may not be valid. Live keys start with pk_live and sk_live. Please go to your settings and, <a href="%s">set your Paidy account keys</a>.', 'woocommerce-for-japan' ), $setting_link ), true );
