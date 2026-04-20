@@ -23,10 +23,14 @@
 .gitignore
 .phpcs.xml.dist
 .phpunit.xml.dist
+phpunit.xml.dist
 composer.json
 composer.lock
 package-lock.json
 package.json
+webpack.config.js
+CLADE.md
+LICENSE
 README.md
 SECURITY-FIX-PAIDY.md
 SHORTCODE-CHECKOUT-VALIDATION-REPORT.md
