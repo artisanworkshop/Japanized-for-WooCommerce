@@ -27,50 +27,6 @@ const Settings = () => {
 		loadSettings();
 	}, [] );
 
-	// Load Google Calendar Scheduling Button
-	useEffect( () => {
-		// Load CSS
-		const link = document.createElement( 'link' );
-		link.href =
-			'https://calendar.google.com/calendar/scheduling-button-script.css';
-		link.rel = 'stylesheet';
-		document.head.appendChild( link );
-
-		// Load Script
-		const script = document.createElement( 'script' );
-		script.src =
-			'https://calendar.google.com/calendar/scheduling-button-script.js';
-		script.async = true;
-		script.onload = () => {
-			// Wait a bit for the script to initialize
-			setTimeout( () => {
-				if ( window.calendar && window.calendar.schedulingButton ) {
-					const container = document.querySelector(
-						'.jp4wc-consultation-button'
-					);
-					if ( container ) {
-						window.calendar.schedulingButton.load( {
-							url: 'https://calendar.google.com/calendar/appointments/AcZssZ3mnRQcAL8LU9tPWptKCm05Zge58Oy2jffVIIQ=?gv=true',
-							color: '#8E24AA',
-							label: '有料相談に申し込む',
-							target: container,
-						} );
-					}
-				}
-			}, 100 );
-		};
-		document.body.appendChild( script );
-
-		return () => {
-			// Cleanup
-			if ( link.parentNode ) {
-				link.parentNode.removeChild( link );
-			}
-			if ( script.parentNode ) {
-				script.parentNode.removeChild( script );
-			}
-		};
-	}, [] );
 
 	const loadSettings = async () => {
 		setLoading( true );
@@ -270,7 +226,15 @@ const Settings = () => {
 							'woocommerce-for-japan'
 						) }
 					</p>
-					<div className="jp4wc-consultation-button"></div>
+					<a
+						href="https://calendar.google.com/calendar/appointments/AcZssZ3mnRQcAL8LU9tPWptKCm05Zge58Oy2jffVIIQ=?gv=true"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="jp4wc-consultation-button button button-primary"
+						style={ { backgroundColor: '#8E24AA', borderColor: '#8E24AA' } }
+					>
+						{ __( '有料相談に申し込む', 'woocommerce-for-japan' ) }
+					</a>
 				</div>
 			</div>
 		</div>
