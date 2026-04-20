@@ -77,7 +77,7 @@ add_action( 'plugins_loaded', 'jp4wc_plugin', 10 );
  * @return void
  */
 function jp4wc_plugin() {
-	if ( is_woocommerce_active() && class_exists( 'WooCommerce' ) ) {
+	if ( class_exists( 'WooCommerce' ) ) {
 		JP4WC::instance();
 	} else {
 		add_action( 'admin_notices', 'jp4wc_fallback_notice' );
