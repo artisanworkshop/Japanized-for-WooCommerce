@@ -149,7 +149,7 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 	 * @return array
 	 */
 	private function get_all_setting_keys() {
-		return array(
+		$keys = array(
 			// General settings.
 			'yomigana',
 			'yomigana-required',
@@ -221,5 +221,16 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'affiliate-felmat',
 			'affiliate-felmat-pid',
 		);
+
+		/**
+		 * Filters the list of allowed setting keys for the REST API.
+		 *
+		 * Add-on plugins (e.g. jp4wc-pro) can use this filter to register
+		 * additional setting keys so they are accepted by GET/POST /jp4wc/v1/settings.
+		 *
+		 * @since 2.9.5
+		 * @param array $keys Whitelisted setting key suffixes (without the 'wc4jp-' prefix).
+		 */
+		return apply_filters( 'jp4wc_allowed_setting_keys', $keys );
 	}
 }

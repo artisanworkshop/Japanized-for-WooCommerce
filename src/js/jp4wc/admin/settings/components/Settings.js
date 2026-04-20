@@ -5,6 +5,7 @@ import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { TabPanel, Notice, Spinner } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
+import { applyFilters } from '@wordpress/hooks';
 
 import GeneralSettings from './GeneralSettings';
 import ShipmentSettings from './ShipmentSettings';
@@ -134,7 +135,7 @@ const Settings = () => {
 		);
 	}
 
-	const tabs = [
+	const tabs = applyFilters( 'jp4wc.settings.tabs', [
 		{
 			name: 'general',
 			title: __( 'General Settings', 'woocommerce-for-japan' ),
@@ -160,7 +161,7 @@ const Settings = () => {
 			title: __( 'Affiliate', 'woocommerce-for-japan' ),
 			className: 'jp4wc-tab-affiliate',
 		},
-	];
+	] );
 
 	return (
 		<div className="jp4wc-settings-container">
@@ -239,6 +240,17 @@ const Settings = () => {
 								saveSettings={ saveSettings }
 								saving={ saving }
 							/>
+						) }
+						{ applyFilters(
+							'jp4wc.settings.tabContent',
+							null,
+							tab,
+							{
+								settings,
+								updateSetting,
+								saveSettings,
+								saving,
+							}
 						) }
 					</div>
 				) }
