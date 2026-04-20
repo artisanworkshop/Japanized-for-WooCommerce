@@ -149,7 +149,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	 * Initialize the Paidy plugin.
 	 */
 	function wc_paidy_plugin() {
-		if ( is_woocommerce_active() && class_exists( 'WooCommerce' ) ) {
+		if ( class_exists( 'WooCommerce' ) ) {
 			WC_Paidy::get_instance();
 		}
 		if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
@@ -196,6 +196,9 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	 * Redirects to the Paidy wizard after plugin activation.
 	 */
 	function paidy_redirect_to_wizard() {
+		if ( ! class_exists( 'WC_Gateway_Paidy' ) ) {
+			return;
+		}
 		$paidy_payment_method = new WC_Gateway_Paidy();
 		if ( get_option( 'paidy_do_activation_redirect', false ) ) {
 			if ( 'yes' !== $paidy_payment_method->enabled && jp4wc_has_orders_in_last_5_days() ) {
