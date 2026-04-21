@@ -246,9 +246,14 @@ class JP4WC_Address_Fields {
 		// For block checkout, these will be replaced with empty strings in address_replacements().
 		$include_yomigana = get_option( 'wc4jp-yomigana' );
 
+		$country_format = $this->show_country_in_address() ? "\n {country}" : '';
+
 		if ( $has_block_checkout && ! is_order_received_page() ) {
 			if ( $include_yomigana && is_checkout() && ! $this->is_email_context() ) {
 				$fields['JP'] = $fields['JP'] . __( '(Please click "Edit" to check the pronunciation.)', 'woocommerce-for-japan' );
+			}
+			if ( '' === $country_format ) {
+				$fields['JP'] = preg_replace( '/\n\s*\{country\}/', '', $fields['JP'] );
 			}
 			return $fields;
 		}
@@ -268,9 +273,9 @@ class JP4WC_Address_Fields {
 
 		// Build format string based on settings.
 		if ( get_option( 'wc4jp-company-name' ) ) {
-			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . $country_format;
 		} else {
-			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . $country_format;
 		}
 
 		if ( is_cart() ) {
@@ -413,6 +418,21 @@ class JP4WC_Address_Fields {
 			$address['phone']               = $args->get_meta( $order_id, '_shipping_phone', true );
 		}
 		return $address;
+	}
+
+	/**
+	 * Check whether the country should be shown in formatted addresses.
+	 *
+	 * Returns false when the store is configured to sell to only one country,
+	 * since showing the country adds no information for the customer or merchant.
+	 *
+	 * @return bool
+	 */
+	private function show_country_in_address() {
+		if ( ! function_exists( 'WC' ) || ! isset( WC()->countries ) ) {
+			return true;
+		}
+		return count( WC()->countries->get_allowed_countries() ) > 1;
 	}
 
 	/**
