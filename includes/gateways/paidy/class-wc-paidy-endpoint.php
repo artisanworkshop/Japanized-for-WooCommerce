@@ -59,7 +59,9 @@ class WC_Paidy_Endpoint {
 
 	/**
 	 * Permission callback for Paidy webhook endpoint.
-	 * Verifies the request is from Paidy by checking the signature header.
+	 * Verifies the request is from Paidy by checking the signature header or IP whitelist.
+	 * When neither is configured the request is allowed through, preserving the behaviour
+	 * of versions prior to 2.8.0 which used permission_callback => '__return_true'.
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 * @return bool|WP_Error True if authorized, WP_Error otherwise.
@@ -68,35 +70,12 @@ class WC_Paidy_Endpoint {
 		// Get the signature from the header.
 		$signature = $request->get_header( 'x-paidy-signature' );
 
-		// If no signature header, check if this is from allowed IP (optional).
-		if ( empty( $signature ) ) {
-			// Allow filtering of IP whitelist.
-			$allowed_ips = apply_filters( 'paidy_webhook_allowed_ips', array() );
-
-			if ( ! empty( $allowed_ips ) ) {
-				$remote_ip = $this->get_remote_ip();
-				if ( ! in_array( $remote_ip, $allowed_ips, true ) ) {
-					return new WP_Error(
-						'paidy_unauthorized',
-						__( 'Unauthorized access to Paidy webhook.', 'woocommerce-for-japan' ),
-						array( 'status' => 403 )
-					);
-				}
-				// IP validation passed.
-				return true;
-			}
-
-			// No signature AND no IP whitelist configured - REJECT.
-			return new WP_Error(
-				'paidy_unauthorized',
-				__( 'Missing signature header for Paidy webhook.', 'woocommerce-for-japan' ),
-				array( 'status' => 403 )
-			);
-		}
-
-		// Verify the signature if present.
+		// If a signature is present, verify it with the configured API secret key.
 		if ( ! empty( $signature ) ) {
-			$secret_key = $this->paidy->get_option( 'secret_key' );
+			$test_mode  = 'yes' === $this->paidy->get_option( 'testmode' );
+			$secret_key = $test_mode
+				? $this->paidy->get_option( 'test_api_secret_key' )
+				: $this->paidy->get_option( 'api_secret_key' );
 
 			if ( empty( $secret_key ) ) {
 				return new WP_Error(
@@ -120,12 +99,26 @@ class WC_Paidy_Endpoint {
 			return true;
 		}
 
-		// Should never reach here, but reject by default.
-		return new WP_Error(
-			'paidy_unauthorized',
-			__( 'Unauthorized access to Paidy webhook.', 'woocommerce-for-japan' ),
-			array( 'status' => 403 )
-		);
+		// No signature — check IP whitelist if one has been configured via filter.
+		$allowed_ips = apply_filters( 'paidy_webhook_allowed_ips', array() );
+
+		if ( ! empty( $allowed_ips ) ) {
+			$remote_ip = $this->get_remote_ip();
+			if ( ! in_array( $remote_ip, $allowed_ips, true ) ) {
+				return new WP_Error(
+					'paidy_unauthorized',
+					__( 'Unauthorized access to Paidy webhook.', 'woocommerce-for-japan' ),
+					array( 'status' => 403 )
+				);
+			}
+			// IP validation passed.
+			return true;
+		}
+
+		// No signature and no IP whitelist configured — allow through.
+		// Paidy's standard webhook does not include a signature header, so rejecting
+		// unsigned requests with no IP whitelist would block all real notifications.
+		return true;
 	}
 
 	/**
