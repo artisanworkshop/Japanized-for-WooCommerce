@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7.0
 Tested up to: 6.9.4
-Stable tag: 2.9.5
+Stable tag: 2.9.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,18 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.6 - 2026-04-22 =
+* **Fixed** - Paidy webhook permission check rejected all notifications from Paidy (no `x-paidy-signature` header) causing orders to remain "pending" and be auto-cancelled
+* **Fixed** - Paidy webhook signature verification used wrong option name `secret_key` (non-existent); corrected to `api_secret_key` / `test_api_secret_key` based on test mode
+* **Fixed** - Bank transfer (`bankjp`) account skip condition `! isset( $account_names[$i] )` was always false; replaced with `empty( $bank_names[$i] ) && empty( $name )` to properly skip blank rows
+* **Added** - Deduplication of bank transfer account entries on save and load to prevent double display caused by corrupted option data
+* **Fixed** - Yomigana (読み仮名) fields not displayed in HTML emails when using Block Checkout; corrected meta key fallback from `_wc_other/` to `_wc_billing/` and `_wc_shipping/` prefixes
+* **Fixed** - Yomigana displayed twice on order received (thank-you) page when using Block Checkout
+* **Fixed** - Yomigana appearing as a separate bold `<strong>` list below the formatted address in emails and thank-you page; now suppressed via `show_in_order_confirmation: false` and block render filter
+* **Fixed** - "(よみがなを確認するには「編集」をクリックしてください。)" message incorrectly appearing in new order emails
+* **Fixed** - Customer email salutation showing first name only instead of full name (姓名); email context detection now uses `WC_Email::$sending` flag for reliability with WC 10.7+ BlockEmailRenderer
+* **Added** - Country is hidden from formatted address in emails and thank-you page when the store sells to only one country
 
 = 2.9.5 - 2026-04-20 =
 * **Fixed** - White screen on frontend caused by fatal error in Paidy blocks support when gateway is not registered

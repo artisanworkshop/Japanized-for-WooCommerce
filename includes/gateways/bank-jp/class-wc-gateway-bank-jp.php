@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class       WC_Gateway_BANK_JP
  * @extends     WC_Payment_Gateway
- * @version     2.6.15
+ * @version     2.9.6
  * @package     WooCommerce/Classes/Payment
  * @author      Artisan Workshop
  */
@@ -122,6 +122,11 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 				),
 			)
 		);
+
+		// Guard against duplicate entries that may have been saved by a previous bug.
+		if ( is_array( $this->account_details ) && count( $this->account_details ) > 1 ) {
+			$this->account_details = $this->deduplicate_accounts( $this->account_details );
+		}
 
 		// Actions.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -282,21 +287,45 @@ class WC_Gateway_BANK_JP extends WC_Payment_Gateway {
 			$bank_names      = wc_clean( wp_unslash( $_POST['bankjp_bank_name'] ) );// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 			foreach ( $account_names as $i => $name ) {
-				if ( ! isset( $account_names[ $i ] ) ) {
+				// Skip rows where both bank name and account name are empty.
+				if ( empty( $bank_names[ $i ] ) && empty( $name ) ) {
 					continue;
 				}
 
 				$accounts[] = array(
-					'bank_name'      => $bank_names[ $i ],
-					'bank_branch'    => $bank_branches[ $i ],
-					'bank_type'      => $bank_types[ $i ],
-					'account_number' => $account_numbers[ $i ],
-					'account_name'   => $account_names[ $i ],
+					'bank_name'      => isset( $bank_names[ $i ] ) ? $bank_names[ $i ] : '',
+					'bank_branch'    => isset( $bank_branches[ $i ] ) ? $bank_branches[ $i ] : '',
+					'bank_type'      => isset( $bank_types[ $i ] ) ? $bank_types[ $i ] : '',
+					'account_number' => isset( $account_numbers[ $i ] ) ? $account_numbers[ $i ] : '',
+					'account_name'   => $name,
 				);
 			}
+
+			// Remove duplicates before saving.
+			$accounts = $this->deduplicate_accounts( $accounts );
 		}
 
 		update_option( 'woocommerce_bankjp_accounts', $accounts );
+	}
+
+	/**
+	 * Remove duplicate account entries from an array of accounts.
+	 * Two accounts are considered duplicates if all five fields match.
+	 *
+	 * @param array $accounts List of account arrays.
+	 * @return array Deduplicated list.
+	 */
+	private function deduplicate_accounts( $accounts ) {
+		$seen   = array();
+		$unique = array();
+		foreach ( $accounts as $account ) {
+			$key = implode( '|', array( $account['bank_name'], $account['bank_branch'], $account['bank_type'], $account['account_number'], $account['account_name'] ) );
+			if ( ! isset( $seen[ $key ] ) ) {
+				$seen[ $key ] = true;
+				$unique[]     = $account;
+			}
+		}
+		return $unique;
 	}
 
 	/**

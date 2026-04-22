@@ -47,6 +47,14 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'save_to_order_meta' ), 100, 2 );
 		// Hide WooCommerce's default display of additional fields (we use our own).
 		add_filter( 'woocommerce_order_get_formatted_meta_data', array( $this, 'hide_additional_fields_from_order_meta' ), 10, 2 );
+		// Suppress yomigana from WC's address additional-fields list in the Block order confirmation.
+		// BillingAddress/ShippingAddress blocks call get_order_additional_fields_with_values()
+		// directly, bypassing show_in_order_confirmation. Filter the rendered block HTML instead.
+		add_filter( 'render_block_woocommerce/order-confirmation-billing-address', array( $this, 'filter_order_confirmation_address_block' ) );
+		add_filter( 'render_block_woocommerce/order-confirmation-shipping-address', array( $this, 'filter_order_confirmation_address_block' ) );
+		// Fallback for classic-template order-received page.
+		add_action( 'woocommerce_order_details_after_customer_address', array( $this, 'start_order_address_fields_buffer' ), 9, 2 );
+		add_action( 'woocommerce_order_details_after_customer_address', array( $this, 'filter_order_address_fields_buffer' ), 11, 2 );
 		// Enqueue CSS for field ordering.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_block_styles' ) );
 	}
@@ -140,12 +148,12 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		// Register yomigana last name field (applies to both billing and shipping).
 		// Note: Field order is controlled via JavaScript (see checkout-blocks-jp4wc.js).
 		$field_config = array(
-			'id'            => 'jp4wc/yomigana_last_name',
-			'label'         => __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ),
-			'location'      => 'address',
-			'type'          => 'text',
-			'required'      => $is_required,
-			'show_in_order' => true,
+			'id'                       => 'jp4wc/yomigana_last_name',
+			'label'                    => __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ),
+			'location'                 => 'address',
+			'type'                     => 'text',
+			'required'                 => $is_required,
+			'show_in_order_confirmation' => false,
 		);
 
 		try {
@@ -160,12 +168,12 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		// Register yomigana first name field (applies to both billing and shipping).
 		// Note: Field order is controlled via JavaScript (see checkout-blocks-jp4wc.js).
 		$field_config = array(
-			'id'            => 'jp4wc/yomigana_first_name',
-			'label'         => __( 'First Name ( Yomigana )', 'woocommerce-for-japan' ),
-			'location'      => 'address',
-			'type'          => 'text',
-			'required'      => $is_required,
-			'show_in_order' => true,
+			'id'                       => 'jp4wc/yomigana_first_name',
+			'label'                    => __( 'First Name ( Yomigana )', 'woocommerce-for-japan' ),
+			'location'                 => 'address',
+			'type'                     => 'text',
+			'required'                 => $is_required,
+			'show_in_order_confirmation' => false,
 		);
 
 		try {
@@ -274,8 +282,10 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 	 */
 	public function hide_additional_fields_from_order_meta( $formatted_meta, $order ) {
 		$fields_to_hide = array(
-			'_wc_other/jp4wc/yomigana_last_name',
-			'_wc_other/jp4wc/yomigana_first_name',
+			'_wc_billing/jp4wc/yomigana_last_name',
+			'_wc_billing/jp4wc/yomigana_first_name',
+			'_wc_shipping/jp4wc/yomigana_last_name',
+			'_wc_shipping/jp4wc/yomigana_first_name',
 		);
 
 		foreach ( $formatted_meta as $key => $meta ) {
@@ -285,6 +295,79 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		}
 
 		return $formatted_meta;
+	}
+
+	/**
+	 * Start output buffer before WooCommerce renders address additional fields (priority 9).
+	 * Only active on the order-received page.
+	 *
+	 * @param string   $address_type billing or shipping.
+	 * @param WC_Order $order Order object.
+	 */
+	public function start_order_address_fields_buffer( $address_type, $order ) {
+		if ( is_order_received_page() ) {
+			ob_start();
+		}
+	}
+
+	/**
+	 * Filter the buffered output to remove yomigana entries (priority 11).
+	 * WooCommerce renders address-location additional fields at priority 10 via
+	 * CheckoutFieldsFrontend::render_order_address_fields(), which does not respect
+	 * show_in_order_confirmation. We strip the yomigana <dt>/<dd> pairs here
+	 * because they are already embedded in the formatted address block above.
+	 *
+	 * @param string   $address_type billing or shipping.
+	 * @param WC_Order $order Order object.
+	 */
+	public function filter_order_address_fields_buffer( $address_type, $order ) {
+		if ( ! is_order_received_page() ) {
+			return;
+		}
+
+		$output = ob_get_clean();
+		if ( empty( $output ) ) {
+			return;
+		}
+
+		$labels = array(
+			preg_quote( esc_html( __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ) ), '/' ),
+			preg_quote( esc_html( __( 'First Name ( Yomigana )', 'woocommerce-for-japan' ) ), '/' ),
+		);
+
+		foreach ( $labels as $label ) {
+			$output = preg_replace( '/<dt>' . $label . '<\/dt><dd>[^<]*<\/dd>/', '', $output );
+		}
+
+		// Remove the wrapper <dl> if all entries were stripped.
+		$output = preg_replace( '/<dl[^>]*>\s*<\/dl>/', '', $output );
+
+		echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Remove yomigana entries from the rendered Block order-confirmation address block.
+	 *
+	 * WooCommerce's BillingAddress/ShippingAddress order-confirmation blocks call
+	 * get_order_additional_fields_with_values() without respecting show_in_order_confirmation,
+	 * so yomigana would always appear as a separate <dl> list below the formatted address.
+	 * Since yomigana is already embedded in the formatted address string, we strip these
+	 * duplicate entries from the block's rendered HTML.
+	 *
+	 * @param string $block_content Rendered HTML of the block.
+	 * @return string Filtered HTML with yomigana dt/dd pairs removed.
+	 */
+	public function filter_order_confirmation_address_block( $block_content ) {
+		$labels = array(
+			preg_quote( esc_html( __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ) ), '/' ),
+			preg_quote( esc_html( __( 'First Name ( Yomigana )', 'woocommerce-for-japan' ) ), '/' ),
+		);
+		foreach ( $labels as $label ) {
+			$block_content = preg_replace( '/<dt>' . $label . '<\/dt><dd>[^<]*<\/dd>/', '', $block_content );
+		}
+		// Remove empty wrapper if all additional fields were stripped.
+		$block_content = preg_replace( '/<dl[^>]*>\s*<\/dl>/', '', $block_content );
+		return $block_content;
 	}
 
 	/**

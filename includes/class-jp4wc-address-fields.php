@@ -210,14 +210,12 @@ class JP4WC_Address_Fields {
 		}
 
 		if ( get_option( 'wc4jp-yomigana' ) ) {
-			// For block checkout during checkout process, hide yomigana by setting to empty string.
-			// For classic checkout or thank you page, show yomigana if available.
-			if ( $has_block_checkout && ! is_order_received_page() ) {
-				// Block checkout - hide yomigana in address preview.
+			// On the block checkout page itself, hide yomigana (shown via "Edit" flow instead).
+			// In email or order-received context, always show yomigana from order meta.
+			if ( $has_block_checkout && ! is_order_received_page() && ! $this->is_email_context() ) {
 				$fields['{yomigana_last_name}']  = '';
 				$fields['{yomigana_first_name}'] = '';
 			} else {
-				// Classic checkout or thank you page - show yomigana.
 				$fields['{yomigana_last_name}']  = isset( $args['yomigana_last_name'] ) ? $args['yomigana_last_name'] : '';
 				$fields['{yomigana_first_name}'] = isset( $args['yomigana_first_name'] ) ? $args['yomigana_first_name'] : '';
 			}
@@ -246,9 +244,16 @@ class JP4WC_Address_Fields {
 		// For block checkout, these will be replaced with empty strings in address_replacements().
 		$include_yomigana = get_option( 'wc4jp-yomigana' );
 
-		if ( $has_block_checkout && ! is_order_received_page() ) {
+		$country_format = $this->show_country_in_address() ? "\n {country}" : '';
+
+		// On the checkout page (block), return early with WooCommerce's default format.
+		// In email or order-received context, fall through to build the full JP format with yomigana.
+		if ( $has_block_checkout && ! is_order_received_page() && ! $this->is_email_context() ) {
 			if ( $include_yomigana && is_checkout() ) {
 				$fields['JP'] = $fields['JP'] . __( '(Please click "Edit" to check the pronunciation.)', 'woocommerce-for-japan' );
+			}
+			if ( '' === $country_format ) {
+				$fields['JP'] = preg_replace( '/\n\s*\{country\}/', '', $fields['JP'] );
 			}
 			return $fields;
 		}
@@ -268,9 +273,9 @@ class JP4WC_Address_Fields {
 
 		// Build format string based on settings.
 		if ( get_option( 'wc4jp-company-name' ) ) {
-			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . $country_format;
 		} else {
-			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . "\n {country}";
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . $country_format;
 		}
 
 		if ( is_cart() ) {
@@ -278,12 +283,6 @@ class JP4WC_Address_Fields {
 		}
 		if ( is_order_received_page() ) {
 			$fields['JP'] = $fields['JP'] . "\n {phone}";
-			// On thank you page, include yomigana in the format even for block checkout.
-			if ( $has_block_checkout && get_option( 'wc4jp-yomigana' ) ) {
-				$yomigana_format = "\n{yomigana_last_name} {yomigana_first_name}";
-				// Insert yomigana before the name.
-				$fields['JP'] = str_replace( "\n{last_name} {first_name}", $yomigana_format . "\n{last_name} {first_name}", $fields['JP'] );
-			}
 		}
 
 		return $fields;
@@ -324,11 +323,11 @@ class JP4WC_Address_Fields {
 		// Try classic checkout format first, then fall back to block checkout format.
 		$fields['yomigana_first_name'] = $order->get_meta( '_billing_yomigana_first_name', true );
 		if ( empty( $fields['yomigana_first_name'] ) ) {
-			$fields['yomigana_first_name'] = $order->get_meta( '_wc_other/jp4wc/yomigana_first_name', true );
+			$fields['yomigana_first_name'] = $order->get_meta( '_wc_billing/jp4wc/yomigana_first_name', true );
 		}
 		$fields['yomigana_last_name'] = $order->get_meta( '_billing_yomigana_last_name', true );
 		if ( empty( $fields['yomigana_last_name'] ) ) {
-			$fields['yomigana_last_name'] = $order->get_meta( '_wc_other/jp4wc/yomigana_last_name', true );
+			$fields['yomigana_last_name'] = $order->get_meta( '_wc_billing/jp4wc/yomigana_last_name', true );
 		}
 		$fields['phone'] = $order->get_billing_phone();
 
@@ -358,11 +357,11 @@ class JP4WC_Address_Fields {
 			// Try classic checkout format first, then fall back to block checkout format.
 			$fields['yomigana_first_name'] = $order->get_meta( '_shipping_yomigana_first_name', true );
 			if ( empty( $fields['yomigana_first_name'] ) ) {
-				$fields['yomigana_first_name'] = $order->get_meta( '_wc_other/jp4wc/yomigana_first_name', true );
+				$fields['yomigana_first_name'] = $order->get_meta( '_wc_shipping/jp4wc/yomigana_first_name', true );
 			}
 			$fields['yomigana_last_name'] = $order->get_meta( '_shipping_yomigana_last_name', true );
 			if ( empty( $fields['yomigana_last_name'] ) ) {
-				$fields['yomigana_last_name'] = $order->get_meta( '_wc_other/jp4wc/yomigana_last_name', true );
+				$fields['yomigana_last_name'] = $order->get_meta( '_wc_shipping/jp4wc/yomigana_last_name', true );
 			}
 			$fields['phone'] = $order->get_shipping_phone();
 			if ( '' === $fields['country'] ) {
@@ -406,13 +405,67 @@ class JP4WC_Address_Fields {
 
 		if ( 'billing' === $type ) {
 			$address['yomigana_first_name'] = $args->get_meta( '_billing_yomigana_first_name', true );
-			$address['yomigana_last_name']  = $args->get_meta( '_billing_yomigana_last_name', true );
+			if ( empty( $address['yomigana_first_name'] ) ) {
+				$address['yomigana_first_name'] = $args->get_meta( '_wc_billing/jp4wc/yomigana_first_name', true );
+			}
+			$address['yomigana_last_name'] = $args->get_meta( '_billing_yomigana_last_name', true );
+			if ( empty( $address['yomigana_last_name'] ) ) {
+				$address['yomigana_last_name'] = $args->get_meta( '_wc_billing/jp4wc/yomigana_last_name', true );
+			}
 		} else {
 			$address['yomigana_first_name'] = $args->get_meta( '_shipping_yomigana_first_name', true );
-			$address['yomigana_last_name']  = $args->get_meta( $order_id, '_shipping_yomigana_last_name', true );
-			$address['phone']               = $args->get_meta( $order_id, '_shipping_phone', true );
+			if ( empty( $address['yomigana_first_name'] ) ) {
+				$address['yomigana_first_name'] = $args->get_meta( '_wc_shipping/jp4wc/yomigana_first_name', true );
+			}
+			$address['yomigana_last_name'] = $args->get_meta( '_shipping_yomigana_last_name', true );
+			if ( empty( $address['yomigana_last_name'] ) ) {
+				$address['yomigana_last_name'] = $args->get_meta( '_wc_shipping/jp4wc/yomigana_last_name', true );
+			}
+			$address['phone'] = $args->get_shipping_phone();
 		}
 		return $address;
+	}
+
+	/**
+	 * Check whether the country should be shown in formatted addresses.
+	 *
+	 * Returns false when the store is configured to sell to only one country,
+	 * since showing the country adds no information for the customer or merchant.
+	 *
+	 * @return bool
+	 */
+	private function show_country_in_address() {
+		if ( ! function_exists( 'WC' ) || ! isset( WC()->countries ) ) {
+			return true;
+		}
+		return count( WC()->countries->get_allowed_countries() ) > 1;
+	}
+
+	/**
+	 * Check if we are in an email sending context.
+	 *
+	 * @return bool True if in email context, false otherwise.
+	 */
+	private function is_email_context() {
+		// Primary check: WC_Email::get_content() sets $sending = true before rendering.
+		if ( function_exists( 'WC' ) && WC()->mailer() ) {
+			foreach ( WC()->mailer()->get_emails() as $email ) {
+				if ( $email->sending ) {
+					return true;
+				}
+			}
+		}
+
+		// Fallback: check if WC_Email is anywhere in the call stack.
+		if ( function_exists( 'debug_backtrace' ) ) {
+			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
+			foreach ( $backtrace as $trace ) {
+				if ( isset( $trace['class'] ) && false !== strpos( $trace['class'], 'WC_Email' ) ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
