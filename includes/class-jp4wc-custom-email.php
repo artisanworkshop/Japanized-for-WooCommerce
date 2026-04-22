@@ -58,24 +58,19 @@ class JP4WC_Custom_Email {
 	 * @return bool True if in email context, false otherwise.
 	 */
 	private function is_email_context() {
-		// Check if any email-related action is currently being executed.
-		$email_actions = array(
-			'woocommerce_email_header',
-			'woocommerce_email_footer',
-			'woocommerce_email_order_details',
-			'woocommerce_email_order_meta',
-			'woocommerce_email_customer_details',
-		);
-
-		foreach ( $email_actions as $action ) {
-			if ( doing_action( $action ) ) {
-				return true;
+		// Primary check: WC_Email::get_content() sets $sending = true before rendering.
+		// This covers both classic PHP templates and the WC 10.7+ BlockEmailRenderer path.
+		if ( function_exists( 'WC' ) && WC()->mailer() ) {
+			foreach ( WC()->mailer()->get_emails() as $email ) {
+				if ( $email->sending ) {
+					return true;
+				}
 			}
 		}
 
-		// Alternative check: see if WC_Email is in the call stack.
+		// Fallback: check if WC_Email is anywhere in the call stack.
 		if ( function_exists( 'debug_backtrace' ) ) {
-			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 15 );
+			$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 			foreach ( $backtrace as $trace ) {
 				if ( isset( $trace['class'] ) && false !== strpos( $trace['class'], 'WC_Email' ) ) {
 					return true;
