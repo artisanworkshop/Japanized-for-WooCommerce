@@ -421,7 +421,7 @@ class JP4WC_Address_Fields {
 			if ( empty( $address['yomigana_last_name'] ) ) {
 				$address['yomigana_last_name'] = $args->get_meta( '_wc_shipping/jp4wc/yomigana_last_name', true );
 			}
-			$address['phone'] = $args->get_meta( '_shipping_phone', true );
+			$address['phone'] = $args->get_shipping_phone();
 		}
 		return $address;
 	}
