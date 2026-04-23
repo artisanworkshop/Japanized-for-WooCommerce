@@ -3,7 +3,7 @@
  * Japanized for WooCommerce
  *
  * @package     JP4WC
- * @version     2.9.7
+ * @version     2.9.8
  * @category    Email Customize for Japan
  * @author      Artisan Workshop
  */
