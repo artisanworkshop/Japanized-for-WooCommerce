@@ -200,15 +200,24 @@ const PaymentSettings = ( {
 							'Includes taxes',
 							'woocommerce-for-japan'
 						) }
-						value={ settings?.extra_charge_calc_taxes || 'no' }
+						value={ ( () => {
+							const v = settings?.extra_charge_calc_taxes;
+							if ( v === 'yes' ) return 'tax-excl';
+							if ( ! v || v === 'no' ) return 'no-tax';
+							return v;
+						} )() }
 						options={ [
 							{
-								label: __( 'No', 'woocommerce-for-japan' ),
-								value: 'no',
+								label: __( 'Do not calculate taxes', 'woocommerce-for-japan' ),
+								value: 'no-tax',
 							},
 							{
-								label: __( 'Yes', 'woocommerce-for-japan' ),
-								value: 'yes',
+								label: __( 'The fee is taxes included', 'woocommerce-for-japan' ),
+								value: 'tax-incl',
+							},
+							{
+								label: __( 'The fee is taxes excluded', 'woocommerce-for-japan' ),
+								value: 'tax-excl',
 							},
 						] }
 						onChange={ ( value ) =>
