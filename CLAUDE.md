@@ -3,7 +3,7 @@
 ## Plugin Overview
 
 - **Plugin**: Japanized for WooCommerce (`woocommerce-for-japan`)
-- **Version**: 2.9.7 | **PHP**: 8.3+ | **WP**: 6.7+ | **WC**: 8.0+
+- **Version**: 2.9.8 | **PHP**: 8.3+ | **WP**: 6.7+ | **WC**: 8.0+
 - **Text Domain**: `woocommerce-for-japan`
 - **Prefix**: `jp4wc_` (functions), `JP4WC_` (constants), `JP4WC` (classes)
 - **Main files**: `woocommerce-for-japan.php`, `class-jp4wc.php`

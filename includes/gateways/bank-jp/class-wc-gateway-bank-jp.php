@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @class       WC_Gateway_BANK_JP
  * @extends     WC_Payment_Gateway
- * @version     2.9.7
+ * @version     2.9.8
  * @package     WooCommerce/Classes/Payment
  * @author      Artisan Workshop
  */

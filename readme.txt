@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 6.9.4
-Stable tag: 2.9.7
+Stable tag: 2.9.9
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -148,12 +148,12 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Changelog ==
 
-= 2.9.7 - 2026-04-23 =
+= 2.9.9 - 2026-04-23 =
 * **Fixed** - COD fee not applied in Classic Checkout (Shortcode) or Block Checkout because `jp4wc_calculate_order_totals` read from `woocommerce_cod_settings` while the JP4WC admin UI saves to `wc4jp-extra_charge_*` options; settings are now merged at runtime with JP4WC values taking precedence
 * **Fixed** - `extra_charge_calc_taxes` mismatch: React admin UI stored `yes`/`no` but PHP expected `no-tax`/`tax-excl`/`tax-incl`; legacy values are now normalised on read and the admin UI updated to a 3-way select
 * **Fixed** - Stale `jp4wc_gateway_id` session value could cause COD fee to be silently skipped in Classic Checkout (double session-check removed; gateway ID resolved once and passed through the entire calculation)
 * **Improved** - Block Checkout fee script now uses exponential back-off retry (100 ms → 10 s) instead of fixed 1500 ms / 3000 ms timeouts to wait for `wc/store/payment` store readiness
-* **Added** - PRO-ready filter hooks for COD fee: `jp4wc_cod_fee_settings`, `jp4wc_cod_fee_name`, `jp4wc_cod_fee_amount`, `jp4wc_cod_fee_is_applicable`, `jp4wc_cod_fee_tax_class` (all `@since 2.9.7`)
+* **Added** - PRO-ready filter hooks for COD fee: `jp4wc_cod_fee_settings`, `jp4wc_cod_fee_name`, `jp4wc_cod_fee_amount`, `jp4wc_cod_fee_is_applicable`, `jp4wc_cod_fee_tax_class` (all `@since 2.9.8`)
 * **Changed** - Minimum required PHP version raised from 8.1 to 8.3
 
 = 2.9.6 - 2026-04-22 =
