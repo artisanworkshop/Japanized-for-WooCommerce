@@ -66,7 +66,7 @@ if ( ! class_exists( 'JP4WC_Admin_PHP_Notice', false ) ) :
 			}
 
 			$php_ver = phpversion();
-			if ( version_compare( $php_ver, '8.1.0', '>=' ) ) {
+			if ( version_compare( $php_ver, '8.3.0', '>=' ) ) {
 				return false;
 			}
 			if ( ! is_multisite() && class_exists( 'JP4WC_Usage_Tracking' ) ) {

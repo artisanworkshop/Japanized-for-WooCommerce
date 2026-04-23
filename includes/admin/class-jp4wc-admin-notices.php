@@ -522,14 +522,14 @@ class JP4WC_Admin_Notices {
 	}
 
 	/**
-	 * Checks if the current PHP version is considered safe (8.1.0 or higher).
+	 * Checks if the current PHP version is considered safe (8.3.0 or higher).
 	 *
 	 * @since 2.6.37
 	 * @return bool True if PHP version is safe, false otherwise.
 	 */
 	public function is_safe_php_version() {
 		$php_ver = phpversion();
-		if ( version_compare( $php_ver, '8.2.0', '>=' ) ) {
+		if ( version_compare( $php_ver, '8.3.0', '>=' ) ) {
 			return true;
 		}
 		return false;

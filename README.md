@@ -46,7 +46,7 @@ https://ja.wordpress.org/plugins/woocommerce-for-japan/
 - Node.js 18以上
 - npm 8以上
 - Docker Desktop（wp-env用）
-- PHP 8.1以上
+- PHP 8.3以上
 
 ### 環境構築手順
 
@@ -188,7 +188,7 @@ npm run packages-update
 - SCSS（スタイリング）
 
 ### バックエンド
-- PHP 8.1+
+- PHP 8.3+
 - WordPress 6.7+
 - WooCommerce 8.0+
 - WordPress REST API

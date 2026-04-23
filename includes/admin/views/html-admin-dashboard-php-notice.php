@@ -18,6 +18,12 @@ if ( strpos( $php_ver, '7.4.' ) !== false ) {
 } elseif ( strpos( $php_ver, '8.0.' ) !== false ) {
 	/* Translators: %1$s is the PHP version number, %2$s is the date of support end.*/
 	$message .= sprintf( __( 'The PHP version of this site is %1$s, and support has already ended in %2$s.', 'woocommerce-for-japan' ), $php_ver, __( 'November 2023', 'woocommerce-for-japan' ) );
+} elseif ( strpos( $php_ver, '8.1.' ) !== false ) {
+	/* Translators: %1$s is the PHP version number, %2$s is the date of support end.*/
+	$message .= sprintf( __( 'The PHP version of this site is %1$s, and support has already ended in %2$s.', 'woocommerce-for-japan' ), $php_ver, __( 'December 2023', 'woocommerce-for-japan' ) );
+} elseif ( strpos( $php_ver, '8.2.' ) !== false ) {
+	/* Translators: %1$s is the PHP version number, %2$s is the date of support end.*/
+	$message .= sprintf( __( 'The PHP version of this site is %1$s, and support has already ended in %2$s.', 'woocommerce-for-japan' ), $php_ver, __( 'December 2024', 'woocommerce-for-japan' ) );
 } else {
 	/* Translators: %s is the PHP version number.*/
 	$message .= sprintf( __( 'The PHP version of this site is %s, and support has already ended.', 'woocommerce-for-japan' ), $php_ver );

@@ -248,6 +248,31 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 
 
 	/**
+	 * Get merged COD fee settings.
+	 *
+	 * JP4WC admin UI stores values under the wc4jp- prefix via the REST API.
+	 * These take precedence over anything in woocommerce_cod_settings so that
+	 * the two setting pages stay in sync regardless of which one was last saved.
+	 *
+	 * @return array
+	 */
+	private static function get_cod_fee_settings() {
+		$cod_setting = get_option( 'woocommerce_cod_settings', array() );
+		if ( ! is_array( $cod_setting ) ) {
+			$cod_setting = array();
+		}
+
+		foreach ( array( 'extra_charge_name', 'extra_charge_amount', 'extra_charge_max_cart_value', 'extra_charge_calc_taxes' ) as $key ) {
+			$value = get_option( 'wc4jp-' . $key, null );
+			if ( null !== $value ) {
+				$cod_setting[ $key ] = $value;
+			}
+		}
+
+		return $cod_setting;
+	}
+
+	/**
 	 * Add extra charge to cart totals
 	 *
 	 * @param object $cart Cart object.
@@ -268,144 +293,189 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		// For Block Checkout REST, use jp4wc_gateway_id (updated by extensionCartUpdate).
 		// This prevents stale jp4wc_gateway_id from overriding the current selection in Classic Checkout.
 		if ( wp_doing_ajax() ) {
-			$current_gateway = WC()->session->get( 'chosen_payment_method' );
+			$current_gateway_id = WC()->session->get( 'chosen_payment_method' );
 		} else {
-			$current_gateway = WC()->session->get( 'jp4wc_gateway_id' );
-			$current_gateway = empty( $current_gateway ) ? WC()->session->get( 'chosen_payment_method' ) : $current_gateway;
+			$current_gateway_id = WC()->session->get( 'jp4wc_gateway_id' );
+			$current_gateway_id = empty( $current_gateway_id ) ? WC()->session->get( 'chosen_payment_method' ) : $current_gateway_id;
 		}
 
-		if ( empty( $current_gateway ) ) {
+		if ( empty( $current_gateway_id ) ) {
 			return;
 		}
 
-		$fee_data  = self::get_gateway_fee_value( $cart );
-		$fee_value = $fee_data['fee_value'];
+		// Get COD fee settings — JP4WC admin values (wc4jp- prefix) override WC gateway settings.
+		$cod_setting = self::get_cod_fee_settings();
 
-		if ( empty( $fee_value ) ) {
-			return;
+		/**
+		 * Filter the COD fee settings array.
+		 * PRO version can use this to inject tiered fee tables or other advanced settings.
+		 *
+		 * @since 2.9.7
+		 * @param array  $cod_setting        The woocommerce_cod_settings option array.
+		 * @param string $current_gateway_id The currently selected payment method ID.
+		 */
+		$cod_setting = apply_filters( 'jp4wc_cod_fee_settings', $cod_setting, $current_gateway_id );
+
+		$extra_charge_name           = isset( $cod_setting['extra_charge_name'] ) ? $cod_setting['extra_charge_name'] : '';
+		$extra_charge_amount         = isset( $cod_setting['extra_charge_amount'] ) ? floatval( $cod_setting['extra_charge_amount'] ) : 0;
+		$extra_charge_max_cart_value = isset( $cod_setting['extra_charge_max_cart_value'] ) ? $cod_setting['extra_charge_max_cart_value'] : '';
+		$calc_taxes                  = isset( $cod_setting['extra_charge_calc_taxes'] ) ? $cod_setting['extra_charge_calc_taxes'] : 'no-tax';
+
+		// Normalize legacy yes/no values saved by the React admin UI before the 3-way select was introduced.
+		if ( 'yes' === $calc_taxes ) {
+			$calc_taxes = 'tax-excl';
+		} elseif ( 'no' === $calc_taxes || '' === $calc_taxes ) {
+			$calc_taxes = 'no-tax';
 		}
 
-		// Save the gateway ID string before $current_gateway is potentially overwritten with a gateway object.
-		// In block checkout, jp4wc_gateway_id is set via extensionCartUpdate but chosen_payment_method
-		// is only set during checkout processing, so we must use the already-resolved $current_gateway value.
-		$current_gateway_id = $current_gateway;
-
-		$available_gateways = WC()->payment_gateways ? WC()->payment_gateways->get_available_payment_gateways() : array();
-		$subtotal           = $cart->cart_contents_total;
-
-		if ( ! empty( $available_gateways ) ) {
-			// Get the current gateway object for use in filters.
-			if ( isset( $available_gateways[ $current_gateway_id ] ) ) {
-				$current_gateway = $available_gateways[ $current_gateway_id ];
-			} elseif ( isset( $available_gateways[ get_option( 'woocommerce_default_gateway' ) ] ) ) {
-				$current_gateway = $available_gateways[ get_option( 'woocommerce_default_gateway' ) ];
-			} else {
-				$current_gateway = current( $available_gateways );
-			}
-		}
-
-		$cod_setting = get_option( 'woocommerce_cod_settings' );
-		if ( isset( $cod_setting['extra_charge_max_cart_value'] ) ) {
-			$extra_charge_max_cart_value = $cod_setting['extra_charge_max_cart_value'];
-		} else {
-			$extra_charge_max_cart_value = '';
-		}
-
-		$extra_charge_amount = 0;
-		$extra_charge_name   = '';
-		if ( isset( $cod_setting['extra_charge_name'] ) ) {
-			$extra_charge_name = $cod_setting['extra_charge_name'];
-		}
-		// Add charges to cart totals.
-		if ( ! empty( $current_gateway_id ) && ( empty( $extra_charge_max_cart_value ) || $extra_charge_max_cart_value >= $subtotal ) && 'cod' === $current_gateway_id ) {
-			if ( isset( $cod_setting['extra_charge_name'] ) ) {
-				$extra_charge_name = $cod_setting['extra_charge_name'];
-			}
-			if ( isset( $cod_setting['extra_charge_amount'] ) ) {
-				$extra_charge_amount = $cod_setting['extra_charge_amount'];
-			}
-			if ( isset( $cod_setting['extra_charge_calc_taxes'] ) ) {
-				$calc_taxes = $cod_setting['extra_charge_calc_taxes'];
-			}
-
-			$taxable = false;
-			$taxes   = 0;
-			if ( isset( $calc_taxes ) && 'no-tax' !== $calc_taxes ) {
-				$taxable   = true;
-				$tax       = new WC_Tax();
-				$base_rate = $tax->get_base_tax_rates();
-				$taxrates  = array_shift( $base_rate );
-				$taxrate   = floatval( $taxrates['rate'] ) / 100;
-				if ( 'tax-incl' === $calc_taxes ) {
-					$taxes                = $extra_charge_amount - ( $extra_charge_amount / ( 1 + $taxrate ) );
-					$extra_charge_amount -= $taxes;
-				} else {
-					$taxes = $extra_charge_amount * $taxrate;
-				}
-			}
-
-			$extra_charge_amount = apply_filters( 'jp4wc_' . $current_gateway_id . '_amount', $extra_charge_amount, $subtotal, $current_gateway );
-			$do_apply            = 0 !== $extra_charge_amount;
-			$do_apply            = apply_filters( 'jp4wc_apply', $do_apply, $extra_charge_amount, $subtotal, $current_gateway, $cart );
-			$do_apply            = apply_filters( 'jp4wc_apply_for_' . $current_gateway_id, $do_apply, $extra_charge_amount, $subtotal, $current_gateway );
-
-			if ( $do_apply ) {
-				$already_exists = false;
-				$fees           = $cart->get_fees();
-				$fees_count     = count( $fees );
-				for ( $i = 0; $i < $fees_count; $i++ ) {
-					if ( 'payment-method-fee' === $fees[ $i ]->id ) {
-						$already_exists = true;
-						$fee_id         = $i;
-					}
-				}
-
-				$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
-				if ( false === $tax_class ) {
-					$tax_class = get_option( 'wc4jp-extra_charge_tax_class' );
-				}
-				$tax_class = empty( $tax_class ) ? 'standard' : $tax_class;
-
-				if ( ! $already_exists ) {
-					$fee = array(
-						'id'        => 'jp4wc_gateway_fee',
-						'name'      => $extra_charge_name,
-						'amount'    => $extra_charge_amount,
-						'taxable'   => $taxable,
-						'tax_class' => $tax_class,
-					);
-					$cart->fees_api()->add_fee( $fee );
-				}
-			}
-		} else {
+		// Remove fee and bail if payment method is not COD.
+		if ( 'cod' !== $current_gateway_id ) {
 			self::remove_fee( $extra_charge_name );
+			return;
 		}
+
+		$subtotal = $cart->cart_contents_total;
+
+		// Remove fee and bail if cart total exceeds the max value threshold.
+		if ( ! empty( $extra_charge_max_cart_value ) && floatval( $extra_charge_max_cart_value ) < $subtotal ) {
+			self::remove_fee( $extra_charge_name );
+			return;
+		}
+
+		if ( 0.0 === $extra_charge_amount ) {
+			return;
+		}
+
+		// Get gateway object for use in filters.
+		$available_gateways = WC()->payment_gateways ? WC()->payment_gateways->get_available_payment_gateways() : array();
+		$current_gateway    = isset( $available_gateways[ $current_gateway_id ] ) ? $available_gateways[ $current_gateway_id ] : null;
+
+		// Tax calculation.
+		$taxable = false;
+		if ( 'no-tax' !== $calc_taxes ) {
+			$taxable   = true;
+			$tax       = new WC_Tax();
+			$base_rate = $tax->get_base_tax_rates();
+			$taxrates  = array_shift( $base_rate );
+			$taxrate   = floatval( $taxrates['rate'] ) / 100;
+			if ( 'tax-incl' === $calc_taxes ) {
+				$taxes                = $extra_charge_amount - ( $extra_charge_amount / ( 1 + $taxrate ) );
+				$extra_charge_amount -= $taxes;
+			}
+			// tax-excl: WooCommerce calculates tax automatically via taxable=true and tax_class.
+		}
+
+		/**
+		 * Filter the COD fee display name.
+		 * PRO version can use this to customise the label shown in cart/order.
+		 *
+		 * @since 2.9.7
+		 * @param string          $extra_charge_name The fee display name.
+		 * @param float           $subtotal          Cart subtotal (excl. tax).
+		 * @param WC_Gateway|null $current_gateway   The current payment gateway object.
+		 */
+		$extra_charge_name = apply_filters( 'jp4wc_cod_fee_name', $extra_charge_name, $subtotal, $current_gateway );
+
+		/**
+		 * Filter the COD fee amount (tax-excluded).
+		 * PRO version can use this to implement tiered fees based on cart total.
+		 *
+		 * @since 2.9.7
+		 * @param float           $extra_charge_amount The fee amount (excl. tax).
+		 * @param float           $subtotal            Cart subtotal (excl. tax).
+		 * @param WC_Gateway|null $current_gateway     The current payment gateway object.
+		 */
+		$extra_charge_amount = apply_filters( 'jp4wc_cod_fee_amount', $extra_charge_amount, $subtotal, $current_gateway );
+		// Backward-compatible filters.
+		$extra_charge_amount = apply_filters( 'jp4wc_cod_amount', $extra_charge_amount, $subtotal, $current_gateway );
+		$extra_charge_amount = apply_filters( 'jp4wc_' . $current_gateway_id . '_amount', $extra_charge_amount, $subtotal, $current_gateway );
+
+		$do_apply = 0 !== floatval( $extra_charge_amount );
+
+		/**
+		 * Filter whether the COD fee should be applied.
+		 * PRO version can add custom eligibility conditions (e.g. specific shipping zones).
+		 *
+		 * @since 2.9.7
+		 * @param bool            $do_apply            Whether to apply the fee.
+		 * @param float           $extra_charge_amount The fee amount (excl. tax).
+		 * @param float           $subtotal            Cart subtotal (excl. tax).
+		 * @param WC_Gateway|null $current_gateway     The current payment gateway object.
+		 * @param WC_Cart         $cart                The cart object.
+		 */
+		$do_apply = apply_filters( 'jp4wc_cod_fee_is_applicable', $do_apply, $extra_charge_amount, $subtotal, $current_gateway, $cart );
+		// Backward-compatible filters.
+		$do_apply = apply_filters( 'jp4wc_apply', $do_apply, $extra_charge_amount, $subtotal, $current_gateway, $cart );
+		$do_apply = apply_filters( 'jp4wc_apply_for_' . $current_gateway_id, $do_apply, $extra_charge_amount, $subtotal, $current_gateway );
+
+		if ( ! $do_apply ) {
+			self::remove_fee( $extra_charge_name );
+			return;
+		}
+
+		// Tax class.
+		$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
+		if ( false === $tax_class ) {
+			$tax_class = get_option( 'wc4jp-extra_charge_tax_class' );
+		}
+		$tax_class = empty( $tax_class ) ? 'standard' : $tax_class;
+
+		/**
+		 * Filter the tax class applied to the COD fee.
+		 * PRO version can use this to apply a reduced rate or zero rate.
+		 *
+		 * @since 2.9.7
+		 * @param string          $tax_class           Tax class slug (e.g. 'standard', 'reduced-rate').
+		 * @param float           $extra_charge_amount The fee amount (excl. tax).
+		 * @param WC_Gateway|null $current_gateway     The current payment gateway object.
+		 */
+		$tax_class = apply_filters( 'jp4wc_cod_fee_tax_class', $tax_class, $extra_charge_amount, $current_gateway );
+
+		// Prevent duplicate fees.
+		foreach ( $cart->get_fees() as $fee ) {
+			if ( 'jp4wc_gateway_fee' === $fee->id ) {
+				return;
+			}
+		}
+
+		$cart->fees_api()->add_fee(
+			array(
+				'id'        => 'jp4wc_gateway_fee',
+				'name'      => $extra_charge_name,
+				'amount'    => $extra_charge_amount,
+				'taxable'   => $taxable,
+				'tax_class' => $tax_class,
+			)
+		);
 	}
 
 
 	/**
 	 * Add Gateway Total Fee.
 	 *
-	 * @param object $cart_obj Cart object.
+	 * @param object      $cart_obj   Cart object.
+	 * @param string|null $gateway_id Payment gateway ID. When null, resolved from session.
+	 * @return array { fee_value: float, fee_text: string }
 	 */
-	public static function get_gateway_fee_value( $cart_obj ) {
+	public static function get_gateway_fee_value( $cart_obj, $gateway_id = null ) {
 		$fee_value = array(
 			'fee_value' => 0,
 			'fee_text'  => '',
 		);
 
-		// Return if the gateway id is empty.
-		$gateway_id = WC()->session->get( 'jp4wc_gateway_id' );
-		$gateway_id = empty( $gateway_id ) ? WC()->session->get( 'chosen_payment_method' ) : $gateway_id;
+		if ( null === $gateway_id ) {
+			$gateway_id = WC()->session->get( 'jp4wc_gateway_id' );
+			$gateway_id = empty( $gateway_id ) ? WC()->session->get( 'chosen_payment_method' ) : $gateway_id;
+		}
+
 		if ( empty( $gateway_id ) ) {
 			return $fee_value;
 		}
 
-		$cod_setting = get_option( 'woocommerce_cod_settings' );
+		$cod_setting = self::get_cod_fee_settings();
 		$value       = isset( $cod_setting['extra_charge_amount'] ) ? $cod_setting['extra_charge_amount'] : 0;
 		$fee_text    = isset( $cod_setting['extra_charge_name'] ) ? $cod_setting['extra_charge_name'] : '';
 
-		// Return if the gateway fee is disabled.
 		if ( 'cod' !== $gateway_id ) {
 			self::remove_fee( $fee_text );
 			return $fee_value;

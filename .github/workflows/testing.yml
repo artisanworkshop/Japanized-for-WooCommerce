@@ -13,9 +13,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.4', '8.2', '8.1']
+        php-version: ['8.5', '8.4', '8.3']
         wp-version: ['latest', '6.8', '6.7']
-        wc-version: ['latest', '10.4.3', '10.3.7']
+        wc-version: ['latest', '10.6.2', '10.5.3']
     services:
       database:
         image: mysql:latest

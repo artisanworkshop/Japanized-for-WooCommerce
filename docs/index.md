@@ -2,7 +2,7 @@
 
 Japanized for WooCommerce（WooCommerce for Japan）は、WooCommerce を日本環境でより使いやすくするための WordPress プラグインです。[Shohei Tanaka](https://github.com/shoheitanaka) が開発し、[WordPress.org にて無償公開](https://ja.wordpress.org/plugins/woocommerce-for-japan/)しています。
 
-> **バージョン**: 2.9.0 | **PHP**: 8.1+ | **WordPress**: 6.7+ | **WooCommerce**: 8.0+
+> **バージョン**: 2.9.0 | **PHP**: 8.3+ | **WordPress**: 6.7+ | **WooCommerce**: 8.0+
 
 ---
 

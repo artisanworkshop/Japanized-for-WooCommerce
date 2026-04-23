@@ -53,13 +53,23 @@
 	}
 
 	var lastGatewayId = null;
+	var subscribed    = false;
 
 	/**
 	 * Subscribe to wp.data payment store changes and send fee update when
 	 * the active payment method changes.
+	 *
+	 * @returns {boolean} true if subscription was set up successfully.
 	 */
 	function initDataStoreSubscription() {
+		if ( subscribed ) {
+			return true;
+		}
 		if ( ! window.wp || ! window.wp.data || 'function' !== typeof window.wp.data.subscribe ) {
+			return false;
+		}
+		// Verify the payment store is already registered before subscribing.
+		if ( ! window.wp.data.select( 'wc/store/payment' ) ) {
 			return false;
 		}
 
@@ -71,6 +81,7 @@
 			}
 		} );
 
+		subscribed = true;
 		return true;
 	}
 
@@ -92,19 +103,35 @@
 	 */
 	function triggerFeeUpdate() {
 		var gatewayId = getActivePaymentMethod() || getGatewayIdFromDOM();
-		if ( gatewayId ) {
+		if ( gatewayId && gatewayId !== lastGatewayId ) {
+			lastGatewayId = gatewayId;
 			sendGatewayFee( gatewayId );
 		}
 	}
 
-	// Try to use wp.data store subscription (preferred method).
-	// Schedule initialization to ensure wp.data and wc stores are ready.
-	if ( document.readyState === 'loading' ) {
-		document.addEventListener( 'DOMContentLoaded', function () {
-			initDataStoreSubscription();
-		} );
-	} else {
-		initDataStoreSubscription();
+	/**
+	 * Try to subscribe; if the store is not ready yet, retry with exponential back-off.
+	 * Gives up after ~10 s (attempts: 100 ms, 200 ms, 400 ms, 800 ms, 1600 ms, 3200 ms, ...).
+	 *
+	 * @param {number} delay Next retry delay in ms.
+	 */
+	function trySubscribeWithRetry( delay ) {
+		if ( initDataStoreSubscription() ) {
+			// Subscription successful — send the current state immediately.
+			triggerFeeUpdate();
+			return;
+		}
+
+		var nextDelay = delay * 2;
+		if ( nextDelay > 10000 ) {
+			// Store never became available; fall back to DOM polling.
+			triggerFeeUpdate();
+			return;
+		}
+
+		setTimeout( function () {
+			trySubscribeWithRetry( nextDelay );
+		}, delay );
 	}
 
 	// Fallback: listen for jQuery change events on radio inputs.
@@ -115,13 +142,19 @@
 			function () {
 				var gatewayId = getGatewayIdFromDOM() || getActivePaymentMethod();
 				if ( gatewayId ) {
+					lastGatewayId = gatewayId;
 					sendGatewayFee( gatewayId );
 				}
 			}
 		);
 	}
 
-	// Delayed initial trigger to catch the default payment method after React renders.
-	setTimeout( triggerFeeUpdate, 1500 );
-	setTimeout( triggerFeeUpdate, 3000 );
+	// Bootstrap: wait for DOM then start the subscription with retry logic.
+	if ( document.readyState === 'loading' ) {
+		document.addEventListener( 'DOMContentLoaded', function () {
+			trySubscribeWithRetry( 100 );
+		} );
+	} else {
+		trySubscribeWithRetry( 100 );
+	}
 } )();
