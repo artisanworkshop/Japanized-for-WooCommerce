@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Japanized for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Japanized for WooCommerce 2.8.5\n"
+"Project-Id-Version: Japanized for WooCommerce 2.9.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Japanized-for-WooCommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-18T01:48:52+00:00\n"
+"POT-Creation-Date: 2026-04-24T22:41:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -39,101 +39,101 @@ msgid "https://wc.artws.info/"
 msgstr ""
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:238
+#: class-jp4wc.php:236
 #, php-format
 msgid "If you like <strong>Japanized for WooCommerce</strong> please leave us a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. A huge thanks in advance!"
 msgstr ""
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:238
+#: class-jp4wc.php:236
 msgid "Thanks :)"
 msgstr ""
 
-#: class-jp4wc.php:248
+#: class-jp4wc.php:246
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:175
+#: includes/admin/class-jp4wc-admin-notices.php:179
 msgid "Credit Card Security Guidelines Quick Check"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:179
+#: includes/admin/class-jp4wc-admin-notices.php:183
 msgid "Please check the PHP version. The PHP currently used on this site is not supported for security reasons."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:184
+#: includes/admin/class-jp4wc-admin-notices.php:188
 msgid "Please check the WordPress version. The version of WordPress is outdated."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:189
+#: includes/admin/class-jp4wc-admin-notices.php:193
 msgid "Please check the WooCommerce version. The version of WooCommerce is outdated."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:195
+#: includes/admin/class-jp4wc-admin-notices.php:199
 msgid "This site is currently in violation of the security guidelines due to the above content. Immediate action is required."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:201
+#: includes/admin/class-jp4wc-admin-notices.php:205
 msgid "Get 2,200 yen/month and cashback now! Click here for your chance to switch to a secure server."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:205
+#: includes/admin/class-jp4wc-admin-notices.php:209
 msgid "30-day money back guarantee! Click here for details on the security-enabled server migration campaign."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:209
+#: includes/admin/class-jp4wc-admin-notices.php:213
 msgid "Get a cashback on all your current server costs! Click here for a safe and economical migration."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:213
+#: includes/admin/class-jp4wc-admin-notices.php:217
 msgid "Fully secure! Migration + cashback for just 2,200 yen per month [Click here for details]."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:217
+#: includes/admin/class-jp4wc-admin-notices.php:221
 msgid "Migration is also safe. 30-day money back guarantee! Click here for security-enabled servers."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:221
+#: includes/admin/class-jp4wc-admin-notices.php:225
 msgid "If you're worried about server migration, check out SoftStepsEC for Pressable!"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:225
+#: includes/admin/class-jp4wc-admin-notices.php:229
 msgid "Now is your chance to switch! Check out the ¥2,200/month + cashback campaign."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:229
+#: includes/admin/class-jp4wc-admin-notices.php:233
 msgid "[Hurry] Check out the details of this safe and affordable server migration campaign now!"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:235
+#: includes/admin/class-jp4wc-admin-notices.php:239
 msgid "We recommend you do a quick check on the following page."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:237
+#: includes/admin/class-jp4wc-admin-notices.php:241
 msgid "The above warning will no longer be displayed, and once you have checked the page problems, addressed them, checked and saved, this message will disappear."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:239
+#: includes/admin/class-jp4wc-admin-notices.php:243
 msgid "Check the security checklist"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:242
+#: includes/admin/class-jp4wc-admin-notices.php:246
 msgid "[Introducing servers that comply with credit card guidelines]"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:372
+#: includes/admin/class-jp4wc-admin-notices.php:376
 msgid "【Important Notice】PayPal Integration Removal"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:374
+#: includes/admin/class-jp4wc-admin-notices.php:378
 msgid "Starting with updates from February 2026, PayPal payment gateway will be removed from the Japanized for WooCommerce plugin."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:375
+#: includes/admin/class-jp4wc-admin-notices.php:379
 msgid "If you are currently using PayPal, please consider installing the official PayPal plugin or using an alternative payment method."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-notices.php:376
+#: includes/admin/class-jp4wc-admin-notices.php:380
 msgid "Please prepare for this change before the update."
 msgstr ""
 
@@ -141,17 +141,17 @@ msgstr ""
 msgid "[Immediate response recommended]PHP Version notice!"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-product-meta.php:69
+#: includes/admin/class-jp4wc-admin-product-meta.php:70
 msgid "Change the price display in the product display of subscription."
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-product-meta.php:77
-#: includes/admin/class-jp4wc-admin-product-meta.php:108
+#: includes/admin/class-jp4wc-admin-product-meta.php:78
+#: includes/admin/class-jp4wc-admin-product-meta.php:109
 msgid "Subscription price string"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-product-meta.php:81
-#: includes/admin/class-jp4wc-admin-product-meta.php:111
+#: includes/admin/class-jp4wc-admin-product-meta.php:82
+#: includes/admin/class-jp4wc-admin-product-meta.php:112
 msgctxt "example price string"
 msgid "e.g. 5.90 per month"
 msgstr ""
@@ -233,43 +233,55 @@ msgstr ""
 msgid "Sorry, you are not allowed to update settings."
 msgstr ""
 
-#: includes/admin/views/html-admin-dashboard-php-notice.php:12
+#: includes/admin/views/html-admin-dashboard-php-notice.php:14
 msgid "Technology is constantly evolving, and web development especially requires updates to languages like PHP."
 msgstr ""
 
 #. Translators: %1$s is the PHP version number, %2$s is the date of support end.
-#: includes/admin/views/html-admin-dashboard-php-notice.php:15
+#: includes/admin/views/html-admin-dashboard-php-notice.php:17
 #, php-format
 msgid "The PHP version of this site is %1$s, and support has already ended in <strong>%2$s</strong>."
 msgstr ""
 
 #. Translators: %1$s is the PHP version number, %2$s is the date of support end.
-#: includes/admin/views/html-admin-dashboard-php-notice.php:15
+#: includes/admin/views/html-admin-dashboard-php-notice.php:17
 msgid "November 2022"
 msgstr ""
 
 #. Translators: %1$s is the PHP version number, %2$s is the date of support end.
-#: includes/admin/views/html-admin-dashboard-php-notice.php:18
+#: includes/admin/views/html-admin-dashboard-php-notice.php:20
+#: includes/admin/views/html-admin-dashboard-php-notice.php:23
+#: includes/admin/views/html-admin-dashboard-php-notice.php:26
 #, php-format
 msgid "The PHP version of this site is %1$s, and support has already ended in %2$s."
 msgstr ""
 
 #. Translators: %1$s is the PHP version number, %2$s is the date of support end.
-#: includes/admin/views/html-admin-dashboard-php-notice.php:18
+#: includes/admin/views/html-admin-dashboard-php-notice.php:20
 msgid "November 2023"
 msgstr ""
 
-#. Translators: $s is the PHP version number.
-#: includes/admin/views/html-admin-dashboard-php-notice.php:21
+#. Translators: %1$s is the PHP version number, %2$s is the date of support end.
+#: includes/admin/views/html-admin-dashboard-php-notice.php:23
+msgid "December 2023"
+msgstr ""
+
+#. Translators: %1$s is the PHP version number, %2$s is the date of support end.
+#: includes/admin/views/html-admin-dashboard-php-notice.php:26
+msgid "December 2024"
+msgstr ""
+
+#. Translators: %s is the PHP version number.
+#: includes/admin/views/html-admin-dashboard-php-notice.php:29
 #, php-format
 msgid "The PHP version of this site is %s, and support has already ended."
 msgstr ""
 
-#: includes/admin/views/html-admin-dashboard-php-notice.php:23
+#: includes/admin/views/html-admin-dashboard-php-notice.php:31
 msgid "Please see here for the detail"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:143
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:144
 #: includes/class-jp4wc-delivery.php:152
 #: assets/js/build/admin/settings.js:1
 #: assets/js/build/blocks/delivery-block-editor.js:1
@@ -280,7 +292,7 @@ msgstr ""
 msgid "Preferred delivery date"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:167
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:172
 #: includes/class-jp4wc-delivery.php:290
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: assets/js/build/blocks/delivery-block-frontend.js:1
@@ -289,153 +301,153 @@ msgstr ""
 msgid "Delivery Time Zone"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:234
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:242
 msgid "Please select a delivery date."
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:249
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:257
 msgid "Please select a delivery time zone."
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:267
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:343
-msgid "Not specified"
-msgstr ""
-
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:294
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:295
 #: includes/class-jp4wc-delivery.php:142
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:292
 msgid "Sun"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:295
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:296
 #: includes/class-jp4wc-delivery.php:143
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:244
 msgid "Mon"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:296
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:297
 #: includes/class-jp4wc-delivery.php:144
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:252
 msgid "Tue"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:297
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:298
 #: includes/class-jp4wc-delivery.php:145
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:260
 msgid "Wed"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:298
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:299
 #: includes/class-jp4wc-delivery.php:146
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:268
 msgid "Thr"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:299
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:300
 #: includes/class-jp4wc-delivery.php:147
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:276
 msgid "Fri"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:300
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:301
 #: includes/class-jp4wc-delivery.php:148
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:284
 msgid "Sat"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:307
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:308
 #: includes/class-jp4wc-delivery.php:161
 msgid "Y/m/d"
 msgstr ""
 
 #. translators: %s: The day of the week (e.g., Mon, Tue, Wed).
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:312
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:313
 #: includes/class-jp4wc-delivery.php:165
 #, php-format
 msgid "(%s)"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:358
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:350
 #: includes/class-jp4wc-delivery.php:297
 msgid "-"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:144
-#: includes/class-jp4wc-address-fields.php:112
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:368
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:378
+msgid "Not specified"
+msgstr ""
+
+#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:152
+#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:334
+#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:362
+#: includes/class-jp4wc-address-fields.php:90
 msgid "Last Name ( Yomigana )"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:167
-#: includes/class-jp4wc-address-fields.php:118
+#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:172
+#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:335
+#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:363
+#: includes/class-jp4wc-address-fields.php:96
 msgid "First Name ( Yomigana )"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:263
+#: includes/blocks/class-jp4wc-yomigana-blocks-integration.php:265
 msgid "Please enter the name reading."
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:142
-#: includes/class-jp4wc-address-fields.php:177
+#: includes/class-jp4wc-address-fields.php:120
+#: includes/class-jp4wc-address-fields.php:155
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:122
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:193
 msgid "Company Name"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:168
-#: includes/class-jp4wc-address-fields.php:384
+#: includes/class-jp4wc-address-fields.php:146
+#: includes/class-jp4wc-address-fields.php:332
 msgid "Shipping Phone"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:251
-msgid "(Please click \"Edit\" to check the pronunciation.)"
-msgstr ""
-
-#: includes/class-jp4wc-address-fields.php:453
-#: includes/class-jp4wc-address-fields.php:497
-#: includes/class-jp4wc-address-fields.php:543
-#: includes/class-jp4wc-address-fields.php:566
+#: includes/class-jp4wc-address-fields.php:518
+#: includes/class-jp4wc-address-fields.php:588
+#: includes/class-jp4wc-address-fields.php:656
+#: includes/class-jp4wc-address-fields.php:679
 msgid "Last Name Yomigana"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:457
-#: includes/class-jp4wc-address-fields.php:501
-#: includes/class-jp4wc-address-fields.php:547
-#: includes/class-jp4wc-address-fields.php:570
+#: includes/class-jp4wc-address-fields.php:524
+#: includes/class-jp4wc-address-fields.php:594
+#: includes/class-jp4wc-address-fields.php:660
+#: includes/class-jp4wc-address-fields.php:683
 msgid "First Name Yomigana"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:512
-#: includes/class-jp4wc-address-fields.php:581
+#: includes/class-jp4wc-address-fields.php:602
+#: includes/class-jp4wc-address-fields.php:694
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:343
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:368
 msgid "Phone"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:640
+#: includes/class-jp4wc-address-fields.php:753
 msgid "Taro"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:641
+#: includes/class-jp4wc-address-fields.php:754
 msgid "Yamada"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:642
+#: includes/class-jp4wc-address-fields.php:755
 msgid "Company"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:645
+#: includes/class-jp4wc-address-fields.php:758
 msgid "2-1 Dougenzaka"
 msgstr ""
 
-#: includes/class-jp4wc-address-fields.php:646
+#: includes/class-jp4wc-address-fields.php:759
 msgid "Shibuya Ku"
 msgstr ""
 
@@ -478,14 +490,20 @@ msgid "Includes taxes"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:128
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:211
 msgid "Do not calculate taxes"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:129
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:215
 msgid "The fee is taxes included"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:130
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:219
 msgid "The fee is taxes excluded"
 msgstr ""
 
@@ -533,81 +551,81 @@ msgstr ""
 msgid "\"Desired delivery time zone\" is a required field. Please enter it."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:620
-#: includes/class-jp4wc-delivery.php:636
+#: includes/class-jp4wc-delivery.php:619
+#: includes/class-jp4wc-delivery.php:633
 msgid "Scheduled Delivery date and time"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:624
-#: includes/class-jp4wc-delivery.php:640
+#: includes/class-jp4wc-delivery.php:623
+#: includes/class-jp4wc-delivery.php:637
 msgid "Scheduled Delivery Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:628
-#: includes/class-jp4wc-delivery.php:644
+#: includes/class-jp4wc-delivery.php:627
+#: includes/class-jp4wc-delivery.php:641
 msgid "Scheduled Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:734
+#: includes/class-jp4wc-delivery.php:731
 msgid "Delivery"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:792
+#: includes/class-jp4wc-delivery.php:789
 msgid "Shipping Detail"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:900
+#: includes/class-jp4wc-delivery.php:897
 msgid "Delivery Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:901
+#: includes/class-jp4wc-delivery.php:898
 msgid "Date on which the customer wished delivery."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:908
+#: includes/class-jp4wc-delivery.php:905
 msgid "Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:909
+#: includes/class-jp4wc-delivery.php:906
 msgid "Time Zone on which the customer wished delivery."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:916
+#: includes/class-jp4wc-delivery.php:913
 msgid "Tracking Ship Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:917
+#: includes/class-jp4wc-delivery.php:914
 msgid "Actually shipped to date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:954
+#: includes/class-jp4wc-delivery.php:951
 msgid "Order failed: Required delivery date was not provided."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:965
+#: includes/class-jp4wc-delivery.php:962
 msgid "Order failed: Required delivery time zone was not provided."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:974
+#: includes/class-jp4wc-delivery.php:971
 msgid "Required delivery information is missing. Please contact the store for assistance."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1004
+#: includes/class-jp4wc-delivery.php:1001
 msgid "delivery time zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1006
+#: includes/class-jp4wc-delivery.php:1003
 msgid "delivery date"
 msgstr ""
 
 #. translators: %1$s: Blog name, %2$s: require type , %3$s: Order number
-#: includes/class-jp4wc-delivery.php:1015
+#: includes/class-jp4wc-delivery.php:1012
 #, php-format
 msgid "[%1$s] There are orders with no requested %2$s specified (Order number: #%3$s)"
 msgstr ""
 
 #. translators: %1$s: Order number, %2$s: Order date, %3$s: Customer name, %4$s: Customer email, %5$s: Order detail URL
-#: includes/class-jp4wc-delivery.php:1035
+#: includes/class-jp4wc-delivery.php:1032
 #, php-format
 msgid ""
 "Order Number: #%1$s\n"
@@ -621,45 +639,45 @@ msgid ""
 "Order Details Page: %5$s"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1044
+#: includes/class-jp4wc-delivery.php:1041
 msgid "Diagnostic Information"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1048
+#: includes/class-jp4wc-delivery.php:1045
 msgid "Checkout Type"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1066
+#: includes/class-jp4wc-delivery.php:1063
 msgid "Delivery Data"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1074
+#: includes/class-jp4wc-delivery.php:1071
 msgid "Plugin Settings"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1083
+#: includes/class-jp4wc-delivery.php:1080
 msgid "POST Data"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1102
+#: includes/class-jp4wc-delivery.php:1099
 msgid "Cart Information"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1120
+#: includes/class-jp4wc-delivery.php:1117
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:226
 msgid "Environment"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1139
+#: includes/class-jp4wc-delivery.php:1136
 msgid "Note"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1140
+#: includes/class-jp4wc-delivery.php:1137
 msgid "Please check WooCommerce logs (jp4wc_delivery_validation) for detailed validation information."
 msgstr ""
 
 #. translators: %1$s: require type , %2$s: Order ID
-#: includes/class-jp4wc-delivery.php:1162
+#: includes/class-jp4wc-delivery.php:1159
 #, php-format
 msgid "%1$sAn empty notification email has been sent. Order ID: %2$d"
 msgstr ""
@@ -668,99 +686,103 @@ msgstr ""
 msgid "<strong>ERROR</strong>: This user has reached the maximum number of login attempts. Please try again later."
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:64
+#: includes/class-jp4wc-shortcodes.php:66
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:57
 msgid "Shop Name"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:65
+#: includes/class-jp4wc-shortcodes.php:67
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:69
 msgid "Sales company name (company name)"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:66
+#: includes/class-jp4wc-shortcodes.php:68
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:84
 msgid "Owner Name"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:67
-#: includes/class-jp4wc-shortcodes.php:90
+#: includes/class-jp4wc-shortcodes.php:69
+#: includes/class-jp4wc-shortcodes.php:95
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:96
 msgid "Manager Name"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:68
+#: includes/class-jp4wc-shortcodes.php:70
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:107
 msgid "Location"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:69
+#: includes/class-jp4wc-shortcodes.php:71
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:120
 msgid "Contact"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:70
-#: includes/class-jp4wc-shortcodes.php:90
+#: includes/class-jp4wc-shortcodes.php:72
+#: includes/class-jp4wc-shortcodes.php:95
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:132
 msgid "Telephone"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:71
+#: includes/class-jp4wc-shortcodes.php:73
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:143
 msgid "Selling price"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:72
+#: includes/class-jp4wc-shortcodes.php:74
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:155
 msgid "Payment method"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:73
+#: includes/class-jp4wc-shortcodes.php:75
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:170
 msgid "Product purchase method"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:74
+#: includes/class-jp4wc-shortcodes.php:76
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:185
 msgid "Product delivery time"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:75
+#: includes/class-jp4wc-shortcodes.php:77
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:200
 msgid "Costs other than product charges"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:76
+#: includes/class-jp4wc-shortcodes.php:78
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:215
 msgid "Returns / Cancellations"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:77
-#: includes/class-jp4wc-shortcodes.php:90
+#: includes/class-jp4wc-shortcodes.php:79
+#: includes/class-jp4wc-shortcodes.php:95
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:230
 msgid "Special conditions"
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:105
+#: includes/class-jp4wc-shortcodes.php:110
 msgid " and "
 msgstr ""
 
-#: includes/class-jp4wc-shortcodes.php:108
+#: includes/class-jp4wc-shortcodes.php:113
 msgid "The following items of \"Notation based on the Specified Commercial Transactions Law\" have not been entered. Please enter the item of \"Notation based on Specified Commercial Transactions Law\" from the management screen."
+msgstr ""
+
+#: includes/class-jp4wc-yahoo-api-endpoint.php:46
+msgid "Too many requests. Please try again later."
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:51
@@ -772,7 +794,7 @@ msgid "Allows At Store payments."
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:78
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:145
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:150
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:191
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:135
 msgid "Enable/Disable"
@@ -783,7 +805,7 @@ msgid "Enable At Store Payment"
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:84
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:151
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:156
 #: includes/gateways/cod/class-wc-gateway-cod2.php:107
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:197
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:141
@@ -791,7 +813,7 @@ msgid "Title"
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:86
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:153
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:158
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:199
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:143
 msgid "This controls the title which the user sees during checkout."
@@ -804,7 +826,7 @@ msgid "At Store Payment"
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:91
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:158
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:163
 #: includes/gateways/cod/class-wc-gateway-cod2.php:114
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:204
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:148
@@ -812,7 +834,7 @@ msgid "Description"
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:93
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:160
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:165
 #: includes/gateways/cod/class-wc-gateway-cod2.php:109
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:206
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:150
@@ -824,14 +846,14 @@ msgid "Please pay the fee at Store."
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:98
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:165
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:170
 #: includes/gateways/cod/class-wc-gateway-cod2.php:121
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:155
 msgid "Instructions"
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:100
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:167
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:172
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:157
 msgid "Instructions that will be added to the thank you page and emails."
 msgstr ""
@@ -853,98 +875,98 @@ msgstr ""
 msgid "Allows payments by bank transfer in Japan."
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:147
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:152
 msgid "Enable Bank Transfer"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:154
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:159
 msgid "Bank Transfer in Japan"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:161
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:166
 msgid "Make your payment directly into our bank account."
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:172
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:177
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:162
 msgid "Transfer account display Location"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:174
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:179
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:164
 msgid "The location of the transfer account information on the e-mail."
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:175
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:180
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:165
 msgid "Unless customized by an extension plugin, 9 will be before the order and 15 will be after the order."
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:180
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:185
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:170
 msgid "Display order of instructions and transfer account"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:182
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:187
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:172
 msgid "Check this box if you want to reverse the order in which instructions and transfer accounts are displayed."
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:201
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:206
 msgid "Account Details"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:209
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:214
 msgid "Bank Name"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:210
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:215
 msgid "Bank Branch"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:211
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:216
 msgid "Bank Type"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:212
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:368
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:415
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:217
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:396
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:441
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:196
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:354
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:396
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:357
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:398
 msgid "Account Number"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:213
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:369
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:416
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:218
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:397
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:442
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:197
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:352
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:394
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:355
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:396
 msgid "Account Name"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:218
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:223
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:202
 msgid "+ Add Account"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:218
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:223
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:202
 msgid "Remove selected account(s)"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:367
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:414
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:395
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:440
 msgid "Bank Account Details"
 msgstr ""
 
-#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:454
+#: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:480
 msgid "Awaiting BANK payment"
 msgstr ""
 
 #: includes/gateways/cod/class-wc-addons-gateway-cod2.php:119
-#: includes/gateways/cod/class-wc-gateway-cod2.php:310
+#: includes/gateways/cod/class-wc-gateway-cod2.php:307
 msgid "Payment to be made upon delivery."
 msgstr ""
 
@@ -1010,25 +1032,25 @@ msgid "Accept COD if the order is virtual"
 msgstr ""
 
 #. Translators: %1$s shipping method name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:259
+#: includes/gateways/cod/class-wc-gateway-cod2.php:258
 #, php-format
 msgid "Any &quot;%1$s&quot; method"
 msgstr ""
 
 #. Translators: %1$s shipping method title, %2$s shipping method id.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:274
+#: includes/gateways/cod/class-wc-gateway-cod2.php:271
 #, php-format
 msgid "%1$s (#%2$s)"
 msgstr ""
 
 #. Translators: %1$s zone name, %2$s shipping method instance name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:277
+#: includes/gateways/cod/class-wc-gateway-cod2.php:274
 #, php-format
 msgid "%1$s &ndash; %2$s"
 msgstr ""
 
 #. Translators: %1$s zone name, %2$s shipping method instance name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:277
+#: includes/gateways/cod/class-wc-gateway-cod2.php:274
 msgid "Other locations"
 msgstr ""
 
@@ -1363,23 +1385,23 @@ msgid "Paidy is in test mode however your test keys may not be valid. Test keys 
 msgstr ""
 
 #. translators: 1) setting link
-#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:139
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:138
 #, php-format
 msgid "Paidy is in live mode however your test keys may not be valid. Live keys start with pk_live and sk_live. Please go to your settings and, <a href=\"%s\">set your Paidy account keys</a>."
 msgstr ""
 
 #. translators: 1) Paidy PR link
-#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:144
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:143
 #, php-format
 msgid "Paidy payment is a monthly postpaid payment that is adopted by Amazon and Yodobashi Camera. <a href=\"%s\">Click here for details.</a>"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:157
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:156
 #: includes/gateways/paidy/class-wc-paidy-apply-admin-dashboard.php:101
 msgid "Action failed. Please refresh the page and retry."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:161
+#: includes/gateways/paidy/class-wc-paidy-admin-notices.php:160
 #: includes/gateways/paidy/class-wc-paidy-apply-admin-dashboard.php:105
 msgid "Cheatin&#8217; huh?"
 msgstr ""
@@ -1400,88 +1422,83 @@ msgstr ""
 msgid "Invalid state token for Paidy onboarding."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:81
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:126
-msgid "Unauthorized access to Paidy webhook."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:92
-msgid "Missing signature header for Paidy webhook."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:104
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:83
 msgid "Paidy secret key is not configured."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:115
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:94
 msgid "Invalid signature for Paidy webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:161
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:110
+msgid "Unauthorized access to Paidy webhook."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:154
 msgid "Paidy Webhook received. "
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:171
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:164
 msgid "This notification is a test request from Paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:175
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:168
 msgid "Exist [payment_id] and [order_ref]"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:181
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:174
 msgid "The order with this order number does not exist in the store."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:188
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:181
 msgid "Order payment method is not Paidy. Possible unauthorized access attempt."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:192
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:185
 msgid "Invalid payment method for this order."
 msgstr ""
 
 #. translators: %s: status of the order.
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:213
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:224
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:233
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:242
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:251
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:206
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:217
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:226
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:235
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:244
 #, php-format
 msgid "It succeeded to check the %s of the order in Paidy Webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:214
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:207
 msgid "authorization"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:218
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:211
 msgid "This order status is processing, this site received authorize_success from the Paidy webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:225
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:218
 msgid "completed"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:234
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:227
 msgid "cancelled"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:243
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:236
 msgid "close"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:252
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:245
 msgid "refunded"
 msgstr ""
 
 #. translators: %s: status of the order.
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:257
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:250
 #, php-format
 msgid "The system received a notification for order %s via Paidy Webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:262
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:255
 msgid "Payment_id exist but order_id. Payment_id : "
 msgstr ""
 
@@ -1514,12 +1531,12 @@ msgstr ""
 msgid "Bank Symbol"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:341
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:384
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:345
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:387
 msgid "Post Office Bank Account Details"
 msgstr ""
 
-#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:423
+#: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:425
 msgid "Awaiting Post Office BANK payment"
 msgstr ""
 
@@ -1529,7 +1546,7 @@ msgstr ""
 
 #: includes/jp4wc-common-functions.php:27
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:228
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:237
 msgid "Standard"
 msgstr ""
 
@@ -1625,7 +1642,7 @@ msgstr ""
 msgid "WooCommerce Doc in Japanese"
 msgstr ""
 
-#: woocommerce-for-japan.php:99
+#: woocommerce-for-japan.php:96
 msgid "Japanized for WooCommerce is enabled but not effective. It requires WooCommerce in order to work."
 msgstr ""
 
@@ -1945,131 +1962,139 @@ msgid "Check it if you want to add honorific suffix(Sama) at cart, checkout and 
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:127
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:152
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:211
-msgid "(Classic Checkout only)"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:132
-msgid "Check it if you want to add Company name input at cart, checkout and my account page."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:147
-msgid "Automatic zip code entry"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:157
-msgid "Check it if you want to use automatic zip code entry."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:172
-msgid "Yahoo APP ID"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:173
-msgid "If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input Yahoo APP ID here."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:187
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:121
 msgid "No Japanese Address"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:191
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:125
 msgid "Check it if you eliminate the order of addresses."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:206
-msgid "Free Shipping Display"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:216
-msgid "Check it if you want to display free shipping message."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:230
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:139
 msgid "Custamize Email template at customer name"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:234
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:143
 msgid "Please check it if you want to change customer name display.( from first name to full name )"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:252
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:161
+msgid "Classic Checkout only"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:172
+msgid "Free Shipping Display"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:176
+msgid "Check it if you want to display free shipping message."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:197
+msgid "Check it if you want to add Company name input at cart, checkout and my account page."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:214
+msgid "Automatic zip code entry"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:218
+msgid "Check it if you want to use automatic zip code entry."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:237
+msgid "Yahoo APP ID"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:241
+msgid "If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input Yahoo APP ID here."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:256
+msgid "Automatic zip code entry for Checkout Block is implemented in Japanized for WooCommerce PRO. If you want to use Automatic zip code entry with Checkout Block, please purchase Japanized for WooCommerce PRO."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:266
+msgid "Learn more about PRO"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:277
 msgid "Virtual order Setting"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:257
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:282
 msgid "Check to hide address input field in virtual orders"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:273
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:298
 msgid "Postcode / ZIP"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:287
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:312
 msgid "Prefecture"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:301
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:326
 msgid "Town / City"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:315
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:340
 msgid "Street address"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:329
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:354
 msgid "Apartment, suite, unit, etc. (optional)"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:358
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:383
 msgid "Usage tracking"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:365
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:390
 msgid "Tracking"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:366
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:391
 msgid "Enable usage tracking"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:154
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:386
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:411
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:251
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:264
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:273
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:547
 msgid "Saving..."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:155
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:387
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:412
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:252
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:265
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:274
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:548
 msgid "Save Settings"
 msgstr ""
@@ -2290,35 +2315,17 @@ msgid "Maximum cart value for COD fee application"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:206
-#: src/js/paidy/wizard/components/controls.jsx:216
-#: src/js/paidy/wizard/components/controls.jsx:337
-#: src/js/paidy/wizard/components/controls.jsx:360
-msgid "No"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:210
-#: src/js/paidy/wizard/components/controls.jsx:212
-#: src/js/paidy/wizard/components/controls.jsx:333
-#: src/js/paidy/wizard/components/controls.jsx:356
-msgid "Yes"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:224
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:233
 msgid "Tax Class"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:235
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:244
 msgid "Reduced rate"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:242
+#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:251
 msgid "Zero rate"
 msgstr ""
 
@@ -2388,63 +2395,68 @@ msgid "Enter your felmat PID"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:85
+#: src/js/jp4wc/admin/settings/components/Settings.js:42
 msgid "Failed to load settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:106
+#: src/js/jp4wc/admin/settings/components/Settings.js:63
 msgid "Settings saved successfully."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:114
+#: src/js/jp4wc/admin/settings/components/Settings.js:71
 msgid "Failed to save settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:132
+#: src/js/jp4wc/admin/settings/components/Settings.js:89
 msgid "Loading settings..."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:140
+#: src/js/jp4wc/admin/settings/components/Settings.js:97
 msgid "General Settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:145
+#: src/js/jp4wc/admin/settings/components/Settings.js:102
 msgid "Shipment Settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:150
+#: src/js/jp4wc/admin/settings/components/Settings.js:107
 msgid "Payment Settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:155
+#: src/js/jp4wc/admin/settings/components/Settings.js:112
 msgid "Commercial Law"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:160
+#: src/js/jp4wc/admin/settings/components/Settings.js:117
 msgid "Affiliate"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:169
+#: src/js/jp4wc/admin/settings/components/Settings.js:126
 msgid "Japanized for WooCommerce Settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:250
+#: src/js/jp4wc/admin/settings/components/Settings.js:218
 msgid "For those who are having trouble with WooCommerce"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:256
+#: src/js/jp4wc/admin/settings/components/Settings.js:224
 msgid "We are currently offering 30-minute paid Zoom consultations. A professional from Woo Agency will assess your current situation and suggest the best course of action."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/Settings.js:236
+msgid "有料相談に申し込む"
 msgstr ""
 
 #: assets/js/build/blocks/delivery-block-editor.js:1
@@ -2883,6 +2895,20 @@ msgstr ""
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/wizard/components/controls.jsx:204
 msgid "Do you use two-step or two-factor authentication to prevent compromised accounts?"
+msgstr ""
+
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/wizard/components/controls.jsx:212
+#: src/js/paidy/wizard/components/controls.jsx:333
+#: src/js/paidy/wizard/components/controls.jsx:356
+msgid "Yes"
+msgstr ""
+
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/wizard/components/controls.jsx:216
+#: src/js/paidy/wizard/components/controls.jsx:337
+#: src/js/paidy/wizard/components/controls.jsx:360
+msgid "No"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1

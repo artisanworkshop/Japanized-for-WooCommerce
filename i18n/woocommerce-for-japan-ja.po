@@ -2224,6 +2224,27 @@ msgid "(Classic Checkout only)"
 msgstr "(クラシックチェックアウトのみ)"
 
 #: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
+msgid "Classic Checkout only"
+msgstr "クラシックチェックアウトのみ"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
+msgid ""
+"Automatic zip code entry for Checkout Block is implemented in Japanized for "
+"WooCommerce PRO. If you want to use Automatic zip code entry with Checkout "
+"Block, please purchase Japanized for WooCommerce PRO."
+msgstr ""
+"チェックアウトブロックでの郵便番号自動住所入力は Japanized for WooCommerce "
+"PRO にて実装されています。チェックアウトブロックで郵便番号自動住所入力を使用"
+"したい場合は、Japanized for WooCommerce PRO をご購入ください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
+msgid "Learn more about PRO"
+msgstr "PRO版の詳細はこちら"
+
+#: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/GeneralSettings.js:132
 msgid ""
 "Check it if you want to add Company name input at cart, checkout and my "
