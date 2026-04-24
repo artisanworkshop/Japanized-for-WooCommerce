@@ -35,15 +35,12 @@ class JP4WC_Address_Fields {
 		if ( defined( 'ICL_LANGUAGE_CODE' ) && ICL_LANGUAGE_CODE !== 'ja' ) {
 			return;
 		}
-		// Default address fields.
-		add_filter( 'woocommerce_default_address_fields', array( $this, 'address_fields' ) );
 		// Add yomigana fields.
 		add_filter( 'woocommerce_default_address_fields', array( $this, 'add_yomigana_fields' ) );
 		// MyPage Edit And Checkout fields.
 		add_filter( 'woocommerce_billing_fields', array( $this, 'billing_address_fields' ) );
 		add_filter( 'woocommerce_shipping_fields', array( $this, 'shipping_address_fields' ), 20 );
 		add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'address_replacements' ), 20, 2 );
-		add_filter( 'woocommerce_localisation_address_formats', array( $this, 'address_formats' ), 20 );
 		// My Account Display for address.
 		add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'formatted_address' ), 20, 3 );// template/myaccount/my-address.php
 		// Checkout Display for address.
@@ -68,26 +65,6 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_email_preview_dummy_address', array( $this, 'jp4wc_email_preview_dummy_address' ), 10 );
 		add_filter( 'woocommerce_email_preview_dummy_product', array( $this, 'jp4wc_email_preview_dummy_product' ), 10 );
 		add_filter( 'woocommerce_email_preview_dummy_product_variation', array( $this, 'jp4wc_email_preview_dummy_product_variation' ), 10 );
-	}
-
-	/**
-	 * Address correspondence in Japan
-	 *
-	 * @since  1.2
-	 * @version 2.2.7
-	 * @param  array $fields The formatted address fields.
-	 * @return array
-	 */
-	public function address_fields( $fields ) {
-		$fields['last_name']['class']     = array( 'form-row-first' );
-		$fields['last_name']['priority']  = 10;
-		$fields['first_name']['class']    = array( 'form-row-last' );
-		$fields['first_name']['priority'] = 20;
-		$fields['postcode']['class']      = array( 'form-row-first' );
-		$fields['postcode']['type']       = 'tel';
-		$fields['state']['class']         = array( 'form-row-last' );
-
-		return $fields;
 	}
 
 	/**
@@ -198,10 +175,6 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function address_replacements( $fields, $args ) {
-		// Check if block checkout is being used.
-		$checkout_page_id   = wc_get_page_id( 'checkout' );
-		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
-
 		// Ensure standard name fields are always set.
 		if ( ! isset( $fields['{first_name}'] ) && isset( $args['first_name'] ) ) {
 			$fields['{first_name}'] = $args['first_name'];
@@ -211,15 +184,8 @@ class JP4WC_Address_Fields {
 		}
 
 		if ( get_option( 'wc4jp-yomigana' ) ) {
-			// On the block checkout page itself, hide yomigana (shown via "Edit" flow instead).
-			// In email or order-received context, always show yomigana from order meta.
-			if ( $has_block_checkout && ! is_order_received_page() && ! $this->is_email_context() ) {
-				$fields['{yomigana_last_name}']  = '';
-				$fields['{yomigana_first_name}'] = '';
-			} else {
-				$fields['{yomigana_last_name}']  = isset( $args['yomigana_last_name'] ) ? $args['yomigana_last_name'] : '';
-				$fields['{yomigana_first_name}'] = isset( $args['yomigana_first_name'] ) ? $args['yomigana_first_name'] : '';
-			}
+			$fields['{yomigana_last_name}']  = isset( $args['yomigana_last_name'] ) ? $args['yomigana_last_name'] : '';
+			$fields['{yomigana_first_name}'] = isset( $args['yomigana_first_name'] ) ? $args['yomigana_first_name'] : '';
 		}
 		if ( is_order_received_page() && isset( $args['phone'] ) ) {
 			$fields['{phone}'] = $args['phone'];
@@ -237,27 +203,9 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function address_formats( $fields ) {
-		// Check if block checkout is being used.
-		$checkout_page_id   = wc_get_page_id( 'checkout' );
-		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
-
-		// Include yomigana placeholders if the option is enabled.
-		// For block checkout, these will be replaced with empty strings in address_replacements().
 		$include_yomigana = get_option( 'wc4jp-yomigana' );
 
 		$country_format = $this->show_country_in_address() ? "\n {country}" : '';
-
-		// On the checkout page (block), return early with WooCommerce's default format.
-		// In email or order-received context, fall through to build the full JP format with yomigana.
-		if ( $has_block_checkout && ! is_order_received_page() && ! $this->is_email_context() ) {
-			if ( $include_yomigana && is_checkout() ) {
-				$fields['JP'] = $fields['JP'] . __( '(Please click "Edit" to check the pronunciation.)', 'woocommerce-for-japan' );
-			}
-			if ( '' === $country_format ) {
-				$fields['JP'] = preg_replace( '/\n\s*\{country\}/', '', $fields['JP'] );
-			}
-			return $fields;
-		}
 
 		// honorific suffix.
 		$honorific_suffix = '';
