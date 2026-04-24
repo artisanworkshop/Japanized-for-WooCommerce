@@ -504,7 +504,14 @@ class JP4WC_Address_Fields {
 		if ( ! $screen ) {
 			return;
 		}
-		if ( ! in_array( $screen->id, array( 'woocommerce_page_wc-orders', 'shop_order' ), true ) ) {
+
+		// Match HPOS edit screen (woocommerce_page_wc-orders or admin_page_wc-orders for restricted users)
+		// and classic post-based shop_order screen.
+		$hpos_page     = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$is_order_page = in_array( $screen->id, array( 'woocommerce_page_wc-orders', 'admin_page_wc-orders', 'shop_order' ), true )
+			|| 'wc-orders' === $hpos_page;
+
+		if ( ! $is_order_page ) {
 			return;
 		}
 
@@ -520,7 +527,10 @@ class JP4WC_Address_Fields {
 	clear: left;
 }
 ';
-		wp_add_inline_style( 'woocommerce_admin_styles', $css );
+		// Register our own handle so this works regardless of WC style load order.
+		wp_register_style( 'jp4wc-admin-order', false, array(), JP4WC_VERSION ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+		wp_enqueue_style( 'jp4wc-admin-order' );
+		wp_add_inline_style( 'jp4wc-admin-order', $css );
 	}
 
 	/**
