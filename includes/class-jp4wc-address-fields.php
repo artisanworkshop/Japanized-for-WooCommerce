@@ -58,6 +58,7 @@ class JP4WC_Address_Fields {
 		// Admin Edit Address.
 		add_filter( 'woocommerce_admin_billing_fields', array( $this, 'admin_billing_address_fields' ) );
 		add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_shipping_address_fields' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_order_enqueue_style' ) );
 		add_filter( 'woocommerce_customer_meta_fields', array( $this, 'admin_customer_meta_fields' ) );
 
 		// Remove checkout fields for PayPal cart checkout.
@@ -488,6 +489,41 @@ class JP4WC_Address_Fields {
 	}
 
 	/**
+	 * Enqueues inline CSS for the admin order edit screen to override WooCommerce default
+	 * field float directions for Japanese name/address ordering.
+	 *
+	 * WooCommerce CSS hardcodes ._billing_last_name_field as float:right and first_name as
+	 * float:left. In Japanese order (last_name first in DOM), we swap these so that the
+	 * visual display shows 姓(last) on the left and 名(first) on the right.
+	 *
+	 * @since  2.9.9
+	 * @return void
+	 */
+	public function admin_order_enqueue_style() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+		if ( ! in_array( $screen->id, array( 'woocommerce_page_wc-orders', 'shop_order' ), true ) ) {
+			return;
+		}
+
+		$css = '
+#order_data .order_data_column ._billing_first_name_field,
+#order_data .order_data_column ._shipping_first_name_field {
+	float: right;
+	clear: right;
+}
+#order_data .order_data_column ._billing_last_name_field,
+#order_data .order_data_column ._shipping_last_name_field {
+	float: left;
+	clear: left;
+}
+';
+		wp_add_inline_style( 'woocommerce_admin_styles', $css );
+	}
+
+	/**
 	 * Setting edit item in the billing address of the admin screen for Japanese.
 	 *
 	 * @since  1.2
@@ -545,6 +581,14 @@ class JP4WC_Address_Fields {
 		}
 		if ( ! get_option( 'wc4jp-yomigana' ) ) {
 			unset( $ordered['yomigana_last_name'], $ordered['yomigana_first_name'] );
+		} else {
+			// Ensure yomigana fields display side-by-side using WC's column convention.
+			if ( isset( $ordered['yomigana_last_name'] ) ) {
+				$ordered['yomigana_last_name']['wrapper_class'] = '';
+			}
+			if ( isset( $ordered['yomigana_first_name'] ) ) {
+				$ordered['yomigana_first_name']['wrapper_class'] = 'last';
+			}
 		}
 
 		return $ordered;
@@ -617,6 +661,14 @@ class JP4WC_Address_Fields {
 		}
 		if ( ! get_option( 'wc4jp-yomigana' ) ) {
 			unset( $ordered['yomigana_last_name'], $ordered['yomigana_first_name'] );
+		} else {
+			// Ensure yomigana fields display side-by-side using WC's column convention.
+			if ( isset( $ordered['yomigana_last_name'] ) ) {
+				$ordered['yomigana_last_name']['wrapper_class'] = '';
+			}
+			if ( isset( $ordered['yomigana_first_name'] ) ) {
+				$ordered['yomigana_first_name']['wrapper_class'] = 'last';
+			}
 		}
 
 		return $ordered;
