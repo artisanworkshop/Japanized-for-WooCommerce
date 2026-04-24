@@ -58,7 +58,7 @@ class JP4WC_Address_Fields {
 		// Admin Edit Address.
 		add_filter( 'woocommerce_admin_billing_fields', array( $this, 'admin_billing_address_fields' ) );
 		add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_shipping_address_fields' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_order_enqueue_style' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_order_enqueue_style' ), 20 );
 		add_filter( 'woocommerce_customer_meta_fields', array( $this, 'admin_customer_meta_fields' ) );
 
 		// Remove checkout fields for PayPal cart checkout.
@@ -527,10 +527,11 @@ class JP4WC_Address_Fields {
 	clear: left;
 }
 ';
-		// Register our own handle so this works regardless of WC style load order.
-		wp_register_style( 'jp4wc-admin-order', false, array(), JP4WC_VERSION ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-		wp_enqueue_style( 'jp4wc-admin-order' );
-		wp_add_inline_style( 'jp4wc-admin-order', $css );
+		// Attach inline CSS directly after woocommerce_admin_styles so our rules
+		// appear later in the document and override WC's admin.css with equal specificity.
+		// Running at priority 20 guarantees WC's admin_styles() (priority 10) has already
+		// registered and enqueued woocommerce_admin_styles before this callback fires.
+		wp_add_inline_style( 'woocommerce_admin_styles', $css );
 	}
 
 	/**
