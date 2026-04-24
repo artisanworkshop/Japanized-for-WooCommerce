@@ -491,90 +491,135 @@ class JP4WC_Address_Fields {
 	 * Setting edit item in the billing address of the admin screen for Japanese.
 	 *
 	 * @since  1.2
-	 * @version 2.0.0
+	 * @version 2.9.9
 	 * @param  array $fields The formatted address fields.
 	 * @return array
 	 */
 	public function admin_billing_address_fields( $fields ) {
-		foreach ( $fields as $key => $value ) {
-			$new_fields[ $key ] = $value;
-		}
-		$fields = array(
-			'last_name'           => $new_fields['last_name'],
-			'first_name'          => $new_fields['first_name'],
-			'yomigana_last_name'  => array(
+		// Japanese address field order.
+		$jp_order = array(
+			'last_name',
+			'first_name',
+			'yomigana_last_name',
+			'yomigana_first_name',
+			'country',
+			'postcode',
+			'state',
+			'city',
+			'company',
+			'address_1',
+			'address_2',
+			'email',
+			'phone',
+		);
+
+		// Add yomigana fields if not already present.
+		if ( ! isset( $fields['yomigana_last_name'] ) ) {
+			$fields['yomigana_last_name'] = array(
 				'label' => __( 'Last Name Yomigana', 'woocommerce-for-japan' ),
 				'show'  => false,
-			),
-			'yomigana_first_name' => array(
+			);
+		}
+		if ( ! isset( $fields['yomigana_first_name'] ) ) {
+			$fields['yomigana_first_name'] = array(
 				'label' => __( 'First Name Yomigana', 'woocommerce-for-japan' ),
 				'show'  => false,
-			),
-			'country'             => $new_fields['country'],
-			'postcode'            => $new_fields['postcode'],
-			'state'               => $new_fields['state'],
-			'city'                => $new_fields['city'],
-			'company'             => $new_fields['company'],
-			'address_1'           => $new_fields['address_1'],
-			'address_2'           => $new_fields['address_2'],
-			'email'               => $new_fields['email'],
-			'phone'               => $new_fields['phone'],
-		);
-		if ( ! get_option( 'wc4jp-company-name' ) ) {
-			unset( $fields['company'] );
-		}
-		if ( ! get_option( 'wc4jp-yomigana' ) ) {
-			unset( $fields['yomigana_last_name'] );
-			unset( $fields['yomigana_first_name'] );
+			);
 		}
 
-		return $fields;
+		// Reorder: first by jp_order, then any remaining unknown fields (e.g. added by WooCommerce extensions).
+		$ordered = array();
+		foreach ( $jp_order as $key ) {
+			if ( isset( $fields[ $key ] ) ) {
+				$ordered[ $key ] = $fields[ $key ];
+			}
+		}
+		foreach ( $fields as $key => $value ) {
+			if ( ! isset( $ordered[ $key ] ) ) {
+				$ordered[ $key ] = $value;
+			}
+		}
+
+		if ( ! get_option( 'wc4jp-company-name' ) ) {
+			unset( $ordered['company'] );
+		}
+		if ( ! get_option( 'wc4jp-yomigana' ) ) {
+			unset( $ordered['yomigana_last_name'], $ordered['yomigana_first_name'] );
+		}
+
+		return $ordered;
 	}
 
 	/**
 	 * Setting edit item in the shipping address of the admin screen for Japanese.
 	 *
 	 * @since  1.2
-	 * @version 2.0.0
+	 * @version 2.9.9
 	 * @param  array $fields The formatted address fields.
 	 * @return array
 	 */
 	public function admin_shipping_address_fields( $fields ) {
-		foreach ( $fields as $key => $value ) {
-			$new_fields[ $key ] = $value;
-		}
-		$fields = array(
-			'last_name'           => $new_fields['last_name'],
-			'first_name'          => $new_fields['first_name'],
-			'yomigana_last_name'  => array(
-				'label' => __( 'Last Name Yomigana', 'woocommerce-for-japan' ),
-				'show'  => false,
-			),
-			'yomigana_first_name' => array(
-				'label' => __( 'First Name Yomigana', 'woocommerce-for-japan' ),
-				'show'  => false,
-			),
-			'country'             => $new_fields['country'],
-			'postcode'            => $new_fields['postcode'],
-			'state'               => $new_fields['state'],
-			'city'                => $new_fields['city'],
-			'company'             => $new_fields['company'],
-			'address_1'           => $new_fields['address_1'],
-			'address_2'           => $new_fields['address_2'],
-			'phone'               => array(
-				'label' => __( 'Phone', 'woocommerce-for-japan' ),
-				'show'  => false,
-			),
+		// Japanese address field order.
+		$jp_order = array(
+			'last_name',
+			'first_name',
+			'yomigana_last_name',
+			'yomigana_first_name',
+			'country',
+			'postcode',
+			'state',
+			'city',
+			'company',
+			'address_1',
+			'address_2',
+			'phone',
 		);
 
-		if ( ! get_option( 'wc4jp-company-name' ) ) {
-			unset( $fields['company'] );
+		// Add yomigana fields if not already present.
+		if ( ! isset( $fields['yomigana_last_name'] ) ) {
+			$fields['yomigana_last_name'] = array(
+				'label' => __( 'Last Name Yomigana', 'woocommerce-for-japan' ),
+				'show'  => false,
+			);
 		}
-		if ( ! get_option( 'wc4jp-yomigana' ) ) {
-			unset( $fields['yomigana_last_name'], $fields['yomigana_first_name'] );
+		if ( ! isset( $fields['yomigana_first_name'] ) ) {
+			$fields['yomigana_first_name'] = array(
+				'label' => __( 'First Name Yomigana', 'woocommerce-for-japan' ),
+				'show'  => false,
+			);
 		}
 
-		return $fields;
+		// Ensure shipping phone field is shown with correct label.
+		if ( ! isset( $fields['phone'] ) ) {
+			$fields['phone'] = array(
+				'label' => __( 'Phone', 'woocommerce-for-japan' ),
+				'show'  => false,
+			);
+		} else {
+			$fields['phone']['show'] = false;
+		}
+
+		// Reorder: first by jp_order, then any remaining unknown fields (e.g. added by WooCommerce extensions).
+		$ordered = array();
+		foreach ( $jp_order as $key ) {
+			if ( isset( $fields[ $key ] ) ) {
+				$ordered[ $key ] = $fields[ $key ];
+			}
+		}
+		foreach ( $fields as $key => $value ) {
+			if ( ! isset( $ordered[ $key ] ) ) {
+				$ordered[ $key ] = $value;
+			}
+		}
+
+		if ( ! get_option( 'wc4jp-company-name' ) ) {
+			unset( $ordered['company'] );
+		}
+		if ( ! get_option( 'wc4jp-yomigana' ) ) {
+			unset( $ordered['yomigana_last_name'], $ordered['yomigana_first_name'] );
+		}
+
+		return $ordered;
 	}
 
 	/**
