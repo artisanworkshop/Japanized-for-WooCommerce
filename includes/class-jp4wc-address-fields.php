@@ -517,12 +517,16 @@ class JP4WC_Address_Fields {
 
 		$css = '
 #order_data .order_data_column ._billing_first_name_field,
-#order_data .order_data_column ._shipping_first_name_field {
+#order_data .order_data_column ._shipping_first_name_field,
+#order_data .order_data_column ._billing_city_field,
+#order_data .order_data_column ._shipping_city_field {
 	float: right;
 	clear: right;
 }
 #order_data .order_data_column ._billing_last_name_field,
-#order_data .order_data_column ._shipping_last_name_field {
+#order_data .order_data_column ._shipping_last_name_field,
+#order_data .order_data_column ._billing_state_field,
+#order_data .order_data_column ._shipping_state_field {
 	float: left;
 	clear: left;
 }
@@ -553,9 +557,9 @@ class JP4WC_Address_Fields {
 			'postcode',
 			'state',
 			'city',
-			'company',
 			'address_1',
 			'address_2',
+			'company',
 			'email',
 			'phone',
 		);
