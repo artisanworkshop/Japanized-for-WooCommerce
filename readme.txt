@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 6.9.4
-Stable tag: 2.9.9
+Stable tag: 2.9.10
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,15 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.10 - 2026-04-27 =
+* **Security** - `jp4wc_hide_notices()` now requires `manage_woocommerce` capability before processing notice-dismissal requests
+* **Fixed** - Admin order edit page displayed 名|姓 instead of 姓|名; CSS overrides now swap float directions for first/last name fields to restore the correct Japanese display order
+* **Fixed** - Admin order address field CSS was not applied on HPOS screens; enqueue now covers all screen ID variants including `admin_page_wc-orders` and uses a `$_GET['page']` fallback for early-init cases
+* **Fixed** - JP4WC admin CSS was overridden by WooCommerce's cascade; inline styles are now attached directly after `woocommerce_admin_styles` at `admin_enqueue_scripts` priority 20 to guarantee the overrides take effect
+* **Improved** - Admin address field ordering rewritten with an order-list approach that preserves fields injected by third-party plugins and guards against yomigana field duplication
+* **Improved** - Admin settings panel: Classic Checkout settings (Company name, Zip auto-entry, Free shipping display) grouped under a dedicated section; added PRO notice for Block Checkout zip auto-entry
+* **Changed** - Removed unused `woocommerce_billing_fields`/`woocommerce_shipping_fields` filter and streamlined yomigana field handling in address replacements
 
 = 2.9.9 - 2026-04-23 =
 * **Fixed** - COD fee not applied in Classic Checkout (Shortcode) or Block Checkout because `jp4wc_calculate_order_totals` read from `woocommerce_cod_settings` while the JP4WC admin UI saves to `wc4jp-extra_charge_*` options; settings are now merged at runtime with JP4WC values taking precedence

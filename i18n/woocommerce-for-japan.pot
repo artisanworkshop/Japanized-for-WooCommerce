@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Japanized for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Japanized for WooCommerce 2.9.9\n"
+"Project-Id-Version: Japanized for WooCommerce 2.9.10\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Japanized-for-WooCommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
