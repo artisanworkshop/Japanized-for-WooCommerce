@@ -656,6 +656,9 @@ class JP4WC_Admin_Notices {
 	 * @return void
 	 */
 	public function jp4wc_hide_notices() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['jp4wc-hide-notice'] ) && 'security' === sanitize_text_field( wp_unslash( $_GET['jp4wc-hide-notice'] ) ) ) {
 			if ( ! isset( $_GET['_jp4wc_notice_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_jp4wc_notice_nonce'] ) ), 'jp4wc_hide_notices_nonce' ) ) {

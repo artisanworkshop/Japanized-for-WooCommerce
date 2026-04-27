@@ -118,72 +118,6 @@ const GeneralSettings = ( {
 				<PanelRow>
 					<ToggleControl
 						__nextHasNoMarginBottom={ true }
-						label={
-							__(
-								'Company Name',
-								'woocommerce-for-japan'
-							) +
-							' ' +
-							__(
-								'(Classic Checkout only)',
-								'woocommerce-for-japan'
-							)
-						}
-						help={ __(
-							'Check it if you want to add Company name input at cart, checkout and my account page.',
-							'woocommerce-for-japan'
-						) }
-						checked={ settings?.[ 'company-name' ] === '1' }
-						onChange={ ( value ) =>
-							updateSetting( 'company-name', value ? '1' : '' )
-						}
-					/>
-				</PanelRow>
-
-				<PanelRow>
-					<ToggleControl
-						__nextHasNoMarginBottom={ true }
-						label={
-							__(
-								'Automatic zip code entry',
-								'woocommerce-for-japan'
-							) +
-							' ' +
-							__(
-								'(Classic Checkout only)',
-								'woocommerce-for-japan'
-							)
-						}
-						help={ __(
-							'Check it if you want to use automatic zip code entry.',
-							'woocommerce-for-japan'
-						) }
-						checked={ settings?.zip2address === '1' }
-						onChange={ ( value ) =>
-							updateSetting( 'zip2address', value ? '1' : '' )
-						}
-					/>
-				</PanelRow>
-
-				<PanelRow>
-					<TextControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom={ true }
-						label={ __( 'Yahoo APP ID', 'woocommerce-for-japan' ) }
-						help={ __(
-							'If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input Yahoo APP ID here.',
-							'woocommerce-for-japan'
-						) }
-						value={ settings?.[ 'yahoo-app-id' ] || '' }
-						onChange={ ( value ) =>
-							updateSetting( 'yahoo-app-id', value )
-						}
-					/>
-				</PanelRow>
-
-				<PanelRow>
-					<ToggleControl
-						__nextHasNoMarginBottom={ true }
 						label={ __(
 							'No Japanese Address',
 							'woocommerce-for-japan'
@@ -195,31 +129,6 @@ const GeneralSettings = ( {
 						checked={ settings?.[ 'no-ja' ] === '1' }
 						onChange={ ( value ) =>
 							updateSetting( 'no-ja', value ? '1' : '' )
-						}
-					/>
-				</PanelRow>
-
-				<PanelRow>
-					<ToggleControl
-						__nextHasNoMarginBottom={ true }
-						label={
-							__(
-								'Free Shipping Display',
-								'woocommerce-for-japan'
-							) +
-							' ' +
-							__(
-								'(Classic Checkout only)',
-								'woocommerce-for-japan'
-							)
-						}
-						help={ __(
-							'Check it if you want to display free shipping message.',
-							'woocommerce-for-japan'
-						) }
-						checked={ settings?.[ 'free-shipping' ] === '1' }
-						onChange={ ( value ) =>
-							updateSetting( 'free-shipping', value ? '1' : '' )
 						}
 					/>
 				</PanelRow>
@@ -246,6 +155,122 @@ const GeneralSettings = ( {
 						}
 					/>
 				</PanelRow>
+
+				<div className="jp4wc-classic-section-header">
+					<span>
+						{ __(
+							'Classic Checkout only',
+							'woocommerce-for-japan'
+						) }
+					</span>
+				</div>
+
+				<div className="jp4wc-classic-section">
+					<PanelRow>
+						<ToggleControl
+							__nextHasNoMarginBottom={ true }
+							label={ __(
+								'Free Shipping Display',
+								'woocommerce-for-japan'
+							) }
+							help={ __(
+								'Check it if you want to display free shipping message.',
+								'woocommerce-for-japan'
+							) }
+							checked={ settings?.[ 'free-shipping' ] === '1' }
+							onChange={ ( value ) =>
+								updateSetting(
+									'free-shipping',
+									value ? '1' : ''
+								)
+							}
+						/>
+					</PanelRow>
+
+					<PanelRow>
+						<ToggleControl
+							__nextHasNoMarginBottom={ true }
+							label={ __(
+								'Company Name',
+								'woocommerce-for-japan'
+							) }
+							help={ __(
+								'Check it if you want to add Company name input at cart, checkout and my account page.',
+								'woocommerce-for-japan'
+							) }
+							checked={ settings?.[ 'company-name' ] === '1' }
+							onChange={ ( value ) =>
+								updateSetting(
+									'company-name',
+									value ? '1' : ''
+								)
+							}
+						/>
+					</PanelRow>
+
+					<PanelRow>
+						<ToggleControl
+							__nextHasNoMarginBottom={ true }
+							label={ __(
+								'Automatic zip code entry',
+								'woocommerce-for-japan'
+							) }
+							help={ __(
+								'Check it if you want to use automatic zip code entry.',
+								'woocommerce-for-japan'
+							) }
+							checked={ settings?.zip2address === '1' }
+							onChange={ ( value ) =>
+								updateSetting(
+									'zip2address',
+									value ? '1' : ''
+								)
+							}
+						/>
+					</PanelRow>
+
+					{ settings?.zip2address === '1' && (
+						<PanelRow>
+							<TextControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom={ true }
+								label={ __(
+									'Yahoo APP ID',
+									'woocommerce-for-japan'
+								) }
+								help={ __(
+									'If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input Yahoo APP ID here.',
+									'woocommerce-for-japan'
+								) }
+								value={ settings?.[ 'yahoo-app-id' ] || '' }
+								onChange={ ( value ) =>
+									updateSetting( 'yahoo-app-id', value )
+								}
+							/>
+						</PanelRow>
+					) }
+
+					<div className="jp4wc-pro-notice">
+						<span className="jp4wc-pro-notice__icon">ℹ</span>
+						<span>
+							{ __(
+								'Automatic zip code entry for Checkout Block is implemented in Japanized for WooCommerce PRO. If you want to use Automatic zip code entry with Checkout Block, please purchase Japanized for WooCommerce PRO.',
+								'woocommerce-for-japan'
+							) }
+							{ ' ' }
+							<a
+								href="https://wc4jp-pro.work/product/jp4wc-pro/"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{ __(
+									'Learn more about PRO',
+									'woocommerce-for-japan'
+								) }
+							</a>
+						</span>
+					</div>
+				</div>
 			</PanelBody>
 
 			<PanelBody

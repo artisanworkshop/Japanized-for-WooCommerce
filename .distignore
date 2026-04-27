@@ -8,6 +8,7 @@
 /.vscode
 /.git
 /.github
+/.claude
 /bin
 /node_modules
 /vendor
@@ -29,9 +30,9 @@ composer.lock
 package-lock.json
 package.json
 webpack.config.js
-CLADE.md
 LICENSE
 README.md
+CLAUDE.md
 SECURITY-FIX-PAIDY.md
 SHORTCODE-CHECKOUT-VALIDATION-REPORT.md
 
