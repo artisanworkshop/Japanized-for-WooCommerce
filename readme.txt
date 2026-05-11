@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 6.9.4
-Stable tag: 2.9.10
+Stable tag: 2.9.11
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,12 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.11 - 2026-05-11 =
+* **Fixed** - Fatal error in `jp4wc_delivery_check_data()` on Classic Checkout with Square / Amazon Pay; `woocommerce_payment_successful_result` was registered with 1 argument so `$result['order_id']` was undefined when gateways omit it — `wc_get_order(null)` returned false, causing a PHP Fatal Error on `$order->get_meta()` and corrupting the AJAX redirect to the Thank You page; filter now accepts 2 arguments and `$order_id` arrives as the second parameter; added early-return guard when `wc_get_order()` returns false (Closes #166)
+* **Fixed** - Yomigana (reading) fields no longer appeared in order emails after 2.9.10; restored accidentally removed `woocommerce_localisation_address_formats` filter registration that injects `{yomigana_last_name}` / `{yomigana_first_name}` placeholders into the JP address format template
+* **Changed** - "NOT registered" delivery log messages changed from `log_info` to `log_debug` (WP_DEBUG only) to stop a 2 MB/day log flood on sites with delivery date disabled
+* **Changed** - Removed unused `display_admin_order_meta()` method in `JP4WC_Delivery` that was never registered to any hook (dead code since introduction)
 
 = 2.9.10 - 2026-04-27 =
 * **Security** - `jp4wc_hide_notices()` now requires `manage_woocommerce` capability before processing notice-dismissal requests

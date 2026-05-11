@@ -782,16 +782,6 @@ class JP4WC_Delivery {
 	}
 
 	/**
-	 * Admin: Display date and timeslot on the admin order page
-	 *
-	 * @param object $order WP_Order.
-	 */
-	public function display_admin_order_meta( $order ) {
-
-		$this->display_date_and_time_zone( $order );
-	}
-
-	/**
 	 * Add the meta box for shipment info on the order page
 	 *
 	 * @access public
