@@ -63,6 +63,10 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_email_preview_dummy_address', array( $this, 'jp4wc_email_preview_dummy_address' ), 10 );
 		add_filter( 'woocommerce_email_preview_dummy_product', array( $this, 'jp4wc_email_preview_dummy_product' ), 10 );
 		add_filter( 'woocommerce_email_preview_dummy_product_variation', array( $this, 'jp4wc_email_preview_dummy_product_variation' ), 10 );
+		// Remove WC Additional Checkout Fields API duplicates from My Account address edit form.
+		add_filter( 'woocommerce_address_to_edit', array( $this, 'remove_duplicate_yomigana_from_address_edit' ), 20, 2 );
+		// Suppress WC Additional Fields API rendering on My Account address view page.
+		add_action( 'woocommerce_my_account_after_my_address', array( $this, 'suppress_wc_additional_fields_on_account_view' ), 9 );
 	}
 
 	/**
@@ -293,9 +297,31 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function formatted_address( $fields, $customer_id, $name ) {
-		$fields['yomigana_first_name'] = get_user_meta( $customer_id, $name . '_yomigana_first_name', true );
-		$fields['yomigana_last_name']  = get_user_meta( $customer_id, $name . '_yomigana_last_name', true );
-		$fields['phone']               = get_user_meta( $customer_id, $name . '_phone', true );
+		// Determine which meta key set to prefer based on the configured checkout type.
+		// Block checkout saves to _wc_{type}/jp4wc/* keys; classic checkout saves to {type}_yomigana_* keys.
+		// When both are present (e.g. after switching checkout types), use the key that matches the
+		// current checkout configuration so the most recently entered value is shown.
+		// When the checkout page is not configured (no page ID), we cannot detect the type and
+		// default to block (WC Additional Fields API) keys, matching the block-preferred fallback.
+		$checkout_page_id     = wc_get_page_id( 'checkout' );
+		$has_classic_checkout = $checkout_page_id && ! has_block( 'woocommerce/checkout', $checkout_page_id );
+
+		$block_last    = get_user_meta( $customer_id, '_wc_' . $name . '/jp4wc/yomigana_last_name', true );
+		$block_first   = get_user_meta( $customer_id, '_wc_' . $name . '/jp4wc/yomigana_first_name', true );
+		$classic_last  = get_user_meta( $customer_id, $name . '_yomigana_last_name', true );
+		$classic_first = get_user_meta( $customer_id, $name . '_yomigana_first_name', true );
+
+		if ( $has_classic_checkout ) {
+			// Classic checkout: prefer classic keys, fall back to block.
+			$fields['yomigana_last_name']  = ! empty( $classic_last ) ? $classic_last : $block_last;
+			$fields['yomigana_first_name'] = ! empty( $classic_first ) ? $classic_first : $block_first;
+		} else {
+			// Block checkout or no checkout page configured: prefer block keys, fall back to classic.
+			$fields['yomigana_last_name']  = ! empty( $block_last ) ? $block_last : $classic_last;
+			$fields['yomigana_first_name'] = ! empty( $block_first ) ? $block_first : $classic_first;
+		}
+
+		$fields['phone'] = get_user_meta( $customer_id, $name . '_phone', true );
 
 		return $fields;
 	}
@@ -807,6 +833,89 @@ class JP4WC_Address_Fields {
 	public function jp4wc_email_preview_dummy_product_variation( $product ) {
 		$product->set_price( 1500 );
 		return $product;
+	}
+
+	/**
+	 * Remove WC Additional Checkout Fields API yomigana duplicates from My Account address edit.
+	 *
+	 * WC's CheckoutFieldsFrontend::edit_address_fields() (priority 10) always injects
+	 * _wc_{type}/jp4wc/* fields into the My Account address edit form. On classic-checkout
+	 * sites (and FSE block-checkout sites where has_block() returns false) JP4WC's own
+	 * {type}_yomigana_* fields are also present, causing a second yomigana row below the
+	 * email field with an incorrect name attribute.
+	 *
+	 * When the traditional {type}_yomigana_last_name field is present we remove the
+	 * WC-added duplicates so only the traditional fields (positioned near the name section)
+	 * remain visible.
+	 *
+	 * On non-FSE block-checkout sites add_yomigana_fields() returns early, so the
+	 * traditional field is absent. In that case this guard is false and the WC-added
+	 * fields are left intact (single display via block API).
+	 *
+	 * @since 2.9.12
+	 * @param array  $address      Address fields array for the edit form.
+	 * @param string $address_type 'billing' or 'shipping'.
+	 * @return array
+	 */
+	public function remove_duplicate_yomigana_from_address_edit( $address, $address_type ) {
+		if ( ! get_option( 'wc4jp-yomigana' ) ) {
+			return $address;
+		}
+		if ( ! isset( $address[ $address_type . '_yomigana_last_name' ] ) ) {
+			return $address;
+		}
+		$namespace_prefix = '_wc_' . $address_type . '/jp4wc/';
+		foreach ( array_keys( $address ) as $key ) {
+			if ( 0 === strpos( $key, $namespace_prefix ) ) {
+				unset( $address[ $key ] );
+			}
+		}
+		return $address;
+	}
+
+	/**
+	 * Suppress WC Additional Checkout Fields rendering on the My Account address view page.
+	 *
+	 * On the My Account address view page, is_blocks_checkout_context() always returns false,
+	 * so address_formats() always takes the PHP rendering path and includes {yomigana_*} in
+	 * the JP format string (both classic and block checkout sites). WC's CheckoutFieldsFrontend::
+	 * render_address_fields() (priority 10) would then render yomigana again as a bare
+	 * <br><strong> line, causing a duplicate entry below the formatted address block.
+	 *
+	 * This callback (priority 9) removes WC's render_address_fields hook whenever yomigana is
+	 * enabled, preventing the duplicate. It runs for both classic and block checkout setups.
+	 *
+	 * @since 2.9.12
+	 * @param string $address_type 'billing' or 'shipping'.
+	 * @return void
+	 */
+	public function suppress_wc_additional_fields_on_account_view( $address_type ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		if ( ! get_option( 'wc4jp-yomigana' ) ) {
+			return;
+		}
+		$hook     = 'woocommerce_my_account_after_my_address';
+		$priority = 10;
+		// Guard: skip if the hook has no callbacks at all.
+		if ( ! has_action( $hook ) ) {
+			return;
+		}
+		global $wp_filter;
+		if ( ! isset( $wp_filter[ $hook ] ) || ! ( $wp_filter[ $hook ] instanceof WP_Hook ) ) {
+			return;
+		}
+		// Use remove_action() rather than directly mutating $wp_filter internals.
+		// Iterate over a snapshot so removal does not affect the current loop.
+		foreach ( $wp_filter[ $hook ]->callbacks[ $priority ] ?? array() as $callback_data ) {
+			$fn = $callback_data['function'];
+			if (
+				is_array( $fn )
+				&& is_object( $fn[0] )
+				&& false !== strpos( get_class( $fn[0] ), 'CheckoutFields' )
+				&& method_exists( $fn[0], 'render_address_fields' )
+			) {
+				remove_action( $hook, $fn, $priority );
+			}
+		}
 	}
 }
 // Address Fields Class load.

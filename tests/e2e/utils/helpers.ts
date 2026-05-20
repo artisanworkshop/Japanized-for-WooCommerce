@@ -29,8 +29,8 @@ export async function wpFetch(
 export const ADMIN_USER = 'admin';
 export const ADMIN_PASS = 'password';
 
-/** Read the Application Password written by global-setup.ts */
-function getBasicAuth(): string {
+/** Read the Application Password written by global-setup.ts. Used by wcGet, wcPut, and related helpers. */
+export function getBasicAuth(): string {
 	// Prefer env var (set by global-setup in the same process).
 	if ( process.env.WP_APP_PASSWORD ) {
 		return Buffer.from( `${ ADMIN_USER }:${ process.env.WP_APP_PASSWORD }` ).toString( 'base64' );
@@ -61,6 +61,66 @@ export async function login( page: Page, baseURL: string ): Promise<void> {
 // ---------------------------------------------------------------------------
 // WooCommerce REST API helpers
 // ---------------------------------------------------------------------------
+
+/** PUT to WC REST API /wc/v3/{endpoint}. */
+export async function wcPut(
+	request: APIRequestContext,
+	baseURL: string,
+	endpoint: string,
+	body: object,
+): Promise<unknown> {
+	const res = await request.put( `${ baseURL }/wp-json/wc/v3/${ endpoint }`, {
+		headers: {
+			Authorization: `Basic ${ getBasicAuth() }`,
+			'Content-Type': 'application/json',
+		},
+		data: JSON.stringify( body ),
+	} );
+	return res.json();
+}
+
+/** GET from WC REST API /wc/v3/{endpoint}. */
+export async function wcGet(
+	request: APIRequestContext,
+	baseURL: string,
+	endpoint: string,
+): Promise<unknown> {
+	const res = await request.get( `${ baseURL }/wp-json/wc/v3/${ endpoint }`, {
+		headers: { Authorization: `Basic ${ getBasicAuth() }` },
+	} );
+	return res.json();
+}
+
+/** Get the current WC checkout page ID from WC settings. */
+export async function getCheckoutPageId(
+	request: APIRequestContext,
+	baseURL: string,
+): Promise<string> {
+	const settings = ( await wcGet( request, baseURL, 'settings/advanced' ) ) as { id: string; value: string }[];
+	return settings.find( ( s ) => s.id === 'woocommerce_checkout_page_id' )?.value ?? '';
+}
+
+/** Set the WC checkout page ID in WC settings. */
+export async function setCheckoutPageId(
+	request: APIRequestContext,
+	baseURL: string,
+	pageId: string | number,
+): Promise<void> {
+	await wcPut( request, baseURL, 'settings/advanced/woocommerce_checkout_page_id', {
+		value: String( pageId ),
+	} );
+}
+
+/** Set billing or shipping address for a WC customer by user ID. */
+export async function setCustomerAddress(
+	request: APIRequestContext,
+	baseURL: string,
+	customerId: number,
+	type: 'billing' | 'shipping',
+	address: Record< string, string >,
+): Promise<void> {
+	await wcPut( request, baseURL, `customers/${ customerId }`, { [ type ]: address } );
+}
 
 async function wcFetch(
 	request: APIRequestContext,
