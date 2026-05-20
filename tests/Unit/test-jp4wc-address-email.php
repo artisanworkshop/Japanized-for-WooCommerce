@@ -90,6 +90,40 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * JP format must include honorific suffix when enabled.
+	 */
+	public function test_jp_address_format_includes_honorific_suffix_when_enabled() {
+		update_option( 'wc4jp-honorific-suffix', '1' );
+
+		$formats = apply_filters( 'woocommerce_localisation_address_formats', array( 'JP' => '' ) );
+
+		$this->assertArrayHasKey( 'JP', $formats );
+		$this->assertStringContainsString(
+			'{last_name} {first_name}様',
+			$formats['JP'],
+			'JP address format must append 様 to the name line when honorific suffix is enabled.'
+		);
+	}
+
+	/**
+	 * JP format must keep a trailing newline after the name placeholders.
+	 */
+	public function test_jp_address_format_has_newline_after_name_placeholders() {
+		delete_option( 'wc4jp-honorific-suffix' );
+		update_option( 'woocommerce_allowed_countries', 'specific' );
+		update_option( 'woocommerce_specific_allowed_countries', array( 'JP', 'US' ) );
+
+		$formats = apply_filters( 'woocommerce_localisation_address_formats', array( 'JP' => '' ) );
+
+		$this->assertArrayHasKey( 'JP', $formats );
+		$this->assertMatchesRegularExpression(
+			'/\{last_name\} \{first_name\}\n/',
+			$formats['JP'],
+			'JP address format must keep a trailing newline after the name placeholders.'
+		);
+	}
+
 	// ------------------------------------------------------------------
 	// Layer 3: woocommerce_formatted_address_replacements
 	// ------------------------------------------------------------------
@@ -129,6 +163,25 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 
 		$this->assertArrayNotHasKey( '{yomigana_last_name}', $replacements );
 		$this->assertArrayNotHasKey( '{yomigana_first_name}', $replacements );
+	}
+
+	/**
+	 * address_replacements() must not add honorific suffix for non-JP addresses.
+	 */
+	public function test_address_replacements_does_not_add_honorific_suffix_for_non_jp() {
+		update_option( 'wc4jp-honorific-suffix', '1' );
+
+		$args = array(
+			'first_name' => 'John',
+			'last_name'  => 'Doe',
+			'country'    => 'US',
+		);
+
+		$replacements = apply_filters( 'woocommerce_formatted_address_replacements', array(), $args );
+
+		$this->assertArrayHasKey( '{first_name}', $replacements );
+		$this->assertSame( 'John', $replacements['{first_name}'] );
+		$this->assertStringNotContainsString( '様', $replacements['{first_name}'] );
 	}
 
 	// ------------------------------------------------------------------
