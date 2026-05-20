@@ -41,16 +41,7 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_billing_fields', array( $this, 'billing_address_fields' ) );
 		add_filter( 'woocommerce_shipping_fields', array( $this, 'shipping_address_fields' ), 20 );
 		add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'address_replacements' ), 20, 2 );
-		add_filter(
-			'woocommerce_localisation_address_formats',
-			function ( $formats ) {
-				if ( isset( $_GET['woo-paypal-return'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					$_GET['woo-paypal-return'] = wp_validate_boolean( wp_unslash( $_GET['woo-paypal-return'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-				}
-				return $this->address_formats( $formats );
-			},
-			20
-		);
+		add_filter( 'woocommerce_localisation_address_formats', array( $this, 'address_formats' ), 20 );
 		// My Account Display for address.
 		add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'formatted_address' ), 20, 3 );// template/myaccount/my-address.php
 		// Checkout Display for address.
@@ -67,9 +58,6 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_shipping_address_fields' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_order_enqueue_style' ), 20 );
 		add_filter( 'woocommerce_customer_meta_fields', array( $this, 'admin_customer_meta_fields' ) );
-
-		// Remove checkout fields for PayPal cart checkout.
-		add_filter( 'woocommerce_default_address_fields', array( $this, 'remove_checkout_fields_for_paypal' ) );
 
 		add_filter( 'woocommerce_email_preview_dummy_order', array( $this, 'jp4wc_email_preview_dummy_order' ), 10 );
 		add_filter( 'woocommerce_email_preview_dummy_address', array( $this, 'jp4wc_email_preview_dummy_address' ), 10 );
@@ -242,12 +230,7 @@ class JP4WC_Address_Fields {
 		}
 
 		// PHP rendering contexts (order emails, admin, My Account, order confirmation).
-		// PayPal Payment compatible.
-		if ( isset( $_GET['woo-paypal-return'] ) && true === $_GET['woo-paypal-return'] && isset( $_GET['token'] ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended
-			$set_yomigana = '';
-		} else {
-			$set_yomigana = $include_yomigana ? "\n{yomigana_last_name} {yomigana_first_name}" : '';
-		}
+		$set_yomigana = $include_yomigana ? "\n{yomigana_last_name} {yomigana_first_name}" : '';
 
 		if ( $include_company ) {
 			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}\n" . $country_inner;
@@ -764,29 +747,6 @@ class JP4WC_Address_Fields {
 			unset( $customer_meta_fields['billing']['fields']['billing_yomigana_last_name'], $customer_meta_fields['billing']['fields']['billing_yomigana_first_name'], $customer_meta_fields['shipping']['fields']['shipping_yomigana_last_name'], $customer_meta_fields['shipping']['fields']['shipping_yomigana_first_name'] );
 		}
 		return $customer_meta_fields;
-	}
-
-	/**
-	 * Address correspondence in Japan
-	 *
-	 * @since  2.2.7
-	 * @param  array $fields The formatted address fields.
-	 * @return array $fields
-	 */
-	public function remove_checkout_fields_for_paypal( $fields ) {
-		$gateways         = WC()->payment_gateways->get_available_payment_gateways();
-		$enabled_gateways = array();
-		foreach ( $gateways as $key => $value ) {
-			if ( 'yes' === $value->enabled ) {
-				$enabled_gateways[] = $key;
-			}
-		}
-		$paypal_flag = in_array( 'ppec_paypal', $enabled_gateways, true );
-		if ( get_option( 'wc4jp-yomigana' ) && $paypal_flag ) {
-			$fields['yomigana_last_name']['required']  = false;
-			$fields['yomigana_first_name']['required'] = false;
-		}
-		return $fields;
 	}
 
 	/**
