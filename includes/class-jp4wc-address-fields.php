@@ -41,17 +41,7 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_billing_fields', array( $this, 'billing_address_fields' ) );
 		add_filter( 'woocommerce_shipping_fields', array( $this, 'shipping_address_fields' ), 20 );
 		add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'address_replacements' ), 20, 2 );
-		add_filter(
-			'woocommerce_localisation_address_formats',
-			function ( $formats ) {
-				if ( isset( $_GET['woo-paypal-return'] ) ) {
-					$_GET['woo-paypal-return'] = wp_validate_boolean( wp_unslash( $_GET['woo-paypal-return'] ) );
-				}
-
-				return $this->address_formats( $formats );
-			},
-			20
-		);
+		add_filter( 'woocommerce_localisation_address_formats', array( $this, 'address_formats' ), 20 );
 		// My Account Display for address.
 		add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'formatted_address' ), 20, 3 );// template/myaccount/my-address.php
 		// Checkout Display for address.
@@ -68,9 +58,6 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_shipping_address_fields' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_order_enqueue_style' ), 20 );
 		add_filter( 'woocommerce_customer_meta_fields', array( $this, 'admin_customer_meta_fields' ) );
-
-		// Remove checkout fields for PayPal cart checkout.
-		add_filter( 'woocommerce_default_address_fields', array( $this, 'remove_checkout_fields_for_paypal' ) );
 
 		add_filter( 'woocommerce_email_preview_dummy_order', array( $this, 'jp4wc_email_preview_dummy_order' ), 10 );
 		add_filter( 'woocommerce_email_preview_dummy_address', array( $this, 'jp4wc_email_preview_dummy_address' ), 10 );
@@ -222,23 +209,30 @@ class JP4WC_Address_Fields {
 	 */
 	public function address_formats( $fields ) {
 		$include_yomigana = get_option( 'wc4jp-yomigana' );
+		$include_company  = get_option( 'wc4jp-company-name' );
+		$country_inner    = $this->show_country_in_address() ? '{country}' : '';
 
-		$country_inner = $this->show_country_in_address() ? '{country}' : '';
-
-		// PayPal Payment compatible.
-		if ( isset( $_GET['woo-paypal-return'] ) && true === $_GET['woo-paypal-return'] && isset( $_GET['token'] ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$set_yomigana = '';
-		} else {
-			$set_yomigana = $include_yomigana ? "\n{yomigana_last_name} {yomigana_first_name}" : '';
+		// For the WooCommerce Blocks checkout (JS rendering), the name placeholder must appear
+		// first in the format string so checkout-frontend.js can identify and strip it before
+		// replacing address-only placeholders. Custom placeholders like {yomigana_*} are not
+		// in the JS replacement table and would appear verbatim if included here.
+		// Honorific suffix (様) is applied in address_replacements() for PHP-only contexts.
+		if ( $this->is_blocks_checkout_context() ) {
+			$parts = array( '{last_name} {first_name}', '〒{postcode}', '{state}{city}{address_1}', '{address_2}' );
+			if ( $include_company ) {
+				$parts[] = '{company}';
+			}
+			if ( $country_inner ) {
+				$parts[] = $country_inner;
+			}
+			$fields['JP'] = implode( "\n", $parts );
+			return $fields;
 		}
 
-		// Build format string based on settings.
-		// {last_name} {first_name} must be followed immediately by \n: WooCommerce Blocks JS
-		// (checkout-frontend.js) identifies the name line by searching for this pattern and
-		// removes it before rendering the address portion. Without the trailing \n the name
-		// placeholders are never substituted and appear verbatim in the Checkout Block UI.
-		// Honorific suffix (様) is applied in address_replacements() for PHP-only contexts.
-		if ( get_option( 'wc4jp-company-name' ) ) {
+		// PHP rendering contexts (order emails, admin, My Account, order confirmation).
+		$set_yomigana = $include_yomigana ? "\n{yomigana_last_name} {yomigana_first_name}" : '';
+
+		if ( $include_company ) {
 			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}\n" . $country_inner;
 		} else {
 			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}\n" . $country_inner;
@@ -252,6 +246,40 @@ class JP4WC_Address_Fields {
 		}
 
 		return $fields;
+	}
+
+	/**
+	 * Detect whether the current request is for the WooCommerce Blocks checkout.
+	 *
+	 * WC Blocks JS (checkout-frontend.js) renders the address summary client-side using
+	 * countryData[country]['format'], which is embedded by Checkout::enqueue_data() on the
+	 * checkout page load. Store API REST calls also need the JS-compatible format so that
+	 * server-side validation receives the same structure.
+	 *
+	 * @return bool
+	 */
+	private function is_blocks_checkout_context() {
+		// Admin (non-AJAX) is never a JS-rendered blocks context.
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return false;
+		}
+		// Order-received (thank-you) page uses PHP rendering even after a blocks checkout.
+		if ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) {
+			return false;
+		}
+		// WooCommerce Store API REST calls (checkout block submits here).
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( false !== strpos( $uri, '/wc/store/' ) ) {
+				return true;
+			}
+		}
+		// Checkout page: enqueue_data() embeds countryData here for the blocks JS.
+		// Classic checkout does not display a formatted address string during checkout,
+		// so returning the blocks-compatible format for is_checkout() is safe for both
+		// classic and blocks setups. FSE themes are also covered since is_checkout() works
+		// regardless of whether the block appears in post content or a site template.
+		return function_exists( 'is_checkout' ) && is_checkout();
 	}
 
 	/**
@@ -719,29 +747,6 @@ class JP4WC_Address_Fields {
 			unset( $customer_meta_fields['billing']['fields']['billing_yomigana_last_name'], $customer_meta_fields['billing']['fields']['billing_yomigana_first_name'], $customer_meta_fields['shipping']['fields']['shipping_yomigana_last_name'], $customer_meta_fields['shipping']['fields']['shipping_yomigana_first_name'] );
 		}
 		return $customer_meta_fields;
-	}
-
-	/**
-	 * Address correspondence in Japan
-	 *
-	 * @since  2.2.7
-	 * @param  array $fields The formatted address fields.
-	 * @return array $fields
-	 */
-	public function remove_checkout_fields_for_paypal( $fields ) {
-		$gateways         = WC()->payment_gateways->get_available_payment_gateways();
-		$enabled_gateways = array();
-		foreach ( $gateways as $key => $value ) {
-			if ( 'yes' === $value->enabled ) {
-				$enabled_gateways[] = $key;
-			}
-		}
-		$paypal_flag = in_array( 'ppec_paypal', $enabled_gateways );
-		if ( get_option( 'wc4jp-yomigana' ) && 1 === $paypal_flag ) {
-			$fields['yomigana_last_name']['required']  = false;
-			$fields['yomigana_first_name']['required'] = false;
-		}
-		return $fields;
 	}
 
 	/**

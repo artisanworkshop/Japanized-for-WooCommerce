@@ -91,18 +91,35 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * JP format must include honorific suffix when enabled.
+	 * Honorific suffix (様) must NOT appear in the format string.
+	 * It is applied via address_replacements() so PHP rendering (emails, admin) gets 様
+	 * while WooCommerce Blocks JS — which renders the format client-side and cannot
+	 * substitute custom text — never encounters a literal 様 placeholder.
 	 */
-	public function test_jp_address_format_includes_honorific_suffix_when_enabled() {
+	public function test_honorific_suffix_applied_via_replacements_not_format_string() {
 		update_option( 'wc4jp-honorific-suffix', '1' );
 
+		// Format string must be free of 様 so Blocks JS does not render it literally.
 		$formats = apply_filters( 'woocommerce_localisation_address_formats', array( 'JP' => '' ) );
-
 		$this->assertArrayHasKey( 'JP', $formats );
-		$this->assertStringContainsString(
-			'{last_name} {first_name}様',
+		$this->assertStringNotContainsString(
+			'様',
 			$formats['JP'],
-			'JP address format must append 様 to the name line when honorific suffix is enabled.'
+			'JP address format must not contain 様 — Blocks JS renders this client-side and cannot substitute it.'
+		);
+
+		// address_replacements() must append 様 to {first_name} for JP (PHP rendering path).
+		$args         = array(
+			'first_name' => 'Taro',
+			'last_name'  => 'Yamada',
+			'country'    => 'JP',
+		);
+		$replacements = apply_filters( 'woocommerce_formatted_address_replacements', array(), $args );
+		$this->assertArrayHasKey( '{first_name}', $replacements );
+		$this->assertStringContainsString(
+			'様',
+			$replacements['{first_name}'],
+			'address_replacements() must append 様 to {first_name} for JP country when honorific suffix is enabled.'
 		);
 	}
 
