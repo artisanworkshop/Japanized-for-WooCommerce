@@ -888,7 +888,7 @@ class JP4WC_Address_Fields {
 			$fn = $callback_data['function'];
 			if ( is_array( $fn ) && is_object( $fn[0] ) && method_exists( $fn[0], 'render_address_fields' ) ) {
 				unset( $wp_filter['woocommerce_my_account_after_my_address']->callbacks[10][ $callback_id ] );
-				break;
+				// Do not break — WC CheckoutFieldsFrontend may be registered alongside other callbacks.
 			}
 		}
 	}
