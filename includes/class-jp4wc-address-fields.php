@@ -297,9 +297,16 @@ class JP4WC_Address_Fields {
 	 * @return array
 	 */
 	public function formatted_address( $fields, $customer_id, $name ) {
+		// Try classic checkout meta key first, then fall back to block checkout (WC Additional Fields API) key.
+		$fields['yomigana_last_name'] = get_user_meta( $customer_id, $name . '_yomigana_last_name', true );
+		if ( empty( $fields['yomigana_last_name'] ) ) {
+			$fields['yomigana_last_name'] = get_user_meta( $customer_id, '_wc_' . $name . '/jp4wc/yomigana_last_name', true );
+		}
 		$fields['yomigana_first_name'] = get_user_meta( $customer_id, $name . '_yomigana_first_name', true );
-		$fields['yomigana_last_name']  = get_user_meta( $customer_id, $name . '_yomigana_last_name', true );
-		$fields['phone']               = get_user_meta( $customer_id, $name . '_phone', true );
+		if ( empty( $fields['yomigana_first_name'] ) ) {
+			$fields['yomigana_first_name'] = get_user_meta( $customer_id, '_wc_' . $name . '/jp4wc/yomigana_first_name', true );
+		}
+		$fields['phone'] = get_user_meta( $customer_id, $name . '_phone', true );
 
 		return $fields;
 	}
@@ -852,16 +859,16 @@ class JP4WC_Address_Fields {
 	}
 
 	/**
-	 * Suppress WC Additional Checkout Fields rendering on My Account address VIEW for classic checkout.
+	 * Suppress WC Additional Checkout Fields rendering on My Account address VIEW page.
 	 *
-	 * On classic (or FSE block) checkout sites, yomigana already appears inside the JP-formatted
-	 * address string via address_formats() + formatted_address(). WC's CheckoutFieldsFrontend::
-	 * render_address_fields() (priority 10) would render it again as a bare <br><strong> line,
-	 * causing a duplicate entry below the formatted address block.
+	 * On the My Account address view page, is_blocks_checkout_context() always returns false,
+	 * so address_formats() always takes the PHP rendering path and includes {yomigana_*} in
+	 * the JP format string (both classic and block checkout sites). WC's CheckoutFieldsFrontend::
+	 * render_address_fields() (priority 10) would then render yomigana again as a bare
+	 * <br><strong> line, causing a duplicate entry below the formatted address block.
 	 *
-	 * This callback (priority 9) removes that WC hook before it fires. On non-FSE block checkout
-	 * sites, add_yomigana_fields() returns early so yomigana is absent from the format string and
-	 * WC's rendering is the sole display mechanism — we leave it intact.
+	 * This callback (priority 9) unconditionally removes WC's render_address_fields hook
+	 * whenever yomigana is enabled, preventing the duplicate.
 	 *
 	 * @since 2.9.12
 	 * @param string $address_type 'billing' or 'shipping'.
@@ -871,13 +878,8 @@ class JP4WC_Address_Fields {
 		if ( ! get_option( 'wc4jp-yomigana' ) ) {
 			return;
 		}
-		// On non-FSE block checkout, yomigana is not in the format string — leave WC rendering intact.
-		$checkout_page_id   = wc_get_page_id( 'checkout' );
-		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
-		if ( $has_block_checkout ) {
-			return;
-		}
-		// Classic / FSE checkout: find and remove WC's render_address_fields callback (priority 10).
+		// address_formats() uses PHP rendering on My Account (is_blocks_checkout_context() = false),
+		// so {yomigana_*} is always in the format string — suppress WC's duplicate render_address_fields.
 		global $wp_filter;
 		if ( empty( $wp_filter['woocommerce_my_account_after_my_address']->callbacks[10] ) ) {
 			return;
