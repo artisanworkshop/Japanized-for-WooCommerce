@@ -29,7 +29,7 @@ export async function wpFetch(
 export const ADMIN_USER = 'admin';
 export const ADMIN_PASS = 'password';
 
-/** Read the Application Password written by global-setup.ts. Exported as getAuth for specs. */
+/** Read the Application Password written by global-setup.ts. Used by wcGet, wcPut, and related helpers. */
 export function getBasicAuth(): string {
 	// Prefer env var (set by global-setup in the same process).
 	if ( process.env.WP_APP_PASSWORD ) {

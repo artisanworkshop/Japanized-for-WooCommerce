@@ -206,7 +206,7 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Address_replacements() must not add honorific suffix for non-JP addresses.
+	 * address_replacements() must not add honorific suffix for non-JP addresses.
 	 */
 	public function test_address_replacements_does_not_add_honorific_suffix_for_non_jp() {
 		update_option( 'wc4jp-honorific-suffix', '1' );

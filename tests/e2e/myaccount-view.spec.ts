@@ -12,12 +12,10 @@
 import { test, expect } from '@playwright/test';
 import { execSync } from 'child_process';
 import {
-	ADMIN_USER,
-	ADMIN_PASS,
+	login,
 	getJp4wcSettings,
 	setJp4wcSettings,
 	wpFetch,
-	wcPut,
 	getCheckoutPageId,
 	setCheckoutPageId,
 	setCustomerAddress,
@@ -119,21 +117,13 @@ test.describe( 'My Account address view — yomigana deduplication', () => {
 		}
 	} );
 
-	async function loginAsAdmin( page: import('@playwright/test').Page ): Promise<void> {
-		await page.goto( `${ BASE_URL }/wp-login.php` );
-		await page.fill( '#user_login', ADMIN_USER );
-		await page.fill( '#user_pass', ADMIN_PASS );
-		await page.click( '#wp-submit' );
-		await page.waitForURL( /wp-admin/ );
-	}
-
 	// -----------------------------------------------------------------------
 	// Classic checkout
 	// -----------------------------------------------------------------------
 
 	test( 'Classic: address view shows yomigana exactly once (no WC-API duplicate)', async ( { page, request } ) => {
 		await setCheckoutPageId( request, BASE_URL, classicPageId );
-		await loginAsAdmin( page );
+		await login( page, BASE_URL );
 
 		await page.goto( `${ BASE_URL }/my-account/?edit-address` );
 		await page.waitForLoadState( 'networkidle' );
@@ -154,7 +144,7 @@ test.describe( 'My Account address view — yomigana deduplication', () => {
 
 	test( 'Block: address view shows yomigana exactly once (no WC-API duplicate)', async ( { page, request } ) => {
 		await setCheckoutPageId( request, BASE_URL, blockPageId );
-		await loginAsAdmin( page );
+		await login( page, BASE_URL );
 
 		await page.goto( `${ BASE_URL }/my-account/?edit-address` );
 		await page.waitForLoadState( 'networkidle' );
@@ -182,7 +172,7 @@ test.describe( 'My Account address view — yomigana deduplication', () => {
 			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_first_name`, 'たろう' );
 		}
 
-		await loginAsAdmin( page );
+		await login( page, BASE_URL );
 
 		await page.goto( `${ BASE_URL }/my-account/?edit-address` );
 		await page.waitForLoadState( 'networkidle' );
@@ -220,7 +210,7 @@ test.describe( 'My Account address view — yomigana deduplication', () => {
 			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_first_name`, 'たろう-block' );
 		}
 
-		await loginAsAdmin( page );
+		await login( page, BASE_URL );
 		await page.goto( `${ BASE_URL }/my-account/?edit-address` );
 		await page.waitForLoadState( 'networkidle' );
 
@@ -250,7 +240,7 @@ test.describe( 'My Account address view — yomigana deduplication', () => {
 			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_first_name`, 'たろう-block' );
 		}
 
-		await loginAsAdmin( page );
+		await login( page, BASE_URL );
 		await page.goto( `${ BASE_URL }/my-account/?edit-address` );
 		await page.waitForLoadState( 'networkidle' );
 

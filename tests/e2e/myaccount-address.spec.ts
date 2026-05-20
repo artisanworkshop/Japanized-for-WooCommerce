@@ -14,13 +14,10 @@
  */
 import { test, expect } from '@playwright/test';
 import {
-	ADMIN_USER,
-	ADMIN_PASS,
+	login,
 	getJp4wcSettings,
 	setJp4wcSettings,
 	wpFetch,
-	wcGet,
-	wcPut,
 	getCheckoutPageId,
 	setCheckoutPageId,
 } from './utils/helpers';
@@ -95,12 +92,7 @@ test.describe( 'My Account address edit — yomigana deduplication', () => {
 	test( 'Classic: billing edit shows only traditional yomigana (no WC-API duplicate)', async ( { page, request } ) => {
 		await setCheckoutPageId( request, BASE_URL, classicPageId );
 
-		// Log in as admin via the login form.
-		await page.goto( `${ BASE_URL }/wp-login.php` );
-		await page.fill( '#user_login', ADMIN_USER );
-		await page.fill( '#user_pass', ADMIN_PASS );
-		await page.click( '#wp-submit' );
-		await page.waitForURL( /wp-admin/ );
+		await login( page, BASE_URL );
 
 		await page.goto( `${ BASE_URL }/my-account/edit-address/billing/` );
 		await page.waitForLoadState( 'networkidle' );
@@ -124,11 +116,7 @@ test.describe( 'My Account address edit — yomigana deduplication', () => {
 	test( 'Classic: shipping edit shows only traditional yomigana (no WC-API duplicate)', async ( { page, request } ) => {
 		await setCheckoutPageId( request, BASE_URL, classicPageId );
 
-		await page.goto( `${ BASE_URL }/wp-login.php` );
-		await page.fill( '#user_login', ADMIN_USER );
-		await page.fill( '#user_pass', ADMIN_PASS );
-		await page.click( '#wp-submit' );
-		await page.waitForURL( /wp-admin/ );
+		await login( page, BASE_URL );
 
 		await page.goto( `${ BASE_URL }/my-account/edit-address/shipping/` );
 		await page.waitForLoadState( 'networkidle' );
@@ -151,11 +139,7 @@ test.describe( 'My Account address edit — yomigana deduplication', () => {
 	test( 'Block: billing edit shows only WC-API yomigana (no traditional duplicate)', async ( { page, request } ) => {
 		await setCheckoutPageId( request, BASE_URL, blockPageId );
 
-		await page.goto( `${ BASE_URL }/wp-login.php` );
-		await page.fill( '#user_login', ADMIN_USER );
-		await page.fill( '#user_pass', ADMIN_PASS );
-		await page.click( '#wp-submit' );
-		await page.waitForURL( /wp-admin/ );
+		await login( page, BASE_URL );
 
 		await page.goto( `${ BASE_URL }/my-account/edit-address/billing/` );
 		await page.waitForLoadState( 'networkidle' );

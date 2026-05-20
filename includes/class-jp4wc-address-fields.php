@@ -301,23 +301,24 @@ class JP4WC_Address_Fields {
 		// Block checkout saves to _wc_{type}/jp4wc/* keys; classic checkout saves to {type}_yomigana_* keys.
 		// When both are present (e.g. after switching checkout types), use the key that matches the
 		// current checkout configuration so the most recently entered value is shown.
-		// If checkout page is not configured, fall back to block (WC Additional Fields API) keys first.
-		$checkout_page_id   = wc_get_page_id( 'checkout' );
-		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+		// When the checkout page is not configured (no page ID), we cannot detect the type and
+		// default to block (WC Additional Fields API) keys, matching the block-preferred fallback.
+		$checkout_page_id     = wc_get_page_id( 'checkout' );
+		$has_classic_checkout = $checkout_page_id && ! has_block( 'woocommerce/checkout', $checkout_page_id );
 
 		$block_last    = get_user_meta( $customer_id, '_wc_' . $name . '/jp4wc/yomigana_last_name', true );
 		$block_first   = get_user_meta( $customer_id, '_wc_' . $name . '/jp4wc/yomigana_first_name', true );
 		$classic_last  = get_user_meta( $customer_id, $name . '_yomigana_last_name', true );
 		$classic_first = get_user_meta( $customer_id, $name . '_yomigana_first_name', true );
 
-		if ( $has_block_checkout ) {
-			// Block checkout: prefer block keys, fall back to classic.
-			$fields['yomigana_last_name']  = ! empty( $block_last ) ? $block_last : $classic_last;
-			$fields['yomigana_first_name'] = ! empty( $block_first ) ? $block_first : $classic_first;
-		} else {
-			// Classic checkout (or no page configured): prefer classic keys, fall back to block.
+		if ( $has_classic_checkout ) {
+			// Classic checkout: prefer classic keys, fall back to block.
 			$fields['yomigana_last_name']  = ! empty( $classic_last ) ? $classic_last : $block_last;
 			$fields['yomigana_first_name'] = ! empty( $classic_first ) ? $classic_first : $block_first;
+		} else {
+			// Block checkout or no checkout page configured: prefer block keys, fall back to classic.
+			$fields['yomigana_last_name']  = ! empty( $block_last ) ? $block_last : $classic_last;
+			$fields['yomigana_first_name'] = ! empty( $block_first ) ? $block_first : $classic_first;
 		}
 
 		$fields['phone'] = get_user_meta( $customer_id, $name . '_phone', true );
