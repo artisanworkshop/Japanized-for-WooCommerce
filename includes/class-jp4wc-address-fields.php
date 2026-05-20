@@ -194,6 +194,13 @@ class JP4WC_Address_Fields {
 			$fields['{last_name}'] = $args['last_name'];
 		}
 
+		// Apply honorific suffix here (PHP-only): WooCommerce Blocks JS replaces format
+		// placeholders client-side and never calls this filter, so 様 is kept out of the
+		// format string itself (see address_formats()).
+		if ( get_option( 'wc4jp-honorific-suffix' ) && isset( $fields['{first_name}'] ) && isset( $args['country'] ) && 'JP' === $args['country'] ) {
+			$fields['{first_name}'] .= '様';
+		}
+
 		if ( get_option( 'wc4jp-yomigana' ) ) {
 			$fields['{yomigana_last_name}']  = isset( $args['yomigana_last_name'] ) ? $args['yomigana_last_name'] : '';
 			$fields['{yomigana_first_name}'] = isset( $args['yomigana_first_name'] ) ? $args['yomigana_first_name'] : '';
@@ -216,13 +223,7 @@ class JP4WC_Address_Fields {
 	public function address_formats( $fields ) {
 		$include_yomigana = get_option( 'wc4jp-yomigana' );
 
-		$country_format = $this->show_country_in_address() ? "\n {country}" : '';
-
-		// honorific suffix.
-		$honorific_suffix = '';
-		if ( get_option( 'wc4jp-honorific-suffix' ) ) {
-			$honorific_suffix = '様';
-		}
+		$country_inner = $this->show_country_in_address() ? '{country}' : '';
 
 		// PayPal Payment compatible.
 		if ( isset( $_GET['woo-paypal-return'] ) && true === $_GET['woo-paypal-return'] && isset( $_GET['token'] ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
@@ -232,10 +233,15 @@ class JP4WC_Address_Fields {
 		}
 
 		// Build format string based on settings.
+		// {last_name} {first_name} must be followed immediately by \n: WooCommerce Blocks JS
+		// (checkout-frontend.js) identifies the name line by searching for this pattern and
+		// removes it before rendering the address portion. Without the trailing \n the name
+		// placeholders are never substituted and appear verbatim in the Checkout Block UI.
+		// Honorific suffix (様) is applied in address_replacements() for PHP-only contexts.
 		if ( get_option( 'wc4jp-company-name' ) ) {
-			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . $country_format;
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}\n" . $country_inner;
 		} else {
-			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}" . $honorific_suffix . $country_format;
+			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}\n" . $country_inner;
 		}
 
 		if ( is_cart() ) {
