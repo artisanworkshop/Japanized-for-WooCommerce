@@ -779,7 +779,7 @@ class JP4WC_Address_Fields {
 			}
 		}
 		$paypal_flag = in_array( 'ppec_paypal', $enabled_gateways, true );
-		if ( get_option( 'wc4jp-yomigana' ) && 1 === $paypal_flag ) {
+		if ( get_option( 'wc4jp-yomigana' ) && $paypal_flag ) {
 			$fields['yomigana_last_name']['required']  = false;
 			$fields['yomigana_first_name']['required'] = false;
 		}
