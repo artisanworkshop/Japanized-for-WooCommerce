@@ -197,7 +197,7 @@ class JP4WC_Address_Fields {
 		// Apply honorific suffix here (PHP-only): WooCommerce Blocks JS replaces format
 		// placeholders client-side and never calls this filter, so 様 is kept out of the
 		// format string itself (see address_formats()).
-		if ( get_option( 'wc4jp-honorific-suffix' ) && isset( $fields['{first_name}'] ) ) {
+		if ( get_option( 'wc4jp-honorific-suffix' ) && isset( $fields['{first_name}'] ) && isset( $args['country'] ) && 'JP' === $args['country'] ) {
 			$fields['{first_name}'] .= '様';
 		}
 
