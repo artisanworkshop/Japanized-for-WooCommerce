@@ -204,4 +204,69 @@ test.describe( 'My Account address view — yomigana deduplication', () => {
 			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_first_name`, '' );
 		}
 	} );
+
+	// -----------------------------------------------------------------------
+	// Priority: when both meta key sets are present, checkout type wins
+	// -----------------------------------------------------------------------
+
+	test( 'Block (both meta): block keys take priority over classic keys', async ( { page, request } ) => {
+		await setCheckoutPageId( request, BASE_URL, blockPageId );
+
+		// Set DIFFERENT values in each meta key set so we can tell which is displayed.
+		for ( const type of [ 'billing', 'shipping' ] ) {
+			setUserMetaCli( 1, `${ type }_yomigana_last_name`, 'やまだ-classic' );
+			setUserMetaCli( 1, `${ type }_yomigana_first_name`, 'たろう-classic' );
+			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_last_name`, 'やまだ-block' );
+			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_first_name`, 'たろう-block' );
+		}
+
+		await loginAsAdmin( page );
+		await page.goto( `${ BASE_URL }/my-account/?edit-address` );
+		await page.waitForLoadState( 'networkidle' );
+
+		await page.screenshot( { path: 'test-results/block-priority-view-page.png', fullPage: true } );
+
+		// Block checkout configured → block keys must win.
+		const content = page.locator( '.woocommerce-address-fields, .woocommerce-MyAccount-content' );
+		await expect( content ).toContainText( 'やまだ-block' );
+		await expect( content ).not.toContainText( 'やまだ-classic' );
+
+		// Restore.
+		for ( const type of [ 'billing', 'shipping' ] ) {
+			setUserMetaCli( 1, `${ type }_yomigana_last_name`, 'やまだ' );
+			setUserMetaCli( 1, `${ type }_yomigana_first_name`, 'たろう' );
+			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_last_name`, '' );
+			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_first_name`, '' );
+		}
+	} );
+
+	test( 'Classic (both meta): classic keys take priority over block keys', async ( { page, request } ) => {
+		await setCheckoutPageId( request, BASE_URL, classicPageId );
+
+		for ( const type of [ 'billing', 'shipping' ] ) {
+			setUserMetaCli( 1, `${ type }_yomigana_last_name`, 'やまだ-classic' );
+			setUserMetaCli( 1, `${ type }_yomigana_first_name`, 'たろう-classic' );
+			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_last_name`, 'やまだ-block' );
+			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_first_name`, 'たろう-block' );
+		}
+
+		await loginAsAdmin( page );
+		await page.goto( `${ BASE_URL }/my-account/?edit-address` );
+		await page.waitForLoadState( 'networkidle' );
+
+		await page.screenshot( { path: 'test-results/classic-priority-view-page.png', fullPage: true } );
+
+		// Classic checkout configured → classic keys must win.
+		const content = page.locator( '.woocommerce-address-fields, .woocommerce-MyAccount-content' );
+		await expect( content ).toContainText( 'やまだ-classic' );
+		await expect( content ).not.toContainText( 'やまだ-block' );
+
+		// Restore.
+		for ( const type of [ 'billing', 'shipping' ] ) {
+			setUserMetaCli( 1, `${ type }_yomigana_last_name`, 'やまだ' );
+			setUserMetaCli( 1, `${ type }_yomigana_first_name`, 'たろう' );
+			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_last_name`, '' );
+			setUserMetaCli( 1, `_wc_${ type }/jp4wc/yomigana_first_name`, '' );
+		}
+	} );
 } );
