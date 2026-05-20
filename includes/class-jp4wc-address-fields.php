@@ -65,6 +65,8 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_email_preview_dummy_product_variation', array( $this, 'jp4wc_email_preview_dummy_product_variation' ), 10 );
 		// Remove WC Additional Checkout Fields API duplicates from My Account address edit form.
 		add_filter( 'woocommerce_address_to_edit', array( $this, 'remove_duplicate_yomigana_from_address_edit' ), 20, 2 );
+		// Suppress WC Additional Fields API rendering on My Account address view for classic checkout.
+		add_action( 'woocommerce_my_account_after_my_address', array( $this, 'suppress_wc_additional_fields_view_on_classic' ), 9 );
 	}
 
 	/**
@@ -847,6 +849,46 @@ class JP4WC_Address_Fields {
 			}
 		}
 		return $address;
+	}
+
+	/**
+	 * Suppress WC Additional Checkout Fields rendering on My Account address VIEW for classic checkout.
+	 *
+	 * On classic (or FSE block) checkout sites, yomigana already appears inside the JP-formatted
+	 * address string via address_formats() + formatted_address(). WC's CheckoutFieldsFrontend::
+	 * render_address_fields() (priority 10) would render it again as a bare <br><strong> line,
+	 * causing a duplicate entry below the formatted address block.
+	 *
+	 * This callback (priority 9) removes that WC hook before it fires. On non-FSE block checkout
+	 * sites, add_yomigana_fields() returns early so yomigana is absent from the format string and
+	 * WC's rendering is the sole display mechanism — we leave it intact.
+	 *
+	 * @since 2.9.12
+	 * @param string $address_type 'billing' or 'shipping'.
+	 * @return void
+	 */
+	public function suppress_wc_additional_fields_view_on_classic( $address_type ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		if ( ! get_option( 'wc4jp-yomigana' ) ) {
+			return;
+		}
+		// On non-FSE block checkout, yomigana is not in the format string — leave WC rendering intact.
+		$checkout_page_id   = wc_get_page_id( 'checkout' );
+		$has_block_checkout = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+		if ( $has_block_checkout ) {
+			return;
+		}
+		// Classic / FSE checkout: find and remove WC's render_address_fields callback (priority 10).
+		global $wp_filter;
+		if ( empty( $wp_filter['woocommerce_my_account_after_my_address']->callbacks[10] ) ) {
+			return;
+		}
+		foreach ( $wp_filter['woocommerce_my_account_after_my_address']->callbacks[10] as $callback_id => $callback_data ) {
+			$fn = $callback_data['function'];
+			if ( is_array( $fn ) && is_object( $fn[0] ) && method_exists( $fn[0], 'render_address_fields' ) ) {
+				unset( $wp_filter['woocommerce_my_account_after_my_address']->callbacks[10][ $callback_id ] );
+				break;
+			}
+		}
 	}
 }
 // Address Fields Class load.

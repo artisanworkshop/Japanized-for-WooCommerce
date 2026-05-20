@@ -8,6 +8,22 @@
  * @package Japanized_For_WooCommerce
  */
 
+// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed,Generic.Files.OneObjectStructurePerFile.MultipleFound
+// Test files mix function stubs with multiple class declarations; these rules do not apply here.
+
+// Stub WooCommerce functions that are absent in the minimal WP test environment.
+if ( ! function_exists( 'wc_get_page_id' ) ) {
+	/**
+	 * Stub: returns 0 (no page configured), simulating classic/non-block checkout.
+	 *
+	 * @param string $page Page slug.
+	 * @return int
+	 */
+	function wc_get_page_id( $page ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		return 0;
+	}
+}
+
 /**
  * JP4WC_Address_Email_Test
  *
@@ -18,6 +34,9 @@
  */
 class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 
+	/**
+	 * Set up test environment before each test.
+	 */
 	public function setUp(): void {
 		parent::setUp();
 
@@ -26,6 +45,9 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * Tear down test environment after each test.
+	 */
 	public function tearDown(): void {
 		delete_option( 'wc4jp-yomigana' );
 		delete_option( 'wc4jp-yomigana-required' );
@@ -147,7 +169,7 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 	// ------------------------------------------------------------------
 
 	/**
-	 * address_replacements() must populate {yomigana_*} from the args array.
+	 * Address_replacements() must populate {yomigana_*} from the args array.
 	 */
 	public function test_address_replacements_sets_yomigana_values() {
 		update_option( 'wc4jp-yomigana', '1' );
@@ -168,7 +190,7 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * address_replacements() must not set {yomigana_*} when the option is disabled.
+	 * Address_replacements() must not set {yomigana_*} when the option is disabled.
 	 */
 	public function test_address_replacements_skips_yomigana_when_disabled() {
 		delete_option( 'wc4jp-yomigana' );
@@ -184,7 +206,7 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * address_replacements() must not add honorific suffix for non-JP addresses.
+	 * Address_replacements() must not add honorific suffix for non-JP addresses.
 	 */
 	public function test_address_replacements_does_not_add_honorific_suffix_for_non_jp() {
 		update_option( 'wc4jp-honorific-suffix', '1' );
@@ -324,23 +346,23 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		$af = new JP4WC_Address_Fields();
 
 		$address = array(
-			'billing_last_name'                      => array(
+			'billing_last_name'                     => array(
 				'label' => 'Last Name',
 				'value' => 'Yamada',
 			),
-			'billing_first_name'                     => array(
+			'billing_first_name'                    => array(
 				'label' => 'First Name',
 				'value' => 'Taro',
 			),
-			'billing_yomigana_last_name'             => array(
+			'billing_yomigana_last_name'            => array(
 				'label' => 'Yomigana Last',
 				'value' => 'ヤマダ',
 			),
-			'billing_yomigana_first_name'            => array(
+			'billing_yomigana_first_name'           => array(
 				'label' => 'Yomigana First',
 				'value' => 'タロウ',
 			),
-			'billing_email'                          => array(
+			'billing_email'                         => array(
 				'label' => 'Email',
 				'value' => 'test@example.com',
 			),
@@ -372,15 +394,15 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		$af = new JP4WC_Address_Fields();
 
 		$address = array(
-			'shipping_last_name'                      => array(
+			'shipping_last_name'                     => array(
 				'label' => 'Last Name',
 				'value' => 'Suzuki',
 			),
-			'shipping_yomigana_last_name'             => array(
+			'shipping_yomigana_last_name'            => array(
 				'label' => 'Yomigana Last',
 				'value' => 'スズキ',
 			),
-			'shipping_yomigana_first_name'            => array(
+			'shipping_yomigana_first_name'           => array(
 				'label' => 'Yomigana First',
 				'value' => 'ハナコ',
 			),
@@ -411,11 +433,11 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		$af = new JP4WC_Address_Fields();
 
 		$address = array(
-			'billing_last_name'                      => array(
+			'billing_last_name'                     => array(
 				'label' => 'Last Name',
 				'value' => 'Yamada',
 			),
-			'billing_email'                          => array(
+			'billing_email'                         => array(
 				'label' => 'Email',
 				'value' => 'test@example.com',
 			),
@@ -444,11 +466,11 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		$af = new JP4WC_Address_Fields();
 
 		$address = array(
-			'billing_yomigana_last_name'             => array(
+			'billing_yomigana_last_name'           => array(
 				'label' => 'Yomigana Last',
 				'value' => 'ヤマダ',
 			),
-			'_wc_billing/jp4wc/yomigana_last_name'  => array(
+			'_wc_billing/jp4wc/yomigana_last_name' => array(
 				'label' => 'Yomigana Last',
 				'value' => 'ヤマダ',
 			),
@@ -457,5 +479,81 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		$result = $af->remove_duplicate_yomigana_from_address_edit( $address, 'billing' );
 
 		$this->assertArrayHasKey( '_wc_billing/jp4wc/yomigana_last_name', $result, 'WC-added fields must remain when yomigana option is disabled.' );
+	}
+
+	// ------------------------------------------------------------------
+	// My Account address view: suppress_wc_additional_fields_view_on_classic
+	// ------------------------------------------------------------------
+
+	/**
+	 * On classic checkout with yomigana enabled, a mock render_address_fields callback
+	 * at priority 10 must be removed by suppress_wc_additional_fields_view_on_classic.
+	 *
+	 * The test environment has no WooCommerce/checkout block on the checkout page
+	 * (wc_get_page_id('checkout') returns 0 or a page without that block), so
+	 * has_block() returns false — the classic-checkout suppression path is taken.
+	 */
+	public function test_suppress_removes_wc_render_address_fields_on_classic_checkout() {
+		update_option( 'wc4jp-yomigana', '1' );
+
+		// Simulate WC CheckoutFieldsFrontend having render_address_fields hooked at priority 10.
+		$mock = new JP4WC_Test_CheckoutFieldsFrontend_Mock();
+		add_action( 'woocommerce_my_account_after_my_address', array( $mock, 'render_address_fields' ), 10 );
+
+		$af = new JP4WC_Address_Fields();
+		$af->suppress_wc_additional_fields_view_on_classic( 'billing' );
+
+		// The mock callback must have been removed.
+		global $wp_filter;
+		$callbacks_at_10 = $wp_filter['woocommerce_my_account_after_my_address']->callbacks[10] ?? array();
+		foreach ( $callbacks_at_10 as $callback_data ) {
+			$fn = $callback_data['function'];
+			if ( is_array( $fn ) && $fn[0] === $mock ) {
+				$this->fail( 'render_address_fields callback should have been removed on classic checkout.' );
+			}
+		}
+		$this->assertTrue( true, 'render_address_fields callback was correctly removed.' );
+	}
+
+	/**
+	 * When yomigana option is disabled, suppress_wc_additional_fields_view_on_classic
+	 * must leave WC's render_address_fields callback intact.
+	 */
+	public function test_suppress_skips_removal_when_yomigana_disabled() {
+		delete_option( 'wc4jp-yomigana' );
+
+		$mock = new JP4WC_Test_CheckoutFieldsFrontend_Mock();
+		add_action( 'woocommerce_my_account_after_my_address', array( $mock, 'render_address_fields' ), 10 );
+
+		$af = new JP4WC_Address_Fields();
+		$af->suppress_wc_additional_fields_view_on_classic( 'billing' );
+
+		// Callback must still be present.
+		global $wp_filter;
+		$found           = false;
+		$callbacks_at_10 = $wp_filter['woocommerce_my_account_after_my_address']->callbacks[10] ?? array();
+		foreach ( $callbacks_at_10 as $callback_data ) {
+			$fn = $callback_data['function'];
+			if ( is_array( $fn ) && $fn[0] === $mock ) {
+				$found = true;
+				break;
+			}
+		}
+		$this->assertTrue( $found, 'render_address_fields callback must remain when yomigana option is disabled.' );
+	}
+}
+
+/**
+ * Minimal stand-in for WC CheckoutFieldsFrontend — provides render_address_fields()
+ * so method_exists() detection inside suppress_wc_additional_fields_view_on_classic works.
+ */
+class JP4WC_Test_CheckoutFieldsFrontend_Mock {
+	/**
+	 * Stub render_address_fields — intentionally empty for detection testing only.
+	 *
+	 * @param string $address_type Address type (billing or shipping).
+	 * @return void
+	 */
+	public function render_address_fields( $address_type ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 	}
 }
