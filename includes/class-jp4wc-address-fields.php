@@ -222,23 +222,35 @@ class JP4WC_Address_Fields {
 	 */
 	public function address_formats( $fields ) {
 		$include_yomigana = get_option( 'wc4jp-yomigana' );
+		$include_company  = get_option( 'wc4jp-company-name' );
+		$country_inner    = $this->show_country_in_address() ? '{country}' : '';
 
-		$country_inner = $this->show_country_in_address() ? '{country}' : '';
+		// For the WooCommerce Blocks checkout (JS rendering), the name placeholder must appear
+		// first in the format string so checkout-frontend.js can identify and strip it before
+		// replacing address-only placeholders. Custom placeholders like {yomigana_*} are not
+		// in the JS replacement table and would appear verbatim if included here.
+		// Honorific suffix (様) is applied in address_replacements() for PHP-only contexts.
+		if ( $this->is_blocks_checkout_context() ) {
+			$parts = array( '{last_name} {first_name}', '〒{postcode}', '{state}{city}{address_1}', '{address_2}' );
+			if ( $include_company ) {
+				$parts[] = '{company}';
+			}
+			if ( $country_inner ) {
+				$parts[] = $country_inner;
+			}
+			$fields['JP'] = implode( "\n", $parts );
+			return $fields;
+		}
 
+		// PHP rendering contexts (order emails, admin, My Account, order confirmation).
 		// PayPal Payment compatible.
-		if ( isset( $_GET['woo-paypal-return'] ) && true === $_GET['woo-paypal-return'] && isset( $_GET['token'] ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( isset( $_GET['woo-paypal-return'] ) && true === $_GET['woo-paypal-return'] && isset( $_GET['token'] ) ) {// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Recommended
 			$set_yomigana = '';
 		} else {
 			$set_yomigana = $include_yomigana ? "\n{yomigana_last_name} {yomigana_first_name}" : '';
 		}
 
-		// Build format string based on settings.
-		// {last_name} {first_name} must be followed immediately by \n: WooCommerce Blocks JS
-		// (checkout-frontend.js) identifies the name line by searching for this pattern and
-		// removes it before rendering the address portion. Without the trailing \n the name
-		// placeholders are never substituted and appear verbatim in the Checkout Block UI.
-		// Honorific suffix (様) is applied in address_replacements() for PHP-only contexts.
-		if ( get_option( 'wc4jp-company-name' ) ) {
+		if ( $include_company ) {
 			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}\n{company}" . $set_yomigana . "\n{last_name} {first_name}\n" . $country_inner;
 		} else {
 			$fields['JP'] = "〒{postcode}\n{state}{city}{address_1}\n{address_2}" . $set_yomigana . "\n{last_name} {first_name}\n" . $country_inner;
@@ -252,6 +264,36 @@ class JP4WC_Address_Fields {
 		}
 
 		return $fields;
+	}
+
+	/**
+	 * Detect whether the current request is for the WooCommerce Blocks checkout.
+	 *
+	 * WC Blocks JS (checkout-frontend.js) renders the address summary client-side using
+	 * countryData[country]['format'], which is embedded by Checkout::enqueue_data() on the
+	 * checkout page load. Store API REST calls also need the JS-compatible format so that
+	 * server-side validation receives the same structure.
+	 *
+	 * @return bool
+	 */
+	private function is_blocks_checkout_context() {
+		// Admin (non-AJAX) is never a JS-rendered blocks context.
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return false;
+		}
+		// Order-received (thank-you) page uses PHP rendering even after a blocks checkout.
+		if ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) {
+			return false;
+		}
+		// WooCommerce Store API REST calls (checkout block submits here).
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( false !== strpos( $uri, '/wc/store/' ) ) {
+				return true;
+			}
+		}
+		// Checkout page: enqueue_data() embeds countryData here for the blocks JS.
+		return function_exists( 'is_checkout' ) && is_checkout();
 	}
 
 	/**
@@ -736,7 +778,7 @@ class JP4WC_Address_Fields {
 				$enabled_gateways[] = $key;
 			}
 		}
-		$paypal_flag = in_array( 'ppec_paypal', $enabled_gateways );
+		$paypal_flag = in_array( 'ppec_paypal', $enabled_gateways, true );
 		if ( get_option( 'wc4jp-yomigana' ) && 1 === $paypal_flag ) {
 			$fields['yomigana_last_name']['required']  = false;
 			$fields['yomigana_first_name']['required'] = false;
