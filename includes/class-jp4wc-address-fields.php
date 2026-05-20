@@ -41,17 +41,6 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_billing_fields', array( $this, 'billing_address_fields' ) );
 		add_filter( 'woocommerce_shipping_fields', array( $this, 'shipping_address_fields' ), 20 );
 		add_filter( 'woocommerce_formatted_address_replacements', array( $this, 'address_replacements' ), 20, 2 );
-		add_filter(
-			'woocommerce_localisation_address_formats',
-			function ( $formats ) {
-				if ( isset( $_GET['woo-paypal-return'] ) ) {
-					$_GET['woo-paypal-return'] = wp_validate_boolean( wp_unslash( $_GET['woo-paypal-return'] ) );
-				}
-
-				return $this->address_formats( $formats );
-			},
-			20
-		);
 		// My Account Display for address.
 		add_filter( 'woocommerce_my_account_my_address_formatted_address', array( $this, 'formatted_address' ), 20, 3 );// template/myaccount/my-address.php
 		// Checkout Display for address.
@@ -292,8 +281,18 @@ class JP4WC_Address_Fields {
 				return true;
 			}
 		}
-		// Checkout page: enqueue_data() embeds countryData here for the blocks JS.
-		return function_exists( 'is_checkout' ) && is_checkout();
+		// Checkout page: only treat it as a blocks context when the Checkout block is present.
+		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
+			return false;
+		}
+		if ( ! function_exists( 'has_block' ) ) {
+			return false;
+		}
+		$post_id = get_queried_object_id();
+		if ( empty( $post_id ) ) {
+			return false;
+		}
+		return has_block( 'woocommerce/checkout', $post_id );
 	}
 
 	/**
