@@ -63,6 +63,8 @@ class JP4WC_Address_Fields {
 		add_filter( 'woocommerce_email_preview_dummy_address', array( $this, 'jp4wc_email_preview_dummy_address' ), 10 );
 		add_filter( 'woocommerce_email_preview_dummy_product', array( $this, 'jp4wc_email_preview_dummy_product' ), 10 );
 		add_filter( 'woocommerce_email_preview_dummy_product_variation', array( $this, 'jp4wc_email_preview_dummy_product_variation' ), 10 );
+		// Remove WC Additional Checkout Fields API duplicates from My Account address edit form.
+		add_filter( 'woocommerce_address_to_edit', array( $this, 'remove_duplicate_yomigana_from_address_edit' ), 20, 2 );
 	}
 
 	/**
@@ -807,6 +809,44 @@ class JP4WC_Address_Fields {
 	public function jp4wc_email_preview_dummy_product_variation( $product ) {
 		$product->set_price( 1500 );
 		return $product;
+	}
+
+	/**
+	 * Remove WC Additional Checkout Fields API yomigana duplicates from My Account address edit.
+	 *
+	 * WC's CheckoutFieldsFrontend::edit_address_fields() (priority 10) always injects
+	 * _wc_{type}/jp4wc/* fields into the My Account address edit form. On classic-checkout
+	 * sites (and FSE block-checkout sites where has_block() returns false) JP4WC's own
+	 * {type}_yomigana_* fields are also present, causing a second yomigana row below the
+	 * email field with an incorrect name attribute.
+	 *
+	 * When the traditional {type}_yomigana_last_name field is present we remove the
+	 * WC-added duplicates so only the traditional fields (positioned near the name section)
+	 * remain visible.
+	 *
+	 * On non-FSE block-checkout sites add_yomigana_fields() returns early, so the
+	 * traditional field is absent. In that case this guard is false and the WC-added
+	 * fields are left intact (single display via block API).
+	 *
+	 * @since 2.9.12
+	 * @param array  $address      Address fields array for the edit form.
+	 * @param string $address_type 'billing' or 'shipping'.
+	 * @return array
+	 */
+	public function remove_duplicate_yomigana_from_address_edit( $address, $address_type ) {
+		if ( ! get_option( 'wc4jp-yomigana' ) ) {
+			return $address;
+		}
+		if ( ! isset( $address[ $address_type . '_yomigana_last_name' ] ) ) {
+			return $address;
+		}
+		$namespace_prefix = '_wc_' . $address_type . '/jp4wc/';
+		foreach ( array_keys( $address ) as $key ) {
+			if ( 0 === strpos( $key, $namespace_prefix ) ) {
+				unset( $address[ $key ] );
+			}
+		}
+		return $address;
 	}
 }
 // Address Fields Class load.

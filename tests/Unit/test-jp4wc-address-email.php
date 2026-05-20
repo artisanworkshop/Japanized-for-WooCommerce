@@ -27,12 +27,13 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown(): void {
-		parent::tearDown();
 		delete_option( 'wc4jp-yomigana' );
 		delete_option( 'wc4jp-yomigana-required' );
 		delete_option( 'wc4jp-honorific-suffix' );
 		delete_option( 'wc4jp-company-name' );
+		parent::tearDown();
 	}
+
 
 	// ------------------------------------------------------------------
 	// Layer 1: woocommerce_localisation_address_formats filter registration
@@ -305,5 +306,156 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		);
 
 		$order->delete( true );
+	}
+
+	// ------------------------------------------------------------------
+	// My Account address edit: remove_duplicate_yomigana_from_address_edit
+	// ------------------------------------------------------------------
+
+	/**
+	 * When traditional yomigana fields are present, WC-added _wc_billing/jp4wc/* duplicates
+	 * must be removed so only one yomigana row appears in My Account billing address edit.
+	 */
+	public function test_duplicate_wc_added_yomigana_removed_from_billing_address_edit() {
+		update_option( 'wc4jp-yomigana', '1' );
+
+		// Call the method directly to avoid WP_UnitTestCase's _restore_hooks() resetting
+		// $wp_filter between tests — the hook state is unreliable across test methods.
+		$af = new JP4WC_Address_Fields();
+
+		$address = array(
+			'billing_last_name'                      => array(
+				'label' => 'Last Name',
+				'value' => 'Yamada',
+			),
+			'billing_first_name'                     => array(
+				'label' => 'First Name',
+				'value' => 'Taro',
+			),
+			'billing_yomigana_last_name'             => array(
+				'label' => 'Yomigana Last',
+				'value' => 'ヤマダ',
+			),
+			'billing_yomigana_first_name'            => array(
+				'label' => 'Yomigana First',
+				'value' => 'タロウ',
+			),
+			'billing_email'                          => array(
+				'label' => 'Email',
+				'value' => 'test@example.com',
+			),
+			'_wc_billing/jp4wc/yomigana_last_name'  => array(
+				'label' => 'Yomigana Last',
+				'value' => 'ヤマダ',
+			),
+			'_wc_billing/jp4wc/yomigana_first_name' => array(
+				'label' => 'Yomigana First',
+				'value' => 'タロウ',
+			),
+		);
+
+		$result = $af->remove_duplicate_yomigana_from_address_edit( $address, 'billing' );
+
+		$this->assertArrayHasKey( 'billing_yomigana_last_name', $result, 'Traditional yomigana_last_name must remain.' );
+		$this->assertArrayHasKey( 'billing_yomigana_first_name', $result, 'Traditional yomigana_first_name must remain.' );
+		$this->assertArrayNotHasKey( '_wc_billing/jp4wc/yomigana_last_name', $result, 'WC-added _wc_billing/jp4wc/yomigana_last_name must be removed.' );
+		$this->assertArrayNotHasKey( '_wc_billing/jp4wc/yomigana_first_name', $result, 'WC-added _wc_billing/jp4wc/yomigana_first_name must be removed.' );
+	}
+
+	/**
+	 * When traditional yomigana fields are present, WC-added _wc_shipping/jp4wc/* duplicates
+	 * must be removed from the shipping address edit form.
+	 */
+	public function test_duplicate_wc_added_yomigana_removed_from_shipping_address_edit() {
+		update_option( 'wc4jp-yomigana', '1' );
+
+		$af = new JP4WC_Address_Fields();
+
+		$address = array(
+			'shipping_last_name'                      => array(
+				'label' => 'Last Name',
+				'value' => 'Suzuki',
+			),
+			'shipping_yomigana_last_name'             => array(
+				'label' => 'Yomigana Last',
+				'value' => 'スズキ',
+			),
+			'shipping_yomigana_first_name'            => array(
+				'label' => 'Yomigana First',
+				'value' => 'ハナコ',
+			),
+			'_wc_shipping/jp4wc/yomigana_last_name'  => array(
+				'label' => 'Yomigana Last',
+				'value' => 'スズキ',
+			),
+			'_wc_shipping/jp4wc/yomigana_first_name' => array(
+				'label' => 'Yomigana First',
+				'value' => 'ハナコ',
+			),
+		);
+
+		$result = $af->remove_duplicate_yomigana_from_address_edit( $address, 'shipping' );
+
+		$this->assertArrayHasKey( 'shipping_yomigana_last_name', $result, 'Traditional shipping_yomigana_last_name must remain.' );
+		$this->assertArrayNotHasKey( '_wc_shipping/jp4wc/yomigana_last_name', $result, 'WC-added _wc_shipping/jp4wc/yomigana_last_name must be removed.' );
+		$this->assertArrayNotHasKey( '_wc_shipping/jp4wc/yomigana_first_name', $result, 'WC-added _wc_shipping/jp4wc/yomigana_first_name must be removed.' );
+	}
+
+	/**
+	 * When traditional yomigana fields are absent (block checkout, non-FSE theme),
+	 * the WC-added _wc_billing/jp4wc/* fields must be kept intact (single display).
+	 */
+	public function test_wc_added_yomigana_kept_when_traditional_fields_absent() {
+		update_option( 'wc4jp-yomigana', '1' );
+
+		$af = new JP4WC_Address_Fields();
+
+		$address = array(
+			'billing_last_name'                      => array(
+				'label' => 'Last Name',
+				'value' => 'Yamada',
+			),
+			'billing_email'                          => array(
+				'label' => 'Email',
+				'value' => 'test@example.com',
+			),
+			'_wc_billing/jp4wc/yomigana_last_name'  => array(
+				'label' => 'Yomigana Last',
+				'value' => 'ヤマダ',
+			),
+			'_wc_billing/jp4wc/yomigana_first_name' => array(
+				'label' => 'Yomigana First',
+				'value' => 'タロウ',
+			),
+		);
+
+		$result = $af->remove_duplicate_yomigana_from_address_edit( $address, 'billing' );
+
+		$this->assertArrayHasKey( '_wc_billing/jp4wc/yomigana_last_name', $result, 'WC-added fields must remain when traditional fields are absent (block checkout).' );
+		$this->assertArrayHasKey( '_wc_billing/jp4wc/yomigana_first_name', $result, 'WC-added fields must remain when traditional fields are absent (block checkout).' );
+	}
+
+	/**
+	 * When yomigana option is disabled, no fields are removed.
+	 */
+	public function test_address_edit_deduplication_skipped_when_yomigana_disabled() {
+		delete_option( 'wc4jp-yomigana' );
+
+		$af = new JP4WC_Address_Fields();
+
+		$address = array(
+			'billing_yomigana_last_name'             => array(
+				'label' => 'Yomigana Last',
+				'value' => 'ヤマダ',
+			),
+			'_wc_billing/jp4wc/yomigana_last_name'  => array(
+				'label' => 'Yomigana Last',
+				'value' => 'ヤマダ',
+			),
+		);
+
+		$result = $af->remove_duplicate_yomigana_from_address_edit( $address, 'billing' );
+
+		$this->assertArrayHasKey( '_wc_billing/jp4wc/yomigana_last_name', $result, 'WC-added fields must remain when yomigana option is disabled.' );
 	}
 }
