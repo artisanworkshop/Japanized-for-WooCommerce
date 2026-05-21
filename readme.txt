@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 6.9.4
-Stable tag: 2.9.11
+Stable tag: 2.9.12
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,13 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.12 - 2026-05-21 =
+* **Fixed** - Yomigana (reading) fields duplicated on My Account address edit form when block checkout is active; `woocommerce_address_to_edit` filter now removes `_wc_{type}/jp4wc/yomigana_*` duplicates when traditional `{type}_yomigana_*` fields are already present (classic checkout), and suppresses traditional fields when only WC Additional Fields API keys are registered (block checkout)
+* **Fixed** - Yomigana rows duplicated on My Account Addresses view page (`/my-account/?edit-address`) for both classic and block checkout; WC Additional Fields API `render_address_fields` callback is now removed before it fires when JP4WC yomigana is enabled, eliminating the extra "Last Name ( Yomigana )" label rows
+* **Fixed** - My Account Addresses view page did not display yomigana for block checkout users whose data is stored only in `_wc_billing/jp4wc/yomigana_*` meta keys; `formatted_address()` now reads both classic (`{type}_yomigana_*`) and block (`_wc_{type}/jp4wc/yomigana_*`) meta keys, selecting the set that matches the active checkout type
+* **Fixed** - `{last_name}`, `{first_name}`, and `{yomigana_*}` placeholders appeared as literal text in the Block Checkout address summary; address format filter now correctly handles block checkout context
+* **Changed** - Removed unused PayPal Express Checkout (`ppec_paypal`) compatibility code that referenced a decommissioned gateway
 
 = 2.9.11 - 2026-05-11 =
 * **Fixed** - Fatal error in `jp4wc_delivery_check_data()` on Classic Checkout with Square / Amazon Pay; `woocommerce_payment_successful_result` was registered with 1 argument so `$result['order_id']` was undefined when gateways omit it — `wc_get_order(null)` returned false, causing a PHP Fatal Error on `$order->get_meta()` and corrupting the AJAX redirect to the Thank You page; filter now accepts 2 arguments and `$order_id` arrives as the second parameter; added early-return guard when `wc_get_order()` returns false (Closes #166)
