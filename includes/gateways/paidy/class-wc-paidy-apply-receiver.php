@@ -75,8 +75,13 @@ class WC_Paidy_Apply_Receiver {
 		// The transient is keyed by the token value itself (set in the admin wizard) so
 		// parallel onboarding sessions cannot clobber each other's tokens. Verifying
 		// existence of the scoped key is sufficient — no separate value comparison needed.
-		$request_token = $request->get_param( 'state' );
-		if ( empty( $request_token ) || false === get_transient( 'paidy_onboarding_state_' . $request_token ) ) {
+		//
+		// Validate format before use: the token must be a 32-char alphanumeric string
+		// (matching wp_generate_password(32, false)) to prevent non-string values or
+		// oversized inputs from being used as transient key suffixes.
+		$request_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
+		if ( 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $request_token )
+			|| false === get_transient( 'paidy_onboarding_state_' . $request_token ) ) {
 			return new WP_Error(
 				'paidy_invalid_state',
 				__( 'Invalid or missing state token for Paidy onboarding.', 'woocommerce-for-japan' ),
@@ -255,7 +260,12 @@ class WC_Paidy_Apply_Receiver {
 				// succeeded — consuming it here (not in check_permissions) means a
 				// transient DB or decryption failure during processing does not
 				// permanently prevent the merchant from retrying the callback.
-				delete_transient( 'paidy_onboarding_state_' . $request->get_param( 'state' ) );
+				// Re-validate the format here (same rule as check_permissions) so we
+				// never build a transient key from an unsanitized param.
+				$state_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
+				if ( 1 === preg_match( '/^[A-Za-z0-9]{32}$/', $state_token ) ) {
+					delete_transient( 'paidy_onboarding_state_' . $state_token );
+				}
 
 				// Success response — omit decrypted API key fields to avoid
 				// exposing secrets via response bodies, proxy logs, or intermediaries.

@@ -425,6 +425,9 @@ class WC_Paidy_Admin_Wizard {
 				'Paidy On Boarding API Error: ' . $error_message,
 				array( 'source' => 'paidy-wc' )
 			);
+			// Clean up the state transient: the POST never reached the intermediary,
+			// so the receiver callback will never arrive to consume it.
+			delete_transient( 'paidy_onboarding_state_' . $state_token );
 			$result = false;
 		}
 		$response_code = wp_remote_retrieve_response_code( $response );
@@ -436,6 +439,8 @@ class WC_Paidy_Admin_Wizard {
 					'response' => $response,
 				)
 			);
+			// Clean up the orphaned state transient on HTTP-level failures as well.
+			delete_transient( 'paidy_onboarding_state_' . $state_token );
 			$result = false;
 		}
 
