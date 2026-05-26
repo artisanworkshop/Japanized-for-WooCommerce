@@ -85,8 +85,9 @@ class WC_Paidy_Apply_Receiver {
 			);
 		}
 
-		// Consume the token so it cannot be replayed.
-		delete_transient( 'paidy_onboarding_state' );
+		// Do NOT delete the transient here — consume it only after the handler
+		// completes successfully so a transient DB/decryption failure does not
+		// permanently prevent retrying the onboarding callback.
 
 		return true;
 	}
@@ -140,18 +141,43 @@ class WC_Paidy_Apply_Receiver {
 			}
 
 			// Decrypt AES-256-CBC-encoded API keys sent by the Paidy intermediary server.
-			$method = 'AES-256-CBC';
-			$key    = substr( hash( 'sha256', $site_hash ), 0, 32 );
-			$iv     = substr( hash( 'sha256', $site_hash . 'iv' ), 0, 16 );
+			$method     = 'AES-256-CBC';
+			$aes_key    = substr( hash( 'sha256', $site_hash ), 0, 32 );
+			$aes_iv     = substr( hash( 'sha256', $site_hash . 'iv' ), 0, 16 );
+			$key_fields = array( 'public_live_key', 'secret_live_key', 'public_test_key', 'secret_test_key' );
+			$decrypted  = array();
 
-			$decrypted = array(
+			foreach ( $key_fields as $field ) {
+				if ( ! isset( $filtered_params[ $field ] ) ) {
+					// Field absent — skip decryption; will be treated as empty.
+					$decrypted[ $field ] = '';
+					continue;
+				}
+
 				// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- legitimate AES decryption of Paidy-supplied key data.
-				'public_live_key' => openssl_decrypt( base64_decode( $filtered_params['public_live_key'] ), $method, $key, 0, $iv ),
-				'secret_live_key' => openssl_decrypt( base64_decode( $filtered_params['secret_live_key'] ), $method, $key, 0, $iv ),
-				'public_test_key' => openssl_decrypt( base64_decode( $filtered_params['public_test_key'] ), $method, $key, 0, $iv ),
-				'secret_test_key' => openssl_decrypt( base64_decode( $filtered_params['secret_test_key'] ), $method, $key, 0, $iv ),
+				$decoded = base64_decode( (string) $filtered_params[ $field ], true );
 				// phpcs:enable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-			);
+
+				if ( false === $decoded ) {
+					return new WP_Error(
+						'paidy_invalid_encoding',
+						'Invalid base64 encoding for field: ' . esc_html( $field ),
+						array( 'status' => 400 )
+					);
+				}
+
+				$result = openssl_decrypt( $decoded, $method, $aes_key, 0, $aes_iv );
+				if ( false === $result ) {
+					return new WP_Error(
+						'paidy_decryption_failed',
+						'Decryption failed for field: ' . esc_html( $field ),
+						array( 'status' => 400 )
+					);
+				}
+
+				$decrypted[ $field ] = $result;
+			}
+
 			$filtered_params = array_merge(
 				$filtered_params,
 				array_intersect_key( $decrypted, $filtered_params )
@@ -215,6 +241,12 @@ class WC_Paidy_Apply_Receiver {
 			}
 			// Check if the data was saved successfully.
 			if ( $saved ) {
+				// Consume the one-time state token now that the handler has fully
+				// succeeded — consuming it here (not in check_permissions) means a
+				// transient DB or decryption failure during processing does not
+				// permanently prevent the merchant from retrying the callback.
+				delete_transient( 'paidy_onboarding_state' );
+
 				// Success response.
 				return new WP_REST_Response(
 					array(

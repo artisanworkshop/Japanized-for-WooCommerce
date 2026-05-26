@@ -117,12 +117,10 @@ class WC_Paidy_Endpoint {
 
 		// No signature and no IP whitelist configured — reject.
 		// At least one verification method must be in place to prevent unauthenticated
-		// callers from forging order status changes. Configure an API secret key to
-		// enable HMAC signature verification, or use the paidy_webhook_allowed_ips
-		// filter to restrict to known Paidy IP ranges.
+		// callers from forging order status changes.
 		return new WP_Error(
 			'paidy_unauthorized',
-			__( 'Unauthorized: Paidy webhook requires signature verification or an IP allowlist. Please configure your Paidy API secret key.', 'woocommerce-for-japan' ),
+			__( 'Unauthorized: Paidy webhook requires either HMAC signature verification (configure an API secret key) or an IP allowlist (use the paidy_webhook_allowed_ips filter).', 'woocommerce-for-japan' ),
 			array( 'status' => 403 )
 		);
 	}
@@ -130,17 +128,24 @@ class WC_Paidy_Endpoint {
 	/**
 	 * Get the remote IP address from the request.
 	 *
+	 * Uses REMOTE_ADDR by default. HTTP_X_FORWARDED_FOR is only trusted when the
+	 * site is explicitly behind a reverse proxy (opt-in via the
+	 * `paidy_trust_proxy_headers` filter), because the header is attacker-controlled
+	 * on most deployments and could be used to bypass the IP allowlist.
+	 *
 	 * @return string The remote IP address.
 	 */
 	private function get_remote_ip() {
-		$ip = '';
+		$ip = isset( $_SERVER['REMOTE_ADDR'] ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+			? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) )
+			: '';
 
-		if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-			$ip = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
-			$ip = explode( ',', $ip );
-			$ip = trim( $ip[0] );
-		} elseif ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
-			$ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+		// Only trust X-Forwarded-For when the operator has explicitly opted in,
+		// e.g. because the site sits behind a known reverse proxy.
+		if ( apply_filters( 'paidy_trust_proxy_headers', false ) && ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$forwarded = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
+			$parts     = explode( ',', $forwarded );
+			$ip        = trim( $parts[0] );
 		}
 
 		return $ip;
