@@ -115,10 +115,16 @@ class WC_Paidy_Endpoint {
 			return true;
 		}
 
-		// No signature and no IP whitelist configured — allow through.
-		// Paidy's standard webhook does not include a signature header, so rejecting
-		// unsigned requests with no IP whitelist would block all real notifications.
-		return true;
+		// No signature and no IP whitelist configured — reject.
+		// At least one verification method must be in place to prevent unauthenticated
+		// callers from forging order status changes. Configure an API secret key to
+		// enable HMAC signature verification, or use the paidy_webhook_allowed_ips
+		// filter to restrict to known Paidy IP ranges.
+		return new WP_Error(
+			'paidy_unauthorized',
+			__( 'Unauthorized: Paidy webhook requires signature verification or an IP allowlist. Please configure your Paidy API secret key.', 'woocommerce-for-japan' ),
+			array( 'status' => 403 )
+		);
 	}
 
 	/**

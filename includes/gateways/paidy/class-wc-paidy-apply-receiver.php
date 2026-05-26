@@ -71,16 +71,22 @@ class WC_Paidy_Apply_Receiver {
 			);
 		}
 
-		// Verify onboarding state token to ensure request is from expected Paidy flow.
-		$expected_token = get_transient( 'paidy_onboarding_state_' . $application_id );
+		// Verify the one-time state token generated when the onboarding form was submitted.
+		// The transient must exist (active session) AND the request must carry a matching
+		// token — if either is absent the request is rejected to prevent unauthenticated
+		// callers from clearing Paidy API credentials.
+		$expected_token = get_transient( 'paidy_onboarding_state' );
 		$request_token  = $request->get_param( 'state' );
-		if ( ! empty( $expected_token ) && ( empty( $request_token ) || ! hash_equals( $expected_token, $request_token ) ) ) {
+		if ( empty( $expected_token ) || empty( $request_token ) || ! hash_equals( (string) $expected_token, (string) $request_token ) ) {
 			return new WP_Error(
 				'paidy_invalid_state',
-				__( 'Invalid state token for Paidy onboarding.', 'woocommerce-for-japan' ),
+				__( 'Invalid or missing state token for Paidy onboarding.', 'woocommerce-for-japan' ),
 				array( 'status' => 403 )
 			);
 		}
+
+		// Consume the token so it cannot be replayed.
+		delete_transient( 'paidy_onboarding_state' );
 
 		return true;
 	}
@@ -101,7 +107,7 @@ class WC_Paidy_Apply_Receiver {
 			$internal_params = array( '_wpnonce', '_wp_http_referer', 'rest_route' );
 
 			foreach ( $post_params as $key => $value ) {
-				if ( ! in_array( $key, $internal_params ) ) {
+				if ( ! in_array( $key, $internal_params, true ) ) {
 					$filtered_params[ $key ] = $value;
 				}
 			}
@@ -133,16 +139,18 @@ class WC_Paidy_Apply_Receiver {
 				);
 			}
 
-			// Encrypt the data using AES-256-CBC.
+			// Decrypt AES-256-CBC-encoded API keys sent by the Paidy intermediary server.
 			$method = 'AES-256-CBC';
 			$key    = substr( hash( 'sha256', $site_hash ), 0, 32 );
 			$iv     = substr( hash( 'sha256', $site_hash . 'iv' ), 0, 16 );
 
-			$decrypted       = array(
+			$decrypted = array(
+				// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- legitimate AES decryption of Paidy-supplied key data.
 				'public_live_key' => openssl_decrypt( base64_decode( $filtered_params['public_live_key'] ), $method, $key, 0, $iv ),
 				'secret_live_key' => openssl_decrypt( base64_decode( $filtered_params['secret_live_key'] ), $method, $key, 0, $iv ),
 				'public_test_key' => openssl_decrypt( base64_decode( $filtered_params['public_test_key'] ), $method, $key, 0, $iv ),
 				'secret_test_key' => openssl_decrypt( base64_decode( $filtered_params['secret_test_key'] ), $method, $key, 0, $iv ),
+				// phpcs:enable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 			);
 			$filtered_params = array_merge(
 				$filtered_params,
