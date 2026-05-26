@@ -166,7 +166,10 @@ class WC_Paidy_Apply_Receiver {
 					);
 				}
 
-				$result = openssl_decrypt( $decoded, $method, $aes_key, 0, $aes_iv );
+				// OPENSSL_RAW_DATA is required because $decoded is already raw binary
+				// (we base64-decoded it above). Without this flag openssl_decrypt()
+				// would attempt a second base64 decode and fail.
+				$result = openssl_decrypt( $decoded, $method, $aes_key, OPENSSL_RAW_DATA, $aes_iv );
 				if ( false === $result ) {
 					return new WP_Error(
 						'paidy_decryption_failed',

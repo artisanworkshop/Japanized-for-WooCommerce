@@ -59,9 +59,9 @@ class WC_Paidy_Endpoint {
 
 	/**
 	 * Permission callback for Paidy webhook endpoint.
-	 * Verifies the request is from Paidy by checking the signature header or IP whitelist.
-	 * When neither is configured the request is allowed through, preserving the behaviour
-	 * of versions prior to 2.8.0 which used permission_callback => '__return_true'.
+	 * Verifies the request is from Paidy by checking the signature header or IP allowlist.
+	 * At least one verification method must be active; requests are rejected with 403 when
+	 * neither an API secret key (for HMAC signature) nor an IP allowlist is configured.
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 * @return bool|WP_Error True if authorized, WP_Error otherwise.
