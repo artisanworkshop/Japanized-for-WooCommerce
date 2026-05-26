@@ -373,8 +373,10 @@ class WC_Paidy_Admin_Wizard {
 
 		// Generate a one-time state token so the receiver endpoint can verify the
 		// callback originates from an active onboarding session (not a forged request).
+		// The transient is keyed by the token value itself so parallel or retried
+		// onboarding sessions do not overwrite each other's tokens.
 		$state_token     = wp_generate_password( 32, false );
-		$transient_saved = set_transient( 'paidy_onboarding_state', $state_token, 7 * DAY_IN_SECONDS );
+		$transient_saved = set_transient( 'paidy_onboarding_state_' . $state_token, 1, 7 * DAY_IN_SECONDS );
 		if ( ! $transient_saved ) {
 			wc_get_logger()->error(
 				'Paidy onboarding: failed to store state token transient. The onboarding callback will be rejected. Check your object cache / DB.',

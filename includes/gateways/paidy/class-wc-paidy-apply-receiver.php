@@ -72,12 +72,11 @@ class WC_Paidy_Apply_Receiver {
 		}
 
 		// Verify the one-time state token generated when the onboarding form was submitted.
-		// The transient must exist (active session) AND the request must carry a matching
-		// token — if either is absent the request is rejected to prevent unauthenticated
-		// callers from clearing Paidy API credentials.
-		$expected_token = get_transient( 'paidy_onboarding_state' );
-		$request_token  = $request->get_param( 'state' );
-		if ( empty( $expected_token ) || empty( $request_token ) || ! hash_equals( (string) $expected_token, (string) $request_token ) ) {
+		// The transient is keyed by the token value itself (set in the admin wizard) so
+		// parallel onboarding sessions cannot clobber each other's tokens. Verifying
+		// existence of the scoped key is sufficient — no separate value comparison needed.
+		$request_token = $request->get_param( 'state' );
+		if ( empty( $request_token ) || false === get_transient( 'paidy_onboarding_state_' . $request_token ) ) {
 			return new WP_Error(
 				'paidy_invalid_state',
 				__( 'Invalid or missing state token for Paidy onboarding.', 'woocommerce-for-japan' ),
@@ -237,10 +236,18 @@ class WC_Paidy_Apply_Receiver {
 			}
 
 			// Save data to wp_option.
+			// update_option() returns false both when the save fails AND when the stored
+			// value is already identical to $filtered_params (no-change). Treat the
+			// no-change case as success so retries with an identical payload do not
+			// incorrectly return a 500 and skip consuming the one-time state token.
 			$saved = update_option( 'paidy_received_data', $filtered_params, false );
 			if ( false === $saved ) {
-				// If update_option fails, try to add it.
-				$saved = add_option( 'paidy_received_data', $filtered_params, '', 'no' );
+				if ( get_option( 'paidy_received_data' ) === $filtered_params ) {
+					$saved = true; // Value already identical — treat as success.
+				} else {
+					// Option does not exist yet — create it.
+					$saved = add_option( 'paidy_received_data', $filtered_params, '', 'no' );
+				}
 			}
 			// Check if the data was saved successfully.
 			if ( $saved ) {
@@ -248,7 +255,7 @@ class WC_Paidy_Apply_Receiver {
 				// succeeded — consuming it here (not in check_permissions) means a
 				// transient DB or decryption failure during processing does not
 				// permanently prevent the merchant from retrying the callback.
-				delete_transient( 'paidy_onboarding_state' );
+				delete_transient( 'paidy_onboarding_state_' . $request->get_param( 'state' ) );
 
 				// Success response — omit decrypted API key fields to avoid
 				// exposing secrets via response bodies, proxy logs, or intermediaries.
