@@ -250,12 +250,16 @@ class WC_Paidy_Apply_Receiver {
 				// permanently prevent the merchant from retrying the callback.
 				delete_transient( 'paidy_onboarding_state' );
 
-				// Success response.
+				// Success response — omit decrypted API key fields to avoid
+				// exposing secrets via response bodies, proxy logs, or intermediaries.
+				$sensitive_fields = array( 'public_live_key', 'secret_live_key', 'public_test_key', 'secret_test_key' );
+				$safe_received    = array_diff_key( $filtered_params, array_flip( $sensitive_fields ) );
+
 				return new WP_REST_Response(
 					array(
 						'success'       => true,
 						'message'       => 'Data saved successfully.',
-						'received_data' => $filtered_params,
+						'received_data' => $safe_received,
 						'timestamp'     => current_time( 'mysql' ),
 					),
 					200
