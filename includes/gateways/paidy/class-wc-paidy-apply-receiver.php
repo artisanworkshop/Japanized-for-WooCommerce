@@ -153,7 +153,8 @@ class WC_Paidy_Apply_Receiver {
 
 			foreach ( $key_fields as $field ) {
 				if ( ! isset( $filtered_params[ $field ] ) ) {
-					// Field absent — skip decryption; will be treated as empty.
+					// Field absent — store empty string so all four key fields are
+					// always present in $decrypted and merged into $filtered_params.
 					$decrypted[ $field ] = '';
 					continue;
 				}
@@ -165,7 +166,8 @@ class WC_Paidy_Apply_Receiver {
 				if ( false === $decoded ) {
 					return new WP_Error(
 						'paidy_invalid_encoding',
-						'Invalid base64 encoding for field: ' . esc_html( $field ),
+						/* translators: %s: API key field name */
+						sprintf( __( 'Invalid base64 encoding for field: %s', 'woocommerce-for-japan' ), esc_html( $field ) ),
 						array( 'status' => 400 )
 					);
 				}
@@ -177,7 +179,8 @@ class WC_Paidy_Apply_Receiver {
 				if ( false === $result ) {
 					return new WP_Error(
 						'paidy_decryption_failed',
-						'Decryption failed for field: ' . esc_html( $field ),
+						/* translators: %s: API key field name */
+						sprintf( __( 'Decryption failed for field: %s', 'woocommerce-for-japan' ), esc_html( $field ) ),
 						array( 'status' => 400 )
 					);
 				}
@@ -185,10 +188,9 @@ class WC_Paidy_Apply_Receiver {
 				$decrypted[ $field ] = $result;
 			}
 
-			$filtered_params = array_merge(
-				$filtered_params,
-				array_intersect_key( $decrypted, $filtered_params )
-			);
+			// Merge all four key fields (present or absent) into $filtered_params so
+			// downstream code can access them unconditionally without undefined-index notices.
+			$filtered_params = array_merge( $filtered_params, $decrypted );
 
 			if ( isset( $filtered_params['paidy_status'] ) ) {
 				$paidy_status         = $filtered_params['paidy_status'];
