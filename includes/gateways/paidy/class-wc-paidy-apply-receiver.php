@@ -71,16 +71,27 @@ class WC_Paidy_Apply_Receiver {
 			);
 		}
 
-		// Verify onboarding state token to ensure request is from expected Paidy flow.
-		$expected_token = get_transient( 'paidy_onboarding_state_' . $application_id );
-		$request_token  = $request->get_param( 'state' );
-		if ( ! empty( $expected_token ) && ( empty( $request_token ) || ! hash_equals( $expected_token, $request_token ) ) ) {
+		// Verify the one-time state token generated when the onboarding form was submitted.
+		// The transient is keyed by the token value itself (set in the admin wizard) so
+		// parallel onboarding sessions cannot clobber each other's tokens. Verifying
+		// existence of the scoped key is sufficient — no separate value comparison needed.
+		//
+		// Validate format before use: the token must be a 32-char alphanumeric string
+		// (matching wp_generate_password(32, false)) to prevent non-string values or
+		// oversized inputs from being used as transient key suffixes.
+		$request_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
+		if ( 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $request_token )
+			|| false === get_transient( 'paidy_onboarding_state_' . $request_token ) ) {
 			return new WP_Error(
 				'paidy_invalid_state',
-				__( 'Invalid state token for Paidy onboarding.', 'woocommerce-for-japan' ),
+				__( 'Invalid or missing state token for Paidy onboarding.', 'woocommerce-for-japan' ),
 				array( 'status' => 403 )
 			);
 		}
+
+		// Do NOT delete the transient here — consume it only after the handler
+		// completes successfully so a transient DB/decryption failure does not
+		// permanently prevent retrying the onboarding callback.
 
 		return true;
 	}
@@ -101,7 +112,7 @@ class WC_Paidy_Apply_Receiver {
 			$internal_params = array( '_wpnonce', '_wp_http_referer', 'rest_route' );
 
 			foreach ( $post_params as $key => $value ) {
-				if ( ! in_array( $key, $internal_params ) ) {
+				if ( ! in_array( $key, $internal_params, true ) ) {
 					$filtered_params[ $key ] = $value;
 				}
 			}
@@ -133,21 +144,53 @@ class WC_Paidy_Apply_Receiver {
 				);
 			}
 
-			// Encrypt the data using AES-256-CBC.
-			$method = 'AES-256-CBC';
-			$key    = substr( hash( 'sha256', $site_hash ), 0, 32 );
-			$iv     = substr( hash( 'sha256', $site_hash . 'iv' ), 0, 16 );
+			// Decrypt AES-256-CBC-encoded API keys sent by the Paidy intermediary server.
+			$method     = 'AES-256-CBC';
+			$aes_key    = substr( hash( 'sha256', $site_hash ), 0, 32 );
+			$aes_iv     = substr( hash( 'sha256', $site_hash . 'iv' ), 0, 16 );
+			$key_fields = array( 'public_live_key', 'secret_live_key', 'public_test_key', 'secret_test_key' );
+			$decrypted  = array();
 
-			$decrypted       = array(
-				'public_live_key' => openssl_decrypt( base64_decode( $filtered_params['public_live_key'] ), $method, $key, 0, $iv ),
-				'secret_live_key' => openssl_decrypt( base64_decode( $filtered_params['secret_live_key'] ), $method, $key, 0, $iv ),
-				'public_test_key' => openssl_decrypt( base64_decode( $filtered_params['public_test_key'] ), $method, $key, 0, $iv ),
-				'secret_test_key' => openssl_decrypt( base64_decode( $filtered_params['secret_test_key'] ), $method, $key, 0, $iv ),
-			);
-			$filtered_params = array_merge(
-				$filtered_params,
-				array_intersect_key( $decrypted, $filtered_params )
-			);
+			foreach ( $key_fields as $field ) {
+				if ( ! isset( $filtered_params[ $field ] ) ) {
+					// Field absent — store empty string so all four key fields are
+					// always present in $decrypted and merged into $filtered_params.
+					$decrypted[ $field ] = '';
+					continue;
+				}
+
+				// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- legitimate AES decryption of Paidy-supplied key data.
+				$decoded = base64_decode( (string) $filtered_params[ $field ], true );
+				// phpcs:enable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+
+				if ( false === $decoded ) {
+					return new WP_Error(
+						'paidy_invalid_encoding',
+						/* translators: %s: API key field name */
+						sprintf( __( 'Invalid base64 encoding for field: %s', 'woocommerce-for-japan' ), esc_html( $field ) ),
+						array( 'status' => 400 )
+					);
+				}
+
+				// OPENSSL_RAW_DATA is required because $decoded is already raw binary
+				// (we base64-decoded it above). Without this flag openssl_decrypt()
+				// would attempt a second base64 decode and fail.
+				$result = openssl_decrypt( $decoded, $method, $aes_key, OPENSSL_RAW_DATA, $aes_iv );
+				if ( false === $result ) {
+					return new WP_Error(
+						'paidy_decryption_failed',
+						/* translators: %s: API key field name */
+						sprintf( __( 'Decryption failed for field: %s', 'woocommerce-for-japan' ), esc_html( $field ) ),
+						array( 'status' => 400 )
+					);
+				}
+
+				$decrypted[ $field ] = $result;
+			}
+
+			// Merge all four key fields (present or absent) into $filtered_params so
+			// downstream code can access them unconditionally without undefined-index notices.
+			$filtered_params = array_merge( $filtered_params, $decrypted );
 
 			if ( isset( $filtered_params['paidy_status'] ) ) {
 				$paidy_status         = $filtered_params['paidy_status'];
@@ -200,19 +243,42 @@ class WC_Paidy_Apply_Receiver {
 			}
 
 			// Save data to wp_option.
+			// update_option() returns false both when the save fails AND when the stored
+			// value is already identical to $filtered_params (no-change). Treat the
+			// no-change case as success so retries with an identical payload do not
+			// incorrectly return a 500 and skip consuming the one-time state token.
 			$saved = update_option( 'paidy_received_data', $filtered_params, false );
 			if ( false === $saved ) {
-				// If update_option fails, try to add it.
-				$saved = add_option( 'paidy_received_data', $filtered_params, '', 'no' );
+				if ( get_option( 'paidy_received_data' ) === $filtered_params ) {
+					$saved = true; // Value already identical — treat as success.
+				} else {
+					// Option does not exist yet — create it.
+					$saved = add_option( 'paidy_received_data', $filtered_params, '', 'no' );
+				}
 			}
 			// Check if the data was saved successfully.
 			if ( $saved ) {
-				// Success response.
+				// Consume the one-time state token now that the handler has fully
+				// succeeded — consuming it here (not in check_permissions) means a
+				// transient DB or decryption failure during processing does not
+				// permanently prevent the merchant from retrying the callback.
+				// Re-validate the format here (same rule as check_permissions) so we
+				// never build a transient key from an unsanitized param.
+				$state_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
+				if ( 1 === preg_match( '/^[A-Za-z0-9]{32}$/', $state_token ) ) {
+					delete_transient( 'paidy_onboarding_state_' . $state_token );
+				}
+
+				// Success response — omit decrypted API key fields to avoid
+				// exposing secrets via response bodies, proxy logs, or intermediaries.
+				$sensitive_fields = array( 'public_live_key', 'secret_live_key', 'public_test_key', 'secret_test_key' );
+				$safe_received    = array_diff_key( $filtered_params, array_flip( $sensitive_fields ) );
+
 				return new WP_REST_Response(
 					array(
 						'success'       => true,
 						'message'       => 'Data saved successfully.',
-						'received_data' => $filtered_params,
+						'received_data' => $safe_received,
 						'timestamp'     => current_time( 'mysql' ),
 					),
 					200

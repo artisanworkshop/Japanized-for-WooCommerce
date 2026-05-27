@@ -371,6 +371,20 @@ class WC_Paidy_Admin_Wizard {
 			$average_flag = 1;
 		}
 
+		// Generate a one-time state token so the receiver endpoint can verify the
+		// callback originates from an active onboarding session (not a forged request).
+		// The transient is keyed by the token value itself so parallel or retried
+		// onboarding sessions do not overwrite each other's tokens.
+		$state_token     = wp_generate_password( 32, false );
+		$transient_saved = set_transient( 'paidy_onboarding_state_' . $state_token, 1, 7 * DAY_IN_SECONDS );
+		if ( ! $transient_saved ) {
+			wc_get_logger()->error(
+				'Paidy onboarding: failed to store state token transient. The onboarding callback will be rejected. Check your object cache / DB.',
+				array( 'source' => 'paidy-wc' )
+			);
+			return false;
+		}
+
 		$data_array = array(
 			'site_name'    => $value['siteName'],
 			'site_url'     => $value['storeUrl'],
@@ -392,6 +406,7 @@ class WC_Paidy_Admin_Wizard {
 			'survey07'     => $value['securitySurvey10TextAreaControl'],
 			'survey08'     => $value['securitySurvey08RadioControl'],
 			'survey09'     => $value['securitySurvey09RadioControl'],
+			'state'        => $state_token,
 		);
 		$args       = array(
 			'method'      => 'POST',
@@ -410,6 +425,9 @@ class WC_Paidy_Admin_Wizard {
 				'Paidy On Boarding API Error: ' . $error_message,
 				array( 'source' => 'paidy-wc' )
 			);
+			// Clean up the state transient: the POST never reached the intermediary,
+			// so the receiver callback will never arrive to consume it.
+			delete_transient( 'paidy_onboarding_state_' . $state_token );
 			$result = false;
 		}
 		$response_code = wp_remote_retrieve_response_code( $response );
@@ -421,6 +439,8 @@ class WC_Paidy_Admin_Wizard {
 					'response' => $response,
 				)
 			);
+			// Clean up the orphaned state transient on HTTP-level failures as well.
+			delete_transient( 'paidy_onboarding_state_' . $state_token );
 			$result = false;
 		}
 
