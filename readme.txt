@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 6.9.4
-Stable tag: 2.9.12
+Stable tag: 2.9.13
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,13 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.13 - 2026-05-27 =
+* **Security** - Fixed Broken Access Control (CVSS 6.5) in Paidy payment gateway REST endpoints: `paidy-receiver/v1/receive` now enforces a one-time per-session state token (stored as a per-token transient keyed by the 32-char value itself so parallel sessions cannot clobber each other); `paidy/v1/order` and `paidy/v1/check` now require either HMAC signature verification or an IP allowlist — the previous unconditional `return true` fallback has been removed
+* **Security** - State token parameter is validated for type and format (32-char alphanumeric) before use as a transient key suffix to prevent non-string or oversized inputs on the unauthenticated receiver endpoint
+* **Security** - State transient is consumed only after the handler completes successfully so transient DB / decryption failures do not permanently prevent retrying the onboarding callback; orphaned transients are cleaned up when `wp_remote_post()` fails
+* **Fixed** - WP_Error messages for base64 and AES-256-CBC decryption failures in the Paidy receiver are now translatable via `__()` / `sprintf()` with a `%s` field-name placeholder
+* **Fixed** - Missing Paidy API key fields (absent from the intermediary POST) are now merged into `$filtered_params` as empty strings so downstream code can access all four key fields unconditionally without undefined-index notices
 
 = 2.9.12 - 2026-05-21 =
 * **Fixed** - Yomigana (reading) fields duplicated on My Account address edit form when block checkout is active; `woocommerce_address_to_edit` filter now removes `_wc_{type}/jp4wc/yomigana_*` duplicates when traditional `{type}_yomigana_*` fields are already present (classic checkout), and suppresses traditional fields when only WC Additional Fields API keys are registered (block checkout)
