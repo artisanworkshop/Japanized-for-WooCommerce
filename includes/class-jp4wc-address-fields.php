@@ -272,10 +272,14 @@ class JP4WC_Address_Fields {
 			return false;
 		}
 		// WooCommerce Store API REST calls (checkout block submits here).
+		// WC sends order emails synchronously within the same Store API request, so
+		// is_email_context() is evaluated here to keep {yomigana_*} in the format string
+		// when email rendering is in progress. The check is intentionally deferred to this
+		// branch (not hoisted) to avoid the debug_backtrace() overhead on every request.
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			if ( false !== strpos( $uri, '/wc/store/' ) ) {
-				return true;
+				return ! $this->is_email_context();
 			}
 		}
 		// Checkout page: enqueue_data() embeds countryData here for the blocks JS.
@@ -283,7 +287,11 @@ class JP4WC_Address_Fields {
 		// so returning the blocks-compatible format for is_checkout() is safe for both
 		// classic and blocks setups. FSE themes are also covered since is_checkout() works
 		// regardless of whether the block appears in post content or a site template.
-		return function_exists( 'is_checkout' ) && is_checkout();
+		// Same email guard applies here for consistency.
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+			return ! $this->is_email_context();
+		}
+		return false;
 	}
 
 	/**

@@ -541,6 +541,62 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		}
 		$this->assertTrue( $found, 'render_address_fields callback must remain when yomigana option is disabled.' );
 	}
+
+	// ------------------------------------------------------------------
+	// Regression 2.9.12: yomigana in emails during Store API request
+	// ------------------------------------------------------------------
+
+	/**
+	 * Regression (2.9.12): JP address format must include {yomigana_*} when a WC email is
+	 * being sent, even if the current request looks like a Store API call.
+	 *
+	 * WooCommerce blocks checkout sends order confirmation emails synchronously within the
+	 * same Store API (/wc/store/checkout) request. In 2.9.12, is_blocks_checkout_context()
+	 * returned true for that URI and stripped {yomigana_*} from the format string, causing
+	 * yomigana to disappear from all order emails placed via block checkout.
+	 *
+	 * This test simulates that scenario by setting REQUEST_URI to the store API path and
+	 * marking a WC email as "sending" (the primary is_email_context() signal). Because
+	 * REST_REQUEST is not defined in the unit-test bootstrap, the REST branch is not entered
+	 * here; the test exercises the email-context guard through the WC mailer sending flag,
+	 * which is the production signal used when WC dispatches emails during an actual
+	 * /wc/store/checkout request.
+	 */
+	public function test_yomigana_in_address_format_when_email_sending_during_store_api_request() {
+		update_option( 'wc4jp-yomigana', '1' );
+
+		// Simulate Store API request URI.
+		$original_uri                  = isset( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$_SERVER['REQUEST_URI']        = '/wp-json/wc/store/checkout'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+
+		// Mark a WC email as currently sending — is_email_context() primary check.
+		$emails      = WC()->mailer()->get_emails();
+		$first_email = reset( $emails );
+		$prev_sending = $first_email ? $first_email->sending : false;
+		if ( $first_email ) {
+			$first_email->sending = true;
+		}
+
+		$formats = apply_filters( 'woocommerce_localisation_address_formats', array( 'JP' => '' ) );
+
+		// Restore state before asserting so tearDown is clean even on failure.
+		if ( $first_email ) {
+			$first_email->sending = $prev_sending;
+		}
+		$_SERVER['REQUEST_URI'] = $original_uri; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+
+		$this->assertArrayHasKey( 'JP', $formats );
+		$this->assertStringContainsString(
+			'{yomigana_last_name}',
+			$formats['JP'],
+			'JP format must contain {yomigana_last_name} during email rendering even when REQUEST_URI is a Store API path. Regression from 2.9.12.'
+		);
+		$this->assertStringContainsString(
+			'{yomigana_first_name}',
+			$formats['JP'],
+			'JP format must contain {yomigana_first_name} during email rendering even when REQUEST_URI is a Store API path. Regression from 2.9.12.'
+		);
+	}
 }
 
 /**
