@@ -271,6 +271,12 @@ class JP4WC_Address_Fields {
 		if ( function_exists( 'is_order_received_page' ) && is_order_received_page() ) {
 			return false;
 		}
+		// Email sending always requires PHP rendering with {yomigana_*} in the format string.
+		// Blocks checkout triggers order emails synchronously during the Store API request,
+		// so this guard must come before the REST_REQUEST check below.
+		if ( $this->is_email_context() ) {
+			return false;
+		}
 		// WooCommerce Store API REST calls (checkout block submits here).
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
