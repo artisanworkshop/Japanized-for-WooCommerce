@@ -102,5 +102,4 @@ jobs:
                   name: ${{ github.ref_name }}
                   tag_name: ${{ github.ref_name }}
                   body: ${{ steps.changelog.outputs.BODY }}
-                  generate_release_notes: true
                   files: woocommerce-for-japan-${{ steps.version.outputs.VERSION }}.zip
