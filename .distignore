@@ -15,24 +15,36 @@
 /src
 /docs
 /tests
+/test-results
 /promotion-json
 
 # Files
+.DS_Store
 .wp-env.json
 .gitattributes
 .distignore
 .gitignore
 .phpcs.xml.dist
 .phpunit.xml.dist
+.phpunit.result.cache
 phpunit.xml.dist
+playwright.config.ts
+tsconfig.e2e.json
 composer.json
 composer.lock
 package-lock.json
 package.json
 webpack.config.js
+wordfence-vendor.txt
 LICENSE
 README.md
 CLAUDE.md
 SECURITY-FIX-PAIDY.md
 SHORTCODE-CHECKOUT-VALIDATION-REPORT.md
+
+# Source files (compiled output is sufficient for distribution)
+*.scss
+
+# Temporary files
+temp-editor.json
 
