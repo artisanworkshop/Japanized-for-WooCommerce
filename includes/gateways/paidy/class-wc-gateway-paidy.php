@@ -733,14 +733,19 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 * @param string $order_id Order ID.
 	 */
 	public function thankyou_completed( $order_id ) {
-		$order          = wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			return;
+		}
 		$current_status = $order->get_status();
-		if ( 'pending' === $current_status || 'cancelled' === $current_status ) {
+		// Idempotency: skip if payment_complete() was already called (transaction_id already set).
+		if ( ( 'pending' === $current_status || 'cancelled' === $current_status ) && empty( $order->get_transaction_id() ) ) {
 			// Reduce stock levels.
 			wc_reduce_stock_levels( $order_id );
-			$order->payment_complete( $_GET['transaction_id'] );// phpcs:ignore
+			$transaction_id = isset( $_GET['transaction_id'] ) ? sanitize_text_field( wp_unslash( $_GET['transaction_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$order->payment_complete( $transaction_id );
 			$message  = __( 'Paidy Payment succeeds to authorize and move to thank you page. Get data is following.', 'woocommerce-for-japan' ) . "\n";
-			$message .= $this->jp4wc_framework->jp4wc_array_to_message( $_GET ); // phpcs:ignore
+			$message .= $this->jp4wc_framework->jp4wc_array_to_message( $_GET ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
 		}
 	}
