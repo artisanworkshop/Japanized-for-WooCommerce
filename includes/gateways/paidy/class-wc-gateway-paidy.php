@@ -740,9 +740,23 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$current_status = $order->get_status();
 		// Idempotency: skip if payment_complete() was already called (transaction_id already set).
 		if ( ( 'pending' === $current_status || 'cancelled' === $current_status ) && empty( $order->get_transaction_id() ) ) {
+			$transaction_id = isset( $_GET['transaction_id'] ) ? sanitize_text_field( wp_unslash( $_GET['transaction_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+			// Verify the payment with Paidy server-side before completing the order. The
+			// transaction id comes from the (buyer-controllable) return URL, so it must not
+			// be trusted on its own: confirm the payment belongs to this order, is authorized,
+			// and matches the order total before reducing stock and completing payment.
+			if ( ! $this->paidy_verify_payment_for_order( $order, $transaction_id ) ) {
+				$this->jp4wc_framework->jp4wc_debug_log(
+					'Paidy thank-you completion blocked: payment verification failed for order ' . $order_id,
+					$this->debug,
+					'paidy-wc'
+				);
+				return;
+			}
+
 			// Reduce stock levels.
 			wc_reduce_stock_levels( $order_id );
-			$transaction_id = isset( $_GET['transaction_id'] ) ? sanitize_text_field( wp_unslash( $_GET['transaction_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$order->payment_complete( $transaction_id );
 			$message  = __( 'Paidy Payment succeeds to authorize and move to thank you page. Get data is following.', 'woocommerce-for-japan' ) . "\n";
 			$message .= $this->jp4wc_framework->jp4wc_array_to_message( $_GET ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -1077,7 +1091,96 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			),
 		);
 		$response = wp_remote_post( $send_url, $args );
-		return json_decode( $response['body'], true );
+		if ( is_wp_error( $response ) ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy get payment data request failed: ' . $response->get_error_message(),
+				$this->debug,
+				'paidy-wc'
+			);
+			return null;
+		}
+		return json_decode( wp_remote_retrieve_body( $response ), true );
+	}
+
+	/**
+	 * Verify a Paidy payment server-side before completing an order.
+	 *
+	 * Queries the Paidy API for the given payment and confirms that it belongs to
+	 * the supplied order, is in an authorized/active state, and that its amount
+	 * matches the order total. This prevents an order from being marked paid on the
+	 * strength of an attacker-supplied transaction id (thank-you page) or webhook
+	 * body alone, which would otherwise allow goods to ship without a real payment.
+	 *
+	 * @param WC_Order|false $order          The order to verify against.
+	 * @param string         $transaction_id Paidy payment ID.
+	 * @return bool True when the payment is verified for this order, false otherwise.
+	 */
+	public function paidy_verify_payment_for_order( $order, $transaction_id ) {
+		if ( ! $order instanceof WC_Order || empty( $transaction_id ) ) {
+			return false;
+		}
+
+		$paidy_info = $this->paidy_get_payment_data( $transaction_id );
+
+		if ( ! is_array( $paidy_info ) || empty( $paidy_info['status'] ) ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy payment verification failed: no payment data for transaction ' . $transaction_id,
+				$this->debug,
+				'paidy-wc'
+			);
+			return false;
+		}
+
+		// The payment id returned by Paidy must match the one we queried.
+		if ( isset( $paidy_info['id'] ) && (string) $paidy_info['id'] !== (string) $transaction_id ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy payment verification failed: payment id mismatch for transaction ' . $transaction_id,
+				$this->debug,
+				'paidy-wc'
+			);
+			return false;
+		}
+
+		// The payment must reference this exact order.
+		$order_ref = isset( $paidy_info['order']['order_ref'] ) ? (string) $paidy_info['order']['order_ref'] : '';
+		if ( (string) $order->get_id() !== $order_ref ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy payment verification failed: order_ref mismatch (expected ' . $order->get_id() . ', got ' . $order_ref . ')',
+				$this->debug,
+				'paidy-wc'
+			);
+			return false;
+		}
+
+		// The authorized amount must match the order total.
+		$paid_amount  = isset( $paidy_info['amount'] ) ? (float) $paidy_info['amount'] : -1.0;
+		$order_amount = (float) $order->get_total();
+		if ( abs( $paid_amount - $order_amount ) >= 0.01 ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy payment verification failed: amount mismatch (expected ' . $order_amount . ', got ' . $paid_amount . ')',
+				$this->debug,
+				'paidy-wc'
+			);
+			return false;
+		}
+
+		// The payment must be in an authorized/active state. Filterable to allow
+		// for capture flows where the payment has already moved to "closed".
+		$allowed_statuses = apply_filters(
+			'paidy_verify_allowed_statuses',
+			array( 'authorized', 'active', 'closed' ),
+			$order
+		);
+		if ( ! in_array( $paidy_info['status'], $allowed_statuses, true ) ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy payment verification failed: unexpected status "' . $paidy_info['status'] . '" for transaction ' . $transaction_id,
+				$this->debug,
+				'paidy-wc'
+			);
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
