@@ -60,8 +60,8 @@ class WC_Paidy_Endpoint {
 	/**
 	 * Permission callback for Paidy webhook endpoint.
 	 * Verifies the request is from Paidy by checking the signature header or IP allowlist.
-	 * At least one verification method must be active; requests are rejected with 403 when
-	 * neither an API secret key (for HMAC signature) nor an IP allowlist is configured.
+	 * When neither is configured the request is allowed through, preserving the behaviour
+	 * of versions prior to 2.9.13 which used permission_callback => '__return_true'.
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 * @return bool|WP_Error True if authorized, WP_Error otherwise.
@@ -115,21 +115,22 @@ class WC_Paidy_Endpoint {
 			return true;
 		}
 
-		// No signature and no IP whitelist configured — reject.
-		// At least one verification method must be in place to prevent unauthenticated
-		// callers from forging order status changes.
-		// Log a warning so site admins can diagnose blocked webhooks after upgrading.
-		wc_get_logger()->warning(
-			'Paidy webhook rejected: no HMAC signature present and no IP allowlist configured. ' .
-			'To restore webhook processing, configure the API secret key in WooCommerce > Settings > Payments > Paidy, ' .
-			'or supply a trusted IP list via the paidy_webhook_allowed_ips filter.',
-			array( 'source' => 'paidy-wc' )
+		// No signature and no IP allowlist configured — allow through.
+		// Paidy's standard webhook does not include an x-paidy-signature header, so
+		// rejecting unsigned requests with no IP allowlist would block all real
+		// notifications. This preserves the behaviour of versions prior to 2.9.13.
+		// Operators who want stricter security should supply a trusted IP list via the
+		// paidy_webhook_allowed_ips filter or configure an API secret key so that future
+		// Paidy webhook signatures can be verified.
+		// Only log when gateway debug mode is enabled to avoid flooding logs with bot traffic.
+		$this->jp4wc_framework->jp4wc_debug_log(
+			'Paidy webhook received without signature or IP allowlist verification. ' .
+			'To enable strict verification, supply a trusted IP list via the paidy_webhook_allowed_ips filter ' .
+			'or configure an API secret key in WooCommerce > Settings > Payments > Paidy.',
+			$this->paidy->debug,
+			'paidy-wc'
 		);
-		return new WP_Error(
-			'paidy_unauthorized',
-			__( 'Unauthorized: Paidy webhook requires either HMAC signature verification (configure an API secret key) or an IP allowlist (use the paidy_webhook_allowed_ips filter).', 'woocommerce-for-japan' ),
-			array( 'status' => 403 )
-		);
+		return true;
 	}
 
 	/**
