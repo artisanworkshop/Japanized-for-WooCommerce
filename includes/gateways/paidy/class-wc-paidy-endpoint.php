@@ -122,11 +122,13 @@ class WC_Paidy_Endpoint {
 		// Operators who want stricter security should supply a trusted IP list via the
 		// paidy_webhook_allowed_ips filter or configure an API secret key so that future
 		// Paidy webhook signatures can be verified.
-		wc_get_logger()->info(
+		// Only log when gateway debug mode is enabled to avoid flooding logs with bot traffic.
+		$this->jp4wc_framework->jp4wc_debug_log(
 			'Paidy webhook received without signature or IP allowlist verification. ' .
 			'To enable strict verification, supply a trusted IP list via the paidy_webhook_allowed_ips filter ' .
 			'or configure an API secret key in WooCommerce > Settings > Payments > Paidy.',
-			array( 'source' => 'paidy-wc' )
+			$this->paidy->debug,
+			'paidy-wc'
 		);
 		return true;
 	}
