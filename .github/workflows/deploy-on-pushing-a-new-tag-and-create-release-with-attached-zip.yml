@@ -9,13 +9,45 @@ jobs:
     tag:
         name: New tag
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        env:
+            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
         steps:
             - name: Checkout code
-              uses: actions/checkout@master
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20.x'
+                  cache: 'npm'
+
+            - name: Install dependencies & build
+              run: |
+                  npm ci
+                  npm run build
+
+            - name: Get version from tag
+              id: version
+              run: echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
+            - name: Extract changelog for this version
+              id: changelog
+              run: |
+                  VERSION="${{ steps.version.outputs.VERSION }}"
+                  BODY=$(awk "/^= ${VERSION} /{found=1; next} found && /^= [0-9]+\.[0-9]+/{exit} found && NF{print}" readme.txt)
+                  {
+                    echo "BODY<<EOF"
+                    echo "$BODY"
+                    echo "EOF"
+                  } >> "$GITHUB_OUTPUT"
+
             - name: Install SVN ( Subversion )
               run: |
                   sudo apt-get update
                   sudo apt-get install subversion
+
             - name: Remove PayPal gateway from SVN trunk
               env:
                   SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
@@ -34,20 +66,41 @@ jobs:
                   else
                       echo "PayPal gateway not found in SVN trunk. Skipping."
                   fi
+
             - name: Remove nested .git directories from vendor packages
               run: find . -mindepth 2 -name '.git' -type d -exec rm -rf '{}' + 2>/dev/null || true
+
+            - name: Create plugin zip
+              run: |
+                  PLUGIN_SLUG="woocommerce-for-japan"
+                  VERSION="${{ steps.version.outputs.VERSION }}"
+                  DEST="${PLUGIN_SLUG}-${VERSION}"
+
+                  mkdir -p "/tmp/${DEST}/${PLUGIN_SLUG}"
+                  rsync -a \
+                    --exclude-from='.distignore' \
+                    . "/tmp/${DEST}/${PLUGIN_SLUG}/"
+
+                  cd "/tmp/${DEST}"
+                  zip -r "${PLUGIN_SLUG}-${VERSION}.zip" "${PLUGIN_SLUG}/"
+
+                  mv "${PLUGIN_SLUG}-${VERSION}.zip" "$GITHUB_WORKSPACE/"
+
             - name: WordPress Plugin Deploy
               id: deploy
               uses: 10up/action-wordpress-plugin-deploy@stable
               with:
-                  generate-zip: true
+                  generate-zip: false
               env:
                   SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
                   SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
                   SLUG: 'woocommerce-for-japan'
-            - name: Create GitHub release
-              uses: softprops/action-gh-release@v1
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v2
               with:
-                  files: ${{github.workspace}}/${{ github.event.repository.name }}.zip
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  name: ${{ github.ref_name }}
+                  tag_name: ${{ github.ref_name }}
+                  body: ${{ steps.changelog.outputs.BODY }}
+                  generate_release_notes: true
+                  files: woocommerce-for-japan-${{ steps.version.outputs.VERSION }}.zip
