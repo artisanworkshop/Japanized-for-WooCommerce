@@ -48,7 +48,7 @@ class JP4WC_Check_Security {
 				'page_title' => __( 'Security Check List', 'woocommerce-for-japan' ),
 				'parent'     => 'woocommerce',
 				'path'       => '/jp4wc-security-check',
-				'capability' => 'manage_woocommerce',
+				'capability' => 'manage_options',
 			)
 		);
 	}
@@ -553,7 +553,7 @@ class JP4WC_Check_Security {
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'jp4wc_ms_start_scan_func' ),
 				'permission_callback' => function () {
-					return current_user_can( 'manage_woocommerce' );
+					return current_user_can( 'manage_options' );
 				},
 			)
 		);
@@ -600,7 +600,7 @@ class JP4WC_Check_Security {
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'jp4wc_ms_process_scan_batch_func' ),
 				'permission_callback' => function () {
-					return current_user_can( 'manage_woocommerce' );
+					return current_user_can( 'manage_options' );
 				},
 			)
 		);
@@ -613,7 +613,7 @@ class JP4WC_Check_Security {
 	 * @param WP_REST_Request $request The REST request object.
 	 * @return WP_REST_Response Response object containing scan batch results.
 	 */
-	public function jp4wc_ms_process_scan_batch_func( WP_REST_Request $request ) {
+	public function jp4wc_ms_process_scan_batch_func( WP_REST_Request $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- required by WP REST callback signature.
 		$session = get_transient( MS_SCAN_TRANSIENT_KEY );
 		if ( ! $session ) {
 			return rest_ensure_response(

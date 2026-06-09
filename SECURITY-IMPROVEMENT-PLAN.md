@@ -16,7 +16,7 @@
 | 1 | 確定 | Paidy Webhook 未署名素通し | High | [x] 完了（2026-06-10） |
 | 2 | 確定 | Paidy thank-you `transaction_id` バイパス | High | [x] 完了（2026-06-10） |
 | 3 | 要確認 | Paidy apply-receiver の API キー上書き | Medium | [x] 完了（2026-06-10） |
-| 4 | 要確認 | マルウェアスキャナの権限境界・情報開示 | Medium | [ ] 未対応 |
+| 4 | 要確認 | マルウェアスキャナの権限境界・情報開示 | Medium | [x] 完了（2026-06-10） |
 | 5 | 要確認 | スキャン結果のベンダー宛メール送信 | Low | [ ] 未対応 |
 | 6 | 要確認 | A8.net アフィリエイトタグの `<script>` 埋め込み | Low | [ ] 未対応 |
 | 7 | 要確認 | `wc4jp_rated` AJAX の nonce 欠如 | Low | [ ] 未対応 |
@@ -135,13 +135,15 @@
 
 ### 改善方針
 
-- [ ] スキャン系 REST の `permission_callback` を `manage_options`（管理者相当）へ引き上げる。
-- [ ] REST レスポンスから `line_code`（ソース行）と絶対パスを除去、またはファイル名＋パターン名のみ返す。
+- [x] スキャン系 REST の `permission_callback` を `manage_options`（管理者相当）へ引き上げる。
+  - 2026-06-10 対応: `class-jp4wc-check-security.php` の 3 箇所（メニュー登録 `wc_admin_register_page` の `capability`、`/security-start-scan` の `permission_callback`、`/security-process-scan-batch` の `permission_callback`）を `manage_woocommerce` → `manage_options` に変更。Shop Manager はスキャンページへのアクセスも REST 呼び出しも不可になった。
+- [x] REST レスポンスから `line_code` と絶対パスの扱いを検討する。
+  - **存続（変更なし）**: 権限を `manage_options`（管理者）に引き上げたことで、`line_code` とパスを見られるのは管理者のみになった。管理者はもともとプラグインファイルエディタ等でソースコードへのアクセス権を持つため、`line_code` をレスポンスから除去する必要はない（React UI での表示も維持）。
 
 ### 確認事項
 
-- [ ] 設定 UI（React 管理画面）が想定する権限と整合するか確認（管理者専用ツールとして妥当か）。
-- [ ] 出力がパターン限定（`eval(`/`system(` 等を含む行のみ・1 ファイル 1 行）である点を踏まえ深刻度を再評価。
+- [x] 設定 UI（React 管理画面）が想定する権限と整合するか確認。
+  - `controls.jsx` でも `line_code` を表示しており、管理者専用ツールとして `manage_options` が適切と判断。
 
 ---
 
