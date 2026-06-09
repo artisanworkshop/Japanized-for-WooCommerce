@@ -207,6 +207,24 @@ class WC_Paidy_Apply_Receiver {
 				$woocommerce_paidy_on_boarding_settings = get_option( 'woocommerce_paidy_on_boarding_settings', array() );
 				$current_step                           = isset( $woocommerce_paidy_on_boarding_settings['currentStep'] ) ? $woocommerce_paidy_on_boarding_settings['currentStep'] : 0;
 				if ( 'approved' === $paidy_status ) {
+					// Require all four key fields to be non-empty after decryption.
+					// An approved callback from the intermediary always contains all four
+					// keys; an empty string here means the field was absent or the
+					// intermediary sent an incomplete payload. Accepting empty keys would
+					// silently overwrite existing credentials with blank values, breaking
+					// payment processing without any obvious error.
+					$required_key_fields = array( 'public_live_key', 'secret_live_key', 'public_test_key', 'secret_test_key' );
+					foreach ( $required_key_fields as $key_field ) {
+						if ( empty( $filtered_params[ $key_field ] ) ) {
+							return new WP_Error(
+								'paidy_missing_key',
+								/* translators: %s: API key field name */
+								sprintf( __( 'Approved response is missing a required API key field: %s', 'woocommerce-for-japan' ), esc_html( $key_field ) ),
+								array( 'status' => 400 )
+							);
+						}
+					}
+
 					// Process approved status.
 					$woocommerce_paidy_on_boarding_settings['currentStep'] = 3;
 					update_option( 'woocommerce_paidy_on_boarding_settings', $woocommerce_paidy_on_boarding_settings );

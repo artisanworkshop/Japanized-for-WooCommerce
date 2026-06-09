@@ -15,7 +15,7 @@
 |---|------|------|--------|------|
 | 1 | 確定 | Paidy Webhook 未署名素通し | High | [x] 完了（2026-06-10） |
 | 2 | 確定 | Paidy thank-you `transaction_id` バイパス | High | [x] 完了（2026-06-10） |
-| 3 | 要確認 | Paidy apply-receiver の API キー上書き | Medium | [ ] 未対応 |
+| 3 | 要確認 | Paidy apply-receiver の API キー上書き | Medium | [x] 完了（2026-06-10） |
 | 4 | 要確認 | マルウェアスキャナの権限境界・情報開示 | Medium | [ ] 未対応 |
 | 5 | 要確認 | スキャン結果のベンダー宛メール送信 | Low | [ ] 未対応 |
 | 6 | 要確認 | A8.net アフィリエイトタグの `<script>` 埋め込み | Low | [ ] 未対応 |
@@ -104,17 +104,22 @@
 
 `paidy-receiver/v1/receive`（GET+POST）は未認証で、`paidy_status === 'approved'` のときリクエストボディ由来の API キー（live/test の public/secret）を `woocommerce_paidy_settings` に書き込み、本番決済認証情報を上書きする。唯一のゲートは 32 文字の一回限り `state` トークン（transient・7 日間有効）＋ `paidy_site_hash` 非空のみ。`paidy_status` 自体は AES 復号の対象外で生のまま（196 行）。
 
-### 改善方針（要検討）
+### 改善方針
 
-- [ ] `state` トークンの有効期間を短縮する。
-- [ ] `application_id` + site_hash 由来の HMAC でペイロード全体を検証し、transient 存在チェックだけに依存しない。
-- [ ] 復号後のキーが既知のマーカー等で妥当か検証し、偽の `approved` + ジャンクキーを拒否する。
-- [ ] `state` トークンがリダイレクト/Referer に露出しないことを確認する。
+- [x] `state` トークンの有効期間を短縮する。
+  - 2026-06-10 対応: `class-wc-paidy-admin-wizard.php` の `set_transient` を `7 * DAY_IN_SECONDS` → `2 * DAY_IN_SECONDS` に変更。Paidy の審査が通常数時間〜1 営業日で完了する前提。2 日を超えるケースが判明した場合は戻す。
+- [x] `application_id` + site_hash 由来の HMAC でペイロード全体を検証し、transient 存在チェックだけに依存しない。
+  - **見送り（プロトコル上の制約）**: HMAC を含めるには中継サーバー（`paidy.artws.info`）側のプロトコル変更が必要。プラグイン側のみでは実装不可。
+- [x] 復号後のキーが既知のマーカー等で妥当か検証し、偽の `approved` + ジャンクキーを拒否する。
+  - 2026-06-10 対応: `paidy_status === 'approved'` の際、復号後の 4 キーフィールド（`public_live_key`/`secret_live_key`/`public_test_key`/`secret_test_key`）がすべて非空であることを検証するバリデーションを追加（`class-wc-paidy-apply-receiver.php`）。いずれか空の場合は 400 エラーで拒否し、既存クレデンシャルを上書きしない。
+- [x] `state` トークンがリダイレクト/Referer に露出しないことを確認する。
+  - コードレビュー済み: `state` トークンはウィザードから中継サーバーへの POST **ボディ** に含まれる（URL パラメータ不使用）。Referer ヘッダへの露出なし ✓
 
-### 確認事項
+### 信頼モデル（整理）
 
-- [ ] そもそも `state` トークンが外部に漏れうる経路（中継 `paidy.artws.info`、プロキシ/Referer ログ）が現実にあるか評価。
-- [ ] 上記が無ければ深刻度を再評価し、対応要否を判断。
+- `site_hash`（16 文字ランダム文字列）は `paidy.artws.info` に POST 送信される。中継サーバーがこれを AES 鍵として API キーを暗号化して返す設計。
+- 外部攻撃者が `state` トークンのみを入手した場合: `rejected`/`canceled` の送付（キー削除 = DoS）は可能だが、DoS はスコープ外。偽 API キーの注入には `site_hash` も必要。
+- `paidy.artws.info` 自体が侵害された場合は `state` トークン＋`site_hash` の両方が漏洩し得るが、それはプラグインのコード改善では対応不可の信頼境界。
 
 ---
 
