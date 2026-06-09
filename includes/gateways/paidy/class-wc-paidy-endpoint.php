@@ -211,6 +211,10 @@ class WC_Paidy_Endpoint {
 				$enable_authorize_success_statuses = apply_filters( 'paidy_endpoint_enable_authorize_statuses', array( 'pending', 'cancelled' ), $order );
 
 				if ( 'authorize_success' === $main_data['status'] && in_array( $status, $enable_authorize_success_statuses, true ) ) {
+					// Idempotency: skip if payment_complete() was already called (transaction_id already set).
+					if ( ! empty( $order->get_transaction_id() ) ) {
+						return new WP_REST_Response( $main_data, 200 );
+					}
 					// Reduce stock levels.
 					wc_reduce_stock_levels( $main_data['order_ref'] );
 					if ( isset( $main_data['payment_id'] ) ) {

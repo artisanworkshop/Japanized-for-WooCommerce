@@ -735,7 +735,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	public function thankyou_completed( $order_id ) {
 		$order          = wc_get_order( $order_id );
 		$current_status = $order->get_status();
-		if ( 'pending' === $current_status || 'cancelled' === $current_status ) {
+		// Idempotency: skip if payment_complete() was already called (transaction_id already set).
+		if ( ( 'pending' === $current_status || 'cancelled' === $current_status ) && empty( $order->get_transaction_id() ) ) {
 			// Reduce stock levels.
 			wc_reduce_stock_levels( $order_id );
 			$order->payment_complete( $_GET['transaction_id'] );// phpcs:ignore
