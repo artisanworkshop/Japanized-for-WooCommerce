@@ -1080,7 +1080,18 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 * @return WP_Error|array
 	 */
 	public function paidy_get_payment_data( $payment_id ) {
-		$send_url = 'https://api.paidy.com/payments/' . $payment_id;
+		// Validate format before building the URL: Paidy payment IDs are "pay_" followed by
+		// alphanumeric characters. Rejecting anything else prevents path/query injection when
+		// $payment_id originates from the buyer-controllable thank-you URL transaction_id param.
+		if ( ! preg_match( '/^pay_[A-Za-z0-9]+$/', $payment_id ) ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy get payment data: invalid payment_id format: ' . $payment_id,
+				$this->debug,
+				'paidy-wc'
+			);
+			return null;
+		}
+		$send_url = 'https://api.paidy.com/payments/' . rawurlencode( $payment_id );
 		$args     = array(
 			'headers' => array(
 				'Content-Type'  => 'application/json',
@@ -1088,7 +1099,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 				'Authorization' => 'Bearer ' . $this->set_api_secret_key(),
 			),
 		);
-		$response = wp_remote_get( $send_url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+		$response = wp_safe_remote_get( $send_url, $args );
 		if ( is_wp_error( $response ) ) {
 			$this->jp4wc_framework->jp4wc_debug_log(
 				'Paidy get payment data request failed: ' . $response->get_error_message(),
