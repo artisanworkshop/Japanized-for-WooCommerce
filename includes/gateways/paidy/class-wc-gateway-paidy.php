@@ -1082,15 +1082,13 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	public function paidy_get_payment_data( $payment_id ) {
 		$send_url = 'https://api.paidy.com/payments/' . $payment_id;
 		$args     = array(
-			'method'  => 'POST',
-			'body'    => '',
 			'headers' => array(
 				'Content-Type'  => 'application/json',
 				'Paidy-Version' => '2018-04-10',
 				'Authorization' => 'Bearer ' . $this->set_api_secret_key(),
 			),
 		);
-		$response = wp_remote_post( $send_url, $args );
+		$response = wp_remote_get( $send_url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 		if ( is_wp_error( $response ) ) {
 			$this->jp4wc_framework->jp4wc_debug_log(
 				'Paidy get payment data request failed: ' . $response->get_error_message(),
