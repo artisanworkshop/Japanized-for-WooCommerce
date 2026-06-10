@@ -18,12 +18,17 @@ jobs:
         wc-version: ['latest', '10.6.2', '10.5.3']
     services:
       database:
-        image: mysql:latest
+        image: mysql:8.0
         env:
           MYSQL_DATABASE: wordpress_tests
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=6
     steps:
       - name: Check out source code
         uses: actions/checkout@v4
