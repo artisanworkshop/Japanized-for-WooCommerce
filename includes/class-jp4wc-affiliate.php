@@ -83,8 +83,8 @@ class JP4WC_Affiliate {
 			'total_price'  => (int) $total_price,
 		);
 
-		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript,WordPress.Security.EscapeOutput.OutputNotEscaped -- third-party conversion tag; wp_json_encode handles escaping
-		echo '<span id="a8sales"></span><script src="//statics.a8.net/a8sales/a8sales.js"></script><script>a8sales(' . wp_json_encode( $payload ) . ');</script>' . "\n";
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript,WordPress.Security.EscapeOutput.OutputNotEscaped -- third-party conversion tag; wp_json_encode with HEX flags handles escaping
+		echo '<span id="a8sales"></span><script src="//statics.a8.net/a8sales/a8sales.js"></script><script>a8sales(' . wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) . ');</script>' . "\n";
 	}
 
 	/**
