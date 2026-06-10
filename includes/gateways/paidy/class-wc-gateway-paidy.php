@@ -1099,7 +1099,25 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			);
 			return null;
 		}
-		return json_decode( wp_remote_retrieve_body( $response ), true );
+		$http_code = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== (int) $http_code ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy get payment data returned HTTP ' . $http_code . ' for payment ' . $payment_id,
+				$this->debug,
+				'paidy-wc'
+			);
+			return null;
+		}
+		$decoded = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( ! is_array( $decoded ) ) {
+			$this->jp4wc_framework->jp4wc_debug_log(
+				'Paidy get payment data: invalid JSON response for payment ' . $payment_id,
+				$this->debug,
+				'paidy-wc'
+			);
+			return null;
+		}
+		return $decoded;
 	}
 
 	/**
@@ -1171,6 +1189,9 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			array( 'authorized', 'active', 'closed' ),
 			$order
 		);
+		if ( ! is_array( $allowed_statuses ) ) {
+			$allowed_statuses = array( 'authorized', 'active', 'closed' );
+		}
 		if ( ! in_array( $paidy_info['status'], $allowed_statuses, true ) ) {
 			$this->jp4wc_framework->jp4wc_debug_log(
 				'Paidy payment verification failed: unexpected status "' . $paidy_info['status'] . '" for transaction ' . $transaction_id,

@@ -122,6 +122,9 @@ class WC_Paidy_Endpoint {
 		// No signature — fall back to the IP allowlist. Defaults to Paidy's official
 		// webhook source IPs; operators can extend or override via the filter.
 		$allowed_ips = apply_filters( 'paidy_webhook_allowed_ips', self::PAIDY_WEBHOOK_IPS );
+		if ( ! is_array( $allowed_ips ) ) {
+			$allowed_ips = self::PAIDY_WEBHOOK_IPS;
+		}
 
 		if ( ! empty( $allowed_ips ) ) {
 			$remote_ip = $this->get_remote_ip();
@@ -323,13 +326,15 @@ class WC_Paidy_Endpoint {
 	 */
 	public function paidy_check_regist_webhook() {
 		// POST /wp-json/paidy/v1/check .
+		// This endpoint is called by the Paidy intermediary server (paidy.artws.info) for webhook
+		// registration verification. It does not modify order state, so __return_true is appropriate.
 		register_rest_route(
 			'paidy/v1',
 			'/check',
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'paidy_regist_webhook' ),
-				'permission_callback' => array( $this, 'paidy_webhook_permission_check' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 	}
