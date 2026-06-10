@@ -1077,7 +1077,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 * Check Paidy payment details by payment_id
 	 *
 	 * @param string $payment_id Paidy payment ID.
-	 * @return WP_Error|array
+	 * @return array|null Payment data array on success, null on any failure.
 	 */
 	public function paidy_get_payment_data( $payment_id ) {
 		// Validate format before building the URL: Paidy payment IDs are "pay_" followed by
