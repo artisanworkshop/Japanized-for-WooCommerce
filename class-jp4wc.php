@@ -130,11 +130,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// Note: class-jp4wc-admin-product-meta.php is loaded in on_plugins_loaded() (init priority 20)
 			// to ensure load_plugin_textdomain() has run before __() calls in the framework config.
 
-			// Admin Security Screen.
-			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-check-security.php';
-			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-malware-check.php';
-			new JP4WC_Check_Security();
-
 			// Admin PR notice.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-notices.php';
 

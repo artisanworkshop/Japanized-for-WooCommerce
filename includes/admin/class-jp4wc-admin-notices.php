@@ -54,7 +54,6 @@ class JP4WC_Admin_Notices {
 	 * @since 2.3.4
 	 */
 	public function __construct() {
-		add_action( 'admin_notices', array( $this, 'admin_jp4wc_security_checklist' ) );
 		add_action( 'admin_notices', array( $this, 'admin_jp4wc_promotion' ) );
 		add_action( 'admin_notices', array( $this, 'admin_jp4wc_paypal_deprecation' ) );
 		add_action( 'wp_loaded', array( $this, 'jp4wc_hide_notices' ) );
@@ -107,153 +106,6 @@ class JP4WC_Admin_Notices {
 				);
 			}
 		}
-	}
-
-	/**
-	 * Display security checklist notice for WooCommerce admins.
-	 *
-	 * @since 2.6.8
-	 * @return void
-	 */
-	public function admin_jp4wc_security_checklist() {
-		// Only show to WooCommerce admins.
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			return;
-		}
-
-		// Notification display content.
-		if ( get_option( 'jp4wc_hide_security_check_notice', 0 ) ) {
-			return;
-		}
-
-		// Check if the user has placed orders in the last 5 days.
-		if ( ! jp4wc_has_orders_in_last_5_days() ) {
-			return;
-		}
-
-		$security_check = get_option( 'jp4wc_security_settings' );
-
-		$self_check_flag = false;
-		$sacurity_flag   = false;
-		// Check if the security check is enabled.
-		if ( isset( $security_check['checkAdminLogin'] )
-		&& isset( $security_check['checkSeucirytPluigns'] )
-		&& $security_check['checkAdminLogin']
-		&& $security_check['checkSeucirytPluigns'] ) {
-			$self_check_flag = true;
-		}
-		// Check if the PHP version is safe.
-		if ( $this->is_safe_php_version() ) {
-			$sacurity_flag = true;
-		}
-		// Check if the WordPress version is up to date.
-		if ( $this->is_later_wordpress_version() ) {
-			$sacurity_flag = true;
-		}
-		// Check if the WooCommerce version is up to date.
-		if ( $this->is_latest_woocommerce_version() ) {
-			$sacurity_flag = true;
-		}
-
-		if ( $self_check_flag && $sacurity_flag ) {
-			return;
-		}
-
-		$this->jp4wc_security_checklist_display();
-	}
-
-	/**
-	 * Display the security checklist notice.
-	 *
-	 * @since 2.6.8
-	 */
-	public function jp4wc_security_checklist_display() {
-		$check_link = '/wp-admin/admin.php?page=wc-admin&path=%2Fjp4wc-security-check';
-		?>
-		<div class="notice notice-warning jp4wc-security-check" id="pr_jp4wc" style="background-color: #002F6C; color: #D1C1FF;">
-		<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'jp4wc-hide-notice', 'security' ), 'jp4wc_hide_notices_nonce', '_jp4wc_notice_nonce' ) ); ?>" class="woocommerce-message-close notice-dismiss" style="position:relative;float:right;padding:9px 0 9px 9px;text-decoration:none;"></a>
-		<div id="jp4wc-security-check">
-			<p>
-		<?php
-			$message_flag = false;
-			$catch_copy   = __( 'Credit Card Security Guidelines Quick Check', 'woocommerce-for-japan' );
-			echo '<h2 style="color:#fff;">' . esc_html( $catch_copy ) . '</h2>';
-			echo '<span style="color:#f00; font-weight:bold;">';
-		if ( ! $this->is_safe_php_version() ) {
-			esc_html_e( 'Please check the PHP version. The PHP currently used on this site is not supported for security reasons.', 'woocommerce-for-japan' );
-			echo '<br />';
-			$message_flag = true;
-		}
-		if ( ! $this->is_later_wordpress_version() ) {
-			esc_html_e( 'Please check the WordPress version. The version of WordPress is outdated.', 'woocommerce-for-japan' );
-			echo '<br />';
-			$message_flag = true;
-		}
-		if ( ! $this->is_latest_woocommerce_version() ) {
-			esc_html_e( 'Please check the WooCommerce version. The version of WooCommerce is outdated.', 'woocommerce-for-japan' );
-			echo '<br />';
-			$message_flag = true;
-		}
-			echo '</span>';
-		if ( $message_flag ) {
-			esc_html_e( 'This site is currently in violation of the security guidelines due to the above content. Immediate action is required.', 'woocommerce-for-japan' );
-			echo '<br />';
-			echo '<br />';
-		}
-		$messages = array(
-			array(
-				'text' => __( 'Get 2,200 yen/month and cashback now! Click here for your chance to switch to a secure server.', 'woocommerce-for-japan' ),
-				'link' => '001',
-			),
-			array(
-				'text' => __( '30-day money back guarantee! Click here for details on the security-enabled server migration campaign.', 'woocommerce-for-japan' ),
-				'link' => '002',
-			),
-			array(
-				'text' => __( 'Get a cashback on all your current server costs! Click here for a safe and economical migration.', 'woocommerce-for-japan' ),
-				'link' => '003',
-			),
-			array(
-				'text' => __( 'Fully secure! Migration + cashback for just 2,200 yen per month [Click here for details].', 'woocommerce-for-japan' ),
-				'link' => '004',
-			),
-			array(
-				'text' => __( 'Migration is also safe. 30-day money back guarantee! Click here for security-enabled servers.', 'woocommerce-for-japan' ),
-				'link' => '005',
-			),
-			array(
-				'text' => __( 'If you\'re worried about server migration, check out SoftStepsEC for Pressable!', 'woocommerce-for-japan' ),
-				'link' => '006',
-			),
-			array(
-				'text' => __( 'Now is your chance to switch! Check out the ¥2,200/month + cashback campaign.', 'woocommerce-for-japan' ),
-				'link' => '007',
-			),
-			array(
-				'text' => __( '[Hurry] Check out the details of this safe and affordable server migration campaign now!', 'woocommerce-for-japan' ),
-				'link' => '008',
-			),
-		);
-		// Get a random key from the array.
-		$random_key = array_rand( $messages );
-		esc_html_e( 'We recommend you do a quick check on the following page.', 'woocommerce-for-japan' );
-		echo '<br />';
-		esc_html_e( 'The above warning will no longer be displayed, and once you have checked the page problems, addressed them, checked and saved, this message will disappear.', 'woocommerce-for-japan' );
-		echo '<br />';
-		echo '<a href="' . esc_url( $check_link ) . '" style="color:#fff;">' . esc_html__( 'Check the security checklist', 'woocommerce-for-japan' ) . '</a>';
-		echo '<br />';
-		echo '<strong style="color:#fff;margin-top: 15px;display: inline-block;">';
-		esc_html_e( '[Introducing servers that comply with credit card guidelines]', 'woocommerce-for-japan' );
-		echo '</strong>';
-		echo '<br />';
-		echo '<a href="https://wc4jp-pro.work/product/softstepec-for-pressable/?utm_source=jp4wc&utm_medium=plugin&utm_campaign=' . esc_html( $messages[ $random_key ]['link'] ) . '" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; border: 2px solid #3498db; border-radius: 12px; text-decoration: none;color:#fff; font-weight:bold;margin: 15px 0 5px;">';
-		echo esc_html( $messages[ $random_key ]['text'] );
-		echo '</a>';
-		?>
-			</p>
-		</div>
-		</div>
-		<?php
 	}
 
 	/**
@@ -522,131 +374,6 @@ class JP4WC_Admin_Notices {
 	}
 
 	/**
-	 * Checks if the current PHP version is considered safe (8.3.0 or higher).
-	 *
-	 * @since 2.6.37
-	 * @return bool True if PHP version is safe, false otherwise.
-	 */
-	public function is_safe_php_version() {
-		$php_ver = phpversion();
-		if ( version_compare( $php_ver, '8.3.0', '>=' ) ) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if the site is running a recent version of WordPress.
-	 *
-	 * Compares the current WordPress version with the latest available version
-	 * to determine if the site needs an update.
-	 *
-	 * @since 2.6.37
-	 * @return bool True if running a recent WordPress version, false if update needed.
-	 */
-	public function is_later_wordpress_version() {
-		$api_response = wp_remote_get( 'https://api.wordpress.org/core/version-check/1.7/' );
-
-		if ( is_wp_error( $api_response ) ) {
-			return true;
-		}
-
-		$api_data = json_decode( wp_remote_retrieve_body( $api_response ), true );
-
-		if ( empty( $api_data ) || ! isset( $api_data['offers'] ) || empty( $api_data['offers'] ) ) {
-			return true;
-		}
-
-		$latest_version  = $api_data['offers'][0]['version'];
-		$current_version = get_bloginfo( 'version' );
-
-		$latest_parts  = explode( '.', $latest_version );
-		$current_parts = explode( '.', $current_version );
-
-		if ( isset( $latest_parts[0] ) && isset( $current_parts[0] ) && $current_parts[0] !== $latest_parts[0] ) {
-			return false;
-		}
-
-		if ( isset( $latest_parts[1] ) && isset( $current_parts[1] ) ) {
-			$minor_diff = intval( $latest_parts[1] ) - intval( $current_parts[1] );
-
-			if ( $minor_diff >= 1 ) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Checks if the site is running a recent version of WooCommerce.
-	 *
-	 * Compares the current WooCommerce version with the latest available version
-	 * to determine if an update is needed. Considers a version outdated if it's
-	 * at least 2 minor versions behind.
-	 *
-	 * @since 2.6.37
-	 * @return bool True if running an acceptable WooCommerce version, false if update needed.
-	 */
-	public function is_latest_woocommerce_version() {
-		// Get the currently installed WooCommerce version.
-		if ( ! function_exists( 'WC' ) ) {
-			// WooCommerce is not active.
-			return true;
-		}
-
-		$current_version = WC()->version;
-
-		// Get the latest WooCommerce version from the WordPress.org API.
-		$response = wp_remote_get( 'https://api.wordpress.org/plugins/info/1.0/woocommerce.json' );
-
-		// Check if request was successful.
-		if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
-			// If we can't determine the latest version, assume current version is OK.
-			return true;
-		}
-
-		$plugin_info = json_decode( wp_remote_retrieve_body( $response ) );
-
-		if ( empty( $plugin_info ) || ! isset( $plugin_info->version ) ) {
-			// If we can't determine the latest version, assume current version is OK.
-			return true;
-		}
-
-		$latest_version = $plugin_info->version;
-
-		// Parse version numbers.
-		$current_parts = explode( '.', $current_version );
-		$latest_parts  = explode( '.', $latest_version );
-
-		// Ensure we have at least major.minor.patch format.
-		$current_parts_count = count( $current_parts );
-		while ( $current_parts_count < 3 ) {
-			$current_parts[] = '0';
-			++$current_parts_count;
-		}
-		$latest_parts_count = count( $latest_parts );
-		while ( $latest_parts_count < 3 ) {
-			$latest_parts[] = '0';
-			++$latest_parts_count;
-		}
-
-		// Compare major versions.
-		if ( $current_parts[0] < $latest_parts[0] ) {
-			// If major version is behind, check if minor version is at least 2 versions behind.
-			return ( 2 <= $latest_parts[1] - $current_parts[1] ) ? false : true;
-		}
-
-		// If major versions are the same, check if minor version is at least 2 versions behind.
-		if ( $latest_parts[0] === $current_parts[0] && ( 2 <= $latest_parts[1] - $current_parts[1] ) ) {
-			return false;
-		}
-
-		// Otherwise, the version is current enough.
-		return true;
-	}
-
-	/**
 	 * Hides the security checklist notice when the user opts to dismiss it.
 	 *
 	 * This function checks for a specific GET parameter and nonce to securely
@@ -658,13 +385,6 @@ class JP4WC_Admin_Notices {
 	public function jp4wc_hide_notices() {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
-		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['jp4wc-hide-notice'] ) && 'security' === sanitize_text_field( wp_unslash( $_GET['jp4wc-hide-notice'] ) ) ) {
-			if ( ! isset( $_GET['_jp4wc_notice_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_jp4wc_notice_nonce'] ) ), 'jp4wc_hide_notices_nonce' ) ) {
-				return;
-			}
-			update_option( 'jp4wc_hide_security_check_notice', 1 );
 		}
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['jp4wc-hide-notice'] ) && 'ecbuddy' === sanitize_text_field( wp_unslash( $_GET['jp4wc-hide-notice'] ) ) ) {
@@ -679,9 +399,6 @@ class JP4WC_Admin_Notices {
 				return;
 			}
 			update_option( 'jp4wc_hide_paypal_deprecation_notice', 1 );
-		}
-		if ( get_option( 'jp4wc_hide_security_check_notice', 0 ) ) {
-			return;
 		}
 		if ( get_option( 'jp4wc_hide_ecbuddy_notice', 0 ) ) {
 			return;
