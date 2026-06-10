@@ -18,8 +18,8 @@
 | 3 | 要確認 | Paidy apply-receiver の API キー上書き | Medium | [x] 完了（2026-06-10） |
 | 4 | 要確認 | マルウェアスキャナの権限境界・情報開示 | Medium | [x] 完了（2026-06-10） |
 | 5 | 要確認 | スキャン結果のベンダー宛メール送信 | Low | [x] 完了（2026-06-10・機能削除） |
-| 6 | 要確認 | A8.net アフィリエイトタグの `<script>` 埋め込み | Low | [ ] 未対応 |
-| 7 | 要確認 | `wc4jp_rated` AJAX の nonce 欠如 | Low | [ ] 未対応 |
+| 6 | 要確認 | A8.net アフィリエイトタグの `<script>` 埋め込み | Low | [x] 完了（2026-06-10） |
+| 7 | 要確認 | `wc4jp_rated` AJAX の nonce 欠如 | Low | [x] 完了（2026-06-10） |
 
 > **共通方針**: #1 と #2 は「`payment_complete()` / 在庫減算の前に Paidy API で `order_ref`・`status`・金額を検証する」という共通の修正で一括対処できる。先にこの検証ヘルパーを用意してから両経路に適用すると効率的。
 
@@ -174,7 +174,8 @@
 
 ### 改善方針（ハードニング）
 
-- [ ] `wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )` を使用する。
+- [x] `wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )` を使用する。
+  - 2026-06-10 対応: `includes/class-jp4wc-affiliate.php` 87 行の `wp_json_encode( $payload )` に 4 フラグを追加。
 
 ---
 
@@ -186,7 +187,8 @@
 
 ### 改善方針（任意）
 
-- [ ] `admin_footer_text`（240 行付近）のインライン JS に `wp_create_nonce('wc4jp_rated')` を出力し、`jp4wc_rated()` 冒頭で `check_ajax_referer('wc4jp_rated', 'security')` を検証する。
+- [x] `admin_footer_text`（240 行付近）のインライン JS に `wp_create_nonce('wc4jp_rated')` を出力し、`jp4wc_rated()` 冒頭で `check_ajax_referer('wc4jp_rated', 'security')` を検証する。
+  - 2026-06-10 対応: `class-jp4wc.php` の JS 側に `security: wp_create_nonce('wc4jp_rated')` を追加。PHP ハンドラ `jp4wc_rated()` に `check_ajax_referer('wc4jp_rated', 'security')` を追加。
 
 ---
 
