@@ -17,7 +17,7 @@
 | 2 | 確定 | Paidy thank-you `transaction_id` バイパス | High | [x] 完了（2026-06-10） |
 | 3 | 要確認 | Paidy apply-receiver の API キー上書き | Medium | [x] 完了（2026-06-10） |
 | 4 | 要確認 | マルウェアスキャナの権限境界・情報開示 | Medium | [x] 完了（2026-06-10） |
-| 5 | 要確認 | スキャン結果のベンダー宛メール送信 | Low | [ ] 未対応 |
+| 5 | 要確認 | スキャン結果のベンダー宛メール送信 | Low | [x] 完了（2026-06-10・機能削除） |
 | 6 | 要確認 | A8.net アフィリエイトタグの `<script>` 埋め込み | Low | [ ] 未対応 |
 | 7 | 要確認 | `wc4jp_rated` AJAX の nonce 欠如 | Low | [ ] 未対応 |
 
@@ -157,11 +157,12 @@
 
 スキャン完了時、疑わしいファイルのパス＋ソース行を含むペイロードをハードコードされたベンダーアドレス `wp-admin@artws.info` へ無言で送信する。
 
-### 改善方針（任意・プライバシー観点の改善）
+### 対応内容
 
-- [ ] 送信内容をメタデータ（件数・プラグインバージョン）のみに限定する。
-- [ ] 送信先をフィルタ可能にし、デフォルトはサイト管理者メール（`get_option('admin_email')`）にする。
-- [ ] 明示的なオプトインを必須にする。
+- [x] 2026-06-10: **マルウェアスキャン機能全体を削除**（利用者がほぼいないため）。
+  - 削除ファイル: `includes/admin/class-jp4wc-check-security.php`、`includes/admin/class-jp4wc-malware-check.php`、`src/js/jp4wc/admin/security/`（全 JS ソース）、`assets/js/build/admin/security.*`（ビルド成果物）
+  - `class-jp4wc.php` の require/instantiate を削除。`webpack.config.js` の `admin/security` エントリを削除。
+  - これにより #4（スキャナ権限境界）と #5（ベンダー宛メール）の両問題が根本解消された。
 
 ---
 
