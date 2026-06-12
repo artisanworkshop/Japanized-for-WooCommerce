@@ -25,8 +25,12 @@
 	"scripts": {
 		"format": "phpcbf --standard=./.phpcs.xml.dist --report-summary --report-source",
 		"lint": "phpcs --standard=./.phpcs.xml.dist",
-		"test": "phpunit",
-		"test-install": "bash bin/setup-test-env.sh wordpress_test root root 127.0.0.1 3306 latest"
+		"test": [
+			"phpunit",
+			"@test-stop"
+		],
+		"test-install": "bash bin/setup-test-env.sh wordpress_test root root 127.0.0.1 3306 latest",
+		"test-stop": "docker stop jp4wc-mysql-test 2>/dev/null; docker rm jp4wc-mysql-test 2>/dev/null; true"
 	},
 	"config": {
 		"allow-plugins": {
