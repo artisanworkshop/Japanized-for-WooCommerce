@@ -23,6 +23,12 @@ jobs:
                   node-version: '20.x'
                   cache: 'npm'
 
+            - name: Install WP-CLI
+              run: |
+                  curl -sO https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+                  chmod +x wp-cli.phar
+                  sudo mv wp-cli.phar /usr/local/bin/wp
+
             - name: Install dependencies & build
               run: |
                   npm ci
