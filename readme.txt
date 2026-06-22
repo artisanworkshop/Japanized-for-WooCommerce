@@ -3,8 +3,8 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
-Tested up to: 6.9.4
-Stable tag: 2.9.13
+Tested up to: 7.0
+Stable tag: 2.9.14
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,11 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.14 - 2026-06-22 =
+* **Fixed** - Paidy payment verification was always failing (HTTP 404) because the gateway incorrectly used POST for `GET /payments/{id}`; switched to `wp_safe_remote_get()` so payment status checks now succeed and order completion is unblocked
+* **Security** - `payment_id` parameter is now validated against the Paidy format (`pay_[A-Za-z0-9_]+`) and `rawurlencode()`-escaped before being interpolated into the API URL, preventing path/query injection from buyer-controllable transaction IDs
+* **Fixed** - Paidy payment_id regex was too strict (rejected underscores); updated to `pay_[A-Za-z0-9_]+` to match actual Paidy IDs such as `pay_aii8_kYAAEYA2BDW`
 
 = 2.9.13 - 2026-05-27 =
 * **Security** - Fixed Broken Access Control (CVSS 6.5) in Paidy payment gateway REST endpoints: `paidy-receiver/v1/receive` now enforces a one-time per-session state token (stored as a per-token transient keyed by the 32-char value itself so parallel sessions cannot clobber each other); `paidy/v1/order` and `paidy/v1/check` now require either HMAC signature verification or an IP allowlist — the previous unconditional `return true` fallback has been removed
