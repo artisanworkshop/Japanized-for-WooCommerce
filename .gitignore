@@ -6,7 +6,6 @@
 # Grunt
 node_modules/
 deploy/
-package-lock.json
 
 # Composer
 vendor/
