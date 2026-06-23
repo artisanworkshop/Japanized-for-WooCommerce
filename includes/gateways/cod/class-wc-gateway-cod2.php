@@ -162,7 +162,7 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 				'title'       => __( 'Maximum cart value to which adding fee', 'woocommerce-for-japan' ),
 				'type'        => 'number',
 				'css'         => 'width:120px;',
-				'description' => __( 'If you dont need this setting, please set empty, 0.', 'woocommerce-for-japan' ),
+				'description' => __( "If you don't need this setting, please leave it empty or set to 0.", 'woocommerce-for-japan' ),
 			),
 			'extra_charge_calc_taxes'     => array(
 				'title'   => __( 'Includes taxes', 'woocommerce-for-japan' ),
@@ -471,23 +471,28 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	 * Save PRO tiered fee details for COD2.
 	 */
 	public function save_cod2_fee_details() {
-		$fees  = array();
 		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
 
-		if ( isset( $_POST['cod2_fee'] ) && isset( $_POST['cod2_max'] ) && wp_verify_nonce( $nonce, 'woocommerce-settings' ) ) {
-			$cod2_fees = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_fee'] ) ) );
-			$cod2_maxs = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_max'] ) ) );
+		if ( ! isset( $_POST['cod2_fee'] ) || ! isset( $_POST['cod2_max'] ) || ! wp_verify_nonce( $nonce, 'woocommerce-settings' ) ) {
+			return;
+		}
 
-			foreach ( $cod2_fees as $i => $fee ) {
-				$fees[] = array(
-					'cod_fee' => $cod2_fees[ $i ],
-					'cod_max' => $cod2_maxs[ $i ],
-				);
-			}
+		$fees      = array();
+		$cod2_fees = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_fee'] ) ) );
+		$cod2_maxs = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_max'] ) ) );
 
-			if ( isset( $_POST['jp4wc_tax_class_for_cod2'] ) ) {
-				update_option( 'jp4wc_tax_class_for_cod2', sanitize_text_field( wp_unslash( $_POST['jp4wc_tax_class_for_cod2'] ) ) );
+		foreach ( $cod2_fees as $i => $fee ) {
+			if ( ! isset( $cod2_maxs[ $i ] ) ) {
+				continue;
 			}
+			$fees[] = array(
+				'cod_fee' => $fee,
+				'cod_max' => $cod2_maxs[ $i ],
+			);
+		}
+
+		if ( isset( $_POST['jp4wc_tax_class_for_cod2'] ) ) {
+			update_option( 'jp4wc_tax_class_for_cod2', sanitize_text_field( wp_unslash( $_POST['jp4wc_tax_class_for_cod2'] ) ) );
 		}
 
 		update_option( 'woocommerce_cod2_fees', $fees );

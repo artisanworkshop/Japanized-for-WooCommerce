@@ -437,10 +437,14 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			return;
 		}
 
-		// Tax class.
-		$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
-		if ( false === $tax_class ) {
-			$tax_class = get_option( 'wc4jp-extra_charge_tax_class' );
+		// Tax class — use gateway-specific option so COD2 uses its own setting.
+		if ( 'cod2' === $current_gateway_id ) {
+			$tax_class = get_option( 'jp4wc_tax_class_for_cod2' );
+		} else {
+			$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
+			if ( false === $tax_class ) {
+				$tax_class = get_option( 'wc4jp-extra_charge_tax_class' );
+			}
 		}
 		$tax_class = empty( $tax_class ) ? 'standard' : $tax_class;
 

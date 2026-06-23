@@ -153,7 +153,7 @@ const PaymentSettings = ( {
 						<a
 							href="/wp-admin/admin.php?page=wc-settings&tab=checkout&section=cod2"
 							target="_blank"
-							rel="noreferrer"
+							rel="noopener noreferrer"
 						>
 							{ __(
 								'WooCommerce → Settings → Payments → Cash on Delivery for Subscriptions',
