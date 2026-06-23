@@ -382,7 +382,8 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public static function get_cod2_fee_settings() {
-		return get_option( 'woocommerce_cod2_settings', array() );
+		$settings = get_option( 'woocommerce_cod2_settings', array() );
+		return is_array( $settings ) ? $settings : array();
 	}
 
 	/**
@@ -410,7 +411,7 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 			<td class="forminp" id="cod2_tax_class_setting">
 			<select name="jp4wc_tax_class_for_cod2">
 			<?php foreach ( jp4wc_get_fee_tax_classes() as $tax_class_id => $tax_class_name ) : ?>
-					<option value="<?php echo esc_attr( $tax_class_id ); ?>" <?php echo selected( $tax_class, $tax_class_id, true ); ?>><?php echo esc_html( $tax_class_name ); ?></option>
+					<option value="<?php echo esc_attr( $tax_class_id ); ?>" <?php selected( $tax_class, $tax_class_id ); ?>><?php echo esc_html( $tax_class_name ); ?></option>
 			<?php endforeach; ?>
 			</select>
 			</td>
