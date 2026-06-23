@@ -176,6 +176,17 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 			'extra_charge_terms_of_use'   => array(
 				'type' => 'cod2_fee_details',
 			),
+			'debug_mode'                  => array(
+				'title'       => __( 'Debug mode', 'woocommerce-for-japan' ),
+				'label'       => __( 'Enable debug logging for COD2 fee calculation', 'woocommerce-for-japan' ),
+				'type'        => 'checkbox',
+				'description' => sprintf(
+					/* translators: %s: WooCommerce logs URL */
+					__( 'Logs fee calculation details to <a href="%s">WooCommerce > Status > Logs</a> (source: <code>jp4wc-cod2-fee</code>). Disable after investigation.', 'woocommerce-for-japan' ),
+					esc_url( admin_url( 'admin.php?page=wc-status&tab=logs' ) )
+				),
+				'default'     => 'no',
+			),
 		);
 	}
 
