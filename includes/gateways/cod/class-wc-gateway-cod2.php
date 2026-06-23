@@ -156,12 +156,12 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 			'extra_charge_amount'         => array(
 				'title' => __( 'Extra charge amount', 'woocommerce-for-japan' ),
 				'type'  => 'number',
-				'css'   => 'width:70px;',
+				'css'   => 'width:120px;',
 			),
 			'extra_charge_max_cart_value' => array(
 				'title'       => __( 'Maximum cart value to which adding fee', 'woocommerce-for-japan' ),
 				'type'        => 'number',
-				'css'         => 'width:70px;',
+				'css'         => 'width:120px;',
 				'description' => __( 'If you dont need this setting, please set empty, 0.', 'woocommerce-for-japan' ),
 			),
 			'extra_charge_calc_taxes'     => array(
