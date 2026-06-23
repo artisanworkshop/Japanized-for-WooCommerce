@@ -85,6 +85,7 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 		$this->enable_for_virtual = $this->get_option( 'enable_for_virtual', 'yes' ) === 'yes';
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'save_cod2_fee_details' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 
 		// Customer Emails.
@@ -96,35 +97,35 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	 */
 	public function init_form_fields() {
 		$this->form_fields = array(
-			'enabled'            => array(
+			'enabled'                     => array(
 				'title'       => __( 'Enable COD', 'woocommerce-for-japan' ),
 				'label'       => __( 'Enable Cash on Delivery', 'woocommerce-for-japan' ),
 				'type'        => 'checkbox',
 				'description' => '',
 				'default'     => 'no',
 			),
-			'title'              => array(
+			'title'                       => array(
 				'title'       => __( 'Title', 'woocommerce-for-japan' ),
 				'type'        => 'text',
 				'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Cash on Delivery', 'woocommerce-for-japan' ),
 				'desc_tip'    => true,
 			),
-			'description'        => array(
+			'description'                 => array(
 				'title'       => __( 'Description', 'woocommerce-for-japan' ),
 				'type'        => 'textarea',
 				'description' => __( 'Payment method description that the customer will see on your website.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Pay with cash upon delivery.', 'woocommerce-for-japan' ),
 				'desc_tip'    => true,
 			),
-			'instructions'       => array(
+			'instructions'                => array(
 				'title'       => __( 'Instructions', 'woocommerce-for-japan' ),
 				'type'        => 'textarea',
 				'description' => __( 'Instructions that will be added to the thank you page.', 'woocommerce-for-japan' ),
 				'default'     => __( 'Pay with cash upon delivery.', 'woocommerce-for-japan' ),
 				'desc_tip'    => true,
 			),
-			'enable_for_methods' => array(
+			'enable_for_methods'          => array(
 				'title'             => __( 'Enable for shipping methods', 'woocommerce-for-japan' ),
 				'type'              => 'multiselect',
 				'class'             => 'wc-enhanced-select',
@@ -137,11 +138,43 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 					'data-placeholder' => __( 'Select shipping methods', 'woocommerce-for-japan' ),
 				),
 			),
-			'enable_for_virtual' => array(
+			'enable_for_virtual'          => array(
 				'title'   => __( 'Accept for virtual orders', 'woocommerce-for-japan' ),
 				'label'   => __( 'Accept COD if the order is virtual', 'woocommerce-for-japan' ),
 				'type'    => 'checkbox',
 				'default' => 'yes',
+			),
+			'extra_cod2_title'            => array(
+				'title' => __( 'Extra charge for COD2 method', 'woocommerce-for-japan' ),
+				'type'  => 'title',
+			),
+			'extra_charge_name'           => array(
+				'title'   => __( 'Fee name', 'woocommerce-for-japan' ),
+				'type'    => 'text',
+				'default' => __( 'COD Payment method fee', 'woocommerce-for-japan' ),
+			),
+			'extra_charge_amount'         => array(
+				'title' => __( 'Extra charge amount', 'woocommerce-for-japan' ),
+				'type'  => 'number',
+				'css'   => 'width:70px;',
+			),
+			'extra_charge_max_cart_value' => array(
+				'title'       => __( 'Maximum cart value to which adding fee', 'woocommerce-for-japan' ),
+				'type'        => 'number',
+				'css'         => 'width:70px;',
+				'description' => __( 'If you dont need this setting, please set empty, 0.', 'woocommerce-for-japan' ),
+			),
+			'extra_charge_calc_taxes'     => array(
+				'title'   => __( 'Includes taxes', 'woocommerce-for-japan' ),
+				'type'    => 'select',
+				'options' => array(
+					'no-tax'   => __( 'Do not calculate taxes', 'woocommerce-for-japan' ),
+					'tax-incl' => __( 'The fee is taxes included', 'woocommerce-for-japan' ),
+					'tax-excl' => __( 'The fee is taxes excluded', 'woocommerce-for-japan' ),
+				),
+			),
+			'extra_charge_terms_of_use'   => array(
+				'type' => 'cod2_fee_details',
 			),
 		);
 	}
@@ -341,6 +374,123 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 		if ( $this->instructions && ! $sent_to_admin && $this->id === $order->get_payment_method() ) {
 			echo wp_kses_post( wpautop( wptexturize( $this->instructions ) ) ) . PHP_EOL;
 		}
+	}
+
+	/**
+	 * Get COD2 fee settings from gateway options.
+	 *
+	 * @return array
+	 */
+	public static function get_cod2_fee_settings() {
+		return get_option( 'woocommerce_cod2_settings', array() );
+	}
+
+	/**
+	 * Generate PRO tiered fee table HTML for COD2 admin settings.
+	 *
+	 * @return string
+	 */
+	public function generate_cod2_fee_details_html() {
+		$tax_class = get_option( 'jp4wc_tax_class_for_cod2' );
+		$tax_class = empty( $tax_class ) ? 'standard' : $tax_class;
+		$cod2_fees = get_option(
+			'woocommerce_cod2_fees',
+			array(
+				array(
+					'cod_fee' => '',
+					'cod_max' => '',
+				),
+			)
+		);
+
+		ob_start();
+		?>
+		<tr valign="top" id="cod2_tax_class_setting">
+			<th scope="row" class="titledesc"><?php esc_html_e( 'Tax Class:', 'woocommerce-for-japan' ); ?></th>
+			<td class="forminp" id="cod2_tax_class_setting">
+			<select name="jp4wc_tax_class_for_cod2">
+			<?php foreach ( jp4wc_get_fee_tax_classes() as $tax_class_id => $tax_class_name ) : ?>
+					<option value="<?php echo esc_attr( $tax_class_id ); ?>" <?php echo selected( $tax_class, $tax_class_id, true ); ?>><?php echo esc_html( $tax_class_name ); ?></option>
+			<?php endforeach; ?>
+			</select>
+			</td>
+		</tr>
+		<tr valign="top" id="cod2_fee_details">
+			<th scope="row" class="titledesc"><?php esc_html_e( 'Charge amount of details:', 'woocommerce-for-japan' ); ?></th>
+			<td class="forminp" id="cod2_fee_accounts">
+				<div class="wc_input_table_wrapper">
+					<table class="widefat wc_input_table sortable" cellspacing="0">
+						<thead>
+						<tr>
+							<th class="sort">&nbsp;</th>
+							<th><?php esc_html_e( 'Charge amount of COD', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'Max', 'woocommerce-for-japan' ); ?></th>
+						</tr>
+						</thead>
+						<tbody class="accounts">
+						<?php
+						$i = -1;
+						foreach ( $cod2_fees as $cod2_fee ) {
+							++$i;
+							echo '<tr class="account">
+									<td class="sort"></td>
+									<td><input type="text" value="' . esc_attr( wp_unslash( $cod2_fee['cod_fee'] ) ) . '" name="cod2_fee[' . esc_attr( $i ) . ']" /></td>
+									<td><input type="text" value="' . esc_attr( wp_unslash( $cod2_fee['cod_max'] ) ) . '" name="cod2_max[' . esc_attr( $i ) . ']" /></td>
+								</tr>';
+						}
+						?>
+						</tbody>
+						<tfoot>
+						<tr>
+							<th colspan="7"><a href="#" class="add button"><?php esc_html_e( '+ Add Charge amount', 'woocommerce-for-japan' ); ?></a> <a href="#" class="remove_rows button"><?php esc_html_e( 'Remove selected Charge amount(s)', 'woocommerce-for-japan' ); ?></a></th>
+						</tr>
+						</tfoot>
+					</table>
+				</div>
+				<script type="text/javascript">
+					jQuery(function() {
+						jQuery('#cod2_fee_accounts').on( 'click', 'a.add', function(){
+							var size = jQuery('#cod2_fee_accounts').find('tbody .account').length;
+							jQuery('<tr class="account">\
+									<td class="sort"></td>\
+									<td><input type="text" name="cod2_fee[' + size + ']" /></td>\
+									<td><input type="text" name="cod2_max[' + size + ']" /></td>\
+								</tr>').appendTo('#cod2_fee_accounts table tbody');
+							return false;
+						});
+					});
+				</script>
+				<p class="cod-charge-note"><?php esc_html_e( 'Note : This function is only available to PRO purchasers.', 'woocommerce-for-japan' ); ?></p>
+			</td>
+		</tr>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Save PRO tiered fee details for COD2.
+	 */
+	public function save_cod2_fee_details() {
+		$fees  = array();
+		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
+
+		if ( isset( $_POST['cod2_fee'] ) && isset( $_POST['cod2_max'] ) && wp_verify_nonce( $nonce, 'woocommerce-settings' ) ) {
+			$cod2_fees = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_fee'] ) ) );
+			$cod2_maxs = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_max'] ) ) );
+
+			foreach ( $cod2_fees as $i => $fee ) {
+				$fees[] = array(
+					'cod_fee' => $cod2_fees[ $i ],
+					'cod_max' => $cod2_maxs[ $i ],
+				);
+			}
+
+			if ( isset( $_POST['jp4wc_tax_class_for_cod2'] ) ) {
+				update_option( 'jp4wc_tax_class_for_cod2', sanitize_text_field( wp_unslash( $_POST['jp4wc_tax_class_for_cod2'] ) ) );
+			}
+		}
+
+		update_option( 'woocommerce_cod2_fees', $fees );
 	}
 
 	/**
