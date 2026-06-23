@@ -474,22 +474,27 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 	public function save_cod2_fee_details() {
 		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
 
-		if ( ! isset( $_POST['cod2_fee'] ) || ! isset( $_POST['cod2_max'] ) || ! wp_verify_nonce( $nonce, 'woocommerce-settings' ) ) {
+		// Bail only on nonce failure to prevent CSRF; an absent cod2_fee key
+		// means all rows were deleted and we intentionally save an empty array.
+		if ( ! wp_verify_nonce( $nonce, 'woocommerce-settings' ) ) {
 			return;
 		}
 
-		$fees      = array();
-		$cod2_fees = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_fee'] ) ) );
-		$cod2_maxs = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_max'] ) ) );
+		$fees = array();
 
-		foreach ( $cod2_fees as $i => $fee ) {
-			if ( ! isset( $cod2_maxs[ $i ] ) ) {
-				continue;
+		if ( isset( $_POST['cod2_fee'] ) && isset( $_POST['cod2_max'] ) ) {
+			$cod2_fees = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_fee'] ) ) );
+			$cod2_maxs = wc_clean( array_map( 'sanitize_text_field', wp_unslash( $_POST['cod2_max'] ) ) );
+
+			foreach ( $cod2_fees as $i => $fee ) {
+				if ( ! isset( $cod2_maxs[ $i ] ) ) {
+					continue;
+				}
+				$fees[] = array(
+					'cod_fee' => $fee,
+					'cod_max' => $cod2_maxs[ $i ],
+				);
 			}
-			$fees[] = array(
-				'cod_fee' => $fee,
-				'cod_max' => $cod2_maxs[ $i ],
-			);
 		}
 
 		if ( isset( $_POST['jp4wc_tax_class_for_cod2'] ) ) {
