@@ -1,131 +1,162 @@
 ---
 name: woo-marketplace-content
 description: >
-  Skill for creating sales content for the WooCommerce.com Marketplace, including product pages,
-  documentation, and FAQs. Generates product pages (name, short description, long description,
-  media gallery, FAQ), user-facing documentation (installation instructions, setup guides,
-  settings references, troubleshooting), developer documentation (hooks/filters list, template
-  overrides), and visual asset briefs aligned with screenshot guidelines.
-  Use when keywords like "write the product page", "create documentation", "write FAQ",
-  "usage guide", "marketplace description", "plugin description", "installation instructions",
-  "setup guide", "troubleshooting", "hooks reference", or "screenshot guide" appear.
-  Also reference proactively when consulting on sales preparation or content creation for a
-  WooCommerce plugin.
+  Skill for creating sales content (product pages, documentation, FAQs, etc.) for the WooCommerce.com Marketplace.
+  Generates product page content (name, short description, long description, media gallery, FAQ), user documentation
+  (installation instructions, setup guide, configuration reference, troubleshooting), developer documentation
+  (hooks/filters list, template overrides), and visual asset instructions aligned with screenshot guidelines.
+  Use when keywords like "write product page", "create documentation", "write FAQ", "usage guide",
+  "marketplace description", "plugin description", "installation instructions", "setup guide",
+  "troubleshooting", "hook reference", or "screenshot guide" appear. Also reference proactively
+  when consulted about preparing WooCommerce plugins for sale or content creation.
 ---
 
 # WooCommerce Marketplace Content Creation
 
-Selling a product on the WooCommerce.com marketplace requires not just code, but both a
-compelling product page that drives purchases and documentation that supports users after
-they buy. This skill generates content that complies with the official marketplace guidelines.
+Selling a product on WooCommerce.com marketplace requires not just code, but also
+a product page that drives purchases and documentation that supports users after purchase.
+This skill generates content that complies with the official marketplace guidelines.
 
 ## Content Overview
 
-A marketplace product requires content across four main categories:
+Content needed for a marketplace product falls into 4 main categories:
 
 ```
-1. Product Page (edited in Vendor Dashboard)
-   ├── Product name
+1. Product Page (edited via Vendor Dashboard)
+   ├── Product Name
    ├── Short Description
-   ├── Long Description
-   ├── FAQ section
-   ├── Media gallery / demo
-   └── Icon / highlight card
+   ├── Long Description (Description)
+   ├── FAQ Section
+   ├── Media Gallery / Demo
+   └── Icon / Highlight Cards
 
-2. User-Facing Documentation (Documentation section)
+2. User Documentation (Documentation section)
    ├── Installation & Setup
-   ├── Settings Reference
-   ├── Usage Guide (by use case)
+   ├── Configuration Reference
+   ├── Usage Guides (by use case)
    ├── Troubleshooting
    └── Frequently Asked Questions
 
 3. Developer Documentation
-   ├── Hooks & Filters reference
-   ├── Template overrides
+   ├── Hooks & Filters List
+   ├── Template Overrides
    ├── REST API (if applicable)
-   └── Code examples
+   └── Code Examples
 
-4. Visual Asset Brief
-   ├── Screenshot plan
-   ├── Icon specifications
-   └── Demo environment checklist
+4. Visual Asset Instructions
+   ├── Screenshot Plan
+   ├── Icon Specifications
+   └── Demo Environment Checklist
 ```
 
 ## Process
 
-### 1) Gather Product Information
+### 1) Gathering Product Information
 
-Confirm the following information for content generation:
+Confirm the information needed for content generation:
 
-- Plugin name (a name that describes the feature, not a brand name)
+- Plugin name (a name that briefly describes the function, not just a brand name)
 - What the plugin does (in one sentence)
-- Core features (3–5 top benefits)
-- Target users (what kind of merchants will use it)
-- Differentiators from competitors
+- Key features (3–5 top benefits)
+- Target users (what type of merchants will use it)
+- Differentiation from competitors
 - Compatibility requirements (WC/WP versions, integrations with other extensions)
 - Price range
-- Settings screen structure (number of tabs, key settings)
+- Settings screen structure (number of tabs, main settings)
 
-### 2) Generate Product Page Content
+### 2) Generating Product Page Content
 
-Generate sales-optimized copy following the marketplace's Content Style Guide.
+Generate sales-optimized copy following the marketplace Content Style Guide.
 
 See: `references/product-page.md`
 
-### 3) Generate Documentation
+### 3) Generating Documentation
 
-Generate user and developer documentation following official WooCommerce documentation templates.
+Generate user/developer documentation following the official WooCommerce documentation templates.
 
 See: `references/documentation.md`
 
 ### 4) Visual Asset Plan
 
-Generate a preparation guide for screenshots, icons, and the demo environment.
+Generate a guide for preparing screenshots, icons, and demo environment.
 
 See: `references/visual-assets.md`
 
+## Publishing to the WooCommerce Official Documentation Portal (UX Review Requirement)
+
+On the WooCommerce Marketplace, publishing your product documentation to the WooCommerce official
+documentation portal is subject to the UX review process. **Missing documentation will block the UX review.**
+Start immediately after passing code review, and publish before the UX review begins — this is mandatory.
+
+### Gutenberg Block Editor Format
+
+Documentation on the official documentation portal must be created in **WordPress Gutenberg block editor** format.
+Create, edit, and publish documentation using the WordPress block editor from the Vendor Dashboard.
+
+Available blocks:
+- **Heading block**: H2 for main sections, H3 for subsections (do not use H1)
+- **Paragraph block**: Regular text
+- **List block**: Bulleted and numbered lists
+- **Table block**: Settings reference tables
+- **Code block**: Code snippets
+- **Image block**: Screenshots (alt text required)
+- Emoji and decorative HTML are prohibited (marketplace guidelines)
+
+### Documentation Completeness Checklist (UX Review Criteria)
+
+Items UX reviewers check in documentation:
+- [ ] Installation instructions are clear and complete
+- [ ] Initial setup (API integrations, initial configuration, etc.) can be reproduced step by step
+- [ ] Key feature usage is covered comprehensively
+- [ ] FAQ answers common questions
+- [ ] Troubleshooting covers representative issues
+- [ ] Screenshots supplement screen operations
+
+See: `references/documentation.md`
+
+---
+
 ## Output Format
 
-Generate content in Markdown format. Intended for pasting into the Vendor Dashboard, so
-comply with the HTML/Markdown format supported by WooCommerce.com:
+Generate content in Markdown format, formatted for pasting into the Vendor Dashboard
+and compliant with HTML/Markdown formats supported by WooCommerce.com:
 
 - Headings: h2, h3 (do not use h1 — the product name automatically becomes h1)
-- Lists: bullet lists (`*` or `-`) and numbered lists
+- Lists: bulleted (`*` or `-`) and numbered lists
 - Bold/italic: `**bold**`, `*italic*`
 - Links: `[text](url)`
 - Code blocks: backticks
 - Images: upload separately via the Vendor Dashboard editor
-- Emoji: prohibited (per marketplace guidelines)
+- Emoji: prohibited (marketplace guidelines)
 
 ## Voice & Tone
 
-Align with the official WooCommerce voice:
+Match WooCommerce's official voice:
 
-- **Human**: Avoid jargon; use plain language
+- **Human**: Avoid jargon, use plain language
 - **Plain-speaking**: Avoid roundabout expressions
-- **Confident**: Describe features definitively ("it does X", not "it might do X")
+- **Confident**: Describe features definitively ("it does X" not "it might do X")
 - **Empathetic**: Show understanding of the user's challenges
 
 Adjust tone by context:
-- Product page: Enthusiastic yet professional
-- Documentation: Clear and instructional
-- FAQ: Friendly and reassuring
-- Troubleshooting: Calm and solution-focused
+- Product page: enthusiastic yet professional
+- Documentation: clear and instructional
+- FAQ: friendly and reassuring
+- Troubleshooting: calm and solution-focused
 
 ## Multilingual Support
 
 For the Japanese market, generate both English and Japanese versions.
-English is the default language on the marketplace — always create the English version first,
-then prepare the Japanese version. For the Japanese version, adjust to expressions that feel
-natural to Japanese merchants rather than providing a literal translation.
+English is the default marketplace language — create the English version first, then prepare the Japanese version.
+For the Japanese version, adjust expressions to feel natural to Japanese merchants rather than a direct translation.
 
 ## Validation
 
-- Does the product name describe the feature (not just a brand name)?
+- Does the product name describe the function (not just a brand name)?
 - Is the short description concise and search-optimized?
-- Does the long description follow the benefits → features → use cases order?
-- Does the FAQ address pre-purchase concerns?
-- Does the documentation cover everything from installation through each feature?
-- Do screenshots cover both the frontend and backend?
-- Are there any emoji in the content?
-- Is any third-party trademark being used inappropriately?
+- Does the long description follow the order: benefits → features → use cases?
+- Does the FAQ address pre-purchase questions?
+- Does documentation cover everything from installation to each feature?
+- Do screenshots cover both front-end and back-end views?
+- Are emoji absent?
+- Are third-party trademarks not improperly used?

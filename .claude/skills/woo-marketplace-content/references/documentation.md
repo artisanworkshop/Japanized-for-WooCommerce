@@ -1,19 +1,33 @@
 # Documentation Creation Guide
 
-A guide for creating documentation managed in the Vendor Dashboard's Documentation section.
-There are two types: user-facing documentation and developer documentation.
+Guide for creating documentation managed in the Documentation section of the Vendor Dashboard.
+There are two types: user documentation and developer documentation.
+
+> **Important**: Publishing documentation to the WooCommerce official documentation portal is subject to UX review.
+> Missing documentation will block the UX review (this has happened).
+> Start immediately after passing code review and complete publication before the UX review begins.
+
+## Publishing to the Documentation Portal
+
+1. Log in to the Vendor Dashboard
+2. Navigate to the **Documentation** section
+3. Click **Add New Document**
+4. Create content using the **Gutenberg block editor** (see templates below)
+5. Insert screenshots using **Image blocks** (alt text required)
+6. Click **Publish** to go live
+7. Including the published URL in the "Notes for reviewers" field of the submission form helps speed up review
 
 ## Documentation Workflow
 
 1. **Organize** — Consider your target audience and decide on the section structure
 2. **Write** — Write following the Content Style Guide
-3. **Review** — Verify the steps while actually operating the plugin
-4. **Publish** — Publish in the Vendor Dashboard
+3. **Review** — Verify steps by actually operating the plugin
+4. **Publish** — Publish via the Vendor Dashboard
 5. **Maintain** — Update with each version release
 
-## User-Facing Documentation
+## User Documentation
 
-### Base Template (General Extension)
+### Basic Template (General Extensions)
 
 ```markdown
 # [Product Name]
@@ -49,22 +63,22 @@ After activating [Product Name], navigate to
 
 ### [Settings Section 2 Name]
 
-[Describe settings in the same way]
+[Describe settings similarly]
 
 ## Usage
 
 ### [Use Case 1: Basic Usage]
 
-[Explain the steps to perform the operation]
+[Describe the steps in a step-by-step manner]
 
-1. Go to **[Menu path]**
-2. Click **[Button name]**
-3. [Action to take]
+1. Go to **[Menu Path]**
+2. Click **[Button Name]**
+3. [Action]
 4. Click **Save changes**
 
 ### [Use Case 2: Advanced Usage]
 
-[Steps in the same format]
+[Step-by-step similarly]
 
 ## Frequently Asked Questions
 
@@ -78,12 +92,12 @@ After activating [Product Name], navigate to
 
 ## Troubleshooting
 
-### [Symptom of Problem 1]
+### [Issue 1 Symptom]
 
 **Cause:** [Cause]
 **Solution:** [Solution]
 
-### [Symptom of Problem 2]
+### [Issue 2 Symptom]
 
 **Cause:** [Cause]
 **Solution:** [Solution]
@@ -124,7 +138,7 @@ and our team will be happy to assist.
 
 ### 1. Create a [Provider Name] Account
 
-[Account creation steps and how to obtain API keys]
+[Account creation steps and how to get API keys]
 
 ### 2. Connect [Provider Name] to WooCommerce
 
@@ -138,7 +152,7 @@ and our team will be happy to assist.
 ### 3. Test Your Setup
 
 1. Enable **Test Mode** in the gateway settings
-2. Place a test order using [test card number, etc.]
+2. Place a test order using [test card number etc.]
 3. Verify the order appears in **WooCommerce > Orders**
 4. Confirm the payment in your [Provider Name] dashboard
 5. When satisfied, disable **Test Mode** for live transactions
@@ -165,7 +179,7 @@ and our team will be happy to assist.
 
 ## Troubleshooting
 
-### Payment fails with "[Error message]"
+### Payment fails with "[Error Message]"
 
 **Cause:** [Cause]
 **Solution:** [Solution]
@@ -257,9 +271,9 @@ WooCommerce.com uses US English:
 
 Follow official WooCommerce terminology:
 - **add-on** (noun/adjective), **add on** (verb)
-- **admin** — when referring to an administrator user
+- **admin** — refers to admin users
 - **checkout** — one word (not check-out)
-- **ecommerce** — no hyphen after "e" (not e-commerce)
+- **ecommerce** — no hyphen after e (not e-commerce)
 - **email** — not e-mail
 - **plugin** — interchangeable with add-on/extension
 - **setup** (noun), **set up** (verb)
@@ -267,10 +281,10 @@ Follow official WooCommerce terminology:
 
 ### Heading Levels
 
-- Do not use h1 (the product name automatically becomes h1)
-- Use h2 for main sections
-- Use h3 for subsections
-- Avoid h4 and below (too deep, harder to read)
+- Do not use h1 (product name is automatically h1)
+- h2 for main sections
+- h3 for subsections
+- Avoid h4 and below (too deep, becomes hard to read)
 
 ### Describing UI Paths
 
@@ -284,21 +298,21 @@ Button names also in bold:
 Click **Save changes**
 ```
 
-### Including Screenshots
+### Inserting Screenshots
 
-Rules for screenshots within documentation:
-- Place alongside sections explaining settings screens or UI elements
-- Mask personal information and test data
+Rules for screenshots in documentation:
+- Include alongside sections that explain settings screens or UI elements
+- Hide personal information and test data
 - Appropriate size (800–1200px wide recommended)
 - Always include alt text
-- Optimize for high-resolution displays (2x recommended)
+- High-resolution display support (2x recommended)
 
 ## Documentation Maintenance
 
-Check the following when releasing a new version:
+Check the following at each version update:
 
 - [ ] Add documentation for new features
-- [ ] Update changed settings entries
+- [ ] Update changed settings
 - [ ] Remove descriptions of deleted features
 - [ ] Verify screenshots match the latest UI
 - [ ] Update version number references
