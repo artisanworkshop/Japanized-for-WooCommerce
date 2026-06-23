@@ -9,6 +9,7 @@ import {
 	TextControl,
 	Button,
 	SelectControl,
+	Notice,
 } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
@@ -133,6 +134,34 @@ const PaymentSettings = ( {
 				opened={ panelStates.extraCharge }
 				onToggle={ () => togglePanel( 'extraCharge' ) }
 			>
+				<Notice
+					status="info"
+					isDismissible={ false }
+				>
+					<p>
+						{ __(
+							'These settings apply to the standard WooCommerce "Cash on Delivery" payment method.',
+							'woocommerce-for-japan'
+						) }
+					</p>
+					<p>
+						{ __(
+							'To configure the COD fee for "Cash on Delivery for Subscriptions", please go to:',
+							'woocommerce-for-japan'
+						) }
+						{ ' ' }
+						<a
+							href={ ( window.jp4wcSettings?.adminUrl || '/wp-admin/' ) + 'admin.php?page=wc-settings&tab=checkout&section=cod2' }
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{ __(
+								'WooCommerce → Settings → Payments → Cash on Delivery for Subscriptions',
+								'woocommerce-for-japan'
+							) }
+						</a>
+					</p>
+				</Notice>
 				<PanelRow>
 					<TextControl
 						__next40pxDefaultSize

@@ -273,6 +273,29 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 	}
 
 	/**
+	 * Get COD2 fee settings from the gateway options.
+	 *
+	 * @return array
+	 */
+	private static function get_cod2_fee_settings() {
+		$cod2_setting = get_option( 'woocommerce_cod2_settings', array() );
+		return is_array( $cod2_setting ) ? $cod2_setting : array();
+	}
+
+	/**
+	 * Remove the JP4WC gateway fee from the cart by its fixed fee ID.
+	 */
+	private static function remove_fee_by_id() {
+		$fees = WC()->cart->get_fees();
+		foreach ( $fees as $key => $fee ) {
+			if ( 'jp4wc_gateway_fee' === $fee->id ) {
+				unset( $fees[ $key ] );
+			}
+		}
+		WC()->cart->fees_api()->set_fees( $fees );
+	}
+
+	/**
 	 * Add extra charge to cart totals
 	 *
 	 * @param object $cart Cart object.
@@ -303,16 +326,23 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			return;
 		}
 
-		// Get COD fee settings — JP4WC admin values (wc4jp- prefix) override WC gateway settings.
-		$cod_setting = self::get_cod_fee_settings();
+		// Load settings for cod or cod2; remove any fee and bail for other gateways.
+		if ( 'cod' === $current_gateway_id ) {
+			$cod_setting = self::get_cod_fee_settings();
+		} elseif ( 'cod2' === $current_gateway_id ) {
+			$cod_setting = self::get_cod2_fee_settings();
+		} else {
+			self::remove_fee_by_id();
+			return;
+		}
 
 		/**
-		 * Filter the COD fee settings array.
+		 * Filter the COD/COD2 fee settings array.
 		 * PRO version can use this to inject tiered fee tables or other advanced settings.
 		 *
 		 * @since 2.9.7
-		 * @param array  $cod_setting        The woocommerce_cod_settings option array.
-		 * @param string $current_gateway_id The currently selected payment method ID.
+		 * @param array  $cod_setting        The gateway settings option array.
+		 * @param string $current_gateway_id The currently selected payment method ID ('cod' or 'cod2').
 		 */
 		$cod_setting = apply_filters( 'jp4wc_cod_fee_settings', $cod_setting, $current_gateway_id );
 
@@ -326,12 +356,6 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			$calc_taxes = 'tax-excl';
 		} elseif ( 'no' === $calc_taxes || '' === $calc_taxes ) {
 			$calc_taxes = 'no-tax';
-		}
-
-		// Remove fee and bail if payment method is not COD.
-		if ( 'cod' !== $current_gateway_id ) {
-			self::remove_fee( $extra_charge_name );
-			return;
 		}
 
 		$subtotal = $cart->cart_contents_total;
@@ -413,10 +437,14 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			return;
 		}
 
-		// Tax class.
-		$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
-		if ( false === $tax_class ) {
-			$tax_class = get_option( 'wc4jp-extra_charge_tax_class' );
+		// Tax class — use gateway-specific option so COD2 uses its own setting.
+		if ( 'cod2' === $current_gateway_id ) {
+			$tax_class = get_option( 'jp4wc_tax_class_for_cod2' );
+		} else {
+			$tax_class = get_option( 'jp4wc_tax_class_for_cod' );
+			if ( false === $tax_class ) {
+				$tax_class = get_option( 'wc4jp-extra_charge_tax_class' );
+			}
 		}
 		$tax_class = empty( $tax_class ) ? 'standard' : $tax_class;
 
@@ -472,14 +500,17 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			return $fee_value;
 		}
 
-		$cod_setting = self::get_cod_fee_settings();
-		$value       = isset( $cod_setting['extra_charge_amount'] ) ? $cod_setting['extra_charge_amount'] : 0;
-		$fee_text    = isset( $cod_setting['extra_charge_name'] ) ? $cod_setting['extra_charge_name'] : '';
-
-		if ( 'cod' !== $gateway_id ) {
-			self::remove_fee( $fee_text );
+		if ( 'cod' === $gateway_id ) {
+			$cod_setting = self::get_cod_fee_settings();
+		} elseif ( 'cod2' === $gateway_id ) {
+			$cod_setting = self::get_cod2_fee_settings();
+		} else {
+			self::remove_fee_by_id();
 			return $fee_value;
 		}
+
+		$value    = isset( $cod_setting['extra_charge_amount'] ) ? $cod_setting['extra_charge_amount'] : 0;
+		$fee_text = isset( $cod_setting['extra_charge_name'] ) ? $cod_setting['extra_charge_name'] : '';
 
 		return array(
 			'fee_value' => $value,
