@@ -398,7 +398,10 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			$calc_taxes = 'no-tax';
 		}
 
-		$subtotal = $cart->cart_contents_total;
+		// Use the tax-inclusive subtotal when the store displays prices with tax,
+		// so the threshold setting matches what the customer sees at checkout.
+		// wc_prices_include_tax() returns true when "Enter prices inclusive of tax" is enabled.
+		$subtotal = wc_prices_include_tax() ? $cart->subtotal : $cart->cart_contents_total;
 
 		// Remove fee and bail if cart total exceeds the max value threshold.
 		if ( ! empty( $extra_charge_max_cart_value ) && floatval( $extra_charge_max_cart_value ) < $subtotal ) {
@@ -407,6 +410,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 					'[MAX] Cart subtotal exceeds max → fee removed (free)',
 					array(
 						'subtotal'                    => $subtotal,
+						'prices_include_tax'          => wc_prices_include_tax() ? 'yes' : 'no',
 						'extra_charge_max_cart_value' => floatval( $extra_charge_max_cart_value ),
 						'comparison'                  => floatval( $extra_charge_max_cart_value ) . ' < ' . $subtotal . ' = true',
 					)
@@ -421,6 +425,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 				'[MAX] Max cart value check passed → fee will be applied',
 				array(
 					'subtotal'                    => $subtotal,
+					'prices_include_tax'          => wc_prices_include_tax() ? 'yes' : 'no',
 					'extra_charge_max_cart_value' => '' === $extra_charge_max_cart_value ? '(empty/disabled)' : floatval( $extra_charge_max_cart_value ),
 					'extra_charge_amount'         => $extra_charge_amount,
 				)
