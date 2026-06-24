@@ -422,7 +422,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 					'[MAX] Cart subtotal exceeds max → fee removed (free)',
 					array(
 						'subtotal'                    => $subtotal,
-						'prices_include_tax'          => wc_prices_include_tax() ? 'yes' : 'no',
+						'display_prices_incl_tax'     => $cart->display_prices_including_tax() ? 'yes' : 'no',
 						'extra_charge_max_cart_value' => floatval( $extra_charge_max_cart_value ),
 						'comparison'                  => floatval( $extra_charge_max_cart_value ) . ' < ' . $subtotal . ' = true',
 					)
@@ -437,7 +437,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 				'[MAX] Max cart value check passed → fee will be applied',
 				array(
 					'subtotal'                    => $subtotal,
-					'prices_include_tax'          => wc_prices_include_tax() ? 'yes' : 'no',
+					'display_prices_incl_tax'     => $cart->display_prices_including_tax() ? 'yes' : 'no',
 					'extra_charge_max_cart_value' => '' === $extra_charge_max_cart_value ? '(empty/disabled)' : floatval( $extra_charge_max_cart_value ),
 					'extra_charge_amount'         => $extra_charge_amount,
 				)
@@ -524,7 +524,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 
 		if ( 'cod2' === $current_gateway_id ) {
 			self::cod2_log(
-				'[APPLY] jp4wc_cod_fee_is_applicable filter result',
+				'[APPLY] Final applicability after all filters (jp4wc_cod_fee_is_applicable, jp4wc_apply, jp4wc_apply_for_cod2)',
 				array(
 					'do_apply'            => $do_apply ? 'true' : 'false',
 					'extra_charge_amount' => $extra_charge_amount,
