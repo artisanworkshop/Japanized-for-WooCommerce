@@ -408,10 +408,12 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			$calc_taxes = 'no-tax';
 		}
 
-		// Use the tax-inclusive subtotal when the store displays prices with tax,
-		// so the threshold setting matches what the customer sees at checkout.
-		// wc_prices_include_tax() returns true when "Enter prices inclusive of tax" is enabled.
-		$subtotal = wc_prices_include_tax() ? $cart->subtotal : $cart->cart_contents_total;
+		// Use the subtotal that matches what is displayed at checkout so the
+		// threshold setting behaves as the shop admin expects.
+		// display_prices_including_tax() checks woocommerce_tax_display_cart (the
+		// cart/checkout display setting), not woocommerce_prices_include_tax (the
+		// price-entry setting) — these can differ, so using the display setting is correct.
+		$subtotal = $cart->display_prices_including_tax() ? $cart->subtotal : $cart->subtotal_ex_tax;
 
 		// Remove fee and bail if cart total exceeds the max value threshold.
 		if ( ! empty( $extra_charge_max_cart_value ) && floatval( $extra_charge_max_cart_value ) < $subtotal ) {
