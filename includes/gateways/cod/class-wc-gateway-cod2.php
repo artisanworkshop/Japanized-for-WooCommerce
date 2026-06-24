@@ -435,8 +435,8 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 						<thead>
 						<tr>
 							<th class="sort">&nbsp;</th>
-							<th><?php esc_html_e( 'Charge amount of COD', 'woocommerce-for-japan' ); ?></th>
-							<th><?php esc_html_e( 'Min. cart value (from)', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'Min order amount (¥)', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'COD fee (¥)', 'woocommerce-for-japan' ); ?></th>
 						</tr>
 						</thead>
 						<tbody class="accounts">
@@ -446,8 +446,8 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 							++$i;
 							echo '<tr class="account">
 									<td class="sort"></td>
-									<td><input type="text" value="' . esc_attr( wp_unslash( $cod2_fee['cod_fee'] ) ) . '" name="cod2_fee[' . esc_attr( $i ) . ']" /></td>
 									<td><input type="text" value="' . esc_attr( wp_unslash( $cod2_fee['cod_max'] ) ) . '" name="cod2_max[' . esc_attr( $i ) . ']" /></td>
+									<td><input type="text" value="' . esc_attr( wp_unslash( $cod2_fee['cod_fee'] ) ) . '" name="cod2_fee[' . esc_attr( $i ) . ']" /></td>
 								</tr>';
 						}
 						?>
@@ -465,8 +465,8 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 							var size = jQuery('#cod2_fee_accounts').find('tbody .account').length;
 							jQuery('<tr class="account">\
 									<td class="sort"></td>\
-									<td><input type="text" name="cod2_fee[' + size + ']" /></td>\
 									<td><input type="text" name="cod2_max[' + size + ']" /></td>\
+									<td><input type="text" name="cod2_fee[' + size + ']" /></td>\
 								</tr>').appendTo('#cod2_fee_accounts table tbody');
 							return false;
 						});

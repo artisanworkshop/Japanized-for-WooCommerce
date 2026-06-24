@@ -166,8 +166,8 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 						<thead>
 						<tr>
 							<th class="sort">&nbsp;</th>
-							<th><?php esc_html_e( 'Charge amount of COD', 'woocommerce-for-japan' ); ?></th>
-							<th><?php esc_html_e( 'Min. cart value (from)', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'Min order amount (¥)', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'COD fee (¥)', 'woocommerce-for-japan' ); ?></th>
 						</tr>
 						</thead>
 						<tbody class="accounts">
@@ -179,8 +179,8 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 
 								echo '<tr class="account">
 										<td class="sort"></td>
-										<td><input type="text" value="' . esc_attr( wp_unslash( $cod_fee['cod_fee'] ) ) . '" name="cod_fee[' . esc_attr( $i ) . ']" /></td>
 										<td><input type="text" value="' . esc_attr( wp_unslash( $cod_fee['cod_max'] ) ) . '" name="cod_max[' . esc_attr( $i ) . ']" /></td>
+										<td><input type="text" value="' . esc_attr( wp_unslash( $cod_fee['cod_fee'] ) ) . '" name="cod_fee[' . esc_attr( $i ) . ']" /></td>
 									</tr>';
 							}
 						}
@@ -201,8 +201,8 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 
 							jQuery('<tr class="account">\
 									<td class="sort"></td>\
-									<td><input type="text" name="cod_fee[' + size + ']" /></td>\
 									<td><input type="text" name="cod_max[' + size + ']" /></td>\
+									<td><input type="text" name="cod_fee[' + size + ']" /></td>\
 								</tr>').appendTo('#bacs_accounts table tbody');
 
 							return false;
