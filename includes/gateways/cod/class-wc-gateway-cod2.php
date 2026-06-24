@@ -176,6 +176,17 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 			'extra_charge_terms_of_use'   => array(
 				'type' => 'cod2_fee_details',
 			),
+			'debug_mode'                  => array(
+				'title'       => __( 'Debug mode', 'woocommerce-for-japan' ),
+				'label'       => __( 'Enable debug logging for COD2 fee calculation', 'woocommerce-for-japan' ),
+				'type'        => 'checkbox',
+				'description' => sprintf(
+					/* translators: %s: WooCommerce logs URL */
+					__( 'Logs fee calculation details to <a href="%s">WooCommerce > Status > Logs</a> (source: <code>jp4wc-cod2-fee</code>). Disable after investigation.', 'woocommerce-for-japan' ),
+					esc_url( admin_url( 'admin.php?page=wc-status&tab=logs' ) )
+				),
+				'default'     => 'no',
+			),
 		);
 	}
 
@@ -424,8 +435,8 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 						<thead>
 						<tr>
 							<th class="sort">&nbsp;</th>
-							<th><?php esc_html_e( 'Charge amount of COD', 'woocommerce-for-japan' ); ?></th>
-							<th><?php esc_html_e( 'Max', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'Min order amount (¥)', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'COD fee (¥)', 'woocommerce-for-japan' ); ?></th>
 						</tr>
 						</thead>
 						<tbody class="accounts">
@@ -435,8 +446,8 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 							++$i;
 							echo '<tr class="account">
 									<td class="sort"></td>
-									<td><input type="text" value="' . esc_attr( wp_unslash( $cod2_fee['cod_fee'] ) ) . '" name="cod2_fee[' . esc_attr( $i ) . ']" /></td>
 									<td><input type="text" value="' . esc_attr( wp_unslash( $cod2_fee['cod_max'] ) ) . '" name="cod2_max[' . esc_attr( $i ) . ']" /></td>
+									<td><input type="text" value="' . esc_attr( wp_unslash( $cod2_fee['cod_fee'] ) ) . '" name="cod2_fee[' . esc_attr( $i ) . ']" /></td>
 								</tr>';
 						}
 						?>
@@ -454,8 +465,8 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 							var size = jQuery('#cod2_fee_accounts').find('tbody .account').length;
 							jQuery('<tr class="account">\
 									<td class="sort"></td>\
-									<td><input type="text" name="cod2_fee[' + size + ']" /></td>\
 									<td><input type="text" name="cod2_max[' + size + ']" /></td>\
+									<td><input type="text" name="cod2_fee[' + size + ']" /></td>\
 								</tr>').appendTo('#cod2_fee_accounts table tbody');
 							return false;
 						});
