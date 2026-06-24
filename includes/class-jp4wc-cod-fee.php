@@ -167,7 +167,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 						<tr>
 							<th class="sort">&nbsp;</th>
 							<th><?php esc_html_e( 'Charge amount of COD', 'woocommerce-for-japan' ); ?></th>
-							<th><?php esc_html_e( 'Max', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'Min. cart value (from)', 'woocommerce-for-japan' ); ?></th>
 						</tr>
 						</thead>
 						<tbody class="accounts">
@@ -385,6 +385,16 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		 * @param string $current_gateway_id The currently selected payment method ID ('cod' or 'cod2').
 		 */
 		$cod_setting = apply_filters( 'jp4wc_cod_fee_settings', $cod_setting, $current_gateway_id );
+
+		if ( 'cod2' === $current_gateway_id ) {
+			self::cod2_log(
+				'[SETTINGS-FILTER] After jp4wc_cod_fee_settings filter (PRO may have modified these)',
+				array(
+					'extra_charge_amount'         => isset( $cod_setting['extra_charge_amount'] ) ? $cod_setting['extra_charge_amount'] : '(not set)',
+					'extra_charge_max_cart_value' => isset( $cod_setting['extra_charge_max_cart_value'] ) ? $cod_setting['extra_charge_max_cart_value'] : '(not set)',
+				)
+			);
+		}
 
 		$extra_charge_name           = isset( $cod_setting['extra_charge_name'] ) ? $cod_setting['extra_charge_name'] : '';
 		$extra_charge_amount         = isset( $cod_setting['extra_charge_amount'] ) ? floatval( $cod_setting['extra_charge_amount'] ) : 0;

@@ -436,7 +436,7 @@ class WC_Gateway_COD2 extends WC_Payment_Gateway {
 						<tr>
 							<th class="sort">&nbsp;</th>
 							<th><?php esc_html_e( 'Charge amount of COD', 'woocommerce-for-japan' ); ?></th>
-							<th><?php esc_html_e( 'Max', 'woocommerce-for-japan' ); ?></th>
+							<th><?php esc_html_e( 'Min. cart value (from)', 'woocommerce-for-japan' ); ?></th>
 						</tr>
 						</thead>
 						<tbody class="accounts">
