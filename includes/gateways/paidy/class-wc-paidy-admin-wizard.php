@@ -552,7 +552,7 @@ class WC_Paidy_Admin_Wizard {
 
 	/**
 	 * Handles redirect when wizard=false parameter is present.
-	 * Updates test_api_public_key with pk_test_ prefix and redirects to Paidy settings page.
+	 * Redirects to Paidy settings page.
 	 */
 	public function paidy_handle_wizard_false_redirect() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -578,28 +578,6 @@ class WC_Paidy_Admin_Wizard {
 		// Check user capability.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
-		}
-
-		// Update test_api_public_key with pk_test_ prefix if not already present.
-		$paidy_settings = get_option( 'woocommerce_' . $this->id . '_settings' );
-
-		if ( ! is_array( $paidy_settings ) ) {
-			$paidy_settings = array();
-		}
-
-		// If test_api_public_key exists, add pk_test_ prefix if not already present.
-		if ( isset( $paidy_settings['test_api_public_key'] ) ) {
-			$current_key = $paidy_settings['test_api_public_key'];
-
-			// Add prefix if not already present.
-			if ( 0 !== strpos( $current_key, 'pk_test_' ) ) {
-				$paidy_settings['test_api_public_key'] = 'pk_test_' . $current_key;
-				update_option( 'woocommerce_' . $this->id . '_settings', $paidy_settings );
-			}
-		} else {
-			// If test_api_public_key does not exist, set it to pk_test_.
-			$paidy_settings['test_api_public_key'] = 'pk_test_';
-			update_option( 'woocommerce_' . $this->id . '_settings', $paidy_settings );
 		}
 
 		// Redirect to Paidy settings page (remove wizard=false parameter).
