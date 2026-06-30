@@ -70,6 +70,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_frontend' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_cod', array( $this, 'save_account_details' ) );
 		add_filter( 'woocommerce_cart_calculate_fees', array( $this, 'jp4wc_calculate_order_totals' ), 1001 );
+		add_filter( 'woocommerce_cart_totals_fee_html', array( $this, 'jp4wc_add_tax_label_to_fee_html' ), 10, 2 );
 	}
 
 	/**
@@ -632,6 +633,30 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 			'fee_value' => $value,
 			'fee_text'  => $fee_text,
 		);
+	}
+
+	/**
+	 * Add "(incl. tax)" or "(excl. tax)" label to the COD fee in cart/checkout totals.
+	 *
+	 * Mirrors the label logic used by WC_Cart::get_cart_subtotal() and
+	 * get_cart_shipping_total() in WooCommerce core.
+	 *
+	 * @param string   $fee_html Fee HTML string.
+	 * @param stdClass $fee      Fee object with id, total, tax properties.
+	 * @return string
+	 */
+	public function jp4wc_add_tax_label_to_fee_html( $fee_html, $fee ) {
+		if ( 'jp4wc_gateway_fee' !== $fee->id || ! wc_tax_enabled() || $fee->tax <= 0 ) {
+			return $fee_html;
+		}
+
+		if ( WC()->cart->display_prices_including_tax() && ! wc_prices_include_tax() ) {
+			$fee_html .= ' <small class="tax_label">' . WC()->countries->inc_tax_or_vat() . '</small>';
+		} elseif ( ! WC()->cart->display_prices_including_tax() && wc_prices_include_tax() ) {
+			$fee_html .= ' <small class="tax_label">' . WC()->countries->ex_tax_or_vat() . '</small>';
+		}
+
+		return $fee_html;
 	}
 
 	/**

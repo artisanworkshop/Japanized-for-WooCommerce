@@ -112,31 +112,87 @@ function jp4wc_yahoo_api_postcode( $request ) {
 		// Convert from json to associative array.
 		$result_array = json_decode( $result, true );
 		if ( isset( $result_array['Feature'][0]['Property']['Address'] ) ) {
-			$postcode_address    = $result_array['Feature'][0]['Property']['Address'];
-			$jp4wc_countries     = new WC_Countries();
-			$states              = $jp4wc_countries->get_states();
-			$set_prefecture_code = 0;
-			$set_prefecture_name = 0;
-			foreach ( $states['JP'] as $key => $value ) {
-				$test_value = $value;
-				// if WPML is active and current language is not JA.
-				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- calling WPML's own hooks
-				if ( defined( 'ICL_SITEPRESS_VERSION' ) && apply_filters( 'wpml_current_language', null ) !== 'ja' ) {
-					$test_value = apply_filters( 'wpml_translate_single_string', $value, 'woocommerce', $value, 'ja' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-				}
+			$postcode_address = $result_array['Feature'][0]['Property']['Address'];
 
-				if ( mb_substr( $test_value, 0, 3 ) === mb_substr( $postcode_address, 0, 3 ) ) {
-					$set_prefecture_code = $key;
-					$set_prefecture_name = $value;
+			// Fixed Japanese prefecture name → WooCommerce state code map.
+			// Yahoo API always returns Japanese addresses regardless of site locale,
+			// so we match against the Japanese names directly rather than relying
+			// on WC_Countries::get_states() which returns translated names.
+			$jp_prefecture_map = array(
+				'北海道'  => 'JP01',
+				'青森県'  => 'JP02',
+				'岩手県'  => 'JP03',
+				'宮城県'  => 'JP04',
+				'秋田県'  => 'JP05',
+				'山形県'  => 'JP06',
+				'福島県'  => 'JP07',
+				'茨城県'  => 'JP08',
+				'栃木県'  => 'JP09',
+				'群馬県'  => 'JP10',
+				'埼玉県'  => 'JP11',
+				'千葉県'  => 'JP12',
+				'東京都'  => 'JP13',
+				'神奈川県' => 'JP14',
+				'新潟県'  => 'JP15',
+				'富山県'  => 'JP16',
+				'石川県'  => 'JP17',
+				'福井県'  => 'JP18',
+				'山梨県'  => 'JP19',
+				'長野県'  => 'JP20',
+				'岐阜県'  => 'JP21',
+				'静岡県'  => 'JP22',
+				'愛知県'  => 'JP23',
+				'三重県'  => 'JP24',
+				'滋賀県'  => 'JP25',
+				'京都府'  => 'JP26',
+				'大阪府'  => 'JP27',
+				'兵庫県'  => 'JP28',
+				'奈良県'  => 'JP29',
+				'和歌山県' => 'JP30',
+				'鳥取県'  => 'JP31',
+				'島根県'  => 'JP32',
+				'岡山県'  => 'JP33',
+				'広島県'  => 'JP34',
+				'山口県'  => 'JP35',
+				'徳島県'  => 'JP36',
+				'香川県'  => 'JP37',
+				'愛媛県'  => 'JP38',
+				'高知県'  => 'JP39',
+				'福岡県'  => 'JP40',
+				'佐賀県'  => 'JP41',
+				'長崎県'  => 'JP42',
+				'熊本県'  => 'JP43',
+				'大分県'  => 'JP44',
+				'宮崎県'  => 'JP45',
+				'鹿児島県' => 'JP46',
+				'沖縄県'  => 'JP47',
+			);
+
+			$set_prefecture_code = '';
+			$set_prefecture_jp   = '';
+
+			foreach ( $jp_prefecture_map as $jp_name => $code ) {
+				if ( 0 === mb_strpos( $postcode_address, $jp_name ) ) {
+					$set_prefecture_code = $code;
+					$set_prefecture_jp   = $jp_name;
+					break;
 				}
 			}
-			if ( 0 === $set_prefecture_code ) {
+
+			if ( '' === $set_prefecture_code ) {
 				return new WP_Error( 'no_address', 'No match address', array( 'status' => 404 ) );
 			} else {
+				// Use localized state name from WC_Countries for the response.
+				$jp4wc_countries     = new WC_Countries();
+				$states              = $jp4wc_countries->get_states();
+				$set_prefecture_name = isset( $states['JP'][ $set_prefecture_code ] )
+					? $states['JP'][ $set_prefecture_code ]
+					: $set_prefecture_jp;
+
 				$postcode_result = array(
 					'state_code' => $set_prefecture_code,
 					'state'      => $set_prefecture_name,
-					'city'       => str_replace( $states['JP'][ $set_prefecture_code ], '', $postcode_address ),
+					'city'       => mb_substr( $postcode_address, mb_strlen( $set_prefecture_jp ) ),
 				);
 				return new WP_REST_Response( $postcode_result, 200 );
 			}
