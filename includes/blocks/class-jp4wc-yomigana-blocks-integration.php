@@ -377,10 +377,13 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 	 * order-received (thank-you) page and the My Account view-order page, so yomigana
 	 * suppression is needed on both.
 	 *
+	 * The result is passed through the jp4wc_is_order_display_page filter so that
+	 * tests can override it without needing to manipulate WP query vars.
+	 *
 	 * @return bool
 	 */
 	private function is_order_display_page() {
-		return is_order_received_page() || is_wc_endpoint_url( 'view-order' );
+		return (bool) apply_filters( 'jp4wc_is_order_display_page', is_order_received_page() || is_wc_endpoint_url( 'view-order' ) );
 	}
 
 	/**
