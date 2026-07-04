@@ -341,4 +341,91 @@ class JP4WC_Yomigana_Blocks_Validation_Test extends WP_UnitTestCase {
 
 		$this->assertStringNotContainsString( '<dl', $result );
 	}
+
+	// ------------------------------------------------------------------
+	// start_order_address_fields_buffer / filter_order_address_fields_buffer
+	// ------------------------------------------------------------------
+
+	/**
+	 * Output buffer is started when jp4wc_is_order_display_page returns true
+	 * (covers both order-received and My Account view-order pages).
+	 */
+	public function test_buffer_starts_on_order_display_page() {
+		add_filter( 'jp4wc_is_order_display_page', '__return_true' );
+		$level_before = ob_get_level();
+		$level_after  = $level_before;
+
+		try {
+			$this->integration->start_order_address_fields_buffer( 'billing', null );
+			$level_after = ob_get_level();
+
+			$this->assertGreaterThan( $level_before, $level_after, 'ob_start() should be called on order display pages' );
+		} finally {
+			while ( ob_get_level() > $level_before ) {
+				ob_end_clean();
+			}
+			remove_filter( 'jp4wc_is_order_display_page', '__return_true' );
+		}
+	}
+
+	/**
+	 * Output buffer is NOT started on pages other than order display pages.
+	 */
+	public function test_buffer_does_not_start_outside_order_display_page() {
+		add_filter( 'jp4wc_is_order_display_page', '__return_false' );
+		$level_before = ob_get_level();
+
+		try {
+			$this->integration->start_order_address_fields_buffer( 'billing', null );
+
+			$this->assertSame( $level_before, ob_get_level(), 'ob_start() should not be called outside order display pages' );
+		} finally {
+			while ( ob_get_level() > $level_before ) {
+				ob_end_clean();
+			}
+			remove_filter( 'jp4wc_is_order_display_page', '__return_false' );
+		}
+	}
+
+	/**
+	 * Yomigana dt/dd pairs are stripped from buffered output on order display pages.
+	 *
+	 * Simulates the priority-9/10/11 sequence:
+	 *   9  → start_order_address_fields_buffer() opens a buffer
+	 *   10 → WooCommerce renders additional fields (yomigana) into that buffer
+	 *   11 → filter_order_address_fields_buffer() consumes the buffer and echoes filtered HTML
+	 */
+	public function test_filter_strips_yomigana_from_buffer_on_order_display_page() {
+		add_filter( 'jp4wc_is_order_display_page', '__return_true' );
+		$level_before = ob_get_level();
+		$output       = '';
+
+		try {
+			$label_last  = esc_html( __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ) );
+			$label_first = esc_html( __( 'First Name ( Yomigana )', 'woocommerce-for-japan' ) );
+
+			// Outer buffer captures whatever filter_order_address_fields_buffer echoes.
+			ob_start();
+
+			// Priority 9: open inner buffer (via start_order_address_fields_buffer).
+			$this->integration->start_order_address_fields_buffer( 'billing', null );
+
+			// Priority 10: WooCommerce renders yomigana + other fields into the inner buffer.
+			echo "<dl><dt>{$label_last}</dt><dd>タナカ</dd><dt>{$label_first}</dt><dd>ショウヘイ</dd><dt>City</dt><dd>Tokyo</dd></dl>";
+
+			// Priority 11: consume inner buffer, strip yomigana, echo result to outer buffer.
+			$this->integration->filter_order_address_fields_buffer( 'billing', null );
+
+			$output = ob_get_clean();
+
+			$this->assertStringNotContainsString( $label_last, $output, 'Last name yomigana dt/dd should be stripped' );
+			$this->assertStringNotContainsString( $label_first, $output, 'First name yomigana dt/dd should be stripped' );
+			$this->assertStringContainsString( 'Tokyo', $output, 'Non-yomigana entries should remain' );
+		} finally {
+			while ( ob_get_level() > $level_before ) {
+				ob_end_clean();
+			}
+			remove_filter( 'jp4wc_is_order_display_page', '__return_true' );
+		}
+	}
 }

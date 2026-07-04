@@ -20,6 +20,19 @@ if ( ! interface_exists( 'Automattic\WooCommerce\Blocks\Integrations\Integration
 class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 
 	/**
+	 * Whether start_order_address_fields_buffer() actually opened an output buffer
+	 * that filter_order_address_fields_buffer() still needs to close.
+	 *
+	 * Tracked instead of re-evaluating is_order_display_page() at priority 11, since
+	 * a jp4wc_is_order_display_page filter callback could otherwise return a different
+	 * value between priority 9 and priority 11 and leave a buffer open (or unintentionally
+	 * clean an unrelated buffer).
+	 *
+	 * @var bool
+	 */
+	private $order_address_buffer_open = false;
+
+	/**
 	 * The name of the integration.
 	 *
 	 * @return string
@@ -148,11 +161,11 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		// Register yomigana last name field (applies to both billing and shipping).
 		// Note: Field order is controlled via JavaScript (see checkout-blocks-jp4wc.js).
 		$field_config = array(
-			'id'                       => 'jp4wc/yomigana_last_name',
-			'label'                    => __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ),
-			'location'                 => 'address',
-			'type'                     => 'text',
-			'required'                 => $is_required,
+			'id'                         => 'jp4wc/yomigana_last_name',
+			'label'                      => __( 'Last Name ( Yomigana )', 'woocommerce-for-japan' ),
+			'location'                   => 'address',
+			'type'                       => 'text',
+			'required'                   => $is_required,
 			'show_in_order_confirmation' => false,
 		);
 
@@ -168,11 +181,11 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		// Register yomigana first name field (applies to both billing and shipping).
 		// Note: Field order is controlled via JavaScript (see checkout-blocks-jp4wc.js).
 		$field_config = array(
-			'id'                       => 'jp4wc/yomigana_first_name',
-			'label'                    => __( 'First Name ( Yomigana )', 'woocommerce-for-japan' ),
-			'location'                 => 'address',
-			'type'                     => 'text',
-			'required'                 => $is_required,
+			'id'                         => 'jp4wc/yomigana_first_name',
+			'label'                      => __( 'First Name ( Yomigana )', 'woocommerce-for-japan' ),
+			'location'                   => 'address',
+			'type'                       => 'text',
+			'required'                   => $is_required,
 			'show_in_order_confirmation' => false,
 		);
 
@@ -299,14 +312,15 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 
 	/**
 	 * Start output buffer before WooCommerce renders address additional fields (priority 9).
-	 * Only active on the order-received page.
+	 * Active on the order-received (thank-you) page and My Account view-order page.
 	 *
 	 * @param string   $address_type billing or shipping.
 	 * @param WC_Order $order Order object.
 	 */
 	public function start_order_address_fields_buffer( $address_type, $order ) {
-		if ( is_order_received_page() ) {
+		if ( $this->is_order_display_page() ) {
 			ob_start();
+			$this->order_address_buffer_open = true;
 		}
 	}
 
@@ -317,13 +331,19 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 	 * show_in_order_confirmation. We strip the yomigana <dt>/<dd> pairs here
 	 * because they are already embedded in the formatted address block above.
 	 *
+	 * Gated on $order_address_buffer_open (set by start_order_address_fields_buffer())
+	 * rather than re-checking is_order_display_page(), so a filter callback that changes
+	 * its answer between priority 9 and 11 can't leave a buffer open or clean one we
+	 * never opened.
+	 *
 	 * @param string   $address_type billing or shipping.
 	 * @param WC_Order $order Order object.
 	 */
 	public function filter_order_address_fields_buffer( $address_type, $order ) {
-		if ( ! is_order_received_page() ) {
+		if ( ! $this->order_address_buffer_open ) {
 			return;
 		}
+		$this->order_address_buffer_open = false;
 
 		$output = ob_get_clean();
 		if ( empty( $output ) ) {
@@ -368,6 +388,22 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 		// Remove empty wrapper if all additional fields were stripped.
 		$block_content = preg_replace( '/<dl[^>]*>\s*<\/dl>/', '', $block_content );
 		return $block_content;
+	}
+
+	/**
+	 * Return true on pages that render order address fields via the classic template.
+	 *
+	 * WooCommerce fires woocommerce_order_details_after_customer_address on both the
+	 * order-received (thank-you) page and the My Account view-order page, so yomigana
+	 * suppression is needed on both.
+	 *
+	 * The result is passed through the jp4wc_is_order_display_page filter so that
+	 * tests can override it without needing to manipulate WP query vars.
+	 *
+	 * @return bool
+	 */
+	private function is_order_display_page() {
+		return (bool) apply_filters( 'jp4wc_is_order_display_page', is_order_received_page() || is_wc_endpoint_url( 'view-order' ) );
 	}
 
 	/**
