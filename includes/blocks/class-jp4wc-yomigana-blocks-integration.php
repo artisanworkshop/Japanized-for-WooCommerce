@@ -20,6 +20,19 @@ if ( ! interface_exists( 'Automattic\WooCommerce\Blocks\Integrations\Integration
 class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 
 	/**
+	 * Whether start_order_address_fields_buffer() actually opened an output buffer
+	 * that filter_order_address_fields_buffer() still needs to close.
+	 *
+	 * Tracked instead of re-evaluating is_order_display_page() at priority 11, since
+	 * a jp4wc_is_order_display_page filter callback could otherwise return a different
+	 * value between priority 9 and priority 11 and leave a buffer open (or unintentionally
+	 * clean an unrelated buffer).
+	 *
+	 * @var bool
+	 */
+	private $order_address_buffer_open = false;
+
+	/**
 	 * The name of the integration.
 	 *
 	 * @return string
@@ -307,6 +320,7 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 	public function start_order_address_fields_buffer( $address_type, $order ) {
 		if ( $this->is_order_display_page() ) {
 			ob_start();
+			$this->order_address_buffer_open = true;
 		}
 	}
 
@@ -317,13 +331,19 @@ class JP4WC_Yomigana_Blocks_Integration implements IntegrationInterface {
 	 * show_in_order_confirmation. We strip the yomigana <dt>/<dd> pairs here
 	 * because they are already embedded in the formatted address block above.
 	 *
+	 * Gated on $order_address_buffer_open (set by start_order_address_fields_buffer())
+	 * rather than re-checking is_order_display_page(), so a filter callback that changes
+	 * its answer between priority 9 and 11 can't leave a buffer open or clean one we
+	 * never opened.
+	 *
 	 * @param string   $address_type billing or shipping.
 	 * @param WC_Order $order Order object.
 	 */
 	public function filter_order_address_fields_buffer( $address_type, $order ) {
-		if ( ! $this->is_order_display_page() ) {
+		if ( ! $this->order_address_buffer_open ) {
 			return;
 		}
+		$this->order_address_buffer_open = false;
 
 		$output = ob_get_clean();
 		if ( empty( $output ) ) {
