@@ -24,13 +24,13 @@ If you see "The block 'namespace/block' is registered with API version 2 or lowe
 
 - Update `apiVersion` to `3` in block.json.
 - This warning only appears when `SCRIPT_DEBUG` is true.
-- WordPress 7.1 (scheduled 2026-08-19) will enforce the iframed editor for block-based themes, requiring apiVersion 3.
+- WordPress 7.1 (scheduled 2026-08-19) will enforce the iframe editor for block-based themes, requiring apiVersion 3.
 
 ## Styles not applying in editor (apiVersion 3 / iframe)
 
 If styles work on frontend but not in the editor:
 
 - Ensure style handles are declared in block.json (`editorStyle`, `style`).
-- Styles not included in block.json won't load inside the iframed editor.
+- Styles not included in block.json won't load inside the iframe editor.
 - Check for Dashicons or other dependencies that need explicit inclusion.
 

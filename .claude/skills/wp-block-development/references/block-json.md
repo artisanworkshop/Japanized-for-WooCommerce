@@ -13,8 +13,8 @@ Use this file when you’re editing `block.json` fields or choosing between scri
 **WordPress 6.9+ requires apiVersion 3.** The block.json schema now only validates blocks with `apiVersion: 3`. Older versions (1 or 2) trigger console warnings when `SCRIPT_DEBUG` is enabled.
 
 **Why apiVersion 3 matters:**
-- The post editor will be iframed if all registered blocks have apiVersion 3+.
-- WordPress 7.1 (scheduled 2026-08-19) will enforce the iframed editor for block-based themes, so blocks must be apiVersion 3 there.
+- The post editor will run in an iframe if all registered blocks have apiVersion 3+.
+- WordPress 7.1 (scheduled 2026-08-19) will enforce the iframe editor for block-based themes, so blocks must be apiVersion 3 there.
 - Benefits: style isolation (admin CSS won't affect editor content), correct viewport units (vw, vh), native media queries.
 
 **Migration checklist:**

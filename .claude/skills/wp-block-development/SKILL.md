@@ -55,11 +55,11 @@ After scaffolding:
 WordPress 6.9 enforces `apiVersion: 3` in the block.json schema. Blocks with apiVersion 2 or lower trigger console warnings when `SCRIPT_DEBUG` is enabled.
 
 **Why this matters:**
-- WordPress 7.1 (scheduled 2026-08-19) will enforce the iframed editor for block-based themes, so blocks must be apiVersion 3 to function there.
-- apiVersion 3 ensures your block works correctly inside the iframed editor (style isolation, viewport units, media queries).
+- WordPress 7.1 (scheduled 2026-08-19) will enforce the iframe editor for block-based themes, so blocks must be apiVersion 3 to function there.
+- apiVersion 3 ensures your block works correctly inside the iframe editor (style isolation, viewport units, media queries).
 
 **Migration:** Changing from version 2 to 3 is usually as simple as updating the `apiVersion` field in `block.json`. However:
-- Test in a local environment with the iframed editor enabled.
+- Test in a local environment with the iframe editor enabled.
 - Ensure any style handles are included in `block.json` (styles missing from the iframe won't apply).
 - Third-party scripts attached to a specific `window` may have scoping issues.
 
