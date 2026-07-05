@@ -6,7 +6,8 @@ description: >
   Submit Product form (Name, Short description, Best features, Benefits, Rationale, Monthly sales,
   Competitive comparison, Testing instructions, Notes for reviewers, etc.) with appropriate English
   text generation, submission package preparation (ZIP naming, changelog format, version consistency),
-  response strategies for the 4-stage review process (Automated testing/Business/Code/UX), pricing rules
+  response strategies for the 4-stage review process (Business/Code/UX/Launch preparations,
+  with automated QIT testing as a submission prerequisite), pricing rules
   (70/30 revenue split, SaaS Billing API), Freemium model configuration, post-release update
   obligations (minimum every 6 months, quarterly major recommended), and documentation requirements.
   Use when keywords like "marketplace submission", "Woo submission", "review handling", "Vendor Dashboard",
@@ -127,9 +128,11 @@ A mismatch will cause an upload error.
 
 ## Review Process
 
-After submission, you must pass through 4 stages of review:
+After submission, you must pass through 4 stages of review
+(Business / Code / UX / Launch preparations). Automated testing is a
+prerequisite that gates entry into the review queue.
 
-### 1. Automated Testing (Immediate)
+### Prerequisite: Automated Testing (immediate, at submission)
 
 Upon submission, QIT automatically runs the following tests:
 - Activation Test
@@ -142,7 +145,7 @@ Results appear in the Submission progress tab of the Vendor Dashboard.
 QIT test result links are temporary signed URLs and may expire.
 Re-run the tests if fresh results are needed.
 
-### 2. Business Review (Up to 30 days for a formal decision)
+### 1. Business Review (Up to 30 days for a formal decision)
 
 The review team evaluates:
 
@@ -164,7 +167,7 @@ Whether differentiating factors are clear.
 - Spam links
 - Links directing to other marketplaces
 
-### 3. Code Review
+### 2. Code Review
 
 Checks the submission code for originality, security, and compliance with WordPress/WooCommerce quality standards:
 
@@ -174,7 +177,7 @@ Checks the submission code for originality, security, and compliance with WordPr
 - HPOS compatibility
 - Appropriate data validation/sanitization
 
-### 4. UX Review
+### 3. UX Review
 
 Since 2024, UX review has been added to the process, extending the review period.
 
@@ -191,6 +194,13 @@ Tips for passing the UX review quickly:
 - Thoroughly test critical flows in-house beforehand
 - Refer to WooCommerce Core's critical flow definitions
 - Maximize the use of existing WordPress/WooCommerce UI components
+
+### 4. Launch Preparations
+
+After the three reviews pass, the marketplace team works with you to get the
+listing ready for release: finalizing the product page content, pricing
+configuration, and documentation links, and coordinating the go-live timing.
+The product is published once these preparations complete.
 
 ### Handling Feedback
 
