@@ -29,7 +29,7 @@ Managed tests required by the marketplace:
 | **Activation Test** | Verifies the plugin activates without errors or warnings in a clean WP+WC environment | ✅ |
 | **Security Test** | Semgrep-based security scan and coding best practices check | ✅ |
 | **PHPStan Test** | Static analysis to detect bugs and type errors | ✅ |
-| **PHP Compatibility Test** | Compatibility across different PHP versions (8.2–8.3+) | ✅ |
+| **PHP Compatibility Test** | Compatibility across different PHP versions (8.3–8.5) | ✅ |
 | **Malware Test** | Detection of malicious code | ✅ |
 | **Woo E2E Test** | Runs WooCommerce Core E2E tests (Playwright) with the extension active | ✅ |
 | **Woo API Test** | Runs WooCommerce Core API tests with the extension active | ✅ |
@@ -91,8 +91,8 @@ submitted to or are listed on the marketplace.
 ./vendor/bin/qit run:e2e my-extension \
   --zip=./my-extension.zip \
   --php_version=8.3 \
-  --wordpress_version=6.7 \
-  --woocommerce_version=9.6
+  --wordpress_version=7.0 \
+  --woocommerce_version=10.9
 
 # Activate other extensions simultaneously for compatibility testing
 ./vendor/bin/qit run:activation my-extension \
@@ -249,8 +249,8 @@ test.describe( 'Checkout Integration', () => {
 // composer.json
 {
   "require-dev": {
-    "squizlabs/php_codesniffer": "^3.7",
-    "wp-coding-standards/wpcs": "^3.0",
+    "squizlabs/php_codesniffer": "^3.13",
+    "wp-coding-standards/wpcs": "^3.3",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
   },
@@ -260,6 +260,10 @@ test.describe( 'Checkout Integration', () => {
   }
 }
 ```
+
+> **Note:** Stay on PHPCS 3.13.x. PHPCS 4.0 is released but WPCS 3.3.0 still
+> requires `squizlabs/php_codesniffer ^3.13.4` and does not support PHPCS 4.0 —
+> upgrading PHPCS to 4.0 will break WordPress-Coding-Standards linting.
 
 ```xml
 <!-- phpcs.xml -->
@@ -294,7 +298,7 @@ test.describe( 'Checkout Integration', () => {
   </rule>
 
   <!-- PHP Compatibility -->
-  <config name="testVersion" value="8.2-"/>
+  <config name="testVersion" value="8.3-"/>
   <rule ref="PHPCompatibilityWP"/>
 
   <!-- Minimum WP version -->
@@ -331,9 +335,9 @@ parameters:
 // Add to composer.json
 {
   "require-dev": {
-    "phpstan/phpstan": "^1.10",
+    "phpstan/phpstan": "^2.2",
     "phpstan/extension-installer": "^1.3",
-    "szepeviktor/phpstan-wordpress": "^1.3"
+    "szepeviktor/phpstan-wordpress": "^2.0"
   },
   "scripts": {
     "phpstan": "phpstan analyse --memory-limit=512M"
@@ -373,7 +377,7 @@ parameters:
 {
   "devDependencies": {
     "@woocommerce/eslint-plugin": "^2.2.0",
-    "@wordpress/scripts": "^28.0.0"
+    "@wordpress/scripts": "^32.0.0"
   },
   "scripts": {
     "lint:js": "wp-scripts lint-js src/",
@@ -405,10 +409,10 @@ jobs:
     name: PHPCS
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
           tools: composer, cs2pr
       - run: composer install --no-progress
       - run: composer phpcs -- --report=checkstyle | cs2pr
@@ -417,10 +421,10 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
       - run: composer install --no-progress
       - run: composer phpstan
 
@@ -428,10 +432,10 @@ jobs:
     name: ESLint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
       - run: npm ci
       - run: npm run lint:js
@@ -441,9 +445,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['8.2', '8.3']
+        php: ['8.3', '8.4']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
@@ -461,16 +465,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        wc: ['9.0', 'latest']
-        php: ['8.2', '8.3']
+        wc: ['10.9', 'latest']
+        php: ['8.3', '8.4']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
       - run: npm ci && npm run build
       - name: Install wp-env
         run: npm -g install @wordpress/env
@@ -506,10 +510,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
       - run: composer install --no-progress
       - name: Build ZIP
         run: |
@@ -537,7 +541,7 @@ Verify all of the following before submitting:
 - [ ] PHPCS (WordPress-Extra) zero errors
 - [ ] PHPStan level 5 or higher with zero errors
 - [ ] ESLint zero errors
-- [ ] PHP compatibility test passes for PHP 8.2 and 8.3
+- [ ] PHP compatibility test passes for PHP 8.3 and 8.4
 - [ ] Zero errors, warnings, or notices with WP_DEBUG enabled
 - [ ] QIT Activation Test passes (clean WP+WC environment)
 - [ ] QIT Security Test passes

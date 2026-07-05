@@ -128,7 +128,7 @@ Accessible by simply sharing a URL. Temporary environment that is safe to share.
 ```json
 // .wp-env.json
 {
-  "core": "WordPress/WordPress#6.7",
+  "core": "WordPress/WordPress#7.0",
   "plugins": [
     ".",
     "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip"

@@ -6,7 +6,7 @@ description: >
   Submit Product form (Name, Short description, Best features, Benefits, Rationale, Monthly sales,
   Competitive comparison, Testing instructions, Notes for reviewers, etc.) with appropriate English
   text generation, submission package preparation (ZIP naming, changelog format, version consistency),
-  response strategies for the 3-stage review process (Business/Code/UX), pricing rules
+  response strategies for the 4-stage review process (Business/Code/UX/Launch preparations), pricing rules
   (70/30 revenue split, SaaS Billing API), Freemium model configuration, post-release update
   obligations (minimum every 6 months, quarterly major recommended), and documentation requirements.
   Use when keywords like "marketplace submission", "Woo submission", "review handling", "Vendor Dashboard",
@@ -107,7 +107,7 @@ echo "Created ${PLUGIN_SLUG}.zip (v${VERSION})"
 * Fix - Resolved checkout validation issue with block editor
 
 = 1.0.1 - 2025-05-15 =
-* Fix - Fixed compatibility issue with WooCommerce 9.5
+* Fix - Fixed compatibility issue with WooCommerce 10.9
 * Fix - Corrected translation string for Japanese locale
 
 = 1.0.0 - 2025-04-01 =
@@ -127,7 +127,7 @@ A mismatch will cause an upload error.
 
 ## Review Process
 
-After submission, you must pass through 3 stages of review:
+After submission, you must pass through 4 stages of review:
 
 ### 1. Automated Testing (Immediate)
 
@@ -360,7 +360,7 @@ Test with beta/RC versions before new version releases to confirm compatibility:
 {
   "plugins": [
     ".",
-    "https://github.com/woocommerce/woocommerce/releases/download/9.7.0-beta.1/woocommerce.zip"
+    "https://github.com/woocommerce/woocommerce/releases/download/11.0.0-beta.1/woocommerce.zip"
   ]
 }
 ```

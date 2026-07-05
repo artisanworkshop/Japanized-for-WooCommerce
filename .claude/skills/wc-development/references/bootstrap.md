@@ -21,7 +21,7 @@
  * Requires Plugins:     woocommerce
  *
  * WC requires at least: 9.0
- * WC tested up to:      10.6
+ * WC tested up to:      10.9
  * Woo: 12345:abcdef1234567890abcdef1234567890
  */
 ```

@@ -1,7 +1,7 @@
 ---
 name: wp-security-check
 description: "Use for security audits of WordPress plugins: nonce validation, capability checks, input sanitization, output escaping, SQL injection prevention, CSRF protection, PCI DSS compliance for payment plugins, and WooCommerce-specific security patterns."
-compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (PHP 8.2+). Requires PHPCS with WordPress standards."
+compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9; PHP 8.2+). Requires PHPCS with WordPress standards (PHPCS 3.13.x + WPCS 3.3.0 — not PHPCS 4.0, which WPCS does not yet support)."
 ---
 
 # WP Security Check
