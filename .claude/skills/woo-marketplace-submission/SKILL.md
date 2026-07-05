@@ -6,7 +6,7 @@ description: >
   Submit Product form (Name, Short description, Best features, Benefits, Rationale, Monthly sales,
   Competitive comparison, Testing instructions, Notes for reviewers, etc.) with appropriate English
   text generation, submission package preparation (ZIP naming, changelog format, version consistency),
-  response strategies for the 4-stage review process (Business/Code/UX/Launch preparations), pricing rules
+  response strategies for the 4-stage review process (Automated testing/Business/Code/UX), pricing rules
   (70/30 revenue split, SaaS Billing API), Freemium model configuration, post-release update
   obligations (minimum every 6 months, quarterly major recommended), and documentation requirements.
   Use when keywords like "marketplace submission", "Woo submission", "review handling", "Vendor Dashboard",
@@ -346,7 +346,7 @@ Upload error causes:
 
 ### Keeping Up with WooCommerce Core Releases
 
-WooCommerce releases major versions approximately quarterly.
+WooCommerce releases major versions approximately monthly.
 Test with beta/RC versions before new version releases to confirm compatibility:
 
 ```bash
@@ -355,12 +355,13 @@ Test with beta/RC versions before new version releases to confirm compatibility:
   --zip=./my-extension.zip \
   --woocommerce_version=rc
 
-# Or specify in wp-env
+# Or specify in wp-env — replace the tag with the current pre-release from
+# https://github.com/woocommerce/woocommerce/releases (e.g. 10.9.0-rc.1)
 # .wp-env.override.json
 {
   "plugins": [
     ".",
-    "https://github.com/woocommerce/woocommerce/releases/download/11.0.0-beta.1/woocommerce.zip"
+    "https://github.com/woocommerce/woocommerce/releases/download/10.9.0-rc.1/woocommerce.zip"
   ]
 }
 ```
