@@ -64,10 +64,10 @@ Keep the directory name, main filename, and text domain all identical (hyphen-se
  * Text Domain:          my-extension
  * Domain Path:          /languages
  * Requires at least:    6.7
- * Tested up to:         6.7
- * Requires PHP:         8.2
+ * Tested up to:         7.0
+ * Requires PHP:         8.3
  * WC requires at least: 9.0
- * WC tested up to:      9.6
+ * WC tested up to:      10.9
  * Requires Plugins:     woocommerce
  *
  * Woo: 12345:abcdef1234567890abcdef1234567890

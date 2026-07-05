@@ -6,7 +6,7 @@ description: >
   「paygent_mb」「WC_Gateway_Paygent_MB」「キャリア決済」「auかんたん決済」「d払い」
   「ソフトバンク」「携帯決済」「career_type」「addon-mb」などのキーワードで発動。
 compatibility: >
-  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+。
+  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+（現行安定版: WC 10.9 / WP 7.0）。
   継続課金はWooCommerce Subscriptions必須。
   各キャリアとPaygent経由で個別に契約が必要。
 ---

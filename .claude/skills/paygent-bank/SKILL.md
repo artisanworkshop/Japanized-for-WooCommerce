@@ -7,7 +7,7 @@ description: >
   「paygent_bn」「WC_Gateway_Paygent_BN」「仮想口座」「コンビニ」「銀行ネット」「口座振替」
   などのキーワードで発動。
 compatibility: >
-  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+。
+  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+（現行安定版: WC 10.9 / WP 7.0）。
 ---
 
 # Paygent 銀行・コンビニ系決済

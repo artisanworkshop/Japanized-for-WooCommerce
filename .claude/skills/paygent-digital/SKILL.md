@@ -7,7 +7,7 @@ description: >
   「PayPay」「Paidy」「楽天ペイ」「Apple Pay」「Google Pay」「Alipay」「銀聯」
   などのキーワードで発動。
 compatibility: >
-  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+。
+  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+（現行安定版: WC 10.9 / WP 7.0）。
   各デジタル決済はPaygent側で個別に契約が必要。
 ---
 

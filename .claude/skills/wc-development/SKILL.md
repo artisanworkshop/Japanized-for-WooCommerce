@@ -7,10 +7,10 @@ description: >
   "WooCommerce plugin", "WC extension", "payment gateway", "HPOS", "order meta", "wc_get_orders",
   "checkout block", "Store API", "WC_Payment_Gateway", "shipping method", "product type",
   "WooCommerce REST API", or any WooCommerce-specific development task. Also trigger when the user
-  references WooCommerce hooks, filters, or classes. This skill targets WooCommerce 10.x (current stable: 10.6)
-  on WordPress 6.6+ / 7.0+.
+  references WooCommerce hooks, filters, or classes. This skill targets WooCommerce 9.0+ (current stable: 10.9;
+  11.0 scheduled 2026-07-28) on WordPress 6.7+ (current stable: 7.0).
 compatibility: >
-  WooCommerce 9.0–10.6+ on WordPress 6.7–7.0+. PHP 8.2+. HPOS required for all new extensions.
+  WooCommerce 9.0+ on WordPress 6.7+ (current stable: WC 10.9, WP 7.0). PHP 8.2+. HPOS required for all new extensions.
   Some workflows use WP-CLI with WooCommerce commands.
 ---
 
