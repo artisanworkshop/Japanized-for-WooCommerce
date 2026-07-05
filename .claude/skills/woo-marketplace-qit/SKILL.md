@@ -249,7 +249,7 @@ test.describe( 'Checkout Integration', () => {
 // composer.json
 {
   "require-dev": {
-    "squizlabs/php_codesniffer": "^3.13",
+    "squizlabs/php_codesniffer": "^3.13.4",
     "wp-coding-standards/wpcs": "^3.3",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
