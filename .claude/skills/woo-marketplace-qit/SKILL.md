@@ -445,7 +445,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['8.3', '8.4']
+        php: ['8.3', '8.4', '8.5']
     steps:
       - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
@@ -466,7 +466,7 @@ jobs:
     strategy:
       matrix:
         wc: ['10.9', 'latest']
-        php: ['8.3', '8.4']
+        php: ['8.3', '8.4', '8.5']
     steps:
       - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
@@ -541,7 +541,7 @@ Verify all of the following before submitting:
 - [ ] PHPCS (WordPress-Extra) zero errors
 - [ ] PHPStan level 5 or higher with zero errors
 - [ ] ESLint zero errors
-- [ ] PHP compatibility test passes for PHP 8.3 and 8.4
+- [ ] PHP compatibility test passes for PHP 8.3–8.5
 - [ ] Zero errors, warnings, or notices with WP_DEBUG enabled
 - [ ] QIT Activation Test passes (clean WP+WC environment)
 - [ ] QIT Security Test passes

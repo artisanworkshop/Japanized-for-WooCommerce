@@ -101,16 +101,16 @@ echo "Created ${PLUGIN_SLUG}.zip (v${VERSION})"
 ```
 *** My Extension Changelog ***
 
-= 1.1.0 - 2025-06-01 =
+= 1.1.0 - 2026-07-01 =
 * Feature - Added new payment method support
 * Tweak - Improved order processing performance
 * Fix - Resolved checkout validation issue with block editor
 
-= 1.0.1 - 2025-05-15 =
+= 1.0.1 - 2026-06-25 =
 * Fix - Fixed compatibility issue with WooCommerce 10.9
 * Fix - Corrected translation string for Japanese locale
 
-= 1.0.0 - 2025-04-01 =
+= 1.0.0 - 2026-05-01 =
 * Feature - Initial release
 ```
 
