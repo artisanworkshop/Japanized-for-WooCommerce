@@ -1,7 +1,7 @@
 ---
 name: wp-rest-api
 description: "Use when building, extending, or debugging WordPress REST API endpoints/routes: register_rest_route, WP_REST_Controller/controller classes, schema/argument validation, permission_callback/authentication, response shaping, register_rest_field/register_meta, or exposing CPTs/taxonomies via show_in_rest."
-compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9; PHP 8.3 recommended). Filesystem-based agent with bash + node. Some workflows require WP-CLI."
+compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9). PHP 8.2+ (8.3 recommended). Filesystem-based agent with bash + node. Some workflows require WP-CLI."
 ---
 
 # WP REST API
@@ -22,7 +22,7 @@ Use this skill when you need to:
 - Repo root + target plugin/theme/mu-plugin (path to entrypoint).
 - Desired namespace + version (e.g. `my-plugin/v1`) and routes.
 - Authentication mode (cookie + nonce vs application passwords vs auth plugin).
-- Target WordPress version constraints (if below 7.0, call out).
+- Target WordPress version constraints (if below 6.7 — this skill's minimum — call out).
 
 ## Procedure
 

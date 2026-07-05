@@ -1,7 +1,7 @@
 ---
 name: wp-phpstan
 description: "Use when configuring, running, or fixing PHPStan static analysis in WordPress projects (plugins/themes/sites): phpstan.neon setup, baselines, WordPress-specific typing, and handling third-party plugin classes."
-compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9; PHP 8.3 recommended). Requires Composer-based PHPStan."
+compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9). PHP 8.2+ (8.3 recommended). Requires Composer-based PHPStan."
 ---
 
 # WP PHPStan

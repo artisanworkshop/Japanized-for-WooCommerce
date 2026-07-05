@@ -1,7 +1,7 @@
 ---
 name: wp-block-development
 description: "Use when developing WordPress (Gutenberg) blocks: block.json metadata, register_block_type(_from_metadata), attributes/serialization, supports, dynamic rendering (render.php/render_callback), deprecations/migrations, viewScript vs viewScriptModule, and @wordpress/scripts/@wordpress/create-block build and test workflows."
-compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9; PHP 8.3 recommended). Filesystem-based agent with bash + node. Some workflows require WP-CLI."
+compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9). PHP 8.2+ (8.3 recommended). Filesystem-based agent with bash + node. Some workflows require WP-CLI."
 ---
 
 # WP Block Development

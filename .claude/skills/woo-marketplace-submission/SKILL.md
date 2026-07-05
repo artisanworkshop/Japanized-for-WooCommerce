@@ -325,7 +325,7 @@ The review team will actually interact with the product to verify UX, so prepare
 Products listed on the marketplace require ongoing maintenance:
 
 - **Minimum update every 6 months**: Products without updates for 6+ months are subject to delisting
-- **Quarterly major releases recommended**: Synchronized with the WooCommerce Core release calendar
+- **Quarterly major releases recommended**: WooCommerce Core ships major versions roughly monthly, so verify compatibility with each Core release and fold the results into at least quarterly releases of your extension
 - **Security fixes**: Emergency releases as needed
 - **Minor improvements**: Monthly or as features/fixes are ready
 
