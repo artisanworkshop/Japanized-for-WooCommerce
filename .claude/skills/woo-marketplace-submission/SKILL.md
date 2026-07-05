@@ -6,7 +6,8 @@ description: >
   Submit Product form (Name, Short description, Best features, Benefits, Rationale, Monthly sales,
   Competitive comparison, Testing instructions, Notes for reviewers, etc.) with appropriate English
   text generation, submission package preparation (ZIP naming, changelog format, version consistency),
-  response strategies for the 3-stage review process (Business/Code/UX), pricing rules
+  response strategies for the 4-stage review process (Business/Code/UX/Launch preparations,
+  with automated QIT testing as a submission prerequisite), pricing rules
   (70/30 revenue split, SaaS Billing API), Freemium model configuration, post-release update
   obligations (minimum every 6 months, quarterly major recommended), and documentation requirements.
   Use when keywords like "marketplace submission", "Woo submission", "review handling", "Vendor Dashboard",
@@ -101,16 +102,16 @@ echo "Created ${PLUGIN_SLUG}.zip (v${VERSION})"
 ```
 *** My Extension Changelog ***
 
-= 1.1.0 - 2025-06-01 =
+= 1.1.0 - 2026-07-01 =
 * Feature - Added new payment method support
 * Tweak - Improved order processing performance
 * Fix - Resolved checkout validation issue with block editor
 
-= 1.0.1 - 2025-05-15 =
-* Fix - Fixed compatibility issue with WooCommerce 9.5
+= 1.0.1 - 2026-06-25 =
+* Fix - Fixed compatibility issue with WooCommerce 10.9
 * Fix - Corrected translation string for Japanese locale
 
-= 1.0.0 - 2025-04-01 =
+= 1.0.0 - 2026-05-01 =
 * Feature - Initial release
 ```
 
@@ -127,9 +128,11 @@ A mismatch will cause an upload error.
 
 ## Review Process
 
-After submission, you must pass through 3 stages of review:
+After submission, you must pass through 4 stages of review
+(Business / Code / UX / Launch preparations). Automated testing is a
+prerequisite that gates entry into the review queue.
 
-### 1. Automated Testing (Immediate)
+### Prerequisite: Automated Testing (immediate, at submission)
 
 Upon submission, QIT automatically runs the following tests:
 - Activation Test
@@ -142,7 +145,7 @@ Results appear in the Submission progress tab of the Vendor Dashboard.
 QIT test result links are temporary signed URLs and may expire.
 Re-run the tests if fresh results are needed.
 
-### 2. Business Review (Up to 30 days for a formal decision)
+### 1. Business Review (Up to 30 days for a formal decision)
 
 The review team evaluates:
 
@@ -164,7 +167,7 @@ Whether differentiating factors are clear.
 - Spam links
 - Links directing to other marketplaces
 
-### 3. Code Review
+### 2. Code Review
 
 Checks the submission code for originality, security, and compliance with WordPress/WooCommerce quality standards:
 
@@ -174,7 +177,7 @@ Checks the submission code for originality, security, and compliance with WordPr
 - HPOS compatibility
 - Appropriate data validation/sanitization
 
-### 4. UX Review
+### 3. UX Review
 
 Since 2024, UX review has been added to the process, extending the review period.
 
@@ -191,6 +194,13 @@ Tips for passing the UX review quickly:
 - Thoroughly test critical flows in-house beforehand
 - Refer to WooCommerce Core's critical flow definitions
 - Maximize the use of existing WordPress/WooCommerce UI components
+
+### 4. Launch Preparations
+
+After the three reviews pass, the marketplace team works with you to get the
+listing ready for release: finalizing the product page content, pricing
+configuration, and documentation links, and coordinating the go-live timing.
+The product is published once these preparations complete.
 
 ### Handling Feedback
 
@@ -325,7 +335,7 @@ The review team will actually interact with the product to verify UX, so prepare
 Products listed on the marketplace require ongoing maintenance:
 
 - **Minimum update every 6 months**: Products without updates for 6+ months are subject to delisting
-- **Quarterly major releases recommended**: Synchronized with the WooCommerce Core release calendar
+- **Quarterly major releases recommended**: WooCommerce Core ships major versions roughly monthly, so verify compatibility with each Core release and fold the results into at least quarterly releases of your extension
 - **Security fixes**: Emergency releases as needed
 - **Minor improvements**: Monthly or as features/fixes are ready
 
@@ -346,7 +356,7 @@ Upload error causes:
 
 ### Keeping Up with WooCommerce Core Releases
 
-WooCommerce releases major versions approximately quarterly.
+WooCommerce releases major versions approximately monthly.
 Test with beta/RC versions before new version releases to confirm compatibility:
 
 ```bash
@@ -355,12 +365,13 @@ Test with beta/RC versions before new version releases to confirm compatibility:
   --zip=./my-extension.zip \
   --woocommerce_version=rc
 
-# Or specify in wp-env
+# Or specify in wp-env — replace the tag with the current pre-release from
+# https://github.com/woocommerce/woocommerce/releases (e.g. 10.9.0-rc.1)
 # .wp-env.override.json
 {
   "plugins": [
     ".",
-    "https://github.com/woocommerce/woocommerce/releases/download/9.7.0-beta.1/woocommerce.zip"
+    "https://github.com/woocommerce/woocommerce/releases/download/10.9.0-rc.1/woocommerce.zip"
   ]
 }
 ```

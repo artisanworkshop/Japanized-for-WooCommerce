@@ -7,9 +7,9 @@ description: >
   「paygent_cc」「WC_Gateway_Paygent_CC」「tds2」「3Dセキュア」「継続課金」「トークン決済」
   「クレジットカード」「paygent_mccc」「多通貨」「addon-cc」などのキーワードで発動。
 compatibility: >
-  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+。
+  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+（現行安定版: WC 10.9 / WP 7.0）。
   継続課金はWooCommerce Subscriptions必須。
-  EMV 3DS2はPaygent側でオプション契約が必要。
+  EMV 3DS2は2025年3月末以降、原則すべてのEC加盟店で必須（クレジットカード・セキュリティガイドライン6.0版）。
 ---
 
 # Paygent クレジットカード決済

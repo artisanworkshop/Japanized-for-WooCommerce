@@ -1,7 +1,7 @@
 ---
 name: wp-wpcli-and-ops
 description: "Use when working with WP-CLI (wp) for WordPress operations: safe search-replace, db export/import, plugin/theme/user/content management, cron, cache flushing, multisite, and scripting/automation with wp-cli.yml."
-compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (PHP 8.2+). Requires WP-CLI in the execution environment."
+compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9). PHP 8.2+ (8.3 recommended). Requires WP-CLI in the execution environment."
 ---
 
 # WP-CLI and Ops

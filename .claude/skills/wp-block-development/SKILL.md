@@ -1,7 +1,7 @@
 ---
 name: wp-block-development
 description: "Use when developing WordPress (Gutenberg) blocks: block.json metadata, register_block_type(_from_metadata), attributes/serialization, supports, dynamic rendering (render.php/render_callback), deprecations/migrations, viewScript vs viewScriptModule, and @wordpress/scripts/@wordpress/create-block build and test workflows."
-compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (PHP 8.2+). Filesystem-based agent with bash + node. Some workflows require WP-CLI."
+compatibility: "Targets WordPress 6.7+ / WooCommerce 9.0+ (current stable: WP 7.0, WC 10.9). PHP 8.2+ (8.3 recommended). Filesystem-based agent with bash + node. Some workflows require WP-CLI."
 ---
 
 # WP Block Development
@@ -55,11 +55,11 @@ After scaffolding:
 WordPress 6.9 enforces `apiVersion: 3` in the block.json schema. Blocks with apiVersion 2 or lower trigger console warnings when `SCRIPT_DEBUG` is enabled.
 
 **Why this matters:**
-- WordPress 7.0 will run the post editor in an iframe regardless of block apiVersion.
+- WordPress 7.1 (scheduled 2026-08-19) will enforce the iframed editor for block-based themes, so blocks must be apiVersion 3 to function there.
 - apiVersion 3 ensures your block works correctly inside the iframed editor (style isolation, viewport units, media queries).
 
 **Migration:** Changing from version 2 to 3 is usually as simple as updating the `apiVersion` field in `block.json`. However:
-- Test in a local environment with the iframe editor enabled.
+- Test in a local environment with the iframed editor enabled.
 - Ensure any style handles are included in `block.json` (styles missing from the iframe won't apply).
 - Third-party scripts attached to a specific `window` may have scoping issues.
 

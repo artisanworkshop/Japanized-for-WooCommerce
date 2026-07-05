@@ -146,3 +146,5 @@ Gateway classes in `includes/gateways/`. Each extends `WC_Payment_Gateway`. Bloc
 - Block checkout REST validation runs multiple times per page load (calc_totals, locale calls) — guard accordingly
 - `wc4jp-` option prefix ≠ `jp4wc_` function prefix — they are different naming schemes intentionally
 - CSS `:has()` selector is used for field ordering — supported in Chrome 105+, Firefox 121+, Safari 15.4+
+- `is_order_received_page()` does NOT cover the My Account view-order page — order-display logic must also check `is_wc_endpoint_url( 'view-order' )` (both pages fire `woocommerce_order_details_after_customer_address`)
+- Paired output-buffer hooks (ob_start at priority 9 / ob_get_clean at 11) must gate the close on a flag set by the open call — never re-evaluate the page condition, or a filter changing mid-request leaks/steals a buffer

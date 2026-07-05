@@ -14,7 +14,7 @@ Use this file when you’re editing `block.json` fields or choosing between scri
 
 **Why apiVersion 3 matters:**
 - The post editor will be iframed if all registered blocks have apiVersion 3+.
-- WordPress 7.0 will always use the iframe editor regardless of apiVersion.
+- WordPress 7.1 (scheduled 2026-08-19) will enforce the iframed editor for block-based themes, so blocks must be apiVersion 3 there.
 - Benefits: style isolation (admin CSS won't affect editor content), correct viewport units (vw, vh), native media queries.
 
 **Migration checklist:**

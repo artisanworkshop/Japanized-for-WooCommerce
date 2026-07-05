@@ -7,7 +7,7 @@ description: >
   「paygent API」「telegram_kind」「PaygentB2BModule」「send_paygent_request」
   「wc-paygent-mid」「ハッシュチェック」「WC_Gateway_Paygent_Request」などのキーワードで発動。
 compatibility: >
-  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+。
+  WooCommerce 9.0+ / WordPress 6.7+ / PHP 8.2+（現行安定版: WC 10.9 / WP 7.0）。
   PaygentB2BModuleはvendor-wc/paygent/connect/に内包。
   JP4WCフレームワーク v2.0.13を使用。
 ---
