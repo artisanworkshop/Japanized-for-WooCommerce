@@ -15,9 +15,9 @@
  * License URI:          https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:          my-wc-extension
  * Domain Path:          /languages
- * Requires at least:    6.6
+ * Requires at least:    6.7
  * Tested up to:         7.0
- * Requires PHP:         8.0
+ * Requires PHP:         8.2
  * Requires Plugins:     woocommerce
  *
  * WC requires at least: 9.0
