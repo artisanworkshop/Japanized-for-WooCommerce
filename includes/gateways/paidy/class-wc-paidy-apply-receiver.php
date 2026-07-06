@@ -82,7 +82,10 @@ class WC_Paidy_Apply_Receiver {
 	/**
 	 * Verify an onboarding state token exists and has not expired.
 	 *
-	 * @param string $token 32-char alphanumeric state token.
+	 * Accepts raw request input: anything but a 32-char alphanumeric string is
+	 * rejected before any storage key is built.
+	 *
+	 * @param mixed $token 32-char alphanumeric state token.
 	 * @return bool True if the token is valid.
 	 */
 	public static function verify_state_token( $token ) {
@@ -112,7 +115,10 @@ class WC_Paidy_Apply_Receiver {
 	/**
 	 * Consume (delete) an onboarding state token so it cannot be reused.
 	 *
-	 * @param string $token 32-char alphanumeric state token.
+	 * Accepts raw request input: anything but a 32-char alphanumeric string is
+	 * rejected before any storage key is built.
+	 *
+	 * @param mixed $token 32-char alphanumeric state token.
 	 * @return void
 	 */
 	public static function consume_state_token( $token ) {
@@ -139,8 +145,9 @@ class WC_Paidy_Apply_Receiver {
 
 		// Token options are non-autoloaded and keyed by a random token value,
 		// so there is no core API to enumerate them — a direct LIKE query is
-		// required. esc_like() escapes the underscores so the pattern cannot
-		// match the legacy `_transient_paidy_onboarding_state_*` rows.
+		// required. esc_like() makes the underscores match literally instead
+		// of acting as single-character LIKE wildcards, so the pattern cannot
+		// accidentally match other, similarly named option rows.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -212,12 +219,10 @@ class WC_Paidy_Apply_Receiver {
 		// parallel onboarding sessions cannot clobber each other's tokens. Verifying
 		// existence of the scoped key is sufficient — no separate value comparison needed.
 		//
-		// Validate format before use: the token must be a 32-char alphanumeric string
-		// (matching wp_generate_password(32, false)) to prevent non-string values or
-		// oversized inputs from being used as storage key suffixes.
-		$request_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
-		if ( 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $request_token )
-			|| ! self::verify_state_token( $request_token ) ) {
+		// verify_state_token() validates the format internally (32-char alphanumeric,
+		// matching wp_generate_password(32, false)) before building any storage key,
+		// so non-string values or oversized inputs are rejected there.
+		if ( ! self::verify_state_token( $request->get_param( 'state' ) ) ) {
 			return new WP_Error(
 				'paidy_invalid_state',
 				__( 'Invalid or missing state token for Paidy onboarding.', 'woocommerce-for-japan' ),
@@ -416,12 +421,10 @@ class WC_Paidy_Apply_Receiver {
 				// succeeded — consuming it here (not in check_permissions) means a
 				// transient DB or decryption failure during processing does not
 				// permanently prevent the merchant from retrying the callback.
-				// Re-validate the format here (same rule as check_permissions) so we
-				// never build a storage key from an unsanitized param.
-				$state_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
-				if ( 1 === preg_match( '/^[A-Za-z0-9]{32}$/', $state_token ) ) {
-					self::consume_state_token( $state_token );
-				}
+				// consume_state_token() validates the format internally (same rule
+				// as verify_state_token) so it never builds a storage key from an
+				// unsanitized param.
+				self::consume_state_token( $request->get_param( 'state' ) );
 
 				// Success response — omit decrypted API key fields to avoid
 				// exposing secrets via response bodies, proxy logs, or intermediaries.

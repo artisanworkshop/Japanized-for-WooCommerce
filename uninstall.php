@@ -51,11 +51,14 @@ function wc_paidy_delete_plugin() {
 	// Delete onboarding state token options (one non-autoloaded row per token,
 	// named paidy_onboarding_state_<token>) — the random suffixes cannot be
 	// enumerated via a core API, so a direct LIKE query is required.
+	// Must match WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX (the class is not
+	// loaded during uninstall, so the constant cannot be referenced directly).
+	$state_option_prefix = 'paidy_onboarding_state_';
 	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 	$wpdb->query(
 		$wpdb->prepare(
 			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-			$wpdb->esc_like( 'paidy_onboarding_state_' ) . '%'
+			$wpdb->esc_like( $state_option_prefix ) . '%'
 		)
 	);
 	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
