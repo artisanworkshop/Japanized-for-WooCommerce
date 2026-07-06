@@ -21,10 +21,125 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Paidy_Apply_Receiver {
 
 	/**
+	 * Option name that stores active onboarding state tokens.
+	 *
+	 * Stored as a non-autoloaded option holding array( token => issued UNIX time ).
+	 * Options survive object-cache evictions and have no TTL, unlike transients —
+	 * the Paidy review takes days to weeks, far longer than any safe transient TTL.
+	 */
+	const STATE_OPTION_NAME = 'paidy_onboarding_states';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+	}
+
+	/**
+	 * Get the lifetime of an onboarding state token in seconds.
+	 *
+	 * @return int TTL in seconds.
+	 */
+	public static function get_state_token_ttl() {
+		/**
+		 * Filters the lifetime of a Paidy onboarding state token.
+		 *
+		 * The token must outlive the Paidy merchant review, which can take
+		 * several weeks between application and the key-delivery callback.
+		 *
+		 * @param int $ttl Lifetime in seconds. Default 90 days.
+		 */
+		return (int) apply_filters( 'wc4jp_paidy_onboarding_state_ttl', 90 * DAY_IN_SECONDS );
+	}
+
+	/**
+	 * Store a one-time onboarding state token.
+	 *
+	 * Expired entries are pruned on every store so no cron cleanup is needed.
+	 *
+	 * @param string $token 32-char alphanumeric state token.
+	 * @return bool True if the token was persisted, false otherwise.
+	 */
+	public static function store_state_token( $token ) {
+		if ( ! is_string( $token ) || 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $token ) ) {
+			return false;
+		}
+
+		$states = get_option( self::STATE_OPTION_NAME, array() );
+		if ( ! is_array( $states ) ) {
+			$states = array();
+		}
+
+		// Prune expired entries while we are here.
+		$ttl = self::get_state_token_ttl();
+		$now = time();
+		foreach ( $states as $stored_token => $issued_at ) {
+			if ( ! is_int( $issued_at ) || ( $now - $issued_at ) > $ttl ) {
+				unset( $states[ $stored_token ] );
+			}
+		}
+
+		$states[ $token ] = $now;
+		update_option( self::STATE_OPTION_NAME, $states, false );
+
+		// Re-read to verify the token actually persisted — update_option()
+		// returns false on a no-change write, so its return value alone
+		// cannot distinguish failure from an identical existing value.
+		$saved = get_option( self::STATE_OPTION_NAME, array() );
+
+		return is_array( $saved ) && isset( $saved[ $token ] );
+	}
+
+	/**
+	 * Verify an onboarding state token exists and has not expired.
+	 *
+	 * @param string $token 32-char alphanumeric state token.
+	 * @return bool True if the token is valid.
+	 */
+	public static function verify_state_token( $token ) {
+		if ( ! is_string( $token ) || 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $token ) ) {
+			return false;
+		}
+
+		$states = get_option( self::STATE_OPTION_NAME, array() );
+		if ( is_array( $states ) && isset( $states[ $token ] ) ) {
+			$issued_at = $states[ $token ];
+			if ( is_int( $issued_at ) && ( time() - $issued_at ) <= self::get_state_token_ttl() ) {
+				return true;
+			}
+		}
+
+		// Legacy fallback: tokens issued by older plugin versions were stored as
+		// transients. Keep accepting them so an in-flight application submitted
+		// before the update still succeeds. TODO: remove after 2-3 releases.
+		if ( false !== get_transient( 'paidy_onboarding_state_' . $token ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Consume (delete) an onboarding state token so it cannot be reused.
+	 *
+	 * @param string $token 32-char alphanumeric state token.
+	 * @return void
+	 */
+	public static function consume_state_token( $token ) {
+		if ( ! is_string( $token ) || 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $token ) ) {
+			return;
+		}
+
+		$states = get_option( self::STATE_OPTION_NAME, array() );
+		if ( is_array( $states ) && isset( $states[ $token ] ) ) {
+			unset( $states[ $token ] );
+			update_option( self::STATE_OPTION_NAME, $states, false );
+		}
+
+		// Also clear the legacy transient variant. Remove together with the
+		// legacy fallback in verify_state_token().
+		delete_transient( 'paidy_onboarding_state_' . $token );
 	}
 
 	/**
@@ -72,16 +187,16 @@ class WC_Paidy_Apply_Receiver {
 		}
 
 		// Verify the one-time state token generated when the onboarding form was submitted.
-		// The transient is keyed by the token value itself (set in the admin wizard) so
+		// Tokens are stored keyed by their own value (set in the admin wizard) so
 		// parallel onboarding sessions cannot clobber each other's tokens. Verifying
 		// existence of the scoped key is sufficient — no separate value comparison needed.
 		//
 		// Validate format before use: the token must be a 32-char alphanumeric string
 		// (matching wp_generate_password(32, false)) to prevent non-string values or
-		// oversized inputs from being used as transient key suffixes.
+		// oversized inputs from being used as storage key suffixes.
 		$request_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
 		if ( 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $request_token )
-			|| false === get_transient( 'paidy_onboarding_state_' . $request_token ) ) {
+			|| ! self::verify_state_token( $request_token ) ) {
 			return new WP_Error(
 				'paidy_invalid_state',
 				__( 'Invalid or missing state token for Paidy onboarding.', 'woocommerce-for-japan' ),
@@ -89,7 +204,7 @@ class WC_Paidy_Apply_Receiver {
 			);
 		}
 
-		// Do NOT delete the transient here — consume it only after the handler
+		// Do NOT consume the token here — consume it only after the handler
 		// completes successfully so a transient DB/decryption failure does not
 		// permanently prevent retrying the onboarding callback.
 
@@ -281,10 +396,10 @@ class WC_Paidy_Apply_Receiver {
 				// transient DB or decryption failure during processing does not
 				// permanently prevent the merchant from retrying the callback.
 				// Re-validate the format here (same rule as check_permissions) so we
-				// never build a transient key from an unsanitized param.
+				// never build a storage key from an unsanitized param.
 				$state_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
 				if ( 1 === preg_match( '/^[A-Za-z0-9]{32}$/', $state_token ) ) {
-					delete_transient( 'paidy_onboarding_state_' . $state_token );
+					self::consume_state_token( $state_token );
 				}
 
 				// Success response — omit decrypted API key fields to avoid
