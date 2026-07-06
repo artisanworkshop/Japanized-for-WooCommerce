@@ -21,13 +21,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Paidy_Apply_Receiver {
 
 	/**
-	 * Option name that stores active onboarding state tokens.
+	 * Prefix for the options that store active onboarding state tokens.
 	 *
-	 * Stored as a non-autoloaded option holding array( token => issued UNIX time ).
+	 * Each token is stored as its own non-autoloaded option (prefix + token,
+	 * value = issued UNIX time). One row per token means concurrent onboarding
+	 * sessions insert separate rows and cannot overwrite each other — a single
+	 * shared array option would lose tokens to read-modify-write races.
 	 * Options survive object-cache evictions and have no TTL, unlike transients —
 	 * the Paidy review takes days to weeks, far longer than any safe transient TTL.
 	 */
-	const STATE_OPTION_NAME = 'paidy_onboarding_states';
+	const STATE_OPTION_PREFIX = 'paidy_onboarding_state_';
 
 	/**
 	 * Constructor.
@@ -66,29 +69,14 @@ class WC_Paidy_Apply_Receiver {
 			return false;
 		}
 
-		$states = get_option( self::STATE_OPTION_NAME, array() );
-		if ( ! is_array( $states ) ) {
-			$states = array();
-		}
+		self::prune_expired_state_tokens();
 
-		// Prune expired entries while we are here.
-		$ttl = self::get_state_token_ttl();
-		$now = time();
-		foreach ( $states as $stored_token => $issued_at ) {
-			if ( ! is_int( $issued_at ) || ( $now - $issued_at ) > $ttl ) {
-				unset( $states[ $stored_token ] );
-			}
-		}
-
-		$states[ $token ] = $now;
-		update_option( self::STATE_OPTION_NAME, $states, false );
+		update_option( self::STATE_OPTION_PREFIX . $token, time(), false );
 
 		// Re-read to verify the token actually persisted — update_option()
 		// returns false on a no-change write, so its return value alone
 		// cannot distinguish failure from an identical existing value.
-		$saved = get_option( self::STATE_OPTION_NAME, array() );
-
-		return is_array( $saved ) && isset( $saved[ $token ] );
+		return is_numeric( get_option( self::STATE_OPTION_PREFIX . $token ) );
 	}
 
 	/**
@@ -102,18 +90,19 @@ class WC_Paidy_Apply_Receiver {
 			return false;
 		}
 
-		$states = get_option( self::STATE_OPTION_NAME, array() );
-		if ( is_array( $states ) && isset( $states[ $token ] ) ) {
-			$issued_at = $states[ $token ];
-			if ( is_int( $issued_at ) && ( time() - $issued_at ) <= self::get_state_token_ttl() ) {
-				return true;
-			}
+		// is_numeric (not is_int): scalar options round-trip through the DB as
+		// numeric strings on requests other than the one that stored them.
+		$issued_at = get_option( self::STATE_OPTION_PREFIX . $token );
+		if ( is_numeric( $issued_at ) && ( time() - (int) $issued_at ) <= self::get_state_token_ttl() ) {
+			return true;
 		}
 
 		// Legacy fallback: tokens issued by older plugin versions were stored as
-		// transients. Keep accepting them so an in-flight application submitted
-		// before the update still succeeds. TODO: remove after 2-3 releases.
-		if ( false !== get_transient( 'paidy_onboarding_state_' . $token ) ) {
+		// transients under the same key (transients live in separate, prefixed
+		// option rows, so there is no collision). Keep accepting them so an
+		// in-flight application submitted before the update still succeeds.
+		// TODO: remove after 2-3 releases.
+		if ( false !== get_transient( self::STATE_OPTION_PREFIX . $token ) ) {
 			return true;
 		}
 
@@ -131,15 +120,47 @@ class WC_Paidy_Apply_Receiver {
 			return;
 		}
 
-		$states = get_option( self::STATE_OPTION_NAME, array() );
-		if ( is_array( $states ) && isset( $states[ $token ] ) ) {
-			unset( $states[ $token ] );
-			update_option( self::STATE_OPTION_NAME, $states, false );
-		}
+		delete_option( self::STATE_OPTION_PREFIX . $token );
 
 		// Also clear the legacy transient variant. Remove together with the
 		// legacy fallback in verify_state_token().
-		delete_transient( 'paidy_onboarding_state_' . $token );
+		delete_transient( self::STATE_OPTION_PREFIX . $token );
+	}
+
+	/**
+	 * Delete state token options that are past their TTL or hold invalid values.
+	 *
+	 * Runs on every store_state_token() call so no cron cleanup is needed.
+	 *
+	 * @return void
+	 */
+	private static function prune_expired_state_tokens() {
+		global $wpdb;
+
+		// Token options are non-autoloaded and keyed by a random token value,
+		// so there is no core API to enumerate them — a direct LIKE query is
+		// required. esc_like() escapes the underscores so the pattern cannot
+		// match the legacy `_transient_paidy_onboarding_state_*` rows.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( self::STATE_OPTION_PREFIX ) . '%'
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		if ( empty( $rows ) ) {
+			return;
+		}
+
+		$ttl = self::get_state_token_ttl();
+		$now = time();
+		foreach ( $rows as $row ) {
+			if ( ! is_numeric( $row->option_value ) || ( $now - (int) $row->option_value ) > $ttl ) {
+				delete_option( $row->option_name );
+			}
+		}
 	}
 
 	/**

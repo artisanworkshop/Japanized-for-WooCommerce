@@ -2,9 +2,10 @@
 /**
  * Tests for the Paidy onboarding state token storage.
  *
- * Covers the migration from transients (2-day TTL, evictable) to a
- * non-autoloaded option so the token survives the multi-week Paidy review
- * between wizard submission and the CSV-import key-delivery callback.
+ * Covers the migration from transients (2-day TTL, evictable) to per-token
+ * non-autoloaded options so the token survives the multi-week Paidy review
+ * between wizard submission and the CSV-import key-delivery callback, and so
+ * concurrent onboarding sessions cannot overwrite each other's tokens.
  *
  * @package Japanized_For_WooCommerce
  */
@@ -22,6 +23,20 @@ class WC_Paidy_Onboarding_State_Test extends WP_UnitTestCase {
 	const TOKEN = 'abcdefghijklmnopqrstuvwxyzABCDEF';
 
 	/**
+	 * A second valid token for parallel-session tests.
+	 *
+	 * @var string
+	 */
+	const OTHER_TOKEN = '0123456789abcdef0123456789abcdef';
+
+	/**
+	 * A third valid token used as an expired entry.
+	 *
+	 * @var string
+	 */
+	const EXPIRED_TOKEN = 'ZYXWVUTSRQPONMLKJIHGFEDCBA654321';
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -36,8 +51,10 @@ class WC_Paidy_Onboarding_State_Test extends WP_UnitTestCase {
 	 * Tear down test environment after each test.
 	 */
 	public function tearDown(): void {
-		delete_option( WC_Paidy_Apply_Receiver::STATE_OPTION_NAME );
-		delete_transient( 'paidy_onboarding_state_' . self::TOKEN );
+		foreach ( array( self::TOKEN, self::OTHER_TOKEN, self::EXPIRED_TOKEN ) as $token ) {
+			delete_option( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . $token );
+			delete_transient( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . $token );
+		}
 		parent::tearDown();
 	}
 
@@ -65,11 +82,26 @@ class WC_Paidy_Onboarding_State_Test extends WP_UnitTestCase {
 		WC_Paidy_Apply_Receiver::store_state_token( self::TOKEN );
 
 		// Rewind the issued timestamp to 91 days ago (TTL is 90 days).
-		$states                 = get_option( WC_Paidy_Apply_Receiver::STATE_OPTION_NAME );
-		$states[ self::TOKEN ]  = time() - ( 91 * DAY_IN_SECONDS );
-		update_option( WC_Paidy_Apply_Receiver::STATE_OPTION_NAME, $states, false );
+		update_option(
+			WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN,
+			time() - ( 91 * DAY_IN_SECONDS ),
+			false
+		);
 
 		$this->assertFalse( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
+	}
+
+	/**
+	 * A timestamp stored as a numeric string (DB round-trip) still verifies.
+	 */
+	public function test_numeric_string_timestamp_verifies() {
+		update_option(
+			WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN,
+			(string) time(),
+			false
+		);
+
+		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
 	}
 
 	/**
@@ -87,65 +119,79 @@ class WC_Paidy_Onboarding_State_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A corrupted (non-array) option value does not fatal and verification fails.
+	 * A corrupted (non-numeric) option value does not fatal and verification fails.
 	 */
 	public function test_corrupted_option_does_not_fatal() {
-		update_option( WC_Paidy_Apply_Receiver::STATE_OPTION_NAME, 'corrupted-string', false );
+		update_option( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN, 'corrupted-string', false );
 
 		$this->assertFalse( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
 		WC_Paidy_Apply_Receiver::consume_state_token( self::TOKEN ); // Must not fatal.
 
-		// store_state_token() recovers by rebuilding the array.
+		// store_state_token() recovers by overwriting with a fresh timestamp.
 		$this->assertTrue( WC_Paidy_Apply_Receiver::store_state_token( self::TOKEN ) );
 		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
 	}
 
 	/**
-	 * Storing a new token prunes expired entries.
+	 * Storing a new token prunes expired and corrupted entries.
 	 */
 	public function test_store_prunes_expired_entries() {
-		$expired_token = 'ZYXWVUTSRQPONMLKJIHGFEDCBA654321';
 		update_option(
-			WC_Paidy_Apply_Receiver::STATE_OPTION_NAME,
-			array( $expired_token => time() - ( 91 * DAY_IN_SECONDS ) ),
+			WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::EXPIRED_TOKEN,
+			time() - ( 91 * DAY_IN_SECONDS ),
+			false
+		);
+		update_option(
+			WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::OTHER_TOKEN,
+			'corrupted-string',
 			false
 		);
 
 		WC_Paidy_Apply_Receiver::store_state_token( self::TOKEN );
 
-		$states = get_option( WC_Paidy_Apply_Receiver::STATE_OPTION_NAME );
-		$this->assertArrayNotHasKey( $expired_token, $states );
-		$this->assertArrayHasKey( self::TOKEN, $states );
+		$this->assertFalse( get_option( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::EXPIRED_TOKEN ) );
+		$this->assertFalse( get_option( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::OTHER_TOKEN ) );
+		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
+	}
+
+	/**
+	 * Pruning does not delete legacy transient rows for other tokens.
+	 */
+	public function test_prune_leaves_legacy_transients_intact() {
+		set_transient( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::OTHER_TOKEN, 1, 2 * DAY_IN_SECONDS );
+
+		WC_Paidy_Apply_Receiver::store_state_token( self::TOKEN );
+
+		$this->assertNotFalse( get_transient( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::OTHER_TOKEN ) );
 	}
 
 	/**
 	 * Multiple tokens coexist (parallel onboarding sessions).
 	 */
 	public function test_parallel_tokens_coexist() {
-		$other_token = '0123456789abcdef0123456789abcdef';
 		WC_Paidy_Apply_Receiver::store_state_token( self::TOKEN );
-		WC_Paidy_Apply_Receiver::store_state_token( $other_token );
+		WC_Paidy_Apply_Receiver::store_state_token( self::OTHER_TOKEN );
 
 		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
-		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( $other_token ) );
+		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( self::OTHER_TOKEN ) );
 
 		// Consuming one leaves the other intact.
 		WC_Paidy_Apply_Receiver::consume_state_token( self::TOKEN );
 		$this->assertFalse( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
-		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( $other_token ) );
+		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( self::OTHER_TOKEN ) );
 	}
 
 	/**
 	 * Legacy transient-only tokens (issued by older plugin versions) still verify.
 	 */
 	public function test_legacy_transient_token_verifies_and_is_consumed() {
-		set_transient( 'paidy_onboarding_state_' . self::TOKEN, 1, 2 * DAY_IN_SECONDS );
+		set_transient( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN, 1, 2 * DAY_IN_SECONDS );
 
 		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
 
 		WC_Paidy_Apply_Receiver::consume_state_token( self::TOKEN );
 		$this->assertFalse( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
-		$this->assertFalse( get_transient( 'paidy_onboarding_state_' . self::TOKEN ) );
+		$this->assertFalse( get_transient( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN ) );
 	}
 
 	/**
@@ -160,6 +206,6 @@ class WC_Paidy_Onboarding_State_Test extends WP_UnitTestCase {
 			WC_Paidy_Apply_Receiver::consume_state_token( $bad_token ); // Must not fatal.
 		}
 
-		$this->assertFalse( get_option( WC_Paidy_Apply_Receiver::STATE_OPTION_NAME ) );
+		$this->assertFalse( get_option( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . 'short' ) );
 	}
 }

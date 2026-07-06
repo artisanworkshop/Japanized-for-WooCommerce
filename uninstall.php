@@ -47,7 +47,18 @@ function wc_paidy_delete_plugin() {
 		}
 	}
 	delete_option( 'wc_paidy_show_pr_notice' );
-	delete_option( 'paidy_onboarding_states' );
+
+	// Delete onboarding state token options (one non-autoloaded row per token,
+	// named paidy_onboarding_state_<token>) — the random suffixes cannot be
+	// enumerated via a core API, so a direct LIKE query is required.
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	$wpdb->query(
+		$wpdb->prepare(
+			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+			$wpdb->esc_like( 'paidy_onboarding_state_' ) . '%'
+		)
+	);
+	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 }
 
 wc_paidy_delete_plugin();
