@@ -373,13 +373,15 @@ class WC_Paidy_Admin_Wizard {
 
 		// Generate a one-time state token so the receiver endpoint can verify the
 		// callback originates from an active onboarding session (not a forged request).
-		// The transient is keyed by the token value itself so parallel or retried
-		// onboarding sessions do not overwrite each other's tokens.
-		$state_token     = wp_generate_password( 32, false );
-		$transient_saved = set_transient( 'paidy_onboarding_state_' . $state_token, 1, 2 * DAY_IN_SECONDS );
-		if ( ! $transient_saved ) {
+		// Tokens are stored keyed by their own value so parallel or retried
+		// onboarding sessions do not overwrite each other's tokens. Storage is a
+		// non-autoloaded option (not a transient) because the Paidy review can take
+		// weeks and the callback must still verify when it finally arrives.
+		$state_token = wp_generate_password( 32, false );
+		$state_saved = WC_Paidy_Apply_Receiver::store_state_token( $state_token );
+		if ( ! $state_saved ) {
 			wc_get_logger()->error(
-				'Paidy onboarding: failed to store state token transient. The onboarding callback will be rejected. Check your object cache / DB.',
+				'Paidy onboarding: failed to store state token option. The onboarding callback will be rejected. Check your DB.',
 				array( 'source' => 'paidy-wc' )
 			);
 			return false;
@@ -425,9 +427,9 @@ class WC_Paidy_Admin_Wizard {
 				'Paidy On Boarding API Error: ' . $error_message,
 				array( 'source' => 'paidy-wc' )
 			);
-			// Clean up the state transient: the POST never reached the intermediary,
+			// Clean up the state token: the POST never reached the intermediary,
 			// so the receiver callback will never arrive to consume it.
-			delete_transient( 'paidy_onboarding_state_' . $state_token );
+			WC_Paidy_Apply_Receiver::consume_state_token( $state_token );
 			$result = false;
 		}
 		$response_code = wp_remote_retrieve_response_code( $response );
@@ -439,8 +441,8 @@ class WC_Paidy_Admin_Wizard {
 					'response' => $response,
 				)
 			);
-			// Clean up the orphaned state transient on HTTP-level failures as well.
-			delete_transient( 'paidy_onboarding_state_' . $state_token );
+			// Clean up the orphaned state token on HTTP-level failures as well.
+			WC_Paidy_Apply_Receiver::consume_state_token( $state_token );
 			$result = false;
 		}
 

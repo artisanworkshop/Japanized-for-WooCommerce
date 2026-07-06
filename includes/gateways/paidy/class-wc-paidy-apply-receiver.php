@@ -21,10 +21,153 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WC_Paidy_Apply_Receiver {
 
 	/**
+	 * Prefix for the options that store active onboarding state tokens.
+	 *
+	 * Each token is stored as its own non-autoloaded option (prefix + token,
+	 * value = issued UNIX time). One row per token means concurrent onboarding
+	 * sessions insert separate rows and cannot overwrite each other — a single
+	 * shared array option would lose tokens to read-modify-write races.
+	 * Options survive object-cache evictions and have no TTL, unlike transients —
+	 * the Paidy review takes days to weeks, far longer than any safe transient TTL.
+	 */
+	const STATE_OPTION_PREFIX = 'paidy_onboarding_state_';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+	}
+
+	/**
+	 * Get the lifetime of an onboarding state token in seconds.
+	 *
+	 * @return int TTL in seconds.
+	 */
+	public static function get_state_token_ttl() {
+		/**
+		 * Filters the lifetime of a Paidy onboarding state token.
+		 *
+		 * The token must outlive the Paidy merchant review, which can take
+		 * several weeks between application and the key-delivery callback.
+		 *
+		 * @param int $ttl Lifetime in seconds. Default 90 days.
+		 */
+		return (int) apply_filters( 'wc4jp_paidy_onboarding_state_ttl', 90 * DAY_IN_SECONDS );
+	}
+
+	/**
+	 * Store a one-time onboarding state token.
+	 *
+	 * Expired entries are pruned on every store so no cron cleanup is needed.
+	 *
+	 * @param string $token 32-char alphanumeric state token.
+	 * @return bool True if the token was persisted, false otherwise.
+	 */
+	public static function store_state_token( $token ) {
+		if ( ! is_string( $token ) || 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $token ) ) {
+			return false;
+		}
+
+		self::prune_expired_state_tokens();
+
+		update_option( self::STATE_OPTION_PREFIX . $token, time(), false );
+
+		// Re-read to verify the token actually persisted — update_option()
+		// returns false on a no-change write, so its return value alone
+		// cannot distinguish failure from an identical existing value.
+		return is_numeric( get_option( self::STATE_OPTION_PREFIX . $token ) );
+	}
+
+	/**
+	 * Verify an onboarding state token exists and has not expired.
+	 *
+	 * Accepts raw request input: anything but a 32-char alphanumeric string is
+	 * rejected before any storage key is built.
+	 *
+	 * @param mixed $token 32-char alphanumeric state token.
+	 * @return bool True if the token is valid.
+	 */
+	public static function verify_state_token( $token ) {
+		if ( ! is_string( $token ) || 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $token ) ) {
+			return false;
+		}
+
+		// is_numeric (not is_int): scalar options round-trip through the DB as
+		// numeric strings on requests other than the one that stored them.
+		$issued_at = get_option( self::STATE_OPTION_PREFIX . $token );
+		if ( is_numeric( $issued_at ) && ( time() - (int) $issued_at ) <= self::get_state_token_ttl() ) {
+			return true;
+		}
+
+		// Legacy fallback: tokens issued by older plugin versions were stored as
+		// transients under the same key (transients live in separate, prefixed
+		// option rows, so there is no collision). Keep accepting them so an
+		// in-flight application submitted before the update still succeeds.
+		// TODO: remove after 2-3 releases.
+		if ( false !== get_transient( self::STATE_OPTION_PREFIX . $token ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Consume (delete) an onboarding state token so it cannot be reused.
+	 *
+	 * Accepts raw request input: anything but a 32-char alphanumeric string is
+	 * rejected before any storage key is built.
+	 *
+	 * @param mixed $token 32-char alphanumeric state token.
+	 * @return void
+	 */
+	public static function consume_state_token( $token ) {
+		if ( ! is_string( $token ) || 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $token ) ) {
+			return;
+		}
+
+		delete_option( self::STATE_OPTION_PREFIX . $token );
+
+		// Also clear the legacy transient variant. Remove together with the
+		// legacy fallback in verify_state_token().
+		delete_transient( self::STATE_OPTION_PREFIX . $token );
+	}
+
+	/**
+	 * Delete state token options that are past their TTL or hold invalid values.
+	 *
+	 * Runs on every store_state_token() call so no cron cleanup is needed.
+	 *
+	 * @return void
+	 */
+	private static function prune_expired_state_tokens() {
+		global $wpdb;
+
+		// Token options are non-autoloaded and keyed by a random token value,
+		// so there is no core API to enumerate them — a direct LIKE query is
+		// required. esc_like() makes the underscores match literally instead
+		// of acting as single-character LIKE wildcards, so the pattern cannot
+		// accidentally match other, similarly named option rows.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( self::STATE_OPTION_PREFIX ) . '%'
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		if ( empty( $rows ) ) {
+			return;
+		}
+
+		$ttl = self::get_state_token_ttl();
+		$now = time();
+		foreach ( $rows as $row ) {
+			if ( ! is_numeric( $row->option_value ) || ( $now - (int) $row->option_value ) > $ttl ) {
+				delete_option( $row->option_name );
+			}
+		}
 	}
 
 	/**
@@ -72,16 +215,14 @@ class WC_Paidy_Apply_Receiver {
 		}
 
 		// Verify the one-time state token generated when the onboarding form was submitted.
-		// The transient is keyed by the token value itself (set in the admin wizard) so
+		// Tokens are stored keyed by their own value (set in the admin wizard) so
 		// parallel onboarding sessions cannot clobber each other's tokens. Verifying
 		// existence of the scoped key is sufficient — no separate value comparison needed.
 		//
-		// Validate format before use: the token must be a 32-char alphanumeric string
-		// (matching wp_generate_password(32, false)) to prevent non-string values or
-		// oversized inputs from being used as transient key suffixes.
-		$request_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
-		if ( 1 !== preg_match( '/^[A-Za-z0-9]{32}$/', $request_token )
-			|| false === get_transient( 'paidy_onboarding_state_' . $request_token ) ) {
+		// verify_state_token() validates the format internally (32-char alphanumeric,
+		// matching wp_generate_password(32, false)) before building any storage key,
+		// so non-string values or oversized inputs are rejected there.
+		if ( ! self::verify_state_token( $request->get_param( 'state' ) ) ) {
 			return new WP_Error(
 				'paidy_invalid_state',
 				__( 'Invalid or missing state token for Paidy onboarding.', 'woocommerce-for-japan' ),
@@ -89,7 +230,7 @@ class WC_Paidy_Apply_Receiver {
 			);
 		}
 
-		// Do NOT delete the transient here — consume it only after the handler
+		// Do NOT consume the token here — consume it only after the handler
 		// completes successfully so a transient DB/decryption failure does not
 		// permanently prevent retrying the onboarding callback.
 
@@ -280,12 +421,10 @@ class WC_Paidy_Apply_Receiver {
 				// succeeded — consuming it here (not in check_permissions) means a
 				// transient DB or decryption failure during processing does not
 				// permanently prevent the merchant from retrying the callback.
-				// Re-validate the format here (same rule as check_permissions) so we
-				// never build a transient key from an unsanitized param.
-				$state_token = is_string( $request->get_param( 'state' ) ) ? $request->get_param( 'state' ) : '';
-				if ( 1 === preg_match( '/^[A-Za-z0-9]{32}$/', $state_token ) ) {
-					delete_transient( 'paidy_onboarding_state_' . $state_token );
-				}
+				// consume_state_token() validates the format internally (same rule
+				// as verify_state_token) so it never builds a storage key from an
+				// unsanitized param.
+				self::consume_state_token( $request->get_param( 'state' ) );
 
 				// Success response — omit decrypted API key fields to avoid
 				// exposing secrets via response bodies, proxy logs, or intermediaries.
