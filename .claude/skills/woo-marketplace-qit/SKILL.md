@@ -298,7 +298,7 @@ test.describe( 'Checkout Integration', () => {
   </rule>
 
   <!-- PHP Compatibility -->
-  <config name="testVersion" value="8.3-"/>
+  <config name="testVersion" value="8.3-8.5"/>
   <rule ref="PHPCompatibilityWP"/>
 
   <!-- Minimum WP version -->
