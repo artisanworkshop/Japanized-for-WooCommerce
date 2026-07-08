@@ -724,7 +724,7 @@ class JP4WC_Address_Fields {
 	/**
 	 * Deduplicate yomigana billing fields on the admin order edit screen.
 	 *
-	 * @since 2.9.9
+	 * @since 2.9.15
 	 * @param array               $fields The admin billing fields.
 	 * @param \WC_Order|bool|null $order  The order being displayed, or false/null outside an order context.
 	 * @return array
@@ -736,7 +736,7 @@ class JP4WC_Address_Fields {
 	/**
 	 * Deduplicate yomigana shipping fields on the admin order edit screen.
 	 *
-	 * @since 2.9.9
+	 * @since 2.9.15
 	 * @param array               $fields The admin shipping fields.
 	 * @param \WC_Order|bool|null $order  The order being displayed, or false/null outside an order context.
 	 * @return array
@@ -762,7 +762,7 @@ class JP4WC_Address_Fields {
 	 * keep only the pair matching the meta the order actually stores. Orders without
 	 * any yomigana meta keep the pair matching the current checkout page type.
 	 *
-	 * @since 2.9.9
+	 * @since 2.9.15
 	 * @param array               $fields The admin address fields.
 	 * @param \WC_Order|bool|null $order  The order being displayed, or false/null outside an order context.
 	 * @param string              $group  Address group: 'billing' or 'shipping'.
