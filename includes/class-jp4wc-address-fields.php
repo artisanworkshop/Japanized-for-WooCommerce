@@ -56,6 +56,11 @@ class JP4WC_Address_Fields {
 		// Admin Edit Address.
 		add_filter( 'woocommerce_admin_billing_fields', array( $this, 'admin_billing_address_fields' ) );
 		add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_shipping_address_fields' ) );
+		// Deduplicate yomigana fields injected by the WC Additional Checkout Fields API
+		// (CheckoutFieldsAdmin, priority 10) on the admin order edit screen. Must run
+		// after both that injection and admin_billing/shipping_address_fields() above.
+		add_filter( 'woocommerce_admin_billing_fields', array( $this, 'admin_billing_dedupe_yomigana_fields' ), 20, 2 );
+		add_filter( 'woocommerce_admin_shipping_fields', array( $this, 'admin_shipping_dedupe_yomigana_fields' ), 20, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_order_enqueue_style' ), 20 );
 		add_filter( 'woocommerce_customer_meta_fields', array( $this, 'admin_customer_meta_fields' ) );
 
@@ -714,6 +719,106 @@ class JP4WC_Address_Fields {
 		}
 
 		return $ordered;
+	}
+
+	/**
+	 * Deduplicate yomigana billing fields on the admin order edit screen.
+	 *
+	 * @since 2.9.15
+	 * @param array               $fields The admin billing fields.
+	 * @param \WC_Order|bool|null $order  The order being displayed, or false/null outside an order context.
+	 * @return array
+	 */
+	public function admin_billing_dedupe_yomigana_fields( $fields, $order = null ) {
+		return $this->dedupe_admin_yomigana_fields( $fields, $order, 'billing' );
+	}
+
+	/**
+	 * Deduplicate yomigana shipping fields on the admin order edit screen.
+	 *
+	 * @since 2.9.15
+	 * @param array               $fields The admin shipping fields.
+	 * @param \WC_Order|bool|null $order  The order being displayed, or false/null outside an order context.
+	 * @return array
+	 */
+	public function admin_shipping_dedupe_yomigana_fields( $fields, $order = null ) {
+		return $this->dedupe_admin_yomigana_fields( $fields, $order, 'shipping' );
+	}
+
+	/**
+	 * Deduplicate yomigana fields on the admin order edit screen.
+	 *
+	 * For block checkout orders, WooCommerce core (CheckoutFieldsAdmin) injects the
+	 * Additional Checkout Fields API yomigana fields (id `_wc_billing/jp4wc/yomigana_*` /
+	 * `_wc_shipping/jp4wc/yomigana_*`) with `show => true`, which the order data meta box
+	 * echoes below the formatted address.
+	 * The formatted address already contains yomigana (see jp4wc_billing_address() /
+	 * address_formats()), so that echo duplicates it — suppress it with `show => false`.
+	 * The edit form ignores `show`, so the fields remain editable and keep persisting
+	 * to `_wc_billing/jp4wc/*` / `_wc_shipping/jp4wc/*` via WC core's update callback.
+	 *
+	 * The edit form would also render two pairs of yomigana inputs (the classic pair
+	 * bound to `_billing_yomigana_*` / `_shipping_yomigana_*` plus the block pair), so
+	 * keep only the pair matching the meta the order actually stores. Orders without
+	 * any yomigana meta keep the pair matching the current checkout page type.
+	 *
+	 * @since 2.9.15
+	 * @param array               $fields The admin address fields.
+	 * @param \WC_Order|bool|null $order  The order being displayed, or false/null outside an order context.
+	 * @param string              $group  Address group: 'billing' or 'shipping'.
+	 * @return array
+	 */
+	private function dedupe_admin_yomigana_fields( $fields, $order, $group ) {
+		if ( ! $order instanceof WC_Order ) {
+			return $fields;
+		}
+
+		$classic_keys = array( 'yomigana_last_name', 'yomigana_first_name' );
+
+		// CheckoutFieldsAdmin inserts its fields with array_splice(), which does not
+		// preserve their string keys (they become numeric), so detect the injected
+		// fields by their 'id' (always set to the prefixed meta key) instead.
+		$block_ids  = array(
+			'_wc_' . $group . '/jp4wc/yomigana_last_name',
+			'_wc_' . $group . '/jp4wc/yomigana_first_name',
+		);
+		$block_keys = array();
+		foreach ( $fields as $key => $field ) {
+			if ( isset( $field['id'] ) && in_array( $field['id'], $block_ids, true ) ) {
+				$block_keys[] = $key;
+			}
+		}
+
+		if ( empty( $block_keys ) ) {
+			return $fields;
+		}
+
+		// Suppress the duplicate view-mode rows (yomigana is already in the formatted address).
+		foreach ( $block_keys as $key ) {
+			$fields[ $key ]['show'] = false;
+		}
+
+		$classic_prefix   = '_' . $group . '_yomigana_';
+		$block_prefix     = '_wc_' . $group . '/jp4wc/yomigana_';
+		$has_classic_meta = '' !== $order->get_meta( $classic_prefix . 'last_name' ) || '' !== $order->get_meta( $classic_prefix . 'first_name' );
+		$has_block_meta   = '' !== $order->get_meta( $block_prefix . 'last_name' ) || '' !== $order->get_meta( $block_prefix . 'first_name' );
+
+		if ( $has_classic_meta ) {
+			// Classic meta wins when both exist, matching jp4wc_billing_address().
+			$keep_block = false;
+		} elseif ( $has_block_meta ) {
+			$keep_block = true;
+		} else {
+			$checkout_page_id = wc_get_page_id( 'checkout' );
+			$keep_block       = $checkout_page_id && has_block( 'woocommerce/checkout', $checkout_page_id );
+		}
+
+		$remove_keys = $keep_block ? $classic_keys : $block_keys;
+		foreach ( $remove_keys as $key ) {
+			unset( $fields[ $key ] );
+		}
+
+		return $fields;
 	}
 
 	/**
