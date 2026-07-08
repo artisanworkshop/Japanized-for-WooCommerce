@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@art
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.0
-Stable tag: 2.9.14
+Stable tag: 2.9.15
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -147,6 +147,17 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.15 - 2026-07-08 =
+* **Added** - COD fee feature for the "Cash on Delivery for Subscriptions" (COD2) gateway: fee name, amount, maximum cart amount, tax settings, and a PRO tiered-fee table can now be configured on the gateway settings page
+* **Added** - Toggleable debug logging for COD2 fee calculation; enable "Debug mode" on the gateway settings page to log calculation details (start values, max-amount check, filter results, applied fee) to WooCommerce → Status → Logs (source: `jp4wc-cod2-fee`)
+* **Added** - Tax label (e.g. `(incl. tax)`) after the COD fee amount in cart/checkout totals on the classic checkout, following the same display logic as WooCommerce core subtotal/shipping rows; applied only to the JP4WC gateway fee
+* **Fixed** - Deleting all rows of the COD2 tiered-fee table and saving restored the previous data; an empty table is now saved correctly (early return happens only on nonce failure)
+* **Fixed** - Duplicated place-order row (privacy text, terms checkbox, order button) accumulating on every classic-checkout update when the admin-edited Paidy description contained unbalanced HTML; the description is now balanced with `force_balance_tags()` on output and validated on save
+* **Fixed** - `403 paidy_invalid_state` error on Paidy Instant Onboarding key delivery when the merchant review took longer than 2 days; the one-time state token is now stored as a non-autoloaded option with an application-level expiry instead of a transient, so it survives until the callback arrives
+* **Fixed** - Paidy settings wizard redirect no longer injects or rewrites the `pk_test_` prefix into the saved test API public key; key management is left entirely to the user
+* **Fixed** - Yomigana (reading) fields duplicated on the My Account order details page (`view-order`); the duplicate additional-field rows are now suppressed there as well as on the order received page
+* **Fixed** - Yomigana displayed twice (and editable twice) on the admin order edit screen for orders placed via the block checkout; the Additional Checkout Fields API entries injected by WooCommerce core are now removed from the billing/shipping field lists since JP4WC already embeds yomigana in the formatted address
 
 = 2.9.14 - 2026-06-22 =
 * **Fixed** - Paidy payment verification was always failing (HTTP 404) because the gateway incorrectly used POST for `GET /payments/{id}`; switched to `wp_safe_remote_get()` so payment status checks now succeed and order completion is unblocked
