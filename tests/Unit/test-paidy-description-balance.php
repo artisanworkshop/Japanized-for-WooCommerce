@@ -32,8 +32,9 @@ class WC_Paidy_Description_Balance_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		if ( ! class_exists( 'WC_Gateway_Paidy' ) ) {
-			$this->markTestSkipped( 'WC_Gateway_Paidy is not loaded.' );
+			require_once dirname( __DIR__, 2 ) . '/includes/gateways/paidy/class-wc-gateway-paidy.php';
 		}
+		$this->assertTrue( class_exists( 'WC_Gateway_Paidy' ), 'WC_Gateway_Paidy should be loadable.' );
 		$this->gateway = new WC_Gateway_Paidy();
 	}
 

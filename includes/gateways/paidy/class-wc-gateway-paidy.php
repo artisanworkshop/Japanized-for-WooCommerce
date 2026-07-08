@@ -375,7 +375,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 * @return string Sanitized value with balanced tags.
 	 */
 	public function validate_paidy_description_field( $key, $value ) {
-		$value = is_null( $value ) ? '' : trim( stripslashes( $value ) );
+		$value = is_null( $value ) ? '' : trim( wp_unslash( $value ) );
 		return wp_kses( force_balance_tags( $value ), $this->paidy_description_allowed_html() );
 	}
 
