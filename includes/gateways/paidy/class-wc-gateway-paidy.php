@@ -334,7 +334,18 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		} else {
 			$paidy_explanation = $this->paidy_description;
 		}
-		$allowed_html = array(
+		echo wp_kses( force_balance_tags( $paidy_explanation ), $this->paidy_description_allowed_html() );
+	}
+
+	/**
+	 * Allowed HTML tags for the Paidy description output.
+	 *
+	 * @since 2.9.15
+	 *
+	 * @return array Allowed HTML for wp_kses().
+	 */
+	private function paidy_description_allowed_html() {
+		return array(
 			'a'      => array(
 				'href'   => array(),
 				'target' => array(),
@@ -346,7 +357,26 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			'ul'     => array(),
 			'li'     => array(),
 		);
-		echo wp_kses( $paidy_explanation, $allowed_html );
+	}
+
+	/**
+	 * Validate the Paidy description field on save.
+	 *
+	 * The wp_kses() function does not fix unbalanced tags, and a stray closing tag saved in
+	 * this field escapes the payment box when the classic checkout payment
+	 * fragment is re-rendered, leaving an orphaned place-order row behind on
+	 * every update_order_review call (duplicated order buttons). Balance the
+	 * tags before saving so broken markup never reaches the checkout.
+	 *
+	 * @since 2.9.15
+	 *
+	 * @param string      $key   Field key.
+	 * @param string|null $value Posted value.
+	 * @return string Sanitized value with balanced tags.
+	 */
+	public function validate_paidy_description_field( $key, $value ) {
+		$value = is_null( $value ) ? '' : trim( stripslashes( $value ) );
+		return wp_kses( force_balance_tags( $value ), $this->paidy_description_allowed_html() );
 	}
 
 	/**
