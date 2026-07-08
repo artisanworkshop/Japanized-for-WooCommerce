@@ -3,7 +3,7 @@
 ## Plugin Overview
 
 - **Plugin**: Japanized for WooCommerce (`woocommerce-for-japan`)
-- **Version**: 2.9.8 | **PHP**: 8.3+ | **WP**: 6.7+ | **WC**: 8.0+
+- **Version**: 2.9.14 | **PHP**: 8.3+ | **WP**: 6.7+ | **WC**: 8.0+
 - **Text Domain**: `woocommerce-for-japan`
 - **Prefix**: `jp4wc_` (functions), `JP4WC_` (constants), `JP4WC` (classes)
 - **Main files**: `woocommerce-for-japan.php`, `class-jp4wc.php`
@@ -150,3 +150,5 @@ Gateway classes in `includes/gateways/`. Each extends `WC_Payment_Gateway`. Bloc
 - Paired output-buffer hooks (ob_start at priority 9 / ob_get_clean at 11) must gate the close on a flag set by the open call — never re-evaluate the page condition, or a filter changing mid-request leaks/steals a buffer
 - Transients are unsuitable for state that must outlive a slow external process (e.g. a third-party review taking days–weeks) — the external delay is unbounded, so no TTL is reliably long enough, and on sites with a persistent object cache (Redis/Memcached) transients can also be dropped before the TTL by eviction or a cache flush. Use a non-autoloaded option instead with an application-level TTL check.
 - For concurrency-safe keyed storage, don't hold many independent values in a single option updated via read-modify-write (`get_option` → mutate → `update_option`) — concurrent requests can lose each other's writes. Store one option row per key (key embedded in the option name) instead.
+- WC core injects Additional Checkout Fields into the admin order edit screen (`CheckoutFieldsAdmin` on `woocommerce_admin_billing_fields` / `woocommerce_admin_shipping_fields`, priority 10) via `array_splice()`, which replaces the injected entries' string keys with numeric ones — detect them by `$field['id']` (e.g. `_wc_billing/jp4wc/...`), never by array key. `show => false` suppresses only the view-mode echo; the edit form ignores `show`, so the field stays editable.
+- Docblock `@since` on new code must be the next release version (current Stable tag +1), not the version when work started — Copilot review flags stale values.
