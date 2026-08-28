@@ -599,6 +599,11 @@ class WC_Paidy_Admin_Wizard {
 	 */
 	public function paidy_method_description( $description, $payment_object ) {
 		if ( $payment_object->id === $this->id ) {
+			// Manual entry requested via wizard=false: render the gateway
+			// fields as-is instead of the onboarding UI that hides them.
+			if ( $this->is_manual_settings_requested() ) {
+				return $description;
+			}
 			if ( isset( $this->paidy_settings['api_public_key'] )
 			&& isset( $this->paidy_settings['test_api_public_key'] )
 			&& ( ! empty( $this->paidy_settings['api_public_key'] ) || ! empty( $this->paidy_settings['test_api_public_key'] ) )
@@ -618,12 +623,45 @@ class WC_Paidy_Admin_Wizard {
 	public function paidy_after_settings_checkout() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['section'] ) && $_GET['section'] === $this->id ) {
+			// No wrapper was opened in paidy_method_description() for manual entry.
+			if ( $this->is_manual_settings_requested() ) {
+				return;
+			}
 			if ( isset( $this->paidy_settings['api_public_key'] ) && isset( $this->paidy_settings['test_api_public_key'] ) ) {
 				return;
 			} else {
 				echo '</div>';
 			}
 		}
+	}
+
+	/**
+	 * Lifetime of the per-user "show manual settings" flag, in seconds.
+	 *
+	 * @since 2.9.16
+	 */
+	const MANUAL_SETTINGS_TTL = 15 * MINUTE_IN_SECONDS;
+
+	/**
+	 * Transient key of the per-user "show manual settings" flag.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return string
+	 */
+	public static function manual_settings_transient_key() {
+		return 'paidy_manual_settings_' . get_current_user_id();
+	}
+
+	/**
+	 * Whether the current user asked for the plain gateway fields (wizard=false).
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return bool
+	 */
+	public function is_manual_settings_requested() {
+		return false !== get_transient( self::manual_settings_transient_key() );
 	}
 
 	/**
@@ -655,6 +693,12 @@ class WC_Paidy_Admin_Wizard {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
 		}
+
+		// Remember the request so the settings page renders the plain gateway
+		// fields after the redirect below strips wizard=false. Without this
+		// the page would show the onboarding/under-review UI again and keep
+		// #paidy-payment-settings hidden, so manual key entry was impossible.
+		set_transient( self::manual_settings_transient_key(), 1, self::MANUAL_SETTINGS_TTL );
 
 		// Redirect to Paidy settings page (remove wizard=false parameter).
 		$redirect_url = add_query_arg(
