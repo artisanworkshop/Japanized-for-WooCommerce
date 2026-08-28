@@ -60,6 +60,7 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 		delete_option( 'woocommerce_paidy_on_boarding_settings' );
 		delete_option( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN );
 		delete_transient( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN );
+		delete_transient( WC_Paidy_Apply_Receiver::SIGNATURE_WARNING_THROTTLE );
 
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -185,14 +186,17 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * An accepted signature cannot be replayed.
+	 * A claimed signature cannot be replayed; the claim is exclusive.
 	 */
-	public function test_replay_rejected_after_mark_used() {
+	public function test_claim_is_exclusive_and_blocks_replay() {
 		$ts  = (string) time();
 		$sig = $this->sign( $ts );
 
 		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_request_signature( $ts, $sig, self::BODY, self::SITE_HASH ) );
-		WC_Paidy_Apply_Receiver::mark_signature_used( $sig );
+		$this->assertTrue( WC_Paidy_Apply_Receiver::claim_signature( $sig ) );
+
+		// A concurrent delivery of the same request loses the claim race.
+		$this->assertFalse( WC_Paidy_Apply_Receiver::claim_signature( $sig ) );
 		$this->assertFalse( WC_Paidy_Apply_Receiver::verify_request_signature( $ts, $sig, self::BODY, self::SITE_HASH ) );
 
 		// A fresh signature (new timestamp) is still accepted.
@@ -201,13 +205,74 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * mark_signature_used() ignores malformed values without fatal.
+	 * Releasing a claim after a processing failure allows a retry.
 	 */
-	public function test_mark_used_ignores_malformed() {
-		WC_Paidy_Apply_Receiver::mark_signature_used( null );
-		WC_Paidy_Apply_Receiver::mark_signature_used( 'not-hex' );
-		WC_Paidy_Apply_Receiver::mark_signature_used( array( 'x' ) );
-		$this->assertTrue( true ); // Reached without error.
+	public function test_release_allows_retry() {
+		$ts  = (string) time();
+		$sig = $this->sign( $ts );
+
+		$this->assertTrue( WC_Paidy_Apply_Receiver::claim_signature( $sig ) );
+		WC_Paidy_Apply_Receiver::release_signature_claim( $sig );
+		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_request_signature( $ts, $sig, self::BODY, self::SITE_HASH ) );
+		$this->assertTrue( WC_Paidy_Apply_Receiver::claim_signature( $sig ) );
+	}
+
+	/**
+	 * Claims older than twice the tolerance are pruned on the next claim.
+	 */
+	public function test_stale_claims_are_pruned() {
+		$old_key = WC_Paidy_Apply_Receiver::SIGNATURE_USED_PREFIX . str_repeat( 'a', 40 );
+		update_option( $old_key, time() - ( 2 * WC_Paidy_Apply_Receiver::get_signature_tolerance() ) - 1, false );
+
+		WC_Paidy_Apply_Receiver::claim_signature( $this->sign( (string) time() ) );
+
+		$this->assertFalse( get_option( $old_key ) );
+	}
+
+	/**
+	 * claim/release ignore malformed values without fatal.
+	 */
+	public function test_claim_and_release_ignore_malformed() {
+		foreach ( array( null, 'not-hex', array( 'x' ), 123 ) as $bad ) {
+			$this->assertFalse( WC_Paidy_Apply_Receiver::claim_signature( $bad ) );
+			WC_Paidy_Apply_Receiver::release_signature_claim( $bad ); // Must not fatal.
+		}
+	}
+
+	/**
+	 * A processing failure releases the claim so the same signed request can be retried.
+	 */
+	public function test_failed_processing_releases_claim_for_retry() {
+		$receiver = new WC_Paidy_Apply_Receiver();
+		// "approved" without any key fields → paidy_missing_key after authorization.
+		$request = $this->build_request();
+		$ts      = (string) time();
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts, $request->get_body() ) );
+
+		$this->assertTrue( $receiver->check_permissions( $request ) );
+		$result = $receiver->handle_receive_data( $request );
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertSame( 'paidy_missing_key', $result->get_error_code() );
+
+		// The retry is authorized again because the claim was released.
+		$this->assertTrue( $receiver->check_permissions( $request ) );
+	}
+
+	/**
+	 * The "signature present but invalid" warning is throttled to one per window.
+	 */
+	public function test_invalid_signature_warning_is_throttled() {
+		delete_transient( WC_Paidy_Apply_Receiver::SIGNATURE_WARNING_THROTTLE );
+
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = $this->build_request();
+		$ts       = (string) time();
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts, $request->get_body(), 'wrong' ) );
+
+		$this->assertInstanceOf( 'WP_Error', $receiver->check_permissions( $request ) );
+		$this->assertNotFalse( get_transient( WC_Paidy_Apply_Receiver::SIGNATURE_WARNING_THROTTLE ) );
 	}
 
 	/**

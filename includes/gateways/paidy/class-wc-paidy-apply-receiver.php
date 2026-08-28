@@ -53,11 +53,23 @@ class WC_Paidy_Apply_Receiver {
 	const TIMESTAMP_HEADER = 'x-paidy-receiver-timestamp';
 
 	/**
-	 * Transient prefix for signatures that have already been accepted (replay guard).
+	 * Option-name prefix for signature claims (replay guard).
+	 *
+	 * A signed callback claims its signature atomically during authorization
+	 * (add_option() on a unique option_name), so two concurrent deliveries of
+	 * the same request cannot both pass. The claim is released if processing
+	 * fails and kept (until pruned) if it succeeds.
 	 *
 	 * @since 2.9.16
 	 */
 	const SIGNATURE_USED_PREFIX = 'paidy_receiver_sig_';
+
+	/**
+	 * Transient that throttles the "signature present but invalid" warning.
+	 *
+	 * @since 2.9.16
+	 */
+	const SIGNATURE_WARNING_THROTTLE = 'paidy_receiver_sig_warned';
 
 	/**
 	 * Constructor.
@@ -184,8 +196,8 @@ class WC_Paidy_Apply_Receiver {
 	 *
 	 * Accepts raw header values: anything but a numeric timestamp within the
 	 * tolerance window and a 64-char lowercase hex digest is rejected before
-	 * any HMAC is computed. Replays of an already-accepted signature are
-	 * rejected as well (see mark_signature_used()).
+	 * any HMAC is computed. Signatures already claimed by an earlier delivery
+	 * are rejected as well (see claim_signature()).
 	 *
 	 * @since 2.9.16
 	 *
@@ -217,42 +229,109 @@ class WC_Paidy_Apply_Receiver {
 			return false;
 		}
 
-		return ! self::is_signature_used( $signature );
+		return ! self::is_signature_claimed( $signature );
 	}
 
 	/**
-	 * Whether a signature has already been accepted by a successful callback.
+	 * Build the claim option name for a signature.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param string $signature Hex HMAC digest.
+	 * @return string
+	 */
+	private static function signature_claim_key( $signature ) {
+		return self::SIGNATURE_USED_PREFIX . substr( $signature, 0, 40 );
+	}
+
+	/**
+	 * Whether a signature has already been claimed by another delivery.
 	 *
 	 * @since 2.9.16
 	 *
 	 * @param string $signature Hex HMAC digest.
 	 * @return bool
 	 */
-	private static function is_signature_used( $signature ) {
-		return false !== get_transient( self::SIGNATURE_USED_PREFIX . substr( $signature, 0, 40 ) );
+	private static function is_signature_claimed( $signature ) {
+		return false !== get_option( self::signature_claim_key( $signature ) );
 	}
 
 	/**
-	 * Record an accepted signature so the same callback cannot be replayed.
+	 * Atomically claim a signature for the current delivery.
 	 *
-	 * A transient is appropriate here (unlike the state token) because the
-	 * replay window is bounded by the short signature tolerance, not by the
-	 * length of the Paidy review.
+	 * The claim uses add_option(), which inserts against the unique
+	 * option_name index, so when the
+	 * intermediary retries the same signed request concurrently only one of
+	 * the overlapping requests obtains the claim; the others are rejected
+	 * before any credential or status update runs. Stale claims are pruned
+	 * on every call so no cron cleanup is needed.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param mixed $signature Hex HMAC digest from the request header.
+	 * @return bool True if this request now owns the claim.
+	 */
+	public static function claim_signature( $signature ) {
+		if ( ! is_string( $signature ) || 1 !== preg_match( '/^[a-f0-9]{64}$/', $signature ) ) {
+			return false;
+		}
+
+		self::prune_stale_signature_claims();
+
+		return false !== add_option( self::signature_claim_key( $signature ), time(), '', false );
+	}
+
+	/**
+	 * Release a signature claim so the intermediary can retry after a
+	 * processing failure (DB write, decryption, missing key field, ...).
 	 *
 	 * @since 2.9.16
 	 *
 	 * @param mixed $signature Hex HMAC digest from the request header.
 	 * @return void
 	 */
-	public static function mark_signature_used( $signature ) {
+	public static function release_signature_claim( $signature ) {
 		if ( ! is_string( $signature ) || 1 !== preg_match( '/^[a-f0-9]{64}$/', $signature ) ) {
 			return;
 		}
-		set_transient(
-			self::SIGNATURE_USED_PREFIX . substr( $signature, 0, 40 ),
-			time(),
-			2 * self::get_signature_tolerance()
+		delete_option( self::signature_claim_key( $signature ) );
+	}
+
+	/**
+	 * Delete signature claims older than twice the timestamp tolerance.
+	 *
+	 * A signature can only verify while its timestamp is within the tolerance
+	 * window, so a claim older than 2x the tolerance can never be replayed and
+	 * is safe to drop. Same direct LIKE query rationale as
+	 * prune_expired_state_tokens().
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return void
+	 */
+	private static function prune_stale_signature_claims() {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( self::SIGNATURE_USED_PREFIX ) . '%'
+			)
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		if ( empty( $rows ) ) {
+			return;
+		}
+
+		$max_age = 2 * self::get_signature_tolerance();
+		$now     = time();
+		foreach ( $rows as $row ) {
+			if ( ! is_numeric( $row->option_value ) || ( $now - (int) $row->option_value ) > $max_age ) {
+				delete_option( $row->option_name );
+			}
+		}
 	}
 
 	/**
@@ -360,7 +439,11 @@ class WC_Paidy_Apply_Receiver {
 		$signature = $request->get_header( self::SIGNATURE_HEADER );
 		$timestamp = $request->get_header( self::TIMESTAMP_HEADER );
 		if ( null !== $signature ) {
-			if ( self::verify_request_signature( $timestamp, $signature, $request->get_body(), $site_hash ) ) {
+			// Verify, then claim the signature atomically so concurrent
+			// deliveries of the same request cannot both run the handler. The
+			// claim is released in handle_receive_data() if processing fails.
+			if ( self::verify_request_signature( $timestamp, $signature, $request->get_body(), $site_hash )
+				&& self::claim_signature( $signature ) ) {
 				wc_get_logger()->info(
 					'Paidy onboarding callback accepted via body signature (state token missing or expired).',
 					array( 'source' => 'paidy-wc' )
@@ -368,18 +451,25 @@ class WC_Paidy_Apply_Receiver {
 				return true;
 			}
 
-			// A signature was sent but did not verify. The most common field
-			// cause is server clock drift beyond the tolerance, so record the
-			// drift to make the 403 diagnosable from the site's own log.
-			$drift = is_numeric( $timestamp ) ? (string) ( time() - (int) $timestamp ) : 'n/a';
-			wc_get_logger()->warning(
-				sprintf(
-					'Paidy onboarding callback rejected: signature header present but invalid (timestamp drift: %s s, tolerance: %d s). Check the server clock and that paidy_site_hash matches the value sent at application time.',
-					$drift,
-					self::get_signature_tolerance()
-				),
-				array( 'source' => 'paidy-wc' )
-			);
+			// A signature was sent but did not verify (or was already claimed).
+			// The most common field cause is server clock drift beyond the
+			// tolerance, so record the drift to make the 403 diagnosable from
+			// the site's own log. The endpoint is public, so throttle the
+			// warning to one entry per window to keep a flood of forged
+			// requests from growing the log file.
+			if ( false === get_transient( self::SIGNATURE_WARNING_THROTTLE ) ) {
+				set_transient( self::SIGNATURE_WARNING_THROTTLE, 1, self::get_signature_tolerance() );
+				$drift = is_numeric( $timestamp ) ? (string) ( time() - (int) $timestamp ) : 'n/a';
+				wc_get_logger()->warning(
+					sprintf(
+						'Paidy onboarding callback rejected: signature header present but invalid or already used (timestamp drift: %s s, tolerance: %d s). Check the server clock and that paidy_site_hash matches the value sent at application time. Further occurrences are suppressed for %d s.',
+						$drift,
+						self::get_signature_tolerance(),
+						self::get_signature_tolerance()
+					),
+					array( 'source' => 'paidy-wc' )
+				);
+			}
 		}
 
 		return new WP_Error(
@@ -392,10 +482,32 @@ class WC_Paidy_Apply_Receiver {
 	/**
 	 * Handle received POST data.
 	 *
+	 * Wraps process_receive_data() so that a failed delivery releases the
+	 * signature claim taken in check_permissions() and the intermediary can
+	 * retry with the same signed request.
+	 *
 	 * @param WP_REST_Request $request request object.
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function handle_receive_data( $request ) {
+		$result = $this->process_receive_data( $request );
+
+		if ( is_wp_error( $result ) ) {
+			self::release_signature_claim( $request->get_header( self::SIGNATURE_HEADER ) );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Decrypt, validate and store the delivered onboarding result.
+	 *
+	 * @since 2.9.16 Split out of handle_receive_data().
+	 *
+	 * @param WP_REST_Request $request request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	private function process_receive_data( $request ) {
 		try {
 			// Get POST parameters from form data.
 			$post_params = $request->get_params();
@@ -578,7 +690,8 @@ class WC_Paidy_Apply_Receiver {
 				// as verify_state_token) so it never builds a storage key from an
 				// unsanitized param.
 				self::consume_state_token( $request->get_param( 'state' ) );
-				self::mark_signature_used( $request->get_header( self::SIGNATURE_HEADER ) );
+				// A signature claim taken in check_permissions() is intentionally
+				// kept here: it is the replay marker until it is pruned.
 
 				// Success response — omit decrypted API key fields to avoid
 				// exposing secrets via response bodies, proxy logs, or intermediaries.
