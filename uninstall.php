@@ -47,6 +47,7 @@ function wc_paidy_delete_plugin() {
 		}
 	}
 	delete_option( 'wc_paidy_show_pr_notice' );
+	delete_option( 'paidy_application_id' );
 
 	// Delete onboarding state token options (one non-autoloaded row per token,
 	// named paidy_onboarding_state_<token>) — the random suffixes cannot be

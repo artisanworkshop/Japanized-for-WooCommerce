@@ -263,6 +263,21 @@ class WC_Paidy_Admin_Wizard {
 				'sanitize_callback' => array( $this, 'paidy_sanitize_on_boarding_settings' ),
 			)
 		);
+
+		// Application ID assigned by the intermediary, read by the wizard UI so
+		// the merchant can see it on the "under review" screen. Kept outside
+		// woocommerce_paidy_on_boarding_settings because that option's sanitizer
+		// whitelists form fields and would strip it on the next save.
+		register_setting(
+			'options',
+			'paidy_application_id',
+			array(
+				'type'              => 'string',
+				'default'           => '',
+				'show_in_rest'      => true,
+				'sanitize_callback' => array( __CLASS__, 'sanitize_application_id' ),
+			)
+		);
 	}
 
 	/**
@@ -388,27 +403,31 @@ class WC_Paidy_Admin_Wizard {
 		}
 
 		$data_array = array(
-			'site_name'    => $value['siteName'],
-			'site_url'     => $value['storeUrl'],
-			'trade_name'   => $value['storeName'],
-			'site_hash'    => $site_hash,
-			'email'        => $value['registEmail'],
-			'phone'        => $value['contactPhone'],
-			'ceo'          => $value['representativeLastName'] . ' ' . $value['representativeFirstName'],
-			'ceo_kana'     => $value['representativeLastNameKana'] . ' ' . $value['representativeFirstNameKana'],
-			'ceo_birthday' => $value['representativeDateOfBirth'],
-			'gmv_flag'     => $gmv_flag,
-			'average_flag' => $average_flag,
-			'survey01'     => $value['securitySurvey01RadioControl'],
-			'survey02'     => $value['securitySurvey01TextControl'],
-			'survey03'     => $value['securitySurvey11CheckControl'],
-			'survey04'     => $value['securitySurvey12CheckControl'],
-			'survey05'     => $value['securitySurvey13CheckControl'],
-			'survey06'     => $value['securitySurvey14CheckControl'],
-			'survey07'     => $value['securitySurvey10TextAreaControl'],
-			'survey08'     => $value['securitySurvey08RadioControl'],
-			'survey09'     => $value['securitySurvey09RadioControl'],
-			'state'        => $state_token,
+			'site_name'      => $value['siteName'],
+			'site_url'       => $value['storeUrl'],
+			'trade_name'     => $value['storeName'],
+			'site_hash'      => $site_hash,
+			'email'          => $value['registEmail'],
+			'phone'          => $value['contactPhone'],
+			'ceo'            => $value['representativeLastName'] . ' ' . $value['representativeFirstName'],
+			'ceo_kana'       => $value['representativeLastNameKana'] . ' ' . $value['representativeFirstNameKana'],
+			'ceo_birthday'   => $value['representativeDateOfBirth'],
+			'gmv_flag'       => $gmv_flag,
+			'average_flag'   => $average_flag,
+			'survey01'       => $value['securitySurvey01RadioControl'],
+			'survey02'       => $value['securitySurvey01TextControl'],
+			'survey03'       => $value['securitySurvey11CheckControl'],
+			'survey04'       => $value['securitySurvey12CheckControl'],
+			'survey05'       => $value['securitySurvey13CheckControl'],
+			'survey06'       => $value['securitySurvey14CheckControl'],
+			'survey07'       => $value['securitySurvey10TextAreaControl'],
+			'survey08'       => $value['securitySurvey08RadioControl'],
+			'survey09'       => $value['securitySurvey09RadioControl'],
+			'state'          => $state_token,
+			// Sent for support diagnostics only: the intermediary records which
+			// plugin version submitted the application (state-token handling
+			// differs by version, see WC_Paidy_Apply_Receiver::SIGNATURE_HEADER).
+			'plugin_version' => defined( 'JP4WC_VERSION' ) ? JP4WC_VERSION : '',
 		);
 		$args       = array(
 			'method'      => 'POST',
@@ -446,7 +465,62 @@ class WC_Paidy_Admin_Wizard {
 			$result = false;
 		}
 
+		if ( $result ) {
+			$this->store_application_id( wp_remote_retrieve_body( $response ) );
+		}
+
 		return $result;
+	}
+
+	/**
+	 * Persist the application ID returned by the intermediary.
+	 *
+	 * The ID is shown on the "under review" screen so a merchant can quote it
+	 * to support, and logged so the site's own WooCommerce log ties the wizard
+	 * submission to the intermediary's record.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param string $response_body Raw JSON body of the application POST response.
+	 * @return void
+	 */
+	private function store_application_id( $response_body ) {
+		$body = json_decode( (string) $response_body, true );
+		if ( ! is_array( $body ) || empty( $body['application_id'] ) ) {
+			return;
+		}
+
+		$application_id = self::sanitize_application_id( $body['application_id'] );
+		if ( '' === $application_id ) {
+			return;
+		}
+
+		update_option( 'paidy_application_id', $application_id, false );
+		wc_get_logger()->info(
+			'Paidy onboarding application accepted by the intermediary. Application ID: ' . $application_id,
+			array( 'source' => 'paidy-wc' )
+		);
+	}
+
+	/**
+	 * Sanitize an application ID (e.g. WC000000571).
+	 *
+	 * Used both for the intermediary response and as the REST sanitize
+	 * callback of the `paidy_application_id` setting.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string Sanitized ID, or empty string if invalid.
+	 */
+	public static function sanitize_application_id( $value ) {
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
+		// Strict allow-list on the raw (trimmed) value: reject rather than
+		// strip, so markup or separators never collapse into a "valid" ID.
+		$value = trim( $value );
+		return 1 === preg_match( '/^[A-Za-z0-9_\-]{1,32}$/', $value ) ? $value : '';
 	}
 
 	/**

@@ -33,6 +33,33 @@ class WC_Paidy_Apply_Receiver {
 	const STATE_OPTION_PREFIX = 'paidy_onboarding_state_';
 
 	/**
+	 * Request header carrying the HMAC-SHA256 signature of the callback body.
+	 *
+	 * The intermediary signs `<timestamp>.<raw JSON body>` with the site hash
+	 * shared at application time, so a callback can be authenticated even when
+	 * the one-time state token has expired or was never issued (applications
+	 * submitted from plugin versions before 2.9.13 sent no state at all, and
+	 * 2.9.13–2.9.14 kept it in a 2-day transient that never outlived the review).
+	 *
+	 * @since 2.9.16
+	 */
+	const SIGNATURE_HEADER = 'x-paidy-receiver-signature';
+
+	/**
+	 * Request header carrying the UNIX timestamp that was signed together with the body.
+	 *
+	 * @since 2.9.16
+	 */
+	const TIMESTAMP_HEADER = 'x-paidy-receiver-timestamp';
+
+	/**
+	 * Transient prefix for signatures that have already been accepted (replay guard).
+	 *
+	 * @since 2.9.16
+	 */
+	const SIGNATURE_USED_PREFIX = 'paidy_receiver_sig_';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -134,6 +161,101 @@ class WC_Paidy_Apply_Receiver {
 	}
 
 	/**
+	 * Get the maximum allowed clock drift between the signed timestamp and now.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return int Tolerance in seconds.
+	 */
+	public static function get_signature_tolerance() {
+		/**
+		 * Filters how far the signed callback timestamp may deviate from the
+		 * receiving site's clock before the signature is rejected.
+		 *
+		 * @since 2.9.16
+		 *
+		 * @param int $tolerance Tolerance in seconds. Default 10 minutes.
+		 */
+		return (int) apply_filters( 'wc4jp_paidy_receiver_signature_tolerance', 10 * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Verify an HMAC-SHA256 signature over `<timestamp>.<body>` keyed by the site hash.
+	 *
+	 * Accepts raw header values: anything but a numeric timestamp within the
+	 * tolerance window and a 64-char lowercase hex digest is rejected before
+	 * any HMAC is computed. Replays of an already-accepted signature are
+	 * rejected as well (see mark_signature_used()).
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param mixed  $timestamp UNIX timestamp from the request header.
+	 * @param mixed  $signature Hex HMAC digest from the request header.
+	 * @param string $body      Raw request body exactly as received.
+	 * @param string $site_hash Shared secret established at application time.
+	 * @return bool True if the signature is valid, fresh, and unused.
+	 */
+	public static function verify_request_signature( $timestamp, $signature, $body, $site_hash ) {
+		if ( ! is_string( $site_hash ) || '' === $site_hash || ! is_string( $body ) ) {
+			return false;
+		}
+		if ( ! is_string( $signature ) || 1 !== preg_match( '/^[a-f0-9]{64}$/', $signature ) ) {
+			return false;
+		}
+		if ( ! is_string( $timestamp ) && ! is_int( $timestamp ) ) {
+			return false;
+		}
+		if ( 1 !== preg_match( '/^[0-9]{1,12}$/', (string) $timestamp ) ) {
+			return false;
+		}
+		if ( abs( time() - (int) $timestamp ) > self::get_signature_tolerance() ) {
+			return false;
+		}
+
+		$expected = hash_hmac( 'sha256', $timestamp . '.' . $body, $site_hash );
+		if ( ! hash_equals( $expected, $signature ) ) {
+			return false;
+		}
+
+		return ! self::is_signature_used( $signature );
+	}
+
+	/**
+	 * Whether a signature has already been accepted by a successful callback.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param string $signature Hex HMAC digest.
+	 * @return bool
+	 */
+	private static function is_signature_used( $signature ) {
+		return false !== get_transient( self::SIGNATURE_USED_PREFIX . substr( $signature, 0, 40 ) );
+	}
+
+	/**
+	 * Record an accepted signature so the same callback cannot be replayed.
+	 *
+	 * A transient is appropriate here (unlike the state token) because the
+	 * replay window is bounded by the short signature tolerance, not by the
+	 * length of the Paidy review.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param mixed $signature Hex HMAC digest from the request header.
+	 * @return void
+	 */
+	public static function mark_signature_used( $signature ) {
+		if ( ! is_string( $signature ) || 1 !== preg_match( '/^[a-f0-9]{64}$/', $signature ) ) {
+			return;
+		}
+		set_transient(
+			self::SIGNATURE_USED_PREFIX . substr( $signature, 0, 40 ),
+			time(),
+			2 * self::get_signature_tolerance()
+		);
+	}
+
+	/**
 	 * Delete state token options that are past their TTL or hold invalid values.
 	 *
 	 * Runs on every store_state_token() call so no cron cleanup is needed.
@@ -222,19 +344,49 @@ class WC_Paidy_Apply_Receiver {
 		// verify_state_token() validates the format internally (32-char alphanumeric,
 		// matching wp_generate_password(32, false)) before building any storage key,
 		// so non-string values or oversized inputs are rejected there.
-		if ( ! self::verify_state_token( $request->get_param( 'state' ) ) ) {
-			return new WP_Error(
-				'paidy_invalid_state',
-				__( 'Invalid or missing state token for Paidy onboarding.', 'woocommerce-for-japan' ),
-				array( 'status' => 403 )
-			);
-		}
-
+		//
 		// Do NOT consume the token here — consume it only after the handler
 		// completes successfully so a transient DB/decryption failure does not
 		// permanently prevent retrying the onboarding callback.
+		if ( self::verify_state_token( $request->get_param( 'state' ) ) ) {
+			return true;
+		}
 
-		return true;
+		// No usable state token. Fall back to the signed-callback path: the
+		// intermediary signs the raw body with the site hash it received at
+		// application time, so the callback can still be authenticated when the
+		// token expired (2.9.13–2.9.14 stored it in a 2-day transient), was
+		// never issued (pre-2.9.13 applications), or was lost to a reinstall.
+		$signature = $request->get_header( self::SIGNATURE_HEADER );
+		$timestamp = $request->get_header( self::TIMESTAMP_HEADER );
+		if ( null !== $signature ) {
+			if ( self::verify_request_signature( $timestamp, $signature, $request->get_body(), $site_hash ) ) {
+				wc_get_logger()->info(
+					'Paidy onboarding callback accepted via body signature (state token missing or expired).',
+					array( 'source' => 'paidy-wc' )
+				);
+				return true;
+			}
+
+			// A signature was sent but did not verify. The most common field
+			// cause is server clock drift beyond the tolerance, so record the
+			// drift to make the 403 diagnosable from the site's own log.
+			$drift = is_numeric( $timestamp ) ? (string) ( time() - (int) $timestamp ) : 'n/a';
+			wc_get_logger()->warning(
+				sprintf(
+					'Paidy onboarding callback rejected: signature header present but invalid (timestamp drift: %s s, tolerance: %d s). Check the server clock and that paidy_site_hash matches the value sent at application time.',
+					$drift,
+					self::get_signature_tolerance()
+				),
+				array( 'source' => 'paidy-wc' )
+			);
+		}
+
+		return new WP_Error(
+			'paidy_invalid_state',
+			__( 'Invalid or missing state token or signature for Paidy onboarding.', 'woocommerce-for-japan' ),
+			array( 'status' => 403 )
+		);
 	}
 
 	/**
@@ -383,6 +535,7 @@ class WC_Paidy_Apply_Receiver {
 					if ( 'canceled' === $paidy_status ) {
 						// Process canceled status.
 						delete_option( 'woocommerce_paidy_on_boarding_settings' );
+						delete_option( 'paidy_application_id' );
 					} else {
 						// Process rejected status.
 						$woocommerce_paidy_on_boarding_settings['currentStep'] = 99;
@@ -425,6 +578,7 @@ class WC_Paidy_Apply_Receiver {
 				// as verify_state_token) so it never builds a storage key from an
 				// unsanitized param.
 				self::consume_state_token( $request->get_param( 'state' ) );
+				self::mark_signature_used( $request->get_header( self::SIGNATURE_HEADER ) );
 
 				// Success response — omit decrypted API key fields to avoid
 				// exposing secrets via response bodies, proxy logs, or intermediaries.

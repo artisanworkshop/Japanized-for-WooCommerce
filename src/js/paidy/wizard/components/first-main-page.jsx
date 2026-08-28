@@ -87,6 +87,7 @@ const FirstMainPage = () => {
 	const {
 		currentStep,
 		setCurrentStep,
+		applicationId,
 		storeName,
 		setStoreName,
 		siteName,
@@ -351,7 +352,7 @@ const FirstMainPage = () => {
 			<>
 				<PaidyTitle />
 				<div className="paidy-on-boarding">
-					<ApplyCompletedMessage />
+					<ApplyCompletedMessage applicationId={ applicationId } />
 				</div>
 			</>
 		);
