@@ -62,9 +62,13 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 		delete_transient( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN );
 		delete_transient( WC_Paidy_Apply_Receiver::SIGNATURE_WARNING_THROTTLE );
 
+		delete_option( 'paidy_application_id' );
+
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '%" . WC_Paidy_Apply_Receiver::SIGNATURE_USED_PREFIX . "%'" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '%" . WC_Paidy_Apply_Receiver::EVENT_CLAIM_PREFIX . "%'" );
 		wp_cache_flush();
 
 		parent::tearDown();
@@ -476,5 +480,163 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 		$retry = $receiver->check_permissions( $request );
 		$this->assertInstanceOf( 'WP_Error', $retry );
 		$this->assertSame( 'paidy_invalid_state', $retry->get_error_code() );
+	}
+
+	/**
+	 * event_claim_key() is stable across different timestamps for the same
+	 * application_id + paidy_status + key fields (the P1 finding on PR #211:
+	 * the signature-derived claim varies with the timestamp, so a retry with
+	 * a fresh timestamp produced a different claim and bypassed the guard).
+	 */
+	public function test_event_claim_is_stable_across_timestamps() {
+		$request1 = $this->build_request();
+		$request2 = $this->build_request(); // Identical params, would sign differently at a later time.
+
+		$this->assertTrue( WC_Paidy_Apply_Receiver::claim_event( $request1 ) );
+		$this->assertFalse( WC_Paidy_Apply_Receiver::claim_event( $request2 ) );
+	}
+
+	/**
+	 * A different paidy_status (or key fields) produces a different event
+	 * claim, so a genuinely new decision for the same application is not
+	 * blocked by an earlier one.
+	 */
+	public function test_event_claim_differs_for_a_different_decision() {
+		$approved = $this->build_request( array(), array( 'paidy_status' => 'approved' ) );
+		$rejected = $this->build_request( array(), array( 'paidy_status' => 'rejected' ) );
+
+		$this->assertTrue( WC_Paidy_Apply_Receiver::claim_event( $approved ) );
+		$this->assertTrue( WC_Paidy_Apply_Receiver::claim_event( $rejected ) );
+	}
+
+	/**
+	 * Releasing an event claim allows it to be claimed again (retry after failure).
+	 */
+	public function test_event_claim_release_allows_retry() {
+		$request = $this->build_request();
+
+		$this->assertTrue( WC_Paidy_Apply_Receiver::claim_event( $request ) );
+		WC_Paidy_Apply_Receiver::release_event_claim( $request );
+		$this->assertTrue( WC_Paidy_Apply_Receiver::claim_event( $request ) );
+	}
+
+	/**
+	 * End to end via the signature-only path (no state token): the same
+	 * decision (application_id + paidy_status + key fields) delivered twice
+	 * with two different timestamps — and therefore two different, both
+	 * individually valid, signatures — is authorized only once. This is the
+	 * exact scenario reported in the PR #211 review.
+	 */
+	public function test_same_decision_with_different_timestamps_is_authorized_once() {
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$params   = array(
+			'public_live_key' => $this->encrypt_key( 'pk_live_xxx' ),
+			'secret_live_key' => $this->encrypt_key( 'sk_live_xxx' ),
+			'public_test_key' => $this->encrypt_key( 'pk_test_xxx' ),
+			'secret_test_key' => $this->encrypt_key( 'sk_test_xxx' ),
+		);
+
+		$first = $this->build_request( array(), $params );
+		$ts1   = (string) time();
+		$first->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts1 );
+		$first->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts1, $first->get_body() ) );
+		$this->assertTrue( $receiver->check_permissions( $first ) );
+		$this->assertSame( 200, $receiver->handle_receive_data( $first )->get_status() );
+
+		// A second, independently-signed delivery of the identical decision —
+		// a fresh timestamp produces a fresh, individually valid signature,
+		// so the per-signature claim alone would not catch this.
+		$second = $this->build_request( array(), $params );
+		$ts2    = (string) ( time() + 1 );
+		$second->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts2 );
+		$sig2 = $this->sign( $ts2, $second->get_body() );
+		$second->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $sig2 );
+
+		// The signature itself is still individually valid and unclaimed.
+		$this->assertTrue( WC_Paidy_Apply_Receiver::verify_request_signature( $ts2, $sig2, $second->get_body(), self::SITE_HASH ) );
+
+		// But check_permissions() rejects it because the underlying event was
+		// already claimed by the first delivery.
+		$result = $receiver->check_permissions( $second );
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertSame( 'paidy_invalid_state', $result->get_error_code() );
+	}
+
+	/**
+	 * A GET request (or any request with an empty raw body) is never
+	 * authorized via the signature — a signature over an empty body proves
+	 * nothing about query-string-only parameters (PR #211 review finding).
+	 */
+	public function test_empty_body_is_never_authorized_via_signature() {
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = new WP_REST_Request( 'GET', '/paidy-receiver/v1/receive' );
+		$request->set_query_params(
+			array(
+				'application_id' => 'WC000000571',
+				'paidy_status'   => 'canceled',
+			)
+		);
+		$ts = (string) time();
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		// A signature computed exactly the way the receiver would recompute
+		// it for this (empty) body — i.e. genuinely valid for '', not forged.
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts, '' ) );
+
+		$result = $receiver->check_permissions( $request );
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertSame( 'paidy_invalid_state', $result->get_error_code() );
+	}
+
+	/**
+	 * check_permissions() rejects a callback whose application_id does not
+	 * match the currently on-record application (PR #211 review finding): a
+	 * delayed/resent callback for a superseded application must not be able
+	 * to approve/reject/cancel a newer onboarding attempt.
+	 */
+	public function test_permission_rejects_callback_for_superseded_application() {
+		update_option( 'paidy_application_id', 'WC000000999' );
+
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = $this->build_request(); // BODY's application_id is WC000000571.
+		$ts       = (string) time();
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts, $request->get_body() ) );
+
+		$result = $receiver->check_permissions( $request );
+		$this->assertInstanceOf( 'WP_Error', $result );
+		$this->assertSame( 'paidy_stale_application', $result->get_error_code() );
+	}
+
+	/**
+	 * The application_id match check only applies once an application ID is
+	 * on record — legacy sites where it was never stored keep working via
+	 * the existing state/signature checks.
+	 */
+	public function test_permission_allows_callback_when_no_current_application_id_recorded() {
+		delete_option( 'paidy_application_id' );
+
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = $this->build_request();
+		$ts       = (string) time();
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts, $request->get_body() ) );
+
+		$this->assertTrue( $receiver->check_permissions( $request ) );
+	}
+
+	/**
+	 * A callback for the current application (application_id matches the
+	 * recorded one) is unaffected by the mismatch check.
+	 */
+	public function test_permission_allows_callback_for_current_application() {
+		update_option( 'paidy_application_id', 'WC000000571' ); // Matches BODY.
+
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = $this->build_request();
+		$ts       = (string) time();
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts, $request->get_body() ) );
+
+		$this->assertTrue( $receiver->check_permissions( $request ) );
 	}
 }

@@ -72,6 +72,22 @@ class WC_Paidy_Apply_Receiver {
 	const SIGNATURE_WARNING_THROTTLE = 'paidy_receiver_sig_warned';
 
 	/**
+	 * Option-name prefix for business-event claims (idempotency guard).
+	 *
+	 * Unlike the per-signature claim (keyed by the HMAC, which changes on
+	 * every retry because the timestamp it covers changes), this key is
+	 * derived from stable, business-relevant fields — application_id,
+	 * paidy_status, and the four (still-encrypted) key fields — so a retry or
+	 * manual resend of the identical decision cannot re-run the
+	 * credential/status update and the paidy_application_approved/rejected
+	 * action a second time just because it carries a fresh timestamp and
+	 * therefore a different signature.
+	 *
+	 * @since 2.9.16
+	 */
+	const EVENT_CLAIM_PREFIX = 'paidy_receiver_event_';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -353,6 +369,104 @@ class WC_Paidy_Apply_Receiver {
 	}
 
 	/**
+	 * Build the business-event claim key for a request.
+	 *
+	 * Derived only from application_id, paidy_status, and the four
+	 * (still-encrypted) key fields as delivered — never from the header
+	 * timestamp or signature — so a retry or resend carrying the identical
+	 * decision produces the identical key regardless of when it is sent.
+	 * Missing fields are treated as empty strings so the key stays
+	 * deterministic even for requests that omit paidy_status or the key
+	 * fields (e.g. a bare ping).
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param WP_REST_Request $request request object.
+	 * @return string
+	 */
+	private static function event_claim_key( $request ) {
+		$parts = array(
+			(string) $request->get_param( 'application_id' ),
+			(string) $request->get_param( 'paidy_status' ),
+		);
+		foreach ( array( 'public_live_key', 'secret_live_key', 'public_test_key', 'secret_test_key' ) as $field ) {
+			$value   = $request->get_param( $field );
+			$parts[] = is_string( $value ) ? $value : '';
+		}
+
+		return self::EVENT_CLAIM_PREFIX . hash( 'sha256', implode( '|', $parts ) );
+	}
+
+	/**
+	 * Atomically claim the business event carried by a request.
+	 *
+	 * Same add_option()-based exclusivity as claim_signature(), but keyed by
+	 * event_claim_key() instead of the signature, so a retry with a fresh
+	 * timestamp (and therefore a different signature) for the identical
+	 * decision is still recognized as a duplicate and rejected.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param WP_REST_Request $request request object.
+	 * @return bool True if this request now owns the claim.
+	 */
+	public static function claim_event( $request ) {
+		self::prune_stale_event_claims();
+
+		return false !== add_option( self::event_claim_key( $request ), time(), '', false );
+	}
+
+	/**
+	 * Release a business-event claim so a failed delivery can be retried.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param WP_REST_Request $request request object.
+	 * @return void
+	 */
+	public static function release_event_claim( $request ) {
+		delete_option( self::event_claim_key( $request ) );
+	}
+
+	/**
+	 * Delete event claims older than twice the signature timestamp tolerance.
+	 *
+	 * A short-lived window is intentional: it closes the near-term automatic-
+	 * retry gap this guard exists for, while still letting an operator's
+	 * deliberate later resend (see WC_Paidy_Apply_Receiver via the paidy-app
+	 * "resend" action) go through once the window has passed. Same direct
+	 * LIKE query rationale as prune_expired_state_tokens().
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return void
+	 */
+	private static function prune_stale_event_claims() {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( self::EVENT_CLAIM_PREFIX ) . '%'
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		if ( empty( $rows ) ) {
+			return;
+		}
+
+		$max_age = 2 * self::get_signature_tolerance();
+		$now     = time();
+		foreach ( $rows as $row ) {
+			if ( ! is_numeric( $row->option_value ) || ( $now - (int) $row->option_value ) > $max_age ) {
+				delete_option( $row->option_name );
+			}
+		}
+	}
+
+	/**
 	 * Delete state token options that are past their TTL or hold invalid values.
 	 *
 	 * Runs on every store_state_token() call so no cron cleanup is needed.
@@ -433,6 +547,26 @@ class WC_Paidy_Apply_Receiver {
 			);
 		}
 
+		// Reject callbacks for a superseded application. paidy_site_hash is
+		// site-wide and intentionally survives reinstalls (see uninstall.php),
+		// so without this check a delayed callback or a manual resend for an
+		// older application would still authenticate via a still-valid state
+		// token or a correctly signed body, and could approve/reject/cancel a
+		// newer onboarding attempt — including overwriting or clearing its
+		// credentials. Only enforced when an application ID is on record
+		// (set by the wizard on submission, see
+		// WC_Paidy_Admin_Wizard::store_application_id()); legacy sites and
+		// applications submitted before this was tracked fall through
+		// unchanged to the state/signature checks below.
+		$current_application_id = get_option( 'paidy_application_id' );
+		if ( ! empty( $current_application_id ) && $current_application_id !== $application_id ) {
+			return new WP_Error(
+				'paidy_stale_application',
+				__( 'This callback is for an application that is no longer the current one.', 'woocommerce-for-japan' ),
+				array( 'status' => 403 )
+			);
+		}
+
 		// Verify the one-time state token generated when the onboarding form was submitted.
 		// Tokens are stored keyed by their own value (set in the admin wizard) so
 		// parallel onboarding sessions cannot clobber each other's tokens. Verifying
@@ -457,12 +591,21 @@ class WC_Paidy_Apply_Receiver {
 			// bad signature header must not turn a legitimate request away.
 			$signature = $request->get_header( self::SIGNATURE_HEADER );
 			$timestamp = $request->get_header( self::TIMESTAMP_HEADER );
-			if ( null !== $signature && self::signature_matches( $timestamp, $signature, $request->get_body(), $site_hash ) ) {
-				if ( ! self::claim_signature( $signature ) ) {
-					// The signature matches the body but is already claimed —
-					// this exact request was already authorized and processed
-					// (or is being processed concurrently). Reject the replay
-					// even though the state token still verifies.
+			$body      = $request->get_body();
+			// A signature over an empty body (a GET request has none) covers
+			// nothing meaningful — application_id/paidy_status/keys read from
+			// query params would then be entirely unauthenticated by it — so
+			// only trust the header when there is a body for it to protect.
+			if ( null !== $signature && '' !== $body && self::signature_matches( $timestamp, $signature, $body, $site_hash ) ) {
+				if ( ! self::claim_signature( $signature ) || ! self::claim_event( $request ) ) {
+					// Either the signature or the underlying business event
+					// (same application_id + paidy_status + key fields,
+					// regardless of the signature's timestamp) is already
+					// claimed — this exact request or decision was already
+					// authorized and processed (or is being processed
+					// concurrently). Reject the replay even though the state
+					// token still verifies.
+					self::release_signature_claim( $signature );
 					return new WP_Error(
 						'paidy_invalid_state',
 						__( 'Invalid or missing state token or signature for Paidy onboarding.', 'woocommerce-for-japan' ),
@@ -480,17 +623,31 @@ class WC_Paidy_Apply_Receiver {
 		// never issued (pre-2.9.13 applications), or was lost to a reinstall.
 		$signature = $request->get_header( self::SIGNATURE_HEADER );
 		$timestamp = $request->get_header( self::TIMESTAMP_HEADER );
-		if ( null !== $signature ) {
-			// Verify, then claim the signature atomically so concurrent
-			// deliveries of the same request cannot both run the handler. The
-			// claim is released in handle_receive_data() if processing fails.
-			if ( self::verify_request_signature( $timestamp, $signature, $request->get_body(), $site_hash )
+		$body      = $request->get_body();
+		// See the same-named guard above: a signature over an empty body
+		// authenticates nothing about the (query-string-only) parameters a
+		// GET request would carry.
+		if ( null !== $signature && '' !== $body ) {
+			// Verify, then claim both the signature and the underlying
+			// business event atomically so concurrent deliveries of the same
+			// request — or a retry that carries a fresh timestamp and
+			// therefore a different signature for the same application_id +
+			// paidy_status + key fields — cannot both run the handler. Both
+			// claims are released in handle_receive_data() if processing
+			// fails.
+			if ( self::verify_request_signature( $timestamp, $signature, $body, $site_hash )
 				&& self::claim_signature( $signature ) ) {
-				wc_get_logger()->info(
-					'Paidy onboarding callback accepted via body signature (state token missing or expired).',
-					array( 'source' => 'paidy-wc' )
-				);
-				return true;
+				if ( self::claim_event( $request ) ) {
+					wc_get_logger()->info(
+						'Paidy onboarding callback accepted via body signature (state token missing or expired).',
+						array( 'source' => 'paidy-wc' )
+					);
+					return true;
+				}
+				// Signature was fresh (unclaimed) but the same business event
+				// was already claimed by an earlier delivery — release the
+				// signature claim we just took and fall through to the 403.
+				self::release_signature_claim( $signature );
 			}
 
 			// A signature was sent but did not verify (or was already claimed).
@@ -536,6 +693,10 @@ class WC_Paidy_Apply_Receiver {
 
 		if ( is_wp_error( $result ) ) {
 			self::release_signature_claim( $request->get_header( self::SIGNATURE_HEADER ) );
+			// Also release the business-event claim (may have been taken on
+			// either the state-authorized or the signature-only path) so a
+			// transient failure does not permanently block a legitimate retry.
+			self::release_event_claim( $request );
 		}
 
 		return $result;
