@@ -399,4 +399,82 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $receiver->check_permissions( $request ) );
 	}
+
+	/**
+	 * check_permissions() also claims a valid signature that accompanies an
+	 * otherwise state-authorized request, so the signature cannot separately
+	 * re-authorize the identical request later.
+	 */
+	public function test_permission_claims_signature_alongside_valid_state() {
+		WC_Paidy_Apply_Receiver::store_state_token( self::TOKEN );
+
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = $this->build_request( array(), array( 'state' => self::TOKEN ) );
+		$ts       = (string) time();
+		$sig      = $this->sign( $ts, $request->get_body() );
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $sig );
+
+		$this->assertTrue( $receiver->check_permissions( $request ) );
+
+		// The signature was claimed as a side effect, even though state
+		// authorized the request — a signature-only retry of the identical
+		// request is now rejected.
+		$this->assertFalse( WC_Paidy_Apply_Receiver::verify_request_signature( $ts, $sig, $request->get_body(), self::SITE_HASH ) );
+	}
+
+	/**
+	 * A malformed or non-matching signature alongside a valid state token
+	 * does not block the state-authorized request (backward compatible with
+	 * intermediaries that send an unrelated or missing signature).
+	 */
+	public function test_permission_ignores_bad_signature_alongside_valid_state() {
+		WC_Paidy_Apply_Receiver::store_state_token( self::TOKEN );
+
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = $this->build_request( array(), array( 'state' => self::TOKEN ) );
+		$ts       = (string) time();
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts, $request->get_body(), 'wrong-secret' ) );
+
+		$this->assertTrue( $receiver->check_permissions( $request ) );
+	}
+
+	/**
+	 * End to end: consuming the state token on success does not let an
+	 * identical sequential retry re-authorize via the signature path, because
+	 * the accompanying signature was already claimed on the first delivery
+	 * (the scenario reported in PR #211 review).
+	 */
+	public function test_sequential_retry_after_state_success_is_rejected_via_signature() {
+		WC_Paidy_Apply_Receiver::store_state_token( self::TOKEN );
+
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = $this->build_request(
+			array(),
+			array(
+				'state'           => self::TOKEN,
+				'public_live_key' => $this->encrypt_key( 'pk_live_xxx' ),
+				'secret_live_key' => $this->encrypt_key( 'sk_live_xxx' ),
+				'public_test_key' => $this->encrypt_key( 'pk_test_xxx' ),
+				'secret_test_key' => $this->encrypt_key( 'sk_test_xxx' ),
+			)
+		);
+		$ts = (string) time();
+		$request->set_header( WC_Paidy_Apply_Receiver::TIMESTAMP_HEADER, $ts );
+		$request->set_header( WC_Paidy_Apply_Receiver::SIGNATURE_HEADER, $this->sign( $ts, $request->get_body() ) );
+
+		// First delivery: authorized via state, processed successfully, state consumed.
+		$this->assertTrue( $receiver->check_permissions( $request ) );
+		$first = $receiver->handle_receive_data( $request );
+		$this->assertInstanceOf( 'WP_REST_Response', $first );
+		$this->assertSame( 200, $first->get_status() );
+		$this->assertFalse( WC_Paidy_Apply_Receiver::verify_state_token( self::TOKEN ) );
+
+		// Sequential retry of the identical request: state is now consumed,
+		// and the accompanying signature was already claimed on delivery 1.
+		$retry = $receiver->check_permissions( $request );
+		$this->assertInstanceOf( 'WP_Error', $retry );
+		$this->assertSame( 'paidy_invalid_state', $retry->get_error_code() );
+	}
 }

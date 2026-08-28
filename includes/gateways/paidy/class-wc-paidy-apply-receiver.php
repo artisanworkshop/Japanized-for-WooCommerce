@@ -208,6 +208,28 @@ class WC_Paidy_Apply_Receiver {
 	 * @return bool True if the signature is valid, fresh, and unused.
 	 */
 	public static function verify_request_signature( $timestamp, $signature, $body, $site_hash ) {
+		return self::signature_matches( $timestamp, $signature, $body, $site_hash )
+			&& ! self::is_signature_claimed( $signature );
+	}
+
+	/**
+	 * Cryptographic half of verify_request_signature(), without the claim check.
+	 *
+	 * Used where a signature must be evaluated on its own merit independent of
+	 * claim state — e.g. deciding whether a signature accompanying an
+	 * already-state-authorized request is genuine before claiming it (see
+	 * check_permissions()). A malformed/incorrect signature here must not
+	 * reject a request that state-token verification already authorized.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param mixed  $timestamp UNIX timestamp from the request header.
+	 * @param mixed  $signature Hex HMAC digest from the request header.
+	 * @param string $body      Raw request body exactly as received.
+	 * @param string $site_hash Shared secret established at application time.
+	 * @return bool True if the signature is well-formed, fresh, and matches the body.
+	 */
+	private static function signature_matches( $timestamp, $signature, $body, $site_hash ) {
 		if ( ! is_string( $site_hash ) || '' === $site_hash || ! is_string( $body ) ) {
 			return false;
 		}
@@ -225,11 +247,7 @@ class WC_Paidy_Apply_Receiver {
 		}
 
 		$expected = hash_hmac( 'sha256', $timestamp . '.' . $body, $site_hash );
-		if ( ! hash_equals( $expected, $signature ) ) {
-			return false;
-		}
-
-		return ! self::is_signature_claimed( $signature );
+		return hash_equals( $expected, $signature );
 	}
 
 	/**
@@ -428,6 +446,30 @@ class WC_Paidy_Apply_Receiver {
 		// completes successfully so a transient DB/decryption failure does not
 		// permanently prevent retrying the onboarding callback.
 		if ( self::verify_state_token( $request->get_param( 'state' ) ) ) {
+			// A well-formed, correctly-signed signature accompanying this
+			// state-authorized request is claimed here as well. Without this,
+			// consuming the state token on success leaves the signature
+			// unclaimed; a sequential retry of the identical request would
+			// then fail the (now-consumed) state check but pass the signature
+			// check and re-run the handler a second time. A signature that is
+			// missing, malformed, or does not match the body is ignored here
+			// — the state token alone already authorizes the request, and a
+			// bad signature header must not turn a legitimate request away.
+			$signature = $request->get_header( self::SIGNATURE_HEADER );
+			$timestamp = $request->get_header( self::TIMESTAMP_HEADER );
+			if ( null !== $signature && self::signature_matches( $timestamp, $signature, $request->get_body(), $site_hash ) ) {
+				if ( ! self::claim_signature( $signature ) ) {
+					// The signature matches the body but is already claimed —
+					// this exact request was already authorized and processed
+					// (or is being processed concurrently). Reject the replay
+					// even though the state token still verifies.
+					return new WP_Error(
+						'paidy_invalid_state',
+						__( 'Invalid or missing state token or signature for Paidy onboarding.', 'woocommerce-for-japan' ),
+						array( 'status' => 403 )
+					);
+				}
+			}
 			return true;
 		}
 
