@@ -49,20 +49,30 @@ function wc_paidy_delete_plugin() {
 	delete_option( 'wc_paidy_show_pr_notice' );
 	delete_option( 'paidy_application_id' );
 
-	// Delete onboarding state token options (one non-autoloaded row per token,
-	// named paidy_onboarding_state_<token>) — the random suffixes cannot be
-	// enumerated via a core API, so a direct LIKE query is required.
-	// Must match WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX (the class is not
-	// loaded during uninstall, so the constant cannot be referenced directly).
-	$state_option_prefix = 'paidy_onboarding_state_';
-	// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-	$wpdb->query(
-		$wpdb->prepare(
-			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-			$wpdb->esc_like( $state_option_prefix ) . '%'
-		)
+	// Delete onboarding state token options, signature-claim options, and
+	// event-claim options (one non-autoloaded row per token/claim, keyed by a
+	// random or hashed suffix) — the suffixes cannot be enumerated via a core
+	// API, so a direct LIKE query is required per prefix. Must match
+	// WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX / SIGNATURE_USED_PREFIX /
+	// EVENT_CLAIM_PREFIX (the class is not loaded during uninstall, so the
+	// constants cannot be referenced directly). Without this, rows accumulate
+	// indefinitely and an immediate reinstall could reject an otherwise-fresh
+	// callback because its old claim is still on record.
+	$prefixes_to_purge = array(
+		'paidy_onboarding_state_', // STATE_OPTION_PREFIX.
+		'paidy_receiver_sig_',     // SIGNATURE_USED_PREFIX.
+		'paidy_receiver_event_',   // EVENT_CLAIM_PREFIX.
 	);
-	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	foreach ( $prefixes_to_purge as $prefix ) {
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( $prefix ) . '%'
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	}
 }
 
 wc_paidy_delete_plugin();
