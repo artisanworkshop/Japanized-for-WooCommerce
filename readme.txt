@@ -77,11 +77,11 @@ Note: Paidy Checkout is also available as a standalone payment plugin.
 
 = External Services =
 
-This plugin connects to the following third-party services for specific, optional features. Each is only contacted when the related feature is configured and enabled by the store owner.
+This plugin connects to the following third-party services:
 
 * **Yahoo! Japan Web API** (yahoo.co.jp) — used by the postal-code auto-fill feature to look up a Japanese address from a postal code entered at checkout. The postal code is sent to Yahoo! Japan's address lookup API. Only active when a Yahoo! Japan Application ID is configured in Japan Settings → Address Form. See Yahoo! Japan's own site for their terms of service and privacy policy.
 * **Paidy API** (paidy.com) — used by the Paidy (Buy Now, Pay Later) payment gateway to process payments and, during merchant onboarding, to deliver API credentials. Only active when the Paidy gateway is enabled. See Paidy's own site for their terms of service and privacy policy.
-* **Artisan Workshop update/promotion service** (wc.artws.info) — the plugin's own first-party service, used to check for update-related notices. No order, customer, or site-configuration data is sent.
+* **Artisan Workshop promotion service** (wc.artws.info) — the plugin's own first-party service. It is contacted automatically (no setting to disable it) to fetch promotional notice content shown in the WordPress admin dashboard to users who can manage WooCommerce, on stores with at least one order placed in the last 5 days. No order, customer, or site-configuration data is sent or received beyond the request itself.
 
 == Installation ==
 
