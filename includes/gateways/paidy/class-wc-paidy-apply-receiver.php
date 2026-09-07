@@ -92,7 +92,6 @@ class WC_Paidy_Apply_Receiver {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
-		add_action( 'jp4wc_updated', array( __CLASS__, 'redact_stored_secrets_on_upgrade' ) );
 	}
 
 	/**
@@ -1053,3 +1052,12 @@ class WC_Paidy_Apply_Receiver {
 		return delete_option( 'received_data' );
 	}
 }
+
+// Registered at file-load time, not from the constructor: this file is
+// require_once'd unconditionally before 'init' fires, but the receiver
+// itself is only instantiated on 'init' at the default priority (10) —
+// after JP4WC_Install::check_version() (priority 5) has already run and,
+// on the one request that detects an upgrade, already fired
+// 'jp4wc_updated'. Registering from the constructor would attach this
+// listener too late to ever catch that action (PR review, third round).
+add_action( 'jp4wc_updated', array( 'WC_Paidy_Apply_Receiver', 'redact_stored_secrets_on_upgrade' ) );

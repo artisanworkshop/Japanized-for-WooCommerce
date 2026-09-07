@@ -753,4 +753,22 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 		$this->assertSame( '[redacted]', $received_data['secret_live_key'] );
 		$this->assertSame( '[redacted]', $received_data['secret_test_key'] );
 	}
+
+	/**
+	 * The jp4wc_updated listener must be registered at file-load time, not
+	 * from the constructor: JP4WC_Install::check_version() runs on 'init'
+	 * at priority 5 and fires 'jp4wc_updated' synchronously from inside
+	 * that same callback, while the receiver is only instantiated from a
+	 * separate 'init' callback at the default priority (10) — after
+	 * 'jp4wc_updated' has already fired on the one request that detects an
+	 * upgrade. A constructor-registered listener would silently never run
+	 * (PR review, third round). This file is already loaded by setUp(), so
+	 * simply asserting the hook is attached (without ever instantiating
+	 * the class) verifies the registration happened at file scope.
+	 */
+	public function test_redact_stored_secrets_on_upgrade_is_registered_at_file_load() {
+		$this->assertNotFalse(
+			has_action( 'jp4wc_updated', array( 'WC_Paidy_Apply_Receiver', 'redact_stored_secrets_on_upgrade' ) )
+		);
+	}
 }
