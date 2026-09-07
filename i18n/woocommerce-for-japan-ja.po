@@ -1551,6 +1551,16 @@ msgstr "アプリケーションIDの形式が不正です。"
 msgid "Invalid state token for Paidy onboarding."
 msgstr "Paidyのオンボーディングにおいて、ステートトークンが無効です。"
 
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:590
+msgid "This callback is for an application that is no longer the current one."
+msgstr "このコールバックは、現在有効な申し込みとは異なる申し込みに対するものです。"
+
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:631
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:648
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:712
+msgid "Invalid or missing state token or signature for Paidy onboarding."
+msgstr "Paidyのオンボーディングにおいて、ステートトークンまたは署名が無効です。"
+
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:81
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:126
 msgid "Unauthorized access to Paidy webhook."
@@ -2791,6 +2801,13 @@ msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/admin/components/index.js:47
+#: src/js/paidy/main-hooks/form-info.jsx:152
+msgid "Application ID:"
+msgstr "申し込みID:"
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:46
 #: src/js/paidy/main-hooks/form-info.jsx:147
 msgid "The review process may take up to 5 business days."
@@ -2802,6 +2819,15 @@ msgstr "審査には最大5営業日かかることがございます。"
 #: src/js/paidy/main-hooks/form-info.jsx:153
 msgid "Inquiries regarding screening: sales@paidy.com"
 msgstr "審査に関するお問い合わせ：sales@paidy.com"
+
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:170
+msgid ""
+"If you have received your API keys separately, you can enter them manually "
+"without waiting for the automatic delivery."
+msgstr ""
+"APIキーを別途受け取っている場合は、自動反映を待たずに手動で入力することがで"
+"きます。"
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
