@@ -2,7 +2,7 @@
 /**
  * Tests for guest-checkout handling in WC_Gateway_Paidy::paidy_make_order().
  *
- * paidy_make_order() computes the customer's completed-order history (total
+ * This method computes the customer's completed-order history (total
  * amount, count, latest order) as risk-signal values sent to Paidy. For a
  * guest checkout, $user_id is 'guest-paidy' . order ID — a non-numeric
  * string, not a real customer identity. Passing that directly to
