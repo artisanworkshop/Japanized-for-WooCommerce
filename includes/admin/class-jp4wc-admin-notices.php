@@ -298,6 +298,16 @@ class JP4WC_Admin_Notices {
 	 * @return array Array of promotion data, or empty array on failure.
 	 */
 	private static function get_promotion_content() {
+		// This runs on every wp-admin page load for any WooCommerce admin
+		// (see admin_jp4wc_promotion()), so cache the result — without this,
+		// a slow or unreachable wc.artws.info would add a blocking remote
+		// request (up to the 10s timeout below) to every single admin page.
+		$cache_key = 'jp4wc_promotion_content';
+		$cached    = get_transient( $cache_key );
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
 		$promotion_url = 'https://wc.artws.info/jp4wc-promotion-notices.json';
 
 		// Make remote request to fetch JSON data.
@@ -313,6 +323,9 @@ class JP4WC_Admin_Notices {
 
 		// Check for errors in the response.
 		if ( is_wp_error( $response ) ) {
+			// Cache the miss briefly too, so a struggling endpoint doesn't
+			// keep costing every admin page load a fresh timeout attempt.
+			set_transient( $cache_key, array(), HOUR_IN_SECONDS );
 			return array();
 		}
 
@@ -324,6 +337,7 @@ class JP4WC_Admin_Notices {
 
 		// Return empty array if JSON decode fails or result is not an array.
 		if ( ! is_array( $promotions ) || empty( $promotions ) ) {
+			set_transient( $cache_key, array(), HOUR_IN_SECONDS );
 			return array();
 		}
 
@@ -364,13 +378,16 @@ class JP4WC_Admin_Notices {
 
 		// Return empty array if no promotions available after filtering.
 		if ( empty( $filtered_promotions ) ) {
+			set_transient( $cache_key, array(), HOUR_IN_SECONDS );
 			return array();
 		}
 
 		// Randomly select one promotion to display.
 		$random_key = array_rand( $filtered_promotions );
+		$selected   = $filtered_promotions[ $random_key ];
 
-		return $filtered_promotions[ $random_key ];
+		set_transient( $cache_key, $selected, 6 * HOUR_IN_SECONDS );
+		return $selected;
 	}
 
 	/**

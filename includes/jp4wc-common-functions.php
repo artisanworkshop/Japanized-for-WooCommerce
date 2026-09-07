@@ -103,14 +103,27 @@ if ( ! function_exists( 'jp4wc_has_orders_in_last_5_days' ) ) {
 	 * @return bool True if orders exist, false otherwise.
 	 */
 	function jp4wc_has_orders_in_last_5_days() {
+		// This gates a promo banner shown on every wp-admin page load (see
+		// JP4WC_Admin_Notices::admin_jp4wc_promotion()), so cache the
+		// result — exact freshness doesn't matter for a banner condition,
+		// and this avoids a fresh order query on every single admin request.
+		$cache_key = 'jp4wc_has_orders_in_last_5_days';
+		$cached    = get_transient( $cache_key );
+		if ( false !== $cached ) {
+			return (bool) $cached;
+		}
+
 		$args = array(
 			'limit'        => 1,
 			'status'       => array( 'wc-processing', 'wc-completed', 'wc-on-hold', 'wc-pending', 'wc-refunded' ),
 			'date_created' => '>' . ( time() - ( 5 * DAY_IN_SECONDS ) ),
 		);
 
-		$orders = wc_get_orders( $args );
+		$orders    = wc_get_orders( $args );
+		$has_order = ! empty( $orders );
 
-		return ! empty( $orders );
+		set_transient( $cache_key, $has_order, HOUR_IN_SECONDS );
+
+		return $has_order;
 	}
 }
