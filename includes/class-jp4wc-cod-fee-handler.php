@@ -69,7 +69,17 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 				return;
 			}
 
-			if ( empty( $data['gateway_id'] ) ) {
+			// This Store API extension endpoint is unauthenticated by design
+			// (anonymous shoppers must be able to update their cart), so
+			// $data['gateway_id'] is fully client-controlled. Only trust it
+			// when it names a gateway actually available on this site;
+			// otherwise fall back to WooCommerce's own chosen_payment_method
+			// (see jp4wc_calculate_order_totals()) the same way an empty
+			// value already does — a bogus value must never be able to
+			// suppress the COD/COD2 surcharge for an order that ultimately
+			// uses a real gateway.
+			$available_gateways = WC()->payment_gateways->get_available_payment_gateways();
+			if ( empty( $data['gateway_id'] ) || ! isset( $available_gateways[ $data['gateway_id'] ] ) ) {
 				WC()->session->__unset( 'jp4wc_gateway_id' );
 				return;
 			}
