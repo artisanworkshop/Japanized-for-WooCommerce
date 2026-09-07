@@ -298,46 +298,13 @@ class JP4WC_Admin_Notices {
 	 * @return array Array of promotion data, or empty array on failure.
 	 */
 	private static function get_promotion_content() {
-		// This runs on every wp-admin page load for any WooCommerce admin
-		// (see admin_jp4wc_promotion()), so cache the result — without this,
-		// a slow or unreachable wc.artws.info would add a blocking remote
-		// request (up to the 10s timeout below) to every single admin page.
-		$cache_key = 'jp4wc_promotion_content';
-		$cached    = get_transient( $cache_key );
-		if ( false !== $cached ) {
-			return $cached;
-		}
-
-		$promotion_url = 'https://wc.artws.info/jp4wc-promotion-notices.json';
-
-		// Make remote request to fetch JSON data.
-		$response = wp_remote_get(
-			$promotion_url,
-			array(
-				'timeout' => 10,
-				'headers' => array(
-					'Accept' => 'application/json',
-				),
-			)
-		);
-
-		// Check for errors in the response.
-		if ( is_wp_error( $response ) ) {
-			// Cache the miss briefly too, so a struggling endpoint doesn't
-			// keep costing every admin page load a fresh timeout attempt.
-			set_transient( $cache_key, array(), HOUR_IN_SECONDS );
-			return array();
-		}
-
-		// Get the response body.
-		$body = wp_remote_retrieve_body( $response );
-
-		// Decode JSON to array.
-		$promotions = json_decode( $body, true );
-
-		// Return empty array if JSON decode fails or result is not an array.
-		if ( ! is_array( $promotions ) || empty( $promotions ) ) {
-			set_transient( $cache_key, array(), HOUR_IN_SECONDS );
+		// The remote fetch below is locale-independent (it returns every
+		// promotion, in every language), so it is cached once and shared
+		// across all site locales/administrators. Only the filtering and
+		// random selection that follows — which IS locale-specific — runs
+		// fresh on every call; it's cheap (in-memory array_filter, no I/O).
+		$promotions = self::get_cached_promotions_raw();
+		if ( empty( $promotions ) ) {
 			return array();
 		}
 
@@ -378,16 +345,73 @@ class JP4WC_Admin_Notices {
 
 		// Return empty array if no promotions available after filtering.
 		if ( empty( $filtered_promotions ) ) {
-			set_transient( $cache_key, array(), HOUR_IN_SECONDS );
 			return array();
 		}
 
 		// Randomly select one promotion to display.
 		$random_key = array_rand( $filtered_promotions );
-		$selected   = $filtered_promotions[ $random_key ];
 
-		set_transient( $cache_key, $selected, 6 * HOUR_IN_SECONDS );
-		return $selected;
+		return $filtered_promotions[ $random_key ];
+	}
+
+	/**
+	 * Fetch (and cache) the full, unfiltered promotion list.
+	 *
+	 * This is the only part of get_promotion_content() that performs I/O, so
+	 * it's the only part cached — and the cache is shared across every site
+	 * locale/administrator, since the fetched data itself isn't locale-
+	 * specific (caching the already-locale-filtered result under one
+	 * site-wide key, as an earlier version of this method did, meant every
+	 * administrator saw whichever locale first populated the cache for up
+	 * to 6 hours).
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return array Raw promotions array (every locale), or an empty array
+	 *               on a fetch/decode failure.
+	 */
+	private static function get_cached_promotions_raw() {
+		$cache_key = 'jp4wc_promotion_content_raw';
+		$cached    = get_transient( $cache_key );
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$promotion_url = 'https://wc.artws.info/jp4wc-promotion-notices.json';
+
+		// Make remote request to fetch JSON data.
+		$response = wp_remote_get(
+			$promotion_url,
+			array(
+				'timeout' => 10,
+				'headers' => array(
+					'Accept' => 'application/json',
+				),
+			)
+		);
+
+		// Check for errors in the response.
+		if ( is_wp_error( $response ) ) {
+			// Cache the miss briefly too, so a struggling endpoint doesn't
+			// keep costing every admin page load a fresh timeout attempt.
+			set_transient( $cache_key, array(), HOUR_IN_SECONDS );
+			return array();
+		}
+
+		// Get the response body.
+		$body = wp_remote_retrieve_body( $response );
+
+		// Decode JSON to array.
+		$promotions = json_decode( $body, true );
+
+		// Return empty array if JSON decode fails or result is not an array.
+		if ( ! is_array( $promotions ) || empty( $promotions ) ) {
+			set_transient( $cache_key, array(), HOUR_IN_SECONDS );
+			return array();
+		}
+
+		set_transient( $cache_key, $promotions, 6 * HOUR_IN_SECONDS );
+		return $promotions;
 	}
 
 	/**

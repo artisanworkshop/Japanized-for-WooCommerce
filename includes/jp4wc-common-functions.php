@@ -107,10 +107,14 @@ if ( ! function_exists( 'jp4wc_has_orders_in_last_5_days' ) ) {
 		// JP4WC_Admin_Notices::admin_jp4wc_promotion()), so cache the
 		// result — exact freshness doesn't matter for a banner condition,
 		// and this avoids a fresh order query on every single admin request.
+		// get_transient() also returns false on a cache miss, which is
+		// indistinguishable from a cached "false" (no recent orders) — use
+		// a non-boolean sentinel so the common "quiet store" case actually
+		// gets cached instead of re-querying on every call.
 		$cache_key = 'jp4wc_has_orders_in_last_5_days';
 		$cached    = get_transient( $cache_key );
 		if ( false !== $cached ) {
-			return (bool) $cached;
+			return '1' === $cached;
 		}
 
 		$args = array(
@@ -122,7 +126,7 @@ if ( ! function_exists( 'jp4wc_has_orders_in_last_5_days' ) ) {
 		$orders    = wc_get_orders( $args );
 		$has_order = ! empty( $orders );
 
-		set_transient( $cache_key, $has_order, HOUR_IN_SECONDS );
+		set_transient( $cache_key, $has_order ? '1' : '0', HOUR_IN_SECONDS );
 
 		return $has_order;
 	}
