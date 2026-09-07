@@ -386,6 +386,16 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 		// Decrypted keys must not leak into the response body.
 		$this->assertArrayNotHasKey( 'secret_live_key', $response->get_data()['received_data'] );
 
+		// The decrypted secret keys must not be duplicated in plaintext in
+		// the diagnostic paidy_received_data option either — they are
+		// already stored (and actually used) in woocommerce_paidy_settings
+		// above (PR review finding, second round).
+		$received_data = get_option( 'paidy_received_data' );
+		$this->assertSame( '[redacted]', $received_data['secret_live_key'] );
+		$this->assertSame( '[redacted]', $received_data['secret_test_key'] );
+		// Public keys are not sensitive and retain their diagnostic value.
+		$this->assertSame( 'pk_live_xxx', $received_data['public_live_key'] );
+
 		// Replaying the identical signed request is now rejected.
 		$replay = $receiver->check_permissions( $request );
 		$this->assertInstanceOf( 'WP_Error', $replay );

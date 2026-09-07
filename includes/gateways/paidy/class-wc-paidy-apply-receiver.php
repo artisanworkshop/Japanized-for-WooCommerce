@@ -927,18 +927,31 @@ class WC_Paidy_Apply_Receiver {
 				}
 			}
 
-			// Save data to wp_option.
+			// Save data to wp_option, redacting the decrypted secret keys first.
+			// They are already stored (and actually used) in
+			// woocommerce_paidy_settings above; this option is a write-only
+			// diagnostic record with no other reader in the codebase, so a
+			// second plaintext copy of the secrets would only widen the
+			// at-rest exposure surface for no functional benefit. Redaction
+			// is deterministic, so the idempotency check below is unaffected.
+			$loggable_params = $filtered_params;
+			foreach ( array( 'secret_live_key', 'secret_test_key' ) as $secret_field ) {
+				if ( isset( $loggable_params[ $secret_field ] ) && '' !== $loggable_params[ $secret_field ] ) {
+					$loggable_params[ $secret_field ] = '[redacted]';
+				}
+			}
+
 			// update_option() returns false both when the save fails AND when the stored
-			// value is already identical to $filtered_params (no-change). Treat the
+			// value is already identical to $loggable_params (no-change). Treat the
 			// no-change case as success so retries with an identical payload do not
 			// incorrectly return a 500 and skip consuming the one-time state token.
-			$saved = update_option( 'paidy_received_data', $filtered_params, false );
+			$saved = update_option( 'paidy_received_data', $loggable_params, false );
 			if ( false === $saved ) {
-				if ( get_option( 'paidy_received_data' ) === $filtered_params ) {
+				if ( get_option( 'paidy_received_data' ) === $loggable_params ) {
 					$saved = true; // Value already identical — treat as success.
 				} else {
 					// Option does not exist yet — create it.
-					$saved = add_option( 'paidy_received_data', $filtered_params, '', 'no' );
+					$saved = add_option( 'paidy_received_data', $loggable_params, '', 'no' );
 				}
 			}
 			// Check if the data was saved successfully.
