@@ -3,8 +3,9 @@ Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
-Tested up to: 7.0
-Stable tag: 2.9.15
+Tested up to: 7.1
+Requires PHP: 8.3
+Stable tag: 2.9.16
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -69,11 +70,18 @@ Works smoothly with WooCommerce core features and popular extensions. Fully comp
 * Address validation for Japanese postal codes
 * Affiliate integration (A8.net, Access Trade, Value Commerce)
 * WooCommerce Blocks compatibility
-* Security scanning and malware detection
 
-Note: Paidy Checkout are also available as standalone payment plugins.
+Note: Paidy Checkout is also available as a standalone payment plugin.
 
 [youtube https://www.youtube.com/watch?v=mPYlDDuGzis]
+
+= External Services =
+
+This plugin connects to the following third-party services for specific, optional features. Each is only contacted when the related feature is configured and enabled by the store owner.
+
+* **Yahoo! Japan Web API** (yahoo.co.jp) — used by the postal-code auto-fill feature to look up a Japanese address from a postal code entered at checkout. The postal code is sent to Yahoo! Japan's address lookup API. Only active when a Yahoo! Japan Application ID is configured in Japan Settings → Address Form. See Yahoo! Japan's own site for their terms of service and privacy policy.
+* **Paidy API** (paidy.com) — used by the Paidy (Buy Now, Pay Later) payment gateway to process payments and, during merchant onboarding, to deliver API credentials. Only active when the Paidy gateway is enabled. See Paidy's own site for their terms of service and privacy policy.
+* **Artisan Workshop update/promotion service** (wc.artws.info) — the plugin's own first-party service, used to check for update-related notices. No order, customer, or site-configuration data is sent.
 
 == Installation ==
 
@@ -120,7 +128,7 @@ You need to obtain a free Yahoo! Japan Application ID from the Yahoo! Developer 
 
 = Which payment methods are included? =
 
-The plugin includes: Bank Transfer (Japanese banks), Japan Post Bank Transfer, Cash on Delivery (COD) with fee calculation, Pay at Store, Paidy (Buy Now, Pay Later), and PayPal Checkout optimized for Japan. Paidy and PayPal are also available as standalone plugins.
+The plugin includes: Bank Transfer (Japanese banks), Japan Post Bank Transfer, Cash on Delivery (COD) with fee calculation, Pay at Store, and Paidy (Buy Now, Pay Later). Paidy is also available as a standalone plugin.
 
 = Can I use only specific features and disable others? =
 
@@ -147,6 +155,20 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.16 - 2026-09-07 =
+* **Added** - Paidy onboarding callbacks can now be authenticated via an HMAC-SHA256 signature shared at application time, in addition to the one-time state token; this restores automatic API key delivery for merchants whose token had already expired or was never issued
+* **Added** - A "Back to Paidy settings" link on the onboarding "under review" screen so merchants who received their Paidy API keys separately can enter them manually without waiting for automatic delivery
+* **Security** - Fixed a replay/idempotency gap where two concurrent Paidy onboarding callbacks authorized by the same state token (without an accompanying signature) could both be processed, duplicating the credential/status update
+* **Security** - Paidy onboarding callbacks are now authenticated strictly from the signed request body; a query-string parameter could previously override a value that was actually covered by the signature
+* **Security** - Paidy onboarding callbacks for an application that is no longer the current one on record are now rejected, preventing a delayed or resent callback from overwriting a newer application's credentials
+* **Security** - The Cash on Delivery / COD2 surcharge configured for Block Checkout could be bypassed by sending an invalid payment gateway ID to the cart-update endpoint while still completing the order via COD; the gateway ID is now validated against the site's registered gateways
+* **Security** - Decrypted Paidy API secret keys are no longer duplicated in plaintext in the diagnostic `paidy_received_data` option; they remain stored (as before) in the gateway's own settings
+* **Fixed** - `wizard=false` now correctly shows the Paidy gateway's manual configuration fields
+* **Fixed** - Uninstalling the plugin now also removes the signature- and event-claim option rows created by the onboarding receiver's replay guards
+* **Fixed** - A `wp_remote_post()` failure during Paidy onboarding submission no longer also falls through to the HTTP-response-code error branch, avoiding duplicate log entries
+* **Changed** - The admin promotion notice and its "has recent orders" check are now cached for a short period instead of making an uncached remote request and database query on every wp-admin page load
+* **Changed** - Tested up to WordPress 7.1 and WooCommerce 11.1.0
 
 = 2.9.15 - 2026-07-08 =
 * **Added** - COD fee feature for the "Cash on Delivery for Subscriptions" (COD2) gateway: fee name, amount, maximum cart amount, tax settings, and a PRO tiered-fee table can now be configured on the gateway settings page
