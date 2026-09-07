@@ -97,4 +97,72 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 
 		$this->assertNull( WC()->session->get( 'jp4wc_gateway_id' ) );
 	}
+
+	/**
+	 * A place-order POST whose fee-basis gateway (a real, available, but
+	 * different gateway sent to the extension endpoint earlier) disagrees
+	 * with the payment method actually being submitted must be rejected —
+	 * even though that gateway ID individually passed the availability
+	 * check above (second-round security review finding: a valid-but-
+	 * different gateway ID still let the surcharge be dropped).
+	 */
+	public function test_reject_stale_gateway_fee_throws_on_mismatch() {
+		WC()->session->set( 'jp4wc_gateway_id', 'bacs' );
+
+		$order = new WC_Order();
+		$order->set_payment_method( 'cod' );
+
+		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+
+		$this->expectException( \Automattic\WooCommerce\StoreApi\Exceptions\RouteException::class );
+		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
+	}
+
+	/**
+	 * A place-order POST whose fee-basis gateway matches the submitted
+	 * payment method is allowed through.
+	 */
+	public function test_reject_stale_gateway_fee_allows_match() {
+		WC()->session->set( 'jp4wc_gateway_id', 'cod' );
+
+		$order = new WC_Order();
+		$order->set_payment_method( 'cod' );
+
+		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+
+		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
+		$this->addToAssertionCount( 1 ); // No exception thrown.
+	}
+
+	/**
+	 * When no jp4wc-specific override is in session, fees were calculated
+	 * from chosen_payment_method (which this same request already set to
+	 * the real gateway) — nothing to validate.
+	 */
+	public function test_reject_stale_gateway_fee_allows_empty_session() {
+		$order = new WC_Order();
+		$order->set_payment_method( 'cod' );
+
+		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+
+		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
+		$this->addToAssertionCount( 1 ); // No exception thrown.
+	}
+
+	/**
+	 * The draft-update (PUT/PATCH) flow sets the payment method before
+	 * calculating fees, so a mismatch there does not indicate a stale
+	 * fee — must not be rejected.
+	 */
+	public function test_reject_stale_gateway_fee_skips_non_post_requests() {
+		WC()->session->set( 'jp4wc_gateway_id', 'bacs' );
+
+		$order = new WC_Order();
+		$order->set_payment_method( 'cod' );
+
+		$request = new WP_REST_Request( 'PUT', '/wc/store/v1/checkout' );
+
+		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
+		$this->addToAssertionCount( 1 ); // No exception thrown.
+	}
 }
