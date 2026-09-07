@@ -634,7 +634,10 @@ class WC_Paidy_Apply_Receiver {
 			// nothing meaningful — application_id/paidy_status/keys read from
 			// query params would then be entirely unauthenticated by it — so
 			// only trust the header when there is a body for it to protect.
-			$has_signature = ( null !== $signature && '' !== $body && self::signature_matches( $timestamp, $signature, $body, $site_hash ) );
+			// get_body() returns null, not '', when no body was ever set (see
+			// get_body_only_params()), so this must use empty(), not a strict
+			// '' === comparison.
+			$has_signature = ( null !== $signature && ! empty( $body ) && self::signature_matches( $timestamp, $signature, $body, $site_hash ) );
 
 			if ( $has_signature && ! self::claim_signature( $signature ) ) {
 				// The signature was already claimed by another delivery —
@@ -675,8 +678,11 @@ class WC_Paidy_Apply_Receiver {
 		$body      = $request->get_body();
 		// See the same-named guard above: a signature over an empty body
 		// authenticates nothing about the (query-string-only) parameters a
-		// GET request would carry.
-		if ( null !== $signature && '' !== $body ) {
+		// GET request would carry. get_body() returns null (not '') for such
+		// a request, so this must use empty(), not a strict '' === comparison
+		// — otherwise a bodyless GET carrying a signature header would still
+		// enter this block and log a spurious "rejected" warning below.
+		if ( null !== $signature && ! empty( $body ) ) {
 			// Verify, then claim both the signature and the underlying
 			// business event atomically so concurrent deliveries of the same
 			// request — or a retry that carries a fresh timestamp and

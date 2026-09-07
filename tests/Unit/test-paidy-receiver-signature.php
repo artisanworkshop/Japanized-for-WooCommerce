@@ -566,6 +566,12 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 	 * A GET request (or any request with an empty raw body) is never
 	 * authorized via the signature — a signature over an empty body proves
 	 * nothing about query-string-only parameters (PR #211 review finding).
+	 *
+	 * Also confirms the request never enters the signature-verification
+	 * branch at all: WP_REST_Request::get_body() returns null (not '') for
+	 * a request that never had a body, so a strict `'' !== $body` guard
+	 * would fail to exclude it and — for this signature-only path — log a
+	 * spurious "rejected" warning (PR #211 review, second round).
 	 */
 	public function test_empty_body_is_never_authorized_via_signature() {
 		$receiver = new WC_Paidy_Apply_Receiver();
@@ -585,6 +591,11 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 		$result = $receiver->check_permissions( $request );
 		$this->assertInstanceOf( 'WP_Error', $result );
 		$this->assertSame( 'paidy_invalid_state', $result->get_error_code() );
+
+		// The "signature present but invalid" warning branch — and the
+		// throttle transient it sets — must never be reached for a request
+		// that never had a body to sign in the first place.
+		$this->assertFalse( get_transient( WC_Paidy_Apply_Receiver::SIGNATURE_WARNING_THROTTLE ) );
 	}
 
 	/**
