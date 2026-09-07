@@ -369,6 +369,28 @@ class WC_Paidy_Apply_Receiver {
 	}
 
 	/**
+	 * Extract only the parameters carried in the request body (JSON or
+	 * form-encoded), ignoring the query string, URL, and route defaults.
+	 *
+	 * The HMAC signature verified in check_permissions() covers only the
+	 * raw body, but WP_REST_Request::get_params()/get_param() merge every
+	 * parameter source — and the query string wins over the body for a
+	 * matching key. Trusting that merged view here would let an unsigned
+	 * query parameter (e.g. `?paidy_status=canceled`) override a value
+	 * that was actually signed.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @param WP_REST_Request $request request object.
+	 * @return array
+	 */
+	private static function get_body_only_params( $request ) {
+		$json_params = $request->get_json_params();
+
+		return array_merge( $request->get_body_params(), is_array( $json_params ) ? $json_params : array() );
+	}
+
+	/**
 	 * Build the business-event claim key for a request.
 	 *
 	 * Derived only from application_id, paidy_status, and the four
@@ -377,7 +399,9 @@ class WC_Paidy_Apply_Receiver {
 	 * decision produces the identical key regardless of when it is sent.
 	 * Missing fields are treated as empty strings so the key stays
 	 * deterministic even for requests that omit paidy_status or the key
-	 * fields (e.g. a bare ping).
+	 * fields (e.g. a bare ping). Read from the body only (see
+	 * get_body_only_params()) so an unsigned query parameter cannot change
+	 * which event this request is claiming.
 	 *
 	 * @since 2.9.16
 	 *
@@ -385,12 +409,13 @@ class WC_Paidy_Apply_Receiver {
 	 * @return string
 	 */
 	private static function event_claim_key( $request ) {
-		$parts = array(
-			(string) $request->get_param( 'application_id' ),
-			(string) $request->get_param( 'paidy_status' ),
+		$body_params = self::get_body_only_params( $request );
+		$parts       = array(
+			isset( $body_params['application_id'] ) ? (string) $body_params['application_id'] : '',
+			isset( $body_params['paidy_status'] ) ? (string) $body_params['paidy_status'] : '',
 		);
 		foreach ( array( 'public_live_key', 'secret_live_key', 'public_test_key', 'secret_test_key' ) as $field ) {
-			$value   = $request->get_param( $field );
+			$value   = isset( $body_params[ $field ] ) ? $body_params[ $field ] : null;
 			$parts[] = is_string( $value ) ? $value : '';
 		}
 
@@ -596,22 +621,33 @@ class WC_Paidy_Apply_Receiver {
 			// nothing meaningful — application_id/paidy_status/keys read from
 			// query params would then be entirely unauthenticated by it — so
 			// only trust the header when there is a body for it to protect.
-			if ( null !== $signature && '' !== $body && self::signature_matches( $timestamp, $signature, $body, $site_hash ) ) {
-				if ( ! self::claim_signature( $signature ) || ! self::claim_event( $request ) ) {
-					// Either the signature or the underlying business event
-					// (same application_id + paidy_status + key fields,
-					// regardless of the signature's timestamp) is already
-					// claimed — this exact request or decision was already
-					// authorized and processed (or is being processed
-					// concurrently). Reject the replay even though the state
-					// token still verifies.
+			$has_signature = ( null !== $signature && '' !== $body && self::signature_matches( $timestamp, $signature, $body, $site_hash ) );
+
+			if ( $has_signature && ! self::claim_signature( $signature ) ) {
+				// The signature was already claimed by another delivery —
+				// reject the replay even though the state token still verifies.
+				return new WP_Error(
+					'paidy_invalid_state',
+					__( 'Invalid or missing state token or signature for Paidy onboarding.', 'woocommerce-for-japan' ),
+					array( 'status' => 403 )
+				);
+			}
+
+			// Claim the underlying business event unconditionally, even when
+			// no (or no valid) signature accompanies this request. The state
+			// token is only consumed after the handler completes (see above),
+			// so without this, two concurrent state-only deliveries of the
+			// same callback would both pass this check and both run the
+			// credential/status updates.
+			if ( ! self::claim_event( $request ) ) {
+				if ( $has_signature ) {
 					self::release_signature_claim( $signature );
-					return new WP_Error(
-						'paidy_invalid_state',
-						__( 'Invalid or missing state token or signature for Paidy onboarding.', 'woocommerce-for-japan' ),
-						array( 'status' => 403 )
-					);
 				}
+				return new WP_Error(
+					'paidy_invalid_state',
+					__( 'Invalid or missing state token or signature for Paidy onboarding.', 'woocommerce-for-japan' ),
+					array( 'status' => 403 )
+				);
 			}
 			return true;
 		}
@@ -712,8 +748,11 @@ class WC_Paidy_Apply_Receiver {
 	 */
 	private function process_receive_data( $request ) {
 		try {
-			// Get POST parameters from form data.
-			$post_params = $request->get_params();
+			// Only the request body is covered by the HMAC signature verified
+			// in check_permissions() — see get_body_only_params(). Using
+			// WP_REST_Request::get_params() here would also pull in (and let
+			// override) query-string values that were never actually signed.
+			$post_params = self::get_body_only_params( $request );
 
 			// Remove WordPress internal parameters if they exist.
 			$filtered_params = array();
