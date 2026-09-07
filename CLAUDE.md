@@ -3,7 +3,7 @@
 ## Plugin Overview
 
 - **Plugin**: Japanized for WooCommerce (`woocommerce-for-japan`)
-- **Version**: 2.9.15 | **PHP**: 8.3+ | **WP**: 6.7+ | **WC**: 8.0+
+- **Version**: 2.9.16 | **PHP**: 8.3+ | **WP**: 6.7+ | **WC**: 8.0+
 - **Text Domain**: `woocommerce-for-japan`
 - **Prefix**: `jp4wc_` (functions), `JP4WC_` (constants), `JP4WC` (classes)
 - **Main files**: `woocommerce-for-japan.php`, `class-jp4wc.php`
@@ -159,3 +159,10 @@ Gateway classes in `includes/gateways/`. Each extends `WC_Payment_Gateway`. Bloc
 - `WP_REST_Request::get_params()`/`get_param()` merge the query string on top of the parsed body, and a query value *overrides* a same-named body value — for any HMAC/signature-verified endpoint, read only `get_json_params()`/`get_body_params()` for values the signature actually covers; the query string was never part of what was signed.
 - Not every gateway module's options use the `wc4jp-` prefix — a payment gateway can have its own established naming scheme distinct from both `wc4jp-` and `jp4wc_` (e.g. Paidy's `paidy_*` options, present since v2.7.0). Check sibling options in the same file before flagging a missing `wc4jp-` prefix as a bug.
 - Before running `msgmerge --update` on `i18n/*.po` inside a feature/fix PR, diff it against the current `.pot` first. A `.po` that hasn't been resynced in a while will also prune long-obsolete entries and reflow the whole file on merge, bloating an unrelated PR by 1000+ lines — add only the new/changed msgids by hand instead and leave a full resync for a dedicated POT-regen PR.
+- WooCommerce Store API's checkout POST calculates cart fees (`woocommerce_cart_calculate_fees`, via `calculate_totals()`) *before* it sets the order's final payment method from the request (`woocommerce_store_api_checkout_update_order_from_request` fires after) — code that needs the order's real, final payment method to decide a fee must validate post-hoc in that later action, not trust session state read during fee calculation.
+- A custom action fired synchronously from an early `init`-priority callback (e.g. version-upgrade detection at priority 5) will never reach a listener only registered when a class is lazily instantiated at a later `init` priority (e.g. via its constructor, hooked at the default priority 10) — register such listeners at file-load time instead.
+- `wc_get_orders()`'s `customer_id` must be a real numeric ID — a non-numeric string (e.g. a synthetic guest identifier) coerces to `0`, meaning "no assigned customer," silently pulling in unrelated orders instead of matching none.
+- Client-controlled input used as an array offset (`$array[$input]`) needs an explicit `is_string()`/`is_int()` check, not just `empty()` — a non-empty array/object bypasses `empty()` and crashes with a TypeError instead of being safely rejected.
+- `WC()->payment_gateways` can be `null` depending on init order — guard with `WC()->payment_gateways ? WC()->payment_gateways->get_available_payment_gateways() : array()` (established pattern in `class-jp4wc-cod-fee.php`).
+- `WC_Order::needs_payment()` is `false` for a 0-total order (e.g. fully covered by a coupon), and WC core sets `payment_method` to `''` for such orders regardless of any gateway selected earlier in the session — code comparing against an order's payment method must exempt orders where `needs_payment()` is false.
+- Don't take a readme "External Services" disclosure's stated activation condition at face value — verify against the actual code. This plugin shipped inaccurate claims 3 times in one release cycle: a bundled fallback API key that fires regardless of merchant configuration, a data-collecting intermediary domain distinct from the payment API domain, and a tracking override flag that bypasses the opt-in setting entirely.
