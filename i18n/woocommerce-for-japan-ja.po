@@ -499,6 +499,10 @@ msgstr "道玄坂2-1"
 msgid "Shibuya Ku"
 msgstr "渋谷区"
 
+#: includes/class-jp4wc-cod-fee-handler.php:162
+msgid "Your selected payment method changed. Please refresh and try again."
+msgstr "お支払い方法が変更されました。ページを再読み込みしてやり直してください。"
+
 #: includes/class-jp4wc-cod-fee.php:104 assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/PaymentSettings.js:129
 msgid "Extra charge for COD method"
