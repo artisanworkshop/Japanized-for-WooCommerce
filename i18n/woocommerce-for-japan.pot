@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-08T05:44:29+00:00\n"
+"POT-Creation-Date: 2026-09-07T05:49:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 
@@ -1318,32 +1318,38 @@ msgstr ""
 msgid "Paidy On Boarding"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:202
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:560
 msgid "Paidy onboarding is not configured."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:212
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:570
 msgid "Invalid application ID format."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:228
-msgid "Invalid or missing state token for Paidy onboarding."
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:590
+msgid "This callback is for an application that is no longer the current one."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:631
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:648
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:712
+msgid "Invalid or missing state token or signature for Paidy onboarding."
 msgstr ""
 
 #. translators: %s: API key field name
-#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:311
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:817
 #, php-format
 msgid "Invalid base64 encoding for field: %s"
 msgstr ""
 
 #. translators: %s: API key field name
-#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:324
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:830
 #, php-format
 msgid "Decryption failed for field: %s"
 msgstr ""
 
 #. translators: %s: API key field name
-#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:363
+#: includes/gateways/paidy/class-wc-paidy-apply-receiver.php:869
 #, php-format
 msgid "Approved response is missing a required API key field: %s"
 msgstr ""
@@ -2147,128 +2153,135 @@ msgstr ""
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:36
-#: src/js/paidy/main-hooks/form-info.jsx:137
+#: src/js/paidy/main-hooks/form-info.jsx:141
 msgid "Status: Under review"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:39
-#: src/js/paidy/main-hooks/form-info.jsx:140
+#: src/js/paidy/main-hooks/form-info.jsx:144
 msgid "Thank you for your application. We will notify you of the results via email and dashboard."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:46
-#: src/js/paidy/main-hooks/form-info.jsx:147
-msgid "The review process may take up to 5 business days."
+#: src/js/paidy/admin/components/index.js:47
+#: src/js/paidy/main-hooks/form-info.jsx:152
+msgid "Application ID:"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/admin/components/index.js:52
-#: src/js/paidy/main-hooks/form-info.jsx:153
+#: src/js/paidy/main-hooks/form-info.jsx:157
+msgid "The review process may take up to 5 business days."
+msgstr ""
+
+#: assets/js/build/paidy/admin/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/admin/components/index.js:58
+#: src/js/paidy/main-hooks/form-info.jsx:163
 msgid "Inquiries regarding screening: sales@paidy.com"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:167
+#: src/js/paidy/main-hooks/form-info.jsx:188
 msgid "Status: The review was rejected"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:114
-#: src/js/paidy/main-hooks/form-info.jsx:174
+#: src/js/paidy/admin/components/index.js:120
+#: src/js/paidy/main-hooks/form-info.jsx:195
 msgid "After careful and repeated review, we regret to inform you that we have decided to postpone the transaction at this time."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:120
-#: src/js/paidy/main-hooks/form-info.jsx:180
+#: src/js/paidy/admin/components/index.js:126
+#: src/js/paidy/main-hooks/form-info.jsx:201
 msgid "We sincerely apologize for not being able to meet your expectations."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:126
-#: src/js/paidy/main-hooks/form-info.jsx:186
+#: src/js/paidy/admin/components/index.js:132
+#: src/js/paidy/main-hooks/form-info.jsx:207
 msgid "Please understand that we cannot provide details about the content of the review."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:230
+#: src/js/paidy/main-hooks/form-info.jsx:251
 msgid "Now test mode"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:236
+#: src/js/paidy/main-hooks/form-info.jsx:257
 msgid "Enable test mode"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:328
-#: src/js/paidy/main-hooks/form-info.jsx:357
+#: src/js/paidy/main-hooks/form-info.jsx:349
+#: src/js/paidy/main-hooks/form-info.jsx:378
 msgid "Error enabling Paidy"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:376
-#: src/js/paidy/main-hooks/form-info.jsx:442
+#: src/js/paidy/main-hooks/form-info.jsx:397
+#: src/js/paidy/main-hooks/form-info.jsx:463
 msgid "Enable production mode"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:390
+#: src/js/paidy/main-hooks/form-info.jsx:411
 msgid "Status: The review approved"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:70
-#: src/js/paidy/main-hooks/form-info.jsx:396
+#: src/js/paidy/admin/components/index.js:76
+#: src/js/paidy/main-hooks/form-info.jsx:417
 msgid "The review has been completed and the merchant agreement has been concluded."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:76
-#: src/js/paidy/main-hooks/form-info.jsx:401
+#: src/js/paidy/admin/components/index.js:82
+#: src/js/paidy/main-hooks/form-info.jsx:422
 msgid "For terms of use, please check the terms and conditions notification email sent by Paidy Inc."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:83
-#: src/js/paidy/main-hooks/form-info.jsx:408
+#: src/js/paidy/admin/components/index.js:89
+#: src/js/paidy/main-hooks/form-info.jsx:429
 msgid "We recommend setting the Webhook URL in the Paidy merchant management screen before publishing in production mode. Set the Webhook URL to the following value."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:89
-#: src/js/paidy/main-hooks/form-info.jsx:414
+#: src/js/paidy/admin/components/index.js:95
+#: src/js/paidy/main-hooks/form-info.jsx:435
 msgid "[Common for test and production]"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:96
-#: src/js/paidy/main-hooks/form-info.jsx:421
+#: src/js/paidy/admin/components/index.js:102
+#: src/js/paidy/main-hooks/form-info.jsx:442
 msgid "Please refer to the manual for information on the Paidy merchant management screen."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:429
+#: src/js/paidy/main-hooks/form-info.jsx:450
 msgid "Please click one of the buttons below."
 msgstr ""
 
@@ -2276,92 +2289,92 @@ msgstr ""
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/form-info.jsx:319
-#: src/js/paidy/main-hooks/on-boarding-settings.js:308
+#: src/js/paidy/main-hooks/form-info.jsx:340
+#: src/js/paidy/main-hooks/on-boarding-settings.js:314
 msgid "Settings saved."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:457
+#: src/js/paidy/main-hooks/form-info.jsx:478
 msgid "Paidy test payments enabled"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:460
+#: src/js/paidy/main-hooks/form-info.jsx:481
 msgid "You can now test Paidy payments."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:465
+#: src/js/paidy/main-hooks/form-info.jsx:486
 msgid "Please check the test payment flow."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:474
+#: src/js/paidy/main-hooks/form-info.jsx:495
 msgid "Paidy test payment flow"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:477
+#: src/js/paidy/main-hooks/form-info.jsx:498
 msgid "After confirming the test payment, please switch to production mode."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:490
+#: src/js/paidy/main-hooks/form-info.jsx:511
 msgid "Paidy Payments is now live"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:113
+#: src/js/paidy/main-hooks/on-boarding-settings.js:115
 #: src/js/paidy/wizard/components/controls.jsx:12
 msgid "Trade name / Store name"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:117
+#: src/js/paidy/main-hooks/on-boarding-settings.js:119
 #: src/js/paidy/wizard/components/controls.jsx:24
 msgid "Your EC site name"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:121
+#: src/js/paidy/main-hooks/on-boarding-settings.js:123
 #: src/js/paidy/wizard/components/controls.jsx:37
 msgid "Store URL"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:125
+#: src/js/paidy/main-hooks/on-boarding-settings.js:127
 #: src/js/paidy/wizard/components/controls.jsx:47
 msgid "Email address for registering Paidy"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:132
+#: src/js/paidy/main-hooks/on-boarding-settings.js:134
 #: src/js/paidy/wizard/components/controls.jsx:60
 msgid "Contact phone number"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:136
+#: src/js/paidy/main-hooks/on-boarding-settings.js:138
 #: src/js/paidy/wizard/components/controls.jsx:71
 msgid "Representative (last name)"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:143
+#: src/js/paidy/main-hooks/on-boarding-settings.js:145
 #: src/js/paidy/wizard/components/controls.jsx:84
 msgid "Representative (first name)"
 msgstr ""
@@ -2370,8 +2383,8 @@ msgstr ""
 #: assets/js/build/paidy/admin/paidy.js:2
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:150
-#: src/js/paidy/main-hooks/on-boarding-settings.js:196
+#: src/js/paidy/main-hooks/on-boarding-settings.js:152
+#: src/js/paidy/main-hooks/on-boarding-settings.js:198
 #: src/js/paidy/wizard/components/controls.jsx:97
 msgid "Representative (last name kana)"
 msgstr ""
@@ -2380,15 +2393,15 @@ msgstr ""
 #: assets/js/build/paidy/admin/paidy.js:2
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:157
-#: src/js/paidy/main-hooks/on-boarding-settings.js:203
+#: src/js/paidy/main-hooks/on-boarding-settings.js:159
+#: src/js/paidy/main-hooks/on-boarding-settings.js:205
 #: src/js/paidy/wizard/components/controls.jsx:114
 msgid "Representative (first name kana)"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:164
+#: src/js/paidy/main-hooks/on-boarding-settings.js:166
 #: src/js/paidy/wizard/components/controls.jsx:131
 msgid "Representative's date of birth (Gregorian calendar)"
 msgstr ""
@@ -2396,7 +2409,7 @@ msgstr ""
 #. translators: %s: field label name
 #: assets/js/build/paidy/admin/paidy.js:2
 #: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:175
+#: src/js/paidy/main-hooks/on-boarding-settings.js:177
 #, js-format
 msgid "%s is a required field. Please enter it."
 msgstr ""
@@ -2404,26 +2417,26 @@ msgstr ""
 #. translators: %s: field label name
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:214
+#: src/js/paidy/main-hooks/on-boarding-settings.js:216
 #, js-format
 msgid "%s must be in full-width katakana. Please confirm."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:236
+#: src/js/paidy/main-hooks/on-boarding-settings.js:238
 msgid "When selecting \"No\" for the security survey question, please provide additional details in the text field."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:253
+#: src/js/paidy/main-hooks/on-boarding-settings.js:255
 msgid "Since none of the security measures are implemented, please provide details about your security approach in the additional information field."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:264
+#: src/js/paidy/main-hooks/on-boarding-settings.js:266
 msgid "Please fill in all the fields."
 msgstr ""
 
@@ -2440,7 +2453,7 @@ msgstr ""
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:4
 #: src/js/paidy/admin/onboarding-step/index.js:69
-#: src/js/paidy/wizard/components/first-main-page.jsx:462
+#: src/js/paidy/wizard/components/first-main-page.jsx:463
 msgid "Learn more about Paidy"
 msgstr ""
 
@@ -2527,6 +2540,18 @@ msgstr ""
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: src/js/paidy/main-hooks/form-info.jsx:122
 msgid "Our company (Shokunin Kobo LLC) will provide personal information to third parties when disclosing such information for purposes such as member store screening by payment companies."
+msgstr ""
+
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: src/js/paidy/main-hooks/form-info.jsx:170
+msgid "If you have received your API keys separately, you can enter them manually without waiting for the automatic delivery."
+msgstr ""
+
+#: assets/js/build/paidy/wizard/paidy.js:1
+#: assets/js/build/paidy/wizard/paidy.js:5
+#: src/js/paidy/main-hooks/form-info.jsx:177
+#: src/js/paidy/wizard/index.js:10
+msgid "Back to Paidy settings"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
@@ -2677,159 +2702,154 @@ msgid "I agree to the above and apply"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:152
+#: src/js/paidy/wizard/components/first-main-page.jsx:153
 msgid "Basic information"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:221
+#: src/js/paidy/wizard/components/first-main-page.jsx:222
 msgid "Security survey"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:224
+#: src/js/paidy/wizard/components/first-main-page.jsx:225
 msgid "Based on requests from the Ministry of Economy, Trade and Industry and the Japan Consumer Credit Association, all e-commerce affiliates are required to declare the status of their own security measures when joining. Please answer the following questions."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:231
+#: src/js/paidy/wizard/components/first-main-page.jsx:232
 msgid "For details, please refer to <link>the Security Measures Status Declaration Form FAQ.</link>"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:247
+#: src/js/paidy/wizard/components/first-main-page.jsx:248
 msgid "*If the system has not yet been built, please declare the check items for each security measure on the assumption that they will be satisfied once the system is built."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:255
+#: src/js/paidy/wizard/components/first-main-page.jsx:256
 msgid "[Measures to prevent leakage of cardholder data]"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:261
+#: src/js/paidy/wizard/components/first-main-page.jsx:262
 msgid "Administrator screen access restrictions and administrator ID/PW management"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:280
+#: src/js/paidy/wizard/components/first-main-page.jsx:281
 msgid "[Countermeasures against unauthorized logins]"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:286
+#: src/js/paidy/wizard/components/first-main-page.jsx:287
 msgid "*At least one \"Yes\" is required. If any are missing, we will contact you."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:293
+#: src/js/paidy/wizard/components/first-main-page.jsx:294
 msgid "Do you take the following measures to prevent unauthorized logins when changing a user's attributes?"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:329
+#: src/js/paidy/wizard/components/first-main-page.jsx:330
 msgid "Questionnaire"
 msgstr ""
 
 #. translators: %s: plugin name
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:411
+#: src/js/paidy/wizard/components/first-main-page.jsx:412
 #, js-format
 msgid "Easy Paidy setup now available with %s!"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:419
+#: src/js/paidy/wizard/components/first-main-page.jsx:420
 msgid "Right now, we are offering a one-month trial with no payment fees!"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:440
+#: src/js/paidy/wizard/components/first-main-page.jsx:441
 msgid "What is Paidy?"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:442
+#: src/js/paidy/wizard/components/first-main-page.jsx:443
 msgid "Paidy is a deferred payment service that can be used without the need for a credit card."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:447
+#: src/js/paidy/wizard/components/first-main-page.jsx:448
 msgid "Customers can make purchases with just their mobile phone number and email address."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:452
+#: src/js/paidy/wizard/components/first-main-page.jsx:453
 msgid "Payment can be made from the following month onwards via convenience store, bank or direct debit."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:457
+#: src/js/paidy/wizard/components/first-main-page.jsx:458
 msgid "We respond to the desire to \"buy now.\""
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:471
+#: src/js/paidy/wizard/components/first-main-page.jsx:472
 msgid "Benefits of implementation (for EC businesses)"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:476
+#: src/js/paidy/wizard/components/first-main-page.jsx:477
 msgid "No credit card registration is required, making it easy for new customers to make purchases with confidence."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:481
+#: src/js/paidy/wizard/components/first-main-page.jsx:482
 msgid "Installment payments are also supported, which is expected to increase the success rate of high-priced products."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:486
+#: src/js/paidy/wizard/components/first-main-page.jsx:487
 msgid "*Free installment fees only apply when paying by direct debit or bank transfer. Identity verification and app download required."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:491
+#: src/js/paidy/wizard/components/first-main-page.jsx:492
 msgid "Currently used on over 700,000 websites nationwide, including Amazon. Industry-leading track record."
 msgstr ""
 
 #. translators: %s: plugin name
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:502
+#: src/js/paidy/wizard/components/first-main-page.jsx:503
 #, js-format
 msgid "%s * Paidy"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:507
+#: src/js/paidy/wizard/components/first-main-page.jsx:508
 msgid "With this update, Paidy can now be installed in as little as 30 seconds!"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:512
+#: src/js/paidy/wizard/components/first-main-page.jsx:513
 msgid "No initial or monthly fees."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:517
+#: src/js/paidy/wizard/components/first-main-page.jsx:518
 msgid "The review process is completed in as little as 1-2 days, and setup is easy."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:530
+#: src/js/paidy/wizard/components/first-main-page.jsx:531
 msgid "pass this time"
 msgstr ""
 
-#: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/index.js:10
-msgid "Back to Paidy settings"
-msgstr ""
-
-#: src/js/paidy/admin/components/index.js:67
+#: src/js/paidy/admin/components/index.js:73
 msgid "Status: Approved"
 msgstr ""
 
-#: src/js/paidy/admin/components/index.js:110
+#: src/js/paidy/admin/components/index.js:116
 msgid "Status: Rejected"
 msgstr ""
 
