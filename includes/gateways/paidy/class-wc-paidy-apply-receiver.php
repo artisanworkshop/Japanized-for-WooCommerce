@@ -92,6 +92,42 @@ class WC_Paidy_Apply_Receiver {
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+		add_action( 'jp4wc_updated', array( __CLASS__, 'redact_stored_secrets_on_upgrade' ) );
+	}
+
+	/**
+	 * Redact secret API keys already stored in paidy_received_data from a
+	 * version prior to 2.9.16.
+	 *
+	 * This option started being written with the two secret fields
+	 * redacted in 2.9.16 (see process_receive_data()), but that only takes
+	 * effect the next time an onboarding callback arrives — normally a
+	 * one-time event — so a store that completed onboarding on an earlier
+	 * version would otherwise keep the plaintext secrets in this option
+	 * indefinitely after upgrading. Runs once per upgrade via
+	 * JP4WC_Install's `jp4wc_updated` action.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return void
+	 */
+	public static function redact_stored_secrets_on_upgrade() {
+		$received_data = get_option( 'paidy_received_data' );
+		if ( ! is_array( $received_data ) ) {
+			return;
+		}
+
+		$changed = false;
+		foreach ( array( 'secret_live_key', 'secret_test_key' ) as $secret_field ) {
+			if ( isset( $received_data[ $secret_field ] ) && '' !== $received_data[ $secret_field ] && '[redacted]' !== $received_data[ $secret_field ] ) {
+				$received_data[ $secret_field ] = '[redacted]';
+				$changed                        = true;
+			}
+		}
+
+		if ( $changed ) {
+			update_option( 'paidy_received_data', $received_data, false );
+		}
 	}
 
 	/**

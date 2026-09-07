@@ -690,4 +690,67 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'WP_REST_Response', $result );
 		$this->assertSame( 200, $result->get_status() );
 	}
+
+	/**
+	 * redact_stored_secrets_on_upgrade() must redact plaintext secret keys
+	 * left over from before 2.9.16 (PR review, second round: the redaction
+	 * added on the write path only takes effect the next time an
+	 * onboarding callback arrives, normally a one-time event, so stores
+	 * that already completed onboarding would otherwise keep the
+	 * plaintext copy indefinitely after upgrading).
+	 */
+	public function test_redact_stored_secrets_on_upgrade_redacts_plaintext() {
+		update_option(
+			'paidy_received_data',
+			array(
+				'application_id'  => 'WC000000571',
+				'public_live_key' => 'pk_live_xxx',
+				'secret_live_key' => 'sk_live_xxx',
+				'public_test_key' => 'pk_test_xxx',
+				'secret_test_key' => 'sk_test_xxx',
+			),
+			false
+		);
+
+		WC_Paidy_Apply_Receiver::redact_stored_secrets_on_upgrade();
+
+		$received_data = get_option( 'paidy_received_data' );
+		$this->assertSame( '[redacted]', $received_data['secret_live_key'] );
+		$this->assertSame( '[redacted]', $received_data['secret_test_key'] );
+		// Non-secret fields are left untouched.
+		$this->assertSame( 'pk_live_xxx', $received_data['public_live_key'] );
+		$this->assertSame( 'WC000000571', $received_data['application_id'] );
+	}
+
+	/**
+	 * A missing paidy_received_data option (never onboarded, or already
+	 * cleared) is a no-op.
+	 */
+	public function test_redact_stored_secrets_on_upgrade_handles_missing_option() {
+		delete_option( 'paidy_received_data' );
+
+		WC_Paidy_Apply_Receiver::redact_stored_secrets_on_upgrade();
+
+		$this->assertFalse( get_option( 'paidy_received_data' ) );
+	}
+
+	/**
+	 * Already-redacted data (stores onboarded on 2.9.16+) is left as is.
+	 */
+	public function test_redact_stored_secrets_on_upgrade_is_idempotent() {
+		update_option(
+			'paidy_received_data',
+			array(
+				'secret_live_key' => '[redacted]',
+				'secret_test_key' => '[redacted]',
+			),
+			false
+		);
+
+		WC_Paidy_Apply_Receiver::redact_stored_secrets_on_upgrade();
+
+		$received_data = get_option( 'paidy_received_data' );
+		$this->assertSame( '[redacted]', $received_data['secret_live_key'] );
+		$this->assertSame( '[redacted]', $received_data['secret_test_key'] );
+	}
 }
