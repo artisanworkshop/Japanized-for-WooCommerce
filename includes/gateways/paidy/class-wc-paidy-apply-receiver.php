@@ -95,6 +95,41 @@ class WC_Paidy_Apply_Receiver {
 	}
 
 	/**
+	 * Redact secret API keys already stored in paidy_received_data from a
+	 * version prior to 2.9.16.
+	 *
+	 * This option started being written with the two secret fields
+	 * redacted in 2.9.16 (see process_receive_data()), but that only takes
+	 * effect the next time an onboarding callback arrives — normally a
+	 * one-time event — so a store that completed onboarding on an earlier
+	 * version would otherwise keep the plaintext secrets in this option
+	 * indefinitely after upgrading. Runs once per upgrade via
+	 * JP4WC_Install's `jp4wc_updated` action.
+	 *
+	 * @since 2.9.16
+	 *
+	 * @return void
+	 */
+	public static function redact_stored_secrets_on_upgrade() {
+		$received_data = get_option( 'paidy_received_data' );
+		if ( ! is_array( $received_data ) ) {
+			return;
+		}
+
+		$changed = false;
+		foreach ( array( 'secret_live_key', 'secret_test_key' ) as $secret_field ) {
+			if ( isset( $received_data[ $secret_field ] ) && '' !== $received_data[ $secret_field ] && '[redacted]' !== $received_data[ $secret_field ] ) {
+				$received_data[ $secret_field ] = '[redacted]';
+				$changed                        = true;
+			}
+		}
+
+		if ( $changed ) {
+			update_option( 'paidy_received_data', $received_data, false );
+		}
+	}
+
+	/**
 	 * Get the lifetime of an onboarding state token in seconds.
 	 *
 	 * @return int TTL in seconds.
@@ -927,18 +962,31 @@ class WC_Paidy_Apply_Receiver {
 				}
 			}
 
-			// Save data to wp_option.
+			// Save data to wp_option, redacting the decrypted secret keys first.
+			// They are already stored (and actually used) in
+			// woocommerce_paidy_settings above; this option is a write-only
+			// diagnostic record with no other reader in the codebase, so a
+			// second plaintext copy of the secrets would only widen the
+			// at-rest exposure surface for no functional benefit. Redaction
+			// is deterministic, so the idempotency check below is unaffected.
+			$loggable_params = $filtered_params;
+			foreach ( array( 'secret_live_key', 'secret_test_key' ) as $secret_field ) {
+				if ( isset( $loggable_params[ $secret_field ] ) && '' !== $loggable_params[ $secret_field ] ) {
+					$loggable_params[ $secret_field ] = '[redacted]';
+				}
+			}
+
 			// update_option() returns false both when the save fails AND when the stored
-			// value is already identical to $filtered_params (no-change). Treat the
+			// value is already identical to $loggable_params (no-change). Treat the
 			// no-change case as success so retries with an identical payload do not
 			// incorrectly return a 500 and skip consuming the one-time state token.
-			$saved = update_option( 'paidy_received_data', $filtered_params, false );
+			$saved = update_option( 'paidy_received_data', $loggable_params, false );
 			if ( false === $saved ) {
-				if ( get_option( 'paidy_received_data' ) === $filtered_params ) {
+				if ( get_option( 'paidy_received_data' ) === $loggable_params ) {
 					$saved = true; // Value already identical — treat as success.
 				} else {
 					// Option does not exist yet — create it.
-					$saved = add_option( 'paidy_received_data', $filtered_params, '', 'no' );
+					$saved = add_option( 'paidy_received_data', $loggable_params, '', 'no' );
 				}
 			}
 			// Check if the data was saved successfully.
@@ -1004,3 +1052,12 @@ class WC_Paidy_Apply_Receiver {
 		return delete_option( 'received_data' );
 	}
 }
+
+// Registered at file-load time, not from the constructor: this file is
+// require_once'd unconditionally before 'init' fires, but the receiver
+// itself is only instantiated on 'init' at the default priority (10) —
+// after JP4WC_Install::check_version() (priority 5) has already run and,
+// on the one request that detects an upgrade, already fired
+// 'jp4wc_updated'. Registering from the constructor would attach this
+// listener too late to ever catch that action (PR review, third round).
+add_action( 'jp4wc_updated', array( 'WC_Paidy_Apply_Receiver', 'redact_stored_secrets_on_upgrade' ) );

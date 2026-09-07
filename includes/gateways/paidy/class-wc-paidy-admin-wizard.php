@@ -439,7 +439,6 @@ class WC_Paidy_Admin_Wizard {
 		);
 		$response   = wp_remote_post( $wcartws_api_url, $args );
 
-		$result = true;
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			wc_get_logger()->error(
@@ -449,8 +448,12 @@ class WC_Paidy_Admin_Wizard {
 			// Clean up the state token: the POST never reached the intermediary,
 			// so the receiver callback will never arrive to consume it.
 			WC_Paidy_Apply_Receiver::consume_state_token( $state_token );
-			$result = false;
+			return false;
 		}
+
+		// wp_remote_retrieve_response_code() returns '' for a WP_Error, which the
+		// case above already returned on — a raw response array is guaranteed here.
+		$result        = true;
 		$response_code = wp_remote_retrieve_response_code( $response );
 		if ( 403 === $response_code || $response_code < 200 || $response_code >= 300 ) {
 			wc_get_logger()->error(
