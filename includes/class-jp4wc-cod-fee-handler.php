@@ -89,7 +89,11 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 				return;
 			}
 
-			$available_gateways = WC()->payment_gateways->get_available_payment_gateways();
+			// WC()->payment_gateways can be null depending on initialization
+			// order (guarded the same way in jp4wc_calculate_order_totals(),
+			// see class-jp4wc-cod-fee.php) — this Store API callback can run
+			// before it's set up.
+			$available_gateways = WC()->payment_gateways ? WC()->payment_gateways->get_available_payment_gateways() : array();
 			if ( ! isset( $available_gateways[ $data['gateway_id'] ] ) ) {
 				WC()->session->__unset( 'jp4wc_gateway_id' );
 				return;
