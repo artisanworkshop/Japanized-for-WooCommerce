@@ -538,37 +538,63 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			}
 		}
 
-		// Get the latest order.
-		$args               = array(
-			'customer_id' => $user_id,
-			'status'      => 'completed',
-			'orderby'     => 'date',
-			'order'       => 'DESC',
-		);
-		$orders             = wc_get_orders( $args );
-		$total_order_amount = 0;
-		$order_count        = 0;
-		foreach ( $orders as $each_order ) {
-			if ( $each_order->get_payment_method() !== $this->id ) {
-				$selected_orders[]   = $each_order;
-				$total_order_amount += $each_order->get_total();
-				++$order_count;
-			}
-		}
-		if ( isset( $selected_orders[1] ) ) {
-			foreach ( $selected_orders as $each_order ) {
-				if ( end( $selected_orders ) === $each_order ) {
-					$latest_order = $each_order;
+		// Get the latest order. This page reloads on every retry of the
+		// Paidy widget, so cache the per-customer risk-signal values
+		// briefly — a few minutes of staleness doesn't affect the values
+		// sent to Paidy below, but avoids refetching and re-hydrating the
+		// customer's full completed-order history on every reload. Only
+		// scalar values are cached (never WC_Order objects — they aren't
+		// safe/meaningful to serialize into a transient).
+		$order_history_cache_key = 'jp4wc_paidy_order_history_' . $user_id;
+		$order_history           = get_transient( $order_history_cache_key );
+		if ( false === $order_history ) {
+			$args   = array(
+				'customer_id' => $user_id,
+				'status'      => 'completed',
+				'orderby'     => 'date',
+				'order'       => 'DESC',
+			);
+			$orders = wc_get_orders( $args );
+
+			$total_order_amount = 0;
+			$order_count        = 0;
+			$selected_orders    = array();
+			foreach ( $orders as $each_order ) {
+				if ( $each_order->get_payment_method() !== $this->id ) {
+					$selected_orders[]   = $each_order;
+					$total_order_amount += $each_order->get_total();
+					++$order_count;
 				}
 			}
-		} elseif ( isset( $selected_orders ) ) {
-			$latest_order = $selected_orders[0];
-		} else {
-			$latest_order = null;
+			if ( isset( $selected_orders[1] ) ) {
+				$latest_order = end( $selected_orders );
+			} elseif ( isset( $selected_orders[0] ) ) {
+				$latest_order = $selected_orders[0];
+			} else {
+				$latest_order = null;
+			}
+			if ( isset( $latest_order ) ) {
+				$latest_order_total = $latest_order->get_total();
+				$latest_order_date  = $latest_order->get_date_created()->date( 'Y-m-d H:i:s' );
+			} else {
+				$latest_order_total = null;
+				$latest_order_date  = null;
+			}
+
+			$order_history = array(
+				'total_order_amount' => $total_order_amount,
+				'order_count'        => $order_count,
+				'latest_order_total' => $latest_order_total,
+				'latest_order_date'  => $latest_order_date,
+			);
+			set_transient( $order_history_cache_key, $order_history, 5 * MINUTE_IN_SECONDS );
 		}
-		if ( isset( $latest_order ) ) {
-			$last_order_amount = $latest_order->get_total();
-			$day1              = strtotime( $latest_order->get_date_created() );
+		$total_order_amount = $order_history['total_order_amount'];
+		$order_count        = $order_history['order_count'];
+
+		if ( null !== $order_history['latest_order_date'] ) {
+			$last_order_amount = $order_history['latest_order_total'];
+			$day1              = strtotime( $order_history['latest_order_date'] );
 			$day2              = strtotime( date_i18n( 'Y-m-d H:i:s' ) );
 			$diff_day          = floor( ( $day2 - $day1 ) / ( 60 * 60 * 24 ) );
 			if ( $diff_day <= 0 ) {
