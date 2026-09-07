@@ -130,7 +130,11 @@ const AgreementInfo = () => {
 	);
 };
 
-const ApplyCompletedMessage = () => {
+const ApplyCompletedMessage = ( { applicationId = '' } ) => {
+	const nonWizardUrl =
+		window.paidyForWcSettings?.nonWizardUrl ||
+		'/wp-admin/admin.php?page=wc-settings&tab=checkout&section=paidy&wizard=false';
+
 	return (
 		<div className="paidy-completed-message">
 			<Heading level={ 3 }>
@@ -143,6 +147,12 @@ const ApplyCompletedMessage = () => {
 				) }
 			</p>
 			<ul>
+				{ applicationId && (
+					<li>
+						{ __( 'Application ID:', 'woocommerce-for-japan' ) }{ ' ' }
+						<code>{ applicationId }</code>
+					</li>
+				) }
 				<li>
 					{ __(
 						'The review process may take up to 5 business days.',
@@ -156,6 +166,17 @@ const ApplyCompletedMessage = () => {
 					) }
 				</li>
 			</ul>
+			<p>
+				{ __(
+					'If you have received your API keys separately, you can enter them manually without waiting for the automatic delivery.',
+					'woocommerce-for-japan'
+				) }
+			</p>
+			<p>
+				<a href={ nonWizardUrl } rel="noreferrer">
+					{ __( 'Back to Paidy settings', 'woocommerce-for-japan' ) }
+				</a>
+			</p>
 		</div>
 	);
 };

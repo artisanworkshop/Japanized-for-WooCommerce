@@ -6,6 +6,7 @@ import { useDispatch } from '@wordpress/data';
 
 const useOnBoardingSettings = () => {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ applicationId, setApplicationId ] = useState( '' );
 	const [ storeName, setStoreName ] = useState();
 	const [ siteName, setSiteName ] = useState();
 	const [ storeUrl, setStoreUrl ] = useState();
@@ -51,6 +52,7 @@ const useOnBoardingSettings = () => {
 				settings.woocommerce_paidy_on_boarding_settings;
 
 			setCurrentStep( Number( onBoardingSettings.currentStep || 0 ) );
+			setApplicationId( settings.paidy_application_id || '' );
 			setStoreName( onBoardingSettings.storeName || '' );
 			setSiteName( onBoardingSettings.siteName || '' );
 			setStoreUrl( onBoardingSettings.storeUrl || '' );
@@ -303,7 +305,11 @@ const useOnBoardingSettings = () => {
 					securitySurvey09RadioControl,
 				},
 			},
-		} ).then( () => {
+		} ).then( ( settings ) => {
+			// The application ID is assigned by the intermediary while the
+			// settings POST is processed server-side, so it is already in the
+			// response of the same request.
+			setApplicationId( settings?.paidy_application_id || '' );
 			createSuccessNotice(
 				__( 'Settings saved.', 'woocommerce-for-japan' )
 			);
@@ -313,6 +319,7 @@ const useOnBoardingSettings = () => {
 	return {
 		currentStep,
 		setCurrentStep,
+		applicationId,
 		storeName,
 		setStoreName,
 		siteName,

@@ -7,7 +7,7 @@ import {
 import { useOnBoardingSettings } from '../../main-hooks/on-boarding-settings';
 
 export const OnBoardingStep = () => {
-	const { currentStep } = useOnBoardingSettings();
+	const { currentStep, applicationId } = useOnBoardingSettings();
 	const paidyAdUrl =
 		window.paidyForWcSettings?.paidyAdUrl ||
 		'https://paidy.com/campaign/merchant/202404_WW';
@@ -19,7 +19,7 @@ export const OnBoardingStep = () => {
 		return (
 			<div>
 				<PaidyTitle />
-				<UnderReviewMessage />
+				<UnderReviewMessage applicationId={ applicationId } />
 			</div>
 		);
 	} else if ( currentStep === 3 ) {

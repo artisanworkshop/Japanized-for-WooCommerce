@@ -29,7 +29,7 @@ const ApplyButton = ( { onClick } ) => {
 	);
 };
 
-const UnderReviewMessage = () => {
+const UnderReviewMessage = ( { applicationId = '' } ) => {
 	return (
 		<div className="paidy-completed-message">
 			<Heading level={ 3 }>
@@ -42,6 +42,12 @@ const UnderReviewMessage = () => {
 				) }
 			</p>
 			<ul>
+				{ applicationId && (
+					<li>
+						{ __( 'Application ID:', 'woocommerce-for-japan' ) }{ ' ' }
+						<code>{ applicationId }</code>
+					</li>
+				) }
 				<li>
 					{ __(
 						'The review process may take up to 5 business days.',
