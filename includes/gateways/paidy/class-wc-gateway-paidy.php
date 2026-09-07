@@ -545,8 +545,24 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		// customer's full completed-order history on every reload. Only
 		// scalar values are cached (never WC_Order objects — they aren't
 		// safe/meaningful to serialize into a transient).
-		$order_history_cache_key = 'jp4wc_paidy_order_history_' . $user_id;
-		$order_history           = get_transient( $order_history_cache_key );
+		//
+		// Guest checkouts have no numeric $user_id (it's 'guest-paidy' .
+		// order ID here, not a real customer identity) — wc_get_orders()
+		// would coerce that non-numeric string to customer_id 0, which
+		// doesn't mean "this guest" but "no assigned customer", pulling in
+		// unrelated guests' orders. There's no real order history to look
+		// up for a guest, so skip the query entirely.
+		if ( ! is_user_logged_in() ) {
+			$order_history = array(
+				'total_order_amount' => 0,
+				'order_count'        => 0,
+				'latest_order_total' => null,
+				'latest_order_date'  => null,
+			);
+		} else {
+			$order_history_cache_key = 'jp4wc_paidy_order_history_' . $user_id;
+			$order_history           = get_transient( $order_history_cache_key );
+		}
 		if ( false === $order_history ) {
 			$args   = array(
 				'customer_id' => $user_id,
