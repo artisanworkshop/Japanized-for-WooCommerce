@@ -58,6 +58,24 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A non-string gateway_id (unrestricted client input on this
+	 * unauthenticated endpoint) must be rejected without a TypeError — a
+	 * non-empty array/object bypasses empty() and, used directly as an
+	 * array offset, would otherwise crash the request (PR review, third
+	 * round).
+	 */
+	public function test_non_string_gateway_id_does_not_throw() {
+		JP4WC_COD_Fee_Handler::add_gateway_fee_for_wc_blocks(
+			array(
+				'action'     => 'add-fee',
+				'gateway_id' => array( 'cod' ),
+			)
+		);
+
+		$this->assertNull( WC()->session->get( 'jp4wc_gateway_id' ) );
+	}
+
+	/**
 	 * A gateway_id matching a real, currently available gateway is stored
 	 * as before. Enable WooCommerce core's built-in "cod" gateway so at
 	 * least one gateway is actually available regardless of test-env
@@ -99,6 +117,20 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Build an order that WC_Order::needs_payment() considers payable
+	 * (pending status, non-zero total) — the scenario the mismatch guard
+	 * in jp4wc_reject_stale_gateway_fee() is meant to protect.
+	 *
+	 * @return WC_Order
+	 */
+	private function create_order_needing_payment() {
+		$order = new WC_Order();
+		$order->set_status( 'pending' );
+		$order->set_total( 1000 );
+		return $order;
+	}
+
+	/**
 	 * A place-order POST whose fee-basis gateway (a real, available, but
 	 * different gateway sent to the extension endpoint earlier) disagrees
 	 * with the payment method actually being submitted must be rejected —
@@ -109,7 +141,7 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	public function test_reject_stale_gateway_fee_throws_on_mismatch() {
 		WC()->session->set( 'jp4wc_gateway_id', 'bacs' );
 
-		$order = new WC_Order();
+		$order = $this->create_order_needing_payment();
 		$order->set_payment_method( 'cod' );
 
 		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
@@ -125,7 +157,7 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	public function test_reject_stale_gateway_fee_allows_match() {
 		WC()->session->set( 'jp4wc_gateway_id', 'cod' );
 
-		$order = new WC_Order();
+		$order = $this->create_order_needing_payment();
 		$order->set_payment_method( 'cod' );
 
 		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
@@ -140,7 +172,7 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	 * the real gateway) — nothing to validate.
 	 */
 	public function test_reject_stale_gateway_fee_allows_empty_session() {
-		$order = new WC_Order();
+		$order = $this->create_order_needing_payment();
 		$order->set_payment_method( 'cod' );
 
 		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
@@ -157,10 +189,32 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	public function test_reject_stale_gateway_fee_skips_non_post_requests() {
 		WC()->session->set( 'jp4wc_gateway_id', 'bacs' );
 
-		$order = new WC_Order();
+		$order = $this->create_order_needing_payment();
 		$order->set_payment_method( 'cod' );
 
 		$request = new WP_REST_Request( 'PUT', '/wc/store/v1/checkout' );
+
+		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
+		$this->addToAssertionCount( 1 ); // No exception thrown.
+	}
+
+	/**
+	 * An order that no longer needs payment (e.g. fully covered by a
+	 * coupon after a gateway was previously selected in the UI, leaving a
+	 * stale jp4wc_gateway_id in session) must not be rejected — there is
+	 * no gateway-specific surcharge to protect, and WooCommerce itself
+	 * sets payment_method to '' for such orders regardless of any earlier
+	 * selection (third-round review finding).
+	 */
+	public function test_reject_stale_gateway_fee_allows_order_not_needing_payment() {
+		WC()->session->set( 'jp4wc_gateway_id', 'bacs' );
+
+		$order = new WC_Order();
+		$order->set_status( 'pending' );
+		$order->set_total( 0 );
+		$order->set_payment_method( '' );
+
+		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
 
 		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
 		$this->addToAssertionCount( 1 ); // No exception thrown.

@@ -79,8 +79,18 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 			// value already does — a bogus value must never be able to
 			// suppress the COD/COD2 surcharge for an order that ultimately
 			// uses a real gateway.
+			// is_string() must run before the array-offset lookup below: a
+			// non-empty array/object for gateway_id (unrestricted client
+			// input on this unauthenticated endpoint) is not caught by
+			// empty(), and using it as an array offset is a TypeError, not
+			// a false isset() — it would 500 instead of safely clearing.
+			if ( empty( $data['gateway_id'] ) || ! is_string( $data['gateway_id'] ) ) {
+				WC()->session->__unset( 'jp4wc_gateway_id' );
+				return;
+			}
+
 			$available_gateways = WC()->payment_gateways->get_available_payment_gateways();
-			if ( empty( $data['gateway_id'] ) || ! isset( $available_gateways[ $data['gateway_id'] ] ) ) {
+			if ( ! isset( $available_gateways[ $data['gateway_id'] ] ) ) {
 				WC()->session->__unset( 'jp4wc_gateway_id' );
 				return;
 			}
@@ -123,6 +133,15 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 				// by the time this hook fires; the draft-update (PUT/PATCH)
 				// flow sets the payment method *before* calculating fees,
 				// so there is nothing to validate here yet.
+				return;
+			}
+
+			if ( ! $order->needs_payment() ) {
+				// An order that stopped needing payment (e.g. fully covered
+				// by a coupon after a gateway was previously selected) is
+				// given payment_method '' by WooCommerce regardless of any
+				// earlier jp4wc_gateway_id — that's not a real mismatch,
+				// and there's no gateway-specific surcharge to protect.
 				return;
 			}
 
