@@ -369,15 +369,21 @@ class WC_Paidy_Apply_Receiver {
 	}
 
 	/**
-	 * Extract only the parameters carried in the request body (JSON or
-	 * form-encoded), ignoring the query string, URL, and route defaults.
+	 * Extract the parameters this request's data should be read from.
 	 *
 	 * The HMAC signature verified in check_permissions() covers only the
 	 * raw body, but WP_REST_Request::get_params()/get_param() merge every
 	 * parameter source — and the query string wins over the body for a
-	 * matching key. Trusting that merged view here would let an unsigned
-	 * query parameter (e.g. `?paidy_status=canceled`) override a value
-	 * that was actually signed.
+	 * matching key. Trusting that merged view for a request that carries a
+	 * body would let an unsigned query parameter (e.g.
+	 * `?paidy_status=canceled`) override a value that was actually signed,
+	 * so such a request is restricted to its JSON/form-encoded body.
+	 *
+	 * A request with an empty body — the still-registered `GET` variant, or
+	 * any state-token-authorized callback that never carried one — has no
+	 * signed payload for a query parameter to override, so it falls back to
+	 * the full parameter merge (query string included) exactly as before
+	 * the body-only restriction was introduced.
 	 *
 	 * @since 2.9.16
 	 *
@@ -385,6 +391,13 @@ class WC_Paidy_Apply_Receiver {
 	 * @return array
 	 */
 	private static function get_body_only_params( $request ) {
+		// WP_REST_Request::get_body() defaults to null (never '') when
+		// set_body() was never called — e.g. every GET request — so this
+		// must use empty(), not a strict '' === comparison.
+		if ( empty( $request->get_body() ) ) {
+			return $request->get_params();
+		}
+
 		$json_params = $request->get_json_params();
 
 		return array_merge( $request->get_body_params(), is_array( $json_params ) ? $json_params : array() );

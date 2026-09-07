@@ -639,4 +639,34 @@ class WC_Paidy_Receiver_Signature_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $receiver->check_permissions( $request ) );
 	}
+
+	/**
+	 * A GET request carrying a valid state token — the still-registered
+	 * `GET` variant of the route, which has an empty body and therefore no
+	 * signed payload — is processed end to end via its query parameters
+	 * (PR #211 review: get_body_only_params() must not turn this into an
+	 * unconditional `no_data` error).
+	 */
+	public function test_state_authorized_get_request_processed_via_query_params() {
+		update_option( WC_Paidy_Apply_Receiver::STATE_OPTION_PREFIX . self::TOKEN, time(), false );
+
+		$receiver = new WC_Paidy_Apply_Receiver();
+		$request  = new WP_REST_Request( 'GET', '/paidy-receiver/v1/receive' );
+		$request->set_query_params(
+			array(
+				'application_id'   => 'WC000000571',
+				'state'            => self::TOKEN,
+				'paidy_status'     => 'approved',
+				'public_live_key'  => $this->encrypt_key( 'pk_live_xxx' ),
+				'secret_live_key'  => $this->encrypt_key( 'sk_live_xxx' ),
+				'public_test_key'  => $this->encrypt_key( 'pk_test_xxx' ),
+				'secret_test_key'  => $this->encrypt_key( 'sk_test_xxx' ),
+			)
+		);
+
+		$this->assertTrue( $receiver->check_permissions( $request ) );
+		$result = $receiver->handle_receive_data( $request );
+		$this->assertInstanceOf( 'WP_REST_Response', $result );
+		$this->assertSame( 200, $result->get_status() );
+	}
 }
