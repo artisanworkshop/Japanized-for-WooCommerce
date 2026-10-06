@@ -15,6 +15,10 @@
  * takes priority over the session — so the fee no longer depends on which of
  * two overlapping requests saved the session last.
  *
+ * These tests call the handler's methods directly. The same behaviour through
+ * real Store API requests, hooks included, is covered by
+ * test-jp4wc-cod-fee-store-api.php.
+ *
  * @package Japanized_For_WooCommerce
  */
 
@@ -74,9 +78,15 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	 * handler keeps it in static properties, which outlive a test.
 	 */
 	private function reset_request_state() {
-		foreach ( array( 'request_payment_method', 'fee_basis_gateway_id' ) as $name ) {
+		foreach (
+			array(
+				'request_payment_method' => null,
+				'fee_basis_gateway_id'   => null,
+				'request_state_stack'    => array(),
+			) as $name => $value
+		) {
 			$property = new ReflectionProperty( 'JP4WC_COD_Fee_Handler', $name );
-			$property->setValue( null, null );
+			$property->setValue( null, $value );
 		}
 	}
 
@@ -86,6 +96,7 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	 * @param string      $method         HTTP method.
 	 * @param string      $route          REST route.
 	 * @param string|null $payment_method Value of the request's payment_method parameter, if any.
+	 * @return WP_REST_Request The request, to hand to finish_request() later.
 	 */
 	private function serve_request( $method, $route, $payment_method = null ) {
 		$request = new WP_REST_Request( $method, $route );
@@ -97,6 +108,23 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 		$this->assertSame(
 			$response,
 			JP4WC_COD_Fee_Handler::jp4wc_capture_checkout_payment_method( $response, array(), $request ),
+			'The filter must pass the response through untouched.'
+		);
+
+		return $request;
+	}
+
+	/**
+	 * Pass a request through the hook WordPress fires after its route has run.
+	 *
+	 * @param WP_REST_Request $request Request returned by serve_request().
+	 */
+	private function finish_request( WP_REST_Request $request ) {
+		$response = new WP_REST_Response();
+
+		$this->assertSame(
+			$response,
+			JP4WC_COD_Fee_Handler::jp4wc_release_checkout_payment_method( $response, array(), $request ),
 			'The filter must pass the response through untouched.'
 		);
 	}
@@ -265,27 +293,87 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A checkout request naming a gateway that is not available is not
-	 * trusted; WooCommerce rejects such a request itself.
+	 * The request's payment method is taken as it is. WooCommerce validates
+	 * it for the same request and rejects the request when the gateway is
+	 * not available; second-guessing it here, in the middle of the totals
+	 * calculation, could only fall back to a stale session value.
 	 */
-	public function test_unavailable_request_payment_method_is_ignored() {
+	public function test_request_payment_method_is_not_second_guessed() {
 		WC()->session->set( 'chosen_payment_method', 'cod' );
 
 		$this->serve_request( 'POST', '/wc/store/v1/checkout', 'this-gateway-does-not-exist' );
+
+		$this->assertSame( 'this-gateway-does-not-exist', JP4WC_COD_Fee_Handler::get_fee_gateway_id() );
+	}
+
+	/**
+	 * WooCommerce reads the parameter with wc_clean(); the handler must
+	 * resolve the same value.
+	 */
+	public function test_request_payment_method_is_cleaned_like_woocommerce_does() {
+		$this->serve_request( 'POST', '/wc/store/v1/checkout', ' cod ' );
 
 		$this->assertSame( 'cod', JP4WC_COD_Fee_Handler::get_fee_gateway_id() );
 	}
 
 	/**
-	 * Only checkout requests carry a payment method that will be applied to
-	 * the order; a same-named parameter on any other route means nothing.
+	 * WooCommerce registers the Store API under `wc/store` as well as
+	 * `wc/store/v1`, WordPress matches routes case-insensitively, and paying
+	 * for an existing order is a checkout request too.
+	 *
+	 * @dataProvider checkout_routes
+	 *
+	 * @param string $route REST route.
 	 */
-	public function test_payment_method_on_other_routes_is_ignored() {
-		WC()->session->set( 'chosen_payment_method', 'cod' );
+	public function test_every_form_of_the_checkout_route_is_recognised( $route ) {
+		WC()->session->set( 'chosen_payment_method', 'bacs' );
 
-		$this->serve_request( 'POST', '/wc/store/v1/cart/extensions', 'bacs' );
+		$this->serve_request( 'POST', $route, 'cod' );
 
 		$this->assertSame( 'cod', JP4WC_COD_Fee_Handler::get_fee_gateway_id() );
+	}
+
+	/**
+	 * Routes that reach WooCommerce's checkout handlers.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function checkout_routes() {
+		return array(
+			'versioned'     => array( '/wc/store/v1/checkout' ),
+			'unversioned'   => array( '/wc/store/checkout' ),
+			'mixed case'    => array( '/WC/Store/V1/Checkout' ),
+			'pay for order' => array( '/wc/store/v1/checkout/123' ),
+		);
+	}
+
+	/**
+	 * Only checkout requests carry a payment method that will be applied to
+	 * the order; a same-named parameter on any other route means nothing.
+	 *
+	 * @dataProvider other_routes
+	 *
+	 * @param string $route REST route.
+	 */
+	public function test_payment_method_on_other_routes_is_ignored( $route ) {
+		WC()->session->set( 'chosen_payment_method', 'cod' );
+
+		$this->serve_request( 'POST', $route, 'bacs' );
+
+		$this->assertSame( 'cod', JP4WC_COD_Fee_Handler::get_fee_gateway_id() );
+	}
+
+	/**
+	 * Routes that are not the checkout.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function other_routes() {
+		return array(
+			'cart extensions'   => array( '/wc/store/v1/cart/extensions' ),
+			'similar name'      => array( '/wc/store/v1/checkout-fields' ),
+			'another namespace' => array( '/my-plugin/v1/wc/store/v1/checkout' ),
+		);
 	}
 
 	/**
@@ -295,10 +383,52 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 	public function test_request_payment_method_does_not_leak_into_the_next_request() {
 		WC()->session->set( 'chosen_payment_method', 'cod' );
 
-		$this->serve_request( 'PUT', '/wc/store/v1/checkout', 'bacs' );
+		$request = $this->serve_request( 'PUT', '/wc/store/v1/checkout', 'bacs' );
+		$this->assertSame( 'bacs', JP4WC_COD_Fee_Handler::get_fee_gateway_id() );
+		$this->finish_request( $request );
+
 		$this->serve_request( 'POST', '/wc/store/v1/cart/update-item' );
 
 		$this->assertSame( 'cod', JP4WC_COD_Fee_Handler::get_fee_gateway_id() );
+	}
+
+	/**
+	 * A route may dispatch another REST request while it runs. That inner
+	 * request must not wipe what the checkout request named.
+	 */
+	public function test_nested_request_does_not_wipe_the_checkout_payment_method() {
+		WC()->session->set( 'chosen_payment_method', 'bacs' );
+
+		$checkout = $this->serve_request( 'POST', '/wc/store/v1/checkout', 'cod' );
+
+		$inner = $this->serve_request( 'GET', '/wc/store/v1/cart' );
+		$this->finish_request( $inner );
+
+		$this->assertSame( 'cod', JP4WC_COD_Fee_Handler::get_fee_gateway_id() );
+
+		$this->finish_request( $checkout );
+		$this->assertSame( 'bacs', JP4WC_COD_Fee_Handler::get_fee_gateway_id() );
+	}
+
+	/**
+	 * Each checkout request starts without a fee basis, so the place-order
+	 * guard never compares an order against a fee that an earlier request in
+	 * the same process calculated.
+	 */
+	public function test_fee_basis_of_an_earlier_request_is_not_checked_against_a_later_order() {
+		WC()->session->set( 'chosen_payment_method', 'bacs' );
+
+		$first = $this->serve_request( 'PUT', '/wc/store/v1/checkout', 'bacs' );
+		JP4WC_COD_Fee_Handler::get_fee_gateway_id();
+		$this->finish_request( $first );
+
+		// Paying for an existing order: its fees are not recalculated.
+		$second = $this->serve_request( 'POST', '/wc/store/v1/checkout/123', 'cod' );
+
+		$order = $this->create_order_needing_payment();
+		$order->set_payment_method( 'cod' );
+		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $second );
+		$this->addToAssertionCount( 1 ); // No exception thrown.
 	}
 
 	// ---------------------------------------------------------------------
@@ -416,6 +546,59 @@ class JP4WC_COD_Fee_Handler_Gateway_Validation_Test extends WP_UnitTestCase {
 
 		$this->expectException( \Automattic\WooCommerce\StoreApi\Exceptions\RouteException::class );
 		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
+	}
+
+	/**
+	 * The reverse mismatch — a COD fee calculated for an order placed with
+	 * another method — is rejected as well.
+	 */
+	public function test_reject_stale_gateway_fee_throws_when_fee_was_calculated_for_cod() {
+		WC()->session->set( 'chosen_payment_method', 'cod' );
+		JP4WC_COD_Fee_Handler::get_fee_gateway_id();
+
+		$order = $this->create_order_needing_payment();
+		$order->set_payment_method( 'bacs' );
+
+		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+
+		$this->expectException( \Automattic\WooCommerce\StoreApi\Exceptions\RouteException::class );
+		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
+	}
+
+	/**
+	 * A difference that does not involve COD or COD2 decides the same thing
+	 * — no gateway fee — so there is no wrong total to protect and the order
+	 * must go through. (No method chosen yet and an order placed by bank
+	 * transfer is the everyday case.)
+	 *
+	 * @dataProvider mismatches_without_a_fee_gateway
+	 *
+	 * @param string|null $chosen       Chosen payment method in the session.
+	 * @param string      $order_method Payment method the order is placed with.
+	 */
+	public function test_reject_stale_gateway_fee_allows_mismatch_without_a_fee_gateway( $chosen, $order_method ) {
+		WC()->session->set( 'chosen_payment_method', $chosen );
+		JP4WC_COD_Fee_Handler::get_fee_gateway_id();
+
+		$order = $this->create_order_needing_payment();
+		$order->set_payment_method( $order_method );
+
+		$request = new WP_REST_Request( 'POST', '/wc/store/v1/checkout' );
+
+		JP4WC_COD_Fee_Handler::jp4wc_reject_stale_gateway_fee( $order, $request );
+		$this->addToAssertionCount( 1 ); // No exception thrown.
+	}
+
+	/**
+	 * Fee basis / order method pairs in which neither is COD or COD2.
+	 *
+	 * @return array<string, array{string|null, string}>
+	 */
+	public function mismatches_without_a_fee_gateway() {
+		return array(
+			'nothing chosen, bank transfer' => array( null, 'bacs' ),
+			'bank transfer, cheque'         => array( 'bacs', 'cheque' ),
+		);
 	}
 
 	/**

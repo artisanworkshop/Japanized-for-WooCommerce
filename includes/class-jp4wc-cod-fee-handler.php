@@ -31,7 +31,7 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		/**
 		 * Payment method named by the Store API checkout request being served.
 		 *
-		 * Null for every other request.
+		 * Null outside such a request, and when the request names none.
 		 *
 		 * @since 2.9.17
 		 * @var string|null
@@ -39,14 +39,25 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		private static $request_payment_method = null;
 
 		/**
-		 * Gateway the gateway fee was last calculated for in this request.
+		 * Gateway the gateway fee was last calculated for.
 		 *
-		 * Null until the fee has been calculated.
+		 * A Store API checkout request starts with null, so inside one this
+		 * is the gateway that request itself calculated the fee for, or null
+		 * when it has not calculated it.
 		 *
 		 * @since 2.9.17
 		 * @var string|null
 		 */
 		private static $fee_basis_gateway_id = null;
+
+		/**
+		 * Values of the two properties above as they were before each Store
+		 * API checkout request that is currently being served.
+		 *
+		 * @since 2.9.17
+		 * @var array<int, array{0: string|null, 1: string|null}>
+		 */
+		private static $request_state_stack = array();
 
 		/**
 		 * Class Initialization.
@@ -58,6 +69,7 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 			}
 			add_action( 'init', array( __CLASS__, 'jp4wc_register_wc_blocks' ), 10 );
 			add_filter( 'rest_request_before_callbacks', array( __CLASS__, 'jp4wc_capture_checkout_payment_method' ), 10, 3 );
+			add_filter( 'rest_request_after_callbacks', array( __CLASS__, 'jp4wc_release_checkout_payment_method' ), 10, 3 );
 			add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( __CLASS__, 'jp4wc_reject_stale_gateway_fee' ), 10, 2 );
 		}
 		/**
@@ -138,6 +150,24 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		}
 
 		/**
+		 * Whether a REST request is a Store API checkout request.
+		 *
+		 * WooCommerce registers its Store API routes under both `wc/store` and
+		 * `wc/store/v1`, and WordPress matches routes case-insensitively.
+		 * Covers the cart checkout (`/checkout`) and paying for an existing
+		 * order (`/checkout/<id>`).
+		 *
+		 * @since 2.9.17
+		 *
+		 * @param mixed $request Request being served.
+		 * @return bool
+		 */
+		private static function is_store_api_checkout_request( $request ) {
+			return $request instanceof \WP_REST_Request
+				&& 1 === preg_match( '#^/wc/store(?:/v1)?/checkout(?:/|$)#i', $request->get_route() );
+		}
+
+		/**
 		 * Remember the payment method a Store API checkout request names.
 		 *
 		 * WooCommerce applies a checkout request's `payment_method` to the
@@ -149,8 +179,15 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		 * will actually be placed with.
 		 *
 		 * Reads the parameter the same way WooCommerce does
-		 * (CheckoutTrait::get_request_payment_method_id()), so both resolve
-		 * the same value from the same request.
+		 * (`wc_clean( wp_unslash( $request['payment_method'] ) )`), so both
+		 * resolve the same value from the same request.
+		 *
+		 * The captured value belongs to this one request:
+		 * jp4wc_release_checkout_payment_method() puts the previous state back
+		 * when the route has run. A batch request serves several requests in
+		 * one process, and a route may dispatch another request while it runs,
+		 * so the state is neither left behind for the next request nor wiped
+		 * by a nested one.
 		 *
 		 * @since 2.9.17
 		 *
@@ -160,15 +197,35 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		 * @return mixed The unchanged $response.
 		 */
 		public static function jp4wc_capture_checkout_payment_method( $response, $handler, $request ) {
-			// A batch request serves several requests in one process: forget
-			// the previous one's value.
-			self::$request_payment_method = null;
+			if ( ! self::is_store_api_checkout_request( $request ) ) {
+				return $response;
+			}
 
-			if ( $request instanceof \WP_REST_Request && 0 === strpos( $request->get_route(), '/wc/store/v1/checkout' ) ) {
-				$payment_method = $request->get_param( 'payment_method' );
-				if ( is_string( $payment_method ) && '' !== $payment_method ) {
-					self::$request_payment_method = wc_clean( wp_unslash( $payment_method ) );
-				}
+			self::$request_state_stack[] = array( self::$request_payment_method, self::$fee_basis_gateway_id );
+
+			$payment_method = $request->get_param( 'payment_method' );
+			$payment_method = is_string( $payment_method ) ? wc_clean( wp_unslash( $payment_method ) ) : '';
+
+			self::$request_payment_method = '' !== $payment_method ? $payment_method : null;
+			self::$fee_basis_gateway_id   = null;
+
+			return $response;
+		}
+
+		/**
+		 * Forget a Store API checkout request's payment method once the route
+		 * has run.
+		 *
+		 * @since 2.9.17
+		 *
+		 * @param mixed            $response Result to send to the client.
+		 * @param array            $handler  Route handler used for the request.
+		 * @param \WP_REST_Request $request  Request used to generate the response.
+		 * @return mixed The unchanged $response.
+		 */
+		public static function jp4wc_release_checkout_payment_method( $response, $handler, $request ) {
+			if ( self::is_store_api_checkout_request( $request ) && ! empty( self::$request_state_stack ) ) {
+				list( self::$request_payment_method, self::$fee_basis_gateway_id ) = array_pop( self::$request_state_stack );
 			}
 
 			return $response;
@@ -177,11 +234,20 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		/**
 		 * Get the payment method the gateway fee should be calculated for.
 		 *
-		 * The payment method named by the Store API checkout request being
-		 * served wins when it is an available gateway (see
-		 * jp4wc_capture_checkout_payment_method()); otherwise WooCommerce's
-		 * `chosen_payment_method`, which the classic checkout, the Checkout
-		 * block and add_gateway_fee_for_wc_blocks() all keep current.
+		 * Inside a Store API checkout request that names a payment method,
+		 * that method (see jp4wc_capture_checkout_payment_method()); otherwise
+		 * WooCommerce's `chosen_payment_method`, which the classic checkout,
+		 * the Checkout block and add_gateway_fee_for_wc_blocks() all keep
+		 * current.
+		 *
+		 * The request's value is not checked against the available gateways
+		 * here. WooCommerce validates it for the same request and rejects the
+		 * request when the gateway is not available, so nothing is placed with
+		 * a fee calculated for a gateway the order cannot use — while a check
+		 * made in the middle of the totals calculation could disagree with
+		 * WooCommerce's own (the cart total is still 0 at that point, which
+		 * availability filters may depend on) and silently fall back to a
+		 * stale session value.
 		 *
 		 * The result is remembered so jp4wc_reject_stale_gateway_fee() can
 		 * compare it with the method the order ends up with.
@@ -194,13 +260,8 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 			$gateway_id = '';
 
 			if ( null !== self::$request_payment_method ) {
-				$available_gateways = WC()->payment_gateways ? WC()->payment_gateways->get_available_payment_gateways() : array();
-				if ( isset( $available_gateways[ self::$request_payment_method ] ) ) {
-					$gateway_id = self::$request_payment_method;
-				}
-			}
-
-			if ( '' === $gateway_id && WC()->session ) {
+				$gateway_id = self::$request_payment_method;
+			} elseif ( WC()->session ) {
 				$chosen_payment_method = WC()->session->get( 'chosen_payment_method' );
 				$gateway_id            = is_string( $chosen_payment_method ) ? $chosen_payment_method : '';
 			}
@@ -223,10 +284,10 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 		 * get_fee_gateway_id() therefore calculates from the payment method
 		 * the request itself names, so the two normally agree. This check is
 		 * the safety net behind that: should the fee ever have been calculated
-		 * for another gateway than the order is placed with — the surcharge
-		 * that applies to the real gateway silently dropped, or one charged
-		 * that does not apply — reject the request instead of risking an
-		 * order placed with an incorrect total.
+		 * for another gateway than the order is placed with, and one of the
+		 * two is COD or COD2 — the surcharge that applies to the real gateway
+		 * silently dropped, or one charged that does not apply — reject the
+		 * request instead of risking an order placed with an incorrect total.
 		 *
 		 * @since 2.9.16
 		 *
@@ -260,7 +321,17 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 				return;
 			}
 
-			if ( self::$fee_basis_gateway_id === $order->get_payment_method() ) {
+			$order_gateway_id = $order->get_payment_method();
+			if ( self::$fee_basis_gateway_id === $order_gateway_id ) {
+				return;
+			}
+
+			// Only COD and COD2 carry a gateway fee. A difference between two
+			// other values (say no method chosen yet and a bank transfer)
+			// decides the same thing — no fee — so the total is right and
+			// there is nothing to protect.
+			$fee_gateway_ids = array( 'cod', 'cod2' );
+			if ( ! in_array( self::$fee_basis_gateway_id, $fee_gateway_ids, true ) && ! in_array( $order_gateway_id, $fee_gateway_ids, true ) ) {
 				return;
 			}
 
