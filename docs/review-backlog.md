@@ -12,5 +12,9 @@
 | 2026-10-06 | R1-X2 | Low | includes/class-jp4wc-cod-fee.php（`get_gateway_fee_value()`） | 無料版・Pro のどこからも呼ばれていないメソッド。`WC()->session` のガードも無い（既存コード） | 未起票 |
 | 2026-10-06 | R1-X3 | Low | Store API 全般 | `payment_method` を持たない並行リクエストが、1 行保存のセッションの後勝ちで古い `chosen_payment_method` を書き戻しうる。WooCommerce 自身の PUT と同じ性質。注文確定は POST の値で計算されるため金額は正しい | 未起票 |
 | 2026-10-06 | R1-L1 | Low | tests/e2e/checkout-blocks.spec.ts | Checkout Block の E2E に代引き手数料の検証と、#215 の症状（切替後の表示不一致）の回帰テストが無い。遅いサーバーの再現が必要 | 未起票 |
-| 2026-10-06 | R1-L2 | Low | includes/class-jp4wc-cod-fee-handler.php | 常駐型ランタイム（FrankenPHP worker 等）での static の持ち越しは、チェックアウトリクエストの開始・終了で初期化・復元する実装で防いでいるが、実機では未確認 | 未起票 |
+| 2026-10-06 | R1-L2 | Low | includes/class-jp4wc-cod-fee-handler.php | 常駐型ランタイム（FrankenPHP worker 等）での static の持ち越しは、チェックアウトリクエストの開始・終了で初期化・復元する実装で防いでいるが、実機では未確認。ルートの途中で `\Error` が抜けた場合は復元されない（R3-L1） | 未起票 |
+| 2026-10-06 | R3-L1 | Low | includes/class-jp4wc-cod-fee-handler.php | チェックアウトルートの途中で `\Error` / TypeError が抜けると `rest_request_after_callbacks` が走らず、捕捉した支払い方法が static に残る。php-fpm では影響なし（常駐型ランタイムと、dispatch を Throwable ごと握りつぶす呼び出し側だけ）。リクエスト先頭での初期化で防げる | 未起票 |
+| 2026-10-06 | R3-L2 | Low | tests/Unit/test-jp4wc-cod-fee-gateway-validation.php / test-jp4wc-cod-fee-store-api.php | 入れ子のチェックアウトリクエストを固定するテストが無い。既存注文の支払いのテストが status を見ていない | 未起票 |
+| 2026-10-06 | R3-L3 | Low | includes/class-jp4wc-cod-fee-handler.php / class-jp4wc-cod-fee.php | 手数料を持つゲートウェイの一覧（`cod` / `cod2`）がガードと計算側で二重管理 | 未起票 |
+| 2026-10-06 | R2-X1 | High | includes/admin/class-jp4wc-settings-api.php / class-jp4wc-cod-fee.php | 代引きの決済設定画面（WooCommerce > 設定 > 決済 > 代金引換）で手数料を設定した店舗が、Japanized for WooCommerce の設定画面で保存すると、存在しなかった `wc4jp-extra_charge_*` が `''` で作られて優先され、代引き手数料が請求されなくなる（設定画面は受け取った全キーを保存し直し、REST は未設定のキーを `''` で返す。wp-env で実測: 保存前 name=代引き手数料 / amount=550 / max=50000 → 保存後すべて空。どのタブの保存でも起きる）。元の値は `woocommerce_cod_settings` に残る。Pro 版 PR（jp4wc-pro #7）のレビュー中に確認。既存コード | 未起票（ユーザーに確認） |
 
