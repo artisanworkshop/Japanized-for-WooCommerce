@@ -335,15 +335,11 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		if ( ! is_checkout() && ! wp_doing_ajax() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 			return;
 		}
-		// For Classic Checkout AJAX, use chosen_payment_method (updated by WC AJAX handler).
-		// For Block Checkout REST, use jp4wc_gateway_id (updated by extensionCartUpdate).
-		// This prevents stale jp4wc_gateway_id from overriding the current selection in Classic Checkout.
-		if ( wp_doing_ajax() ) {
-			$current_gateway_id = WC()->session->get( 'chosen_payment_method' );
-		} else {
-			$current_gateway_id = WC()->session->get( 'jp4wc_gateway_id' );
-			$current_gateway_id = empty( $current_gateway_id ) ? WC()->session->get( 'chosen_payment_method' ) : $current_gateway_id;
-		}
+		// The payment method a Store API checkout request names when there is one,
+		// otherwise WooCommerce's chosen_payment_method — kept current by the classic
+		// checkout's AJAX handler, by the Checkout block's own payment-method update
+		// and by this plugin's extensionCartUpdate callback alike.
+		$current_gateway_id = JP4WC_COD_Fee_Handler::get_fee_gateway_id();
 
 		if ( empty( $current_gateway_id ) ) {
 			return;
@@ -365,7 +361,6 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 					'cart_subtotal_ex_tax'   => $cart->subtotal_ex_tax,
 					'cart_contents_count'    => $cart->get_cart_contents_count(),
 					'chosen_payment_session' => WC()->session->get( 'chosen_payment_method' ),
-					'jp4wc_gateway_session'  => WC()->session->get( 'jp4wc_gateway_id' ),
 					'shipping_total'         => $cart->get_shipping_total(),
 					'extra_charge_amount'    => isset( $cod_setting['extra_charge_amount'] ) ? $cod_setting['extra_charge_amount'] : '(not set)',
 					'extra_charge_max'       => isset( $cod_setting['extra_charge_max_cart_value'] ) ? $cod_setting['extra_charge_max_cart_value'] : '(not set)',
@@ -609,8 +604,7 @@ class JP4WC_COD_Fee extends WC_Gateway_COD {
 		);
 
 		if ( null === $gateway_id ) {
-			$gateway_id = WC()->session->get( 'jp4wc_gateway_id' );
-			$gateway_id = empty( $gateway_id ) ? WC()->session->get( 'chosen_payment_method' ) : $gateway_id;
+			$gateway_id = WC()->session->get( 'chosen_payment_method' );
 		}
 
 		if ( empty( $gateway_id ) ) {
