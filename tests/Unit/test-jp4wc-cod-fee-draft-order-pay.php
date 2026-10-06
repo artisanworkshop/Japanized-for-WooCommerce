@@ -35,10 +35,16 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 		}
 		$this->assertTrue( class_exists( 'JP4WC_COD_Fee_Handler' ) );
 
-		foreach ( array( 'cod', 'bacs' ) as $gateway_id ) {
+		// COD2 (Cash on Delivery for Subscriptions) only registers itself when the
+		// wc4jp-cod2 option is set while the plugin loads, which is before setUp().
+		add_filter( 'woocommerce_payment_gateways', array( 'WC_Gateway_COD2', 'add_gateway' ) );
+		foreach ( array( 'cod', 'cod2', 'bacs' ) as $gateway_id ) {
 			update_option( 'woocommerce_' . $gateway_id . '_settings', array( 'enabled' => 'yes' ) );
 		}
 		WC()->payment_gateways()->init();
+		foreach ( array( 'cod', 'cod2', 'bacs' ) as $gateway_id ) {
+			$this->assertArrayHasKey( $gateway_id, WC()->payment_gateways->get_available_payment_gateways(), "Test fixture expects the {$gateway_id} gateway to be available." );
+		}
 
 		update_option( 'wc4jp-extra_charge_name', 'COD fee' );
 		update_option( 'wc4jp-extra_charge_amount', '330' );
@@ -83,7 +89,9 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 		WC()->session->__unset( 'jp4wc_gateway_id' );
 		WC()->session->__unset( 'store_api_draft_order' );
 
+		remove_filter( 'woocommerce_payment_gateways', array( 'WC_Gateway_COD2', 'add_gateway' ) );
 		delete_option( 'woocommerce_cod_settings' );
+		delete_option( 'woocommerce_cod2_settings' );
 		delete_option( 'woocommerce_bacs_settings' );
 		delete_option( 'wc4jp-extra_charge_name' );
 		delete_option( 'wc4jp-extra_charge_amount' );
@@ -207,14 +215,15 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 	// ---------------------------------------------------------------------
 
 	/**
-	 * @dataProvider pay_for_order_routes
+	 * @dataProvider fee_gateways_and_pay_for_order_routes
 	 *
+	 * @param string $gateway_id   Gateway that carries a fee.
 	 * @param string $route_prefix Checkout route prefix.
 	 */
-	public function test_draft_order_cannot_be_paid_with_cod_outside_the_checkout( $route_prefix ) {
+	public function test_draft_order_cannot_be_paid_with_a_fee_gateway_outside_the_checkout( $gateway_id, $route_prefix ) {
 		$order = $this->create_draft_order();
 
-		$response = $this->pay_for_order( $order, 'cod', $route_prefix );
+		$response = $this->pay_for_order( $order, $gateway_id, $route_prefix );
 
 		$this->assertSame( 409, $response['status'], wp_json_encode( $response['data'] ) );
 		$this->assertSame( 'jp4wc_cod_draft_order_payment', $response['data']['code'] );
@@ -222,16 +231,18 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Routes that reach the pay-for-order handler.
+	 * Both fee gateways on every route that reaches the pay-for-order handler.
 	 *
-	 * @return array<string, array{string}>
+	 * @return array<string, array{string, string}>
 	 */
-	public function pay_for_order_routes() {
-		return array(
-			'versioned'   => array( '/wc/store/v1/checkout' ),
-			'unversioned' => array( '/wc/store/checkout' ),
-			'mixed case'  => array( '/WC/Store/V1/Checkout' ),
-		);
+	public function fee_gateways_and_pay_for_order_routes() {
+		$cases = array();
+		foreach ( array( 'cod', 'cod2' ) as $gateway_id ) {
+			$cases[ $gateway_id . ', versioned' ]   = array( $gateway_id, '/wc/store/v1/checkout' );
+			$cases[ $gateway_id . ', unversioned' ] = array( $gateway_id, '/wc/store/checkout' );
+			$cases[ $gateway_id . ', mixed case' ]  = array( $gateway_id, '/WC/Store/V1/Checkout' );
+		}
+		return $cases;
 	}
 
 	public function test_draft_order_can_still_be_paid_with_another_method() {
@@ -247,13 +258,30 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 	 * Paying a pending order with COD is what the pay-for-order route is for;
 	 * it is not touched.
 	 */
-	public function test_pending_order_can_still_be_paid_with_cod() {
+	/**
+	 * @dataProvider fee_gateways
+	 *
+	 * @param string $gateway_id Gateway that carries a fee.
+	 */
+	public function test_pending_order_can_still_be_paid_with_a_fee_gateway( $gateway_id ) {
 		$order = $this->create_pending_order();
 
-		$response = $this->pay_for_order( $order, 'cod' );
+		$response = $this->pay_for_order( $order, $gateway_id );
 
 		$this->assertSame( 200, $response['status'], wp_json_encode( $response['data'] ) );
-		$this->assertSame( 'cod', wc_get_order( $order->get_id() )->get_payment_method() );
+		$this->assertSame( $gateway_id, wc_get_order( $order->get_id() )->get_payment_method() );
+	}
+
+	/**
+	 * Gateways that carry a fee.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function fee_gateways() {
+		return array(
+			'cod'  => array( 'cod' ),
+			'cod2' => array( 'cod2' ),
+		);
 	}
 
 	/**
@@ -308,26 +336,33 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 		$wp->query_vars['order-pay'] = $order_id;
 	}
 
-	public function test_cod_is_not_offered_on_the_order_pay_page_of_a_draft_order() {
+	public function test_fee_gateways_are_not_offered_on_the_order_pay_page_of_a_draft_order() {
 		$order = $this->create_draft_order();
 		$this->on_order_pay_page( $order->get_id() );
 
 		$gateways = WC()->payment_gateways->get_available_payment_gateways();
 
 		$this->assertArrayNotHasKey( 'cod', $gateways );
+		$this->assertArrayNotHasKey( 'cod2', $gateways );
 		$this->assertArrayHasKey( 'bacs', $gateways );
 	}
 
-	public function test_cod_is_offered_on_the_order_pay_page_of_a_pending_order() {
+	public function test_fee_gateways_are_offered_on_the_order_pay_page_of_a_pending_order() {
 		$order = $this->create_pending_order();
 		$this->on_order_pay_page( $order->get_id() );
 
-		$this->assertArrayHasKey( 'cod', WC()->payment_gateways->get_available_payment_gateways() );
+		$gateways = WC()->payment_gateways->get_available_payment_gateways();
+
+		$this->assertArrayHasKey( 'cod', $gateways );
+		$this->assertArrayHasKey( 'cod2', $gateways );
 	}
 
-	public function test_cod_is_offered_outside_the_order_pay_page() {
+	public function test_fee_gateways_are_offered_outside_the_order_pay_page() {
 		$this->create_draft_order();
 
-		$this->assertArrayHasKey( 'cod', WC()->payment_gateways->get_available_payment_gateways() );
+		$gateways = WC()->payment_gateways->get_available_payment_gateways();
+
+		$this->assertArrayHasKey( 'cod', $gateways );
+		$this->assertArrayHasKey( 'cod2', $gateways );
 	}
 }
