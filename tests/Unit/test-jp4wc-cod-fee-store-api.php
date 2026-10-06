@@ -329,6 +329,27 @@ class JP4WC_COD_Fee_Store_API_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The place-order guard is the safety net behind all of the above: when
+	 * an order ends up with another payment method than the gateway its fee
+	 * was calculated for — here other code switching the method after the
+	 * totals were calculated — it is rejected rather than placed with a COD
+	 * fee that does not belong to it.
+	 */
+	public function test_order_is_rejected_when_its_payment_method_no_longer_matches_the_fee() {
+		$switch_to_bank_transfer = static function ( $order ) {
+			$order->set_payment_method( 'bacs' );
+		};
+		add_action( 'woocommerce_store_api_checkout_update_order_from_request', $switch_to_bank_transfer, 5 );
+
+		$response = $this->place_order( 'cod' );
+
+		remove_action( 'woocommerce_store_api_checkout_update_order_from_request', $switch_to_bank_transfer, 5 );
+
+		$this->assertSame( 409, $response['status'], wp_json_encode( $response['data'] ) );
+		$this->assertSame( 'jp4wc_gateway_fee_mismatch', $response['data']['code'] );
+	}
+
+	/**
 	 * What a checkout request named does not outlive the request: a later
 	 * request in the same process (a batch) is calculated from the session
 	 * again.
