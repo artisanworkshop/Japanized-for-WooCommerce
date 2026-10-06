@@ -109,10 +109,54 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			$settings[ $key ] = get_option( $option_name, '' );
 		}
 
+		$settings = $this->fill_cod_fee_settings_in_force( $settings );
+
 		// Get time zones separately.
 		$settings['timeZones'] = get_option( 'wc4jp_time_zone_details', array() );
 
 		return rest_ensure_response( $settings );
+	}
+
+	/**
+	 * Report the COD fee settings that are in force, not only the ones saved
+	 * on this screen.
+	 *
+	 * The COD fee reads each of these settings from the `wc4jp-` option when
+	 * that option exists and from the COD gateway's own settings page
+	 * otherwise (JP4WC_COD_Fee::get_cod_fee_settings(); the tax class is kept
+	 * in `jp4wc_tax_class_for_cod` by that page). A store configured on the
+	 * gateway page therefore has no `wc4jp-` options, and this endpoint used
+	 * to report its settings as empty. The settings screen saves every value
+	 * it was given, so saving any tab wrote those empty values back, and the
+	 * empty `wc4jp-` options then took precedence over the gateway page:
+	 * the fee name, amount and free-above amount were gone and no COD fee was
+	 * charged (#218).
+	 *
+	 * Returning the values in force makes the first save keep them.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @param array<string, mixed> $settings Settings as read from the `wc4jp-` options.
+	 * @return array<string, mixed>
+	 */
+	private function fill_cod_fee_settings_in_force( array $settings ) {
+		$gateway_settings = get_option( 'woocommerce_cod_settings', array() );
+		$gateway_settings = is_array( $gateway_settings ) ? $gateway_settings : array();
+
+		foreach ( array( 'extra_charge_name', 'extra_charge_amount', 'extra_charge_max_cart_value', 'extra_charge_calc_taxes' ) as $key ) {
+			if ( null === get_option( $this->prefix . $key, null ) && isset( $gateway_settings[ $key ] ) && is_scalar( $gateway_settings[ $key ] ) ) {
+				$settings[ $key ] = (string) $gateway_settings[ $key ];
+			}
+		}
+
+		if ( null === get_option( $this->prefix . 'extra_charge_tax_class', null ) ) {
+			$tax_class = get_option( 'jp4wc_tax_class_for_cod', null );
+			if ( is_string( $tax_class ) ) {
+				$settings['extra_charge_tax_class'] = $tax_class;
+			}
+		}
+
+		return $settings;
 	}
 
 	/**
