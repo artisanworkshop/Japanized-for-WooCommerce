@@ -329,6 +329,26 @@ class JP4WC_COD_Fee_Store_API_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * What a checkout request named does not outlive the request: a later
+	 * request in the same process (a batch) is calculated from the session
+	 * again.
+	 */
+	public function test_checkout_payment_method_does_not_outlive_its_request() {
+		$this->request( 'PUT', '/wc/store/v1/checkout', array( 'payment_method' => 'bacs' ), array( '__experimental_calc_totals' => 'true' ) );
+
+		// The request stored bank transfer in the session as well; select COD
+		// again so the session and the finished request disagree.
+		WC()->session->set( 'chosen_payment_method', 'cod' );
+
+		// A cart request that recalculates the totals without selecting anything
+		// itself (a plain GET returns the totals as last calculated): the
+		// extension endpoint ignores a gateway ID it does not know.
+		$cart = $this->tell_extension_endpoint( 'this-gateway-does-not-exist' );
+		$this->assertSame( 200, $cart['status'] );
+		$this->assertSame( array( 'COD fee' ), $this->cart_fee_names( $cart['data'] ) );
+	}
+
+	/**
 	 * Paying for an existing order does not recalculate cart fees, so a fee
 	 * calculated by an earlier request in the same process (a batch) must
 	 * not be held against it.
@@ -341,7 +361,10 @@ class JP4WC_COD_Fee_Store_API_Test extends WP_UnitTestCase {
 		$order->set_status( 'pending' );
 		$order->save();
 
+		// Fees calculated for bank transfer, by a cart request and by a checkout request.
+		$this->tell_extension_endpoint( 'bacs' );
 		$this->request( 'PUT', '/wc/store/v1/checkout', array( 'payment_method' => 'bacs' ), array( '__experimental_calc_totals' => 'true' ) );
+		$this->tell_extension_endpoint( 'bacs' );
 
 		$response = $this->request(
 			'POST',
