@@ -2,8 +2,8 @@
 - タスク: 設定画面を保存すると、決済設定画面で設定した代引き手数料が空で上書きされる不具合の修正（issue #218）
 - 開始: 2026-10-07
 - ベースブランチ: main
-- PR: 未作成
-- 現在のステップ: 4（push と PR 作成）
+- PR: #219 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/219（head はフォーク shoheitanaka:fix/218-cod-settings-screen-seed）
+- 現在のステップ: 6（CI 待ち → Codex / Copilot へ依頼）
 - Copilot: 依頼 0 回 / 未収束
 - Codex: 依頼 0 回 / 未収束（`@codex review` のコメントで起動するリポジトリ）
 
@@ -12,3 +12,4 @@
 |---|---|---|
 | 2026-10-07 06:40 | 1 | ユーザーが「issue 起票し別 PR で修正」を選択。issue #218 を起票 |
 | 2026-10-07 06:50 | 2–3 | 実装、review-loop R1（自己レビュー＋変異テスト）APPROVE |
+| 2026-10-07 06:53 | 4 | 初回 push（HEAD ce631e0）、PR #219 を作成 |
