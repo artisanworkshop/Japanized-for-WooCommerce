@@ -255,17 +255,12 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Paying a pending order with COD is what the pay-for-order route is for;
-	 * it is not touched.
-	 */
-	/**
 	 * The shopper selected another gateway in the Checkout block before the
-	 * draft was paid for with COD. The stale-fee guard sees a mismatch too;
-	 * the answer must still be the one that says what to do.
+	 * draft was paid for with COD; the answer must still say what to do.
 	 */
 	public function test_draft_order_rejection_says_to_use_the_checkout_even_when_another_gateway_was_selected() {
 		$order = $this->create_draft_order();
-		WC()->session->set( 'jp4wc_gateway_id', 'bacs' );
+		WC()->session->set( 'chosen_payment_method', 'bacs' );
 
 		$response = $this->pay_for_order( $order, 'cod' );
 
@@ -274,6 +269,9 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Paying a pending order with COD is what the pay-for-order route is for;
+	 * it is not touched.
+	 *
 	 * @dataProvider fee_gateways
 	 *
 	 * @param string $gateway_id Gateway that carries a fee.
