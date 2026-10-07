@@ -70,7 +70,100 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 			add_action( 'init', array( __CLASS__, 'jp4wc_register_wc_blocks' ), 10 );
 			add_filter( 'rest_request_before_callbacks', array( __CLASS__, 'jp4wc_capture_checkout_payment_method' ), 10, 3 );
 			add_filter( 'rest_request_after_callbacks', array( __CLASS__, 'jp4wc_release_checkout_payment_method' ), 10, 3 );
+			// The draft-order guard runs first so that, should both guards ever
+			// reject the same request, the answer says what to do rather than
+			// to refresh and try again.
+			add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( __CLASS__, 'jp4wc_reject_cod_payment_of_draft_order' ), 10, 2 );
 			add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( __CLASS__, 'jp4wc_reject_stale_gateway_fee' ), 10, 2 );
+			add_filter( 'woocommerce_available_payment_gateways', array( __CLASS__, 'jp4wc_hide_cod_on_draft_order_pay_page' ) );
+		}
+
+		/**
+		 * Gateways whose fee this plugin calculates at checkout.
+		 *
+		 * @since 2.9.17
+		 *
+		 * @return string[]
+		 */
+		private static function get_fee_gateway_ids() {
+			return array( 'cod', 'cod2' );
+		}
+
+		/**
+		 * Whether an order is a Checkout block draft (`checkout-draft`).
+		 *
+		 * WooCommerce lets such an order be paid like a pending one, but its
+		 * fees are only calculated when it is placed from the checkout, from
+		 * the cart. Paying it anywhere else with a gateway that carries a fee
+		 * would place a COD/COD2 order without the surcharge.
+		 *
+		 * @since 2.9.17
+		 *
+		 * @param mixed $order Order, or anything else.
+		 * @return bool
+		 */
+		private static function is_draft_order( $order ) {
+			return $order instanceof \WC_Order && 'checkout-draft' === $order->get_status();
+		}
+
+		/**
+		 * Reject paying a draft order with COD/COD2 through the Store API's
+		 * pay-for-order route (`/checkout/<id>`).
+		 *
+		 * That route does not recalculate cart fees, so the surcharge the
+		 * gateway carries would be missing from the order. The checkout route
+		 * (`/checkout`) places the same draft with its fees calculated from the
+		 * cart, which is where the Checkout block sends it.
+		 *
+		 * @since 2.9.17
+		 *
+		 * @param \WC_Order        $order   Order being paid.
+		 * @param \WP_REST_Request $request Store API request.
+		 * @throws \Automattic\WooCommerce\StoreApi\Exceptions\RouteException When a draft order is paid with COD/COD2 outside the checkout.
+		 */
+		public static function jp4wc_reject_cod_payment_of_draft_order( $order, $request ) {
+			if ( 'POST' !== $request->get_method() || 1 !== preg_match( '#^/wc/store(?:/v1)?/checkout/\d+#i', $request->get_route() ) ) {
+				return;
+			}
+
+			if ( ! self::is_draft_order( $order ) || ! in_array( $order->get_payment_method(), self::get_fee_gateway_ids(), true ) ) {
+				return;
+			}
+
+			throw new \Automattic\WooCommerce\StoreApi\Exceptions\RouteException(
+				'jp4wc_cod_draft_order_payment',
+				esc_html__( 'To pay by cash on delivery, please place this order from the checkout page.', 'woocommerce-for-japan' ),
+				409
+			);
+		}
+
+		/**
+		 * Leave COD/COD2 out of the payment methods offered on the classic
+		 * order-pay page for a draft order, for the same reason as above.
+		 *
+		 * The pay form is validated against the same list, so the gateways
+		 * cannot be submitted either.
+		 *
+		 * @since 2.9.17
+		 *
+		 * @param array<string, \WC_Payment_Gateway> $gateways Available gateways.
+		 * @return array<string, \WC_Payment_Gateway>
+		 */
+		public static function jp4wc_hide_cod_on_draft_order_pay_page( $gateways ) {
+			if ( ! function_exists( 'is_checkout_pay_page' ) || ! is_checkout_pay_page() ) {
+				return $gateways;
+			}
+
+			global $wp;
+			$order_id = isset( $wp->query_vars['order-pay'] ) ? absint( $wp->query_vars['order-pay'] ) : 0;
+			if ( ! $order_id || ! self::is_draft_order( wc_get_order( $order_id ) ) ) {
+				return $gateways;
+			}
+
+			foreach ( self::get_fee_gateway_ids() as $gateway_id ) {
+				unset( $gateways[ $gateway_id ] );
+			}
+			return $gateways;
 		}
 		/**
 		 * Register & Apply Gateway Fee for WooCommerce Blocks

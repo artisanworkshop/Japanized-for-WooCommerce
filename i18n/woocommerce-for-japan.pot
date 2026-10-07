@@ -326,6 +326,10 @@ msgstr ""
 msgid "Your selected payment method changed. Please refresh and try again."
 msgstr ""
 
+#: includes/class-jp4wc-cod-fee-handler.php
+msgid "To pay by cash on delivery, please place this order from the checkout page."
+msgstr ""
+
 #: includes/class-jp4wc-cod-fee.php:105
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/PaymentSettings.js:130

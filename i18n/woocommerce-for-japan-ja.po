@@ -503,6 +503,10 @@ msgstr "渋谷区"
 msgid "Your selected payment method changed. Please refresh and try again."
 msgstr "お支払い方法が変更されました。ページを再読み込みしてやり直してください。"
 
+#: includes/class-jp4wc-cod-fee-handler.php
+msgid "To pay by cash on delivery, please place this order from the checkout page."
+msgstr "代金引換でお支払いになるには、この注文をチェックアウトページから確定してください。"
+
 #: includes/class-jp4wc-cod-fee.php:104 assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/PaymentSettings.js:129
 msgid "Extra charge for COD method"
