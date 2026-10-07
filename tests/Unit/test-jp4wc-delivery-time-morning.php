@@ -303,14 +303,15 @@ class JP4WC_Delivery_Time_Morning_Test extends WP_UnitTestCase {
 		$this->assertSame( '午前中', $settings['delivery-time-morning-label'] );
 	}
 
-	public function test_settings_endpoint_does_not_save_a_non_string_label() {
+	public function test_settings_endpoint_keeps_the_saved_label_when_sent_a_non_string() {
+		update_option( 'wc4jp-delivery-time-morning-label', '午前中（8〜12時）' );
 		$api = new JP4WC_Settings_API();
 
 		$request = new WP_REST_Request( 'POST', '/jp4wc/v1/settings' );
 		$request->set_body_params( array( 'delivery-time-morning-label' => array( '午前中' ) ) );
 		$api->update_settings( $request );
 
-		$this->assertSame( '', get_option( 'wc4jp-delivery-time-morning-label' ) );
+		$this->assertSame( '午前中（8〜12時）', get_option( 'wc4jp-delivery-time-morning-label' ) );
 	}
 
 	// ------------------------------------------------------------------

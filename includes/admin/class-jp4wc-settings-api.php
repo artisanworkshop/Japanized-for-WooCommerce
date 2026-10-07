@@ -182,8 +182,12 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			} else {
 				$option_name = isset( $option_map[ $key ] ) ? $option_map[ $key ] : $this->prefix . $key;
 				if ( 'delivery-time-morning-label' === $key ) {
+					// A malformed value leaves the saved label as it is.
+					if ( ! is_string( $value ) ) {
+						continue;
+					}
 					// Offered as a checkout option value and saved to orders as is.
-					$value = is_string( $value ) ? sanitize_text_field( $value ) : '';
+					$value = sanitize_text_field( $value );
 				}
 				update_option( $option_name, $value );
 			}
