@@ -53,6 +53,18 @@ const ShipmentSettings = ( {
 			...settings,
 			timeZones,
 		};
+		// Save the default "Morning" label rather than leave it to the server:
+		// the plugin's own translations are used here, while a WordPress.org
+		// language pack that predates the string takes precedence over them in PHP.
+		if (
+			updatedSettings[ 'delivery-time-morning' ] === '1' &&
+			! updatedSettings[ 'delivery-time-morning-label' ]?.trim()
+		) {
+			updatedSettings[ 'delivery-time-morning-label' ] = __(
+				'Morning',
+				'woocommerce-for-japan'
+			);
+		}
 		saveSettings( updatedSettings );
 	};
 
@@ -435,12 +447,24 @@ const ShipmentSettings = ( {
 						checked={
 							settings?.[ 'delivery-time-morning' ] === '1'
 						}
-						onChange={ ( value ) =>
+						onChange={ ( value ) => {
 							updateSetting(
 								'delivery-time-morning',
 								value ? '1' : ''
-							)
-						}
+							);
+							// Fill in the default label, so whichever tab saves next saves it too.
+							if (
+								value &&
+								! settings?.[
+									'delivery-time-morning-label'
+								]?.trim()
+							) {
+								updateSetting(
+									'delivery-time-morning-label',
+									__( 'Morning', 'woocommerce-for-japan' )
+								);
+							}
+						} }
 					/>
 				</PanelRow>
 
@@ -453,7 +477,7 @@ const ShipmentSettings = ( {
 							'woocommerce-for-japan'
 						) }
 						help={ __(
-							'Text shown for the "Morning" option and saved to the order. Leave empty to use "Morning".',
+							'Text shown for the "Morning" option and saved to the order. Saved as "Morning" when left empty.',
 							'woocommerce-for-japan'
 						) }
 						placeholder={ __( 'Morning', 'woocommerce-for-japan' ) }

@@ -1914,7 +1914,7 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
-msgid "Text shown for the \"Morning\" option and saved to the order. Leave empty to use \"Morning\"."
+msgid "Text shown for the \"Morning\" option and saved to the order. Saved as \"Morning\" when left empty."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1

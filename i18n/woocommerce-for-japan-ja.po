@@ -2544,8 +2544,8 @@ msgstr "「午前中」の表示名"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
-msgid "Text shown for the \"Morning\" option and saved to the order. Leave empty to use \"Morning\"."
-msgstr "「午前中」の選択肢に表示され、注文に保存される文字列です。空欄の場合は「午前中」になります。"
+msgid "Text shown for the \"Morning\" option and saved to the order. Saved as \"Morning\" when left empty."
+msgstr "「午前中」の選択肢に表示され、注文に保存される文字列です。空欄のまま保存すると「午前中」になります。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:427

@@ -76,10 +76,11 @@ const Settings = () => {
 	};
 
 	const updateSetting = ( key, value ) => {
-		setSettings( {
-			...settings,
+		// Functional update so that several calls in one handler all apply.
+		setSettings( ( prevSettings ) => ( {
+			...prevSettings,
 			[ key ]: value,
-		} );
+		} ) );
 	};
 
 	if ( loading ) {
