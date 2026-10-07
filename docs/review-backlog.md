@@ -25,3 +25,4 @@
 | 2026-10-07 | R1-L3 | Low | includes/admin/class-jp4wc-settings-api.php | 表示名 `'0'` は保存されるが、チェックアウトでは既定値に置き換わり設定画面と食い違う | 未起票 |
 | 2026-10-07 | R1-L4 | Low | tests/Unit/test-jp4wc-delivery-time-morning.php | Store API の拒否テストがステータス 400 しか見ていない | 未起票 |
 | 2026-10-07 | R1-L5 | Low | src/js/jp4wc/admin/settings/components/ShipmentSettings.js | 表示名を空にして配送設定タブ以外で保存すると、PHP の実行時フォールバック（言語パック・ロケール依存）に戻る | 未起票 |
+| 2026-10-07 | R2-L1 | Low | src/js/jp4wc/admin/settings/components/ShipmentSettings.js | 「午前中」の既定値は操作する管理者のユーザーロケールの JS 翻訳で決まる（プロフィール言語が英語なら「Morning」が保存される。入力欄に値が出るので気づける） | 未起票 |
