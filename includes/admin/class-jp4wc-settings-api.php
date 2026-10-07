@@ -181,6 +181,10 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 				update_option( 'wc4jp_time_zone_details', $value );
 			} else {
 				$option_name = isset( $option_map[ $key ] ) ? $option_map[ $key ] : $this->prefix . $key;
+				if ( 'delivery-time-morning-label' === $key ) {
+					// Offered as a checkout option value and saved to orders as is.
+					$value = is_string( $value ) ? sanitize_text_field( $value ) : '';
+				}
 				update_option( $option_name, $value );
 			}
 		}
@@ -252,6 +256,8 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'delivery-time-zone',
 			'delivery-time-zone-required',
 			'unspecified-time',
+			'delivery-time-morning',
+			'delivery-time-morning-label',
 			'date-format',
 			'day-of-week',
 			'delivery-notification-email',

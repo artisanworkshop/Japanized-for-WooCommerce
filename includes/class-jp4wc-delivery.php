@@ -287,12 +287,19 @@ class JP4WC_Delivery {
 	 */
 	public function delivery_time_display( $setting ) {
 		$time_zone_setting = get_option( 'wc4jp_time_zone_details' );
+		if ( ! is_array( $time_zone_setting ) ) {
+			$time_zone_setting = array();
+		}
 		if ( get_option( 'wc4jp-delivery-time-zone' ) ) {
 			echo '<p class="form-row delivery-time" id="order_wc4jp_delivery_time_field">';
 			echo '<label for="wc4jp_delivery_time_zone" class="">' . esc_html__( 'Delivery Time Zone', 'woocommerce-for-japan' ) . '</label>';
 			echo '<select name="wc4jp_delivery_time_zone" class="input-select" id="wc4jp_delivery_time_zone">';
 			if ( get_option( 'wc4jp-delivery-time-zone-required' ) !== '1' ) {
 				echo '<option value="0">' . esc_html( $setting['unspecified-time'] ) . '</option>';
+			}
+			$morning_label = jp4wc_get_delivery_time_morning_label();
+			if ( '' !== $morning_label ) {
+				echo '<option value="' . esc_attr( $morning_label ) . '">' . esc_html( $morning_label ) . '</option>';
 			}
 			$count_time_zone = count( $time_zone_setting );
 			for ( $i = 0; $i <= $count_time_zone - 1; $i++ ) {

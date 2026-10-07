@@ -333,12 +333,21 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 		$options           = array();
 		$time_zone_setting = get_option( 'wc4jp_time_zone_details' );
 
+		// Note: the "unspecified" option is NOT added here.
+		// It is passed as the `placeholder` parameter to woocommerce_register_additional_checkout_field.
+
+		// The "Morning" option comes first, ahead of the configured time zones.
+		$morning_label = jp4wc_get_delivery_time_morning_label();
+		if ( '' !== $morning_label ) {
+			$options[] = array(
+				'value' => $morning_label,
+				'label' => $morning_label,
+			);
+		}
+
 		if ( empty( $time_zone_setting ) || ! is_array( $time_zone_setting ) ) {
 			return $options;
 		}
-
-		// Note: the "unspecified" option is NOT added here.
-		// It is passed as the `placeholder` parameter to woocommerce_register_additional_checkout_field.
 
 		// Add time zone options.
 		foreach ( $time_zone_setting as $time_zone ) {
