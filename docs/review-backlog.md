@@ -17,4 +17,11 @@
 | 2026-10-06 | R3-L2 | Low | tests/Unit/test-jp4wc-cod-fee-gateway-validation.php / test-jp4wc-cod-fee-store-api.php | 入れ子のチェックアウトリクエストを固定するテストが無い。既存注文の支払いのテストが status を見ていない | 未起票 |
 | 2026-10-06 | R3-L3 | Low | includes/class-jp4wc-cod-fee-handler.php / class-jp4wc-cod-fee.php | 手数料を持つゲートウェイの一覧（`cod` / `cod2`）がガードと計算側で二重管理 | 未起票 |
 | 2026-10-06 | R2-X1 | High | includes/admin/class-jp4wc-settings-api.php / class-jp4wc-cod-fee.php | 代引きの決済設定画面（WooCommerce > 設定 > 決済 > 代金引換）で手数料を設定した店舗が、Japanized for WooCommerce の設定画面で保存すると、存在しなかった `wc4jp-extra_charge_*` が `''` で作られて優先され、代引き手数料が請求されなくなる（設定画面は受け取った全キーを保存し直し、REST は未設定のキーを `''` で返す。wp-env で実測: 保存前 name=代引き手数料 / amount=550 / max=50000 → 保存後すべて空。どのタブの保存でも起きる）。元の値は `woocommerce_cod_settings` に残る。Pro 版 PR（jp4wc-pro #7）のレビュー中に確認。既存コード | 未起票（ユーザーに確認） |
-
+| 2026-10-07 | R1-X1 | Medium | WC `CheckoutFieldsAdmin` / `WC_Meta_Box_Order_Data::save` | 管理画面で注文を保存すると、ブロック注文の `_wc_other/jp4wc/delivery-time` が現在の選択肢だけの select として送られ、保存済みの値が今の選択肢に無い（時間帯の削除、「午前中」の OFF・表示名変更）と先頭の選択肢で上書きされる。既存の挙動（#221 の R1） | 未起票（ユーザーに確認） |
+| 2026-10-07 | R1-X2 | Medium | jp4wc-pro `includes/class-jp4wc-pro-yamato-exporter.php` | ヤマト B2 出力の時間帯対応表に「午前中」が無く、Undefined array key の警告と時間帯コード空欄になる。`jp4wc_get_delivery_time_morning_label()` と一致する値を `0812` に対応させ `isset` で守る（別リポジトリ。#221 の R1） | 未起票（ユーザーに確認） |
+| 2026-10-07 | R1-X3 | Low | class-jp4wc.php | ブロック用フィールドの登録（init 優先度 0）が textdomain の読み込み（init 優先度 1）より前。言語パックが無いサイトでは既存のラベルもブロック側だけ英語になる | 未起票 |
+| 2026-10-07 | R1-L1 | Low | includes/jp4wc-common-functions.php | 「午前中」の表示名が登録済みの時間帯の値（例 `08:00-12:00`）と同じだと選択肢が重複する | 未起票 |
+| 2026-10-07 | R1-L2 | Low | includes/admin/class-jp4wc-settings-api.php | 表示名の `<` は `sanitize_text_field` で `&lt;` になり、ブロックではそのまま見える | 未起票 |
+| 2026-10-07 | R1-L3 | Low | includes/admin/class-jp4wc-settings-api.php | 表示名 `'0'` は保存されるが、チェックアウトでは既定値に置き換わり設定画面と食い違う | 未起票 |
+| 2026-10-07 | R1-L4 | Low | tests/Unit/test-jp4wc-delivery-time-morning.php | Store API の拒否テストがステータス 400 しか見ていない | 未起票 |
+| 2026-10-07 | R1-L5 | Low | src/js/jp4wc/admin/settings/components/ShipmentSettings.js | 表示名を空にして配送設定タブ以外で保存すると、PHP の実行時フォールバック（言語パック・ロケール依存）に戻る | 未起票 |
