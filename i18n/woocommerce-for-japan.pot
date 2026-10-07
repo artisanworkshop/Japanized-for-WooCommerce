@@ -1892,6 +1892,31 @@ msgstr ""
 msgid "Text to display when time is not specified"
 msgstr ""
 
+#: includes/jp4wc-common-functions.php assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "Morning"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "Show \"Morning\" as the first time zone"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "Adds a \"Morning\" option ahead of the time zones below."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "\"Morning\" option label"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "Text shown for the \"Morning\" option and saved to the order. Leave empty to use \"Morning\"."
+msgstr ""
+
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:427
 msgid "Delivery time zone management"

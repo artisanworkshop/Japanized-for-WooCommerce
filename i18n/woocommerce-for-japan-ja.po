@@ -2522,6 +2522,31 @@ msgstr "指定されていない時間の説明"
 msgid "Text to display when time is not specified"
 msgstr "時間が指定されていない場合に表示するテキスト"
 
+#: includes/jp4wc-common-functions.php assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "Morning"
+msgstr "午前中"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "Show \"Morning\" as the first time zone"
+msgstr "「午前中」を最初の時間帯として表示"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "Adds a \"Morning\" option ahead of the time zones below."
+msgstr "下の時間帯より前に「午前中」の選択肢を追加します。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "\"Morning\" option label"
+msgstr "「午前中」の表示名"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
+msgid "Text shown for the \"Morning\" option and saved to the order. Leave empty to use \"Morning\"."
+msgstr "「午前中」の選択肢に表示され、注文に保存される文字列です。空欄の場合は「午前中」になります。"
+
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:427
 msgid "Delivery time zone management"
