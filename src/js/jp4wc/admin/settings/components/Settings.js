@@ -15,6 +15,32 @@ import AffiliateSettings from './AffiliateSettings';
 
 import './Settings.scss';
 
+/**
+ * Fill in the default "Morning" delivery time zone label when the option is
+ * on and the label is empty.
+ *
+ * The default is saved from here rather than left to the server: the plugin's
+ * own translations are used here, while a WordPress.org language pack that
+ * predates the string takes precedence over them in PHP. Every tab saves the
+ * whole settings object, so this runs for all of them.
+ *
+ * @param {Object} values Settings about to be saved.
+ * @return {Object} Settings to save.
+ */
+const withMorningLabel = ( values ) => {
+	const label = values?.[ 'delivery-time-morning-label' ];
+	if (
+		values?.[ 'delivery-time-morning' ] !== '1' ||
+		( typeof label === 'string' && label.trim() )
+	) {
+		return values;
+	}
+	return {
+		...values,
+		'delivery-time-morning-label': __( 'Morning', 'woocommerce-for-japan' ),
+	};
+};
+
 const Settings = () => {
 	const [ settings, setSettings ] = useState( null );
 	const [ loading, setLoading ] = useState( true );
@@ -55,7 +81,7 @@ const Settings = () => {
 			const response = await apiFetch( {
 				path: '/jp4wc/v1/settings',
 				method: 'POST',
-				data: updatedSettings,
+				data: withMorningLabel( updatedSettings ),
 			} );
 
 			setSettings( response );

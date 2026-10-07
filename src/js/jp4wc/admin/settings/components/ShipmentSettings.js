@@ -53,18 +53,6 @@ const ShipmentSettings = ( {
 			...settings,
 			timeZones,
 		};
-		// Save the default "Morning" label rather than leave it to the server:
-		// the plugin's own translations are used here, while a WordPress.org
-		// language pack that predates the string takes precedence over them in PHP.
-		if (
-			updatedSettings[ 'delivery-time-morning' ] === '1' &&
-			! updatedSettings[ 'delivery-time-morning-label' ]?.trim()
-		) {
-			updatedSettings[ 'delivery-time-morning-label' ] = __(
-				'Morning',
-				'woocommerce-for-japan'
-			);
-		}
 		saveSettings( updatedSettings );
 	};
 
