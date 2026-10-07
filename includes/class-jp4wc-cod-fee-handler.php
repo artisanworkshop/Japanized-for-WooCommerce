@@ -70,8 +70,11 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 			add_action( 'init', array( __CLASS__, 'jp4wc_register_wc_blocks' ), 10 );
 			add_filter( 'rest_request_before_callbacks', array( __CLASS__, 'jp4wc_capture_checkout_payment_method' ), 10, 3 );
 			add_filter( 'rest_request_after_callbacks', array( __CLASS__, 'jp4wc_release_checkout_payment_method' ), 10, 3 );
-			add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( __CLASS__, 'jp4wc_reject_stale_gateway_fee' ), 10, 2 );
+			// The draft-order guard runs first: a draft paid for with COD after
+			// another gateway was selected in the block fails both guards, and
+			// the answer should say what to do, not to refresh and try again.
 			add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( __CLASS__, 'jp4wc_reject_cod_payment_of_draft_order' ), 10, 2 );
+			add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( __CLASS__, 'jp4wc_reject_stale_gateway_fee' ), 10, 2 );
 			add_filter( 'woocommerce_available_payment_gateways', array( __CLASS__, 'jp4wc_hide_cod_on_draft_order_pay_page' ) );
 		}
 

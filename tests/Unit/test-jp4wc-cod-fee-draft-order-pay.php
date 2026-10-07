@@ -259,6 +259,21 @@ class JP4WC_COD_Fee_Draft_Order_Pay_Test extends WP_UnitTestCase {
 	 * it is not touched.
 	 */
 	/**
+	 * The shopper selected another gateway in the Checkout block before the
+	 * draft was paid for with COD. The stale-fee guard sees a mismatch too;
+	 * the answer must still be the one that says what to do.
+	 */
+	public function test_draft_order_rejection_says_to_use_the_checkout_even_when_another_gateway_was_selected() {
+		$order = $this->create_draft_order();
+		WC()->session->set( 'jp4wc_gateway_id', 'bacs' );
+
+		$response = $this->pay_for_order( $order, 'cod' );
+
+		$this->assertSame( 409, $response['status'], wp_json_encode( $response['data'] ) );
+		$this->assertSame( 'jp4wc_cod_draft_order_payment', $response['data']['code'] );
+	}
+
+	/**
 	 * @dataProvider fee_gateways
 	 *
 	 * @param string $gateway_id Gateway that carries a fee.
