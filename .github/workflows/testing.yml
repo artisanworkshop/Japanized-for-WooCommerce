@@ -1,3 +1,22 @@
+# Two-tier test matrix.
+#
+#   light — pull requests: one job per supported PHP version, pairing the
+#           oldest WP/WC with the oldest PHP and the newest with the newest
+#           (3 jobs). Every pinned version still runs at least once.
+#   full  — tag pushes (called from the deploy workflow), manual runs and the
+#           weekly schedule: every PHP × WP × WC combination that WooCommerce
+#           itself supports.
+#
+# WooCommerce versions: latest, plus the latest patch of the minor that was
+# current 6 months ago and 12 months ago. Refresh the two pinned versions
+# about every 6 months. WooCommerce supports WordPress on an L-1 basis, so each
+# pinned WC has a "Requires at least" that rules out the older WP versions;
+# those pairs are excluded from the full matrix because WordPress refuses to
+# install such a WooCommerce in the first place.
+#
+#   WC latest (11.2, 2026-10)  requires WP 7.0  → WP latest only
+#   WC 10.6.2  (2026-03)       requires WP 6.8  → WP latest, 6.9
+#   WC 10.2.2  (2025-09)       requires WP 6.7  → WP latest, 6.9, 6.7
 name: Testing
 
 on:
@@ -5,17 +24,86 @@ on:
     branches:
       - main
       - master
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.claude/**'
+  workflow_call:
+    inputs:
+      scope:
+        description: 'Matrix scope: light or full'
+        type: string
+        required: false
+        default: full
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: 'Matrix scope'
+        type: choice
+        options:
+          - light
+          - full
+        default: full
+  schedule:
+    # Weekly full run (Monday 03:00 JST) to catch drift in the "latest" WP/WC.
+    - cron: '0 18 * * 0'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # A newer push to the same PR supersedes the running job; tag, schedule and
+  # manual runs are never cancelled.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  matrix:
+    name: Select matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+    steps:
+      - name: Select matrix scope
+        id: select
+        env:
+          # workflow_call / workflow_dispatch pass an explicit scope; a pull
+          # request defaults to light and everything else (schedule) to full.
+          SCOPE: ${{ inputs.scope || (github.event_name == 'pull_request' && 'light' || 'full') }}
+        run: |
+          echo "scope=$SCOPE"
+          if [ "$SCOPE" = "light" ]; then
+            MATRIX=$(jq -c . <<'JSON'
+          {
+            "include": [
+              { "php-version": "8.3", "wp-version": "6.7",    "wc-version": "10.2.2" },
+              { "php-version": "8.4", "wp-version": "6.9",    "wc-version": "10.6.2" },
+              { "php-version": "8.5", "wp-version": "latest", "wc-version": "latest" }
+            ]
+          }
+          JSON
+            )
+          else
+            MATRIX=$(jq -c . <<'JSON'
+          {
+            "php-version": ["8.5", "8.4", "8.3"],
+            "wp-version":  ["latest", "6.9", "6.7"],
+            "wc-version":  ["latest", "10.6.2", "10.2.2"],
+            "exclude": [
+              { "wp-version": "6.9", "wc-version": "latest" },
+              { "wp-version": "6.7", "wc-version": "latest" },
+              { "wp-version": "6.7", "wc-version": "10.6.2" }
+            ]
+          }
+          JSON
+            )
+          fi
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
   phpunit:
     name: PHP ${{ matrix.php-version }} / WP ${{ matrix.wp-version }} / WC ${{ matrix.wc-version }}
+    needs: matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        php-version: ['8.5', '8.4', '8.3']
-        wp-version: ['latest', '6.8', '6.7']
-        wc-version: ['latest', '10.6.2', '10.5.3']
+      matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
     services:
       database:
         image: mysql:8.0
