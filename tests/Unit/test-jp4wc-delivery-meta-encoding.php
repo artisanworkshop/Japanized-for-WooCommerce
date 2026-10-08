@@ -341,13 +341,38 @@ class JP4WC_Delivery_Meta_Encoding_Test extends WP_UnitTestCase {
 	// ------------------------------------------------------------------
 
 	/**
+	 * The plain-text email of a regular order is unchanged: the block keeps the
+	 * blank lines around it, which an email template relies on.
+	 */
+	public function test_plain_text_output_is_unchanged_for_a_regular_order() {
+		$order = $this->create_order_with_time_zone( '14:00-16:00' );
+		$order->update_meta_data( 'wc4jp-delivery-date', '2026/05/10' );
+		$order->save();
+
+		$this->assertSame(
+			"\n\n==========\n\nSCHEDULED DELIVERY DATE AND TIME \n\nScheduled Delivery Date: 2026/05/10\nScheduled Time Zone: 14:00-16:00\n\n==========\n\n",
+			$this->render( wc_get_order( $order->get_id() ), true )
+		);
+	}
+
+	/**
 	 * The plain-text email prints the label itself.
 	 */
 	public function test_plain_text_output_prints_the_label_itself() {
-		$text = $this->render( $this->create_order_with_time_zone( self::LABEL ), true );
+		$this->assertSame(
+			"\n\n==========\n\nSCHEDULED DELIVERY DATE AND TIME \n\nScheduled Time Zone: " . self::LABEL . "\n\n==========\n\n",
+			$this->render( $this->create_order_with_time_zone( self::LABEL ), true )
+		);
+	}
 
-		$this->assertStringContainsString( ': ' . self::LABEL, $text );
-		$this->assertStringNotContainsString( '&amp;', $text );
+	/**
+	 * A `<` is stored as `&lt;` by sanitize_text_field(); the plain-text email
+	 * prints the `<` and the text after it.
+	 */
+	public function test_plain_text_output_prints_a_less_than_sign_and_what_follows_it() {
+		$text = $this->render( $this->create_order_with_time_zone( '10:00&lt;12:00' ), true );
+
+		$this->assertStringContainsString( "Scheduled Time Zone: 10:00<12:00\n\n==========\n\n", $text );
 	}
 
 	/**
@@ -356,9 +381,7 @@ class JP4WC_Delivery_Meta_Encoding_Test extends WP_UnitTestCase {
 	public function test_html_output_escapes_the_label_once() {
 		$printed = $this->html_time_zone( $this->render( $this->create_order_with_time_zone( self::LABEL ), false ) );
 
-		$this->assertStringNotContainsString( ' & ', $printed );
-		$this->assertStringNotContainsString( '&amp;amp;', $printed );
-		$this->assertSame( self::LABEL, html_entity_decode( $printed, ENT_QUOTES ) );
+		$this->assertSame( 'AM &amp; PM&#039;s &quot;x&quot;', $printed );
 	}
 
 	/**
@@ -366,10 +389,10 @@ class JP4WC_Delivery_Meta_Encoding_Test extends WP_UnitTestCase {
 	 * email prints the label itself.
 	 */
 	public function test_plain_text_output_decodes_a_value_stored_before() {
-		$text = $this->render( $this->create_order_with_time_zone( self::LEGACY ), true );
-
-		$this->assertStringContainsString( ': ' . self::LABEL, $text );
-		$this->assertStringNotContainsString( '&amp;', $text );
+		$this->assertSame(
+			"\n\n==========\n\nSCHEDULED DELIVERY DATE AND TIME \n\nScheduled Time Zone: " . self::LABEL . "\n\n==========\n\n",
+			$this->render( $this->create_order_with_time_zone( self::LEGACY ), true )
+		);
 	}
 
 	/**
@@ -378,8 +401,7 @@ class JP4WC_Delivery_Meta_Encoding_Test extends WP_UnitTestCase {
 	public function test_html_output_does_not_escape_a_value_stored_before_twice() {
 		$printed = $this->html_time_zone( $this->render( $this->create_order_with_time_zone( self::LEGACY ), false ) );
 
-		$this->assertStringNotContainsString( '&amp;amp;', $printed );
-		$this->assertSame( self::LABEL, html_entity_decode( $printed, ENT_QUOTES ) );
+		$this->assertSame( 'AM &amp; PM&#039;s &quot;x&quot;', $printed );
 	}
 
 	/**

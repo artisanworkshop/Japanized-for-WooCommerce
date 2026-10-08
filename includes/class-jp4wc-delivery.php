@@ -655,9 +655,12 @@ class JP4WC_Delivery {
 		}
 		$output = apply_filters( 'jp4wc_display_date_and_time_zone', $html, $date_time, $show_title );
 		if ( $plain_text ) {
-			// A plain-text email shows an entity literally, so a `&` in the value is
-			// kept as it is and only tags are removed.
-			echo wp_strip_all_tags( $output ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plain text, not HTML.
+			// Plain text, not HTML: an entity would show literally and a tag cannot be
+			// interpreted, so the text is printed as it is. Every value in it went
+			// through sanitize_text_field() when it was stored, and wp_strip_all_tags()
+			// is not used because it would trim the blank lines around the block and
+			// cut the text at a `<` in a value.
+			echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plain text, see above.
 		} else {
 			echo wp_kses_post( $output );
 		}
@@ -741,13 +744,15 @@ class JP4WC_Delivery {
 	}
 
 	/**
-	 * Helper: Return a stored delivery value as it was entered.
+	 * Helper: Decode the HTML entities in a stored delivery value.
 	 *
 	 * Up to 2.9.16 the classic checkout stored the delivery date, time zone and
 	 * ship date through esc_attr( htmlspecialchars() ), so an order from then holds
 	 * `&amp;`, `&quot;`, `&#039;`, `&lt;` or `&gt;` where the Checkout block and the
-	 * admin meta box hold the character itself. Undo that for the readers, which
-	 * escape for their own output; the values stored since are left unchanged.
+	 * admin meta box hold the character itself. The readers escape for their own
+	 * output, so they are given the character. A value stored since is decoded the
+	 * same way: sanitize_text_field() turns a `<` into `&lt;`, which reads back as
+	 * `<`. (A `<` stored by the old code went through both and reads back as `&lt;`.)
 	 *
 	 * @since 2.9.17
 	 *
