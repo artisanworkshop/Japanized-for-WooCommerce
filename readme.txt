@@ -158,7 +158,7 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Changelog ==
 
-= 2.9.17 - 2026-10-08 =
+= 2.9.17 - 2026-10-13 =
 * **Added** - A "Morning" (午前中) option can be shown as the first delivery time zone: enable it under Delivery settings → Delivery time settings (off by default) and customise its label; it is offered on both the classic and the block checkout and works even when no hourly time zone is registered (which previously caused a TypeError on the classic checkout)
 * **Fixed** - Paidy payments whose payment ID contains a hyphen (`-`) were rejected by the payment ID format check and never marked as paid, leaving the order pending until the stock hold cancelled it even though the customer had paid; the check now accepts the base64url alphabet Paidy actually uses (`pay_[A-Za-z0-9_-]+`) while keeping the URL injection protection (#223)
 * **Fixed** - In the Checkout block the Cash on Delivery fee could get out of step with the selected payment method on slower servers (a fee left behind after switching to another method, or missing after switching to COD); the fee is now calculated from WooCommerce's own `chosen_payment_method` and from the payment method submitted with the order (#215)
