@@ -178,6 +178,18 @@ npm run format
 npm run packages-update
 ```
 
+### Claude Code スキル
+
+このプラグインは [Claude Code](https://claude.com/claude-code) を使って開発しており、WordPress / WooCommerce プラグイン開発用の共有スキル集 [shinobiashi/claude-skills](https://github.com/shinobiashi/claude-skills) を利用しています。WooCommerce 拡張の実装（HPOS・ブロックチェックアウト・Store API）、PHPCS / PHPUnit / E2E テスト、コードレビュー、CI 失敗の切り分け、WordPress.org へのリリースなどの手順を、スキルとして共有しています。
+
+```bash
+git clone https://github.com/shinobiashi/claude-skills.git ~/Dev/claude-skills
+cd ~/Dev/claude-skills
+bash install.sh   # 全スキルを ~/.claude/skills/ に配置
+```
+
+スキルはこのリポジトリには置かず、個人スキル（`~/.claude/skills/`）として使います。このプラグイン固有の規約やハマりどころは、リポジトリ直下の `CLAUDE.md` にまとめています。
+
 ## 主要技術スタック
 
 ### フロントエンド
