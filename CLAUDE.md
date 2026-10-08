@@ -28,8 +28,8 @@ tests/                        # PHPUnit tests
 ## 開発環境
 
 - ローカル環境: `npx wp-env start` で起動（Docker必須）
-- 開発サイト: http://localhost:8888
-- テストサイト: http://localhost:8889
+- 開発サイト: http://localhost:8890
+- テストサイト: http://localhost:8891
 - WP-CLI: `npx wp-env run cli wp <command>`
 
 ## Coding Standards
@@ -44,9 +44,10 @@ composer test          # phpunit
 
 JS/CSS build:
 ```bash
-npm run build          # production build
+npx wp-scripts build   # bundle only — use this in feature PRs
 npm run start          # watch mode
 ```
+`npm run build` also runs `i18n:build`, which writes a stray `i18n/metaps-for-wc.pot` and rewrites the JSON translations — don't use it in feature PRs.
 
 ### Key Rules
 - All globals must use `jp4wc_` / `JP4WC_` / `JP4WC` prefix
@@ -108,6 +109,7 @@ wp_add_inline_style( 'handle', '.element { order: 3; }' );
 - Checkboxes: `'1'` (enabled) or `''` (disabled)
 - REST API: `GET/POST /jp4wc/v1/settings`
 - Admin UI: React app at `src/js/jp4wc/admin/settings/`
+- Every tab posts the whole settings object through the shared `saveSettings()` in `Settings.js` — put save-time normalization there, not in one tab's handler. `updateSetting()` is a functional state update, so two calls in one handler both apply.
 
 ## i18n
 
@@ -122,6 +124,8 @@ Regenerate translation files after adding strings:
 npm run make-pot    # requires wp-env
 npm run make-json
 ```
+
+Admin React strings load from `i18n/woocommerce-for-japan-ja-<md5>.json` (`<md5>` = md5 of the built script's path relative to the plugin, e.g. `assets/js/build/admin/settings.js` → `6d3c6b06…`). When adding strings by hand, add them to this JSON as well as the `.po`/`.mo`.
 
 ## WooCommerce HPOS Compatibility
 
@@ -160,6 +164,7 @@ Gateway classes in `includes/gateways/`. Each extends `WC_Payment_Gateway`. Bloc
 - The COD fee settings live in two places: the `wc4jp-extra_charge_*` options written by the React settings screen, and `woocommerce_cod_settings` (plus `jp4wc_tax_class_for_cod`) written by the COD gateway's own settings page. `JP4WC_COD_Fee::get_cod_fee_settings()` prefers a `wc4jp-` option whenever it *exists*, even when empty. Anything that reports these settings for editing must report the values in force (`JP4WC_Settings_API::fill_cod_fee_settings_in_force()`), because the settings screen saves back every value it was given — reporting them as empty wiped the fee on the first save (#218).
 - Not every gateway module's options use the `wc4jp-` prefix — a payment gateway can have its own established naming scheme distinct from both `wc4jp-` and `jp4wc_` (e.g. Paidy's `paidy_*` options, present since v2.7.0). Check sibling options in the same file before flagging a missing `wc4jp-` prefix as a bug.
 - Before running `msgmerge --update` on `i18n/*.po` inside a feature/fix PR, diff it against the current `.pot` first. A `.po` that hasn't been resynced in a while will also prune long-obsolete entries and reflow the whole file on merge, bloating an unrelated PR by 1000+ lines — add only the new/changed msgids by hand instead and leave a full resync for a dedicated POT-regen PR.
+- A user-visible default that gets saved or used as a value (e.g. a select option's value) must not come from PHP `__()` at request time: a WordPress.org language pack beats the bundled `i18n/*.mo` and has no translation for a new string until it's translated on translate.wordpress.org, and block checkout fields are registered on `woocommerce_init` (init 0), before `load_plugin_textdomain()` (init 1). Script translations try the bundled JSON before the language pack, so save such defaults from the React settings app (`withMorningLabel()` in `Settings.js`, PR #222).
 - WooCommerce Store API's checkout POST calculates cart fees (`woocommerce_cart_calculate_fees`, via `calculate_totals()`) *before* it sets the order's final payment method from the request (`woocommerce_store_api_checkout_update_order_from_request` fires after) — a fee decided from session state during that calculation can be for the wrong method. Calculate from the request's own `payment_method` (see below) and keep a post-hoc check in that later action only as a safety net.
 - Never keep the shopper's selected payment method in a session key of our own. Since WooCommerce 9.8 the Checkout block pushes a payment-method change itself (`PUT /wc/store/v1/checkout?__experimental_calc_totals=true`, debounced ~1.5 s), writes `chosen_payment_method` and returns recalculated totals. A parallel key updated through `extensionCartUpdate` races with that request on any server slower than the debounce: each calculates from the other's unsaved value, and because the WooCommerce session is saved as one row, the later save overwrites the earlier one (#215). Write `chosen_payment_method` and read only that.
 - To calculate a fee for the payment method a Store API checkout request is submitting, capture the request's `payment_method` in `rest_request_before_callbacks` (see `JP4WC_COD_Fee_Handler::jp4wc_capture_checkout_payment_method()`); it is the only place to see it before the totals are calculated. Scope what you capture to that one request — save the previous state there and restore it in `rest_request_after_callbacks` — because a batch request serves several requests in one process and a route may dispatch a nested request while it runs. Do not re-validate the value against `get_available_payment_gateways()` in the middle of the totals calculation: WooCommerce validates it for the same request and rejects the request, while a mid-calculation check sees a cart total of 0 and can disagree.
