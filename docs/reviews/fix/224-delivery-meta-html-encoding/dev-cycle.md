@@ -2,9 +2,9 @@
 - タスク: Issue #224 — クラシックチェックアウトの配達日・配送時間帯・出荷日を HTML エンコードせずに保存し、出力時にエスケープする
 - 開始: 2026-10-08
 - PR: #230 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/230
-- 現在のステップ: 5→6(G1 修正を push 済み、CI 待ち → G2 の依頼)
-- Copilot: 依頼 1 回 / 未収束(G1 で新規 3 件)
-- Codex: 依頼 1 回 / 未収束(G1 で新規 1 件)
+- 現在のステップ: 完了(G2 で両 bot 収束、最終報告済み。マージは人間が行う)
+- Copilot: 依頼 2 回 / 収束(G2 で新規指摘なし)
+- Codex: 依頼 2 回 / 収束(G2 で新規指摘なし)
 
 ## ログ
 | 日時(JST) | ステップ | 内容 |
@@ -17,6 +17,9 @@
 | 2026-10-08 19:43 | 4 | upstream へ push(HEAD 24ed242、T=2026-10-08T10:43:30Z)、PR #230 作成 |
 | 2026-10-08 19:50 | 5-6 | CI green。Codex(`@codex review`)・Copilot に同時依頼、両 bot が 24ed242 に応答 |
 | 2026-10-08 20:30 | 7 | G1: Codex 1 / Copilot 3。復号の無条件適用(G1-1/G1-2)はユーザー判断で復号を削除(eabf0ec)。docs 2 件は状態ファイル更新で対応。確認ゲート通過 |
+| 2026-10-08 20:05 | 7 | push(HEAD 4815787、T=2026-10-08T11:05:25Z)、4 スレッドに返信・Resolve、サマリ投稿 |
+| 2026-10-08 20:15 | 5-7 | G2: CI green、両 bot に再依頼。Copilot 🟢 Approval recommended(0 findings)、Codex 指摘なし → 両 bot 収束 |
+| 2026-10-08 20:20 | 8 | 最終報告(final-report.md)を記録して停止 |
 
 ## 実装中の判明事項
 - plain-text 分岐も末尾の `wp_kses_post()` が `&` を `&amp;` にしていた(保存形式と無関係)。計画では「plain-text 分岐は変更なし」としていたが、完了条件 2 を満たすため plain-text 分岐は `$output` をそのまま出力するよう変更(text/plain。理由付き `phpcs:ignore`、WooCommerce 本体の plain テンプレートと同じ扱い)。最初に試した `wp_strip_all_tags()` は `trim()` でブロック前後の空行を消し、`<` 以降を切るため review-loop R1 で不採用(R1-1 / R1-2)
