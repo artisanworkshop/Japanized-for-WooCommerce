@@ -329,33 +329,36 @@ class JP4WC_Delivery {
 			return;
 		}
 
+		// The values are stored as entered, like the Checkout block and the admin meta box
+		// store them, and are escaped where they are output (see display_date_and_time_zone()).
+
 		// Process delivery date.
 		if ( isset( $data['wc4jp_delivery_date'] ) ) {
-			$date = apply_filters( 'wc4jp_delivery_date', $data['wc4jp_delivery_date'], $order->get_id() );
+			$date = apply_filters( 'wc4jp_delivery_date', sanitize_text_field( $data['wc4jp_delivery_date'] ), $order->get_id() );
 			if ( ! empty( $date ) && '0' !== $date ) {
 				if ( get_option( 'wc4jp-date-format' ) ) {
 					$date_timestamp = strtotime( $date );
 					$formatted_date = date_i18n( get_option( 'wc4jp-date-format' ), $date_timestamp );
-					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $formatted_date ) ) );
+					$order->update_meta_data( 'wc4jp-delivery-date', $formatted_date );
 				} else {
-					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $date ) ) );
+					$order->update_meta_data( 'wc4jp-delivery-date', $date );
 				}
 			}
 		}
 
 		// Process delivery time zone.
 		if ( isset( $data['wc4jp_delivery_time_zone'] ) ) {
-			$time = apply_filters( 'wc4jp_delivery_time_zone', $data['wc4jp_delivery_time_zone'], $order->get_id() );
+			$time = apply_filters( 'wc4jp_delivery_time_zone', sanitize_text_field( $data['wc4jp_delivery_time_zone'] ), $order->get_id() );
 			if ( ! empty( $time ) && '0' !== $time ) {
-				$order->update_meta_data( 'wc4jp-delivery-time-zone', esc_attr( htmlspecialchars( $time ) ) );
+				$order->update_meta_data( 'wc4jp-delivery-time-zone', $time );
 			}
 		}
 
 		// Process tracking ship date.
 		if ( isset( $data['wc4jp-tracking-ship-date'] ) ) {
-			$ship_date = apply_filters( 'wc4jp_ship_date', $data['wc4jp-tracking-ship-date'], $order->get_id() );
+			$ship_date = apply_filters( 'wc4jp_ship_date', sanitize_text_field( $data['wc4jp-tracking-ship-date'] ), $order->get_id() );
 			if ( ! empty( $ship_date ) && '0' !== $ship_date ) {
-				$order->update_meta_data( 'wc4jp-tracking-ship-date', esc_attr( htmlspecialchars( $ship_date ) ) );
+				$order->update_meta_data( 'wc4jp-tracking-ship-date', $ship_date );
 			}
 		}
 	}
@@ -390,9 +393,9 @@ class JP4WC_Delivery {
 				if ( get_option( 'wc4jp-date-format' ) ) {
 					$date_timestamp = strtotime( $date );
 					$formatted_date = date_i18n( get_option( 'wc4jp-date-format' ), $date_timestamp );
-					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $formatted_date ) ) );
+					$order->update_meta_data( 'wc4jp-delivery-date', $formatted_date );
 				} else {
-					$order->update_meta_data( 'wc4jp-delivery-date', esc_attr( htmlspecialchars( $date ) ) );
+					$order->update_meta_data( 'wc4jp-delivery-date', $date );
 				}
 			} else {
 				$order->delete_meta_data( 'wc4jp-delivery-date' );
@@ -403,7 +406,7 @@ class JP4WC_Delivery {
 		if ( isset( $_POST['wc4jp_delivery_time_zone'] ) ) {
 			$time = apply_filters( 'wc4jp_delivery_time_zone', sanitize_text_field( wp_unslash( $_POST['wc4jp_delivery_time_zone'] ) ), $order_id );
 			if ( ! empty( $time ) && '0' !== $time ) {
-				$order->update_meta_data( 'wc4jp-delivery-time-zone', esc_attr( htmlspecialchars( $time ) ) );
+				$order->update_meta_data( 'wc4jp-delivery-time-zone', $time );
 			} else {
 				$order->delete_meta_data( 'wc4jp-delivery-time-zone' );
 			}
@@ -413,7 +416,7 @@ class JP4WC_Delivery {
 		if ( isset( $_POST['wc4jp-tracking-ship-date'] ) ) {
 			$ship_date = apply_filters( 'wc4jp_ship_date', sanitize_text_field( wp_unslash( $_POST['wc4jp-tracking-ship-date'] ) ), $order_id );
 			if ( ! empty( $ship_date ) && '0' !== $ship_date ) {
-				$order->update_meta_data( 'wc4jp-tracking-ship-date', esc_attr( htmlspecialchars( $ship_date ) ) );
+				$order->update_meta_data( 'wc4jp-tracking-ship-date', $ship_date );
 			} else {
 				$order->delete_meta_data( 'wc4jp-tracking-ship-date' );
 			}
@@ -643,14 +646,21 @@ class JP4WC_Delivery {
 			}
 
 			if ( $date_time['date'] ) {
-				$html .= sprintf( '<p class="jp4wc_date"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_delivery_date_text', __( 'Scheduled Delivery Date', 'woocommerce-for-japan' ), $order ), $date_time['date'] );
+				$html .= sprintf( '<p class="jp4wc_date"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_delivery_date_text', __( 'Scheduled Delivery Date', 'woocommerce-for-japan' ), $order ), esc_html( $date_time['date'] ) );
 			}
 
 			if ( $date_time['time'] ) {
-				$html .= sprintf( '<p class="jp4wc_time"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_time_zone_text', __( 'Scheduled Time Zone', 'woocommerce-for-japan' ), $order ), $date_time['time'] );
+				$html .= sprintf( '<p class="jp4wc_time"><strong>%s</strong> <br>%s</p>', apply_filters( 'wc4jp_time_zone_text', __( 'Scheduled Time Zone', 'woocommerce-for-japan' ), $order ), esc_html( $date_time['time'] ) );
 			}
 		}
-		echo wp_kses_post( apply_filters( 'jp4wc_display_date_and_time_zone', $html, $date_time, $show_title ) );
+		$output = apply_filters( 'jp4wc_display_date_and_time_zone', $html, $date_time, $show_title );
+		if ( $plain_text ) {
+			// A plain-text email shows an entity literally, so a `&` in the value is
+			// kept as it is and only tags are removed.
+			echo wp_strip_all_tags( $output ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plain text, not HTML.
+		} else {
+			echo wp_kses_post( $output );
+		}
 	}
 
 	/**
@@ -696,6 +706,7 @@ class JP4WC_Delivery {
 				$is_block = true;
 			}
 		}
+		$date = $this->decode_stored_value( $date );
 
 		// Check both shortcode and Checkout Block meta keys for delivery time.
 		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
@@ -706,6 +717,7 @@ class JP4WC_Delivery {
 				$is_block = true;
 			}
 		}
+		$time = $this->decode_stored_value( $time );
 
 		if ( ( $date && '' !== $date ) ) {
 			$meta['date'] = $date;
@@ -726,6 +738,28 @@ class JP4WC_Delivery {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Helper: Return a stored delivery value as it was entered.
+	 *
+	 * Up to 2.9.16 the classic checkout stored the delivery date, time zone and
+	 * ship date through esc_attr( htmlspecialchars() ), so an order from then holds
+	 * `&amp;`, `&quot;`, `&#039;`, `&lt;` or `&gt;` where the Checkout block and the
+	 * admin meta box hold the character itself. Undo that for the readers, which
+	 * escape for their own output; the values stored since are left unchanged.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @param mixed $value Order meta value.
+	 * @return mixed The decoded string, or the value unchanged when it is not a string.
+	 */
+	private function decode_stored_value( $value ) {
+		if ( ! is_string( $value ) || '' === $value ) {
+			return $value;
+		}
+
+		return wp_specialchars_decode( $value, ENT_QUOTES );
 	}
 
 	/**
@@ -896,6 +930,12 @@ class JP4WC_Delivery {
 			}
 
 			$delivery_date = $order->get_meta( 'wc4jp-tracking-ship-date', true );
+
+			// woocommerce_wp_text_input() escapes the value; give it the value as entered
+			// so an order stored before 2.9.17 does not show `&amp;` in the input.
+			$date          = $this->decode_stored_value( $date );
+			$time          = $this->decode_stored_value( $time );
+			$delivery_date = $this->decode_stored_value( $delivery_date );
 		} else {
 			$date          = '';
 			$time          = '';
