@@ -1,4 +1,7 @@
-# After pushing a new tag, this workflow will deploy the plugin to the WordPress.org plugin repository and create a new release on GitHub with the attached zip file.
+# After pushing a new tag, this workflow runs the full test matrix and, only if every job passes,
+# deploys the plugin to the WordPress.org plugin repository and creates a new release on GitHub
+# with the attached zip file. If the tests fail nothing is deployed: delete the tag, fix on main,
+# and push the tag again.
 # git push origin --tags
 name: Deploy and Release Plugin
 on:
@@ -6,8 +9,14 @@ on:
         tags:
             - '*'
 jobs:
+    test:
+        name: Full test matrix
+        uses: ./.github/workflows/testing.yml
+        with:
+            scope: full
     tag:
         name: New tag
+        needs: test
         runs-on: ubuntu-latest
         permissions:
             contents: write
