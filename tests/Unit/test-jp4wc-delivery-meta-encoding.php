@@ -5,8 +5,7 @@
  * The classic checkout used to store the three values through
  * esc_attr( htmlspecialchars() ), while the Checkout block and the admin meta
  * box store them as entered. Since 2.9.17 every path stores the value as
- * entered and each output escapes for itself, and the values stored before are
- * decoded when read.
+ * entered and each output escapes for itself.
  *
  * @package Japanized_For_WooCommerce
  */
@@ -21,11 +20,6 @@ class JP4WC_Delivery_Meta_Encoding_Test extends WP_UnitTestCase {
 	 * survive sanitize_text_field(), which every label goes through.
 	 */
 	const LABEL = 'AM & PM\'s "x"';
-
-	/**
-	 * The same label as the classic checkout stored it up to 2.9.16.
-	 */
-	const LEGACY = 'AM &amp; PM&#039;s &quot;x&quot;';
 
 	/**
 	 * A label the Checkout block accepts: WooCommerce's Store API runs the
@@ -366,20 +360,6 @@ class JP4WC_Delivery_Meta_Encoding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A `<` is stored as `&lt;` by sanitize_text_field(); the plain-text email
-	 * prints the `<` and the text after it.
-	 */
-	public function test_plain_text_output_prints_a_less_than_sign_and_what_follows_it() {
-		$order = $this->create_order();
-		( new JP4WC_Delivery() )->save_delivery_data_to_order( $order, array( 'wc4jp_delivery_time_zone' => '10:00<12:00' ) );
-		$order->save();
-		$order = wc_get_order( $order->get_id() );
-
-		$this->assertSame( '10:00&lt;12:00', $order->get_meta( 'wc4jp-delivery-time-zone', true ) );
-		$this->assertStringContainsString( "Scheduled Time Zone: 10:00<12:00\n\n==========\n\n", $this->render( $order, true ) );
-	}
-
-	/**
 	 * The HTML output escapes the label once.
 	 */
 	public function test_html_output_escapes_the_label_once() {
@@ -389,56 +369,31 @@ class JP4WC_Delivery_Meta_Encoding_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * An order stored before 2.9.17 holds the encoded label; the plain-text
-	 * email prints the label itself.
-	 */
-	public function test_plain_text_output_decodes_a_value_stored_before() {
-		$this->assertSame(
-			"\n\n==========\n\nSCHEDULED DELIVERY DATE AND TIME \n\nScheduled Time Zone: " . self::LABEL . "\n\n==========\n\n",
-			$this->render( $this->create_order_with_time_zone( self::LEGACY ), true )
-		);
-	}
-
-	/**
-	 * An order stored before 2.9.17 is not escaped twice in HTML.
-	 */
-	public function test_html_output_does_not_escape_a_value_stored_before_twice() {
-		$printed = $this->html_time_zone( $this->render( $this->create_order_with_time_zone( self::LEGACY ), false ) );
-
-		$this->assertSame( 'AM &amp; PM&#039;s &quot;x&quot;', $printed );
-	}
-
-	/**
 	 * The jp4wc_display_date_and_time_zone filter receives the label itself,
-	 * whichever way the order stored it.
+	 * not the escaped HTML.
 	 */
 	public function test_display_filter_receives_the_label_itself() {
-		$received = array();
+		$received = null;
 		$capture  = function ( $html, $date_time ) use ( &$received ) {
-			$received[] = $date_time['time'];
+			$received = $date_time['time'];
 			return $html;
 		};
 		add_filter( 'jp4wc_display_date_and_time_zone', $capture, 10, 2 );
 
-		$this->render( $this->create_order_with_time_zone( self::LABEL ), true );
-		$this->render( $this->create_order_with_time_zone( self::LEGACY ), true );
+		$this->render( $this->create_order_with_time_zone( self::LABEL ), false );
 
 		remove_filter( 'jp4wc_display_date_and_time_zone', $capture, 10 );
 
-		$this->assertSame( array( self::LABEL, self::LABEL ), $received );
+		$this->assertSame( self::LABEL, $received );
 	}
 
 	/**
-	 * The admin meta box is given the label itself, whichever way the order
-	 * stored it, so saving the box again stores it as entered.
+	 * The admin meta box is given the label itself; woocommerce_wp_text_input()
+	 * escapes it for the input.
 	 */
 	public function test_meta_box_fields_hold_the_label_itself() {
-		$delivery = new JP4WC_Delivery();
+		$fields = ( new JP4WC_Delivery() )->shipping_fields( $this->create_order_with_time_zone( self::LABEL ) );
 
-		$fields = $delivery->shipping_fields( $this->create_order_with_time_zone( self::LABEL ) );
-		$this->assertSame( self::LABEL, $fields['wc4jp-delivery-time-zone']['value'] );
-
-		$fields = $delivery->shipping_fields( $this->create_order_with_time_zone( self::LEGACY ) );
 		$this->assertSame( self::LABEL, $fields['wc4jp-delivery-time-zone']['value'] );
 	}
 }

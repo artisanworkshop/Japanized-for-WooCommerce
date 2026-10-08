@@ -658,8 +658,7 @@ class JP4WC_Delivery {
 			// Plain text, not HTML: nothing in it is interpreted as markup, so an
 			// entity would show literally and the text is printed as it is. The stored
 			// values are sanitized on save; wp_strip_all_tags() is not used because it
-			// would trim the blank lines around the block and cut the text at a `<`
-			// in a value.
+			// would trim the blank lines around the block.
 			echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plain text, see above.
 		} else {
 			echo wp_kses_post( $output );
@@ -709,7 +708,6 @@ class JP4WC_Delivery {
 				$is_block = true;
 			}
 		}
-		$date = $this->decode_stored_value( $date );
 
 		// Check both shortcode and Checkout Block meta keys for delivery time.
 		$time = $order->get_meta( 'wc4jp-delivery-time-zone', true );
@@ -720,7 +718,6 @@ class JP4WC_Delivery {
 				$is_block = true;
 			}
 		}
-		$time = $this->decode_stored_value( $time );
 
 		if ( ( $date && '' !== $date ) ) {
 			$meta['date'] = $date;
@@ -741,30 +738,6 @@ class JP4WC_Delivery {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Helper: Decode the HTML entities in a stored delivery value.
-	 *
-	 * Up to 2.9.16 the classic checkout stored the delivery date, time zone and
-	 * ship date through esc_attr( htmlspecialchars() ), so an order from then holds
-	 * `&amp;`, `&quot;`, `&#039;`, `&lt;` or `&gt;` where the Checkout block and the
-	 * admin meta box hold the character itself. The readers escape for their own
-	 * output, so they are given the character. A value stored since is decoded the
-	 * same way: sanitize_text_field() turns a `<` into `&lt;`, which reads back as
-	 * `<`. (A `<` stored by the old code went through both and reads back as `&lt;`.)
-	 *
-	 * @since 2.9.17
-	 *
-	 * @param mixed $value Order meta value.
-	 * @return mixed The decoded string, or the value unchanged when it is not a string.
-	 */
-	private function decode_stored_value( $value ) {
-		if ( ! is_string( $value ) || '' === $value ) {
-			return $value;
-		}
-
-		return wp_specialchars_decode( $value, ENT_QUOTES );
 	}
 
 	/**
@@ -935,12 +908,6 @@ class JP4WC_Delivery {
 			}
 
 			$delivery_date = $order->get_meta( 'wc4jp-tracking-ship-date', true );
-
-			// woocommerce_wp_text_input() escapes the value; give it the value as entered
-			// so an order stored before 2.9.17 does not show `&amp;` in the input.
-			$date          = $this->decode_stored_value( $date );
-			$time          = $this->decode_stored_value( $time );
-			$delivery_date = $this->decode_stored_value( $delivery_date );
 		} else {
 			$date          = '';
 			$time          = '';
