@@ -1152,10 +1152,14 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 * @return array|null Payment data array on success, null on any failure.
 	 */
 	public function paidy_get_payment_data( $payment_id ) {
-		// Validate format before building the URL: Paidy payment IDs are "pay_" followed by
-		// alphanumeric characters. Rejecting anything else prevents path/query injection when
-		// $payment_id originates from the buyer-controllable thank-you URL transaction_id param.
-		if ( ! preg_match( '/^pay_[A-Za-z0-9_]+$/', $payment_id ) ) {
+		// Validate format before building the URL. Paidy only documents that payment IDs start
+		// with "pay_"; the IDs it actually issues use the base64url alphabet (letters, digits,
+		// "_" and "-", e.g. pay_aii8_kYAAEYA2BDW). "_" and "-" are RFC 3986 unreserved
+		// characters that rawurlencode() leaves untouched, so allowing them keeps the
+		// path/query injection protection intact when $payment_id originates from the
+		// buyer-controllable thank-you URL transaction_id param: "/", "?", "#", "%" and
+		// whitespace are still rejected.
+		if ( ! preg_match( '/^pay_[A-Za-z0-9_-]+$/', $payment_id ) ) {
 			$this->jp4wc_framework->jp4wc_debug_log(
 				'Paidy get payment data: invalid payment_id format: ' . $payment_id,
 				$this->debug,
