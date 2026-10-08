@@ -131,3 +131,31 @@ if ( ! function_exists( 'jp4wc_has_orders_in_last_5_days' ) ) {
 		return $has_order;
 	}
 }
+
+if ( ! function_exists( 'jp4wc_get_delivery_time_morning_label' ) ) {
+	/**
+	 * Get the "Morning" delivery time zone offered ahead of the configured time zones.
+	 *
+	 * The label is used as both the option value and the option text, so the
+	 * order meta holds the same text the customer chose (as it does for the
+	 * "start-end" values of the configured time zones).
+	 *
+	 * @since 2.9.17
+	 * @return string The label, or an empty string when the option is disabled.
+	 */
+	function jp4wc_get_delivery_time_morning_label() {
+		if ( '1' !== get_option( 'wc4jp-delivery-time-morning' ) ) {
+			return '';
+		}
+
+		$label = get_option( 'wc4jp-delivery-time-morning-label', '' );
+		$label = is_string( $label ) ? trim( sanitize_text_field( $label ) ) : '';
+
+		// '0' is the value of the "Not specified" option at the classic checkout.
+		if ( '' === $label || '0' === $label ) {
+			$label = __( 'Morning', 'woocommerce-for-japan' );
+		}
+
+		return $label;
+	}
+}

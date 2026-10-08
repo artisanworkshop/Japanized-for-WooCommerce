@@ -422,6 +422,66 @@ const ShipmentSettings = ( {
 				</PanelRow>
 
 				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'Show "Morning" as the first time zone',
+							'woocommerce-for-japan'
+						) }
+						help={ __(
+							'Adds a "Morning" option ahead of the time zones below.',
+							'woocommerce-for-japan'
+						) }
+						checked={
+							settings?.[ 'delivery-time-morning' ] === '1'
+						}
+						onChange={ ( value ) => {
+							updateSetting(
+								'delivery-time-morning',
+								value ? '1' : ''
+							);
+							// Fill in the default label, so whichever tab saves next saves it too.
+							if (
+								value &&
+								! settings?.[
+									'delivery-time-morning-label'
+								]?.trim()
+							) {
+								updateSetting(
+									'delivery-time-morning-label',
+									__( 'Morning', 'woocommerce-for-japan' )
+								);
+							}
+						} }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'"Morning" option label',
+							'woocommerce-for-japan'
+						) }
+						help={ __(
+							'Text shown for the "Morning" option and saved to the order. Saved as "Morning" when left empty.',
+							'woocommerce-for-japan'
+						) }
+						placeholder={ __( 'Morning', 'woocommerce-for-japan' ) }
+						value={
+							settings?.[ 'delivery-time-morning-label' ] || ''
+						}
+						onChange={ ( value ) =>
+							updateSetting(
+								'delivery-time-morning-label',
+								value
+							)
+						}
+					/>
+				</PanelRow>
+
+				<PanelRow>
 					<div style={ { width: '100%' } }>
 						<h4>
 							{ __(
