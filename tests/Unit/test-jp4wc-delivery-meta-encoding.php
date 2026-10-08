@@ -370,9 +370,13 @@ class JP4WC_Delivery_Meta_Encoding_Test extends WP_UnitTestCase {
 	 * prints the `<` and the text after it.
 	 */
 	public function test_plain_text_output_prints_a_less_than_sign_and_what_follows_it() {
-		$text = $this->render( $this->create_order_with_time_zone( '10:00&lt;12:00' ), true );
+		$order = $this->create_order();
+		( new JP4WC_Delivery() )->save_delivery_data_to_order( $order, array( 'wc4jp_delivery_time_zone' => '10:00<12:00' ) );
+		$order->save();
+		$order = wc_get_order( $order->get_id() );
 
-		$this->assertStringContainsString( "Scheduled Time Zone: 10:00<12:00\n\n==========\n\n", $text );
+		$this->assertSame( '10:00&lt;12:00', $order->get_meta( 'wc4jp-delivery-time-zone', true ) );
+		$this->assertStringContainsString( "Scheduled Time Zone: 10:00<12:00\n\n==========\n\n", $this->render( $order, true ) );
 	}
 
 	/**

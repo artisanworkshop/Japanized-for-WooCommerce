@@ -655,11 +655,11 @@ class JP4WC_Delivery {
 		}
 		$output = apply_filters( 'jp4wc_display_date_and_time_zone', $html, $date_time, $show_title );
 		if ( $plain_text ) {
-			// Plain text, not HTML: an entity would show literally and a tag cannot be
-			// interpreted, so the text is printed as it is. Every value in it went
-			// through sanitize_text_field() when it was stored, and wp_strip_all_tags()
-			// is not used because it would trim the blank lines around the block and
-			// cut the text at a `<` in a value.
+			// Plain text, not HTML: nothing in it is interpreted as markup, so an
+			// entity would show literally and the text is printed as it is. The stored
+			// values are sanitized on save; wp_strip_all_tags() is not used because it
+			// would trim the blank lines around the block and cut the text at a `<`
+			// in a value.
 			echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plain text, see above.
 		} else {
 			echo wp_kses_post( $output );
