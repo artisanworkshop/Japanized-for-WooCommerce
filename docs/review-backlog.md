@@ -22,7 +22,9 @@
 | 2026-10-07 | R1-X3 | Low | class-jp4wc.php | ブロック用フィールドの登録（init 優先度 0）が textdomain の読み込み（init 優先度 1）より前。言語パックが無いサイトでは既存のラベルもブロック側だけ英語になる | 未起票 |
 | 2026-10-07 | R1-L1 | Low | includes/jp4wc-common-functions.php | 「午前中」の表示名が登録済みの時間帯の値（例 `08:00-12:00`）と同じだと選択肢が重複する | 未起票 |
 | 2026-10-07 | R1-L2 | Low | includes/admin/class-jp4wc-settings-api.php | 表示名の `<` は `sanitize_text_field` で `&lt;` になり、ブロックではそのまま見える | 未起票 |
-| 2026-10-07 | R1-L3 | Low | includes/admin/class-jp4wc-settings-api.php | 表示名 `'0'` は保存されるが、チェックアウトでは既定値に置き換わり設定画面と食い違う（PR #222 の G2-2 で Copilot も指摘。保留） | 未起票 |
+| 2026-10-07 | R1-L3 | Low | includes/admin/class-jp4wc-settings-api.php | 表示名 `'0'` は保存されるが、チェックアウトでは既定値に置き換わり設定画面と食い違う（PR #222 の G2-2 で Copilot も指摘し、G3 でも再指摘。保留） | 未起票 |
 | 2026-10-07 | R1-L4 | Low | tests/Unit/test-jp4wc-delivery-time-morning.php | Store API の拒否テストがステータス 400 しか見ていない | 未起票 |
 | 2026-10-07 | R1-L5 | Low | src/js/jp4wc/admin/settings/components/ShipmentSettings.js | 表示名を空にして配送設定タブ以外で保存すると、PHP の実行時フォールバック（言語パック・ロケール依存）に戻る | PR #222 の G1-3（Copilot）で対応済み（補完を全タブ共通の saveSettings に移動） |
 | 2026-10-07 | R2-L1 | Low | src/js/jp4wc/admin/settings/components/ShipmentSettings.js | 「午前中」の既定値は操作する管理者のユーザーロケールの JS 翻訳で決まる（プロフィール言語が英語なら「Morning」が保存される。入力欄に値が出るので気づける） | 未起票 |
+| 2026-10-08 | G3-1 | Low | includes/class-jp4wc-delivery.php:350,406 | クラシックの保存は時間帯を `esc_attr( htmlspecialchars() )` で変換して保存し、ブロックは変換しない。表示名に `&` `'` `"` を含めるとクラシックの注文だけ `&amp;` などで保存され、テキストメールにそのまま出る。保存時の変換をやめるには、変換済みを前提に値をそのまま出す表示（650 行目など）を先に出力時エスケープへ直す必要がある（既存コード。PR #222 の G3 で Copilot が指摘。保留） | 未起票 |
+| 2026-10-08 | G3-2 | Low | src/js/jp4wc/admin/settings/components/Settings.js（`withMorningLabel()`） | タグだけの表示名（例 `<b></b>`）は JS の空判定を通り、`sanitize_text_field()` で空になって保存される。空の間はチェックアウトが PHP の実行時フォールバック（言語パック次第で「Morning」）になり、次の保存で「午前中」が補完される（PR #222 の G3 で Copilot が指摘。R1-L3 と同種。保留） | 未起票 |
