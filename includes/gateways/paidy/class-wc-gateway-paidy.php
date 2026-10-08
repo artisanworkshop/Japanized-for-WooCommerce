@@ -1158,8 +1158,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		// characters that rawurlencode() leaves untouched, so allowing them keeps the
 		// path/query injection protection intact when $payment_id originates from the
 		// buyer-controllable thank-you URL transaction_id param: "/", "?", "#", "%" and
-		// whitespace are still rejected.
-		if ( ! preg_match( '/^pay_[A-Za-z0-9_-]+$/', $payment_id ) ) {
+		// whitespace are still rejected ("D" keeps "$" from matching before a trailing newline).
+		if ( ! preg_match( '/^pay_[A-Za-z0-9_-]+$/D', $payment_id ) ) {
 			$this->jp4wc_framework->jp4wc_debug_log(
 				'Paidy get payment data: invalid payment_id format: ' . $payment_id,
 				$this->debug,

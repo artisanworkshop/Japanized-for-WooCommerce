@@ -130,18 +130,19 @@ class WC_Paidy_Payment_Id_Format_Test extends WP_UnitTestCase {
 	 */
 	public function invalid_payment_id_provider() {
 		return array(
-			'path traversal'    => array( 'pay_abc/../x' ),
-			'query string'      => array( 'pay_abc?x=1' ),
-			'fragment'          => array( 'pay_abc#x' ),
-			'percent encoding'  => array( 'pay_abc%2Fx' ),
-			'whitespace'        => array( 'pay_abc x' ),
-			'newline'           => array( "pay_abc\nx" ),
-			'prefix only'       => array( 'pay_' ),
-			'wrong prefix'      => array( 'cap_WD1KIj4AALQAIMtZ' ),
-			'uppercase prefix'  => array( 'PAY_WD1KIj4AALQAIMtZ' ),
-			'leading space'     => array( ' pay_WD1KIj4AALQAIMtZ' ),
-			'empty'             => array( '' ),
-			'non-ascii hyphen'  => array( 'pay_WD1K‐j4AALQAIMtZ' ),
+			'path traversal'   => array( 'pay_abc/../x' ),
+			'query string'     => array( 'pay_abc?x=1' ),
+			'fragment'         => array( 'pay_abc#x' ),
+			'percent encoding' => array( 'pay_abc%2Fx' ),
+			'whitespace'       => array( 'pay_abc x' ),
+			'newline'          => array( "pay_abc\nx" ),
+			'trailing newline' => array( "pay_WD1KIj4AALQAIMtZ\n" ),
+			'prefix only'      => array( 'pay_' ),
+			'wrong prefix'     => array( 'cap_WD1KIj4AALQAIMtZ' ),
+			'uppercase prefix' => array( 'PAY_WD1KIj4AALQAIMtZ' ),
+			'leading space'    => array( ' pay_WD1KIj4AALQAIMtZ' ),
+			'empty'            => array( '' ),
+			'non-ascii hyphen' => array( 'pay_WD1K‐j4AALQAIMtZ' ),
 		);
 	}
 
