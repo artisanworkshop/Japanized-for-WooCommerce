@@ -23,6 +23,7 @@ src/js/                       # React source (admin settings UI)
 assets/js/                    # Built JS
 i18n/                         # POT/PO/JSON translation files
 tests/                        # PHPUnit tests
+dist/                         # Local install ZIPs (gitignored, never shipped)
 ```
 
 ## 開発環境
@@ -178,3 +179,4 @@ Gateway classes in `includes/gateways/`. Each extends `WC_Payment_Gateway`. Bloc
 - `WC()->payment_gateways` can be `null` depending on init order — guard with `WC()->payment_gateways ? WC()->payment_gateways->get_available_payment_gateways() : array()` (established pattern in `class-jp4wc-cod-fee.php`).
 - `WC_Order::needs_payment()` is `false` for a 0-total order (e.g. fully covered by a coupon), and WC core sets `payment_method` to `''` for such orders regardless of any gateway selected earlier in the session — code comparing against an order's payment method must exempt orders where `needs_payment()` is false.
 - Don't take a readme "External Services" disclosure's stated activation condition at face value — verify against the actual code. This plugin shipped inaccurate claims 3 times in one release cycle: a bundled fallback API key that fires regardless of merchant configuration, a data-collecting intermediary domain distinct from the payment API domain, and a tracking override flag that bypasses the opt-in setting entirely.
+- `.gitignore` does not keep a path out of the plugin package — the release ZIP and the WordPress.org deploy copy the tree with `rsync --exclude-from=.distignore`, so a local-only top-level directory (e.g. `dist/`) must also be listed in `.distignore`, plus `.phpcs.xml.dist` if it can hold PHP. Don't package from `git archive` either: `.gitattributes` export-ignore drops `src/`, `package.json` and `webpack.config.js`, so the export cannot be built.
