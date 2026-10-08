@@ -50,7 +50,7 @@ G2 の後、いったん修正なしでゲートを終えたが、両 bot とも
 | G1-1 | Codex | Medium | 値を固定値にする提案。改名は先頭＝改名後の午前中で意味が保たれ、OFF は固定値でも防げない。変更範囲が大きい（ユーザー判断で保留。backlog R1-X1） | https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/222#discussion_r4203714452 |
 | G2-1 | Codex | Medium（対象外） | Pro 版ヤマト B2 出力の対応表に「午前中」が無い。別リポジトリ（artisanworkshop/jp4wc-pro#8 を起票） | https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/222#discussion_r4206811395 |
 | G2-2 | Copilot | Low | 表示名 `0` の食い違い。管理者が `0` だけを入力した場合だけ（backlog R1-L3）。G3 でも再指摘 | https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/222#discussion_r4206827654 |
-| G3-1 | Copilot | Low | クラシックの保存時の変換で、表示名の `&` `'` `"` が二重に変換される。保存時の変換は既存コードで、やめるには表示側をすべて出力時エスケープへ直す必要がある（ユーザー判断で保留。backlog G3-1） | https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/222#pullrequestreview-5451291676（本文のみ） |
+| G3-1 | Copilot | Low | クラシックの保存時の変換で、表示名の `&` `'` `"` が二重に変換される。保存時の変換は既存コードで、配達日・出荷日にも使われている（ユーザー判断で保留。#224 で起票） | https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/222#pullrequestreview-5451291676（本文のみ） |
 | G3-2 | Copilot | Low | タグだけの表示名が空で保存される。次の保存で補完される（ユーザー判断で保留。backlog G3-2） | https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/222#pullrequestreview-5451291676（本文のみ） |
 
 ## 品質ゲート
