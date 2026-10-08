@@ -44,3 +44,6 @@ tests/e2e/reports/
 tests/e2e/.auth/
 playwright-report/
 test-results/
+
+#dist
+dist/
