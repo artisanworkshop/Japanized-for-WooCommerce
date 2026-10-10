@@ -336,6 +336,22 @@ class WC_Paidy_Payment_Id_Format_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The shop owner is e-mailed when a capture is not sent because of a malformed transaction ID.
+	 */
+	public function test_invalid_payment_id_capture_notifies_shop_owner() {
+		$order                       = $this->create_paidy_order( 'pay_abc/../x' );
+		$this->gateway->notice_email = 'shop-owner@example.com';
+		reset_phpmailer_instance();
+
+		$this->gateway->jp4wc_order_paidy_status_completed( $order->get_id() );
+
+		$sent = tests_retrieve_phpmailer_instance()->get_sent( 0 );
+		$this->assertNotFalse( $sent, 'A notice e-mail should have been sent.' );
+		$this->assertSame( 'shop-owner@example.com', $sent->to[0][0] );
+		$this->assertStringContainsString( 'not in the expected format', $sent->body );
+	}
+
+	/**
 	 * A malformed transaction ID must not be sent to Paidy when the order is refunded.
 	 *
 	 * @dataProvider invalid_payment_id_provider

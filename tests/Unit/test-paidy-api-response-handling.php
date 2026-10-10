@@ -110,10 +110,11 @@ class WC_Paidy_Api_Response_Handling_Test extends WP_UnitTestCase {
 	 */
 	public function failed_response_provider() {
 		return array(
-			'timeout'                => array( 'timeout' ),
-			'502 html page'          => array( 'bad_gateway' ),
-			'200 without status'     => array( 'no_status' ),
-			'200 with non-json body' => array( 'not_json' ),
+			'timeout'                 => array( 'timeout' ),
+			'502 html page'           => array( 'bad_gateway' ),
+			'200 without status'      => array( 'no_status' ),
+			'200 with non-json body'  => array( 'not_json' ),
+			'409 with closed payment' => array( 'conflict_closed' ),
 		);
 	}
 
@@ -137,6 +138,18 @@ class WC_Paidy_Api_Response_Handling_Test extends WP_UnitTestCase {
 				break;
 			case 'not_json':
 				$this->response = $this->http_response( 200, 'OK' );
+				break;
+			case 'conflict_closed':
+				// Only a 2xx answer means the request was carried out, whatever the body says.
+				$this->response = $this->http_response(
+					409,
+					wp_json_encode(
+						array(
+							'id'     => self::PAYMENT_ID,
+							'status' => 'closed',
+						)
+					)
+				);
 				break;
 		}
 	}
