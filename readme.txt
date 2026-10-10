@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 2.9.16
+Stable tag: 2.9.17
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -157,6 +157,16 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.17 - 2026-10-13 =
+* **Added** - A "Morning" (午前中) option can be shown as the first delivery time zone: enable it under Delivery settings → Delivery time settings (off by default) and customise its label; it is offered on both the classic and the block checkout and works even when no hourly time zone is registered (which previously caused a TypeError on the classic checkout)
+* **Fixed** - Paidy payments whose payment ID contains a hyphen (`-`) were rejected by the payment ID format check and never marked as paid, leaving the order pending until the stock hold cancelled it even though the customer had paid; the check now accepts the base64url alphabet Paidy actually uses (`pay_[A-Za-z0-9_-]+`) while keeping the URL injection protection (#223)
+* **Fixed** - In the Checkout block the Cash on Delivery fee could get out of step with the selected payment method on slower servers (a fee left behind after switching to another method, or missing after switching to COD); the fee is now calculated from WooCommerce's own `chosen_payment_method` and from the payment method submitted with the order (#215)
+* **Fixed** - Saving any tab of the Japanized for WooCommerce settings screen wiped a Cash on Delivery fee that had been configured on the COD gateway's own settings page; the settings screen now reports the values actually in force so they are preserved (#218)
+* **Fixed** - The delivery date, delivery time zone and shipping date entered on the classic checkout were stored HTML-encoded (`&amp;`, `&#039;`, `&quot;`), so a time zone label containing `&`, `'` or `"` was saved differently from the block checkout and showed up encoded in plain-text order emails; the values are now stored as entered, like the block checkout and the admin meta box, and escaped only where they are displayed (#224)
+* **Fixed** - Paidy Checkout failed to open on the payment page (a JavaScript syntax error) for orders with a zero-discount coupon such as a free-shipping coupon, a line item whose product had been deleted, or a fee whose name contains a line break or backslash, so the customer could not pay with Paidy and the order was left pending; the order items are now passed to Paidy as JSON, which also stops `&` and similar characters in product and coupon names from showing up as `&amp;` on the Paidy screen (#232)
+* **Security** - A Checkout block draft order could be paid by Cash on Delivery through the Store API pay-for-order route or the classic order-pay page without the COD fee being applied; both paths now refuse COD/COD2 for draft orders and direct the customer to the checkout page
+* **Changed** - Tested up to WordPress 7.1 and WooCommerce 11.2.0
 
 = 2.9.16 - 2026-09-07 =
 * **Added** - Paidy onboarding callbacks can now be authenticated via an HMAC-SHA256 signature shared at application time, in addition to the one-time state token; this restores automatic API key delivery for merchants whose token had already expired or was never issued
