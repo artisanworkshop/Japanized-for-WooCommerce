@@ -1172,6 +1172,10 @@ msgstr ""
 msgid "There was no status in the notification from Paidy."
 msgstr ""
 
+#: includes/gateways/paidy/class-wc-gateway-paidy.php
+msgid "The Paidy payment ID of this order is not in the expected format, so no request was sent to Paidy. Please check the transaction ID and your Paidy dashboard."
+msgstr ""
+
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:1018
 msgid "Status Change from Processing to completed."
 msgstr ""

@@ -11,6 +11,12 @@
  * auto-cancelled. Covers the relaxed check and the injection vectors it must
  * keep rejecting.
  *
+ * Cancellation, capture and refund put the order's transaction ID into the URL
+ * of a request that carries the secret key, and that ID is not guaranteed to be
+ * one Paidy issued: versions before 2.9.14 saved the thank-you URL parameter
+ * unverified, and it can be edited on the order screen (issue #233). They use
+ * the same check, so the same providers cover them.
+ *
  * @package Japanized_For_WooCommerce
  */
 
@@ -201,5 +207,162 @@ class WC_Paidy_Payment_Id_Format_Test extends WP_UnitTestCase {
 		);
 
 		$this->assertFalse( $this->gateway->paidy_verify_payment_for_order( $order, $payment_id ) );
+	}
+
+	/**
+	 * Create a Paidy order with the given transaction ID.
+	 *
+	 * @param string      $transaction_id Transaction ID saved on the order.
+	 * @param string|null $capture_id     Paidy capture ID saved on the order, or null for none.
+	 * @return WC_Order
+	 */
+	private function create_paidy_order( $transaction_id, $capture_id = null ) {
+		$order = wc_create_order();
+		$order->set_payment_method( 'paidy' );
+		$order->set_total( 1000 );
+		$order->set_transaction_id( $transaction_id );
+		if ( null !== $capture_id ) {
+			$order->update_meta_data( 'paidy_capture_id', $capture_id );
+		}
+		$order->save();
+
+		return $order;
+	}
+
+	/**
+	 * Notes added to an order.
+	 *
+	 * @param WC_Order $order Order.
+	 * @return string All note contents, one per line.
+	 */
+	private function order_notes( $order ) {
+		$notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
+
+		return implode( "\n", wp_list_pluck( $notes, 'content' ) );
+	}
+
+	/**
+	 * Cancelling a well-formed payment closes it at Paidy.
+	 *
+	 * @dataProvider valid_payment_id_provider
+	 *
+	 * @param string $payment_id Transaction ID of the order.
+	 */
+	public function test_valid_payment_id_is_closed( $payment_id ) {
+		$order              = $this->create_paidy_order( $payment_id );
+		$this->mock_payment = array(
+			'id'     => $payment_id,
+			'status' => 'closed',
+		);
+
+		$this->assertTrue( $this->gateway->paidy_order_paidy_status_processing_to_cancelled( $order->get_id() ) );
+		$this->assertSame( array( 'https://api.paidy.com/payments/' . $payment_id . '/close' ), $this->requested_urls );
+	}
+
+	/**
+	 * Completing an order with a well-formed payment captures it at Paidy.
+	 *
+	 * @dataProvider valid_payment_id_provider
+	 *
+	 * @param string $payment_id Transaction ID of the order.
+	 */
+	public function test_valid_payment_id_is_captured( $payment_id ) {
+		$order              = $this->create_paidy_order( $payment_id );
+		$this->mock_payment = array(
+			'id'       => $payment_id,
+			'status'   => 'closed',
+			'amount'   => 1000,
+			'captures' => array( array( 'id' => 'cap_WD1KIj4AALQAIMtZ' ) ),
+		);
+
+		$this->assertTrue( $this->gateway->jp4wc_order_paidy_status_completed( $order->get_id() ) );
+		$this->assertSame( array( 'https://api.paidy.com/payments/' . $payment_id . '/captures' ), $this->requested_urls );
+	}
+
+	/**
+	 * Refunding a well-formed payment sends the refund to Paidy.
+	 *
+	 * @dataProvider valid_payment_id_provider
+	 *
+	 * @param string $payment_id Transaction ID of the order.
+	 */
+	public function test_valid_payment_id_is_refunded( $payment_id ) {
+		$order              = $this->create_paidy_order( $payment_id, 'cap_WD1KIj4AALQAIMtZ' );
+		$this->mock_payment = array(
+			'id'      => $payment_id,
+			'status'  => 'closed',
+			'refunds' => array( array( 'id' => 'ref_WD1KIj4AALQAIMtZ' ) ),
+		);
+
+		$this->assertTrue( $this->gateway->process_refund( $order->get_id(), 1000 ) );
+		$this->assertSame( array( 'https://api.paidy.com/payments/' . $payment_id . '/refunds' ), $this->requested_urls );
+	}
+
+	/**
+	 * A malformed transaction ID must not be sent to Paidy when the order is cancelled.
+	 *
+	 * @dataProvider invalid_payment_id_provider
+	 *
+	 * @param string $payment_id Transaction ID of the order.
+	 */
+	public function test_invalid_payment_id_is_not_closed( $payment_id ) {
+		$order = $this->create_paidy_order( $payment_id );
+
+		$result = $this->gateway->paidy_order_paidy_status_processing_to_cancelled( $order->get_id() );
+
+		$this->assertSame( array(), $this->requested_urls );
+		if ( '' === $payment_id ) {
+			// An order without a transaction ID was never paid, so there is nothing to close.
+			$this->assertTrue( $result );
+			return;
+		}
+		$this->assertFalse( $result );
+		$this->assertStringContainsString( 'not in the expected format', $this->order_notes( $order ) );
+	}
+
+	/**
+	 * A malformed transaction ID must not be sent to Paidy when the order is completed.
+	 *
+	 * @dataProvider invalid_payment_id_provider
+	 *
+	 * @param string $payment_id Transaction ID of the order.
+	 */
+	public function test_invalid_payment_id_is_not_captured( $payment_id ) {
+		$order = $this->create_paidy_order( $payment_id );
+
+		$this->assertFalse( $this->gateway->jp4wc_order_paidy_status_completed( $order->get_id() ) );
+		$this->assertSame( array(), $this->requested_urls );
+		$this->assertStringContainsString( 'not in the expected format', $this->order_notes( $order ) );
+	}
+
+	/**
+	 * The shop owner is e-mailed when a capture is not sent because of a malformed transaction ID.
+	 */
+	public function test_invalid_payment_id_capture_notifies_shop_owner() {
+		$order                       = $this->create_paidy_order( 'pay_abc/../x' );
+		$this->gateway->notice_email = 'shop-owner@example.com';
+		reset_phpmailer_instance();
+
+		$this->gateway->jp4wc_order_paidy_status_completed( $order->get_id() );
+
+		$sent = tests_retrieve_phpmailer_instance()->get_sent( 0 );
+		$this->assertNotFalse( $sent, 'A notice e-mail should have been sent.' );
+		$this->assertSame( 'shop-owner@example.com', $sent->to[0][0] );
+		$this->assertStringContainsString( 'not in the expected format', $sent->body );
+	}
+
+	/**
+	 * A malformed transaction ID must not be sent to Paidy when the order is refunded.
+	 *
+	 * @dataProvider invalid_payment_id_provider
+	 *
+	 * @param string $payment_id Transaction ID of the order.
+	 */
+	public function test_invalid_payment_id_is_not_refunded( $payment_id ) {
+		$order = $this->create_paidy_order( $payment_id, 'cap_WD1KIj4AALQAIMtZ' );
+
+		$this->assertFalse( $this->gateway->process_refund( $order->get_id(), 1000 ) );
+		$this->assertSame( array(), $this->requested_urls );
+		$this->assertStringContainsString( 'not in the expected format', $this->order_notes( $order ) );
 	}
 }
