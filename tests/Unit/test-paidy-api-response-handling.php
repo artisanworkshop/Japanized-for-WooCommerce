@@ -141,12 +141,17 @@ class WC_Paidy_Api_Response_Handling_Test extends WP_UnitTestCase {
 				break;
 			case 'conflict_closed':
 				// Only a 2xx answer means the request was carried out, whatever the body says.
+				// The body is a complete closed payment, so without the 2xx check every
+				// operation would succeed and fail the test by its assertions.
 				$this->response = $this->http_response(
 					409,
 					wp_json_encode(
 						array(
-							'id'     => self::PAYMENT_ID,
-							'status' => 'closed',
+							'id'       => self::PAYMENT_ID,
+							'status'   => 'closed',
+							'amount'   => 1000,
+							'captures' => array( array( 'id' => 'cap_WD1KIj4AALQAIMtZ' ) ),
+							'refunds'  => array( array( 'id' => 'ref_WD1KIj4AALQAIMtZ' ) ),
 						)
 					)
 				);
