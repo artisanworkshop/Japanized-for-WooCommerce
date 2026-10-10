@@ -473,7 +473,9 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		}
 		$order_coupons = apply_filters( 'jp4wc_paidy_order_coupons', $order->get_items( 'coupon' ) );
 		foreach ( $order_coupons as $coupon ) {
-			if ( $coupon->get_discount() ) {
+			// Compare as a number: a discount saved as the string "0.00" (e.g. through
+			// the REST API) is truthy.
+			if ( 0.0 !== (float) $coupon->get_discount() ) {
 				$items[]       = array(
 					'id'         => $coupon->get_code(),
 					'quantity'   => 1,

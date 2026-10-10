@@ -136,6 +136,29 @@ class WC_Paidy_Order_Items_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A zero discount saved as the string "0.00" (as the REST API can save
+	 * it; wc_format_decimal() keeps a string's trailing zeros) is left out too.
+	 */
+	public function test_zero_discount_saved_as_decimal_string_is_left_out() {
+		list( $order ) = $this->create_order_with_product();
+
+		$coupon_item = new WC_Order_Item_Coupon();
+		$coupon_item->set_code( 'freeship' );
+		$coupon_item->set_discount( '0.00' );
+		$order->add_item( $coupon_item );
+		$order->save();
+
+		$order   = wc_get_order( $order->get_id() );
+		$coupons = $order->get_items( 'coupon' );
+		$this->assertSame( '0.00', reset( $coupons )->get_discount() );
+
+		$items = $this->decode_items( $this->render( $order ) );
+
+		$this->assertCount( 1, $items );
+		$this->assertSame( 'Tea', $items[0]['title'] );
+	}
+
+	/**
 	 * A coupon with a discount is passed as a negative unit price, and the
 	 * tax is still the order total less the items and shipping.
 	 */
