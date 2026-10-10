@@ -450,66 +450,57 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$states          = $jp4wc_countries->get_states();
 
 		// Get products and coupons information from order.
+		// Build the items as an array and print them with wp_json_encode() below:
+		// concatenating JavaScript by hand printed a stray "}," for a skipped
+		// entry (a zero-discount coupon such as a free-shipping coupon, or a line
+		// item without a product), and a fee name with a newline or backslash
+		// broke the string literal, so Paidy Checkout could not start (#232).
 		$order_items  = apply_filters( 'jp4wc_paidy_order_items', $order->get_items( 'line_item' ) );
 		$fees         = $order->get_fees();
-		$items        = '';
+		$items        = array();
 		$paidy_amount = 0;
-		foreach ( $order_items as $key => $item ) {
+		foreach ( $order_items as $item ) {
 			if ( $item->get_product_id() ) {
-				$item_name     = esc_js( $item->get_name() );
 				$unit_price    = round( $item->get_subtotal() / $item->get_quantity(), 0 );
-				$items        .= '{
-                    "id":"' . esc_js( $item->get_product_id() ) . '",
-                    "quantity":' . (int) $item->get_quantity() . ',
-                    "title":"' . $item_name . '",
-                    "unit_price":' . (float) $unit_price;
+				$items[]       = array(
+					'id'         => (string) $item->get_product_id(),
+					'quantity'   => (int) $item->get_quantity(),
+					'title'      => $item->get_name(),
+					'unit_price' => (float) $unit_price,
+				);
 				$paidy_amount += $item->get_quantity() * $unit_price;
-			}
-			if ( end( $order_items ) === $item && ( ! isset( $fees ) ) ) {
-				$items .= '}
-';
-			} else {
-				$items .= '},
-                    ';
 			}
 		}
 		$order_coupons = apply_filters( 'jp4wc_paidy_order_coupons', $order->get_items( 'coupon' ) );
-		foreach ( $order_coupons as $key => $coupon ) {
+		foreach ( $order_coupons as $coupon ) {
 			if ( $coupon->get_discount() ) {
-				$items        .= '{
-                    "id":"' . esc_js( $coupon->get_code() ) . '",
-                    "quantity":1,
-                    "title":"' . esc_js( $coupon->get_name() ) . '",
-                    "unit_price":-' . (float) $coupon->get_discount();
+				$items[]       = array(
+					'id'         => $coupon->get_code(),
+					'quantity'   => 1,
+					'title'      => $coupon->get_name(),
+					'unit_price' => - (float) $coupon->get_discount(),
+				);
 				$paidy_amount -= $coupon->get_discount();
-			}
-			if ( end( $order_items ) === $coupon && ( ! isset( $fees ) ) ) {
-				$items .= '}
-';
-			} else {
-				$items .= '},
-                    ';
 			}
 		}
 
-		if ( isset( $fees ) ) {
-			$i = 1;
-			foreach ( $fees as $fee ) {
-				$items        .= '{
-                    "id":"fee' . $i . '",
-                    "quantity":1,
-                    "title":"' . esc_html( $fee->get_name() ) . '",
-                    "unit_price":' . esc_html( $fee->get_amount() );
-				$paidy_amount += intval( $fee->get_amount() );
-				if ( end( $fees ) === $fee ) {
-					$items .= '}
-';
-				} else {
-					$items .= '},
-                    ';
-				}
-				++$i;
-			}
+		$i = 1;
+		foreach ( $fees as $fee ) {
+			$items[]       = array(
+				'id'         => 'fee' . $i,
+				'quantity'   => 1,
+				'title'      => $fee->get_name(),
+				'unit_price' => (float) $fee->get_amount(),
+			);
+			$paidy_amount += intval( $fee->get_amount() );
+			++$i;
+		}
+
+		// The JSON_HEX_* flags turn "<", ">", "&", "'" and '"' inside the values
+		// into \u escapes, so a name cannot close the inline script.
+		$items_json = wp_json_encode( $items, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+		if ( false === $items_json ) {
+			$items_json = '[]';
 		}
 
 		// Check the order only for virtual products.
@@ -676,9 +667,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 							"last_order_at": <?php echo esc_js( $diff_day ); ?>
 						},
 						"order": {
-							"items": [
-						<?php echo $items; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $items is JSON for a JS array; string values are escaped with esc_js() during construction above. ?>
-							],
+							"items": <?php echo $items_json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON from wp_json_encode() with the JSON_HEX_* flags above, safe inside an inline script. ?>,
 							"order_ref": "<?php echo esc_js( $paidy_order_ref ); ?>",
 					<?php
 					if ( $not_virtual ) {
