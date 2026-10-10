@@ -4,8 +4,8 @@
 - ベースブランチ: main
 - PR: #235 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/235（head は upstream の `fix/232-paidy-items-json`。Codex が fork PR では応答しないため）
 - オプション: auto-commit（確認ゲートなし）
-- 現在のステップ: 6（ゲート G3: Copilot へ再依頼。最後の依頼）
-- Copilot: 依頼 2 回 / 未収束（G1 で新規 2 件、G2 で新規 1 件。いずれも docs の記録）
+- 現在のステップ: 完了（Codex は G1、Copilot は G3 で収束。マージは人間が行う）
+- Copilot: 依頼 3 回 / 収束（G1 で新規 2 件、G2 で新規 1 件。いずれも docs の記録。G3 で新規指摘なし）
 - Codex: 依頼 1 回 / 収束（G1 で新規指摘なし）
 
 ## ログ
@@ -19,3 +19,5 @@
 | 2026-10-10 22:47 | 5–6 | CI 4 件 green。`@codex review` 投稿 + Copilot 依頼（gh pr edit）。Codex は約 4 分、Copilot は約 5 分で 63ad275 に応答 |
 | 2026-10-10 22:48 | 7 | G1: Codex 0 件（no major issues）→ 収束。Copilot 2 件（Approval recommended、docs の記録の誤り 2 件）→ 修正 242ee0f と記録コミット（auto-commit） |
 | 2026-10-10 22:53 | 5–7 | G2: CI green の後に Copilot へ依頼、約 4 分で 804e724 に応答。新規 1 件（G1.md の表記がコマンド文字列内で変換されていた）→ 修正 ca810fb、G1 の返信とサマリーコメントの本文も訂正 |
+| 2026-10-10 22:58 | 5–7 | G3: CI green の後に Copilot へ依頼（3 回目）、約 4 分で 31cdee4 に応答。新規 0 件（Approval recommended）→ 収束 |
+| 2026-10-10 23:00 | 8 | 最終報告を記録。完了 |
