@@ -2,11 +2,11 @@
 - タスク: Paidy の取消・キャプチャ・返金で、決済 ID を検証せずに URL へ連結している件(issue #233)と、通信エラーで fatal になり 5xx 応答で返金済みと記録される件(issue #231)の修正
 - 開始: 2026-10-11
 - ベースブランチ: main
-- PR: 未作成(head は upstream に push する。Codex が fork PR では応答しないため)
+- PR: #236 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/236(head は upstream の `fix/233-231-paidy-api-requests`。Codex が fork PR では応答しないため)
 - オプション: auto-commit(確認ゲートなし)
-- 現在のステップ: 4(push・PR 作成)
-- Copilot: 依頼 0 回 / 未収束
-- Codex: 依頼 0 回 / 未収束
+- 現在のステップ: 8(最終報告)
+- Copilot: 依頼 1 回 / 収束(G1 で新規指摘なし)
+- Codex: 依頼 1 回 / 収束(G1 で新規指摘なし)
 
 ## ログ
 | 日時(JST) | ステップ | 内容 |
@@ -15,3 +15,5 @@
 | 2026-10-11 | 1 | 計画承認(共通ヘルパー `paidy_payment_api_url()` で検証と `rawurlencode()`、2xx かつ JSON かつ `closed` のときだけ成功、新規翻訳文字列 1 つ、テストは ID 形式テストの拡張と応答処理テストの新規追加) |
 | 2026-10-11 | 2 | 実装コミット 6dd9782。新テスト 80 件(ID 形式テストに取消・キャプチャ・返金の 57 件、応答処理テスト 23 件)を main のコードで流し、54 件が失敗することを確認。`wc_create_refund()` の結合テストは、PHPUnit が警告を例外に変えるため main でも 502 などの 3 件が誤って通っていたので、その呼び出しだけ警告を本番と同じく素通しにし、main で `WC_Order_Refund` が作られる(issue の症状)ことを再現。フル 349 件 OK、lint は main と同じ(97 / 30、変更ファイルは 0) |
 | 2026-10-11 | 3 | review-loop R1 APPROVE(Critical/High なし。Medium 2 件はテストの欠落: 2xx 判定がどのテストにも固定されていない〔mutate-check で NOT CAUGHT〕、キャプチャの通知メールが未検証 → 9412a34。Low 3 件・対象外 4 件を backlog へ)。R2 CHANGES REQUESTED(独立サブエージェントの指摘で、409 ケースのキャプチャが Warning の例外化でしか落ちないことが判明 → R1-1 の残りとして 885a56a で修正)。R3 APPROVE(2xx 判定を外すと 409 の 4 ケースがすべてアサーションで落ちることを実測)。フル 354 件 OK、lint は main と同じ |
+| 2026-10-11 00:34 | 4 | 記録コミット 6ca2b3b、upstream へ初回 push(T=2026-10-10T15:33:33Z)、PR #236 を作成 |
+| 2026-10-11 00:40 | 5–7 | CI 4 件 green の後に `@codex review` 投稿 + Copilot 依頼(gh pr edit、pending 一覧で登録を確認)。Codex は約 2 分(no major issues + 👍)、Copilot は約 4 分(Approval recommended、0 open findings)で 6ca2b3b に応答。G1: 両 bot とも新規 0 件 → 収束 |
