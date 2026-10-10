@@ -4,8 +4,8 @@
 - ベースブランチ: main
 - PR: #238 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/238(head は upstream の `fix/234-paidy-site-hash-reapply`。Codex が fork PR では応答しないため)
 - オプション: auto-commit(確認ゲートなし)
-- 現在のステップ: 7(G2・Copilot に再依頼)
-- Copilot: 依頼 1 回 / 未収束(G1 で新規 2 件、すべて保留)
+- 現在のステップ: 完了(Codex は G1、Copilot は G2 で収束。マージは人間が行う)
+- Copilot: 依頼 2 回 / 収束(G1 で新規 2 件をすべて保留、G2 で新規指摘なし)
 - Codex: 依頼 1 回 / 収束(G1 で新規指摘なし)
 
 ## ログ
@@ -17,3 +17,4 @@
 | 2026-10-11 | 3 | review-loop R1 APPROVE(Critical/High/Medium なし。自己レビュー + 独立サブエージェント。サブエージェントが調査用テストで、main では追加経路 step 1 → 入れ子の step 2 が初回申込でも `site_hash` = null を送っていたことと、修正後は全経路が保存値と同じ hash を 1 回だけ送ることを確認。Low 2 件・対象外 4 件を backlog へ) |
 | 2026-10-11 08:18 | 4 | 記録コミット 7b91593、upstream へ初回 push(T=2026-10-10T23:18:30Z)、PR #238 を作成 |
 | 2026-10-11 08:24 | 5–7 | CI 4 件 green の後に `@codex review` 投稿 + Copilot 依頼(gh pr edit、pending 一覧で登録を確認)。Codex は約 2 分で「no major issues」、Copilot は約 4 分で「Changes recommended」(2 件)。G1: Codex 収束。Copilot 2 件はどちらも保留(G1-1 同時の初回申込の競合は旧コードにもある既存の競合で、直すには直接 SQL が必要 / G1-2 state token が残るという指摘は ROLLBACK で残らないことを実測した誤検知)。修正なし。Copilot は未収束なので G2 で再依頼 |
+| 2026-10-11 08:30 | 7 | G2: CI 4 件 green の後に Copilot だけに再依頼(登録を確認)。約 4 分で「Approval recommended」、新規 0 件(本文の 2 件は G1 の既出)→ 収束 |
