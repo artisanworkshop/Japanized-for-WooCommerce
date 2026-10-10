@@ -878,8 +878,12 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$order_payment_method = $order->get_payment_method();
 		$transaction_id       = $order->get_transaction_id();
 		if ( $order_payment_method === $this->id && ! empty( $transaction_id ) ) {
-			$send_url = 'https://api.paidy.com/payments/' . $transaction_id . '/close';
-			$args     = array(
+			$send_url = $this->paidy_payment_api_url( $transaction_id, 'close' );
+			if ( null === $send_url ) {
+				$order->add_order_note( $this->paidy_invalid_payment_id_message() );
+				return false;
+			}
+			$args = array(
 				'method'  => 'POST',
 				'body'    => '{}',
 				'headers' => array(
@@ -892,18 +896,21 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			$message = 'Send URL is following. : ' . $send_url;
 			$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
 
-			$close       = wp_remote_post( $send_url, $args );
-			$close_array = json_decode( $close['body'], true );
+			$close = wp_remote_post( $send_url, $args );
 			if ( is_wp_error( $close ) ) {
 				$order->add_order_note( $close->get_error_message() );
-			} elseif ( 'closed' === $close_array['status'] ) {
+				return false;
+			}
+			$http_code   = (int) wp_remote_retrieve_response_code( $close );
+			$close_array = json_decode( wp_remote_retrieve_body( $close ), true );
+			if ( $this->paidy_is_closed_response( $http_code, $close_array ) ) {
 				$message = $this->jp4wc_framework->jp4wc_array_to_message( $close_array ) . __( 'This order is success cancellation data at Paidy.', 'woocommerce-for-japan' );
 				$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
 			} else {
-				$message = $this->jp4wc_framework->jp4wc_array_to_message( $close_array ) . __( 'This order is already close data at Paidy.', 'woocommerce-for-japan' );
+				$message = $this->jp4wc_framework->jp4wc_array_to_message( $close_array ) . __( 'This order is already close data at Paidy.', 'woocommerce-for-japan' ) . ' HTTP:' . $http_code;
 				$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
 
-				$order->add_order_note( __( 'Cancelled processing has not been completed due to a Paidy error. Please check Paidy admin.', 'woocommerce-for-japan' ) );
+				$order->add_order_note( __( 'Cancelled processing has not been completed due to a Paidy error. Please check Paidy admin.', 'woocommerce-for-japan' ) . ' (HTTP ' . $http_code . ')' );
 				return false;
 			}
 		}
@@ -975,8 +982,15 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 				return;
 			}
 			$transaction_id = $order->get_transaction_id();
-			$send_url       = 'https://api.paidy.com/payments/' . $transaction_id . '/captures';
-			$args           = array(
+			$situation      = __( 'Status Change from Processing to completed.', 'woocommerce-for-japan' );
+			$send_url       = $this->paidy_payment_api_url( $transaction_id, 'captures' );
+			if ( null === $send_url ) {
+				$message = $this->paidy_invalid_payment_id_message();
+				$order->add_order_note( $message );
+				$this->send_notice_email( $this->notice_message( $order_id, $transaction_id, $situation, $message ) );
+				return false;
+			}
+			$args = array(
 				'method'  => 'POST',
 				'body'    => '{"metadata": {"Platform": "WooCommerce"}}',
 				'headers' => array(
@@ -989,10 +1003,16 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 				$debug_message = 'Send URL is following. : ' . $send_url;
 				$this->jp4wc_framework->jp4wc_debug_log( $debug_message, true, 'paidy-wc' );
 			}
-			$capture       = wp_remote_post( $send_url, $args );
-			$capture_array = json_decode( $capture['body'], true );
+			$capture = wp_remote_post( $send_url, $args );
+			if ( is_wp_error( $capture ) ) {
+				$http_code     = 0;
+				$capture_array = null;
+			} else {
+				$http_code     = (int) wp_remote_retrieve_response_code( $capture );
+				$capture_array = json_decode( wp_remote_retrieve_body( $capture ), true );
+			}
 
-			if ( 'closed' === $capture_array['status'] ) {
+			if ( $this->paidy_is_closed_response( $http_code, $capture_array ) ) {
 				$message = $this->jp4wc_framework->jp4wc_array_to_message( $capture_array ) . __( 'This is capture data.', 'woocommerce-for-japan' );
 				$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
 
@@ -1019,10 +1039,9 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 						return true;
 					}
 				} else {
-					$order->add_order_note( __( 'There was no status in the notification from Paidy.', 'woocommerce-for-japan' ) );
+					$order->add_order_note( __( 'There was no status in the notification from Paidy.', 'woocommerce-for-japan' ) . ' (HTTP ' . $http_code . ')' );
 				}
 			}
-			$situation     = __( 'Status Change from Processing to completed.', 'woocommerce-for-japan' );
 			$email_message = $this->notice_message( $order_id, $transaction_id, $situation, $message );
 			$this->send_notice_email( $email_message );
 			return false;
@@ -1080,7 +1099,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			}
 			$transaction_id = $order->get_transaction_id();
 			$post_data      = '{"capture_id":"' . $capture_id . '","amount":"' . $amount . '","metadata" : {"Platform" : "WooCommerce"}}';
-			$send_url       = 'https://api.paidy.com/payments/' . $transaction_id . '/refunds';
+			$send_url       = $this->paidy_payment_api_url( $transaction_id, 'refunds' );
 			$args           = array(
 				'method'  => 'POST',
 				'body'    => $post_data,
@@ -1094,17 +1113,22 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			$message  = 'Send URL is following. : ' . $send_url . "\n";
 			$message .= 'Post data is following. : ' . $post_data;
 			$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
-			if ( '' !== $capture_id ) {
-				$refund = wp_remote_post( $send_url, $args );
-			} else {
+			if ( '' === $capture_id ) {
 				$order->add_order_note( __( 'Refund is not possible because Paidy has not completed processing.', 'woocommerce-for-japan' ) );
 				return false;
 			}
-			$refund_array = json_decode( $refund['body'], true );
+			if ( null === $send_url ) {
+				$order->add_order_note( $this->paidy_invalid_payment_id_message() );
+				return false;
+			}
+			$refund = wp_remote_post( $send_url, $args );
 			if ( is_wp_error( $refund ) ) {
 				$order->add_order_note( $refund->get_error_message() );
 				return false;
-			} elseif ( 'closed' === $refund_array['status'] ) {
+			}
+			$http_code    = (int) wp_remote_retrieve_response_code( $refund );
+			$refund_array = json_decode( wp_remote_retrieve_body( $refund ), true );
+			if ( $this->paidy_is_closed_response( $http_code, $refund_array ) ) {
 				$refunds_array = $order->get_meta( 'paidy_refund_id', false );
 				if ( empty( $refunds_array ) ) {
 					$refunds_array = array( $refund_array['refunds'][0]['id'] );
@@ -1115,25 +1139,81 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 				$order->save_meta_data();
 				$order->add_order_note( __( 'Completion refunding has been completed at Paidy.', 'woocommerce-for-japan' ) );
 				return true;
-			} else {
-				$message = $this->jp4wc_framework->jp4wc_array_to_message( $refund_array ) . __( 'This is refund data.', 'woocommerce-for-japan' );
-				$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
-
-				if ( isset( $refund_array['status'] ) ) {
-					$this->paidy_check_response( $refund_array['status'], $order );
-					if ( '403' === $refund_array['status'] ) {
-						$paidy_info = $this->paidy_get_payment_data( $transaction_id );
-						if ( isset( $paidy_info ) && isset( $paidy_info['refund'] ) ) {
-							return true;
-						}
-					} else {
-						$order->add_order_note( __( 'There was no status in the notification from Paidy.', 'woocommerce-for-japan' ) );
-					}
-					return false;
-				}
 			}
-			return true;
+			$message = $this->jp4wc_framework->jp4wc_array_to_message( $refund_array ) . __( 'This is refund data.', 'woocommerce-for-japan' ) . ' HTTP:' . $http_code;
+			$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
+
+			if ( isset( $refund_array['status'] ) ) {
+				$this->paidy_check_response( $refund_array['status'], $order );
+				if ( '403' === $refund_array['status'] ) {
+					$paidy_info = $this->paidy_get_payment_data( $transaction_id );
+					if ( isset( $paidy_info ) && isset( $paidy_info['refund'] ) ) {
+						return true;
+					}
+				}
+			} else {
+				// A 5xx error page or an empty body is not a refund; reporting success here
+				// would record a refund in WooCommerce that Paidy never made.
+				$order->add_order_note( __( 'There was no status in the notification from Paidy.', 'woocommerce-for-japan' ) . ' (HTTP ' . $http_code . ')' );
+			}
+			return false;
 		}
+	}
+
+	/**
+	 * Build the Paidy API URL for a payment, or null when the ID is not a Paidy payment ID.
+	 *
+	 * Paidy only documents that payment IDs start with "pay_"; the IDs it actually issues use
+	 * the base64url alphabet (letters, digits, "_" and "-", e.g. pay_aii8_kYAAEYA2BDW). "_" and
+	 * "-" are RFC 3986 unreserved characters that rawurlencode() leaves untouched, so allowing
+	 * them keeps the path/query injection protection intact: "/", "?", "#", "%" and whitespace
+	 * are still rejected ("D" keeps "$" from matching before a trailing newline). Every request
+	 * that carries the secret key goes through here, because an order's transaction ID is not
+	 * guaranteed to be one Paidy issued: versions before 2.9.14 saved the thank-you URL
+	 * parameter unverified, and the ID can be edited on the order screen.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @param mixed  $payment_id Paidy payment ID.
+	 * @param string $action     Sub-resource to append ("close", "captures" or "refunds"), or "".
+	 * @return string|null API URL, or null when the payment ID is malformed.
+	 */
+	private function paidy_payment_api_url( $payment_id, $action = '' ) {
+		if ( ! is_string( $payment_id ) || ! preg_match( '/^pay_[A-Za-z0-9_-]+$/D', $payment_id ) ) {
+			return null;
+		}
+		$url = 'https://api.paidy.com/payments/' . rawurlencode( $payment_id );
+		if ( '' !== $action ) {
+			$url .= '/' . $action;
+		}
+		return $url;
+	}
+
+	/**
+	 * Whether Paidy answered a close, capture or refund request with a closed payment.
+	 *
+	 * Anything else means the operation did not happen: a non-2xx status, a body that is not
+	 * a JSON object (such as an HTML error page from a 5xx), or a payment in another state.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @param int   $http_code HTTP status code of the response.
+	 * @param mixed $body      Decoded JSON body of the response.
+	 * @return bool
+	 */
+	private function paidy_is_closed_response( $http_code, $body ) {
+		return $http_code >= 200 && $http_code < 300 && is_array( $body ) && isset( $body['status'] ) && 'closed' === $body['status'];
+	}
+
+	/**
+	 * Order note for a transaction ID that is not sent to Paidy because it is malformed.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @return string
+	 */
+	private function paidy_invalid_payment_id_message() {
+		return __( 'The Paidy payment ID of this order is not in the expected format, so no request was sent to Paidy. Please check the transaction ID and your Paidy dashboard.', 'woocommerce-for-japan' );
 	}
 
 	/**
@@ -1143,22 +1223,16 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 * @return array|null Payment data array on success, null on any failure.
 	 */
 	public function paidy_get_payment_data( $payment_id ) {
-		// Validate format before building the URL. Paidy only documents that payment IDs start
-		// with "pay_"; the IDs it actually issues use the base64url alphabet (letters, digits,
-		// "_" and "-", e.g. pay_aii8_kYAAEYA2BDW). "_" and "-" are RFC 3986 unreserved
-		// characters that rawurlencode() leaves untouched, so allowing them keeps the
-		// path/query injection protection intact when $payment_id originates from the
-		// buyer-controllable thank-you URL transaction_id param: "/", "?", "#", "%" and
-		// whitespace are still rejected ("D" keeps "$" from matching before a trailing newline).
-		if ( ! preg_match( '/^pay_[A-Za-z0-9_-]+$/D', $payment_id ) ) {
+		// $payment_id can come from the buyer-controllable thank-you URL transaction_id param.
+		$send_url = $this->paidy_payment_api_url( $payment_id );
+		if ( null === $send_url ) {
 			$this->jp4wc_framework->jp4wc_debug_log(
-				'Paidy get payment data: invalid payment_id format: ' . $payment_id,
+				'Paidy get payment data: invalid payment_id format: ' . ( is_string( $payment_id ) ? $payment_id : gettype( $payment_id ) ),
 				$this->debug,
 				'paidy-wc'
 			);
 			return null;
 		}
-		$send_url = 'https://api.paidy.com/payments/' . rawurlencode( $payment_id );
 		$args     = array(
 			'headers' => array(
 				'Content-Type'  => 'application/json',

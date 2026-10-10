@@ -1363,6 +1363,10 @@ msgstr ""
 msgid "There was no status in the notification from Paidy."
 msgstr "Paidy からの通知にはステータスがありませんでした。"
 
+#: includes/gateways/paidy/class-wc-gateway-paidy.php
+msgid "The Paidy payment ID of this order is not in the expected format, so no request was sent to Paidy. Please check the transaction ID and your Paidy dashboard."
+msgstr "この注文の Paidy 決済 ID が想定した形式ではないため、Paidy へリクエストを送信しませんでした。取引 ID と Paidy の管理画面を確認してください。"
+
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:943
 msgid "Status Change from Processing to completed."
 msgstr "ステータスが「処理中」から「完了」に変更されました。"
