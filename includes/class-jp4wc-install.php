@@ -88,12 +88,15 @@ class JP4WC_Install {
 	 *
 	 * Usage tracking was removed in 2.9.17 to make way for a new feature that
 	 * will replace it. Sites that ran an earlier version still have its weekly
-	 * WP-Cron event, its setting and the time of the last send.
+	 * WP-Cron event, its setting and the time of the last send. Versions
+	 * 2.6.10 to 2.6.19 scheduled the event as `wc4jp_tracker_send_event`, and
+	 * nothing has cleared that name since.
 	 *
 	 * @since 2.9.17
 	 */
 	private static function remove_usage_tracking() {
 		wp_clear_scheduled_hook( 'jp4wc_tracker_send_event' );
+		wp_clear_scheduled_hook( 'wc4jp_tracker_send_event' );
 		delete_option( 'wc4jp-tracking' );
 		delete_option( 'jp4wc_tracker_last_send' );
 	}

@@ -30,6 +30,11 @@ class JP4WC_Usage_Tracking_Removal_Test extends WP_UnitTestCase {
 	const CRON_HOOK = 'jp4wc_tracker_send_event';
 
 	/**
+	 * WP-Cron hook of the weekly send in versions 2.6.10 to 2.6.19.
+	 */
+	const LEGACY_CRON_HOOK = 'wc4jp_tracker_send_event';
+
+	/**
 	 * Options the usage tracking feature stored.
 	 *
 	 * @var string[]
@@ -76,6 +81,7 @@ class JP4WC_Usage_Tracking_Removal_Test extends WP_UnitTestCase {
 	public function tearDown(): void {
 		remove_filter( 'pre_http_request', array( $this, 'record_request' ), 10 );
 		wp_clear_scheduled_hook( self::CRON_HOOK );
+		wp_clear_scheduled_hook( self::LEGACY_CRON_HOOK );
 		foreach ( $this->tracking_options as $option ) {
 			delete_option( $option );
 		}
@@ -147,18 +153,23 @@ class JP4WC_Usage_Tracking_Removal_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The update removes the weekly event, the setting and the last-send time.
+	 * The update removes the weekly event (under both names), the setting and the last-send time.
 	 */
 	public function test_update_removes_the_tracking_schedule_and_options() {
 		update_option( 'jp4wc_version', '2.9.16' );
 		wp_schedule_event( time() + HOUR_IN_SECONDS, 'weekly', self::CRON_HOOK );
+		// 2.6.10 to 2.6.19 scheduled the event again on every update, without a duplicate check.
+		wp_schedule_event( time() + HOUR_IN_SECONDS, 'weekly', self::LEGACY_CRON_HOOK );
+		wp_schedule_event( time() + DAY_IN_SECONDS, 'weekly', self::LEGACY_CRON_HOOK );
 		update_option( 'wc4jp-tracking', '1' );
 		update_option( 'jp4wc_tracker_last_send', time() );
 		$this->assertNotFalse( wp_next_scheduled( self::CRON_HOOK ), 'The event must be scheduled before the update.' );
+		$this->assertNotFalse( wp_next_scheduled( self::LEGACY_CRON_HOOK ), 'The legacy event must be scheduled before the update.' );
 
 		JP4WC_Install::check_version();
 
 		$this->assertFalse( wp_next_scheduled( self::CRON_HOOK ) );
+		$this->assertFalse( wp_next_scheduled( self::LEGACY_CRON_HOOK ) );
 		$this->assertFalse( get_option( 'wc4jp-tracking' ) );
 		$this->assertFalse( get_option( 'jp4wc_tracker_last_send' ) );
 	}

@@ -32,6 +32,7 @@ delete_option( 'woocommerce_cod_settings' );
 
 // Left behind by the usage tracking feature, removed in 2.9.17.
 wp_clear_scheduled_hook( 'jp4wc_tracker_send_event' );
+wp_clear_scheduled_hook( 'wc4jp_tracker_send_event' );
 delete_option( 'wc4jp-tracking' );
 delete_option( 'jp4wc_tracker_last_send' );
 
