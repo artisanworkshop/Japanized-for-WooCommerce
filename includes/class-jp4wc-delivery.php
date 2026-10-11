@@ -1164,11 +1164,8 @@ class JP4WC_Delivery {
 		}
 
 		// Email headers.
-		$jp4wc_admin_email = 'wp-admin@artws.info';
-
 		$headers = array(
 			'Content-Type: text/plain; charset=UTF-8',
-			'Bcc: ' . $jp4wc_admin_email,
 			'From: ' . $blog_name . ' <' . $admin_email . '>',
 		);
 

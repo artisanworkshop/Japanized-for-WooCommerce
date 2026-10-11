@@ -240,7 +240,6 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'billing_address_1',
 			'billing_address_2',
 			'billing_phone',
-			'tracking',
 			// Shipment settings.
 			'delivery-date',
 			'delivery-date-required',

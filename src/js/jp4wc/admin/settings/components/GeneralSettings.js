@@ -26,7 +26,6 @@ const GeneralSettings = ( {
 			: {
 					addressDisplay: true,
 					virtualOrder: true,
-					usageTracking: true,
 			  };
 	} );
 
@@ -376,27 +375,6 @@ const GeneralSettings = ( {
 							/>
 						</div>
 					</div>
-				</PanelRow>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Usage tracking', 'woocommerce-for-japan' ) }
-				opened={ panelStates.usageTracking }
-				onToggle={ () => togglePanel( 'usageTracking' ) }
-			>
-				<PanelRow>
-					<ToggleControl
-						__nextHasNoMarginBottom={ true }
-						label={ __( 'Tracking', 'woocommerce-for-japan' ) }
-						help={ __(
-							'Enable usage tracking',
-							'woocommerce-for-japan'
-						) }
-						checked={ settings?.tracking === '1' }
-						onChange={ ( value ) =>
-							updateSetting( 'tracking', value ? '1' : '' )
-						}
-					/>
 				</PanelRow>
 			</PanelBody>
 

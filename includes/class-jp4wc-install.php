@@ -68,7 +68,7 @@ class JP4WC_Install {
 		// If we made it till here nothing is running yet, lets set the transient now.
 		set_transient( 'jp4wc_installing', 'yes', MINUTE_IN_SECONDS * 10 );
 
-		self::create_cron_jobs();
+		self::remove_usage_tracking();
 		self::update_jp4wc_version();
 
 		delete_transient( 'jp4wc_installing' );
@@ -84,17 +84,21 @@ class JP4WC_Install {
 	}
 
 	/**
-	 * Create cron jobs (clear them first).
+	 * Remove what the usage tracking feature left behind.
+	 *
+	 * Usage tracking was removed in 2.9.17 to make way for a new feature that
+	 * will replace it. Sites that ran an earlier version still have its weekly
+	 * WP-Cron event, its setting and the time of the last send. Versions
+	 * 2.6.10 to 2.6.19 scheduled the event as `wc4jp_tracker_send_event`, and
+	 * nothing has cleared that name since.
+	 *
+	 * @since 2.9.17
 	 */
-	private static function create_cron_jobs() {
-		if ( ! wp_next_scheduled( 'jp4wc_tracker_send_event' ) ) {
-			/**
-			 * How frequent to schedule the tracker send event.
-			 *
-			 * @since 2.6.0
-			 */
-			wp_schedule_event( time() + 10, apply_filters( 'jp4wc_tracker_event_recurrence', 'weekly' ), 'jp4wc_tracker_send_event' );
-		}
+	private static function remove_usage_tracking() {
+		wp_clear_scheduled_hook( 'jp4wc_tracker_send_event' );
+		wp_clear_scheduled_hook( 'wc4jp_tracker_send_event' );
+		delete_option( 'wc4jp-tracking' );
+		delete_option( 'jp4wc_tracker_last_send' );
 	}
 
 	/**

@@ -83,7 +83,6 @@ This plugin connects to the following third-party services:
 * **Paidy payment API** (api.paidy.com) — used by the Paidy (Buy Now, Pay Later) payment gateway to process and verify payments. Only active when the Paidy gateway is enabled. See Paidy's own site for their terms of service and privacy policy.
 * **Artisan Workshop Paidy onboarding intermediary** (paidy.artws.info) — used only while applying for a Paidy merchant account through this plugin's setup wizard (available even before the gateway is enabled, since onboarding is how it becomes eligible to be enabled). Submitting the application form sends the store's site name and URL, the merchant's contact details (email, phone), the representative's name and date of birth, the submitted screening survey answers, and a site-specific verification hash, to this Artisan Workshop-operated intermediary, which relays the application to Paidy and later delivers the issued API credentials back to the site.
 * **Artisan Workshop promotion service** (wc.artws.info) — the plugin's own first-party service. It is contacted automatically (no setting to disable it) to fetch promotional notice content shown in the WordPress admin dashboard to users who can manage WooCommerce, on stores with at least one order placed in the last 5 days. No order, customer, or site-configuration data is sent or received beyond the request itself.
-* **Artisan Workshop usage tracking service** (wc.artws.info) — the plugin's own first-party service. When "Allow usage tracking" is enabled in Japan Settings, it sends a site/store profile (site URL, admin email, WordPress/server info, active and inactive plugin list, user/product/order/review/category counts, active payment gateway and shipping method configuration, and WooCommerce settings values — no API keys or payment credentials) on a weekly schedule. Independently of that setting, the same profile is also sent once whenever the plugin is first installed and once after each update to a new version, including this one.
 
 == Installation ==
 
@@ -106,7 +105,7 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Screenshots ==
 
-1. General Settings - Configure name reading (Yomigana) fields, address display options, honorific titles, and usage tracking preferences.
+1. General Settings - Configure name reading (Yomigana) fields, address display options, and honorific titles.
 2. Shipment Settings - Set up delivery date designation, delivery time zones, holidays, and shipping notification options.
 3. Payment Settings - Enable and configure Japanese payment methods including bank transfer, postal transfer, pay at store, and extra charge settings.
 4. Law Settings - Configure Specified Commercial Transaction Law (特定商取引法) information including shop name, company details, owner information, and legal notices.
@@ -169,6 +168,8 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 * **Fixed** - Applying for Paidy again through the onboarding wizard after a cancelled review or a plugin reinstall sent the application without the site hash that encrypts the delivered API keys and signs the key-delivery callback (and logged a PHP "Undefined variable" warning), so the API keys could not be delivered automatically; the application now always sends the hash the site has stored, creating and storing one when none is saved (#234)
 * **Security** - A Checkout block draft order could be paid by Cash on Delivery through the Store API pay-for-order route or the classic order-pay page without the COD fee being applied; both paths now refuse COD/COD2 for draft orders and direct the customer to the checkout page
 * **Security** - The order's transaction ID is now validated against the Paidy payment ID format and `rawurlencode()`-escaped before it is put into the cancel, capture and refund API URLs, as the payment lookup has been since 2.9.14; for an ID that does not match, no request is sent to Paidy and an order note is added (a capture also e-mails the shop's notice address) (#233)
+* **Removed** - The usage tracking feature has been removed in preparation for a new feature that will replace it; no usage data is sent from this version on, and its setting, scheduled event and stored options are cleaned up on update (#239)
+* **Changed** - The notification e-mail sent when a required delivery date or time zone is missing now goes only to the shop's notification address (#239)
 * **Changed** - Tested up to WordPress 7.1 and WooCommerce 11.2.0
 
 = 2.9.16 - 2026-09-07 =
