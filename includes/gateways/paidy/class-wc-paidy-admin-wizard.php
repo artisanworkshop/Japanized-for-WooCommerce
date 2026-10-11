@@ -351,16 +351,31 @@ class WC_Paidy_Admin_Wizard {
 			return;
 		}
 		if ( isset( $value['currentStep'] ) && 2 === $value['currentStep'] && 1 === $old_value['currentStep'] ) {
-
-			// Update the site hash and hash in options.
-			if ( ! get_option( 'paidy_site_hash' ) ) {
-				$site_hash = $this->generate_random_string( 16 );
-				add_option( 'paidy_site_hash', $site_hash );
-			} else {
-				$site_hash = get_option( 'paidy_site_hash' );
-			}
-			$result = $this->send_apply_data_to_wcartws( $value, $site_hash );
+			$result = $this->send_apply_data_to_wcartws( $value, $this->get_or_create_site_hash() );
 		}
+	}
+
+	/**
+	 * Return the stored site hash, creating and storing one on the first application.
+	 *
+	 * The paidy_site_hash option outlives the onboarding settings (a canceled
+	 * review deletes only those) and reinstalls (see uninstall.php), so a new
+	 * application must reuse it rather than be sent without one. Stored with
+	 * update_option() so an option row left with an empty value is replaced:
+	 * add_option() would fail on it and the application would carry a hash
+	 * the site never kept.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @return string
+	 */
+	private function get_or_create_site_hash() {
+		$site_hash = get_option( 'paidy_site_hash' );
+		if ( ! $site_hash ) {
+			$site_hash = $this->generate_random_string( 16 );
+			update_option( 'paidy_site_hash', $site_hash );
+		}
+		return $site_hash;
 	}
 
 	/**
@@ -576,20 +591,13 @@ class WC_Paidy_Admin_Wizard {
 		}
 
 		if ( isset( $value['currentStep'] ) && 1 === $value['currentStep'] ) {
-			// Update the site hash and hash in options.
-			if ( ! get_option( 'paidy_site_hash' ) ) {
-				$site_hash = $this->generate_random_string( 16 );
-				add_option( 'paidy_site_hash', $site_hash );
-			}
+			$this->get_or_create_site_hash();
 			$value['currentStep'] = 2;
 			update_option( $option, $value );
 		} elseif ( isset( $value['currentStep'] ) && 2 === $value['currentStep'] ) {
-			// Update the site hash and hash in options.
-			if ( ! get_option( 'paidy_site_hash' ) ) {
-				$site_hash = $this->generate_random_string( 16 );
-				add_option( 'paidy_site_hash', $site_hash );
-			}
-			$result = $this->send_apply_data_to_wcartws( $value, $site_hash );
+			// The hash is kept after a canceled review or a reinstall, so a
+			// re-application must send the stored one (issue #234).
+			$result = $this->send_apply_data_to_wcartws( $value, $this->get_or_create_site_hash() );
 		}
 	}
 
