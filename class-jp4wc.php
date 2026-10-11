@@ -117,12 +117,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// common functions.
 			require_once JP4WC_INCLUDES_PATH . 'jp4wc-common-functions.php';
 
-			// Usage tracking.
-			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-usage-tracking.php';
-			if ( class_exists( 'JP4WC_Usage_Tracking' ) ) {
-				JP4WC_Usage_Tracking::init();
-			}
-
 			// Install.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
 			// Admin Setting Screen.
