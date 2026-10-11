@@ -224,4 +224,45 @@ class JP4WC_Delivery_Payment_Test extends WP_UnitTestCase {
 
 		$order->delete( true );
 	}
+
+	/**
+	 * The notice about a missing required delivery date goes only to the shop's notification address.
+	 */
+	public function test_missing_date_notice_goes_only_to_the_shop() {
+		$mails   = array();
+		$capture = static function ( $short_circuit, $atts ) use ( &$mails ) {
+			$mails[] = $atts;
+			return true;
+		};
+		add_filter( 'pre_wp_mail', $capture, 10, 2 );
+
+		$order = $this->create_order();
+
+		update_option( 'wc4jp-delivery-date', '1' );
+		update_option( 'wc4jp-delivery-date-required', '1' );
+		update_option( 'wc4jp-delivery-notification-email', 'shop@example.com' );
+
+		try {
+			$this->delivery->jp4wc_delivery_check_data( $this->make_result(), $order->get_id() );
+		} finally {
+			remove_filter( 'pre_wp_mail', $capture, 10 );
+			delete_option( 'wc4jp-delivery-notification-email' );
+		}
+
+		// Marking the order failed also sends WooCommerce's own e-mails; keep the notice only.
+		$notices = array_values(
+			array_filter(
+				$mails,
+				static function ( $mail ) {
+					return 'shop@example.com' === $mail['to'];
+				}
+			)
+		);
+		$this->assertCount( 1, $notices );
+		$headers = implode( "\n", (array) $notices[0]['headers'] );
+		$this->assertStringNotContainsStringIgnoringCase( 'bcc:', $headers );
+		$this->assertStringNotContainsString( 'artws.info', $headers );
+
+		$order->delete( true );
+	}
 }
