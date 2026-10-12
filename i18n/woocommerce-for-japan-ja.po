@@ -1337,8 +1337,8 @@ msgid ""
 "Cancelled processing has not been completed due to a Paidy error. Please "
 "check Paidy admin."
 msgstr ""
-"支払済みエラーが発生したため、処理がキャンセルされました。 Paidy 管理者を確認"
-"してください。"
+"Paidy でエラーが発生したため、キャンセル処理が完了していません。Paidy の管理画"
+"面を確認してください。"
 
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:914
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:931

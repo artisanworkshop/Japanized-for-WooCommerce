@@ -84,6 +84,8 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 				require_once __DIR__ . '/includes/jp4wc-framework/class-jp4wc-framework.php';
 			}
 			require_once __DIR__ . '/includes/gateways/paidy/class-wc-gateway-paidy.php';
+			// Capture, cancel and refund at Paidy once per order status change.
+			WC_Gateway_Paidy::register_order_status_hooks();
 
 			// Endpoints.
 			// Instantiated at init priority 11 (after load_plugin_textdomain at priority 1)
