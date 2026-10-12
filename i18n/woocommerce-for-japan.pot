@@ -1154,6 +1154,10 @@ msgstr ""
 msgid "Cancelled processing has not been completed due to a Paidy error. Please check Paidy admin."
 msgstr ""
 
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1056
+msgid "The remaining amount was not refunded at Paidy when the order was cancelled. Please check Paidy admin."
+msgstr ""
+
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:989
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:1006
 msgid "This is capture data."

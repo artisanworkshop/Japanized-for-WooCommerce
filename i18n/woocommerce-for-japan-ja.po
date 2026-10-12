@@ -1340,6 +1340,10 @@ msgstr ""
 "Paidy でエラーが発生したため、キャンセル処理が完了していません。Paidy の管理画"
 "面を確認してください。"
 
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1056
+msgid "The remaining amount was not refunded at Paidy when the order was cancelled. Please check Paidy admin."
+msgstr "注文のキャンセル時に、残額を Paidy で返金できませんでした。Paidy の管理画面を確認してください。"
+
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:914
 #: includes/gateways/paidy/class-wc-gateway-paidy.php:931
 msgid "This is capture data."
