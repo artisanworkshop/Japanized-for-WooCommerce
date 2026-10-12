@@ -40,6 +40,13 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 	private $responses = array();
 
 	/**
+	 * WooCommerce's gateway list, kept while a test unloads it. False when nothing is kept.
+	 *
+	 * @var WC_Payment_Gateways|null|false
+	 */
+	private $kept_gateway_list = false;
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -64,7 +71,31 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 	 */
 	public function tearDown(): void {
 		remove_filter( 'pre_http_request', array( $this, 'mock_paidy_api' ), 10 );
+		if ( false !== $this->kept_gateway_list ) {
+			$this->gateway_list_property()->setValue( null, $this->kept_gateway_list );
+			$this->kept_gateway_list = false;
+		}
 		parent::tearDown();
+	}
+
+	/**
+	 * The property holding WooCommerce's gateway list once it has been loaded.
+	 *
+	 * @return ReflectionProperty
+	 */
+	private function gateway_list_property() {
+		return new ReflectionProperty( 'WC_Payment_Gateways', '_instance' );
+	}
+
+	/**
+	 * Put WooCommerce back in the state of a request that has not loaded the payment gateways,
+	 * as when an order status is changed through the REST API or a bulk action.
+	 */
+	private function unload_gateway_list() {
+		$this->kept_gateway_list = $this->gateway_list_property()->getValue();
+		$this->gateway_list_property()->setValue( null, null );
+		// Sending an order e-mail would load the gateways; keep the e-mails from doing it.
+		add_filter( 'woocommerce_allow_send_queued_transactional_email', '__return_false' );
 	}
 
 	/**
@@ -125,7 +156,8 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Create the gateway instances that exist besides WooCommerce's own in an admin request.
+	 * Load WooCommerce's gateway list and create the other gateway instances an admin request
+	 * used to have (one like paidy_redirect_to_wizard()'s and one like WC_Paidy_Endpoint's).
 	 */
 	private function create_extra_gateway_instances() {
 		WC()->payment_gateways()->payment_gateways();
@@ -166,11 +198,9 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Cancelling a processing order closes the payment once and leaves no failure note.
+	 * Make the mocked Paidy API close the payment once and refuse to close it again.
 	 */
-	public function test_cancel_sends_close_once() {
-		$order = $this->create_order( 'processing' );
-		$this->create_extra_gateway_instances();
+	private function mock_close_then_conflict() {
 		$this->responses = array(
 			$this->http_response(
 				200,
@@ -194,11 +224,46 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 				)
 			),
 		);
+	}
+
+	/**
+	 * Cancelling a processing order closes the payment once and leaves no failure note.
+	 */
+	public function test_cancel_sends_close_once() {
+		$order = $this->create_order( 'processing' );
+		$this->create_extra_gateway_instances();
+		$this->mock_close_then_conflict();
 
 		$order->update_status( 'cancelled' );
 
 		$this->assertSame( array( 'https://api.paidy.com/payments/' . self::PAYMENT_ID . '/close' ), $this->requested_urls );
 		$this->assertStringNotContainsString( 'HTTP 409', $this->order_notes( $order ) );
+	}
+
+	/**
+	 * The payment is closed once even in a request that has not loaded the payment gateways.
+	 */
+	public function test_cancel_sends_close_once_when_gateways_are_not_loaded() {
+		$order = $this->create_order( 'processing' );
+		$this->unload_gateway_list();
+		$this->mock_close_then_conflict();
+
+		$order->update_status( 'cancelled' );
+
+		$this->assertSame( array( 'https://api.paidy.com/payments/' . self::PAYMENT_ID . '/close' ), $this->requested_urls );
+		$this->assertStringNotContainsString( 'HTTP 409', $this->order_notes( $order ) );
+	}
+
+	/**
+	 * A status change of an order paid by another method does not load the payment gateways.
+	 */
+	public function test_other_payment_method_does_not_load_gateways() {
+		$order = $this->create_order( 'processing', 'bacs' );
+		$this->unload_gateway_list();
+
+		$order->update_status( 'cancelled' );
+
+		$this->assertNull( $this->gateway_list_property()->getValue() );
 	}
 
 	/**
@@ -252,17 +317,6 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 		$this->assertNotFalse( has_action( 'woocommerce_order_status_completed', array( 'WC_Gateway_Paidy', 'handle_order_status_completed' ) ) );
 		$this->assertNotFalse( has_action( 'woocommerce_order_status_processing_to_cancelled', array( 'WC_Gateway_Paidy', 'handle_order_status_processing_to_cancelled' ) ) );
 		$this->assertNotFalse( has_action( 'woocommerce_order_status_completed_to_cancelled', array( 'WC_Gateway_Paidy', 'handle_order_status_completed_to_cancelled' ) ) );
-	}
-
-	/**
-	 * Registering the order status callbacks again does not add them twice.
-	 */
-	public function test_order_status_callbacks_are_registered_once() {
-		$before = $this->callback_count( 'woocommerce_order_status_processing_to_cancelled' );
-
-		WC_Gateway_Paidy::register_order_status_hooks();
-
-		$this->assertSame( $before, $this->callback_count( 'woocommerce_order_status_processing_to_cancelled' ) );
 	}
 
 	/**

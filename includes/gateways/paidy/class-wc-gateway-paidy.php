@@ -198,9 +198,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			'woocommerce_order_status_completed_to_cancelled' => 'handle_order_status_completed_to_cancelled',
 		);
 		foreach ( $hooks as $hook => $method ) {
-			if ( false === has_action( $hook, array( __CLASS__, $method ) ) ) {
-				add_action( $hook, array( __CLASS__, $method ) );
-			}
+			// WordPress keys a callback by its name and priority, so adding it again does not run it twice.
+			add_action( $hook, array( __CLASS__, $method ) );
 		}
 	}
 
