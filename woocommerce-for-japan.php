@@ -199,9 +199,11 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 		if ( ! class_exists( 'WC_Gateway_Paidy' ) ) {
 			return;
 		}
-		$paidy_payment_method = new WC_Gateway_Paidy();
 		if ( get_option( 'paidy_do_activation_redirect', false ) ) {
-			if ( 'yes' !== $paidy_payment_method->enabled && jp4wc_has_orders_in_last_5_days() ) {
+			// Read the setting rather than create a gateway, whose constructor adds its hooks again.
+			$settings = get_option( 'woocommerce_paidy_settings', array() );
+			$enabled  = is_array( $settings ) && isset( $settings['enabled'] ) ? $settings['enabled'] : 'no';
+			if ( 'yes' !== $enabled && jp4wc_has_orders_in_last_5_days() ) {
 				delete_option( 'paidy_do_activation_redirect' );
 				wp_safe_redirect( admin_url( 'admin.php?page=wc-admin&path=%2Fpaidy-on-boarding' ) );
 				exit;

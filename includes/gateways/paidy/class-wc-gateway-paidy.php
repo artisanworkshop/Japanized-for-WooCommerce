@@ -175,11 +175,95 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		add_action( 'woocommerce_before_checkout_form', array( $this, 'checkout_reject_to_cancel' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_completed' ) );
 
-		add_action( 'woocommerce_order_status_completed', array( $this, 'jp4wc_order_paidy_status_completed' ) );
-		add_action( 'woocommerce_order_status_processing_to_cancelled', array( $this, 'paidy_order_paidy_status_processing_to_cancelled' ) );
-		add_action( 'woocommerce_order_status_completed_to_cancelled', array( $this, 'paidy_order_paidy_status_completed_to_cancelled' ) );
+		// The order status callbacks are registered once by register_order_status_hooks().
 
 		add_action( 'admin_print_footer_scripts', array( $this, 'paidy_remove_refund_button_for_processing' ), 10 );
+	}
+
+	/**
+	 * Register the order status callbacks that capture, cancel and refund at Paidy.
+	 *
+	 * They are not registered in the constructor because this class is created more than
+	 * once in a request (WooCommerce's gateway list, WC_Paidy_Endpoint), and each instance
+	 * would send the same request to Paidy again. They are not left to WooCommerce's
+	 * instance alone either: a request that changes an order status, such as a REST API
+	 * call or a bulk action, does not always load the payment gateways.
+	 *
+	 * @since 2.9.17
+	 */
+	public static function register_order_status_hooks() {
+		$hooks = array(
+			'woocommerce_order_status_completed' => 'handle_order_status_completed',
+			'woocommerce_order_status_processing_to_cancelled' => 'handle_order_status_processing_to_cancelled',
+			'woocommerce_order_status_completed_to_cancelled' => 'handle_order_status_completed_to_cancelled',
+		);
+		foreach ( $hooks as $hook => $method ) {
+			if ( false === has_action( $hook, array( __CLASS__, $method ) ) ) {
+				add_action( $hook, array( __CLASS__, $method ) );
+			}
+		}
+	}
+
+	/**
+	 * Capture at Paidy when a Paidy order is completed.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public static function handle_order_status_completed( $order_id ) {
+		$gateway = self::get_gateway_for_order( $order_id );
+		if ( $gateway ) {
+			$gateway->jp4wc_order_paidy_status_completed( $order_id );
+		}
+	}
+
+	/**
+	 * Close the payment at Paidy when a processing Paidy order is cancelled.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public static function handle_order_status_processing_to_cancelled( $order_id ) {
+		$gateway = self::get_gateway_for_order( $order_id );
+		if ( $gateway ) {
+			$gateway->paidy_order_paidy_status_processing_to_cancelled( $order_id );
+		}
+	}
+
+	/**
+	 * Refund at Paidy when a completed Paidy order is cancelled.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public static function handle_order_status_completed_to_cancelled( $order_id ) {
+		$gateway = self::get_gateway_for_order( $order_id );
+		if ( $gateway ) {
+			$gateway->paidy_order_paidy_status_completed_to_cancelled( $order_id );
+		}
+	}
+
+	/**
+	 * The gateway instance WooCommerce has registered, for an order paid with Paidy.
+	 *
+	 * Orders paid by other methods return null without loading the payment gateways.
+	 *
+	 * @since 2.9.17
+	 *
+	 * @param int $order_id Order ID.
+	 * @return WC_Gateway_Paidy|null
+	 */
+	private static function get_gateway_for_order( $order_id ) {
+		$order = wc_get_order( $order_id );
+		if ( ! $order || 'paidy' !== $order->get_payment_method() ) {
+			return null;
+		}
+		$gateways = WC()->payment_gateways()->payment_gateways();
+
+		return isset( $gateways['paidy'] ) && $gateways['paidy'] instanceof self ? $gateways['paidy'] : null;
 	}
 
 	/**
