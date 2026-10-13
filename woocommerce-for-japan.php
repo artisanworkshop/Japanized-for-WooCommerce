@@ -11,7 +11,7 @@
  * Requires at least: 6.7
  * Tested up to: 7.1
  * WC requires at least: 8.0
- * WC tested up to: 11.2.0
+ * WC tested up to: 11.2.1
  *
  * Text Domain: woocommerce-for-japan
  * Domain Path: /i18n/
