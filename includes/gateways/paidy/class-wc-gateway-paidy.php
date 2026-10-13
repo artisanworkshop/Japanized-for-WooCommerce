@@ -1005,7 +1005,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 *
 	 * The refund goes through wc_create_refund(), so WooCommerce records it and only the
 	 * amount not refunded yet is sent. The order stays cancelled even when this refunds it
-	 * in full. Versions before 2.9.18 refunded the order total at Paidy without recording a
+	 * in full. Versions before 2.9.17 refunded the order total at Paidy without recording a
 	 * refund in WooCommerce; such an order is not refunded again.
 	 *
 	 * @param int $order_id Order ID.
@@ -1015,7 +1015,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		if ( ! $order || $this->id !== $order->get_payment_method() ) {
 			return;
 		}
-		// Every Paidy refund since 2.9.18 has a WooCommerce refund sent through the gateway,
+		// Every Paidy refund since 2.9.17 has a WooCommerce refund sent through the gateway,
 		// and earlier versions blocked the refund on cancellation once anything had been
 		// refunded at Paidy. A Paidy refund ID without such a refund is therefore an earlier
 		// version's refund on cancellation, which refunded the order total.
@@ -1330,7 +1330,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 * not document, so every refund ID in the answer that is not saved yet is added,
 	 * rather than the first one, which would be the earlier refund on a second refund.
 	 *
-	 * @since 2.9.18
+	 * @since 2.9.17
 	 *
 	 * @param mixed $saved_ids Value of the order's paidy_refund_id meta.
 	 * @param array $payment   Decoded Paidy payment from the refund answer.
