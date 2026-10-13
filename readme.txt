@@ -172,7 +172,7 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 * **Security** - The order's transaction ID is now validated against the Paidy payment ID format and `rawurlencode()`-escaped before it is put into the cancel, capture and refund API URLs, as the payment lookup has been since 2.9.14; for an ID that does not match, no request is sent to Paidy and an order note is added (a capture also e-mails the shop's notice address) (#233)
 * **Removed** - The usage tracking feature has been removed in preparation for a new feature that will replace it; no usage data is sent from this version on, and its setting, scheduled event and stored options are cleaned up on update (#239)
 * **Changed** - The notification e-mail sent when a required delivery date or time zone is missing now goes only to the shop's notification address (#239)
-* **Changed** - Tested up to WordPress 7.1 and WooCommerce 11.2.0
+* **Changed** - Tested up to WordPress 7.1 and WooCommerce 11.2.1
 
 = 2.9.16 - 2026-09-07 =
 * **Added** - Paidy onboarding callbacks can now be authenticated via an HMAC-SHA256 signature shared at application time, in addition to the one-time state token; this restores automatic API key delivery for merchants whose token had already expired or was never issued
