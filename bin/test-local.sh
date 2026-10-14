@@ -41,6 +41,9 @@ fi
 command -v docker >/dev/null 2>&1 || die "docker is not installed."
 docker info >/dev/null 2>&1 || die "Docker is not running. Start Docker Desktop and try again."
 command -v php >/dev/null 2>&1 || die "php is not installed."
+for tool in svn curl tar unzip; do
+	command -v "$tool" >/dev/null 2>&1 || die "$tool is not installed. It is needed to install the test environment."
+done
 php -r 'exit( extension_loaded( "mysqli" ) ? 0 : 1 );' || die "the PHP mysqli extension is not loaded."
 [ -x "$ROOT_DIR/vendor/bin/phpunit" ] || die "vendor/bin/phpunit is missing. Run 'composer install' first."
 
@@ -129,8 +132,19 @@ fi
 export WP_TESTS_DIR="$ENV_DIR/wordpress-tests-lib"
 export WP_CORE_DIR="$ENV_DIR/wordpress"
 
-JP4WC_TEST_CONTAINER="$CONTAINER_NAME" bash "$ROOT_DIR/bin/setup-test-env.sh" \
-	"$DB_NAME" "$DB_USER" "$DB_PASS" "$DB_HOST" "$DB_PORT" latest
+JP4WC_TEST_CONTAINER="$CONTAINER_NAME" JP4WC_TEST_REQUIRE_STAMP=1 bash "$ROOT_DIR/bin/setup-test-env.sh" \
+	"$DB_NAME" "$DB_USER" "$DB_PASS" "$DB_HOST" "$DB_PORT" latest ||
+	die "the test environment could not be set up (see above)."
+
+# setup-test-env.sh reports success even when a download failed, and skips what
+# already exists on the next run, so check that the install is complete.
+for required in \
+	"$WP_TESTS_DIR/includes/functions.php" \
+	"$WP_TESTS_DIR/.jp4wc-tests-tag" \
+	"$WP_CORE_DIR/wp-settings.php" \
+	"$WP_CORE_DIR/wp-content/plugins/woocommerce/woocommerce.php"; do
+	[ -f "$required" ] || die "the test environment is incomplete: $required is missing. Delete $ENV_DIR and run this again."
+done
 
 cd "$ROOT_DIR"
 exec vendor/bin/phpunit "$@"

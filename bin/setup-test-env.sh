@@ -68,10 +68,14 @@ download() {
     fi
 }
 
-# Resolve "latest" to a version number, so that the core and the test library are
-# the same release. The trunk test library can need code the release does not have.
-# Only when something is about to be installed, so that later runs work offline.
-if [[ $WP_VERSION == 'latest' ]] && { [ ! -d "$WP_CORE_DIR" ] || [ ! -d "$WP_TESTS_DIR" ] || [ ! -s "$WP_TESTS_DIR"/wp-tests-config-sample.php ]; }; then
+# The core and the test library must be the same release: the trunk test library can
+# need code that a release does not have. An installed core decides the version;
+# otherwise "latest" is resolved to a version number (only then, so that later runs
+# work offline).
+if [ -f "$WP_CORE_DIR"/wp-includes/version.php ]; then
+	WP_VERSION=$(sed -n "s/^\$wp_version = '\(.*\)';\$/\1/p" "$WP_CORE_DIR"/wp-includes/version.php)
+	echo "WordPress in $WP_CORE_DIR: $WP_VERSION"
+elif [[ $WP_VERSION == 'latest' ]]; then
 	download https://api.wordpress.org/core/version-check/1.7/ "$TMPDIR"/jp4wc-wp-latest.json
 	WP_VERSION=$(grep -o '"version":"[^"]*' "$TMPDIR"/jp4wc-wp-latest.json | head -1 | sed 's/"version":"//')
 	if [[ -z $WP_VERSION ]]; then
@@ -130,15 +134,21 @@ install_test_suite() {
 	fi
 
 	local WP_TESTS_TAG
-	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
-		WP_TESTS_TAG="trunk"
-	elif [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\.0$ ]]; then
+	if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\.0$ ]]; then
 		# x.y.0 is tagged as x.y
 		WP_TESTS_TAG="tags/${WP_VERSION%.0}"
-	else
-		# https serves multiple requests faster
+	elif [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
 		WP_TESTS_TAG="tags/$WP_VERSION"
+	elif [[ $WP_VERSION =~ ^([0-9]+\.[0-9]+)-(beta|RC)[0-9]+$ ]]; then
+		WP_TESTS_TAG="branches/${BASH_REMATCH[1]}"
+	else
+		# nightly, trunk, or an alpha core
+		WP_TESTS_TAG="trunk"
 	fi
+
+	# The tag the test library was exported from, to catch a library that no longer
+	# matches the core (e.g. a core reinstalled at a newer version).
+	local STAMP="$WP_TESTS_DIR"/.jp4wc-tests-tag
 
 	# set up testing suite if it doesn't yet exist
 	if [ ! -d $WP_TESTS_DIR ]; then
@@ -147,6 +157,19 @@ install_test_suite() {
 		rm -rf $WP_TESTS_DIR/{includes,data}
 		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
 		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
+		if [ -f "$WP_TESTS_DIR"/includes/functions.php ] && [ -d "$WP_TESTS_DIR"/data ]; then
+			echo "$WP_TESTS_TAG" > "$STAMP"
+		fi
+	elif [ -f "$STAMP" ]; then
+		if [ "$(cat "$STAMP")" != "$WP_TESTS_TAG" ]; then
+			echo "The WordPress test library in $WP_TESTS_DIR is from $(cat "$STAMP"), but WordPress $WP_VERSION needs $WP_TESTS_TAG."
+			echo "Delete $WP_TESTS_DIR and $WP_CORE_DIR, then run this again to reinstall both."
+			exit 1
+		fi
+	elif [ -n "${JP4WC_TEST_REQUIRE_STAMP:-}" ]; then
+		echo "The WordPress test library in $WP_TESTS_DIR was not completely installed by this script, so its version cannot be checked."
+		echo "Delete $WP_TESTS_DIR and $WP_CORE_DIR, then run this again to reinstall both."
+		exit 1
 	fi
 
 	if [ ! -s "$WP_TESTS_DIR"/wp-tests-config-sample.php ]; then
