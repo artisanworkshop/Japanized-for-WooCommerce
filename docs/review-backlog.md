@@ -80,3 +80,4 @@
 | 2026-10-14 | R2-3 | Low | bin/setup-test-env.sh(`version.php` の読み取り) | 書式が違う(行末の空白・CRLF など)と版が空になり trunk に対応する。空なら止めるガードの余地(WordPress の書式は安定している)。#237 の対応ブランチ R2 | 未起票 |
 | 2026-10-14 | G1-4 | Low | bin/setup-test-env.sh(版とタグの対応) | beta/RC の core を `branches/x.y` に対応させるが、その時期にブランチがまだ無いと export が失敗する(CI の install-wp-tests.sh と同じ。test-local は記録が無いので止まる)。PR #249 Copilot | 未起票 |
 | 2026-10-14 | G1-5 | Low | bin/test-local.sh `port_owner()` | `lsof` で見えない(他ユーザーの)プロセスがポートを使っていると「空き」と判定する(`docker run` が失敗し、`@@hostname` の確認もあるので別のサーバーでテストは走らない)。PR #249 Copilot | 未起票 |
+| 2026-10-14 | G2-2 | Low | bin/setup-test-env.sh(版の決め方) | 2 回目以降は入っている core の版が `test-install` の版の引数より優先され、引数を変えても黙って無視される(core とテストライブラリを揃えるための意図した動き)。PR #249 Copilot | 未起票 |

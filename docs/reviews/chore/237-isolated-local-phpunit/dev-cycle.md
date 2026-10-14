@@ -4,9 +4,9 @@
 - ベースブランチ: main
 - PR: #249 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/249(head は upstream のブランチ)
 - オプション: auto-commit(確認ゲートなし)
-- 現在のステップ: 6(G2 の依頼待ち)
-- Copilot: 依頼 1 回 / 未収束
-- Codex: 依頼 1 回 / 未収束
+- 現在のステップ: 6(G3 の依頼待ち。両 bot とも最後の依頼)
+- Copilot: 依頼 2 回 / 未収束
+- Codex: 依頼 2 回 / 未収束
 
 ## ログ
 | 日時(JST) | ステップ | 内容 |
@@ -17,3 +17,4 @@
 | 2026-10-14 | 3 | review-loop R1: 自己レビュー + 独立サブエージェント(実測込み)。Critical/High 0、Medium 2(R1-M1 既存環境では `latest` のピン留めが効かない / R1-M2 初回セットアップの失敗が見えず直らない)を修正 1079323、Low 7・対象外 1 を backlog。R2: 独立サブエージェントの検証で M1・M2 解消、新規 Medium R2-1(svn export の途中失敗でも記録を書く)を 910e22d で修正、Low 2 を backlog → **APPROVE**。フルスイート 380 件 OK |
 | 2026-10-14 22:45 | 4 | upstream へ初回 push(T=2026-10-14T13:44:53Z)、PR #249 を作成 |
 | 2026-10-14 22:53 | 5–7 | CI green の後に依頼。G1: Codex 2 件(G1-1 空白を含むパス / G1-2 サンプルのダウンロード失敗が残る)を修正、Copilot はスレッド無し・本文の要約 5 項目(修正 2 は Codex と重複、保留 3)。既定の `~/.cache/jp4wc-tests`(ユーザーが削除済み)を作り直して 380 件 OK。修正 push T=2026-10-14T13:55:42Z、返信・Resolve・サマリ投稿 |
+| 2026-10-14 23:04 | 5–7 | G2: Codex 1 件(G2-1 `:` `&` `'` を含むパス)を 2de6b1f で修正(許可する文字を限定)、Copilot は本文の要約 1 項目(G2-2 繰り返し実行の挙動、具体的な指摘なし)を保留。380 件 OK。修正 push T=2026-10-14T14:05:25Z |
