@@ -173,12 +173,21 @@ install_test_suite() {
 		exit 1
 	fi
 
-	if [ ! -s "$WP_TESTS_DIR"/wp-tests-config-sample.php ]; then
-		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config-sample.php
+	# Keep a sample only when it is the real file (download() saves HTTP error pages and
+	# partial transfers as they are), so a failed download is retried on the next run.
+	local SAMPLE="$WP_TESTS_DIR"/wp-tests-config-sample.php
+	if ! grep -q youremptytestdbnamehere "$SAMPLE" 2>/dev/null; then
+		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$SAMPLE".download
+		if ! grep -q youremptytestdbnamehere "$SAMPLE".download 2>/dev/null || ! grep -q "ABSPATH" "$SAMPLE".download; then
+			rm -f "$SAMPLE".download
+			echo "Could not download wp-tests-config-sample.php for $WP_TESTS_TAG."
+			exit 1
+		fi
+		mv "$SAMPLE".download "$SAMPLE"
 	fi
 
 	# Write the config on every run, so it always points at the database given here.
-	cp "$WP_TESTS_DIR"/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
+	cp "$SAMPLE" "$WP_TESTS_DIR"/wp-tests-config.php
 	# remove all forward slashes in the end
 	WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
 	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
