@@ -9,11 +9,12 @@ DB_HOST=${4-127.0.0.1}
 DB_PORT=${5-3306}
 WP_VERSION=${6-latest}
 
-CONTAINER_NAME="jp4wc-mysql-test"
+# bin/test-local.sh passes its own container through JP4WC_TEST_CONTAINER.
+CONTAINER_NAME="${JP4WC_TEST_CONTAINER:-jp4wc-mysql-test}"
 
 # MySQLコンテナを起動（既に起動している場合はスキップ）
 echo "Starting MySQL container..."
-if ! docker ps | grep -q ${CONTAINER_NAME}; then
+if [ -z "$(docker ps -q --filter "name=^/${CONTAINER_NAME}$")" ]; then
     # 既存のコンテナがあれば削除
     docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
     
@@ -67,6 +68,19 @@ download() {
     fi
 }
 
+# Resolve "latest" to a version number, so that the core and the test library are
+# the same release. The trunk test library can need code the release does not have.
+# Only when something is about to be installed, so that later runs work offline.
+if [[ $WP_VERSION == 'latest' ]] && { [ ! -d "$WP_CORE_DIR" ] || [ ! -d "$WP_TESTS_DIR" ] || [ ! -s "$WP_TESTS_DIR"/wp-tests-config-sample.php ]; }; then
+	download https://api.wordpress.org/core/version-check/1.7/ "$TMPDIR"/jp4wc-wp-latest.json
+	WP_VERSION=$(grep -o '"version":"[^"]*' "$TMPDIR"/jp4wc-wp-latest.json | head -1 | sed 's/"version":"//')
+	if [[ -z $WP_VERSION ]]; then
+		echo "Latest WordPress version could not be found"
+		exit 1
+	fi
+	echo "Latest WordPress version: $WP_VERSION"
+fi
+
 install_wp() {
 	if [ -d $WP_CORE_DIR ]; then
 		return;
@@ -74,9 +88,7 @@ install_wp() {
 
 	mkdir -p $WP_CORE_DIR
 
-	if [[ $WP_VERSION == 'latest' ]]; then
-		local ARCHIVE_NAME='latest'
-	elif [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
+	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 		local ARCHIVE_NAME='nightly'
 	else
 		# https serves multiple requests faster
@@ -117,10 +129,12 @@ install_test_suite() {
 		local ioption='-i'
 	fi
 
-	# WP_VERSIONが'latest'の場合、trunkを使用
 	local WP_TESTS_TAG
-	if [[ $WP_VERSION == 'latest' || $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
+	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 		WP_TESTS_TAG="trunk"
+	elif [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\.0$ ]]; then
+		# x.y.0 is tagged as x.y
+		WP_TESTS_TAG="tags/${WP_VERSION%.0}"
 	else
 		# https serves multiple requests faster
 		WP_TESTS_TAG="tags/$WP_VERSION"
@@ -135,17 +149,20 @@ install_test_suite() {
 		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
 	fi
 
-	if [ ! -f wp-tests-config.php ]; then
-		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
-		# remove all forward slashes in the end
-		WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
-		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s:__DIR__ . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s|localhost|${DB_HOST}:${DB_PORT}|" "$WP_TESTS_DIR"/wp-tests-config.php
+	if [ ! -s "$WP_TESTS_DIR"/wp-tests-config-sample.php ]; then
+		download https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config-sample.php
 	fi
+
+	# Write the config on every run, so it always points at the database given here.
+	cp "$WP_TESTS_DIR"/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
+	# remove all forward slashes in the end
+	WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
+	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
+	sed $ioption "s:__DIR__ . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR"/wp-tests-config.php
+	sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR"/wp-tests-config.php
+	sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
+	sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
+	sed $ioption "s|localhost|${DB_HOST}:${DB_PORT}|" "$WP_TESTS_DIR"/wp-tests-config.php
 }
 
 install_wp
@@ -155,6 +172,6 @@ install_test_suite
 echo ""
 echo "Test environment setup complete!"
 echo ""
-echo "To run tests: composer test"
+echo "To run tests: composer test (or composer test-local, which keeps its own environment and container)"
 echo "To stop MySQL container: docker stop ${CONTAINER_NAME}"
 echo "To remove MySQL container: docker rm ${CONTAINER_NAME}"
