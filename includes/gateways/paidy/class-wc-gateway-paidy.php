@@ -1130,7 +1130,7 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 			);
 			if ( 'no' !== $this->debug ) {
 				$debug_message = 'Send URL is following. : ' . $send_url;
-				$this->jp4wc_framework->jp4wc_debug_log( $debug_message, true, 'paidy-wc' );
+				$this->jp4wc_framework->jp4wc_debug_log( $debug_message, $this->debug, 'paidy-wc' );
 			}
 			$capture = wp_remote_post( $send_url, $args );
 			if ( is_wp_error( $capture ) ) {
