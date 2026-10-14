@@ -81,3 +81,7 @@
 | 2026-10-14 | G1-4 | Low | bin/setup-test-env.sh(版とタグの対応) | beta/RC の core を `branches/x.y` に対応させるが、その時期にブランチがまだ無いと export が失敗する(CI の install-wp-tests.sh と同じ。test-local は記録が無いので止まる)。PR #249 Copilot | 未起票 |
 | 2026-10-14 | G1-5 | Low | bin/test-local.sh `port_owner()` | `lsof` で見えない(他ユーザーの)プロセスがポートを使っていると「空き」と判定する(`docker run` が失敗し、`@@hostname` の確認もあるので別のサーバーでテストは走らない)。PR #249 Copilot | 未起票 |
 | 2026-10-14 | G2-2 | Low | bin/setup-test-env.sh(版の決め方) | 2 回目以降は入っている core の版が `test-install` の版の引数より優先され、引数を変えても黙って無視される(core とテストライブラリを揃えるための意図した動き)。PR #249 Copilot | 未起票 |
+| 2026-10-15 | R1-X1 | Low | includes/class-jp4wc-yahoo-api-endpoint.php:75 | `$debug = true;` を `jp4wc_debug_log()` に渡しており、#247 と同じ型でログが一度も出ない。`'yes'` にすると設定に関係なくリクエスト内容を毎回ログに残すので、設定に連動させるか呼び出しを消すかの判断が要る。#247 の対応ブランチ R1 | 未起票 |
+| 2026-10-15 | R1-X2 | Low | includes/jp4wc-framework/class-jp4wc-framework.php:574 `jp4wc_debug_log()` の docblock | `@param boolean $flag` だが実装は文字列 `'yes'` だけを受け付ける(#247 を誘発した)。`@param string $flag 'yes' to write the log.` へ。#247 の対応ブランチ R1 | 未起票 |
+| 2026-10-15 | R1-L1 | Low | includes/gateways/paidy/class-wc-gateway-paidy.php `jp4wc_order_paidy_status_completed()` | 送信先 URL のログの外側の `if ( 'no' !== $this->debug )` は `jp4wc_debug_log()` 内の判定と重複(他の呼び出しには無い)。#247 の対応ブランチ R1 | 未起票 |
+| 2026-10-15 | R1-L2 | Low | tests/Unit/test-paidy-capture-debug-log.php | デバッグ無効のテストは外側のガードがあるので修正前でも通る(回帰ガード。意図を docblock に書く余地)。tearDown は元のロガーではなく新しい `WC_Logger` に戻す(実害なし)。#247 の対応ブランチ R1 | 未起票 |
