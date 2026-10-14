@@ -38,14 +38,17 @@ if ! [[ "$DB_PORT" =~ ^[0-9]+$ ]] || [ "$DB_PORT" -lt 1 ] || [ "$DB_PORT" -gt 65
 	die "JP4WC_TEST_DB_PORT must be a port number, got '$DB_PORT'."
 fi
 
-# bin/setup-test-env.sh leaves these paths unquoted (including in rm -rf), so a path
-# with whitespace would be split into other directories. Refuse it, and make the
-# path absolute because setup and phpunit run from different directories.
+# bin/setup-test-env.sh expands these paths unquoted (including in rm -rf) and puts
+# them into sed replacements and a single-quoted PHP string, so only plain path
+# characters are safe. Make the path absolute, because setup and phpunit run from
+# different directories.
 case "$ENV_DIR" in
-	*[[:space:]]*) die "JP4WC_TEST_ENV_DIR must not contain whitespace, got '$ENV_DIR'." ;;
 	/*) ;;
 	*) ENV_DIR="$PWD/$ENV_DIR" ;;
 esac
+if ! [[ "$ENV_DIR" =~ ^[A-Za-z0-9._/+-]+$ ]]; then
+	die "JP4WC_TEST_ENV_DIR may contain only letters, digits and . _ / + -, got '$ENV_DIR'."
+fi
 
 command -v docker >/dev/null 2>&1 || die "docker is not installed."
 docker info >/dev/null 2>&1 || die "Docker is not running. Start Docker Desktop and try again."
