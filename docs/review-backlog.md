@@ -68,3 +68,13 @@
 | 2026-10-12 | R1-L4 | Low | tests/Unit/test-paidy-refunds.php `test_failed_refund_on_cancel_keeps_no_refund_and_leaves_a_note()` | 502 の経路では Warning が出ないので `set_error_handler` は実際には効いていない(CLAUDE.md の規則どおりの予防として残している)。#243 の対応ブランチ R1 | 未起票 |
 | 2026-10-12 | R1-L5 | Low | tests/Unit/test-paidy-refunds.php | ステータス保持のフィルタが対象の注文だけに効くことを確かめるテストが無い(防御的な分岐)。`paidy_merge_refund_ids()` に旧形式の値(文字列、入れ子の配列、2.7.0〜2.9.0 の `WC_Meta_Data` 入り)を渡すテストも無い(文字列でない要素は落ちるが、Paidy の応答の `refunds[]` から補われる)。#243 の対応ブランチ R1 | 未起票 |
 | 2026-10-12 | R1-L6 | Low | tests 全体 | テスト環境は HPOS が無効(CPT)で、HPOS の経路(入れ子の返金作成など)を一度も実行していない。#243 の対応ブランチ R1 で確認(リポジトリ全体の課題) | 未起票 |
+| 2026-10-14 | R1-L1 | Low | bin/test-local.sh(コンテナの作り直し) | 使用中のポートを `JP4WC_TEST_DB_PORT` に指定すると、既存の `jp4wc-phpunit-db` を `docker rm -f` してから `ensure_port_free` で止まる(作り直しの前にポートを確かめる順にできる。DB は捨ててよいテスト用)。#237 の対応ブランチ R1 | 未起票 |
+| 2026-10-14 | R1-L2 | Low | bin/setup-test-env.sh(コンテナ起動) | test-local の確認の後、setup の実行までの間にコンテナが止まると、setup が 0.0.0.0 バインドで作り直し、ポートと hostname の確認を通らない(コンテナ管理を飛ばすフラグで防げる)。#237 の対応ブランチ R1 | 未起票 |
+| 2026-10-14 | R1-L3 | Low | bin/test-local.sh `JP4WC_TEST_ENV_DIR` | 相対パスや空白を含むパスは壊れる(setup に未クォートの変数が多い)。絶対パスへの変換で防げる。#237 の対応ブランチ R1 | 未起票 |
+| 2026-10-14 | R1-L4 | Low | CLAUDE.md / bin/test-local.sh のヘッダー | 既定の置き場所を `~/.cache/jp4wc-tests` と書いているが、`XDG_CACHE_HOME` が設定されていればその下になる。#237 の対応ブランチ R1 | 未起票 |
+| 2026-10-14 | R1-L5 | Low | README.md / docs/testing.md / bin/setup-test-env.sh の完了表示 | `test-install` と `test` だけを案内しており `test-local` が無い。test-local の実行中も setup が「To run tests: composer test」と表示する。#237 の対応ブランチ R1 | 未起票 |
+| 2026-10-14 | R1-L6 | Low | bin/test-local.sh | 同時に 2 回走らせる(worktree・エージェント)と同じ DB と `wp-tests-config.php` を取り合う。ロックか CLAUDE.md への注記の余地。#237 の対応ブランチ R1 | 未起票 |
+| 2026-10-14 | R1-L7 | Low | ~/Dev/claude-skills の dev-env `ports.json` | slot 10 の +4(10104)を PHPUnit の MySQL に使っていることが台帳に記録されていない(リポジトリ外)。#237 の対応ブランチ R1 | 未起票 |
+| 2026-10-14 | R1-X1 | Low | bin/setup-test-env.sh(既存) | `/tmp/wordpress.tar.gz`・`/tmp/woocommerce.zip` の固定パス(他リポジトリと競合、失敗時に古い zip を使う)、`download()` が curl/wget 無しで黙る・`curl -f` なし、`test-install` が 0.0.0.0:3306 に root/root で公開、BSD sed で `s:/\+$::` が効かない。#237 の対応ブランチ R1 | 未起票 |
+| 2026-10-14 | R2-2 | Low | bin/setup-test-env.sh の停止メッセージ | 修正前の版で正しく入れた環境(記録なし)にも「was not completely installed by this script」と出る(削除の案内は正しい)。core のディレクトリはあるが `version.php` が無いとき、実在しない core の版を表示する。#237 の対応ブランチ R2 | 未起票 |
+| 2026-10-14 | R2-3 | Low | bin/setup-test-env.sh(`version.php` の読み取り) | 書式が違う(行末の空白・CRLF など)と版が空になり trunk に対応する。空なら止めるガードの余地(WordPress の書式は安定している)。#237 の対応ブランチ R2 | 未起票 |

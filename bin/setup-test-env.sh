@@ -155,9 +155,10 @@ install_test_suite() {
 		# set up testing suite
 		mkdir -p $WP_TESTS_DIR
 		rm -rf $WP_TESTS_DIR/{includes,data}
-		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes
-		svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data
-		if [ -f "$WP_TESTS_DIR"/includes/functions.php ] && [ -d "$WP_TESTS_DIR"/data ]; then
+		# Record the tag only when both exports succeeded, so that an interrupted
+		# export is never taken for a complete library.
+		if svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/includes/ $WP_TESTS_DIR/includes &&
+			svn export --quiet --ignore-externals https://develop.svn.wordpress.org/${WP_TESTS_TAG}/tests/phpunit/data/ $WP_TESTS_DIR/data; then
 			echo "$WP_TESTS_TAG" > "$STAMP"
 		fi
 	elif [ -f "$STAMP" ]; then
