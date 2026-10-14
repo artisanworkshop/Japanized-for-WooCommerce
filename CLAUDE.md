@@ -40,7 +40,7 @@ Follow **WordPress Coding Standards** (WPCS). Run before committing:
 ```bash
 composer lint          # phpcs check
 composer format        # phpcbf auto-fix
-composer test          # phpunit
+composer test-local    # phpunit (see Testing)
 ```
 
 JS/CSS build:
@@ -135,9 +135,17 @@ This plugin declares HPOS (High-Performance Order Storage) compatibility. When a
 ## Testing
 
 ```bash
-composer test-install   # sets up WP test DB (first time)
-composer test           # runs PHPUnit
+composer test-local                     # sets up on first run, then runs PHPUnit
+composer test-local -- --filter Paidy   # arguments after -- go to phpunit
 ```
+
+`composer test-local` (`bin/test-local.sh`) keeps its own environment, so other projects' `install-wp-tests.sh` runs can't repoint it at their database:
+
+- WordPress, the WP test library and WooCommerce live in `~/.cache/jp4wc-tests/` (`JP4WC_TEST_ENV_DIR`); `rm -rf` it to reinstall the latest versions.
+- MySQL runs in the `jp4wc-phpunit-db` container on `127.0.0.1:10104` (`JP4WC_TEST_DB_PORT`; 10104 is the spare +4 of this repo's dev-env slot 10). It is left running between runs. If the port is taken, the script names the owner and stops before connecting; it also checks that the server answering is that container.
+- `wp-tests-config.php` is rewritten on every run.
+
+`composer test-install` + `composer test` remain for the shared `$TMPDIR` layout on port 3306; CI uses neither (it runs `bin/install-wp-tests.sh`).
 
 Test files live in `tests/Unit/`. Follow existing patterns; tests use `WP_UnitTestCase`.
 
@@ -193,7 +201,8 @@ Gateway classes in `includes/gateways/`. Each extends `WC_Payment_Gateway`. Bloc
 - Gateway code must check `is_wp_error()` before using a `wp_remote_*()` result, then read it with `wp_remote_retrieve_response_code()` / `wp_remote_retrieve_body()`. `$response['body']` on a WP_Error is a PHP `Error`, which escapes `wc_create_refund()`'s `catch ( Exception )` and leaves a WooCommerce refund behind with no gateway refund. `process_refund()` returns true only for a confirmed success (Paidy: 2xx, JSON, `status` `closed`), never as a fall-through, or a 502 HTML page gets recorded as refunded (#231).
 - `phpunit.xml` converts warnings to exceptions, and WooCommerce code under test may catch them (`wc_refund_payment()` catches `Exception`). A test can then pass on broken code because a warning stood in for the failure it expects (the #236 `wc_create_refund()` test did). Wrap such a call in `set_error_handler( static function () { return true; }, E_WARNING )` with `restore_error_handler()` in `finally`, since production only logs warnings, and prove the test fails with the fix reverted.
 - `.phpcs.xml.dist` excludes `/tests/`, so `composer lint` and CI never check test files. Run `vendor/bin/phpcs --standard=WordPress tests/Unit/<file>.php` (and `phpcbf`) by hand on a new or changed test — array `=>` alignment is the usual miss.
-- `composer test` ends with `test-stop`, which removes the `jp4wc-mysql-test` container, so a second `composer test` fails to connect. Between runs call `vendor/bin/phpunit` directly (the WP test lib under `sys_get_temp_dir()` and the container stay up), and run `composer test-install` before each `composer test`; macOS also purges the temp dir, so expect to reinstall after a while.
+- Run tests locally with `composer test-local`, not `composer test`. `composer test` ends with `test-stop`, which removes the `jp4wc-mysql-test` container, and it uses the WP test lib in `$TMPDIR`, which other projects rewrite (repointing `DB_HOST` at their MySQL) and macOS purges (#237).
+- Pin the WP test library to the same release as the WordPress core. `bin/setup-test-env.sh` used to pair the `latest` core with the trunk test library, which broke as soon as trunk needed a class the release lacks (`WP_Secrets_Store`, 2026-10); it now resolves `latest` to a version number first, as CI's `install-wp-tests.sh` does.
 - WooCommerce Store API (`CheckoutSchema::sanitize_additional_fields()`) runs every submitted additional-field value through `wp_kses( $v, array() )` *before* `SelectFieldType` matches it against the option values, so a select option whose value contains `&` arrives as `&amp;` and WooCommerce itself rejects it with 400 `rest_not_in_enum` (`'` and `"` pass). The delivery time-zone options use the admin-entered label as the value, so a label with `&` cannot be chosen in the Checkout block (#224, backlog R1-X1) — warn in settings or use a separate option value if this ever needs fixing.
 - `wp_kses_post()` turns a bare `&` into `&amp;` even in text with no markup, so never pass plain-text email output (the `$plain_text` branch) through it, and `wp_strip_all_tags()` is no substitute (its `trim()` eats the surrounding blank lines and `strip_tags()` cuts at a bare `<`). Echo the plain text with a reasoned `phpcs:ignore WordPress.Security.EscapeOutput`, as WooCommerce core's plain templates do. Delivery meta (`wc4jp-delivery-*`) is stored as entered since 2.9.17 and escaped only on output; don't add an unconditional "decode legacy entities on read" — it rewrites legitimate values that contain entity text, and both review bots rejected it (#224).
 - Data printed into an inline `<script>` must be built as a PHP array and printed once with `wp_json_encode( $data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )` — never concatenate JavaScript by hand (a skipped entry left a stray `},` and broke Paidy Checkout for every order with a free-shipping coupon, #232). Don't use `esc_js()` for values the script sends elsewhere: it HTML-encodes `&` `<` `"`, so Paidy showed `&amp;`. `paidy_make_order()` still prints the buyer and address fields with `esc_js()`.
