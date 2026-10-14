@@ -158,5 +158,9 @@ for required in \
 	[ -f "$required" ] || die "the test environment is incomplete: $required is missing. Delete $ENV_DIR and run this again."
 done
 
+# tests/bootstrap.php prefers WC_PLUGIN_DIR over the copy under WP_CORE_DIR, so pin it
+# in case another setup exported it.
+export WC_PLUGIN_DIR="$WP_CORE_DIR/wp-content/plugins/woocommerce/woocommerce.php"
+
 cd "$ROOT_DIR"
 exec vendor/bin/phpunit "$@"
