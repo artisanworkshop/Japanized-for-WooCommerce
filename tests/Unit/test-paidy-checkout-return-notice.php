@@ -43,6 +43,35 @@ class WC_Paidy_Checkout_Return_Notice_Test extends WP_UnitTestCase {
 	private $is_block_checkout = false;
 
 	/**
+	 * Value of WP_TESTS_SKIP_INSTALL before this class ran, or false when it was not set.
+	 *
+	 * @var string|false
+	 */
+	private static $kept_skip_install = false;
+
+	/**
+	 * Keep the separate-process test from reinstalling the shared test database.
+	 *
+	 * A child process runs the bootstrap again, and the WordPress test bootstrap
+	 * drops and recreates every table unless WP_TESTS_SKIP_INSTALL is 1. The child
+	 * inherits this process's environment.
+	 */
+	public static function set_up_before_class() {
+		parent::set_up_before_class();
+		self::$kept_skip_install = getenv( 'WP_TESTS_SKIP_INSTALL' );
+		putenv( 'WP_TESTS_SKIP_INSTALL=1' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv -- Only the test bootstrap reads it.
+	}
+
+	/**
+	 * Restore WP_TESTS_SKIP_INSTALL.
+	 */
+	public static function tear_down_after_class() {
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv -- Restores the value set above.
+		putenv( false === self::$kept_skip_install ? 'WP_TESTS_SKIP_INSTALL' : 'WP_TESTS_SKIP_INSTALL=' . self::$kept_skip_install );
+		parent::tear_down_after_class();
+	}
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -285,8 +314,69 @@ class WC_Paidy_Checkout_Return_Notice_Test extends WP_UnitTestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function test_rejected_off_the_checkout_does_nothing() {
+		$this->assertSame( '1', getenv( 'WP_TESTS_SKIP_INSTALL' ), 'The child process must not reinstall the shared test database.' );
 		$this->assertFalse( defined( 'WOOCOMMERCE_CHECKOUT' ) );
 		$this->test_unrelated_requests_do_nothing( 'rejected', '42', false );
+	}
+
+	/**
+	 * A checkout page that holds the Checkout block gets the notice in the block's notice store.
+	 *
+	 * Unlike the other tests, this one lets the gateway look at the checkout page itself.
+	 */
+	public function test_checkout_page_with_checkout_block_is_detected() {
+		remove_filter( 'jp4wc_paidy_is_block_checkout', array( $this, 'is_block_checkout' ) );
+		$this->use_checkout_page( '<!-- wp:woocommerce/checkout --><div class="wp-block-woocommerce-checkout"></div><!-- /wp:woocommerce/checkout -->' );
+
+		$this->return_from_paidy( 'rejected', '42' );
+
+		$this->assertTrue( wp_script_is( self::HANDLE, 'enqueued' ) );
+		$this->assertSame( 0, wc_notice_count() );
+	}
+
+	/**
+	 * A checkout page that holds the checkout shortcode gets the session notice.
+	 *
+	 * @dataProvider provide_shortcode_checkout_pages
+	 *
+	 * @param string $content Content of the checkout page.
+	 */
+	public function test_checkout_page_with_shortcode_is_detected( $content ) {
+		remove_filter( 'jp4wc_paidy_is_block_checkout', array( $this, 'is_block_checkout' ) );
+		$this->use_checkout_page( $content );
+
+		$this->return_from_paidy( 'rejected', '42' );
+
+		$this->assertFalse( wp_script_is( self::HANDLE, 'enqueued' ) );
+		$this->assertSame( 1, wc_notice_count( 'error' ) );
+	}
+
+	/**
+	 * Checkout page contents that use the checkout shortcode.
+	 *
+	 * @return array[]
+	 */
+	public function provide_shortcode_checkout_pages() {
+		return array(
+			'shortcode'               => array( '[woocommerce_checkout]' ),
+			'classic shortcode block' => array( '<!-- wp:woocommerce/classic-shortcode {"shortcode":"checkout"} /-->' ),
+		);
+	}
+
+	/**
+	 * Make a new page with the given content the WooCommerce checkout page.
+	 *
+	 * @param string $content Page content.
+	 */
+	private function use_checkout_page( $content ) {
+		$page_id = self::factory()->post->create(
+			array(
+				'post_type'    => 'page',
+				'post_status'  => 'publish',
+				'post_content' => $content,
+			)
+		);
+		update_option( 'woocommerce_checkout_page_id', $page_id );
 	}
 
 	/**
