@@ -4,9 +4,9 @@
 - ベースブランチ: main
 - PR: #251 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/251(head は upstream の `fix/248-paidy-block-checkout-reject-notice`。Codex が fork の PR では応答しないため)
 - オプション: auto-commit(確認ゲートなし)
-- 現在のステップ: 7(G1 完了。Copilot の TIMEOUT について確認待ち)
-- Copilot: 依頼 1 回 / TIMEOUT(G1、登録は確認済み)
-- Codex: 依頼 1 回 / 未収束(G1 で 1 件、保留)
+- 現在のステップ: 5–6(G3 の依頼)
+- Copilot: 依頼 2 回 / 未収束(G2 で 8 件: 修正 1・保留 7)
+- Codex: 依頼 2 回 / 未収束(G2 で 1 件、修正)
 
 ## ログ
 | 日時(JST) | ステップ | 内容 |
@@ -18,3 +18,4 @@
 | 2026-10-16 06:03 | 4 | upstream へ初回 push(442b6d0、T=2026-10-15T21:03:09Z)、PR #251 を作成 |
 | 2026-10-16 06:10 | 5 | CI red(run 38806946779): PHP 8.4 / WC 10.6.2 と PHP 8.5 / WC latest で、別プロセスのテストの子 bootstrap が `_load_textdomain_just_in_time` の Notice を出し、PHPUnit がエラーにした(ローカルの WC 11.2.1 と最古の組み合わせでは再現せず)。ユーザー判断で別プロセスをやめ(R1-2 の `WP_TESTS_SKIP_INSTALL` も削除)、order-pay のエンドポイントのガードを同一プロセスで検証するケースに置き換え(55e5975)。ガードを外すと 2 件失敗(CAUGHT)、PHPUnit 397 件 OK。`is_checkout()` のガードは単体テストできないため backlog へ |
 | 2026-10-16 06:40 | 6–7 | CI green(c9b2e73)の後に依頼。Codex は約 5 分で応答し新規 1 件 → G1-1(配列のクエリ値で TypeError)は誤検知として保留(WP 6.7+ の `sanitize_key()` は `is_scalar()` で確認、`absint()` は int キャスト)。返信とサマリを投稿。Copilot は 15 分で TIMEOUT(登録は確認済み) |
+| 2026-10-16 07:15 | 6–7 | ユーザー判断で G2 は両 bot に再依頼。両 bot とも 57f8779 に応答。Copilot は PR 作成時の自動レビュー(442b6d0)と G1 の遅れたレビュー(c9b2e73)の指摘もあり、G2 でまとめて仕分け。G2-1(Codex)/G2-2(Copilot)= static フラグが消えない → d8a6f74 で修正(テスト 2 件追加、ミューテーションで CAUGHT)。保留 7 件(G2-3〜G2-9)。PHPUnit 399 件 OK |
