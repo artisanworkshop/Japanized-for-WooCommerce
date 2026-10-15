@@ -43,35 +43,6 @@ class WC_Paidy_Checkout_Return_Notice_Test extends WP_UnitTestCase {
 	private $is_block_checkout = false;
 
 	/**
-	 * Value of WP_TESTS_SKIP_INSTALL before this class ran, or false when it was not set.
-	 *
-	 * @var string|false
-	 */
-	private static $kept_skip_install = false;
-
-	/**
-	 * Keep the separate-process test from reinstalling the shared test database.
-	 *
-	 * A child process runs the bootstrap again, and the WordPress test bootstrap
-	 * drops and recreates every table unless WP_TESTS_SKIP_INSTALL is 1. The child
-	 * inherits this process's environment.
-	 */
-	public static function set_up_before_class() {
-		parent::set_up_before_class();
-		self::$kept_skip_install = getenv( 'WP_TESTS_SKIP_INSTALL' );
-		putenv( 'WP_TESTS_SKIP_INSTALL=1' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv -- Only the test bootstrap reads it.
-	}
-
-	/**
-	 * Restore WP_TESTS_SKIP_INSTALL.
-	 */
-	public static function tear_down_after_class() {
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv -- Restores the value set above.
-		putenv( false === self::$kept_skip_install ? 'WP_TESTS_SKIP_INSTALL' : 'WP_TESTS_SKIP_INSTALL=' . self::$kept_skip_install );
-		parent::tear_down_after_class();
-	}
-
-	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -268,21 +239,32 @@ class WC_Paidy_Checkout_Return_Notice_Test extends WP_UnitTestCase {
 	/**
 	 * Requests that are not a return from Paidy Checkout do nothing.
 	 *
+	 * The is_checkout() guard is not covered here: a Store API checkout test earlier
+	 * in the suite defines WOOCOMMERCE_CHECKOUT, which keeps is_checkout() true for the
+	 * rest of the process, and a test in a separate process fails on WooCommerce's
+	 * notices during its bootstrap.
+	 *
 	 * @dataProvider provide_unrelated_requests
 	 *
-	 * @param string|null $status      Value of the status query parameter.
-	 * @param string|null $order_id    Value of the order_id query parameter.
-	 * @param bool        $is_checkout Whether the request is for the checkout page.
+	 * @param string|null $status   Value of the status query parameter.
+	 * @param string|null $order_id Value of the order_id query parameter.
+	 * @param string|null $endpoint WooCommerce endpoint the request is for, or null for the checkout page.
 	 */
-	public function test_unrelated_requests_do_nothing( $status, $order_id, $is_checkout ) {
+	public function test_unrelated_requests_do_nothing( $status, $order_id, $endpoint ) {
 		update_option( 'woocommerce_paidy_settings', array( 'debug' => 'yes' ) );
-		if ( ! $is_checkout ) {
-			remove_filter( 'woocommerce_is_checkout', '__return_true' );
+		if ( null !== $endpoint ) {
+			$GLOBALS['wp']->query_vars[ $endpoint ] = '42';
 		}
 
-		foreach ( array( false, true ) as $is_block_checkout ) {
-			$this->is_block_checkout = $is_block_checkout;
-			$this->return_from_paidy( $status, $order_id );
+		try {
+			foreach ( array( false, true ) as $is_block_checkout ) {
+				$this->is_block_checkout = $is_block_checkout;
+				$this->return_from_paidy( $status, $order_id );
+			}
+		} finally {
+			if ( null !== $endpoint ) {
+				unset( $GLOBALS['wp']->query_vars[ $endpoint ] );
+			}
 		}
 
 		$this->assertSame( 0, wc_notice_count() );
@@ -297,26 +279,13 @@ class WC_Paidy_Checkout_Return_Notice_Test extends WP_UnitTestCase {
 	 */
 	public function provide_unrelated_requests() {
 		return array(
-			'rejected without order_id' => array( 'rejected', null, true ),
-			'closed without order_id'   => array( 'closed', null, true ),
-			'order_id without status'   => array( null, '42', true ),
-			'other status'              => array( 'authorized', '42', true ),
+			'rejected without order_id' => array( 'rejected', null, null ),
+			'closed without order_id'   => array( 'closed', null, null ),
+			'order_id without status'   => array( null, '42', null ),
+			'other status'              => array( 'authorized', '42', null ),
+			'rejected on the order-pay' => array( 'rejected', '42', 'order-pay' ),
+			'closed on the order-pay'   => array( 'closed', '42', 'order-pay' ),
 		);
-	}
-
-	/**
-	 * A "rejected" query on another page does nothing.
-	 *
-	 * It runs in its own process because a Store API checkout test defines
-	 * WOOCOMMERCE_CHECKOUT, which keeps is_checkout() true for the rest of the process.
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
-	 */
-	public function test_rejected_off_the_checkout_does_nothing() {
-		$this->assertSame( '1', getenv( 'WP_TESTS_SKIP_INSTALL' ), 'The child process must not reinstall the shared test database.' );
-		$this->assertFalse( defined( 'WOOCOMMERCE_CHECKOUT' ) );
-		$this->test_unrelated_requests_do_nothing( 'rejected', '42', false );
 	}
 
 	/**
