@@ -4,9 +4,9 @@
 - ベースブランチ: main
 - PR: #251 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/251(head は upstream の `fix/248-paidy-block-checkout-reject-notice`。Codex が fork の PR では応答しないため)
 - オプション: auto-commit(確認ゲートなし)
-- 現在のステップ: 5–6(CI 待ち・bot への依頼)
-- Copilot: 依頼 0 回
-- Codex: 依頼 0 回
+- 現在のステップ: 7(G1 完了。Copilot の TIMEOUT について確認待ち)
+- Copilot: 依頼 1 回 / TIMEOUT(G1、登録は確認済み)
+- Codex: 依頼 1 回 / 未収束(G1 で 1 件、保留)
 
 ## ログ
 | 日時(JST) | ステップ | 内容 |
@@ -17,3 +17,4 @@
 | 2026-10-16 | 3 | review-loop R1: 自己レビュー + 独立サブエージェント(Opus)で Critical / High 0 件、Medium 2 件を修正(R1-1 実際の判定を通るテストが無い、R1-2 別プロセスのテストが共有 DB を再インストールする → `WP_TESTS_SKIP_INSTALL`)c3644a3。Low 5 件・対象外 2 件を backlog へ。R2: 両指摘を mutate-check で解消と確認、新規指摘なし → **APPROVE** |
 | 2026-10-16 06:03 | 4 | upstream へ初回 push(442b6d0、T=2026-10-15T21:03:09Z)、PR #251 を作成 |
 | 2026-10-16 06:10 | 5 | CI red(run 38806946779): PHP 8.4 / WC 10.6.2 と PHP 8.5 / WC latest で、別プロセスのテストの子 bootstrap が `_load_textdomain_just_in_time` の Notice を出し、PHPUnit がエラーにした(ローカルの WC 11.2.1 と最古の組み合わせでは再現せず)。ユーザー判断で別プロセスをやめ(R1-2 の `WP_TESTS_SKIP_INSTALL` も削除)、order-pay のエンドポイントのガードを同一プロセスで検証するケースに置き換え(55e5975)。ガードを外すと 2 件失敗(CAUGHT)、PHPUnit 397 件 OK。`is_checkout()` のガードは単体テストできないため backlog へ |
+| 2026-10-16 06:40 | 6–7 | CI green(c9b2e73)の後に依頼。Codex は約 5 分で応答し新規 1 件 → G1-1(配列のクエリ値で TypeError)は誤検知として保留(WP 6.7+ の `sanitize_key()` は `is_scalar()` で確認、`absint()` は int キャスト)。返信とサマリを投稿。Copilot は 15 分で TIMEOUT(登録は確認済み) |
