@@ -300,6 +300,9 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	 * @since 2.9.18
 	 */
 	public static function handle_checkout_return() {
+		// A long-lived PHP worker keeps static properties between requests; start each request clean.
+		self::$show_block_checkout_reject_notice = false;
+
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Paidy Checkout's redirect carries no nonce; nothing is changed here.
 		if ( ! isset( $_GET['status'], $_GET['order_id'] ) || ! is_checkout() || is_wc_endpoint_url() ) {
 			return;
@@ -335,6 +338,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		if ( ! self::$show_block_checkout_reject_notice ) {
 			return;
 		}
+		self::$show_block_checkout_reject_notice = false;
+
 		$handle = 'jp4wc-paidy-checkout-reject-notice';
 		$notice = array(
 			'message' => self::reject_message(),

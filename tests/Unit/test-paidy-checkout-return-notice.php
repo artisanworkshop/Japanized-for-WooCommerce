@@ -188,6 +188,36 @@ class WC_Paidy_Checkout_Return_Notice_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The Checkout block notice is added once, even if wp_enqueue_scripts runs again.
+	 */
+	public function test_block_checkout_notice_is_added_once() {
+		$this->is_block_checkout = true;
+
+		$this->return_from_paidy( 'rejected', '42' );
+		WC_Gateway_Paidy::enqueue_block_checkout_reject_notice();
+
+		$this->assertSame( 1, substr_count( $this->inline_script(), 'createErrorNotice(' ) );
+	}
+
+	/**
+	 * A later request in the same PHP worker does not show the notice again.
+	 *
+	 * Long-lived workers keep static properties between requests, and a rejected
+	 * return that never reached wp_enqueue_scripts (e.g. a redirect) left the flag set.
+	 */
+	public function test_block_checkout_notice_does_not_reach_the_next_request() {
+		$this->is_block_checkout = true;
+		$_GET['status']          = 'rejected';
+		$_GET['order_id']        = '42';
+		WC_Gateway_Paidy::handle_checkout_return();
+
+		unset( $_GET['status'], $_GET['order_id'] );
+		$this->return_from_paidy( null, null );
+
+		$this->assertFalse( wp_script_is( self::HANDLE, 'enqueued' ) );
+	}
+
+	/**
 	 * The notice data is JSON-encoded so that a translation cannot break out of the script.
 	 */
 	public function test_block_checkout_notice_escapes_the_message() {
