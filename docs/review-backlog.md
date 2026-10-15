@@ -92,3 +92,4 @@
 | 2026-10-16 | R1-L6 | Low | Checkout ブロックの通知表示 | ブラウザ確認は WC 11.1.2 のみ。WC 8.0〜11.0 でマウント前に dispatch した `wc/checkout` の通知が出るか未確認。#248 の対応ブランチ R1 | 未起票 |
 | 2026-10-16 | R1-X1 | Low | includes/gateways/paidy/class-wc-gateway-paidy.php `paidy_make_order()`(既存) | 戻り URL を `wc_get_checkout_url() . '?status='` で連結。パーマリンク「基本」では `?page_id=N?status=…` になり通知が出ない。`add_query_arg()` へ。#248 の対応ブランチ R1 | 未起票 |
 | 2026-10-16 | R1-X2 | Low | includes/gateways/paidy/class-wc-gateway-paidy.php `paidy_make_order()`(既存) | 支払いリンク(order-pay、カート空)で断られるとチェックアウトからカートへリダイレクトされ、通知も出ず order-pay にも戻れない。戻り先を `get_checkout_payment_url()` にする検討。#248 の対応ブランチ R1 | 未起票 |
+| 2026-10-16 | CI-1 | Low | tests/Unit/test-paidy-checkout-return-notice.php | `handle_checkout_return()` の `is_checkout()` のガードは単体テストされていない。スイートの先に Store API のテストが `WOOCOMMERCE_CHECKOUT` を定義して `is_checkout()` が真のままになり、別プロセスのテストは WC 10.6.2 / latest で子 bootstrap の Notice によりエラーになる(PR #251 の CI)。#248 の対応ブランチ | 未起票 |
