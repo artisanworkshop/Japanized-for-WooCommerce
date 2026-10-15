@@ -86,6 +86,8 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 			require_once __DIR__ . '/includes/gateways/paidy/class-wc-gateway-paidy.php';
 			// Capture, cancel and refund at Paidy once per order status change.
 			WC_Gateway_Paidy::register_order_status_hooks();
+			// Show the "declined" notice once when the buyer returns from Paidy Checkout.
+			WC_Gateway_Paidy::register_checkout_return_hooks();
 
 			// Endpoints.
 			// Instantiated at init priority 11 (after load_plugin_textdomain at priority 1)
