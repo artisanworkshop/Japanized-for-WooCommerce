@@ -33,6 +33,15 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	public $jp4wc_framework;
 
 	/**
+	 * Whether this request shows the "declined" notice in the Checkout block.
+	 *
+	 * @since 2.9.18
+	 *
+	 * @var bool
+	 */
+	private static $show_block_checkout_reject_notice = false;
+
+	/**
 	 * Settings parameter
 	 *
 	 * @var string
@@ -172,10 +181,10 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		add_action( 'wp_enqueue_scripts', array( $this, 'paidy_token_scripts_method' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'paidy_admin_enqueue_scripts' ) );
 
-		add_action( 'woocommerce_before_checkout_form', array( $this, 'checkout_reject_to_cancel' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_completed' ) );
 
-		// The order status callbacks are registered once by register_order_status_hooks().
+		// The order status callbacks are registered once by register_order_status_hooks(),
+		// and the checkout return callbacks once by register_checkout_return_hooks().
 
 		add_action( 'admin_print_footer_scripts', array( $this, 'paidy_remove_refund_button_for_processing' ), 10 );
 	}
@@ -263,6 +272,121 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$gateways = WC()->payment_gateways()->payment_gateways();
 
 		return isset( $gateways['paidy'] ) && $gateways['paidy'] instanceof self ? $gateways['paidy'] : null;
+	}
+
+	/**
+	 * Register the callbacks for a buyer who returns to the checkout from Paidy Checkout.
+	 *
+	 * They are registered once, not in the constructor, because this class is created more
+	 * than once in a request and each instance would add the notice again.
+	 *
+	 * @since 2.9.18
+	 */
+	public static function register_checkout_return_hooks() {
+		add_action( 'template_redirect', array( __CLASS__, 'handle_checkout_return' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_block_checkout_reject_notice' ) );
+	}
+
+	/**
+	 * Tell the buyer that Paidy declined the payment, or log that the buyer closed Paidy Checkout.
+	 *
+	 * Paidy Checkout sends the buyer back to the checkout page with `status` and `order_id`
+	 * (see paidy_make_order()). This runs before the page is rendered. The classic checkout
+	 * prints session notices, but the Checkout block does not: they appear only where the
+	 * page has a Store Notices block, which classic themes lack, and otherwise stay in the
+	 * session until another page prints them. A block checkout therefore gets the notice
+	 * from enqueue_block_checkout_reject_notice() instead.
+	 *
+	 * @since 2.9.18
+	 */
+	public static function handle_checkout_return() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Paidy Checkout's redirect carries no nonce; nothing is changed here.
+		if ( ! isset( $_GET['status'], $_GET['order_id'] ) || ! is_checkout() || is_wc_endpoint_url() ) {
+			return;
+		}
+		$status   = sanitize_key( wp_unslash( $_GET['status'] ) );
+		$order_id = absint( $_GET['order_id'] );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		if ( 'closed' === $status ) {
+			$settings  = get_option( 'woocommerce_paidy_settings', array() );
+			$debug     = is_array( $settings ) && isset( $settings['debug'] ) ? $settings['debug'] : 'no';
+			$message   = __( 'Once the customer interrupted the payment.. Order ID:', 'woocommerce-for-japan' ) . $order_id;
+			$framework = new Framework\JP4WC_Framework();
+			$framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
+		} elseif ( 'rejected' === $status ) {
+			if ( self::is_block_checkout() ) {
+				self::$show_block_checkout_reject_notice = true;
+			} else {
+				wc_add_notice( self::reject_message(), 'error' );
+			}
+		}
+	}
+
+	/**
+	 * Show the "declined" notice in the Checkout block.
+	 *
+	 * The notice goes to the block's own notice store (context `wc/checkout`), which the
+	 * Checkout block displays; the page itself is never modified.
+	 *
+	 * @since 2.9.18
+	 */
+	public static function enqueue_block_checkout_reject_notice() {
+		if ( ! self::$show_block_checkout_reject_notice ) {
+			return;
+		}
+		$handle = 'jp4wc-paidy-checkout-reject-notice';
+		$notice = array(
+			'message' => self::reject_message(),
+			'options' => array(
+				'context' => 'wc/checkout',
+				'id'      => 'jp4wc-paidy-rejected',
+			),
+		);
+		wp_register_script( $handle, false, array( 'wp-data', 'wp-notices' ), WC_PAIDY_VERSION, true );
+		wp_enqueue_script( $handle );
+		wp_add_inline_script(
+			$handle,
+			'( function ( notice ) { wp.data.dispatch( "core/notices" ).createErrorNotice( notice.message, notice.options ); } )( '
+				. wp_json_encode( $notice, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) . ' );'
+		);
+	}
+
+	/**
+	 * Whether the checkout page uses the Checkout block.
+	 *
+	 * @since 2.9.18
+	 *
+	 * @return bool
+	 */
+	private static function is_block_checkout() {
+		$utils = 'Automattic\WooCommerce\Blocks\Utils\CartCheckoutUtils';
+		if ( method_exists( $utils, 'is_checkout_block_default' ) ) {
+			$is_block = $utils::is_checkout_block_default();
+		} else {
+			$checkout_page_id = wc_get_page_id( 'checkout' );
+			$is_block         = $checkout_page_id > 0 && has_block( 'woocommerce/checkout', $checkout_page_id );
+		}
+
+		/**
+		 * Filters whether the checkout page uses the Checkout block.
+		 *
+		 * @since 2.9.18
+		 *
+		 * @param bool $is_block Whether the checkout page uses the Checkout block.
+		 */
+		return (bool) apply_filters( 'jp4wc_paidy_is_block_checkout', $is_block );
+	}
+
+	/**
+	 * The notice shown when Paidy declines the payment.
+	 *
+	 * @since 2.9.18
+	 *
+	 * @return string
+	 */
+	private static function reject_message() {
+		return __( 'This Paidy payment has been declined. Please select another payment method.', 'woocommerce-for-japan' );
 	}
 
 	/**
@@ -853,23 +977,6 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 				WC_PAIDY_VERSION,
 				true
 			);
-		}
-	}
-
-	/**
-	 * Update Cancel from Auth to Paidy System
-	 *
-	 * @param object $checkout WooCommerce Checkout object.
-	 */
-	public function checkout_reject_to_cancel( $checkout ) {
-		if ( isset( $_GET['status'] ) ) { // phpcs:ignore
-			if ( 'closed' === $_GET['status'] ) { // phpcs:ignore
-				$message = __( 'Once the customer interrupted the payment.. Order ID:', 'woocommerce-for-japan' ) . $_GET['order_id'];// phpcs:ignore
-				$this->jp4wc_framework->jp4wc_debug_log( $message, $this->debug, 'paidy-wc' );
-				} elseif ( 'rejected' === $_GET['status'] || isset( $_GET['order_id'] ) ) {// phpcs:ignore
-				$reject_message = __( 'This Paidy payment has been declined. Please select another payment method.', 'woocommerce-for-japan' );
-				wc_add_notice( $reject_message, 'error' );
-			}
 		}
 	}
 
