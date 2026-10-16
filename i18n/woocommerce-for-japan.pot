@@ -1370,6 +1370,10 @@ msgstr ""
 msgid "Approved response is missing a required API key field: %s"
 msgstr ""
 
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:72
+msgid "The Paidy payment gateway is not available."
+msgstr ""
+
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:103
 msgid "Paidy secret key is not configured."
 msgstr ""

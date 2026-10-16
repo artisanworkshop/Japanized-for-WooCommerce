@@ -33,13 +33,6 @@ class WC_Paidy_Endpoint {
 	);
 
 	/**
-	 * Paidy gateway instance.
-	 *
-	 * @var WC_Gateway_Paidy
-	 */
-	public $paidy;
-
-	/**
 	 * JP4WC Framework instance.
 	 *
 	 * @var Framework\JP4WC_Framework
@@ -54,8 +47,31 @@ class WC_Paidy_Endpoint {
 		add_action( 'rest_api_init', array( $this, 'paidy_register_routes' ) );
 		// WebHook to get data from paidy.artws.info.
 		add_action( 'rest_api_init', array( $this, 'paidy_check_regist_webhook' ) );
-		$this->paidy           = new WC_Gateway_Paidy();
+		// The gateway is taken from WooCommerce's list when it is needed (get_gateway()).
+		// Creating one here registered its hooks a second time (issue #244).
 		$this->jp4wc_framework = new Framework\JP4WC_Framework();
+	}
+
+	/**
+	 * The Paidy gateway WooCommerce has registered.
+	 *
+	 * @return WC_Gateway_Paidy|null Null when Paidy is not in WooCommerce's gateway list.
+	 */
+	private function get_gateway() {
+		return WC_Gateway_Paidy::get_registered_instance();
+	}
+
+	/**
+	 * The error returned when the Paidy gateway is not available. Paidy sends the webhook again.
+	 *
+	 * @return WP_Error
+	 */
+	private function gateway_unavailable_error() {
+		return new WP_Error(
+			'paidy_gateway_unavailable',
+			__( 'The Paidy payment gateway is not available.', 'woocommerce-for-japan' ),
+			array( 'status' => 503 )
+		);
 	}
 
 	/**
@@ -87,15 +103,20 @@ class WC_Paidy_Endpoint {
 	 * @return bool|WP_Error True if authorized, WP_Error otherwise.
 	 */
 	public function paidy_webhook_permission_check( $request ) {
+		$gateway = $this->get_gateway();
+		if ( ! $gateway ) {
+			return $this->gateway_unavailable_error();
+		}
+
 		// Get the signature from the header.
 		$signature = $request->get_header( 'x-paidy-signature' );
 
 		// If a signature is present, verify it with the configured API secret key.
 		if ( ! empty( $signature ) ) {
-			$test_mode  = 'yes' === $this->paidy->get_option( 'testmode' );
+			$test_mode  = 'yes' === $gateway->get_option( 'testmode' );
 			$secret_key = $test_mode
-				? $this->paidy->get_option( 'test_api_secret_key' )
-				: $this->paidy->get_option( 'api_secret_key' );
+				? $gateway->get_option( 'test_api_secret_key' )
+				: $gateway->get_option( 'api_secret_key' );
 
 			if ( empty( $secret_key ) ) {
 				return new WP_Error(
@@ -148,7 +169,7 @@ class WC_Paidy_Endpoint {
 			'The paidy_webhook_allowed_ips filter returned an empty list, disabling IP checks. ' .
 			'To restore strict verification, remove that override or configure an API secret key ' .
 			'in WooCommerce > Settings > Payments > Paidy.',
-			$this->paidy->debug,
+			$gateway->debug,
 			'paidy-wc'
 		);
 		return true;
@@ -188,7 +209,11 @@ class WC_Paidy_Endpoint {
 	 * @return WP_REST_Response | WP_Error endpoint Paidy webhook response
 	 */
 	public function paidy_check_webhook( $data ) {
-		$debug          = $this->paidy->debug;
+		$gateway = $this->get_gateway();
+		if ( ! $gateway ) {
+			return $this->gateway_unavailable_error();
+		}
+		$debug          = $gateway->debug;
 		$body_data      = (array) $data->get_body();
 		$main_data      = json_decode( $body_data[0], true );
 		$notice_message = __( 'Paidy Webhook received. ', 'woocommerce-for-japan' );
@@ -240,7 +265,7 @@ class WC_Paidy_Endpoint {
 					// The webhook body is attacker-controllable (especially for unsigned
 					// requests), so confirm the payment belongs to this order, is authorized,
 					// and matches the order total before reducing stock and completing payment.
-					if ( ! $this->paidy->paidy_verify_payment_for_order( $order, $main_data['payment_id'] ) ) {
+					if ( ! $gateway->paidy_verify_payment_for_order( $order, $main_data['payment_id'] ) ) {
 						$message = $notice_message . __( 'Paidy webhook payment verification failed. Order not completed.', 'woocommerce-for-japan' ) . "\n" . 'Order# :' . $main_data['order_ref'];
 						$this->jp4wc_framework->jp4wc_debug_log( $message, $debug, 'paidy-wc' );
 						return new WP_Error(
@@ -346,7 +371,6 @@ class WC_Paidy_Endpoint {
 	 * @return WP_REST_Response | WP_Error Response for the webhook registration check.
 	 */
 	public function paidy_regist_webhook( $data ) {
-		$debug     = $this->paidy->debug;
 		$body_data = (array) $data->get_body();
 		$main_data = json_decode( $body_data[0], true );
 		if ( empty( $data ) ) {

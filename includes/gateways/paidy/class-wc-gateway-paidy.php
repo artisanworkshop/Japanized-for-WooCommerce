@@ -192,11 +192,10 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	/**
 	 * Register the order status callbacks that capture, cancel and refund at Paidy.
 	 *
-	 * They are not registered in the constructor because this class is created more than
-	 * once in a request (WooCommerce's gateway list, WC_Paidy_Endpoint), and each instance
-	 * would send the same request to Paidy again. They are not left to WooCommerce's
-	 * instance alone either: a request that changes an order status, such as a REST API
-	 * call or a bulk action, does not always load the payment gateways.
+	 * They are not registered in the constructor because any code that creates another
+	 * instance of this class would send the same request to Paidy again. They are not left
+	 * to WooCommerce's instance alone either: a request that changes an order status, such
+	 * as a REST API call or a bulk action, does not always load the payment gateways.
 	 *
 	 * @since 2.9.17
 	 */
@@ -269,6 +268,33 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		if ( ! $order || 'paidy' !== $order->get_payment_method() ) {
 			return null;
 		}
+		$gateway = self::get_registered_instance();
+		if ( ! $gateway ) {
+			// Logged whatever the debug setting is: the payment at Paidy is left as it was.
+			wc_get_logger()->warning(
+				sprintf(
+					'Paidy is not in the WooCommerce payment gateway list, so the status change of order #%d was not sent to Paidy.',
+					$order->get_id()
+				),
+				array( 'source' => 'paidy-wc' )
+			);
+		}
+
+		return $gateway;
+	}
+
+	/**
+	 * The gateway instance WooCommerce has registered.
+	 *
+	 * Use this instead of creating an instance: the constructor registers hooks, so a second
+	 * instance prints the order-pay script and saves the settings twice. The payment gateways
+	 * are loaded if they have not been yet.
+	 *
+	 * @since 2.9.18
+	 *
+	 * @return WC_Gateway_Paidy|null Null when Paidy is not in WooCommerce's gateway list.
+	 */
+	public static function get_registered_instance() {
 		$gateways = WC()->payment_gateways()->payment_gateways();
 
 		return isset( $gateways['paidy'] ) && $gateways['paidy'] instanceof self ? $gateways['paidy'] : null;
@@ -1217,8 +1243,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$order                = wc_get_order( $order_id );
 		$order_payment_method = $order->get_payment_method();
 		if ( $order_payment_method === $this->id ) {
-			// Prevent duplicate capture calls when the action fires multiple times
-			// (e.g. when WooCommerce instantiates the gateway class more than once).
+			// Do not capture again when an order that was captured goes back to
+			// processing and is completed again.
 			if ( $order->get_meta( 'paidy_capture_id' ) ) {
 				return;
 			}

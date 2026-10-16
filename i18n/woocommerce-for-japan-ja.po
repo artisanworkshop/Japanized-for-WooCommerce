@@ -1577,6 +1577,10 @@ msgstr "このコールバックは、現在有効な申し込みとは異なる
 msgid "Invalid or missing state token or signature for Paidy onboarding."
 msgstr "Paidyのオンボーディングにおいて、ステートトークンまたは署名が無効です。"
 
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:72
+msgid "The Paidy payment gateway is not available."
+msgstr "Paidy の決済方法を利用できません。"
+
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:81
 #: includes/gateways/paidy/class-wc-paidy-endpoint.php:126
 msgid "Unauthorized access to Paidy webhook."
