@@ -62,6 +62,13 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 	private $paidy_api_body = '';
 
 	/**
+	 * Logger recording what is logged during a test, or null when the test does not record.
+	 *
+	 * @var WC_Logger|null
+	 */
+	private $logger = null;
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -109,6 +116,18 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 			$_SERVER['REMOTE_ADDR'] = $this->kept_remote_addr;
 		}
 
+		if ( null !== $this->logger ) {
+			remove_filter( 'woocommerce_logging_class', array( $this, 'recording_logger' ) );
+			// wc_get_logger() keeps the recording logger, which is a WC_Logger; put a plain one back.
+			$fresh_logger = static function () {
+				return new WC_Logger();
+			};
+			add_filter( 'woocommerce_logging_class', $fresh_logger );
+			wc_get_logger();
+			remove_filter( 'woocommerce_logging_class', $fresh_logger );
+			$this->logger = null;
+		}
+
 		remove_filter( 'woocommerce_payment_gateways', array( $this, 'remove_paidy_gateway' ), PHP_INT_MAX );
 		$this->gateway_list_property()->setValue( null, $this->kept_gateway_list );
 		$this->kept_gateway_list = false;
@@ -135,6 +154,45 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 	 */
 	private function paypal_instance_property() {
 		return property_exists( 'WC_Gateway_Paypal', 'instance' ) ? new ReflectionProperty( 'WC_Gateway_Paypal', 'instance' ) : null;
+	}
+
+	/**
+	 * Record what is logged through wc_get_logger() for the rest of the test.
+	 */
+	private function record_log() {
+		$this->logger = new class() extends WC_Logger {
+			/**
+			 * Recorded entries, each with level, message and context.
+			 *
+			 * @var array[]
+			 */
+			public $entries = array();
+
+			/**
+			 * Record a log entry.
+			 *
+			 * @param string $level   Log level.
+			 * @param string $message Log message.
+			 * @param array  $context Log context.
+			 */
+			public function log( $level, $message, $context = array() ) {
+				$this->entries[] = array(
+					'level'   => $level,
+					'message' => $message,
+					'context' => $context,
+				);
+			}
+		};
+		add_filter( 'woocommerce_logging_class', array( $this, 'recording_logger' ) );
+	}
+
+	/**
+	 * Give wc_get_logger() the recording logger.
+	 *
+	 * @return WC_Logger
+	 */
+	public function recording_logger() {
+		return $this->logger;
 	}
 
 	/**
@@ -337,6 +395,36 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 		$output = (string) ob_get_clean();
 
 		$this->assertSame( 1, substr_count( $output, 'Paidy.configure(' ) );
+	}
+
+	/**
+	 * When Paidy is not in WooCommerce's gateway list, the thank-you page leaves the order to
+	 * the webhook and says so in the log.
+	 */
+	public function test_thankyou_page_without_paidy_in_gateway_list_is_logged() {
+		$order = wc_create_order();
+		$order->set_payment_method( 'paidy' );
+		$order->set_total( 1000 );
+		$order->set_status( 'pending' );
+		$order->save();
+		$_GET['transaction_id'] = 'pay_WD1KIj4AALQAIMtZ';
+		add_filter( 'woocommerce_payment_gateways', array( $this, 'remove_paidy_gateway' ), PHP_INT_MAX );
+		$this->record_log();
+
+		do_action( 'woocommerce_thankyou_paidy', $order->get_id() );
+
+		$this->assertSame( 'pending', wc_get_order( $order->get_id() )->get_status() );
+		$this->assertSame( array(), $this->requested_urls );
+		$warnings = array_values(
+			array_filter(
+				$this->logger->entries,
+				static function ( $entry ) {
+					return 'warning' === $entry['level'] && isset( $entry['context']['source'] ) && 'paidy-wc' === $entry['context']['source'];
+				}
+			)
+		);
+		$this->assertCount( 1, $warnings );
+		$this->assertStringContainsString( '#' . $order->get_id(), $warnings[0]['message'] );
 	}
 
 	/**
