@@ -104,3 +104,4 @@
 | 2026-10-16 | R1-X2 | Low | tests/Unit/test-jp4wc-address-email.php(既存) | PHPUnit をランダム順(seed 20309 / 4242)で流すと `JP4WC_Address_Email_Test` の 4 件が落ちる(読み仮名の住所書式がテスト順に依存)。main でも同じ。#244 の対応ブランチ R1 | 未起票 |
 | 2026-10-16 | R2-1 | Low | includes/gateways/paidy/class-wc-gateway-paidy.php `handle_thankyou()` | Paidy が一覧に無い時、ログを残さずに thank-you での確定を飛ばす(`get_gateway_for_order()` は warning を残すので扱いがそろわない)。R1-L3 と合わせて見直す。#244 の対応ブランチ R2 | PR #252 の G1-1(Copilot)で対応済み(c160462。warning を残す) |
 | 2026-10-16 | R2-2 | Low | class-wc-paidy.php(`register_checkout_return_hooks()` の呼び出し) | 呼び出し元のコメントが「declined の通知」だけを書いている(thank-you の確定も登録するようになった)。#244 の対応ブランチ R2 | #253 の対応ブランチで対応済み |
+| 2026-10-16 | R1-X1 | Low | includes/gateways/paidy/class-wc-paidy-endpoint.php `paidy_check_webhook()` | Paidy は 200 以外の応答をすべて失敗として約 5 時間再送する(webhook 文書 "Latency & retries")ので、注文が見つからない等で 403 / 404 を返す経路も再送され続ける(既存の動作)。#253 の対応ブランチ R1 | 未起票 |
