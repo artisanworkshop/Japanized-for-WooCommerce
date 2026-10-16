@@ -84,7 +84,8 @@ class WC_Paidy_Endpoint {
 	 * with the last attempt about five hours after the first retry (Paidy's webhook
 	 * documentation, "Latency & retries": https://paidy.com/docs/en/webhook.html). A webhook
 	 * whose retries all arrive while the gateway is unavailable is lost, and the webhook does
-	 * not complete that order; completing it on the thank-you page is a separate path.
+	 * not complete that order. The thank-you page completes orders separately, but it also
+	 * needs the gateway in WooCommerce's list.
 	 *
 	 * @return WP_Error
 	 */
