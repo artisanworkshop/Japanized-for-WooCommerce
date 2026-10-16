@@ -78,7 +78,13 @@ class WC_Paidy_Endpoint {
 	}
 
 	/**
-	 * The error returned when the Paidy gateway is not available. Paidy sends the webhook again.
+	 * The error returned when the Paidy gateway is not available.
+	 *
+	 * Paidy sends a webhook again after any response other than 200, at growing intervals,
+	 * with the last attempt about five hours after the first retry (Paidy's webhook
+	 * documentation, "Latency & retries": https://paidy.com/docs/en/webhook.html). A webhook
+	 * whose retries all arrive while the gateway is unavailable is lost, and the webhook does
+	 * not complete that order; completing it on the thank-you page is a separate path.
 	 *
 	 * @return WP_Error
 	 */
