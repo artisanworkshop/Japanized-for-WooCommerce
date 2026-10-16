@@ -102,3 +102,5 @@
 | 2026-10-16 | R1-L7 | Low | tests/Unit/test-paidy-endpoint-gateway-instance.php | REMOTE_ADDR をサニタイズ後の値で戻している(実害なし)。#244 の対応ブランチ R1 | 未起票 |
 | 2026-10-16 | R1-X1 | Low | includes/gateways/paidy/class-wc-gateway-paidy.php `paidy_remove_refund_button_for_processing()`(既存) | HPOS で同期を切った注文編集画面では `get_post_type( $_GET['id'] )` が `shop_order_placehold` になり、processing の注文の返金ボタンが消えない。`wc_get_order()` で判定する。#244 の対応ブランチ R1 | 未起票 |
 | 2026-10-16 | R1-X2 | Low | tests/Unit/test-jp4wc-address-email.php(既存) | PHPUnit をランダム順(seed 20309 / 4242)で流すと `JP4WC_Address_Email_Test` の 4 件が落ちる(読み仮名の住所書式がテスト順に依存)。main でも同じ。#244 の対応ブランチ R1 | 未起票 |
+| 2026-10-16 | R2-1 | Low | includes/gateways/paidy/class-wc-gateway-paidy.php `handle_thankyou()` | Paidy が一覧に無い時、ログを残さずに thank-you での確定を飛ばす(`get_gateway_for_order()` は warning を残すので扱いがそろわない)。R1-L3 と合わせて見直す。#244 の対応ブランチ R2 | 未起票 |
+| 2026-10-16 | R2-2 | Low | class-wc-paidy.php(`register_checkout_return_hooks()` の呼び出し) | 呼び出し元のコメントが「declined の通知」だけを書いている(thank-you の確定も登録するようになった)。#244 の対応ブランチ R2 | 未起票 |
