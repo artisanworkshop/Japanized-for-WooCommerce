@@ -428,22 +428,42 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A webhook signed with the configured secret key is accepted.
+	 * A sandbox webhook is verified with the test secret key.
 	 */
-	public function test_signed_webhook_is_accepted() {
-		// The same key in both environments: this test is about the gateway the
-		// endpoint uses, not which key it picks.
+	public function test_signed_webhook_is_verified_with_test_key_in_sandbox() {
 		$this->save_settings(
 			array(
-				'api_secret_key'      => self::SECRET_KEY,
+				'environment'         => 'sandbox',
+				'api_secret_key'      => 'sk_live_jp4wc_webhook',
 				'test_api_secret_key' => self::SECRET_KEY,
 			)
 		);
 
 		$response = $this->send_webhook( self::TEST_WEBHOOK_BODY, hash_hmac( 'sha256', self::TEST_WEBHOOK_BODY, self::SECRET_KEY ) );
-
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( json_decode( self::TEST_WEBHOOK_BODY, true ), $response->get_data() );
+
+		$response = $this->send_webhook( self::TEST_WEBHOOK_BODY, hash_hmac( 'sha256', self::TEST_WEBHOOK_BODY, 'sk_live_jp4wc_webhook' ) );
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * A live webhook is verified with the live secret key.
+	 */
+	public function test_signed_webhook_is_verified_with_live_key_in_live() {
+		$this->save_settings(
+			array(
+				'environment'         => 'live',
+				'api_secret_key'      => self::SECRET_KEY,
+				'test_api_secret_key' => 'sk_test_other',
+			)
+		);
+
+		$response = $this->send_webhook( self::TEST_WEBHOOK_BODY, hash_hmac( 'sha256', self::TEST_WEBHOOK_BODY, self::SECRET_KEY ) );
+		$this->assertSame( 200, $response->get_status() );
+
+		$response = $this->send_webhook( self::TEST_WEBHOOK_BODY, hash_hmac( 'sha256', self::TEST_WEBHOOK_BODY, 'sk_test_other' ) );
+		$this->assertSame( 403, $response->get_status() );
 	}
 
 	/**
@@ -457,10 +477,17 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 			)
 		);
 
+		// Registering the REST routes may load the gateways; start the request from a server
+		// that is ready and a gateway list that is not.
+		rest_get_server();
+		$this->gateway_list_property()->setValue( null, null );
+
 		$response = $this->send_webhook( self::TEST_WEBHOOK_BODY, hash_hmac( 'sha256', self::TEST_WEBHOOK_BODY, 'sk_test_other' ) );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'paidy_invalid_signature', $this->error_code( $response ) );
+		// A refused request does not construct WooCommerce's payment gateways.
+		$this->assertNull( $this->gateway_list_property()->getValue() );
 	}
 
 	/**
