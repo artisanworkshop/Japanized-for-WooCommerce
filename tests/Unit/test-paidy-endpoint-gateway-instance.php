@@ -48,6 +48,20 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 	private $kept_remote_addr = null;
 
 	/**
+	 * Paidy API URLs requested during a test.
+	 *
+	 * @var string[]
+	 */
+	private $requested_urls = array();
+
+	/**
+	 * Body the mocked Paidy API returns.
+	 *
+	 * @var string
+	 */
+	private $paidy_api_body = '';
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -72,6 +86,9 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 
 		$this->kept_remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : null;
 
+		$this->requested_urls = array();
+		add_filter( 'pre_http_request', array( $this, 'mock_paidy_api' ), 10, 3 );
+
 		global $wp_rest_server;
 		$wp_rest_server = null;
 	}
@@ -82,6 +99,9 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 	public function tearDown(): void {
 		global $wp_rest_server;
 		$wp_rest_server = null;
+
+		remove_filter( 'pre_http_request', array( $this, 'mock_paidy_api' ), 10 );
+		unset( $_GET['transaction_id'] );
 
 		if ( null === $this->kept_remote_addr ) {
 			unset( $_SERVER['REMOTE_ADDR'] );
@@ -115,6 +135,32 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 	 */
 	private function paypal_instance_property() {
 		return property_exists( 'WC_Gateway_Paypal', 'instance' ) ? new ReflectionProperty( 'WC_Gateway_Paypal', 'instance' ) : null;
+	}
+
+	/**
+	 * Short-circuit every HTTP request, answering Paidy API requests with $paidy_api_body.
+	 *
+	 * @param false|array|WP_Error $preempt     Whether to preempt the request.
+	 * @param array                $parsed_args Request arguments.
+	 * @param string               $url         Request URL.
+	 * @return array|WP_Error Mocked HTTP response.
+	 */
+	public function mock_paidy_api( $preempt, $parsed_args, $url ) {
+		if ( 0 !== strpos( $url, 'https://api.paidy.com/' ) ) {
+			return new WP_Error( 'http_request_failed', 'Only the Paidy API is mocked.' );
+		}
+		$this->requested_urls[] = $url;
+
+		return array(
+			'headers'  => array(),
+			'body'     => $this->paidy_api_body,
+			'response' => array(
+				'code'    => 200,
+				'message' => 'OK',
+			),
+			'cookies'  => array(),
+			'filename' => null,
+		);
 	}
 
 	/**
@@ -220,6 +266,50 @@ class WC_Paidy_Endpoint_Gateway_Instance_Test extends WP_UnitTestCase {
 		foreach ( $hooks as $hook ) {
 			$this->assertSame( 1, $this->paidy_callback_count( $hook ) - $before[ $hook ], $hook );
 		}
+		// The thank-you callback is registered once, on the class, not on each instance.
+		$this->assertSame( 0, $this->paidy_callback_count( 'woocommerce_thankyou_paidy' ) );
+		$this->assertNotFalse( has_action( 'woocommerce_thankyou_paidy', array( 'WC_Gateway_Paidy', 'handle_thankyou' ) ) );
+	}
+
+	/**
+	 * A thank-you page that has not loaded the payment gateways (e.g. one made by a funnel
+	 * plugin outside the checkout) still completes the Paidy order once.
+	 */
+	public function test_thankyou_page_without_loaded_gateways_completes_order() {
+		$this->save_settings(
+			array(
+				'environment'         => 'sandbox',
+				'test_api_secret_key' => self::SECRET_KEY,
+			)
+		);
+		$product = new WC_Product_Simple();
+		$product->set_name( 'Product' );
+		$product->set_regular_price( '1000' );
+		$product->save();
+		$order = wc_create_order();
+		$order->add_product( $product, 1 );
+		$order->set_payment_method( 'paidy' );
+		$order->calculate_totals( false );
+		$order->set_status( 'pending' );
+		$order->save();
+		$payment_id             = 'pay_WD1KIj4AALQAIMtZ';
+		$this->paidy_api_body   = wp_json_encode(
+			array(
+				'id'     => $payment_id,
+				'status' => 'authorized',
+				'amount' => (float) $order->get_total(),
+				'order'  => array( 'order_ref' => (string) $order->get_id() ),
+			)
+		);
+		$_GET['transaction_id'] = $payment_id;
+		$this->assertNull( $this->gateway_list_property()->getValue() );
+
+		do_action( 'woocommerce_thankyou_paidy', $order->get_id() );
+
+		$order = wc_get_order( $order->get_id() );
+		$this->assertSame( 'processing', $order->get_status() );
+		$this->assertSame( $payment_id, $order->get_transaction_id() );
+		$this->assertSame( array( 'https://api.paidy.com/payments/' . $payment_id ), $this->requested_urls );
 	}
 
 	/**

@@ -181,10 +181,8 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		add_action( 'wp_enqueue_scripts', array( $this, 'paidy_token_scripts_method' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'paidy_admin_enqueue_scripts' ) );
 
-		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_completed' ) );
-
 		// The order status callbacks are registered once by register_order_status_hooks(),
-		// and the checkout return callbacks once by register_checkout_return_hooks().
+		// and the checkout return and thank-you callbacks once by register_checkout_return_hooks().
 
 		add_action( 'admin_print_footer_scripts', array( $this, 'paidy_remove_refund_button_for_processing' ), 10 );
 	}
@@ -301,16 +299,36 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Register the callbacks for a buyer who returns to the checkout from Paidy Checkout.
+	 * Register the callbacks for a buyer who returns from Paidy Checkout, to the checkout
+	 * or to the thank-you page.
 	 *
-	 * They are registered once, not in the constructor, because this class is created more
-	 * than once in a request and each instance would add the notice again.
+	 * They are registered once, not in the constructor, because this class can be created
+	 * more than once in a request and each instance would add the notice again.
 	 *
 	 * @since 2.9.18
 	 */
 	public static function register_checkout_return_hooks() {
 		add_action( 'template_redirect', array( __CLASS__, 'handle_checkout_return' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_block_checkout_reject_notice' ) );
+		add_action( 'woocommerce_thankyou_paidy', array( __CLASS__, 'handle_thankyou' ) );
+	}
+
+	/**
+	 * Complete a Paidy order when the buyer reaches the thank-you page.
+	 *
+	 * Registered once rather than in the constructor: a thank-you page that is not the
+	 * checkout's order-received page (e.g. one made by a funnel plugin) does not load the
+	 * payment gateways, so a callback left to WooCommerce's instance would not run there.
+	 *
+	 * @since 2.9.18
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public static function handle_thankyou( $order_id ) {
+		$gateway = self::get_registered_instance();
+		if ( $gateway ) {
+			$gateway->thankyou_completed( $order_id );
+		}
 	}
 
 	/**
