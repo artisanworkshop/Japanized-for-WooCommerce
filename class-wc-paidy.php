@@ -91,9 +91,10 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 			WC_Gateway_Paidy::register_checkout_return_hooks();
 
 			// Endpoints.
-			// The endpoint only registers its REST routes and takes the gateway from WooCommerce's
-			// list when a request needs it, so any point before rest_api_init works; init
-			// priority 11 is kept as it was.
+			// The endpoint registers its REST routes, so it must exist before rest_api_init, and
+			// takes the gateway from WooCommerce's list when a request needs it. Its framework
+			// instance loads translated strings at once when created during init, so keep it
+			// after load_plugin_textdomain (init priority 1); init priority 11 is kept as it was.
 			if ( ! class_exists( 'WC_Paidy_Endpoint' ) ) {
 				require_once __DIR__ . '/includes/gateways/paidy/class-wc-paidy-endpoint.php';
 				if ( did_action( 'init' ) || doing_action( 'init' ) ) {
