@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 2.9.17
+Stable tag: 2.9.18
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -156,6 +156,12 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.18 - 2026-10-19 =
+* **Fixed** - In the Checkout block, a customer who came back from Paidy Checkout after Paidy declined the payment saw no message, because the notice was only added on the classic checkout; the Checkout block now shows it as an error notice, and the classic checkout no longer shows it twice (#248)
+* **Fixed** - The Paidy payment script was printed twice on the order-pay page and the Paidy settings were saved twice, because the Paidy webhook endpoint created its own copy of the Paidy gateway on every request; the endpoint now uses WooCommerce's gateway, answers a webhook with HTTP 503 while Paidy is not in the payment method list, and a capture, cancel, refund or thank-you page completion skipped for that reason is now logged as a warning (#244)
+* **Fixed** - Signed Paidy webhooks in sandbox mode were verified with the live secret key instead of the test secret key, so they could be rejected; the key is now chosen from the Paidy environment setting (#244)
+* **Fixed** - With Paidy debug mode on, the URL of the capture request was never written to the log, unlike the cancel and refund requests; it is now logged as well (#247)
 
 = 2.9.17 - 2026-10-13 =
 * **Added** - A "Morning" (午前中) option can be shown as the first delivery time zone: enable it under Delivery settings → Delivery time settings (off by default) and customise its label; it is offered on both the classic and the block checkout and works even when no hourly time zone is registered (which previously caused a TypeError on the classic checkout); the Yamato B2 export of Japanized for WooCommerce Pro does not support it yet, so keep it off if you use that export until a Pro update adds it
