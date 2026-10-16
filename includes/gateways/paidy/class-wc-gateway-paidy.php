@@ -268,17 +268,27 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		}
 		$gateway = self::get_registered_instance();
 		if ( ! $gateway ) {
-			// Logged whatever the debug setting is: the payment at Paidy is left as it was.
-			wc_get_logger()->warning(
-				sprintf(
-					'Paidy is not in the WooCommerce payment gateway list, so the status change of order #%d was not sent to Paidy.',
-					$order->get_id()
-				),
-				array( 'source' => 'paidy-wc' )
+			self::log_gateway_unavailable(
+				sprintf( 'the status change of order #%d was not sent to Paidy.', $order->get_id() )
 			);
 		}
 
 		return $gateway;
+	}
+
+	/**
+	 * Log that a Paidy order was left unprocessed because Paidy is not in WooCommerce's
+	 * gateway list. Logged whatever the debug setting is, since nothing else records it.
+	 *
+	 * @since 2.9.18
+	 *
+	 * @param string $what What was left undone, as the end of the sentence.
+	 */
+	private static function log_gateway_unavailable( $what ) {
+		wc_get_logger()->warning(
+			'Paidy is not in the WooCommerce payment gateway list, so ' . $what,
+			array( 'source' => 'paidy-wc' )
+		);
 	}
 
 	/**
@@ -328,6 +338,10 @@ class WC_Gateway_Paidy extends WC_Payment_Gateway {
 		$gateway = self::get_registered_instance();
 		if ( $gateway ) {
 			$gateway->thankyou_completed( $order_id );
+		} else {
+			self::log_gateway_unavailable(
+				sprintf( 'order #%d was not completed on the thank-you page; it waits for the Paidy webhook.', absint( $order_id ) )
+			);
 		}
 	}
 
