@@ -47,6 +47,23 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 	private $kept_gateway_list = false;
 
 	/**
+	 * PayPal's singleton, kept while a test unloads the gateway list. False when nothing is kept.
+	 *
+	 * Loading the list again replaces it (WC_Payment_Gateways::init() calls
+	 * WC_Gateway_Paypal::set_instance()).
+	 *
+	 * @var WC_Gateway_Paypal|null|false
+	 */
+	private $kept_paypal_instance = false;
+
+	/**
+	 * Logger recording what is logged during a test, or null when the test does not record.
+	 *
+	 * @var WC_Logger|null
+	 */
+	private $logger = null;
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -56,10 +73,6 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 			require_once dirname( __DIR__, 2 ) . '/includes/gateways/paidy/class-wc-gateway-paidy.php';
 		}
 		$this->assertTrue( class_exists( 'WC_Gateway_Paidy' ), 'WC_Gateway_Paidy should be loadable.' );
-		if ( ! class_exists( 'WC_Paidy_Endpoint' ) ) {
-			require_once dirname( __DIR__, 2 ) . '/includes/gateways/paidy/class-wc-paidy-endpoint.php';
-		}
-		$this->assertTrue( class_exists( 'WC_Paidy_Endpoint' ), 'WC_Paidy_Endpoint should be loadable.' );
 
 		$this->requested_urls = array();
 		$this->responses      = array( $this->http_response( 502, '<html><body><h1>502 Bad Gateway</h1></body></html>' ) );
@@ -75,6 +88,21 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 			$this->gateway_list_property()->setValue( null, $this->kept_gateway_list );
 			$this->kept_gateway_list = false;
 		}
+		if ( false !== $this->kept_paypal_instance ) {
+			$this->paypal_instance_property()->setValue( null, $this->kept_paypal_instance );
+			$this->kept_paypal_instance = false;
+		}
+		if ( null !== $this->logger ) {
+			remove_filter( 'woocommerce_logging_class', array( $this, 'recording_logger' ) );
+			// wc_get_logger() keeps the recording logger, which is a WC_Logger; put a plain one back.
+			$fresh_logger = static function () {
+				return new WC_Logger();
+			};
+			add_filter( 'woocommerce_logging_class', $fresh_logger );
+			wc_get_logger();
+			remove_filter( 'woocommerce_logging_class', $fresh_logger );
+			$this->logger = null;
+		}
 		parent::tearDown();
 	}
 
@@ -88,14 +116,80 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The property holding PayPal's singleton, which loading the gateway list replaces.
+	 *
+	 * @return ReflectionProperty|null Null on a WooCommerce version without it.
+	 */
+	private function paypal_instance_property() {
+		return property_exists( 'WC_Gateway_Paypal', 'instance' ) ? new ReflectionProperty( 'WC_Gateway_Paypal', 'instance' ) : null;
+	}
+
+	/**
 	 * Put WooCommerce back in the state of a request that has not loaded the payment gateways,
 	 * as when an order status is changed through the REST API or a bulk action.
 	 */
 	private function unload_gateway_list() {
 		$this->kept_gateway_list = $this->gateway_list_property()->getValue();
 		$this->gateway_list_property()->setValue( null, null );
-		// Sending an order e-mail would load the gateways; keep the e-mails from doing it.
-		add_filter( 'woocommerce_allow_send_queued_transactional_email', '__return_false' );
+		if ( $this->paypal_instance_property() ) {
+			$this->kept_paypal_instance = $this->paypal_instance_property()->getValue();
+		}
+	}
+
+	/**
+	 * Record what is logged through wc_get_logger() for the rest of the test.
+	 */
+	private function record_log() {
+		$this->logger = new class() extends WC_Logger {
+			/**
+			 * Recorded entries, each with level, message and context.
+			 *
+			 * @var array[]
+			 */
+			public $entries = array();
+
+			/**
+			 * Record a log entry.
+			 *
+			 * @param string $level   Log level.
+			 * @param string $message Log message.
+			 * @param array  $context Log context.
+			 */
+			public function log( $level, $message, $context = array() ) {
+				$this->entries[] = array(
+					'level'   => $level,
+					'message' => $message,
+					'context' => $context,
+				);
+			}
+		};
+		add_filter( 'woocommerce_logging_class', array( $this, 'recording_logger' ) );
+	}
+
+	/**
+	 * Give wc_get_logger() the recording logger.
+	 *
+	 * @return WC_Logger
+	 */
+	public function recording_logger() {
+		return $this->logger;
+	}
+
+	/**
+	 * Leave Paidy out of WooCommerce's gateway list, as a third party removing it would.
+	 *
+	 * @param array $methods Gateway classes or instances.
+	 * @return array
+	 */
+	public function remove_paidy_gateway( $methods ) {
+		return array_values(
+			array_filter(
+				$methods,
+				static function ( $method ) {
+					return 'WC_Gateway_Paidy' !== $method && ! $method instanceof WC_Gateway_Paidy;
+				}
+			)
+		);
 	}
 
 	/**
@@ -157,12 +251,12 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 
 	/**
 	 * Load WooCommerce's gateway list and create the other gateway instances an admin request
-	 * used to have (one like paidy_redirect_to_wizard()'s and one like WC_Paidy_Endpoint's).
+	 * used to have (paidy_redirect_to_wizard() and WC_Paidy_Endpoint each created one).
 	 */
 	private function create_extra_gateway_instances() {
 		WC()->payment_gateways()->payment_gateways();
 		new WC_Gateway_Paidy();
-		new WC_Paidy_Endpoint();
+		new WC_Gateway_Paidy();
 	}
 
 	/**
@@ -252,6 +346,31 @@ class WC_Paidy_Order_Status_Hooks_Test extends WP_UnitTestCase {
 
 		$this->assertSame( array( 'https://api.paidy.com/payments/' . self::PAYMENT_ID . '/close' ), $this->requested_urls );
 		$this->assertStringNotContainsString( 'HTTP 409', $this->order_notes( $order ) );
+	}
+
+	/**
+	 * A Paidy order whose status change cannot reach Paidy, because Paidy is not in
+	 * WooCommerce's gateway list, leaves a warning in the log.
+	 */
+	public function test_status_change_without_paidy_in_gateway_list_is_logged() {
+		$order = $this->create_order( 'processing' );
+		add_filter( 'woocommerce_payment_gateways', array( $this, 'remove_paidy_gateway' ), PHP_INT_MAX );
+		$this->unload_gateway_list();
+		$this->record_log();
+
+		$order->update_status( 'cancelled' );
+
+		$this->assertSame( array(), $this->requested_urls );
+		$warnings = array_values(
+			array_filter(
+				$this->logger->entries,
+				static function ( $entry ) {
+					return 'warning' === $entry['level'] && isset( $entry['context']['source'] ) && 'paidy-wc' === $entry['context']['source'];
+				}
+			)
+		);
+		$this->assertCount( 1, $warnings );
+		$this->assertStringContainsString( '#' . $order->get_id(), $warnings[0]['message'] );
 	}
 
 	/**
