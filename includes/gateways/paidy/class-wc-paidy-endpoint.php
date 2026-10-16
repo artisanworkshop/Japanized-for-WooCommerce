@@ -62,6 +62,22 @@ class WC_Paidy_Endpoint {
 	}
 
 	/**
+	 * A Paidy setting, read from the saved settings without loading the payment gateways.
+	 *
+	 * The permission check runs for every request to the webhook route, including ones that
+	 * fail verification, so it must not construct WooCommerce's whole gateway list.
+	 *
+	 * @param string $key      Setting key.
+	 * @param string $fallback Value when the setting has not been saved.
+	 * @return string
+	 */
+	private function get_setting( $key, $fallback = '' ) {
+		$settings = get_option( 'woocommerce_paidy_settings', array() );
+
+		return is_array( $settings ) && isset( $settings[ $key ] ) && is_string( $settings[ $key ] ) ? $settings[ $key ] : $fallback;
+	}
+
+	/**
 	 * The error returned when the Paidy gateway is not available. Paidy sends the webhook again.
 	 *
 	 * @return WP_Error
@@ -103,20 +119,15 @@ class WC_Paidy_Endpoint {
 	 * @return bool|WP_Error True if authorized, WP_Error otherwise.
 	 */
 	public function paidy_webhook_permission_check( $request ) {
-		$gateway = $this->get_gateway();
-		if ( ! $gateway ) {
-			return $this->gateway_unavailable_error();
-		}
-
 		// Get the signature from the header.
 		$signature = $request->get_header( 'x-paidy-signature' );
 
 		// If a signature is present, verify it with the configured API secret key.
 		if ( ! empty( $signature ) ) {
-			$test_mode  = 'yes' === $gateway->get_option( 'testmode' );
-			$secret_key = $test_mode
-				? $gateway->get_option( 'test_api_secret_key' )
-				: $gateway->get_option( 'api_secret_key' );
+			// Any environment but "live" is the sandbox, as in WC_Gateway_Paidy::paidy_make_order().
+			$secret_key = 'live' === $this->get_setting( 'environment' )
+				? $this->get_setting( 'api_secret_key' )
+				: $this->get_setting( 'test_api_secret_key' );
 
 			if ( empty( $secret_key ) ) {
 				return new WP_Error(
@@ -169,7 +180,7 @@ class WC_Paidy_Endpoint {
 			'The paidy_webhook_allowed_ips filter returned an empty list, disabling IP checks. ' .
 			'To restore strict verification, remove that override or configure an API secret key ' .
 			'in WooCommerce > Settings > Payments > Paidy.',
-			$gateway->debug,
+			$this->get_setting( 'debug', 'no' ),
 			'paidy-wc'
 		);
 		return true;
