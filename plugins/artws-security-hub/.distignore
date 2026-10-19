@@ -1,0 +1,10 @@
+# Files left out of the artws-security-hub ZIP uploaded to wc.artws.info.
+/vendor
+/tests
+.distignore
+.phpcs.xml.dist
+.phpunit.result.cache
+phpunit.xml.dist
+composer.json
+composer.lock
+README.md

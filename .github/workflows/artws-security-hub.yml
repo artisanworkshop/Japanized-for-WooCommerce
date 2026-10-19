@@ -1,0 +1,50 @@
+# Lint and tests for plugins/artws-security-hub, the server-side plugin that
+# runs on wc.artws.info and is never shipped with Japanized for WooCommerce.
+#
+# Runs only when the plugin, the JSON contract it shares with JP4WC
+# (tests/fixtures/security-feed/) or this workflow changes. The JP4WC test
+# matrix (testing.yml) ignores plugins/**, and this workflow never runs the
+# JP4WC tests, so a change to the contract runs both.
+name: artws-security-hub
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'plugins/artws-security-hub/**'
+      - 'tests/fixtures/security-feed/**'
+      - '.github/workflows/artws-security-hub.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint-and-test:
+    name: Lint and test (PHP 8.3)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugins/artws-security-hub
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Lint
+        run: composer lint
+
+      - name: Test
+        run: composer test
