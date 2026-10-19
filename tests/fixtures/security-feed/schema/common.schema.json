@@ -1,0 +1,80 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://wc.artws.info/schema/security/v1/common.schema.json",
+    "title": "Shared definitions for the JP4WC security check contract",
+    "$defs": {
+        "schema_version": {
+            "description": "Format version of the contract. Bumped only for an incompatible change, which is then served under a new URL (/feed/v2/).",
+            "const": 1
+        },
+        "timestamp": {
+            "description": "UTC time in ISO 8601 with a Z suffix and no fractional seconds.",
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+        },
+        "https_url": {
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https://[^\\s/?#]+[^\\s]*$"
+        },
+        "feed_version": {
+            "description": "Opaque identifier of one generated feed. Changes whenever any feed file changes.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[0-9A-Za-z._-]+$"
+        },
+        "slug": {
+            "description": "Plugin or theme slug as WordPress and Wordfence use it (the core slug is \"wordpress\").",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "pattern": "^[^/\\\\\\x00-\\x1f]+$"
+        },
+        "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+        },
+        "attribution": {
+            "description": "Credit line the client shows wherever it displays the data, e.g. in the admin footer.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+        },
+        "copyrights": {
+            "description": "Copyright holders of the vulnerability data, copied from the Wordfence Intelligence V3 copyrights object (without its message key).",
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {
+                "pattern": "^[a-z0-9_-]+$"
+            },
+            "additionalProperties": {
+                "type": "object",
+                "required": [
+                    "notice",
+                    "license",
+                    "license_url"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "notice": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "license": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "license_url": {
+                        "$ref": "#/$defs/https_url"
+                    }
+                }
+            }
+        },
+        "check_id": {
+            "description": "Local check ID: V (vulnerabilities), A (admin access), D (data exposure) or M (malware), then two digits.",
+            "type": "string",
+            "pattern": "^[VADM]-[0-9]{2}$"
+        }
+    }
+}

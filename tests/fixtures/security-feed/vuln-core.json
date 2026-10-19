@@ -1,0 +1,71 @@
+{
+    "schema_version": 1,
+    "type": "core",
+    "generated_at": "2026-10-20T03:00:00Z",
+    "copyrights": {
+        "defiant": {
+            "notice": "Copyright 2012-2026 Defiant Inc.",
+            "license": "Sample license text for the test fixture. The server copies the real text from the Wordfence Intelligence V3 feed.",
+            "license_url": "https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/"
+        }
+    },
+    "attribution": "Vulnerability data: Wordfence Intelligence",
+    "vulnerabilities": {
+        "wordpress": [
+            {
+                "id": "00000000-0000-4000-8000-000000000201",
+                "title": "WordPress Core <= 6.4.2 - Sample Vulnerability (fixture)",
+                "software": {
+                    "type": "core",
+                    "slug": "wordpress"
+                },
+                "affected_versions": [
+                    {
+                        "from_version": "*",
+                        "from_inclusive": true,
+                        "to_version": "6.4.2",
+                        "to_inclusive": true
+                    }
+                ],
+                "patched": true,
+                "patched_versions": [
+                    "6.4.3"
+                ],
+                "remediation": "Update to version 6.4.3, or a newer patched version",
+                "cvss": {
+                    "score": 6.4,
+                    "rating": "Medium"
+                },
+                "published": "2024-01-30T00:00:00Z",
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000201?source=api-prod"
+            },
+            {
+                "id": "00000000-0000-4000-8000-000000000202",
+                "title": "WordPress Core 6.5 - 6.5.4 - Sample Vulnerability (fixture)",
+                "software": {
+                    "type": "core",
+                    "slug": "wordpress"
+                },
+                "affected_versions": [
+                    {
+                        "from_version": "6.5",
+                        "from_inclusive": true,
+                        "to_version": "6.5.4",
+                        "to_inclusive": true
+                    }
+                ],
+                "patched": true,
+                "patched_versions": [
+                    "6.5.5"
+                ],
+                "remediation": "Update to version 6.5.5, or a newer patched version",
+                "cvss": {
+                    "score": 4.4,
+                    "rating": "Medium"
+                },
+                "published": "2024-06-24T00:00:00Z",
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000202?source=api-prod"
+            }
+        ]
+    }
+}

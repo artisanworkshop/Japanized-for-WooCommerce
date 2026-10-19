@@ -1,0 +1,134 @@
+{
+    "schema_version": 1,
+    "type": "plugin",
+    "generated_at": "2026-10-20T03:00:00Z",
+    "copyrights": {
+        "defiant": {
+            "notice": "Copyright 2012-2026 Defiant Inc.",
+            "license": "Sample license text for the test fixture. The server copies the real text from the Wordfence Intelligence V3 feed.",
+            "license_url": "https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/"
+        }
+    },
+    "attribution": "Vulnerability data: Wordfence Intelligence",
+    "vulnerabilities": {
+        "sample-plugin": [
+            {
+                "id": "00000000-0000-4000-8000-000000000001",
+                "title": "Sample Plugin <= 1.2.3 - Cross-Site Scripting (fixture)",
+                "software": {
+                    "type": "plugin",
+                    "slug": "sample-plugin"
+                },
+                "affected_versions": [
+                    {
+                        "from_version": "*",
+                        "from_inclusive": true,
+                        "to_version": "1.2.3",
+                        "to_inclusive": true
+                    }
+                ],
+                "patched": true,
+                "patched_versions": [
+                    "1.2.4"
+                ],
+                "remediation": "Update to version 1.2.4, or a newer patched version",
+                "cvss": {
+                    "score": 7.2,
+                    "rating": "High"
+                },
+                "published": "2026-09-30T00:00:00Z",
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000001?source=api-prod"
+            },
+            {
+                "id": "00000000-0000-4000-8000-000000000002",
+                "title": "Sample Plugin 2.0.0 - 2.0.4 - Missing Authorization (fixture)",
+                "software": {
+                    "type": "plugin",
+                    "slug": "sample-plugin"
+                },
+                "affected_versions": [
+                    {
+                        "from_version": "2.0.0",
+                        "from_inclusive": true,
+                        "to_version": "2.0.5",
+                        "to_inclusive": false
+                    }
+                ],
+                "patched": true,
+                "patched_versions": [
+                    "2.0.5"
+                ],
+                "remediation": "Update to version 2.0.5, or a newer patched version",
+                "cvss": {
+                    "score": 5.3,
+                    "rating": "Medium"
+                },
+                "published": "2026-10-01T12:30:00Z",
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000002?source=api-prod"
+            }
+        ],
+        "sample-multi-range": [
+            {
+                "id": "00000000-0000-4000-8000-000000000003",
+                "title": "Sample Multi Range 1.0 - 1.4.9, 1.5.1 - 1.5.3 - SQL Injection (fixture)",
+                "software": {
+                    "type": "plugin",
+                    "slug": "sample-multi-range"
+                },
+                "affected_versions": [
+                    {
+                        "from_version": "1.0",
+                        "from_inclusive": true,
+                        "to_version": "1.4.9",
+                        "to_inclusive": true
+                    },
+                    {
+                        "from_version": "1.5.0",
+                        "from_inclusive": false,
+                        "to_version": "1.5.3",
+                        "to_inclusive": true
+                    }
+                ],
+                "patched": true,
+                "patched_versions": [
+                    "1.4.10",
+                    "1.5.4"
+                ],
+                "remediation": "Update to version 1.5.4, or a newer patched version",
+                "cvss": {
+                    "score": 9.8,
+                    "rating": "Critical"
+                },
+                "published": "2026-08-15T09:00:00Z",
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000003?source=api-prod"
+            }
+        ],
+        "sample-plugin-unpatched": [
+            {
+                "id": "00000000-0000-4000-8000-000000000004",
+                "title": "Sample Plugin Unpatched (all versions) - Arbitrary File Upload (fixture)",
+                "software": {
+                    "type": "plugin",
+                    "slug": "sample-plugin-unpatched"
+                },
+                "affected_versions": [
+                    {
+                        "from_version": "*",
+                        "from_inclusive": true,
+                        "to_version": "*",
+                        "to_inclusive": true
+                    }
+                ],
+                "patched": false,
+                "patched_versions": [],
+                "remediation": "No known patch available. Uninstall the affected software and find a replacement.",
+                "cvss": {
+                    "score": 8.8,
+                    "rating": "High"
+                },
+                "published": null,
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000004?source=api-prod"
+            }
+        ]
+    }
+}

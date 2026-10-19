@@ -1,0 +1,213 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://wc.artws.info/schema/security/v1/vuln-file.schema.json",
+    "title": "Vulnerability feed file (vuln-plugins.json, vuln-themes.json, vuln-core.json)",
+    "description": "The decompressed content of one /feed/v1/vuln-*.json.gz file. Records are reduced from the Wordfence Intelligence V3 production feed and keep its field names.",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "type",
+        "generated_at",
+        "copyrights",
+        "attribution",
+        "vulnerabilities"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "type": {
+            "$ref": "#/$defs/software_type"
+        },
+        "generated_at": {
+            "$ref": "common.schema.json#/$defs/timestamp"
+        },
+        "copyrights": {
+            "$ref": "common.schema.json#/$defs/copyrights"
+        },
+        "attribution": {
+            "$ref": "common.schema.json#/$defs/attribution"
+        },
+        "vulnerabilities": {
+            "description": "Slug => the records that affect that plugin, theme or core. A Wordfence record that affects several slugs appears once under each.",
+            "type": "object",
+            "propertyNames": {
+                "$ref": "common.schema.json#/$defs/slug"
+            },
+            "additionalProperties": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "$ref": "#/$defs/vulnerability"
+                }
+            }
+        }
+    },
+    "if": {
+        "properties": {
+            "type": {
+                "const": "core"
+            }
+        }
+    },
+    "then": {
+        "properties": {
+            "vulnerabilities": {
+                "propertyNames": {
+                    "const": "wordpress"
+                }
+            }
+        }
+    },
+    "$defs": {
+        "software_type": {
+            "enum": [
+                "plugin",
+                "theme",
+                "core"
+            ]
+        },
+        "feed_software_version": {
+            "description": "A version as Wordfence publishes it, or \"*\" for no bound.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[^\\s]+$"
+        },
+        "vulnerability": {
+            "type": "object",
+            "required": [
+                "id",
+                "title",
+                "software",
+                "affected_versions",
+                "patched",
+                "patched_versions",
+                "remediation",
+                "cvss",
+                "published",
+                "reference"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "description": "Wordfence Intelligence vulnerability UUID.",
+                    "type": "string",
+                    "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                },
+                "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                },
+                "software": {
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "slug"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "type": {
+                            "$ref": "#/$defs/software_type"
+                        },
+                        "slug": {
+                            "$ref": "common.schema.json#/$defs/slug"
+                        }
+                    }
+                },
+                "affected_versions": {
+                    "description": "The V3 affected_versions object as a list (its keys only repeat the range).",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/$defs/version_range"
+                    }
+                },
+                "patched": {
+                    "type": "boolean"
+                },
+                "patched_versions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/feed_software_version"
+                    }
+                },
+                "remediation": {
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "cvss": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "type": "object",
+                            "required": [
+                                "score",
+                                "rating"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "score": {
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 10
+                                },
+                                "rating": {
+                                    "enum": [
+                                        "None",
+                                        "Low",
+                                        "Medium",
+                                        "High",
+                                        "Critical"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                "published": {
+                    "oneOf": [
+                        {
+                            "type": "null"
+                        },
+                        {
+                            "$ref": "common.schema.json#/$defs/timestamp"
+                        }
+                    ]
+                },
+                "reference": {
+                    "description": "Link to this record on wordfence.com. The data license requires it wherever the record is shown.",
+                    "$ref": "common.schema.json#/$defs/https_url"
+                }
+            }
+        },
+        "version_range": {
+            "type": "object",
+            "required": [
+                "from_version",
+                "from_inclusive",
+                "to_version",
+                "to_inclusive"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "from_version": {
+                    "$ref": "#/$defs/feed_software_version"
+                },
+                "from_inclusive": {
+                    "type": "boolean"
+                },
+                "to_version": {
+                    "$ref": "#/$defs/feed_software_version"
+                },
+                "to_inclusive": {
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}

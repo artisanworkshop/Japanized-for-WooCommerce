@@ -1,0 +1,257 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://wc.artws.info/schema/security/v1/report.schema.json",
+    "title": "Free security check report (report_json)",
+    "description": "Body of a successful POST /wp-json/artws-sec/v1/scan and of GET /wp-json/artws-sec/v1/scan/{token}. Every string is plain text: the client escapes it and never renders it as HTML.",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "token",
+        "generated_at",
+        "feed_version",
+        "score",
+        "findings",
+        "next_steps",
+        "attribution"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "token": {
+            "description": "Unguessable random ID of this report, used in GET /scan/{token}.",
+            "type": "string",
+            "pattern": "^scn_[A-Za-z0-9_-]{32,128}$"
+        },
+        "generated_at": {
+            "$ref": "common.schema.json#/$defs/timestamp"
+        },
+        "feed_version": {
+            "description": "The manifest version the server checked the software list against.",
+            "$ref": "common.schema.json#/$defs/feed_version"
+        },
+        "score": {
+            "description": "0-100 per requirement; total is the lowest of the four.",
+            "type": "object",
+            "required": [
+                "total",
+                "vuln",
+                "admin",
+                "data",
+                "malware"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "total": {
+                    "$ref": "#/$defs/score"
+                },
+                "vuln": {
+                    "$ref": "#/$defs/score"
+                },
+                "admin": {
+                    "$ref": "#/$defs/score"
+                },
+                "data": {
+                    "$ref": "#/$defs/score"
+                },
+                "malware": {
+                    "$ref": "#/$defs/score"
+                }
+            }
+        },
+        "findings": {
+            "description": "Items that need action, most urgent first. The client keeps this order.",
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+                "$ref": "#/$defs/finding"
+            }
+        },
+        "next_steps": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+                "$ref": "#/$defs/text"
+            }
+        },
+        "attribution": {
+            "$ref": "common.schema.json#/$defs/attribution"
+        }
+    },
+    "$defs": {
+        "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+        },
+        "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+        },
+        "finding": {
+            "type": "object",
+            "required": [
+                "check_id",
+                "severity",
+                "requirement",
+                "title",
+                "detail",
+                "impact",
+                "fix"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "check_id": {
+                    "$ref": "common.schema.json#/$defs/check_id"
+                },
+                "severity": {
+                    "enum": [
+                        "critical",
+                        "high",
+                        "medium",
+                        "low"
+                    ]
+                },
+                "requirement": {
+                    "description": "The card the finding counts against: vuln (V-), admin (A-), data (D-) or malware (M-).",
+                    "enum": [
+                        "vuln",
+                        "admin",
+                        "data",
+                        "malware"
+                    ]
+                },
+                "title": {
+                    "$ref": "#/$defs/text"
+                },
+                "detail": {
+                    "$ref": "#/$defs/text"
+                },
+                "impact": {
+                    "$ref": "#/$defs/text"
+                },
+                "fix": {
+                    "description": "Steps to fix, in order.",
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 20,
+                    "items": {
+                        "$ref": "#/$defs/text"
+                    }
+                },
+                "reference": {
+                    "$ref": "common.schema.json#/$defs/https_url"
+                },
+                "software": {
+                    "type": "object",
+                    "required": [
+                        "type",
+                        "slug",
+                        "version"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "type": {
+                            "enum": [
+                                "plugin",
+                                "theme",
+                                "core"
+                            ]
+                        },
+                        "slug": {
+                            "$ref": "common.schema.json#/$defs/slug"
+                        },
+                        "version": {
+                            "type": "string",
+                            "maxLength": 64
+                        }
+                    }
+                }
+            },
+            "allOf": [
+                {
+                    "description": "A known vulnerability (V-01) names the software and links to the Wordfence record, as the data license requires.",
+                    "if": {
+                        "properties": {
+                            "check_id": {
+                                "const": "V-01"
+                            }
+                        }
+                    },
+                    "then": {
+                        "required": [
+                            "software",
+                            "reference"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "check_id": {
+                                "pattern": "^V-"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "requirement": {
+                                "const": "vuln"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "check_id": {
+                                "pattern": "^A-"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "requirement": {
+                                "const": "admin"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "check_id": {
+                                "pattern": "^D-"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "requirement": {
+                                "const": "data"
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "check_id": {
+                                "pattern": "^M-"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "requirement": {
+                                "const": "malware"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

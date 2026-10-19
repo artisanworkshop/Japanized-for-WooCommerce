@@ -1,0 +1,144 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://wc.artws.info/schema/security/v1/scan-request.schema.json",
+    "title": "Free security check request (POST /wp-json/artws-sec/v1/scan)",
+    "description": "Everything JP4WC sends after the store owner consents, and nothing else. Every object is closed (additionalProperties: false) so that a field the consent screen does not list cannot be sent.",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "site_url",
+        "wp_ver",
+        "wc_ver",
+        "php_ver",
+        "jp4wc_ver",
+        "locale",
+        "software",
+        "local_findings",
+        "consent_version"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "site_url": {
+            "description": "home_url().",
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https?://[^\\s/?#]+[^\\s]*$"
+        },
+        "wp_ver": {
+            "$ref": "#/$defs/version"
+        },
+        "wc_ver": {
+            "$ref": "#/$defs/version"
+        },
+        "php_ver": {
+            "$ref": "#/$defs/version"
+        },
+        "jp4wc_ver": {
+            "$ref": "#/$defs/version"
+        },
+        "locale": {
+            "description": "WordPress locale, e.g. ja or en_US.",
+            "type": "string",
+            "maxLength": 20,
+            "pattern": "^[A-Za-z]{2,3}(_[A-Za-z0-9]+)*$"
+        },
+        "software": {
+            "description": "Every installed plugin and theme, active or not.",
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "slug",
+                    "version",
+                    "active"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "type": {
+                        "enum": [
+                            "plugin",
+                            "theme"
+                        ]
+                    },
+                    "slug": {
+                        "$ref": "common.schema.json#/$defs/slug"
+                    },
+                    "version": {
+                        "description": "The Version header; empty when the plugin or theme has none.",
+                        "type": "string",
+                        "maxLength": 64,
+                        "pattern": "^[0-9A-Za-z.+_-]*$"
+                    },
+                    "active": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "local_findings": {
+            "description": "Result of each local check. Status only: never the setting values behind it.",
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+                "type": "object",
+                "required": [
+                    "check_id",
+                    "status"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "check_id": {
+                        "$ref": "common.schema.json#/$defs/check_id"
+                    },
+                    "status": {
+                        "description": "pass = requirement met, fail = needs action, unknown = could not be checked.",
+                        "enum": [
+                            "pass",
+                            "fail",
+                            "unknown"
+                        ]
+                    }
+                }
+            }
+        },
+        "revenue_band": {
+            "description": "Optional, separate consent (off by default). Revenue over the last 12 months as a band code, never the amount.",
+            "enum": [
+                "B0",
+                "B1",
+                "B2",
+                "B3",
+                "B4",
+                "B5"
+            ]
+        },
+        "order_band": {
+            "description": "Optional, same consent as revenue_band. Orders over the last 12 months as a band code, never the count.",
+            "enum": [
+                "O0",
+                "O1",
+                "O2",
+                "O3",
+                "O4"
+            ]
+        },
+        "consent_version": {
+            "description": "Version of the consent text the store owner agreed to (YYYY-MM).",
+            "type": "string",
+            "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+        }
+    },
+    "$defs": {
+        "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[0-9A-Za-z.+_-]+$"
+        }
+    }
+}

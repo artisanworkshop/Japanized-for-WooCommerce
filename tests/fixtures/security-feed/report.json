@@ -1,0 +1,59 @@
+{
+    "schema_version": 1,
+    "token": "scn_Zml4dHVyZS10b2tlbi1ub3QtYS1yZWFsLXJlcG9ydC0wMDAx",
+    "generated_at": "2026-10-20T03:15:00Z",
+    "feed_version": "2026-10-20.1",
+    "score": {
+        "total": 85,
+        "vuln": 85,
+        "admin": 92,
+        "data": 100,
+        "malware": 97
+    },
+    "findings": [
+        {
+            "check_id": "V-01",
+            "severity": "high",
+            "requirement": "vuln",
+            "title": "Sample Plugin 1.2.3 に既知の脆弱性があります",
+            "detail": "Sample Plugin <= 1.2.3 - Cross-Site Scripting (fixture)",
+            "impact": "第三者がサイトの閲覧者のブラウザで任意のスクリプトを実行できるおそれがあります。",
+            "fix": [
+                "管理画面の「プラグイン」で Sample Plugin を 1.2.4 以上に更新してください。",
+                "更新できない場合は、プラグインを停止して削除してください。"
+            ],
+            "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000001?source=api-prod",
+            "software": {
+                "type": "plugin",
+                "slug": "sample-plugin",
+                "version": "1.2.3"
+            }
+        },
+        {
+            "check_id": "A-04",
+            "severity": "medium",
+            "requirement": "admin",
+            "title": "XML-RPC が外部から利用できます",
+            "detail": "外部から xmlrpc.php に到達でき、XML-RPC の呼び出しに応答しました。",
+            "impact": "パスワードの総当たり攻撃に使われるおそれがあります。",
+            "fix": [
+                "XML-RPC を使う連携が無ければ、セキュリティプラグインやサーバーの設定で xmlrpc.php へのアクセスを止めてください。"
+            ]
+        },
+        {
+            "check_id": "M-01",
+            "severity": "low",
+            "requirement": "malware",
+            "title": "管理画面からのファイル編集が無効化されていません",
+            "detail": "wp-config.php に DISALLOW_FILE_EDIT が設定されていません。",
+            "impact": "管理者アカウントが乗っ取られた場合に、テーマやプラグインのファイルを書き換えられます。",
+            "fix": [
+                "wp-config.php に define( 'DISALLOW_FILE_EDIT', true ); を追加してください。"
+            ]
+        }
+    ],
+    "next_steps": [
+        "Sample Plugin を更新したら、もう一度診断を実行して結果を確認してください。"
+    ],
+    "attribution": "Vulnerability data: Wordfence Intelligence"
+}
