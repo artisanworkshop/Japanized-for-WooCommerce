@@ -1,0 +1,120 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://wc.artws.info/schema/security/v1/manifest.schema.json",
+    "title": "Vulnerability feed manifest (/feed/v1/manifest.json)",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "version",
+        "generated_at",
+        "stale",
+        "files",
+        "copyrights",
+        "attribution",
+        "eol"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "version": {
+            "$ref": "common.schema.json#/$defs/feed_version"
+        },
+        "generated_at": {
+            "$ref": "common.schema.json#/$defs/timestamp"
+        },
+        "stale": {
+            "description": "True when the server could not refresh the data from Wordfence and is serving older files.",
+            "type": "boolean"
+        },
+        "files": {
+            "type": "object",
+            "required": [
+                "plugin",
+                "theme",
+                "core"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "plugin": {
+                    "$ref": "#/$defs/file"
+                },
+                "theme": {
+                    "$ref": "#/$defs/file"
+                },
+                "core": {
+                    "$ref": "#/$defs/file"
+                }
+            }
+        },
+        "copyrights": {
+            "$ref": "common.schema.json#/$defs/copyrights"
+        },
+        "attribution": {
+            "$ref": "common.schema.json#/$defs/attribution"
+        },
+        "eol": {
+            "description": "Oldest supported versions. A site running an older version is end-of-life (check V-03).",
+            "type": "object",
+            "required": [
+                "php",
+                "wordpress",
+                "woocommerce"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "php": {
+                    "$ref": "#/$defs/eol_entry"
+                },
+                "wordpress": {
+                    "$ref": "#/$defs/eol_entry"
+                },
+                "woocommerce": {
+                    "$ref": "#/$defs/eol_entry"
+                }
+            }
+        }
+    },
+    "$defs": {
+        "file": {
+            "type": "object",
+            "required": [
+                "file",
+                "sha256",
+                "count"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "file": {
+                    "description": "File name relative to the feed base URL. A bare name: no directory part.",
+                    "type": "string",
+                    "maxLength": 128,
+                    "pattern": "^[a-z0-9][a-z0-9._-]*\\.json\\.gz$"
+                },
+                "sha256": {
+                    "description": "SHA-256 of the .json.gz file's bytes as served (not of the decompressed JSON).",
+                    "$ref": "common.schema.json#/$defs/sha256"
+                },
+                "count": {
+                    "description": "Number of vulnerability records in the file, summed over all slugs.",
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "eol_entry": {
+            "type": "object",
+            "required": [
+                "min_supported"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "min_supported": {
+                    "type": "string",
+                    "pattern": "^[0-9]+(\\.[0-9]+)*$"
+                }
+            }
+        }
+    }
+}

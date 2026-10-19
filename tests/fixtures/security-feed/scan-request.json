@@ -1,0 +1,60 @@
+{
+    "schema_version": 1,
+    "site_url": "https://example.jp",
+    "wp_ver": "6.9.1",
+    "wc_ver": "10.6.2",
+    "php_ver": "8.3.12",
+    "jp4wc_ver": "2.9.19",
+    "locale": "ja",
+    "software": [
+        {
+            "type": "plugin",
+            "slug": "woocommerce",
+            "version": "10.6.2",
+            "active": true
+        },
+        {
+            "type": "plugin",
+            "slug": "woocommerce-for-japan",
+            "version": "2.9.19",
+            "active": true
+        },
+        {
+            "type": "plugin",
+            "slug": "sample-plugin",
+            "version": "1.2.3",
+            "active": false
+        },
+        {
+            "type": "theme",
+            "slug": "twentytwentyfive",
+            "version": "1.3",
+            "active": true
+        }
+    ],
+    "local_findings": [
+        {
+            "check_id": "V-01",
+            "status": "fail"
+        },
+        {
+            "check_id": "A-01",
+            "status": "pass"
+        },
+        {
+            "check_id": "A-04",
+            "status": "unknown"
+        },
+        {
+            "check_id": "D-03",
+            "status": "pass"
+        },
+        {
+            "check_id": "M-01",
+            "status": "fail"
+        }
+    ],
+    "revenue_band": "B2",
+    "order_band": "O2",
+    "consent_version": "2026-10"
+}

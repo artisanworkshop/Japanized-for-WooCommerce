@@ -1,0 +1,42 @@
+{
+    "schema_version": 1,
+    "version": "2026-10-20.1",
+    "generated_at": "2026-10-20T03:00:00Z",
+    "stale": false,
+    "files": {
+        "plugin": {
+            "file": "vuln-plugins.json.gz",
+            "sha256": "b057265d731624f64df71fce259d1599ee1dfea738b948e67d3e0ce11dbaa6fc",
+            "count": 4
+        },
+        "theme": {
+            "file": "vuln-themes.json.gz",
+            "sha256": "e98ae354e700cbbeb61b2c7755def60f05c1c7b9923d202043b8d29376fe14f2",
+            "count": 1
+        },
+        "core": {
+            "file": "vuln-core.json.gz",
+            "sha256": "138f06fef557ac766d7ebe186f05c79f27a7b9306d7638281ea3589dd38018a4",
+            "count": 2
+        }
+    },
+    "copyrights": {
+        "defiant": {
+            "notice": "Copyright 2012-2026 Defiant Inc.",
+            "license": "Sample license text for the test fixture. The server copies the real text from the Wordfence Intelligence V3 feed.",
+            "license_url": "https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/"
+        }
+    },
+    "attribution": "Vulnerability data: Wordfence Intelligence",
+    "eol": {
+        "php": {
+            "min_supported": "8.2"
+        },
+        "wordpress": {
+            "min_supported": "6.7"
+        },
+        "woocommerce": {
+            "min_supported": "10.2"
+        }
+    }
+}
