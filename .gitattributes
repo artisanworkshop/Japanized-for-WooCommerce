@@ -27,6 +27,7 @@ tests/* export-ignore
 .phpcs.xml.dist export-ignore
 .phpunit.xml.dist export-ignore
 promotion-json/* export-ignore
+plugins/* export-ignore
 phpunit.xml.dist export-ignore
 webpack.config.js export-ignore
 wordfence-vendor.txt export-ignore

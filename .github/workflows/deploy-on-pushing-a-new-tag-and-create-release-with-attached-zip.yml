@@ -101,6 +101,18 @@ jobs:
 
                   mv "${PLUGIN_SLUG}-${VERSION}.zip" "$GITHUB_WORKSPACE/"
 
+            # plugins/ holds server-side plugins (e.g. artws-security-hub on wc.artws.info).
+            # The zip above and the WordPress.org deploy below both leave out what
+            # .distignore lists, so a zip without plugins/ means neither ships it.
+            - name: Check the plugin zip has no server-side plugins
+              run: |
+                  ZIP="woocommerce-for-japan-${{ steps.version.outputs.VERSION }}.zip"
+                  LISTING=$(unzip -Z1 "$ZIP")
+                  if grep -E '^woocommerce-for-japan/plugins/' <<< "$LISTING"; then
+                      echo "::error::plugins/ is in the plugin zip. Add /plugins to .distignore."
+                      exit 1
+                  fi
+
             - name: WordPress Plugin Deploy
               id: deploy
               uses: 10up/action-wordpress-plugin-deploy@stable
