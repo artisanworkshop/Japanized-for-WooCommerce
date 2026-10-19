@@ -1,0 +1,36 @@
+{
+	"name": "artisanworkshop/artws-security-hub",
+	"description": "Server side of the Japanized for WooCommerce security check (wc.artws.info).",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=8.3"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"opis/json-schema": "^2.6",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"phpunit/phpunit": "^9.6",
+		"squizlabs/php_codesniffer": "^3.10",
+		"wp-coding-standards/wpcs": "^3.0"
+	},
+	"authors": [
+		{
+			"name": "Shohei Tanaka",
+			"email": "shohei.t@artws.info"
+		}
+	],
+	"scripts": {
+		"format": "phpcbf --standard=./.phpcs.xml.dist --report-summary --report-source",
+		"lint": "phpcs --standard=./.phpcs.xml.dist",
+		"test": "phpunit"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"platform": {
+			"php": "8.3"
+		}
+	}
+}

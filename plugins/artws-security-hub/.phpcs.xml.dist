@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<ruleset name="Artws Security Hub Coding Standards">
+	<description>WordPress Coding Standards ruleset for the artws-security-hub plugin (wc.artws.info).</description>
+
+	<!-- What to scan: the plugin and its tests, not the dependencies. -->
+	<file>.</file>
+	<exclude-pattern type="relative">^vendor/*</exclude-pattern>
+
+	<!-- How to scan -->
+	<arg value="sp"/>
+	<arg name="basepath" value="./"/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="8"/>
+
+	<!-- PHP version compatibility: matches the plugin's "Requires PHP". -->
+	<config name="testVersion" value="8.3-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- WordPress Coding Standards -->
+	<config name="minimum_supported_wp_version" value="6.7"/>
+	<rule ref="WordPress"/>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="artws_sec_"/>
+				<element value="ARTWS_SEC_"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="artws-security-hub"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<phpunit
+	bootstrap="tests/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertWarningsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertDeprecationsToExceptions="true"
+	failOnWarning="true"
+	failOnRisky="true"
+	>
+	<testsuites>
+		<testsuite name="artws-security-hub">
+			<directory prefix="test-" suffix=".php">./tests/Unit/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
