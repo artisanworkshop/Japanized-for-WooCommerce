@@ -8,6 +8,12 @@
 	<exclude-pattern>/node_modules/</exclude-pattern>
 	<exclude-pattern>/tests/</exclude-pattern>
 	<exclude-pattern>/dist/</exclude-pattern>
+	<!--
+		Server-side plugins have their own ruleset (plugins/<name>/.phpcs.xml.dist).
+		Relative, because "/plugins/" would match a checkout inside wp-content/plugins/
+		and exclude every file.
+	-->
+	<exclude-pattern type="relative">^plugins/*</exclude-pattern>
 
 	<!-- How to scan -->
 	<arg value="sp"/>

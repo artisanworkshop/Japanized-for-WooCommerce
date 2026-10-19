@@ -18,6 +18,8 @@
 /tests
 /test-results
 /promotion-json
+# Server-side plugins (e.g. artws-security-hub on wc.artws.info), never shipped with this plugin.
+/plugins
 
 # Files
 .DS_Store

@@ -28,6 +28,8 @@ on:
       - '**.md'
       - 'docs/**'
       - '.claude/**'
+      # Server-side plugins have their own workflow (e.g. artws-security-hub.yml).
+      - 'plugins/**'
   workflow_call:
     inputs:
       scope:
