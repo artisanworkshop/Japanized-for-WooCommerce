@@ -44,6 +44,8 @@ README.md
 CLAUDE.md
 SECURITY-FIX-PAIDY.md
 SHORTCODE-CHECKOUT-VALIDATION-REPORT.md
+# Release zip: the tag deploy moves it into the workspace root before syncing to WordPress.org SVN.
+/*.zip
 
 # Source files (compiled output is sufficient for distribution)
 *.scss
