@@ -11,6 +11,8 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 
 共通の定義は `schema/common.schema.json`。Schema は JSON Schema draft 2020-12 で、`$id` の `https://wc.artws.info/schema/security/v1/` は識別子（配信はしない）。サンプルの slug・UUID・トークンは架空の値。
 
+`pattern` は JSON Schema（ECMA-262）の意味で、`$` は文字列の末尾にだけ一致する。PHP の `preg_match()` で同じパターンを使うときは `D` 修飾子を付ける（付けないと `$` が末尾の改行の直前にも一致し、`"scn_…\n"` のような値を通す）。WordPress の REST API の引数スキーマの `pattern` は `D` を付けずに照合するので、トークンなど URL に入れる値の検証には使わない。
+
 ## Schema で表せない取り決め
 
 ### 形式のバージョン
@@ -49,8 +51,8 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 
 ### 送信データ（POST /scan）
 - 同意画面に一覧で示した項目だけを送る。Schema に無い項目（管理者メール、注文の実額、パス、設定値など）は送らない。サーバーは Schema に無い項目を保存しない。
-- `revenue_band` と `order_band` は別の同意（既定オフ）を得たときだけ含める。無いときはキーごと省く。
-- バージョンは各 Version ヘッダーの値をそのまま送る（制御文字は含められない）。64 文字を超えるものは空文字で送り、サーバーはそのソフトウェアを照合しない。
+- `revenue_band` と `order_band` は別の同意（既定オフ）を得たときだけ、2つ一緒に含める。同意が無いときはどちらもキーごと省く（片方だけは Schema が拒否する）。
+- バージョンは各 Version ヘッダーの値をそのまま送る。64 文字（コードポイント数。PHP では `mb_strlen( $v, 'UTF-8' )`）を超えるもの、または制御文字（U+0000〜U+001F、U+007F〜U+009F）を含むものは空文字で送り、サーバーはそのソフトウェアを照合しない。
 - `consent_version` はサーバーが知っている版だけを受け付ける。
 
 ### レポート
