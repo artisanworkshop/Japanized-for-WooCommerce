@@ -43,7 +43,8 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 - V3 の `informational` が true のレコードは除外する。1件のレコードが複数のソフトウェアに影響する場合は、`software[]` の要素ごとに1件ずつ、その slug の下に置く。
 - `published` は V3 の文字列（UTC）を `YYYY-MM-DDTHH:MM:SSZ` に直す。無いか解釈できなければ `null`。
 - `reference` は V3 の `references` から取らず、`id` から組み立てる（`https://www.wordfence.com/threat-intel/vulnerabilities/id/<id>`。`references` は空のことがある）。
-- 変換したレコードはレコード単位で Schema を検査し、合わないもの（バージョンに空白を含む、64 文字を超えるなど）は除外して件数を記録する。1件の不備でフィード全体を止めない。`stale` を立てるのは、取得や生成そのものに失敗して前回のファイルを配信し続けるときだけ。
+- 変換したレコードはレコード単位で Schema を検査し、合わないもの（バージョンに空白を含む、64 文字を超えるなど）は除外して件数を記録する。1件の不備でフィード全体を止めない。
+- ただし、除外が一定の割合を超えたとき、または件数が前回から大きく減ったとき（閾値は S1 で決める）は、Wordfence 側の形式変更などを疑って生成失敗として扱う。生成に失敗したときは前回のファイルを配信し続けて `stale` を立てる。ほぼ空のフィードを `stale: false` で出すと、クライアントは「脆弱性なし」と表示してしまう。
 - `https://wc.artws.info/feed/` は WordPress 本体の RSS の URL でもある。ドキュメントルートに実ディレクトリ `feed/` を作ると、サーバーが `/feed/` を WordPress に渡さなくなりサイトの RSS が壊れるので、ファイルは別の場所に置き `/feed/v1/` だけを Alias（nginx なら location）で配信する。
 
 ### 送信データ（POST /scan）
