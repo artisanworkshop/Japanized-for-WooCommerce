@@ -18,22 +18,39 @@ use ArtisanWorkshop\PluginFramework\v2_0_14 as Framework;
 class JP4WC_Framework_Text_Config_Test extends WP_UnitTestCase {
 
 	/**
+	 * Path to the framework class file.
+	 *
+	 * @var string
+	 */
+	private $class_file;
+
+	/**
 	 * The framework class must be loaded by the plugin.
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		require_once dirname( __DIR__, 2 ) . '/includes/jp4wc-framework/class-jp4wc-framework.php';
+		$this->class_file = dirname( __DIR__, 2 ) . '/includes/jp4wc-framework/class-jp4wc-framework.php';
+		require_once $this->class_file;
 		$this->assertTrue( class_exists( 'ArtisanWorkshop\PluginFramework\v2_0_14\JP4WC_Framework' ) );
 	}
 
 	/**
-	 * The strings load with no other file beside the class.
+	 * The strings load without reading any other file.
+	 *
+	 * Checked on the source rather than on the directory listing: whatever the
+	 * class requires or includes after it is loaded can be missing while the
+	 * plugin is updated, whatever that file is called.
 	 */
 	public function test_text_config_needs_no_separate_file() {
-		$this->assertSame(
-			array( 'class-jp4wc-framework.php' ),
-			array_map( 'basename', glob( dirname( __DIR__, 2 ) . '/includes/jp4wc-framework/*.php' ) )
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
+		$source     = file_get_contents( $this->class_file );
+		$file_reads = array_filter(
+			token_get_all( $source ),
+			static function ( $token ) {
+				return is_array( $token ) && in_array( $token[0], array( T_REQUIRE, T_REQUIRE_ONCE, T_INCLUDE, T_INCLUDE_ONCE ), true );
+			}
 		);
+		$this->assertSame( array(), $file_reads );
 
 		$framework = new Framework\JP4WC_Framework();
 
