@@ -81,13 +81,105 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 	}
 
 	/**
-	 * The optional revenue and order bands may be left out of a request.
+	 * Requests the client may send besides the sample.
+	 *
+	 * @return array<string, array{callable}>
 	 */
-	public function test_scan_request_without_bands_is_valid() {
+	public function valid_request_provider() {
+		return array(
+			'without the revenue and order bands'    => array(
+				static function ( $d ) {
+					unset( $d->revenue_band, $d->order_band );
+				},
+			),
+			'plugin without a Version header'        => array(
+				static function ( $d ) {
+					$d->software[2]->version = '';
+				},
+			),
+			'Version header with a space'            => array(
+				static function ( $d ) {
+					$d->software[2]->version = '1.0 beta';
+				},
+			),
+			'PHP version with a distribution suffix' => array(
+				static function ( $d ) {
+					$d->php_ver = '8.3.6-1+ubuntu24.04.1+deb.sury.org+1';
+				},
+			),
+			'locale with a variant'                  => array(
+				static function ( $d ) {
+					$d->locale = 'de_DE_formal';
+				},
+			),
+		);
+	}
+
+	/**
+	 * The request schema accepts what real sites report.
+	 *
+	 * @dataProvider valid_request_provider
+	 *
+	 * @param callable $mutate Changes the decoded sample in place.
+	 */
+	public function test_scan_request_variant_is_valid( $mutate ) {
 		$request = $this->load_sample( 'scan-request.json' );
-		unset( $request->revenue_band, $request->order_band );
+		$mutate( $request );
 
 		$this->assertTrue( $this->validate( $request, 'scan-request' )->isValid() );
+	}
+
+	/**
+	 * Every schema file.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function schema_file_provider() {
+		$cases = array();
+		foreach ( glob( ARTWS_SEC_CONTRACT_DIR . '/schema/*.schema.json' ) as $file ) {
+			$cases[ basename( $file ) ] = array( $file );
+		}
+		return $cases;
+	}
+
+	/**
+	 * Every object a schema describes is closed, as the README promises:
+	 * a schema with "properties" also has "additionalProperties": false.
+	 * Conditional subschemas (if / then / else) only add constraints to
+	 * an object defined elsewhere, so they are skipped.
+	 *
+	 * @dataProvider schema_file_provider
+	 *
+	 * @param string $file Absolute path of the schema file.
+	 */
+	public function test_every_object_schema_is_closed( $file ) {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local fixture; WordPress is not loaded.
+		$schema = json_decode( file_get_contents( $file ), true, 512, JSON_THROW_ON_ERROR );
+		$open   = array();
+		$closed = 0;
+
+		$walk = static function ( $node, $path ) use ( &$walk, &$open, &$closed ) {
+			if ( ! is_array( $node ) ) {
+				return;
+			}
+			if ( isset( $node['properties'] ) && is_array( $node['properties'] ) ) {
+				if ( isset( $node['additionalProperties'] ) && false === $node['additionalProperties'] ) {
+					++$closed;
+				} else {
+					$open[] = $path;
+				}
+			}
+			foreach ( $node as $key => $child ) {
+				if ( in_array( $key, array( 'if', 'then', 'else' ), true ) ) {
+					continue;
+				}
+				$walk( $child, $path . '/' . $key );
+			}
+		};
+		$walk( $schema, '' );
+
+		$this->assertSame( array(), $open, 'Objects without "additionalProperties": false' );
+		$this->assertGreaterThan( 0, $closed );
 	}
 
 	/**
@@ -98,77 +190,77 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 	public function invalid_provider() {
 		return array(
 			// Manifest.
-			'manifest: newer schema_version'          => array(
+			'manifest: newer schema_version'             => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					$d->schema_version = 2;
 				},
 			),
-			'manifest: missing stale'                 => array(
+			'manifest: missing stale'                    => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					unset( $d->stale );
 				},
 			),
-			'manifest: unknown top-level key'         => array(
+			'manifest: unknown top-level key'            => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					$d->site_count = 10;
 				},
 			),
-			'manifest: missing core file'             => array(
+			'manifest: missing core file'                => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					unset( $d->files->core );
 				},
 			),
-			'manifest: upper-case sha256'             => array(
+			'manifest: upper-case sha256'                => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					$d->files->plugin->sha256 = strtoupper( $d->files->plugin->sha256 );
 				},
 			),
-			'manifest: file with a directory'         => array(
+			'manifest: file with a directory'            => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					$d->files->plugin->file = '../vuln-plugins.json.gz';
 				},
 			),
-			'manifest: file that is not .json.gz'     => array(
+			'manifest: file that is not .json.gz'        => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					$d->files->theme->file = 'vuln-themes.json';
 				},
 			),
-			'manifest: generated_at not in UTC'       => array(
+			'manifest: generated_at not in UTC'          => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					$d->generated_at = '2026-10-20T12:00:00+09:00';
 				},
 			),
-			'manifest: no copyright holder'           => array(
+			'manifest: no copyright holder'              => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					$d->copyrights = new stdClass();
 				},
 			),
-			'manifest: license_url over http'         => array(
+			'manifest: license_url over http'            => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
 					$d->copyrights->defiant->license_url = 'http://www.wordfence.com/';
 				},
 			),
-			'manifest: eol version with a suffix'     => array(
+			'manifest: eol version with a suffix'        => array(
 				'manifest.json',
 				'manifest',
 				static function ( $d ) {
@@ -176,77 +268,77 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 				},
 			),
 			// Vulnerability files.
-			'feed: core file with a plugin slug'      => array(
+			'feed: core file with a plugin slug'         => array(
 				'vuln-core.json',
 				'vuln-file',
 				static function ( $d ) {
 					$d->vulnerabilities->{'sample-plugin'} = $d->vulnerabilities->wordpress;
 				},
 			),
-			'feed: slug with a slash'                 => array(
+			'feed: slug with a slash'                    => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					$d->vulnerabilities->{'sample/plugin'} = $d->vulnerabilities->{'sample-plugin'};
 				},
 			),
-			'feed: slug with no records'              => array(
+			'feed: slug with no records'                 => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					$d->vulnerabilities->{'sample-plugin'} = array();
 				},
 			),
-			'feed: record without reference'          => array(
+			'feed: record without reference'             => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					unset( $d->vulnerabilities->{'sample-plugin'}[0]->reference );
 				},
 			),
-			'feed: record with an extra key'          => array(
+			'feed: record with an extra key'             => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					$d->vulnerabilities->{'sample-plugin'}[0]->description = 'Not part of the reduced record.';
 				},
 			),
-			'feed: id that is not a UUID'             => array(
+			'feed: id that is not a UUID'                => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					$d->vulnerabilities->{'sample-plugin'}[0]->id = 'wf-1';
 				},
 			),
-			'feed: no affected range'                 => array(
+			'feed: no affected range'                    => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					$d->vulnerabilities->{'sample-plugin'}[0]->affected_versions = array();
 				},
 			),
-			'feed: range without to_inclusive'        => array(
+			'feed: range without to_inclusive'           => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					unset( $d->vulnerabilities->{'sample-plugin'}[0]->affected_versions[0]->to_inclusive );
 				},
 			),
-			'feed: unknown cvss rating'               => array(
+			'feed: unknown cvss rating'                  => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					$d->vulnerabilities->{'sample-plugin'}[0]->cvss->rating = 'Severe';
 				},
 			),
-			'feed: cvss score above 10'               => array(
+			'feed: cvss score above 10'                  => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
 					$d->vulnerabilities->{'sample-plugin'}[0]->cvss->score = 10.5;
 				},
 			),
-			'feed: reference over http'               => array(
+			'feed: reference over http'                  => array(
 				'vuln-plugins.json',
 				'vuln-file',
 				static function ( $d ) {
@@ -254,84 +346,119 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 				},
 			),
 			// Free security check request.
-			'request: administrator e-mail'           => array(
+			'request: administrator e-mail'              => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->admin_email = 'owner@example.jp';
 				},
 			),
-			'request: extra key on a software item'   => array(
+			'request: extra key on a software item'      => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->software[0]->path = '/var/www/html/wp-content/plugins/woocommerce';
 				},
 			),
-			'request: core in the software list'      => array(
+			'request: core in the software list'         => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->software[0]->type = 'core';
 				},
 			),
-			'request: setting value in a finding'     => array(
+			'request: setting value in a finding'        => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->local_findings[0]->value = 'DISALLOW_FILE_EDIT=false';
 				},
 			),
-			'request: unknown finding status'         => array(
+			'request: unknown finding status'            => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->local_findings[0]->status = 'ok';
 				},
 			),
-			'request: unknown check ID'               => array(
+			'request: unknown check ID'                  => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->local_findings[0]->check_id = 'X-01';
 				},
 			),
-			'request: revenue amount, not a band'     => array(
+			'request: revenue amount, not a band'        => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->revenue_band = '12000000';
 				},
 			),
-			'request: out-of-range order band'        => array(
+			'request: out-of-range order band'           => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->order_band = 'O5';
 				},
 			),
-			'request: missing consent_version'        => array(
+			'request: missing consent_version'           => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					unset( $d->consent_version );
 				},
 			),
-			'request: consent_version month 13'       => array(
+			'request: consent_version month 13'          => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->consent_version = '2026-13';
 				},
 			),
-			'request: site_url that is not http(s)'   => array(
+			'request: site_url that is not http(s)'      => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
 					$d->site_url = 'javascript:alert(1)';
 				},
 			),
-			'request: too many software items'        => array(
+			'request: control character in a version'    => array(
+				'scan-request.json',
+				'scan-request',
+				static function ( $d ) {
+					$d->software[0]->version = "10.6.2\n";
+				},
+			),
+			'request: Version header over 64 characters' => array(
+				'scan-request.json',
+				'scan-request',
+				static function ( $d ) {
+					$d->software[0]->version = str_repeat( '1', 65 );
+				},
+			),
+			'request: empty WordPress version'           => array(
+				'scan-request.json',
+				'scan-request',
+				static function ( $d ) {
+					$d->wp_ver = '';
+				},
+			),
+			'request: locale with a path'                => array(
+				'scan-request.json',
+				'scan-request',
+				static function ( $d ) {
+					$d->locale = 'ja/../../etc';
+				},
+			),
+			'request: too many findings'                 => array(
+				'scan-request.json',
+				'scan-request',
+				static function ( $d ) {
+					$d->local_findings = array_fill( 0, 101, $d->local_findings[0] );
+				},
+			),
+			'request: too many software items'           => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
@@ -339,70 +466,98 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 				},
 			),
 			// Report.
-			'report: V-01 without the Wordfence link' => array(
+			'report: V-01 without the Wordfence link'    => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					unset( $d->findings[0]->reference );
 				},
 			),
-			'report: V-01 without the software'       => array(
+			'report: V-01 without the software'          => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					unset( $d->findings[0]->software );
 				},
 			),
-			'report: admin check under vuln'          => array(
+			'report: vulnerability check under admin'    => array(
+				'report.json',
+				'report',
+				static function ( $d ) {
+					$d->findings[0]->requirement = 'admin';
+				},
+			),
+			'report: admin check under vuln'             => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					$d->findings[1]->requirement = 'vuln';
 				},
 			),
-			'report: unknown severity'                => array(
+			'report: data check under admin'             => array(
+				'report.json',
+				'report',
+				static function ( $d ) {
+					$d->findings[1]->check_id = 'D-04';
+				},
+			),
+			'report: malware check under data'           => array(
+				'report.json',
+				'report',
+				static function ( $d ) {
+					$d->findings[2]->requirement = 'data';
+				},
+			),
+			'report: unknown severity'                   => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					$d->findings[1]->severity = 'info';
 				},
 			),
-			'report: fix as one string'               => array(
+			'report: fix as one string'                  => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					$d->findings[2]->fix = $d->findings[2]->fix[0];
 				},
 			),
-			'report: HTML field on a finding'         => array(
+			'report: HTML field on a finding'            => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					$d->findings[2]->html = '<p>Fix it</p>';
 				},
 			),
-			'report: score above 100'                 => array(
+			'report: score above 100'                    => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					$d->score->data = 101;
 				},
 			),
-			'report: token without the prefix'        => array(
+			'report: negative score'                     => array(
+				'report.json',
+				'report',
+				static function ( $d ) {
+					$d->score->admin = -1;
+				},
+			),
+			'report: token without the prefix'           => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					$d->token = substr( $d->token, 4 );
 				},
 			),
-			'report: short token'                     => array(
+			'report: short token'                        => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
 					$d->token = 'scn_' . str_repeat( 'a', 31 );
 				},
 			),
-			'report: token with a trailing newline'   => array(
+			'report: token with a trailing newline'      => array(
 				'report.json',
 				'report',
 				static function ( $d ) {
