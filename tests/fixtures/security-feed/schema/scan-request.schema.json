@@ -17,6 +17,14 @@
         "consent_version"
     ],
     "additionalProperties": false,
+    "dependentRequired": {
+        "revenue_band": [
+            "order_band"
+        ],
+        "order_band": [
+            "revenue_band"
+        ]
+    },
     "properties": {
         "schema_version": {
             "$ref": "common.schema.json#/$defs/schema_version"
@@ -72,7 +80,7 @@
                         "description": "The Version header as written; empty when there is none or it is longer than 64 characters.",
                         "type": "string",
                         "maxLength": 64,
-                        "pattern": "^[^\\x00-\\x1f\\x7f]*$"
+                        "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]*$"
                     },
                     "active": {
                         "type": "boolean"
@@ -107,7 +115,7 @@
             }
         },
         "revenue_band": {
-            "description": "Optional, separate consent (off by default). Revenue over the last 12 months as a band code, never the amount.",
+            "description": "Optional, separate consent (off by default) that covers both bands: sent together with order_band or not at all. Revenue over the last 12 months as a band code, never the amount.",
             "enum": [
                 "B0",
                 "B1",
@@ -139,7 +147,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 64,
-            "pattern": "^[^\\x00-\\x1f\\x7f]+$"
+            "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+$"
         }
     }
 }

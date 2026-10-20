@@ -44,22 +44,95 @@
             }
         }
     },
-    "if": {
-        "properties": {
-            "type": {
-                "const": "core"
+    "allOf": [
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "plugin"
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "vulnerabilities": {
+                        "additionalProperties": {
+                            "items": {
+                                "properties": {
+                                    "software": {
+                                        "properties": {
+                                            "type": {
+                                                "const": "plugin"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        }
-    },
-    "then": {
-        "properties": {
-            "vulnerabilities": {
-                "propertyNames": {
-                    "const": "wordpress"
+        },
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "theme"
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "vulnerabilities": {
+                        "additionalProperties": {
+                            "items": {
+                                "properties": {
+                                    "software": {
+                                        "properties": {
+                                            "type": {
+                                                "const": "theme"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "core"
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "vulnerabilities": {
+                        "propertyNames": {
+                            "const": "wordpress"
+                        },
+                        "additionalProperties": {
+                            "items": {
+                                "properties": {
+                                    "software": {
+                                        "properties": {
+                                            "type": {
+                                                "const": "core"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-    },
+    ],
     "$defs": {
         "software_type": {
             "enum": [
