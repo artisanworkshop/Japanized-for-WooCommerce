@@ -37,7 +37,7 @@
                     "rating": "Medium"
                 },
                 "published": "2024-01-30T00:00:00Z",
-                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000201?source=api-prod"
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000201"
             },
             {
                 "id": "00000000-0000-4000-8000-000000000202",
@@ -64,7 +64,7 @@
                     "rating": "Medium"
                 },
                 "published": "2024-06-24T00:00:00Z",
-                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000202?source=api-prod"
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000202"
             }
         ]
     }

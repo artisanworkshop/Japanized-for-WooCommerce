@@ -69,10 +69,10 @@
                         "$ref": "common.schema.json#/$defs/slug"
                     },
                     "version": {
-                        "description": "The Version header; empty when the plugin or theme has none.",
+                        "description": "The Version header as written; empty when there is none or it is longer than 64 characters.",
                         "type": "string",
                         "maxLength": 64,
-                        "pattern": "^[0-9A-Za-z.+_-]*$"
+                        "pattern": "^[^\\x00-\\x1f\\x7f]*$"
                     },
                     "active": {
                         "type": "boolean"
@@ -135,10 +135,11 @@
     },
     "$defs": {
         "version": {
+            "description": "A version as the software reports it (PHP_VERSION may carry a distribution suffix).",
             "type": "string",
             "minLength": 1,
             "maxLength": 64,
-            "pattern": "^[0-9A-Za-z.+_-]+$"
+            "pattern": "^[^\\x00-\\x1f\\x7f]+$"
         }
     }
 }
