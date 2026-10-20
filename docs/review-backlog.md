@@ -117,3 +117,6 @@
 | 2026-10-20 | R1-L9 | Low | .github/workflows/deploy-on-pushing-a-new-tag-and-create-release-with-attached-zip.yml | ZIP 検査が SVN を書き換える「Remove PayPal gateway from SVN trunk」より後にある(検査で止まっても PayPal の削除は済んでいる。削除自体は意図どおりで冪等) | 未起票 |
 | 2026-10-20 | R1-L10 | Low | .github/workflows/artws-security-hub.yml | composer.lock を持たないのに定期実行が無く、opis / phpunit などの更新で壊れても次の PR まで気付けない | 未起票 |
 | 2026-10-20 | R1-L11 | Low | #260 への申し送り | クライアントが実際に作る送信データは、どちらのテストでも scan-request の Schema で検査されない(本体側で Schema の `properties` / `required` を JSON として読み、送信データのキー集合と比べればバリデータ不要) | #260 で対応 |
+| 2026-10-20 | R2-2 | Low | plugins/artws-security-hub/tests/Unit/test-contract-schemas.php | 構造テストは `properties` を持つノードしか見ないので、`{"type":"object"}` だけの開いたオブジェクトは素通りする。`type: object` なら `additionalProperties` が false かスキーマであることも確かめる | 未起票 |
+| 2026-10-20 | R2-3 | Low | tests/fixtures/security-feed/README.md / schema/scan-request.schema.json | 「64 文字」の単位(Schema はコードポイント、PHP の `strlen` はバイト)と、制御文字を含む Version ヘッダーの送り方が未定義。パターンが C1 制御文字(U+0080-009F)を通す。`mb_strlen()` 基準と「制御文字を含むものも空文字」、パターン `[^\x00-\x1f\x7f-\x9f]` で揃える | #260 で対応 |
+| 2026-10-20 | R2-4 | Low | tests/fixtures/security-feed/README.md | 「読む側は Schema を検査に使わず」は値の検査も不要と読める。クライアントは使う値(`file` にディレクトリが無い、`reference` が https、`sha256`、slug)を自分でも確かめる、と補う | #257 で対応 |
