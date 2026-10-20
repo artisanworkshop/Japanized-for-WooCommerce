@@ -158,6 +158,7 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 == Changelog ==
 
 = 2.9.18 - 2026-10-21 =
+* **Fixed** - A request that was running while Japanized for WooCommerce was being updated could stop with a fatal error ("Failed opening required … config-jp4wc-framework.php"), most visibly from Japanized for WooCommerce Pro's tracking and Yamato export features; the framework's strings are now part of the framework class file, so they can no longer go missing while the class is loaded (#266)
 * **Fixed** - In the Checkout block, a customer who came back from Paidy Checkout after Paidy declined the payment saw no message, because the notice was only added on the classic checkout; the Checkout block now shows it as an error notice, and the classic checkout no longer shows it twice (#248)
 * **Fixed** - The Paidy payment script was printed twice on the order-pay page and the Paidy settings were saved twice, because the Paidy webhook endpoint created its own copy of the Paidy gateway on every request; the endpoint now uses WooCommerce's gateway, answers a webhook with HTTP 503 while Paidy is not in the payment method list, and a capture, cancel, refund or thank-you page completion skipped for that reason is now logged as a warning (#244)
 * **Fixed** - Signed Paidy webhooks in sandbox mode were verified with the live secret key instead of the test secret key, so they could be rejected; the key is now chosen from the Paidy environment setting (#244)
