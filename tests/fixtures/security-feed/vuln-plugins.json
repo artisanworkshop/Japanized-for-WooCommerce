@@ -37,7 +37,7 @@
                     "rating": "High"
                 },
                 "published": "2026-09-30T00:00:00Z",
-                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000001?source=api-prod"
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000001"
             },
             {
                 "id": "00000000-0000-4000-8000-000000000002",
@@ -64,7 +64,7 @@
                     "rating": "Medium"
                 },
                 "published": "2026-10-01T12:30:00Z",
-                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000002?source=api-prod"
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000002"
             }
         ],
         "sample-multi-range": [
@@ -100,7 +100,7 @@
                     "rating": "Critical"
                 },
                 "published": "2026-08-15T09:00:00Z",
-                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000003?source=api-prod"
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000003"
             }
         ],
         "sample-plugin-unpatched": [
@@ -127,7 +127,7 @@
                     "rating": "High"
                 },
                 "published": null,
-                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000004?source=api-prod"
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000004"
             }
         ]
     }

@@ -22,7 +22,7 @@
                 "管理画面の「プラグイン」で Sample Plugin を 1.2.4 以上に更新してください。",
                 "更新できない場合は、プラグインを停止して削除してください。"
             ],
-            "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000001?source=api-prod",
+            "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000001",
             "software": {
                 "type": "plugin",
                 "slug": "sample-plugin",

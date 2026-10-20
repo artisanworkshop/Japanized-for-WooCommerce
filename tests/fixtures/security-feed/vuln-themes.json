@@ -34,7 +34,7 @@
                 "remediation": "Update to version 3.1.0, or a newer patched version",
                 "cvss": null,
                 "published": "2026-07-01T00:00:00Z",
-                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000101?source=api-prod"
+                "reference": "https://www.wordfence.com/threat-intel/vulnerabilities/id/00000000-0000-4000-8000-000000000101"
             }
         ]
     }

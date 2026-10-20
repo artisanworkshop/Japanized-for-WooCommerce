@@ -15,8 +15,10 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 
 ### 形式のバージョン
 - すべての JSON が `schema_version: 1` を持つ。読む側は 1 以外を受け付けない。
-- 書く側は Schema に無い項目を出さない（すべてのオブジェクトが `additionalProperties: false`）。項目を足すときは、先にこの Schema に足す（後方互換な追加なら `schema_version` は据え置き）。
-- 互換を壊す変更は `schema_version: 2` とし、フィードは `/feed/v2/` で並行配信する。配布済みの JP4WC は更新を強制できないので、`/feed/v1/` は使われなくなるまで配信し続ける。
+- 書く側は Schema に無い項目を出さない（すべてのオブジェクトが `additionalProperties: false`）。項目を足すときは、先にこの Schema に足す。
+- 読む側は Schema を検査に使わず、知らない項目を無視する。項目の追加は後方互換な変更とし、`schema_version` は据え置く。配布済みの JP4WC は更新を強制できないので、新しい項目が無くても動く作りにする。
+- enum に値を足すこと（`severity`・`requirement`・`files` の種類・`check_id` の接頭辞など）、項目の削除・改名・意味の変更は互換を壊す変更とする。それでも読む側は、知らない値を持つ要素を読み飛ばし、全体をエラーにしない。
+- 互換を壊す変更は `schema_version: 2` とし、新しい URL で並行運用する（フィードは `/feed/v2/`、REST は `artws-sec/v2`）。`/feed/v1/` と `artws-sec/v1` は、使う JP4WC が無くなるまで提供し続ける。
 
 ### フィード
 - 配置: `https://wc.artws.info/feed/v1/manifest.json`。脆弱性ファイルは manifest の `files.<type>.file` を同じディレクトリからの相対名として取得する（`file` はディレクトリを含まない名前に限る）。クライアントは基底 URL をフィルタで差し替えられるようにする（#257）。
@@ -29,15 +31,25 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 - `eol.<name>.min_supported` より古い PHP / WordPress / WooCommerce はサポート終了とみなす（`version_compare( 現在, min_supported, '<' )`。V-03）。値はサーバーの管理画面で設定する（サンプルの値は例）。
 
 ### 脆弱性レコード
-- 項目名は Wordfence Intelligence V3 の production フィードに合わせる。V3 の `affected_versions`（範囲文字列をキーにしたオブジェクト）は配列にする。V3 の `informational` が true のレコードはサーバーで除外する。
+- 項目名は Wordfence Intelligence V3 の production フィードに合わせる。違うのは2点: V3 の `affected_versions`（範囲文字列をキーにしたオブジェクト）を配列にすることと、V3 に無い `reference`（下記）を持つこと。
 - バージョン `v` が影響を受けるのは、`affected_versions` のどれか1つの範囲について次の両方が成り立つとき（V3 と同じ判定。比較は `version_compare()`）:
   - `from_version` が `*`、または `from_version < v`、または `from_inclusive` かつ `from_version == v`
   - `to_version` が `*`、または `v < to_version`、または `to_inclusive` かつ `v == to_version`
+- インストール済みのバージョンが空のソフトウェア（Version ヘッダーが無いもの）は照合しない。`version_compare( '', … )` は常に「古い」と判定するので、照合すると `from_version: "*"` の範囲で必ず「影響あり」になる。
+- slug は WordPress.org と Wordfence の slug で、インストール済みのものとはプラグインのディレクトリ名（単一ファイルのプラグインはファイル名から `.php` を除いたもの）、テーマのディレクトリ名で突き合わせる。
 - `reference` は wordfence.com のそのレコードのページ。データのライセンスがレコードへのリンクを求めるので、レコードを表示する所では必ずリンクする。`copyrights` と `attribution` は V3 の `copyrights` から作り、クライアントは画面に表示する（文言は S1 で実データから写す。サンプルの文言は仮）。
+
+### V3 からの変換（S1 のサーバー）
+- V3 の `informational` が true のレコードは除外する。1件のレコードが複数のソフトウェアに影響する場合は、`software[]` の要素ごとに1件ずつ、その slug の下に置く。
+- `published` は V3 の文字列（UTC）を `YYYY-MM-DDTHH:MM:SSZ` に直す。無いか解釈できなければ `null`。
+- `reference` は V3 の `references` から取らず、`id` から組み立てる（`https://www.wordfence.com/threat-intel/vulnerabilities/id/<id>`。`references` は空のことがある）。
+- 変換したレコードはレコード単位で Schema を検査し、合わないもの（バージョンに空白を含む、64 文字を超えるなど）は除外して件数を記録する。1件の不備でフィード全体を止めない。`stale` を立てるのは、取得や生成そのものに失敗して前回のファイルを配信し続けるときだけ。
+- `https://wc.artws.info/feed/` は WordPress 本体の RSS の URL でもある。ドキュメントルートに実ディレクトリ `feed/` を作ると、サーバーが `/feed/` を WordPress に渡さなくなりサイトの RSS が壊れるので、ファイルは別の場所に置き `/feed/v1/` だけを Alias（nginx なら location）で配信する。
 
 ### 送信データ（POST /scan）
 - 同意画面に一覧で示した項目だけを送る。Schema に無い項目（管理者メール、注文の実額、パス、設定値など）は送らない。サーバーは Schema に無い項目を保存しない。
 - `revenue_band` と `order_band` は別の同意（既定オフ）を得たときだけ含める。無いときはキーごと省く。
+- バージョンは各 Version ヘッダーの値をそのまま送る（制御文字は含められない）。64 文字を超えるものは空文字で送り、サーバーはそのソフトウェアを照合しない。
 - `consent_version` はサーバーが知っている版だけを受け付ける。
 
 ### レポート
