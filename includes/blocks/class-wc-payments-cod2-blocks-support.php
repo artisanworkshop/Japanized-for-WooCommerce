@@ -10,7 +10,7 @@ use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodTyp
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'AbstractPaymentMethodType' ) ) {
+if ( ! class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
 	return;
 }
 
