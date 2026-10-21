@@ -83,6 +83,7 @@ if ( ! class_exists( '\\ArtisanWorkshop\\PluginFramework\\v2_0_14\\JP4WC_Framewo
 		 * replaces the directory in between used to leave the class without its
 		 * config file and stop the request with a fatal error.
 		 *
+		 * @since 2.9.18
 		 * @return array
 		 */
 		private function get_text_config() {
