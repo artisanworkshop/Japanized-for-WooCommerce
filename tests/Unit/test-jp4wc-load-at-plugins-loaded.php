@@ -82,15 +82,8 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 	 * early on such a guard and never declares its class.
 	 */
 	public function test_class_exists_guards_use_fully_qualified_names() {
-		$root  = dirname( __DIR__, 2 );
-		$files = glob( $root . '/*.php' );
-		$tree  = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $root . '/includes', FilesystemIterator::SKIP_DOTS ) );
-		foreach ( $tree as $file ) {
-			if ( 'php' === $file->getExtension() ) {
-				$files[] = $file->getPathname();
-			}
-		}
-		$this->assertNotEmpty( $files );
+		$root  = realpath( dirname( __DIR__, 2 ) );
+		$files = array_merge( glob( $root . '/*.php' ), $this->php_files_in( $root . '/includes' ) );
 
 		$short_names = array();
 		foreach ( $files as $file ) {
@@ -99,6 +92,119 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 			}
 		}
 		$this->assertSame( array(), $short_names );
+	}
+
+	/**
+	 * A file under includes/ loads the class files of the classes it creates.
+	 *
+	 * During an update, the root files of the previous version can already be
+	 * running when this version's includes/ is in place, and then the previous
+	 * version's JP4WC::includes() loads the files of this version. A class file
+	 * that only this version's includes() loads is never loaded in that request,
+	 * and creating the class stops it with a fatal error. So a file loads what it
+	 * needs itself, outside any function, when it is loaded. Classes written
+	 * through a `use` alias, such as the framework, are not checked: the root
+	 * files of every version load the framework.
+	 */
+	public function test_included_files_load_the_classes_they_create() {
+		$root    = realpath( dirname( __DIR__, 2 ) );
+		$files   = $this->php_files_in( $root . '/includes' );
+		$missing = array();
+		foreach ( $files as $file ) {
+			$loaded = $this->files_loaded_at_top_level( $file );
+			foreach ( $this->created_classes( $file ) as $line => $class_name ) {
+				$declared_in = class_exists( $class_name, false ) ? ( new ReflectionClass( $class_name ) )->getFileName() : false;
+				if ( ! in_array( $declared_in, $files, true ) || $declared_in === $file || in_array( basename( $declared_in ), $loaded, true ) ) {
+					continue;
+				}
+				$missing[] = substr( $file, strlen( $root ) + 1 ) . ':' . $line . ' new ' . $class_name . ' (' . substr( $declared_in, strlen( $root ) + 1 ) . ')';
+			}
+		}
+		$this->assertSame( array(), $missing );
+	}
+
+	/**
+	 * PHP files under a directory.
+	 *
+	 * @param string $dir Directory.
+	 * @return string[] Real paths.
+	 */
+	private function php_files_in( $dir ) {
+		$files = array();
+		$tree  = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS ) );
+		foreach ( $tree as $file ) {
+			if ( 'php' === $file->getExtension() ) {
+				$files[] = $file->getRealPath();
+			}
+		}
+		$this->assertNotEmpty( $files );
+		return $files;
+	}
+
+	/**
+	 * Tokens of a PHP file without whitespace and comments.
+	 *
+	 * @param string $file Path of a PHP file.
+	 * @return array
+	 */
+	private function significant_tokens( $file ) {
+		return array_values(
+			array_filter(
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
+				token_get_all( file_get_contents( $file ) ),
+				static function ( $token ) {
+					return ! is_array( $token ) || ! in_array( $token[0], array( T_WHITESPACE, T_COMMENT, T_DOC_COMMENT ), true );
+				}
+			)
+		);
+	}
+
+	/**
+	 * Base names of the files a file requires or includes outside any braces.
+	 *
+	 * @param string $file Path of a PHP file.
+	 * @return string[]
+	 */
+	private function files_loaded_at_top_level( $file ) {
+		$tokens = $this->significant_tokens( $file );
+		$loaded = array();
+		$depth  = 0;
+		$count  = count( $tokens );
+		for ( $i = 0; $i < $count; $i++ ) {
+			$token = $tokens[ $i ];
+			if ( '{' === $token || ( is_array( $token ) && in_array( $token[0], array( T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES ), true ) ) ) {
+				++$depth;
+			} elseif ( '}' === $token ) {
+				--$depth;
+			}
+			if ( 0 !== $depth || ! is_array( $token ) || ! in_array( $token[0], array( T_REQUIRE, T_REQUIRE_ONCE, T_INCLUDE, T_INCLUDE_ONCE ), true ) ) {
+				continue;
+			}
+			for ( $j = $i + 1; $j < $count && ';' !== $tokens[ $j ]; $j++ ) {
+				if ( is_array( $tokens[ $j ] ) && T_CONSTANT_ENCAPSED_STRING === $tokens[ $j ][0] ) {
+					$loaded[] = basename( substr( $tokens[ $j ][1], 1, -1 ) );
+				}
+			}
+		}
+		return $loaded;
+	}
+
+	/**
+	 * Classes a file creates with `new` and an unqualified name.
+	 *
+	 * @param string $file Path of a PHP file.
+	 * @return array Line => class name.
+	 */
+	private function created_classes( $file ) {
+		$tokens  = $this->significant_tokens( $file );
+		$created = array();
+		$count   = count( $tokens );
+		for ( $i = 0; $i < $count - 1; $i++ ) {
+			if ( is_array( $tokens[ $i ] ) && T_NEW === $tokens[ $i ][0] && is_array( $tokens[ $i + 1 ] ) && T_STRING === $tokens[ $i + 1 ][0] ) {
+				$created[ $tokens[ $i ][2] ] = $tokens[ $i + 1 ][1];
+			}
+		}
+		return $created;
 	}
 
 	/**
@@ -128,15 +234,7 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 	 * @return array Line => guard, e.g. 12 => "class_exists( 'AbstractPaymentMethodType' )".
 	 */
 	private function short_imported_names_in_guards( $file ) {
-		$tokens = array_values(
-			array_filter(
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
-				token_get_all( file_get_contents( $file ) ),
-				static function ( $token ) {
-					return ! is_array( $token ) || ! in_array( $token[0], array( T_WHITESPACE, T_COMMENT, T_DOC_COMMENT ), true );
-				}
-			)
-		);
+		$tokens = $this->significant_tokens( $file );
 		$names  = array( T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED );
 		$guards = array( 'class_exists', 'interface_exists', 'trait_exists', 'enum_exists' );
 
