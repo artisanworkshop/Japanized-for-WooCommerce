@@ -75,5 +75,3 @@ if ( ! class_exists( 'JP4WC_Admin_PHP_Notice', false ) ) :
 	}
 
 endif;
-
-return new JP4WC_Admin_PHP_Notice();

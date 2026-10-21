@@ -114,7 +114,6 @@ class JP4WC_Admin_Settings {
 	 * Register REST API routes.
 	 */
 	public function register_rest_routes() {
-		require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-settings-api.php';
 		$controller = new JP4WC_Settings_API();
 		$controller->register_routes();
 	}
@@ -132,7 +131,7 @@ class JP4WC_Admin_Settings {
 		switch ( $screen->id ) {
 			case 'dashboard':
 			case 'dashboard-network':
-				include __DIR__ . '/class-jp4wc-admin-php-notice.php';
+				new JP4WC_Admin_PHP_Notice();
 				break;
 		}
 	}
