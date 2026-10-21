@@ -106,10 +106,11 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		/**
 		 * Include JP4WC classes.
 		 *
-		 * Every class file is loaded here, at plugins_loaded, and the hooks that run
-		 * later only create instances. A plugin update replaces the plugin directory
-		 * while requests are running, so a file required after plugins_loaded can be
-		 * missing by then and stop the request with a fatal error (#266, #268).
+		 * The class files are loaded here, at plugins_loaded, or by the files loaded
+		 * here, and the hooks that run later only create instances. A plugin update
+		 * replaces the plugin directory while requests are running, so a file required
+		 * after plugins_loaded can be missing by then and stop the request with a fatal
+		 * error (#266, #268).
 		 */
 		private function includes() {
 			// load framework.
@@ -124,8 +125,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
 			// Admin Setting Screen.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-settings.php';
-			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-settings-api.php';
-			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-php-notice.php';
 			// Admin product meta, created in on_plugins_loaded().
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
 
