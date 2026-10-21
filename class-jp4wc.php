@@ -275,7 +275,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					add_action(
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							$payment_method_registry->register( new WC_Payments_PostOfficeBank_Blocks_Support() );
+							if ( class_exists( 'WC_Payments_PostOfficeBank_Blocks_Support', false ) ) {
+								$payment_method_registry->register( new WC_Payments_PostOfficeBank_Blocks_Support() );
+							}
 						}
 					);
 				}
@@ -283,7 +285,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					add_action(
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							$payment_method_registry->register( new WC_Payments_BANK_JP_Blocks_Support() );
+							if ( class_exists( 'WC_Payments_BANK_JP_Blocks_Support', false ) ) {
+								$payment_method_registry->register( new WC_Payments_BANK_JP_Blocks_Support() );
+							}
 						}
 					);
 				}
@@ -291,7 +295,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					add_action(
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							$payment_method_registry->register( new WC_Payments_AtStore_Blocks_Support() );
+							if ( class_exists( 'WC_Payments_AtStore_Blocks_Support', false ) ) {
+								$payment_method_registry->register( new WC_Payments_AtStore_Blocks_Support() );
+							}
 						}
 					);
 				}
@@ -299,7 +305,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					add_action(
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							$payment_method_registry->register( new WC_Payments_Cod2_Blocks_Support() );
+							if ( class_exists( 'WC_Payments_Cod2_Blocks_Support', false ) ) {
+								$payment_method_registry->register( new WC_Payments_Cod2_Blocks_Support() );
+							}
 						}
 					);
 				}
