@@ -85,10 +85,8 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		 * @return void
 		 */
 		public function on_plugins_loaded() {
-			// Textdomain is loaded at init priority 1 (woocommerce-for-japan.php).
-			// Load admin product meta here (init priority 20) so __() calls in the
-			// framework config execute after the textdomain is already loaded.
-			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
+			// Admin product meta. Its file is loaded in includes().
+			new JP4WC_Admin_Product_Meta();
 			// Initialize admin settings.
 			// Must be initialized for both admin and frontend to register REST API routes.
 			new JP4WC_Admin_Settings();
@@ -107,6 +105,11 @@ if ( ! class_exists( 'JP4WC' ) ) :
 
 		/**
 		 * Include JP4WC classes.
+		 *
+		 * Every class file is loaded here, at plugins_loaded, and the hooks that run
+		 * later only create instances. A plugin update replaces the plugin directory
+		 * while requests are running, so a file required after plugins_loaded can be
+		 * missing by then and stop the request with a fatal error (#266, #268).
 		 */
 		private function includes() {
 			// load framework.
@@ -121,8 +124,10 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-install.php';
 			// Admin Setting Screen.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-settings.php';
-			// Note: class-jp4wc-admin-product-meta.php is loaded in on_plugins_loaded() (init priority 20)
-			// to ensure load_plugin_textdomain() has run before __() calls in the framework config.
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-settings-api.php';
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-php-notice.php';
+			// Admin product meta, created in on_plugins_loaded().
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-product-meta.php';
 
 			// Admin PR notice.
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-admin-notices.php';
@@ -137,6 +142,15 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			// Payment Gateway For COD subscriptions.
 			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-gateway-cod2.php';
 			require_once JP4WC_INCLUDES_PATH . 'gateways/cod/class-wc-addons-gateway-cod2.php';
+
+			// Block checkout support, created in jp4wc_blocks_support(). Each file
+			// returns early when WooCommerce Blocks is not available.
+			require_once JP4WC_INCLUDES_PATH . 'blocks/class-wc-payments-postofficebank-blocks-support.php';
+			require_once JP4WC_INCLUDES_PATH . 'blocks/class-wc-payments-bank-jp-blocks-support.php';
+			require_once JP4WC_INCLUDES_PATH . 'blocks/class-wc-payments-atstore-blocks-support.php';
+			require_once JP4WC_INCLUDES_PATH . 'blocks/class-wc-payments-cod2-blocks-support.php';
+			require_once JP4WC_INCLUDES_PATH . 'blocks/class-jp4wc-delivery-blocks-integration.php';
+			require_once JP4WC_INCLUDES_PATH . 'blocks/class-jp4wc-yomigana-blocks-integration.php';
 
 			// Address Setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-address-fields.php';
@@ -262,7 +276,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					add_action(
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							require_once 'includes/blocks/class-wc-payments-postofficebank-blocks-support.php';
 							$payment_method_registry->register( new WC_Payments_PostOfficeBank_Blocks_Support() );
 						}
 					);
@@ -271,7 +284,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					add_action(
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							require_once 'includes/blocks/class-wc-payments-bank-jp-blocks-support.php';
 							$payment_method_registry->register( new WC_Payments_BANK_JP_Blocks_Support() );
 						}
 					);
@@ -280,7 +292,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					add_action(
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							require_once 'includes/blocks/class-wc-payments-atstore-blocks-support.php';
 							$payment_method_registry->register( new WC_Payments_AtStore_Blocks_Support() );
 						}
 					);
@@ -289,7 +300,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					add_action(
 						'woocommerce_blocks_payment_method_type_registration',
 						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							require_once 'includes/blocks/class-wc-payments-cod2-blocks-support.php';
 							$payment_method_registry->register( new WC_Payments_Cod2_Blocks_Support() );
 						}
 					);
@@ -308,7 +318,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					}
 					$jp4wc_delivery_init_done = true;
 
-					require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
 					if ( ! class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
 						return;
 					}
@@ -327,12 +336,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					// Reuse the same instance created in woocommerce_init hook.
 					if ( isset( $jp4wc_delivery_integration ) && $jp4wc_delivery_integration instanceof JP4WC_Delivery_Blocks_Integration ) {
 						$integration_registry->register( $jp4wc_delivery_integration );
-					} else {
+					} elseif ( class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
 						// Fallback: create new instance if somehow the global wasn't set.
-						require_once 'includes/blocks/class-jp4wc-delivery-blocks-integration.php';
-						if ( class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
-							$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
-						}
+						$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
 					}
 				}
 			);
@@ -349,7 +355,6 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					}
 					$jp4wc_yomigana_init_done = true;
 
-					require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
 					if ( ! class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
 						return;
 					}
@@ -368,12 +373,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 					// Reuse the same instance created in woocommerce_init hook.
 					if ( isset( $jp4wc_yomigana_integration ) && $jp4wc_yomigana_integration instanceof JP4WC_Yomigana_Blocks_Integration ) {
 						$integration_registry->register( $jp4wc_yomigana_integration );
-					} else {
+					} elseif ( class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
 						// Fallback: create new instance if somehow the global wasn't set.
-						require_once 'includes/blocks/class-jp4wc-yomigana-blocks-integration.php';
-						if ( class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
-							$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
-						}
+						$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
 					}
 				}
 			);

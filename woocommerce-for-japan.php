@@ -156,7 +156,6 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 			add_action(
 				'woocommerce_blocks_payment_method_type_registration',
 				function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-					require_once 'includes/gateways/paidy/class-wc-payments-paidy-blocks-support.php';
 					$payment_method_registry->register( new WC_Payments_Paidy_Blocks_Support() );
 				}
 			);

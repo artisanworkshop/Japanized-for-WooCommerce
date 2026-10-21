@@ -111,5 +111,20 @@ function _init_jp4wc_plugin() {
 
 tests_add_filter( 'plugins_loaded', '_init_jp4wc_plugin', 100 );
 
+/**
+ * Record the files and classes loaded by the end of plugins_loaded.
+ *
+ * A plugin update can remove the plugin directory after plugins_loaded, so the
+ * plugin must have loaded every class file by then (#268).
+ */
+function _record_jp4wc_plugins_loaded_state() {
+	$GLOBALS['jp4wc_tests_plugins_loaded_state'] = array(
+		'files'   => get_included_files(),
+		'classes' => get_declared_classes(),
+	);
+}
+
+tests_add_filter( 'plugins_loaded', '_record_jp4wc_plugins_loaded_state', PHP_INT_MAX );
+
 // Start up the WP testing environment.
 require "{$_tests_dir}/includes/bootstrap.php";

@@ -115,6 +115,13 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 				require_once __DIR__ . '/includes/gateways/paidy/class-wc-paidy-apply-admin-dashboard.php';
 				new WC_Paidy_Apply_Admin_Dashboard();
 			}
+
+			// Block checkout support, registered in wc_paidy_plugin() when WooCommerce registers
+			// payment methods at init. Loaded here because a plugin update can remove the plugin
+			// directory by then (#268).
+			if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+				require_once __DIR__ . '/includes/gateways/paidy/class-wc-payments-paidy-blocks-support.php';
+			}
 		}
 	}
 endif;

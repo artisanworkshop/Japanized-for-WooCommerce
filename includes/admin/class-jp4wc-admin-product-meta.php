@@ -181,5 +181,3 @@ class JP4WC_Admin_Product_Meta {
 		return apply_filters( 'wcs_admin_is_subscription_product_save_request', $is_subscription_product_save_request, $post_id, $product_types );
 	}
 }
-
-new JP4WC_Admin_Product_Meta();
