@@ -76,4 +76,22 @@ class JP4WC_Framework_Text_Config_Test extends WP_UnitTestCase {
 
 		$this->assertSame( 'Custom x<strong>help</strong>', $framework->text_array['support_notice_01'] );
 	}
+
+	/**
+	 * The old strings file stays for the framework class of 2.9.17 and earlier.
+	 *
+	 * That class requires the file at init. A request that loaded it before an
+	 * update to this version still runs it after the update, so removing the
+	 * file brings issue #266 back for that update. Delete this test together
+	 * with the file.
+	 */
+	public function test_transitional_config_file_is_kept() {
+		$config_file = dirname( $this->class_file ) . '/config-jp4wc-framework.php';
+		$this->assertFileExists( $config_file );
+
+		$config = require $config_file;
+
+		$this->assertSame( 'Need support?', $config['support_notice_01'] );
+		$this->assertCount( 19, $config );
+	}
 }
