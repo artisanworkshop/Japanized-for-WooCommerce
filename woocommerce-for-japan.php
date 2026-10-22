@@ -29,6 +29,35 @@ define( 'JP4WC_VERSION', '2.9.19' );
 
 require_once __DIR__ . '/class-jp4wc.php';
 
+// PHP security notice shared with other Artisan Workshop plugins. Shown without WooCommerce too.
+require_once __DIR__ . '/includes/artws-php-security-notice/register.php';
+artws_php_security_notice_register( '1.0.0', __DIR__ . '/includes/artws-php-security-notice/class-notice.php', 'jp4wc_php_security_notice_strings' );
+
+/**
+ * Strings of the PHP security notice, translated with this plugin's text domain.
+ *
+ * The shared notice calls this when it displays, after init.
+ *
+ * @since 2.9.20
+ * @return array
+ */
+function jp4wc_php_security_notice_strings() {
+	return array(
+		'title'          => __( 'Update PHP now: critical security vulnerabilities', 'woocommerce-for-japan' ),
+		/* translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs */
+		'vulnerable'     => __( 'The PHP version of this site (%1$s) has critical vulnerabilities (%3$s) that let an attacker run code on the server with a single request. Update PHP to %2$s or later right away.', 'woocommerce-for-japan' ),
+		'support_ending' => __( 'Security support for PHP 8.2 ends at the end of 2026, so we recommend updating to PHP 8.3 or later.', 'woocommerce-for-japan' ),
+		'vendor_patch'   => __( 'Your hosting company may have applied the fix without changing the PHP version number. Please check with your hosting company.', 'woocommerce-for-japan' ),
+		/* translators: 1: PHP version of this site, 2: vulnerability IDs */
+		'unsupported'    => __( 'The PHP version of this site (%1$s) has critical vulnerabilities (%2$s). Official support for this PHP version has ended, and no fixed version has been released for it. Some hosting companies apply their own security patches, but update to PHP 8.3 or later, which is supported longer, as soon as possible.', 'woocommerce-for-japan' ),
+		/* translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs */
+		'prerelease'     => __( 'This site runs a pre-release of PHP (%1$s) that has critical vulnerabilities (%3$s). Update it to %2$s or later.', 'woocommerce-for-japan' ),
+		'learn_more'     => __( 'Learn more', 'woocommerce-for-japan' ),
+		'dismiss'        => __( 'Don\'t show again', 'woocommerce-for-japan' ),
+		'close'          => __( 'Close', 'woocommerce-for-japan' ),
+	);
+}
+
 // Register activation hook.
 register_activation_hook( __FILE__, 'jp4wc_activation_redirect' );
 // deactivation.

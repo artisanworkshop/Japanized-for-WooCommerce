@@ -32,6 +32,7 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 			'pay at store block, init 5'     => array( 'includes/blocks/class-wc-payments-atstore-blocks-support.php', 'WC_Payments_AtStore_Blocks_Support' ),
 			'COD block, init 5'              => array( 'includes/blocks/class-wc-payments-cod2-blocks-support.php', 'WC_Payments_Cod2_Blocks_Support' ),
 			'Paidy block, init 5'            => array( 'includes/gateways/paidy/class-wc-payments-paidy-blocks-support.php', 'WC_Payments_Paidy_Blocks_Support' ),
+			'PHP security notice, admin'     => array( 'includes/artws-php-security-notice/class-notice.php', 'ArtisanWorkshop\PhpSecurityNotice\Notice' ),
 		);
 	}
 
@@ -67,6 +68,11 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 			'JP4WC_Admin_Settings::register_rest_routes' => new ReflectionMethod( 'JP4WC_Admin_Settings', 'register_rest_routes' ),
 			'JP4WC_Admin_Settings::conditional_includes' => new ReflectionMethod( 'JP4WC_Admin_Settings', 'conditional_includes' ),
 			'wc_paidy_plugin'                            => new ReflectionFunction( 'wc_paidy_plugin' ),
+			'jp4wc_php_security_notice_strings'          => new ReflectionFunction( 'jp4wc_php_security_notice_strings' ),
+			'Notice::admin_init'                         => new ReflectionMethod( 'ArtisanWorkshop\PhpSecurityNotice\Notice', 'admin_init' ),
+			'Notice::enqueue'                            => new ReflectionMethod( 'ArtisanWorkshop\PhpSecurityNotice\Notice', 'enqueue' ),
+			'Notice::render'                             => new ReflectionMethod( 'ArtisanWorkshop\PhpSecurityNotice\Notice', 'render' ),
+			'Notice::ajax_dismiss'                       => new ReflectionMethod( 'ArtisanWorkshop\PhpSecurityNotice\Notice', 'ajax_dismiss' ),
 		);
 
 		foreach ( $callbacks as $name => $callback ) {
