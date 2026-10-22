@@ -73,6 +73,11 @@ class Artws_Sec_Feed_Updater {
 	const ACCEPT_DROP_OPTION = 'artws_sec_feed_accept_drop';
 
 	/**
+	 * Set on deactivation (not autoloaded): a run still in progress then publishes its files as stale.
+	 */
+	const DEACTIVATED_OPTION = 'artws_sec_feed_deactivated';
+
+	/**
 	 * Row in the options table that only one run at a time can hold.
 	 */
 	const LOCK_OPTION = 'artws_sec_feed_lock';
@@ -158,10 +163,21 @@ class Artws_Sec_Feed_Updater {
 	}
 
 	/**
+	 * Activation: schedules the events and lets runs publish fresh files again.
+	 */
+	public static function activate() {
+		delete_option( self::DEACTIVATED_OPTION );
+		self::schedule_events();
+	}
+
+	/**
 	 * Deactivation: removes the cron events and marks the feed stale.
 	 *
 	 * The files stay where the web server serves them, but nothing will
-	 * update them any more, not even the watchdog.
+	 * update them any more, not even the watchdog. The feed is marked stale
+	 * even when the lock is held: by a run still in progress, which sees the
+	 * flag and publishes stale files too, or by a run that died, which will
+	 * never write again.
 	 */
 	public static function deactivate() {
 		foreach ( array( self::UPDATE_HOOK, self::RETRY_HOOK, self::WATCHDOG_HOOK, self::REPUBLISH_HOOK ) as $hook ) {
@@ -169,13 +185,15 @@ class Artws_Sec_Feed_Updater {
 		}
 
 		$now = time();
-		if ( ! self::acquire_lock( $now ) ) {
-			return;
-		}
+		update_option( self::DEACTIVATED_OPTION, $now, false );
+
+		$locked = self::acquire_lock( $now );
 		try {
 			self::record_status( $now, 'stale', self::mark_stale( 'The plugin was deactivated, so the feed is no longer updated.' ), array() );
 		} finally {
-			self::release_lock();
+			if ( $locked ) {
+				self::release_lock();
+			}
 		}
 	}
 
@@ -348,7 +366,8 @@ class Artws_Sec_Feed_Updater {
 			$state = array(
 				'version'      => gmdate( 'Ymd.His', $now ),
 				'generated_at' => $generated_at,
-				'stale'        => false,
+				// Deactivated while this run was in progress: nothing will update these files.
+				'stale'        => false !== self::fresh_option( self::DEACTIVATED_OPTION ),
 				'files'        => $files,
 				'copyrights'   => $result['copyrights'],
 				'attribution'  => self::ATTRIBUTION,
@@ -524,7 +543,10 @@ class Artws_Sec_Feed_Updater {
 	}
 
 	/**
-	 * Marks the published feed stale and rewrites its manifest. Call it while holding the lock.
+	 * Marks the published feed stale and rewrites its manifest.
+	 *
+	 * Call it while holding the lock; deactivate() is the only caller that
+	 * may not have it.
 	 *
 	 * The state is saved as stale only once the manifest says so, so that the
 	 * watchdog tries again when the manifest could not be written. Before the
@@ -555,13 +577,26 @@ class Artws_Sec_Feed_Updater {
 	 * @return array|null
 	 */
 	private static function fresh_state() {
-		wp_cache_delete( self::STATE_OPTION, 'options' );
+		self::fresh_option( self::STATE_OPTION );
+		return self::get_state();
+	}
+
+	/**
+	 * Reads a non-autoloaded option from the database, not from the options cache.
+	 *
+	 * Another process may have changed it since this one cached it.
+	 *
+	 * @param string $name Option name.
+	 * @return mixed The value, or false when the option does not exist.
+	 */
+	private static function fresh_option( $name ) {
+		wp_cache_delete( $name, 'options' );
 		$notoptions = wp_cache_get( 'notoptions', 'options' );
-		if ( is_array( $notoptions ) && isset( $notoptions[ self::STATE_OPTION ] ) ) {
-			unset( $notoptions[ self::STATE_OPTION ] );
+		if ( is_array( $notoptions ) && isset( $notoptions[ $name ] ) ) {
+			unset( $notoptions[ $name ] );
 			wp_cache_set( 'notoptions', $notoptions, 'options' );
 		}
-		return self::get_state();
+		return get_option( $name );
 	}
 
 	/**

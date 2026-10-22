@@ -43,7 +43,7 @@ WP-Cron の日次イベント `artws_sec_feed_update` が Wordfence Intelligence
 - 取得・読み込み・書き込みの失敗（タイムアウト・5xx など）は、1 時間後に再試行する（`artws_sec_feed_retry`。日次・手動の実行ごとに 3 回まで）。上の表の条件による失敗はデータそのものの問題なので再試行しない
 - Wordfence 側の正当な整理で件数が減ったときは、管理画面の「Allow fewer records on the next update」で次の1回だけ件数減少の検査を外す（成功した実行で消える）
 - メモリ不足・時間切れの fatal では失敗処理が走らないので、毎時の `artws_sec_feed_watchdog` が「最後の成功から 48 時間超」（`artws_sec_feed_stale_after`）で stale にする。fatal で残った一時ファイル（システムの一時ディレクトリの `artws-sec-wordfence-*` とフィードのディレクトリの `.*.tmp`）は次の実行が消す
-- プラグインを無効化すると、cron を外して manifest を stale にする（ファイルは配信され続けるが、もう更新されない）
+- プラグインを無効化すると、cron を外して manifest を stale にする（ファイルは配信され続けるが、もう更新されない）。取り込みの実行中に無効化しても、その実行はフラグ（`artws_sec_feed_deactivated`）を見て stale で公開する。有効化でフラグを消す
 - 同時実行は options テーブルの1行（`INSERT IGNORE`）で防ぐ。2 時間たったロックは、死んだ実行の残りとして引き継ぐ。公開した状態はロックの中で、options のキャッシュではなく DB から読む
 - manifest の `version` は成功した生成ごとに変わる（`YYYYMMDD.HHMMSS`）。`generated_at` は最後に成功した生成の時刻で、stale にしたときや EOL を変えたときには変わらない
 

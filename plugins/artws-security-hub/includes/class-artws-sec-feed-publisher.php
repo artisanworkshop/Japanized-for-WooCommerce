@@ -161,7 +161,7 @@ class Artws_Sec_Feed_Publisher {
 	 * Builds the manifest from the last published state.
 	 *
 	 * @param array $state Option Artws_Sec_Feed_Updater::STATE_OPTION.
-	 * @param array $eol   Oldest supported versions: php, WordPress, woocommerce.
+	 * @param array $eol   Oldest supported versions, keyed like Artws_Sec_Feed_Updater::DEFAULT_EOL.
 	 * @return array
 	 */
 	public static function render_manifest( array $state, array $eol ) {
