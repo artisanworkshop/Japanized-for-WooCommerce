@@ -124,6 +124,38 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Payment method registrations check that the block support class is declared.
+	 *
+	 * During an update or a rollback, the root files and the class files they load
+	 * can be of different versions, and then the class may not be declared: a block
+	 * support file of an earlier version returns early on a short-name guard, and
+	 * an earlier class-wc-paidy.php does not load the Paidy one. Creating the class
+	 * would stop the request when WooCommerce registers payment methods at init, so
+	 * that request skips the registration instead.
+	 */
+	public function test_payment_registrations_check_the_class_is_declared() {
+		$root       = realpath( dirname( __DIR__, 2 ) );
+		$registered = array();
+		$unguarded  = array();
+		foreach ( array( 'class-jp4wc.php', 'woocommerce-for-japan.php' ) as $file ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
+			$source = file_get_contents( $root . '/' . $file );
+			preg_match_all( '/\$payment_method_registry->register\(\s*new\s+(\w+)\(\)\s*\);/', $source, $matches, PREG_OFFSET_CAPTURE );
+			foreach ( $matches[0] as $index => $match ) {
+				$class_name   = $matches[1][ $index ][0];
+				$registered[] = $class_name;
+				$guard        = '/if\s*\(\s*class_exists\(\s*\'' . $class_name . '\',\s*false\s*\)\s*\)\s*\{\s*$/';
+				if ( ! preg_match( $guard, substr( $source, 0, $match[1] ) ) ) {
+					$unguarded[] = $file . ' ' . $class_name;
+				}
+			}
+		}
+		$this->assertContains( 'WC_Payments_Paidy_Blocks_Support', $registered );
+		$this->assertCount( 5, $registered );
+		$this->assertSame( array(), $unguarded );
+	}
+
+	/**
 	 * PHP files under a directory.
 	 *
 	 * @param string $dir Directory.
