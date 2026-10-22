@@ -286,22 +286,24 @@ class JP4WC_Security_Feed {
 	/**
 	 * Returns what the last sync stored.
 	 *
-	 * @return array version, generated_at, stale, files (type => sha256, count),
-	 *               copyrights, attribution, synced_at, last_attempt and last_error.
+	 * @return array version, generated_at, stale, files (type => sha256, count,
+	 *               json_sha256), copyrights, attribution, synced_at, last_attempt,
+	 *               last_error and failing_since (when the syncs began to fail, or 0).
 	 */
 	public static function get_state() {
 		$state = get_option( self::STATE_OPTION, array() );
 		return array_merge(
 			array(
-				'version'      => '',
-				'generated_at' => '',
-				'stale'        => false,
-				'files'        => array(),
-				'copyrights'   => array(),
-				'attribution'  => '',
-				'synced_at'    => 0,
-				'last_attempt' => 0,
-				'last_error'   => '',
+				'version'       => '',
+				'generated_at'  => '',
+				'stale'         => false,
+				'files'         => array(),
+				'copyrights'    => array(),
+				'attribution'   => '',
+				'synced_at'     => 0,
+				'last_attempt'  => 0,
+				'last_error'    => '',
+				'failing_since' => 0,
 			),
 			is_array( $state ) ? $state : array()
 		);
@@ -336,15 +338,39 @@ class JP4WC_Security_Feed {
 		if ( false === $generated ) {
 			return true;
 		}
+		return time() - $generated > self::stale_after();
+	}
 
+	/**
+	 * Whether the check has had no data for longer than STALE_AFTER because
+	 * every sync failed (outbound requests blocked, the feed unreachable).
+	 *
+	 * Once data was stored, its age shows the same through is_stale().
+	 *
+	 * @return bool
+	 */
+	public static function is_unavailable() {
+		$state = self::get_state();
+		if ( is_array( $state['files'] ) && array() !== $state['files'] ) {
+			return false;
+		}
+		$failing_since = (int) $state['failing_since'];
+		return $failing_since > 0 && time() - $failing_since > self::stale_after();
+	}
+
+	/**
+	 * Returns how old data may be before it is shown as out of date.
+	 *
+	 * @return int Seconds.
+	 */
+	private static function stale_after() {
 		/**
 		 * Filters how old the vulnerability data may be before it is shown as out of date.
 		 *
 		 * @since 3.0.0
 		 * @param int $seconds Age in seconds. Default 3 days.
 		 */
-		$stale_after = (int) apply_filters( 'jp4wc_security_feed_stale_after', self::STALE_AFTER );
-		return time() - $generated > $stale_after;
+		return (int) apply_filters( 'jp4wc_security_feed_stale_after', self::STALE_AFTER );
 	}
 
 	/**
@@ -367,6 +393,9 @@ class JP4WC_Security_Feed {
 		$result = self::update_files( $state );
 		if ( is_wp_error( $result ) ) {
 			$state['last_error'] = $result->get_error_message();
+			if ( empty( $state['failing_since'] ) ) {
+				$state['failing_since'] = $state['last_attempt'];
+			}
 		} else {
 			$state = $result;
 		}
@@ -514,14 +543,15 @@ class JP4WC_Security_Feed {
 		return array_merge(
 			$state,
 			array(
-				'version'      => $manifest['version'],
-				'generated_at' => $manifest['generated_at'],
-				'stale'        => $manifest['stale'],
-				'files'        => $files,
-				'copyrights'   => $manifest['copyrights'],
-				'attribution'  => $manifest['attribution'],
-				'synced_at'    => time(),
-				'last_error'   => '',
+				'version'       => $manifest['version'],
+				'generated_at'  => $manifest['generated_at'],
+				'stale'         => $manifest['stale'],
+				'files'         => $files,
+				'copyrights'    => $manifest['copyrights'],
+				'attribution'   => $manifest['attribution'],
+				'synced_at'     => time(),
+				'last_error'    => '',
+				'failing_since' => 0,
 			)
 		);
 	}

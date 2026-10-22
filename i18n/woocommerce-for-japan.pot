@@ -2980,6 +2980,12 @@ msgid_plural "%d known vulnerabilities were found in the software installed on t
 msgstr[0] ""
 msgstr[1] ""
 
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: includes/admin/class-jp4wc-security-notice.php:192
+#, php-format
+msgid "The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn the vulnerability check off in the JP4WC settings."
+msgstr ""
+
 #: includes/admin/class-jp4wc-security-notice.php:198
 msgid "Update the affected plugins, themes or WordPress to a fixed version, or remove the ones that have no fix."
 msgstr ""

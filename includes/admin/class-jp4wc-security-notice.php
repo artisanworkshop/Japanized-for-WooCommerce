@@ -51,7 +51,8 @@ class JP4WC_Security_Notice {
 	/**
 	 * Returns what the notice shows to the current user.
 	 *
-	 * @return array|null Null when no notice is shown. Otherwise findings, stale and fingerprint.
+	 * @return array|null Null when no notice is shown. Otherwise findings (null
+	 *                    when no data could be downloaded), stale and fingerprint.
 	 */
 	public static function get_view() {
 		if ( ! current_user_can( 'manage_woocommerce' ) || ! JP4WC_Security_Feed::is_enabled() ) {
@@ -59,14 +60,20 @@ class JP4WC_Security_Notice {
 		}
 		$findings = JP4WC_Security_Feed::get_findings();
 		if ( null === $findings ) {
-			return null;
-		}
-		$stale = JP4WC_Security_Feed::is_stale( $findings );
-		if ( array() === $findings['items'] && ! $stale ) {
-			return null;
+			// No data yet: say so once the syncs have failed for days, or the check would stay silent.
+			if ( ! JP4WC_Security_Feed::is_unavailable() ) {
+				return null;
+			}
+			$fingerprint = sha1( 'unavailable' );
+			$stale       = false;
+		} else {
+			$stale = JP4WC_Security_Feed::is_stale( $findings );
+			if ( array() === $findings['items'] && ! $stale ) {
+				return null;
+			}
+			$fingerprint = self::fingerprint( $findings['items'], $stale );
 		}
 
-		$fingerprint = self::fingerprint( $findings['items'], $stale );
 		if ( get_user_meta( get_current_user_id(), self::DISMISSED_META, true ) === $fingerprint ) {
 			return null;
 		}
@@ -167,7 +174,7 @@ JS;
 			return;
 		}
 		$findings = $view['findings'];
-		$severe   = JP4WC_Security_Scanner::rating_rank( $findings['max_severity'] ) >= JP4WC_Security_Scanner::rating_rank( 'High' );
+		$severe   = null !== $findings && JP4WC_Security_Scanner::rating_rank( $findings['max_severity'] ) >= JP4WC_Security_Scanner::rating_rank( 'High' );
 
 		printf(
 			'<div class="notice %1$s is-dismissible jp4wc-security-notice" data-action="%2$s" data-nonce="%3$s" data-fingerprint="%4$s">',
@@ -178,6 +185,16 @@ JS;
 		);
 		echo '<p><strong>' . esc_html__( 'Japanized for WooCommerce security check', 'woocommerce-for-japan' ) . '</strong></p>';
 
+		if ( null === $findings ) {
+			echo '<p>' . esc_html(
+				sprintf(
+					/* translators: %s: host name of the vulnerability feed, e.g. wc.artws.info */
+					__( 'The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn the vulnerability check off in the JP4WC settings.', 'woocommerce-for-japan' ),
+					(string) wp_parse_url( JP4WC_Security_Feed::base_url(), PHP_URL_HOST )
+				)
+			) . '</p></div>';
+			return;
+		}
 		if ( array() !== $findings['items'] ) {
 			self::render_items( $findings );
 		}

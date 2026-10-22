@@ -738,6 +738,59 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Failing syncs record when they began to fail, and a successful one clears it (G2-1).
+	 */
+	public function test_failing_since_is_kept_until_a_sync_succeeds() {
+		$this->responses['manifest.json']['response']['code'] = 503;
+
+		JP4WC_Security_Feed::sync();
+		$first = JP4WC_Security_Feed::get_state()['failing_since'];
+		$this->assertGreaterThan( 0, $first );
+
+		$state                  = JP4WC_Security_Feed::get_state();
+		$state['failing_since'] = $first - DAY_IN_SECONDS;
+		update_option( JP4WC_Security_Feed::STATE_OPTION, $state, false );
+		JP4WC_Security_Feed::sync();
+		$this->assertSame( $first - DAY_IN_SECONDS, JP4WC_Security_Feed::get_state()['failing_since'], 'A later failure keeps the first one.' );
+
+		$this->responses['manifest.json']['response']['code'] = 200;
+		JP4WC_Security_Feed::sync();
+		$this->assertSame( 0, JP4WC_Security_Feed::get_state()['failing_since'] );
+	}
+
+	/**
+	 * Without data, the check counts as unavailable once the syncs have failed for longer than the stale age (G2-1).
+	 */
+	public function test_no_data_for_days_is_unavailable() {
+		$this->assertFalse( JP4WC_Security_Feed::is_unavailable(), 'Nothing tried yet.' );
+
+		update_option( JP4WC_Security_Feed::STATE_OPTION, array( 'failing_since' => time() - DAY_IN_SECONDS ), false );
+		$this->assertFalse( JP4WC_Security_Feed::is_unavailable() );
+
+		update_option( JP4WC_Security_Feed::STATE_OPTION, array( 'failing_since' => time() - 4 * DAY_IN_SECONDS ), false );
+		$this->assertTrue( JP4WC_Security_Feed::is_unavailable() );
+
+		$this->sync_successfully();
+		$state                  = JP4WC_Security_Feed::get_state();
+		$state['failing_since'] = time() - 4 * DAY_IN_SECONDS;
+		update_option( JP4WC_Security_Feed::STATE_OPTION, $state, false );
+		$this->assertFalse( JP4WC_Security_Feed::is_unavailable(), 'With data, its age tells instead (is_stale).' );
+	}
+
+	/**
+	 * Deactivating the plugin removes its events; activation schedules them again (G2-6).
+	 */
+	public function test_deactivation_clears_the_events() {
+		wp_schedule_single_event( time(), JP4WC_Security_Feed::RESCAN_HOOK );
+		$this->assertNotFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
+
+		jp4wc_on_deactivation();
+
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RESCAN_HOOK ) );
+	}
+
+	/**
 	 * A failed sync still matches the stored data against the software installed now.
 	 */
 	public function test_failed_sync_still_matches_again() {

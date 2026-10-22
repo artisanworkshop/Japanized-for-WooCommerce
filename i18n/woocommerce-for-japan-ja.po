@@ -3740,6 +3740,18 @@ msgstr[0] ""
 "このサイトにインストールされているソフトウェアに、既知の脆弱性が %d 件見つか"
 "りました。"
 
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: includes/admin/class-jp4wc-security-notice.php:192
+#, php-format
+msgid ""
+"The vulnerability data could not be downloaded, so the installed plugins, "
+"themes and WordPress are not being checked. Make sure this server can "
+"connect to %s, or turn the vulnerability check off in the JP4WC settings."
+msgstr ""
+"脆弱性データを取得できないため、インストール済みのプラグイン・テーマ・"
+"WordPress を照合できていません。このサーバーから %s に接続できるか確かめる"
+"か、JP4WC の設定で脆弱性チェックを無効にしてください。"
+
 #: includes/admin/class-jp4wc-security-notice.php:198
 msgid ""
 "Update the affected plugins, themes or WordPress to a fixed version, or "
