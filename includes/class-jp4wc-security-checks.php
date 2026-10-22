@@ -212,9 +212,10 @@ class JP4WC_Security_Checks {
 	const SCAN_DEPTH = 8;
 
 	/**
-	 * Bytes of a PHP file read to tell whether it can run code.
+	 * Bytes of a PHP file read to tell whether it can run code. A larger file is
+	 * judged by what this much of it shows, and is unknown when that is not enough.
 	 */
-	const PHP_HEAD_BYTES = 1024;
+	const PHP_HEAD_BYTES = 65536;
 
 	/**
 	 * Bytes of an .htaccess file read.
@@ -225,6 +226,11 @@ class JP4WC_Security_Checks {
 	 * File names M-03 treats as PHP that a web server may run.
 	 */
 	const PHP_FILE_PATTERN = '/\.(?:php[0-9]?|phtml|phar)$/iD';
+
+	/**
+	 * Tokens that start a declaration, which runs nothing by itself.
+	 */
+	const DECLARATIONS = array( T_NAMESPACE, T_USE, T_DECLARE, T_CLASS, T_ABSTRACT, T_FINAL, T_READONLY, T_INTERFACE, T_TRAIT, T_ENUM, T_FUNCTION, T_CONST );
 
 	/**
 	 * File names D-02 reports in a public directory: database dumps, archives,
@@ -289,6 +295,15 @@ class JP4WC_Security_Checks {
 			// A check that breaks on an unexpected site must not stop the others, nor the
 			// vulnerability findings saved with them.
 			$status = 'unknown';
+
+			/**
+			 * Fires when a local check of the security check throws; the check is reported as unknown.
+			 *
+			 * @since 3.0.0
+			 * @param string    $check_id Check ID.
+			 * @param Throwable $error    What the check threw.
+			 */
+			do_action( 'jp4wc_security_check_error', $check_id, $e );
 		}
 		if ( $own_probe ) {
 			$context['probe']->save();
@@ -821,10 +836,9 @@ class JP4WC_Security_Checks {
 	 * Harmless: comments and HTML only; a first statement that stops (exit,
 	 * die, __halt_compiler, as security plugins guard their data files);
 	 * header() or http_response_code() calls with plain values, as guard files
-	 * answer 404; and a data file that returns plain values. A file that starts
-	 * with declarations (namespace, use, class, as compiled template caches do)
-	 * runs nothing by itself, but only its first kilobyte is read, so it cannot
-	 * be told apart.
+	 * answer 404; a data file that returns plain values; and declarations only
+	 * (namespace, use, class, function), as compiled template caches hold.
+	 * A file larger than PHP_HEAD_BYTES that its start does not decide is unknown.
 	 *
 	 * @param string $path File.
 	 * @return bool|null True when harmless, false when it runs code, null when that cannot be told.
@@ -838,15 +852,18 @@ class JP4WC_Security_Checks {
 
 		$tokens = token_get_all( $head );
 		if ( ! $whole ) {
-			// The last token may be cut in two (a string that goes on, for example).
+			// The last token may be cut in two, and a cut string leaves its opening quote behind.
 			array_pop( $tokens );
+			while ( array() !== $tokens && in_array( self::token_type( end( $tokens ) ), array( '"', '`', T_START_HEREDOC, T_ENCAPSED_AND_WHITESPACE ), true ) ) {
+				array_pop( $tokens );
+			}
 		}
 		$skip   = array( T_OPEN_TAG, T_CLOSE_TAG, T_WHITESPACE, T_COMMENT, T_DOC_COMMENT, T_INLINE_HTML );
 		$tokens = array_values(
 			array_filter(
 				$tokens,
 				static function ( $token ) use ( $skip ) {
-					return ! is_array( $token ) || ! in_array( $token[0], $skip, true );
+					return ! in_array( self::token_type( $token ), $skip, true );
 				}
 			)
 		);
@@ -860,20 +877,95 @@ class JP4WC_Security_Checks {
 			return $whole ? true : null;
 		}
 
-		$type = is_array( $tokens[ $i ] ) ? $tokens[ $i ][0] : $tokens[ $i ];
+		$type = self::token_type( $tokens[ $i ] );
 		if ( T_HALT_COMPILER === $type ) {
 			return true;
 		}
 		if ( T_EXIT === $type ) {
-			return self::is_plain_exit( array_slice( $tokens, $i + 1, 4 ) );
+			return self::is_plain_exit( array_slice( $tokens, $i + 1, 4 ), $whole );
 		}
 		if ( 0 === $i && T_RETURN === $type ) {
 			return self::is_literal_return( array_slice( $tokens, 1 ), $whole );
 		}
-		if ( 0 === $i && in_array( $type, array( T_NAMESPACE, T_USE, T_DECLARE, T_CLASS, T_ABSTRACT, T_FINAL, T_READONLY, T_INTERFACE, T_TRAIT, T_ENUM, T_FUNCTION, T_CONST, T_ATTRIBUTE ), true ) ) {
-			return null;
+		if ( 0 === $i && ( T_ATTRIBUTE === $type || in_array( $type, self::DECLARATIONS, true ) ) ) {
+			// What follows the declarations is not known without the whole file.
+			return $whole ? self::declares_only( $tokens ) : null;
 		}
 		return false;
+	}
+
+	/**
+	 * Whether every top-level statement is a declaration.
+	 *
+	 * Class and function bodies are skipped: they run only when called. A
+	 * namespace or declare block is not, since its statements run.
+	 *
+	 * @param array $tokens Tokens without whitespace and comments.
+	 * @return bool
+	 */
+	private static function declares_only( array $tokens ) {
+		$count = count( $tokens );
+		$i     = 0;
+		while ( $i < $count ) {
+			$type = self::token_type( $tokens[ $i ] );
+			if ( ';' === $type ) {
+				++$i;
+				continue;
+			}
+			if ( T_ATTRIBUTE === $type ) {
+				// #[Attribute( ... )] before a declaration.
+				for ( $brackets = 0; $i < $count; $i++ ) {
+					$token     = self::token_type( $tokens[ $i ] );
+					$brackets += ( T_ATTRIBUTE === $token || '[' === $token ) ? 1 : ( ']' === $token ? -1 : 0 );
+					if ( 0 === $brackets ) {
+						break;
+					}
+				}
+				++$i;
+				continue;
+			}
+			if ( ! in_array( $type, self::DECLARATIONS, true ) ) {
+				return false;
+			}
+
+			// The statement ends at a semicolon outside braces and parentheses, or
+			// where the braces of its body close.
+			$block       = in_array( $type, array( T_NAMESPACE, T_DECLARE ), true );
+			$braces      = 0;
+			$parentheses = 0;
+			for ( ; $i < $count; $i++ ) {
+				$token = self::token_type( $tokens[ $i ] );
+				if ( '(' === $token ) {
+					++$parentheses;
+				} elseif ( ')' === $token ) {
+					--$parentheses;
+				} elseif ( in_array( $token, array( '{', T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES ), true ) ) {
+					if ( $block && 0 === $braces ) {
+						return false;
+					}
+					++$braces;
+				} elseif ( '}' === $token ) {
+					--$braces;
+					if ( 0 === $braces ) {
+						break;
+					}
+				} elseif ( ';' === $token && 0 === $braces && 0 === $parentheses ) {
+					break;
+				}
+			}
+			++$i;
+		}
+		return true;
+	}
+
+	/**
+	 * Returns the type of a token: its token constant, or the character itself.
+	 *
+	 * @param array|string $token Token of token_get_all().
+	 * @return int|string
+	 */
+	private static function token_type( $token ) {
+		return is_array( $token ) ? $token[0] : $token;
 	}
 
 	/**
@@ -912,13 +1004,20 @@ class JP4WC_Security_Checks {
 	/**
 	 * Whether the tokens after exit or die stop at once: exit; exit(); exit( 0 ); exit( 'Silence' );
 	 *
-	 * @param array $rest Up to four tokens after exit.
-	 * @return bool
+	 * The argument of exit( ... ) runs first, so any other argument is code.
+	 *
+	 * @param array $rest  Up to four tokens after exit.
+	 * @param bool  $whole Whether the tokens reach the end of the file.
+	 * @return bool|null Null when what was read ends before the statement does.
 	 */
-	private static function is_plain_exit( array $rest ) {
+	private static function is_plain_exit( array $rest, $whole ) {
 		$next = isset( $rest[0] ) ? $rest[0] : null;
-		if ( null === $next || ';' === $next ) {
+		if ( ';' === $next ) {
 			return true;
+		}
+		if ( null === $next ) {
+			// exit at the end of the file; an argument may follow past what was read.
+			return $whole ? true : null;
 		}
 		if ( '(' !== $next ) {
 			return false;
@@ -927,8 +1026,17 @@ class JP4WC_Security_Checks {
 		if ( ')' === $argument ) {
 			return true;
 		}
-		return is_array( $argument ) && in_array( $argument[0], array( T_LNUMBER, T_CONSTANT_ENCAPSED_STRING ), true )
-			&& isset( $rest[2] ) && ')' === $rest[2];
+		if ( null === $argument ) {
+			return $whole ? false : null;
+		}
+		if ( ! is_array( $argument ) || ! in_array( $argument[0], array( T_LNUMBER, T_CONSTANT_ENCAPSED_STRING ), true ) ) {
+			return false;
+		}
+		$close = isset( $rest[2] ) ? $rest[2] : null;
+		if ( ')' === $close ) {
+			return true;
+		}
+		return null === $close && ! $whole ? null : false;
 	}
 
 	/**
