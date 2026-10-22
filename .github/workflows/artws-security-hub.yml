@@ -2,9 +2,10 @@
 # runs on wc.artws.info and is never shipped with Japanized for WooCommerce.
 #
 # Runs only when the plugin, the JSON contract it shares with JP4WC
-# (tests/fixtures/security-feed/) or this workflow changes. The JP4WC test
-# matrix (testing.yml) ignores plugins/**, and this workflow never runs the
-# JP4WC tests, so a change to the contract runs both.
+# (tests/fixtures/security-feed/), the WordPress test installer it borrows
+# from the repository root, or this workflow changes. The JP4WC test matrix
+# (testing.yml) ignores plugins/**, and this workflow never runs the JP4WC
+# tests, so a change to the contract runs both.
 name: artws-security-hub
 
 on:
@@ -15,6 +16,7 @@ on:
     paths:
       - 'plugins/artws-security-hub/**'
       - 'tests/fixtures/security-feed/**'
+      - 'bin/install-wp-tests.sh'
       - '.github/workflows/artws-security-hub.yml'
   workflow_dispatch:
 
@@ -29,6 +31,19 @@ jobs:
     defaults:
       run:
         working-directory: plugins/artws-security-hub
+    services:
+      database:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: artws_sec_tests
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -uroot -proot --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=6
     steps:
       - name: Check out source code
         uses: actions/checkout@v4
@@ -40,11 +55,19 @@ jobs:
           tools: composer:v2
           coverage: none
 
+      - name: Install subversion
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
       - name: Lint
         run: composer lint
+
+      # The tests run on the WordPress test library (pre_http_request, options, cron).
+      - name: Install WordPress and its test library
+        working-directory: .
+        run: bash bin/install-wp-tests.sh artws_sec_tests root root 127.0.0.1 latest true
 
       - name: Test
         run: composer test

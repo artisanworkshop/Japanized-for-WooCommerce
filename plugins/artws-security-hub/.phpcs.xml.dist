@@ -30,6 +30,15 @@
 		</properties>
 	</rule>
 
+	<!-- Tests extend this base class (tests/includes/), so their files are named like tests, not classes. -->
+	<rule ref="WordPress.Files.FileName">
+		<properties>
+			<property name="custom_test_classes" type="array">
+				<element value="Artws_Sec_Feed_Test_Case"/>
+			</property>
+		</properties>
+	</rule>
+
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
