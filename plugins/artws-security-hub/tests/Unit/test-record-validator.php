@@ -211,7 +211,7 @@ class Artws_Sec_Record_Validator_Test extends Artws_Sec_Feed_Test_Case {
 	}
 
 	/**
-	 * Core records: only the "WordPress" slug, as the schema requires for the core file.
+	 * Core records: only the core slug (CORE_SLUG), as the schema requires for the core file.
 	 */
 	public function test_core_record_needs_the_wordpress_slug() {
 		$record = self::valid_record( 'core' );

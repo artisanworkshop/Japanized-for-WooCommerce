@@ -32,7 +32,7 @@ require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-feed-updater.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-admin.php';
 
 register_activation_hook( __FILE__, array( 'Artws_Sec_Feed_Updater', 'schedule_events' ) );
-register_deactivation_hook( __FILE__, array( 'Artws_Sec_Feed_Updater', 'unschedule_events' ) );
+register_deactivation_hook( __FILE__, array( 'Artws_Sec_Feed_Updater', 'deactivate' ) );
 
 Artws_Sec_Feed_Updater::register_hooks();
 Artws_Sec_Admin::register_hooks();

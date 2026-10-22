@@ -40,16 +40,18 @@ WP-Cron の日次イベント `artws_sec_feed_update` が Wordfence Intelligence
 | 前回成功時の件数に対して、種別ごとにこの割合を下回った | 90% | `artws_sec_feed_min_count_ratio` |
 | 著作権者が1つも無い | — | — |
 
-- Wordfence 側の正当な整理で件数が減ったときは、管理画面の「Allow fewer records on the next update」で次の1回だけ件数減少の検査を外す
-- メモリ不足・時間切れの fatal では失敗処理が走らないので、毎時の `artws_sec_feed_watchdog` が「最後の成功から 48 時間超」（`artws_sec_feed_stale_after`）で stale にする
-- 同時実行は options テーブルの1行（`INSERT IGNORE`）で防ぐ。2 時間たったロックは、死んだ実行の残りとして引き継ぐ
+- 取得・読み込み・書き込みの失敗（タイムアウト・5xx など）は、1 時間後に再試行する（`artws_sec_feed_retry`。日次・手動の実行ごとに 3 回まで）。上の表の条件による失敗はデータそのものの問題なので再試行しない
+- Wordfence 側の正当な整理で件数が減ったときは、管理画面の「Allow fewer records on the next update」で次の1回だけ件数減少の検査を外す（成功した実行で消える）
+- メモリ不足・時間切れの fatal では失敗処理が走らないので、毎時の `artws_sec_feed_watchdog` が「最後の成功から 48 時間超」（`artws_sec_feed_stale_after`）で stale にする。fatal で残った一時ファイル（システムの一時ディレクトリの `artws-sec-wordfence-*` とフィードのディレクトリの `.*.tmp`）は次の実行が消す
+- プラグインを無効化すると、cron を外して manifest を stale にする（ファイルは配信され続けるが、もう更新されない）
+- 同時実行は options テーブルの1行（`INSERT IGNORE`）で防ぐ。2 時間たったロックは、死んだ実行の残りとして引き継ぐ。公開した状態はロックの中で、options のキャッシュではなく DB から読む
 - manifest の `version` は成功した生成ごとに変わる（`YYYYMMDD.HHMMSS`）。`generated_at` は最後に成功した生成の時刻で、stale にしたときや EOL を変えたときには変わらない
 
 ### 管理画面（設定 > Security Hub）
 
 - 最後の成功（version・件数）、stale、最後の実行の結果とエラー、除外件数と除外例（最大 20 件）
 - 「Update now」: 取り込みを WP-Cron に積む。WP-CLI があれば `wp cron event run artws_sec_feed_update` でその場で走らせて結果を見られる
-- EOL（manifest の `eol.{php,wordpress,woocommerce}.min_supported`）: 数字とドットだけ。保存すると manifest を書き直す（既定 PHP 8.2 / WordPress 6.7 / WooCommerce 10.2）
+- EOL（manifest の `eol.{php,wordpress,woocommerce}.min_supported`）: 数字とドットだけ。保存すると manifest を書き直す（取り込みの実行中なら 1 分後に `artws_sec_feed_republish` で書き直す。既定 PHP 8.2 / WordPress 6.7 / WooCommerce 10.2）
 
 WP-Cron はアクセスが無いと走らない。取り込みは数十秒かかるので、`DISABLE_WP_CRON` とサーバーの cron（例: `*/15 * * * * wp --path=/path/to/wordpress cron event run --due-now`）で回すのがよい。
 

@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
  * A hand-written copy of the "vulnerability" definition in
  * tests/fixtures/security-feed/schema/vuln-file.schema.json, plus the
  * constraints the file puts on its records (software.type matches the file,
- * the core file only has the "WordPress" slug) and the copyright holders in
+ * the core file has only the core slug, CORE_SLUG) and the copyright holders in
  * common.schema.json. The plugin does not load Composer packages at run time,
  * so it cannot use the JSON Schema itself; the tests check that whatever this
  * class accepts, the schema accepts too.
