@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 2.9.19
+Stable tag: 2.9.20
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -156,6 +156,9 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.20 - 2026-10-22 =
+* **Added** - Administrators now see a dialog on admin screens when the site's PHP is older than the fix for the critical PHP2Shell vulnerabilities (CVE-2026-109618 / CVE-2026-109619): PHP 8.2.35, 8.3.36, 8.4.27 or 8.5.12, with no fixed release for PHP 8.1 and older. It links to an article on updating PHP and notes that a hosting company may have patched PHP without changing its version number; "Don't show again" hides it for that user until the PHP version changes. It is shown only to users who can manage the site's options (super admins on multisite), and not in the block editor or the Customizer (#271)
 
 = 2.9.19 - 2026-10-22 =
 * **Fixed** - A request that was running while Japanized for WooCommerce was being updated could still stop with a fatal error ("Failed opening required …") after the 2.9.18 fix (#266), because some files were read only later in the request: the Checkout block support of Paidy and of this plugin's other payment methods, the delivery and yomigana fields of the Checkout block, the subscription price field, the settings screen's REST API and the dashboard PHP version notice; these files are now all loaded when the plugin starts, so updating from this version to a later one no longer causes this error (#268)
