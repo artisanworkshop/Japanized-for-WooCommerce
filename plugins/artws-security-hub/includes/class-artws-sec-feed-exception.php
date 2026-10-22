@@ -14,4 +14,10 @@ defined( 'ABSPATH' ) || exit;
  * never contain the Wordfence API key.
  */
 class Artws_Sec_Feed_Exception extends RuntimeException {
+
+	/**
+	 * Code of a failure caused by the data itself (too many invalid records,
+	 * too few records). Retrying the same data would fail the same way.
+	 */
+	const REJECTED = 1;
 }

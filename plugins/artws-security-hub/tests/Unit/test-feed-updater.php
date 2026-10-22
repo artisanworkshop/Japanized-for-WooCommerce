@@ -615,23 +615,273 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 	}
 
 	/**
-	 * The cron events are scheduled once and removed on deactivation.
+	 * The cron events are scheduled once and all removed on deactivation.
 	 */
 	public function test_schedules_and_unschedules_the_events() {
-		Artws_Sec_Feed_Updater::unschedule_events();
+		Artws_Sec_Feed_Updater::deactivate();
 		Artws_Sec_Feed_Updater::schedule_events();
 		Artws_Sec_Feed_Updater::schedule_events();
 
 		$this->assertSame( 'daily', wp_get_schedule( Artws_Sec_Feed_Updater::UPDATE_HOOK ) );
 		$this->assertSame( 'hourly', wp_get_schedule( Artws_Sec_Feed_Updater::WATCHDOG_HOOK ) );
-		$this->assertTrue( has_action( Artws_Sec_Feed_Updater::UPDATE_HOOK, array( 'Artws_Sec_Feed_Updater', 'update' ) ) > 0 );
 
 		wp_schedule_single_event( time(), Artws_Sec_Feed_Updater::UPDATE_HOOK, array( 'manual' ) );
-		Artws_Sec_Feed_Updater::unschedule_events();
+		wp_schedule_single_event( time() + HOUR_IN_SECONDS, Artws_Sec_Feed_Updater::RETRY_HOOK, array( 2 ) );
+		wp_schedule_single_event( time() + MINUTE_IN_SECONDS, Artws_Sec_Feed_Updater::REPUBLISH_HOOK );
+		Artws_Sec_Feed_Updater::deactivate();
 
 		$this->assertFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::UPDATE_HOOK ) );
 		$this->assertFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::UPDATE_HOOK, array( 'manual' ) ) );
+		$this->assertFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::RETRY_HOOK, array( 2 ) ) );
+		$this->assertFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::REPUBLISH_HOOK ) );
 		$this->assertFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::WATCHDOG_HOOK ) );
+	}
+
+	/**
+	 * Deactivation marks the feed stale: nothing will update the served files any more.
+	 */
+	public function test_deactivation_marks_the_feed_stale() {
+		$this->publish_fixture();
+
+		Artws_Sec_Feed_Updater::deactivate();
+
+		$this->assertTrue( self::read_manifest()->stale );
+		$this->assertTrue( Artws_Sec_Feed_Updater::get_state()['stale'] );
+		$this->assertStringContainsString( 'deactivated', Artws_Sec_Feed_Updater::get_status()['message'] );
+	}
+
+	/**
+	 * The cron event of "Update now" runs with the current time, not its "manual" argument.
+	 */
+	public function test_manual_event_runs_with_the_current_time() {
+		$this->mock_wordfence( self::fixture_feed() );
+
+		do_action_ref_array( Artws_Sec_Feed_Updater::UPDATE_HOOK, array( 'manual' ) );
+
+		$manifest = self::read_manifest();
+		$this->assertLessThan( 120, abs( strtotime( $manifest->generated_at ) - time() ), $manifest->generated_at );
+	}
+
+	/**
+	 * A failed download is retried an hour later, up to three times per run.
+	 */
+	public function test_failed_download_is_retried() {
+		$this->mock_wordfence( 'Bad Gateway', 502 );
+
+		$this->assertSame( 'failure', Artws_Sec_Feed_Updater::update( self::NOW ) );
+		$this->assertSame( self::NOW + HOUR_IN_SECONDS, wp_next_scheduled( Artws_Sec_Feed_Updater::RETRY_HOOK, array( 1 ) ) );
+		$this->assertSame( self::NOW + HOUR_IN_SECONDS, Artws_Sec_Feed_Updater::get_status()['retry_at'] );
+
+		// The cron event passes the attempt number.
+		do_action( Artws_Sec_Feed_Updater::RETRY_HOOK, 1 );
+		$this->assertNotFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::RETRY_HOOK, array( 2 ) ) );
+
+		$this->assertSame( 'failure', Artws_Sec_Feed_Updater::retry( 3, self::NOW + 3 * HOUR_IN_SECONDS ) );
+		$this->assertFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::RETRY_HOOK, array( 4 ) ), 'No fourth retry.' );
+		$this->assertSame( 0, Artws_Sec_Feed_Updater::get_status()['retry_at'] );
+	}
+
+	/**
+	 * Rejected data is not retried: the same data would be rejected again.
+	 */
+	public function test_rejected_data_is_not_retried() {
+		$this->mock_wordfence( '{}' );
+
+		$this->assertSame( 'failure', Artws_Sec_Feed_Updater::update( self::NOW ) );
+
+		$this->assertFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::RETRY_HOOK, array( 1 ) ) );
+		$this->assertSame( 0, Artws_Sec_Feed_Updater::get_status()['retry_at'] );
+	}
+
+	/**
+	 * A successful run cancels the pending retries.
+	 */
+	public function test_success_cancels_pending_retries() {
+		wp_schedule_single_event( self::NOW + HOUR_IN_SECONDS, Artws_Sec_Feed_Updater::RETRY_HOOK, array( 2 ) );
+		$this->mock_wordfence( self::fixture_feed() );
+
+		$this->assertSame( 'success', Artws_Sec_Feed_Updater::retry( 1, self::NOW ) );
+
+		$this->assertFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::RETRY_HOOK, array( 2 ) ) );
+	}
+
+	/**
+	 * A failure while writing the files keeps the previous files.
+	 */
+	public function test_unwritable_directory_keeps_the_previous_files() {
+		$this->publish_fixture();
+		$before = self::served_bytes();
+
+		// The same data, so that only the write can fail.
+		$this->mock_wordfence( self::fixture_feed() );
+		$result = $this->with_read_only_feed_directory(
+			static function () {
+				return Artws_Sec_Feed_Updater::update( self::NOW + DAY_IN_SECONDS );
+			}
+		);
+
+		$this->assertSame( 'failure', $result );
+		$this->assertSame( $before, self::served_bytes(), 'Nothing in the directory changed, the manifest included.' );
+		$status = Artws_Sec_Feed_Updater::get_status();
+		$this->assertStringStartsWith( 'The feed directory is not writable.', $status['message'] );
+		$this->assertStringContainsString( 'The stale manifest could not be written either', $status['message'] );
+		$this->assertFalse( Artws_Sec_Feed_Updater::get_state()['stale'], 'Stale is saved only together with the manifest.' );
+		$this->assertNotFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::RETRY_HOOK, array( 1 ) ) );
+	}
+
+	/**
+	 * When the watchdog cannot write the manifest, it tries again on its next run.
+	 */
+	public function test_watchdog_tries_again_after_a_write_failure() {
+		$this->publish_fixture();
+		$later = self::NOW + 3 * DAY_IN_SECONDS;
+
+		$this->with_read_only_feed_directory(
+			static function () use ( $later ) {
+				Artws_Sec_Feed_Updater::watchdog( $later );
+			}
+		);
+		$this->assertFalse( self::read_manifest()->stale );
+
+		$this->assertTrue( Artws_Sec_Feed_Updater::watchdog( $later + HOUR_IN_SECONDS ) );
+		$this->assertTrue( self::read_manifest()->stale );
+	}
+
+	/**
+	 * The watchdog decides on the state in the database, not on an older copy in the options cache.
+	 */
+	public function test_watchdog_reads_the_state_from_the_database() {
+		$this->publish_fixture();
+		$later = self::NOW + 3 * DAY_IN_SECONDS;
+
+		// This process has the old state cached; another process then publishes.
+		Artws_Sec_Feed_Updater::get_state();
+		$published = self::store_state_behind_the_cache( $later - HOUR_IN_SECONDS );
+
+		$this->assertFalse( Artws_Sec_Feed_Updater::watchdog( $later ) );
+
+		$this->assertFalse( self::read_manifest()->stale );
+		$this->assertSame( $published['version'], Artws_Sec_Feed_Updater::get_state()['version'], 'The newer state is not rolled back.' );
+	}
+
+	/**
+	 * The manifest written after an EOL change comes from the state in the database.
+	 */
+	public function test_republish_reads_the_state_from_the_database() {
+		$this->publish_fixture();
+
+		Artws_Sec_Feed_Updater::get_state();
+		$published = self::store_state_behind_the_cache( self::NOW + DAY_IN_SECONDS );
+
+		Artws_Sec_Feed_Updater::republish_manifest();
+
+		$this->assertSame( $published['version'], self::read_manifest()->version );
+	}
+
+	/**
+	 * EOL saved while a run holds the lock: the manifest is rewritten by a one-off event a minute later.
+	 */
+	public function test_eol_saved_during_a_run_is_published_by_a_later_event() {
+		global $wpdb;
+		$this->publish_fixture();
+		$wpdb->insert(
+			$wpdb->options,
+			array(
+				'option_name'  => Artws_Sec_Feed_Updater::LOCK_OPTION,
+				'option_value' => (string) time(),
+				'autoload'     => 'off',
+			)
+		);
+
+		update_option( Artws_Sec_Feed_Updater::EOL_OPTION, array_merge( Artws_Sec_Feed_Updater::DEFAULT_EOL, array( 'php' => '8.4' ) ) );
+
+		$this->assertSame( '8.2', self::read_manifest()->eol->php->min_supported, 'The run holds the lock.' );
+		$this->assertNotFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::REPUBLISH_HOOK ) );
+
+		$wpdb->delete( $wpdb->options, array( 'option_name' => Artws_Sec_Feed_Updater::LOCK_OPTION ) );
+		do_action( Artws_Sec_Feed_Updater::REPUBLISH_HOOK );
+
+		$this->assertSame( '8.4', self::read_manifest()->eol->php->min_supported );
+	}
+
+	/**
+	 * The permission to publish fewer records survives a failed run and is used by the next success.
+	 */
+	public function test_allowed_drop_survives_a_failed_run() {
+		$this->publish_fixture();
+		update_option( Artws_Sec_Feed_Updater::ACCEPT_DROP_OPTION, 1, false );
+
+		$this->mock_wordfence( 'Internal Server Error', 500 );
+		$this->assertSame( 'failure', Artws_Sec_Feed_Updater::update( self::NOW + DAY_IN_SECONDS ) );
+
+		$this->assertSame( '1', (string) get_option( Artws_Sec_Feed_Updater::ACCEPT_DROP_OPTION ) );
+	}
+
+	/**
+	 * Downloads left in the temp directory by a run that died are deleted by the next run.
+	 */
+	public function test_deletes_downloads_left_by_a_dead_run() {
+		$old = trailingslashit( get_temp_dir() ) . Artws_Sec_Feed_Updater::DOWNLOAD_PREFIX . 'dead-run';
+		$new = trailingslashit( get_temp_dir() ) . Artws_Sec_Feed_Updater::DOWNLOAD_PREFIX . 'running';
+		file_put_contents( $old, '{' );
+		file_put_contents( $new, '{' );
+		touch( $old, self::NOW - 2 * HOUR_IN_SECONDS );
+		touch( $new, self::NOW );
+
+		try {
+			$this->mock_wordfence( self::fixture_feed() );
+			Artws_Sec_Feed_Updater::update( self::NOW );
+
+			$this->assertFileDoesNotExist( $old );
+			$this->assertFileExists( $new );
+		} finally {
+			foreach ( array( $old, $new ) as $file ) {
+				if ( file_exists( $file ) ) {
+					unlink( $file );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Saves a newer state straight to the database, as another process would, leaving this process's cache alone.
+	 *
+	 * @param int $time Time of that run.
+	 * @return array The saved state.
+	 */
+	private static function store_state_behind_the_cache( $time ) {
+		global $wpdb;
+		$state                 = Artws_Sec_Feed_Updater::get_state();
+		$state['version']      = gmdate( 'Ymd.His', $time );
+		$state['generated_at'] = gmdate( 'Y-m-d\TH:i:s\Z', $time );
+		$state['last_success'] = $time;
+		$wpdb->update(
+			$wpdb->options,
+			array( 'option_value' => maybe_serialize( $state ) ),
+			array( 'option_name' => Artws_Sec_Feed_Updater::STATE_OPTION )
+		);
+		return $state;
+	}
+
+	/**
+	 * Runs a callback while the feed directory cannot be written to.
+	 *
+	 * @param callable $callback Callback.
+	 * @return mixed What the callback returns.
+	 */
+	private function with_read_only_feed_directory( callable $callback ) {
+		$directory = Artws_Sec_Feed_Publisher::directory();
+		chmod( $directory, 0555 );
+		try {
+			clearstatcache();
+			if ( is_writable( $directory ) ) {
+				$this->markTestSkipped( 'Running as a user that can write to read-only directories (root).' );
+			}
+			return $callback();
+		} finally {
+			chmod( $directory, 0755 );
+			clearstatcache();
+		}
 	}
 
 	/**

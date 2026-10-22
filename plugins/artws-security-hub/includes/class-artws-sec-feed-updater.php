@@ -20,18 +20,32 @@ defined( 'ABSPATH' ) || exit;
  * wrong as a whole: too many records failing the contract, a type with no
  * records, or far fewer records than last time (a format change at
  * Wordfence, for example).
+ *
+ * Everything that reads or writes the published state does so while holding
+ * the lock, and reads the state from the database rather than from the
+ * options cache, because another process may have published in between.
  */
 class Artws_Sec_Feed_Updater {
 
 	/**
-	 * Daily cron event that runs update().
+	 * Daily cron event that runs update(). Also scheduled once with the "manual" argument from the settings page.
 	 */
 	const UPDATE_HOOK = 'artws_sec_feed_update';
+
+	/**
+	 * One-off cron event that retries a failed run; its argument is the attempt number.
+	 */
+	const RETRY_HOOK = 'artws_sec_feed_retry';
 
 	/**
 	 * Hourly cron event that runs watchdog().
 	 */
 	const WATCHDOG_HOOK = 'artws_sec_feed_watchdog';
+
+	/**
+	 * One-off cron event that rewrites the manifest when the EOL settings were saved during a run.
+	 */
+	const REPUBLISH_HOOK = 'artws_sec_feed_republish';
 
 	/**
 	 * Wordfence Intelligence V3 production feed.
@@ -69,6 +83,21 @@ class Artws_Sec_Feed_Updater {
 	const LOCK_TIMEOUT = 7200;
 
 	/**
+	 * Retries after a failed download, read or write (each daily or manual run starts again at 0).
+	 */
+	const MAX_RETRIES = 3;
+
+	/**
+	 * Seconds between a failed run and its retry.
+	 */
+	const RETRY_DELAY = 3600;
+
+	/**
+	 * Prefix of the temporary download in the system temp directory.
+	 */
+	const DOWNLOAD_PREFIX = 'artws-sec-wordfence-';
+
+	/**
 	 * Credit line written into the feed.
 	 */
 	const ATTRIBUTION = 'Vulnerability data: Wordfence Intelligence';
@@ -99,11 +128,16 @@ class Artws_Sec_Feed_Updater {
 
 	/**
 	 * Registers the cron callbacks.
+	 *
+	 * The update callback takes no arguments, so the "manual" argument of a
+	 * run scheduled from the settings page is not read as the run's time.
 	 */
 	public static function register_hooks() {
 		add_action( 'init', array( __CLASS__, 'schedule_events' ) );
 		add_action( self::UPDATE_HOOK, array( __CLASS__, 'update' ), 10, 0 );
+		add_action( self::RETRY_HOOK, array( __CLASS__, 'retry' ), 10, 1 );
 		add_action( self::WATCHDOG_HOOK, array( __CLASS__, 'watchdog' ), 10, 0 );
+		add_action( self::REPUBLISH_HOOK, array( __CLASS__, 'republish_manifest' ), 10, 0 );
 		add_action( 'add_option_' . self::EOL_OPTION, array( __CLASS__, 'republish_manifest' ), 10, 0 );
 		add_action( 'update_option_' . self::EOL_OPTION, array( __CLASS__, 'republish_manifest' ), 10, 0 );
 	}
@@ -124,74 +158,46 @@ class Artws_Sec_Feed_Updater {
 	}
 
 	/**
-	 * Removes the cron events (deactivation).
+	 * Deactivation: removes the cron events and marks the feed stale.
+	 *
+	 * The files stay where the web server serves them, but nothing will
+	 * update them any more, not even the watchdog.
 	 */
-	public static function unschedule_events() {
-		wp_clear_scheduled_hook( self::UPDATE_HOOK );
-		wp_clear_scheduled_hook( self::WATCHDOG_HOOK );
-		wp_clear_scheduled_hook( self::UPDATE_HOOK, array( 'manual' ) );
+	public static function deactivate() {
+		foreach ( array( self::UPDATE_HOOK, self::RETRY_HOOK, self::WATCHDOG_HOOK, self::REPUBLISH_HOOK ) as $hook ) {
+			wp_unschedule_hook( $hook );
+		}
+
+		$now = time();
+		if ( ! self::acquire_lock( $now ) ) {
+			return;
+		}
+		try {
+			self::record_status( $now, 'stale', self::mark_stale( 'The plugin was deactivated, so the feed is no longer updated.' ), array() );
+		} finally {
+			self::release_lock();
+		}
 	}
 
 	/**
-	 * Imports the feed and publishes the files.
+	 * Imports the feed and publishes the files (daily or from the settings page).
 	 *
 	 * @param int|null $now Unix time of the run (for tests).
 	 * @return string "success", "failure" or "locked" (another run is in progress).
 	 */
 	public static function update( $now = null ) {
-		$now = null === $now ? time() : (int) $now;
-		if ( ! self::acquire_lock( $now ) ) {
-			return 'locked';
-		}
+		return self::run( null === $now ? time() : (int) $now, 0 );
+	}
 
-		$download = '';
-		$stats    = array();
-		try {
-			wp_raise_memory_limit( 'artws_sec_feed' );
-			if ( function_exists( 'set_time_limit' ) ) {
-				set_time_limit( 900 );
-			}
-			Artws_Sec_Feed_Publisher::delete_stale_temp_files( $now - HOUR_IN_SECONDS );
-
-			$download = self::download();
-
-			$builder = new Artws_Sec_Feed_Builder();
-			Artws_Sec_Json_Object_Reader::read( self::readable_path( $download ), array( $builder, 'add' ) );
-			$result = $builder->result();
-			$stats  = $result['stats'] + array( 'counts' => $result['counts'] );
-
-			self::check_result( $result );
-
-			$generated_at = gmdate( 'Y-m-d\TH:i:s\Z', $now );
-			$files        = Artws_Sec_Feed_Publisher::write_vulnerability_files( $result['vulnerabilities'], $result['copyrights'], self::ATTRIBUTION, $generated_at );
-
-			$state = array(
-				'version'      => gmdate( 'Ymd.His', $now ),
-				'generated_at' => $generated_at,
-				'stale'        => false,
-				'files'        => $files,
-				'copyrights'   => $result['copyrights'],
-				'attribution'  => self::ATTRIBUTION,
-				'last_success' => $now,
-			);
-			update_option( self::STATE_OPTION, $state, false );
-			delete_option( self::ACCEPT_DROP_OPTION );
-			Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
-
-			self::record_status( $now, 'success', '', $stats );
-			return 'success';
-		} catch ( Throwable $e ) {
-			// Fatal errors such as running out of memory never get here; watchdog() covers them.
-			$message = $e instanceof Artws_Sec_Feed_Exception ? $e->getMessage() : get_class( $e ) . ': ' . $e->getMessage();
-			$message = self::mark_stale( $message );
-			self::record_status( $now, 'failure', $message, $stats );
-			return 'failure';
-		} finally {
-			if ( '' !== $download && file_exists( $download ) ) {
-				wp_delete_file( $download );
-			}
-			self::release_lock();
-		}
+	/**
+	 * Retries a failed run (RETRY_HOOK).
+	 *
+	 * @param int      $attempt Retry number, from 1.
+	 * @param int|null $now     Unix time of the run (for tests).
+	 * @return string See update().
+	 */
+	public static function retry( $attempt, $now = null ) {
+		return self::run( null === $now ? time() : (int) $now, max( 1, (int) $attempt ) );
 	}
 
 	/**
@@ -206,15 +212,16 @@ class Artws_Sec_Feed_Updater {
 	public static function watchdog( $now = null ) {
 		$now = null === $now ? time() : (int) $now;
 
-		$state = self::get_state();
-		if ( null === $state || $state['stale'] || $now - (int) $state['last_success'] <= self::stale_after() ) {
-			return false;
-		}
-		if ( ! self::acquire_lock( $now ) ) {
+		// A cheap check first, so that the hourly event rarely takes the lock.
+		if ( ! self::is_overdue( self::get_state(), $now ) || ! self::acquire_lock( $now ) ) {
 			return false;
 		}
 
 		try {
+			$state = self::fresh_state();
+			if ( ! self::is_overdue( $state, $now ) ) {
+				return false;
+			}
 			$message = self::mark_stale(
 				sprintf( 'No successful update since %s.', gmdate( 'Y-m-d H:i:s \U\T\C', (int) $state['last_success'] ) )
 			);
@@ -228,17 +235,22 @@ class Artws_Sec_Feed_Updater {
 	/**
 	 * Rewrites the manifest from the last published state (after the EOL settings change).
 	 *
-	 * Skipped while a run holds the lock: that run writes the manifest with
-	 * the new settings when it ends.
+	 * While a run holds the lock, a one-off event tries again a minute later:
+	 * the run may already have written the manifest with the previous settings.
 	 */
 	public static function republish_manifest() {
-		$state = self::get_state();
-		if ( null === $state || ! self::acquire_lock( time() ) ) {
+		if ( ! self::acquire_lock( time() ) ) {
+			if ( ! wp_next_scheduled( self::REPUBLISH_HOOK ) ) {
+				wp_schedule_single_event( time() + MINUTE_IN_SECONDS, self::REPUBLISH_HOOK );
+			}
 			return;
 		}
 
 		try {
-			Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
+			$state = self::fresh_state();
+			if ( null !== $state ) {
+				Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
+			}
 		} catch ( Artws_Sec_Feed_Exception $e ) {
 			$status            = self::get_status();
 			$status['message'] = 'The manifest could not be rewritten: ' . $e->getMessage();
@@ -265,7 +277,7 @@ class Artws_Sec_Feed_Updater {
 	/**
 	 * Returns the result of the last run.
 	 *
-	 * @return array{last_attempt?: int, result?: string, message?: string, stats?: array}
+	 * @return array{last_attempt?: int, result?: string, message?: string, stats?: array, retry_at?: int}
 	 */
 	public static function get_status() {
 		$status = get_option( self::STATUS_OPTION );
@@ -275,7 +287,7 @@ class Artws_Sec_Feed_Updater {
 	/**
 	 * Returns the oldest supported versions, with defaults for missing or invalid values.
 	 *
-	 * @return array{php: string, WordPress: string, woocommerce: string}
+	 * @return array<string, string> Keyed like Artws_Sec_Feed_Updater::DEFAULT_EOL.
 	 */
 	public static function get_eol() {
 		$saved = get_option( self::EOL_OPTION );
@@ -299,6 +311,82 @@ class Artws_Sec_Feed_Updater {
 	}
 
 	/**
+	 * Imports the feed and publishes the files.
+	 *
+	 * @param int $now     Unix time of the run.
+	 * @param int $attempt 0 for a daily or manual run, then the retry number.
+	 * @return string "success", "failure" or "locked".
+	 */
+	private static function run( $now, $attempt ) {
+		if ( ! self::acquire_lock( $now ) ) {
+			return 'locked';
+		}
+
+		$download = '';
+		$stats    = array();
+		try {
+			wp_raise_memory_limit( 'artws_sec_feed' );
+			if ( function_exists( 'set_time_limit' ) ) {
+				set_time_limit( 900 );
+			}
+			// What a run killed by a fatal error left behind.
+			Artws_Sec_Feed_Publisher::delete_stale_temp_files( $now - HOUR_IN_SECONDS );
+			self::delete_stale_downloads( $now - HOUR_IN_SECONDS );
+
+			$download = self::download();
+
+			$builder = new Artws_Sec_Feed_Builder();
+			Artws_Sec_Json_Object_Reader::read( self::readable_path( $download ), array( $builder, 'add' ) );
+			$result = $builder->result();
+			$stats  = $result['stats'] + array( 'counts' => $result['counts'] );
+
+			self::check_result( $result, self::fresh_state() );
+
+			$generated_at = gmdate( 'Y-m-d\TH:i:s\Z', $now );
+			$files        = Artws_Sec_Feed_Publisher::write_vulnerability_files( $result['vulnerabilities'], $result['copyrights'], self::ATTRIBUTION, $generated_at );
+
+			$state = array(
+				'version'      => gmdate( 'Ymd.His', $now ),
+				'generated_at' => $generated_at,
+				'stale'        => false,
+				'files'        => $files,
+				'copyrights'   => $result['copyrights'],
+				'attribution'  => self::ATTRIBUTION,
+				'last_success' => $now,
+			);
+			update_option( self::STATE_OPTION, $state, false );
+			delete_option( self::ACCEPT_DROP_OPTION );
+			wp_unschedule_hook( self::RETRY_HOOK );
+			Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
+
+			self::record_status( $now, 'success', '', $stats );
+			return 'success';
+		} catch ( Throwable $e ) {
+			// Fatal errors such as running out of memory never get here; watchdog() covers them.
+			$message = $e instanceof Artws_Sec_Feed_Exception ? $e->getMessage() : get_class( $e ) . ': ' . $e->getMessage();
+			$message = self::mark_stale( $message );
+
+			// Rejected data would be rejected again; a failed download, read or write may not fail again.
+			$retry_at = 0;
+			$rejected = $e instanceof Artws_Sec_Feed_Exception && Artws_Sec_Feed_Exception::REJECTED === $e->getCode();
+			if ( ! $rejected && $attempt < self::MAX_RETRIES ) {
+				$retry_at = $now + self::RETRY_DELAY;
+				if ( ! wp_next_scheduled( self::RETRY_HOOK, array( $attempt + 1 ) ) ) {
+					wp_schedule_single_event( $retry_at, self::RETRY_HOOK, array( $attempt + 1 ) );
+				}
+			}
+
+			self::record_status( $now, 'failure', $message, $stats, $retry_at );
+			return 'failure';
+		} finally {
+			if ( '' !== $download && file_exists( $download ) ) {
+				wp_delete_file( $download );
+			}
+			self::release_lock();
+		}
+	}
+
+	/**
 	 * Downloads the V3 production feed to a temporary file.
 	 *
 	 * @return string Path of the downloaded file.
@@ -315,7 +403,7 @@ class Artws_Sec_Feed_Updater {
 			throw new Artws_Sec_Feed_Exception( 'ARTWS_SEC_WORDFENCE_API_KEY is not set in wp-config.php.' );
 		}
 
-		$file = tempnam( get_temp_dir(), 'artws-sec-wordfence-' );
+		$file = tempnam( get_temp_dir(), self::DOWNLOAD_PREFIX );
 		if ( false === $file ) {
 			throw new Artws_Sec_Feed_Exception( 'No temporary file could be created for the download.' );
 		}
@@ -354,6 +442,20 @@ class Artws_Sec_Feed_Updater {
 	}
 
 	/**
+	 * Deletes downloads that a run killed by a fatal error left in the system temp directory.
+	 *
+	 * @param int $older_than Unix time; files modified before it are deleted.
+	 */
+	private static function delete_stale_downloads( $older_than ) {
+		$files = glob( trailingslashit( get_temp_dir() ) . self::DOWNLOAD_PREFIX . '*' );
+		foreach ( is_array( $files ) ? $files : array() as $file ) {
+			if ( is_file( $file ) && filemtime( $file ) < $older_than ) {
+				wp_delete_file( $file );
+			}
+		}
+	}
+
+	/**
 	 * Returns a path that reads the download decompressed.
 	 *
 	 * The cURL transport decompresses a gzip response while streaming it to
@@ -370,10 +472,11 @@ class Artws_Sec_Feed_Updater {
 	/**
 	 * Fails the run when the new data looks wrong as a whole.
 	 *
-	 * @param array $result Artws_Sec_Feed_Builder::result().
-	 * @throws Artws_Sec_Feed_Exception When the data must not be published.
+	 * @param array      $result   Artws_Sec_Feed_Builder::result().
+	 * @param array|null $previous State of the last successful run.
+	 * @throws Artws_Sec_Feed_Exception When the data must not be published (code REJECTED).
 	 */
-	private static function check_result( array $result ) {
+	private static function check_result( array $result, $previous ) {
 		$stats = $result['stats'];
 
 		/**
@@ -384,21 +487,21 @@ class Artws_Sec_Feed_Updater {
 		$max_excluded = (float) apply_filters( 'artws_sec_feed_max_excluded_ratio', self::DEFAULT_MAX_EXCLUDED_RATIO );
 		if ( $stats['candidates'] > 0 && $stats['excluded'] / $stats['candidates'] > $max_excluded ) {
 			throw new Artws_Sec_Feed_Exception(
-				sprintf( '%d of %d records failed the contract check (more than %s%%).', $stats['excluded'], $stats['candidates'], (string) ( $max_excluded * 100 ) )
+				sprintf( '%d of %d records failed the contract check (more than %s%%).', $stats['excluded'], $stats['candidates'], (string) ( $max_excluded * 100 ) ),
+				Artws_Sec_Feed_Exception::REJECTED
 			);
 		}
 
 		foreach ( $result['counts'] as $type => $count ) {
 			if ( 0 === $count ) {
-				throw new Artws_Sec_Feed_Exception( sprintf( 'The %s file would have no records.', $type ) );
+				throw new Artws_Sec_Feed_Exception( sprintf( 'The %s file would have no records.', $type ), Artws_Sec_Feed_Exception::REJECTED );
 			}
 		}
 
 		if ( array() === $result['copyrights'] ) {
-			throw new Artws_Sec_Feed_Exception( 'No copyright holders were found in the records.' );
+			throw new Artws_Sec_Feed_Exception( 'No copyright holders were found in the records.', Artws_Sec_Feed_Exception::REJECTED );
 		}
 
-		$previous = self::get_state();
 		if ( null === $previous || get_option( self::ACCEPT_DROP_OPTION ) ) {
 			return;
 		}
@@ -413,46 +516,82 @@ class Artws_Sec_Feed_Updater {
 			$before = (int) ( $previous['files'][ $type ]['count'] ?? 0 );
 			if ( $before > 0 && $count < $before * $min_kept ) {
 				throw new Artws_Sec_Feed_Exception(
-					sprintf( 'The %1$s records dropped from %2$d to %3$d. If Wordfence removed them on purpose, allow the drop on the settings page.', $type, $before, $count )
+					sprintf( 'The %1$s records dropped from %2$d to %3$d. If Wordfence removed them on purpose, allow the drop on the settings page.', $type, $before, $count ),
+					Artws_Sec_Feed_Exception::REJECTED
 				);
 			}
 		}
 	}
 
 	/**
-	 * Marks the published feed stale and rewrites its manifest.
+	 * Marks the published feed stale and rewrites its manifest. Call it while holding the lock.
 	 *
-	 * Before the first successful run there is nothing to mark: no manifest is served.
+	 * The state is saved as stale only once the manifest says so, so that the
+	 * watchdog tries again when the manifest could not be written. Before the
+	 * first successful run there is nothing to mark: no manifest is served.
 	 *
 	 * @param string $message Why the feed is stale.
 	 * @return string The message, with the manifest error appended when the manifest could not be written.
 	 */
 	private static function mark_stale( $message ) {
-		$state = self::get_state();
+		$state = self::fresh_state();
 		if ( null === $state ) {
 			return $message;
 		}
 
 		$state['stale'] = true;
-		update_option( self::STATE_OPTION, $state, false );
-
 		try {
 			Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
 		} catch ( Artws_Sec_Feed_Exception $e ) {
-			$message .= ' The stale manifest could not be written either: ' . $e->getMessage();
+			return $message . ' The stale manifest could not be written either: ' . $e->getMessage();
 		}
+		update_option( self::STATE_OPTION, $state, false );
 		return $message;
+	}
+
+	/**
+	 * Reads the published state from the database, not from the options cache.
+	 *
+	 * @return array|null
+	 */
+	private static function fresh_state() {
+		wp_cache_delete( self::STATE_OPTION, 'options' );
+		$notoptions = wp_cache_get( 'notoptions', 'options' );
+		if ( is_array( $notoptions ) && isset( $notoptions[ self::STATE_OPTION ] ) ) {
+			unset( $notoptions[ self::STATE_OPTION ] );
+			wp_cache_set( 'notoptions', $notoptions, 'options' );
+		}
+		return self::get_state();
+	}
+
+	/**
+	 * Whether a published, not yet stale feed has gone without a successful run for too long.
+	 *
+	 * @param array|null $state Published state.
+	 * @param int        $now   Unix time.
+	 * @return bool
+	 */
+	private static function is_overdue( $state, $now ) {
+		/**
+		 * Filters the seconds without a successful run after which the feed is marked stale.
+		 *
+		 * @param int $seconds Default 48 hours.
+		 */
+		$stale_after = (int) apply_filters( 'artws_sec_feed_stale_after', self::DEFAULT_STALE_AFTER );
+
+		return null !== $state && ! $state['stale'] && $now - (int) $state['last_success'] > $stale_after;
 	}
 
 	/**
 	 * Saves the result of a run for the settings page.
 	 *
-	 * @param int    $now     Time of the run.
-	 * @param string $result  "success", "failure" or "stale".
-	 * @param string $message Error message.
-	 * @param array  $stats   Counters from Artws_Sec_Feed_Builder (empty when the download failed).
+	 * @param int    $now      Time of the run.
+	 * @param string $result   "success", "failure" or "stale".
+	 * @param string $message  Error message.
+	 * @param array  $stats    Counters from Artws_Sec_Feed_Builder (empty when the download failed).
+	 * @param int    $retry_at When the retry is scheduled, or 0.
 	 */
-	private static function record_status( $now, $result, $message, array $stats ) {
+	private static function record_status( $now, $result, $message, array $stats, $retry_at = 0 ) {
 		update_option(
 			self::STATUS_OPTION,
 			array(
@@ -460,23 +599,10 @@ class Artws_Sec_Feed_Updater {
 				'result'       => $result,
 				'message'      => $message,
 				'stats'        => $stats,
+				'retry_at'     => $retry_at,
 			),
 			false
 		);
-	}
-
-	/**
-	 * Seconds without a successful run after which the feed is marked stale.
-	 *
-	 * @return int
-	 */
-	private static function stale_after() {
-		/**
-		 * Filters the seconds without a successful run after which the feed is marked stale.
-		 *
-		 * @param int $seconds Default 48 hours.
-		 */
-		return (int) apply_filters( 'artws_sec_feed_stale_after', self::DEFAULT_STALE_AFTER );
 	}
 
 	/**

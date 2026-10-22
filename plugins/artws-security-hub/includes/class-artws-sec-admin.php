@@ -65,7 +65,7 @@ class Artws_Sec_Admin {
 	 * Keeps the submitted versions that fit the manifest and the saved ones otherwise.
 	 *
 	 * @param mixed $input Submitted value.
-	 * @return array{php: string, WordPress: string, woocommerce: string}
+	 * @return array<string, string> Keyed like Artws_Sec_Feed_Updater::DEFAULT_EOL.
 	 */
 	public static function sanitize_eol( $input ) {
 		$eol = Artws_Sec_Feed_Updater::get_eol();
@@ -182,6 +182,10 @@ class Artws_Sec_Admin {
 								echo esc_html( gmdate( 'Y-m-d H:i:s', (int) $status['last_attempt'] ) . ' UTC: ' . ( $status['result'] ?? '' ) );
 								if ( ! empty( $status['message'] ) ) {
 									echo '<br>' . esc_html( $status['message'] );
+								}
+								if ( ! empty( $status['retry_at'] ) ) {
+									/* translators: %s: date and time in UTC. */
+									echo '<br>' . esc_html( sprintf( __( 'Retry scheduled at %s UTC.', 'artws-security-hub' ), gmdate( 'Y-m-d H:i:s', (int) $status['retry_at'] ) ) );
 								}
 							}
 							?>
