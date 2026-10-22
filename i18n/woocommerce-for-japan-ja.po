@@ -2879,6 +2879,29 @@ msgstr ""
 "現在、30分間( Zoom )の有料相談を提供しています。Woo Agency の専門家がお客様の"
 "現状を分析し、最適な解決策をご提案いたします。"
 
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
+msgid "Security"
+msgstr "セキュリティ"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
+msgid "Vulnerability check"
+msgstr "脆弱性チェック"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
+msgid ""
+"Once a day, download the list of known vulnerabilities from wc.artws.info "
+"(Artisan Workshop) and check the installed plugins, themes and WordPress "
+"against it. Only the versions of this plugin, WordPress, WooCommerce and PHP "
+"are sent, in the User-Agent header."
+msgstr ""
+"1日1回、wc.artws.info（職人工房）から既知の脆弱性の一覧を取得し、インストール"
+"済みのプラグイン・テーマ・WordPress と照合します。送信するのは User-Agent "
+"ヘッダーに含まれる、このプラグイン・WordPress・WooCommerce・PHP のバージョン"
+"だけです。"
+
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44
 #: src/js/blocks/delivery-block-editor.js:65
@@ -3693,3 +3716,86 @@ msgstr "ステータス: 審査は否決されました"
 #: src/js/paidy/wizard/button.js:6
 msgid "Next"
 msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:165
+msgid "Japanized for WooCommerce security check"
+msgstr "Japanized for WooCommerce セキュリティチェック"
+
+#: includes/admin/class-jp4wc-security-notice.php:171
+msgid ""
+"The vulnerability data has not been updated for a while, so vulnerabilities "
+"disclosed since then are not checked."
+msgstr ""
+"脆弱性データがしばらく更新されていないため、それ以降に公開された脆弱性は照合"
+"されていません。"
+
+#. translators: %d: number of vulnerabilities
+#: includes/admin/class-jp4wc-security-notice.php:189
+#, php-format
+msgid ""
+"%d known vulnerability was found in the software installed on this site."
+msgid_plural ""
+"%d known vulnerabilities were found in the software installed on this site."
+msgstr[0] ""
+"このサイトにインストールされているソフトウェアに、既知の脆弱性が %d 件見つか"
+"りました。"
+
+#: includes/admin/class-jp4wc-security-notice.php:198
+msgid ""
+"Update the affected plugins, themes or WordPress to a fixed version, or "
+"remove the ones that have no fix."
+msgstr ""
+"該当するプラグイン・テーマ・WordPress を修正済みのバージョンに更新するか、修"
+"正版の無いものは削除してください。"
+
+#. translators: %d: number of vulnerabilities not listed
+#: includes/admin/class-jp4wc-security-notice.php:235
+#, php-format
+msgid "and %d more"
+msgid_plural "and %d more"
+msgstr[0] "ほか %d 件"
+
+#: includes/admin/class-jp4wc-security-notice.php:252
+msgctxt "vulnerability severity"
+msgid "Critical"
+msgstr "緊急"
+
+#: includes/admin/class-jp4wc-security-notice.php:253
+msgctxt "vulnerability severity"
+msgid "High"
+msgstr "高"
+
+#: includes/admin/class-jp4wc-security-notice.php:254
+msgctxt "vulnerability severity"
+msgid "Medium"
+msgstr "中"
+
+#: includes/admin/class-jp4wc-security-notice.php:255
+msgctxt "vulnerability severity"
+msgid "Low"
+msgstr "低"
+
+#: includes/admin/class-jp4wc-security-notice.php:256
+msgctxt "vulnerability severity"
+msgid "None"
+msgstr "なし"
+
+#. translators: %s: severity of a vulnerability, e.g. High
+#: includes/admin/class-jp4wc-security-notice.php:260
+#, php-format
+msgid "Severity: %s"
+msgstr "深刻度: %s"
+
+#: includes/admin/class-jp4wc-security-notice.php:264
+msgid "No fixed version yet"
+msgstr "修正版はまだありません"
+
+#. translators: %s: comma-separated versions that fix the vulnerability
+#: includes/admin/class-jp4wc-security-notice.php:267
+#, php-format
+msgid "Fixed in %s"
+msgstr "修正版: %s"
+
+#: includes/admin/class-jp4wc-security-notice.php:311
+msgid "License"
+msgstr "ライセンス"
