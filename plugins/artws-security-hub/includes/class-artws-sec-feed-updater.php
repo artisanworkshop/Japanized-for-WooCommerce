@@ -366,8 +366,7 @@ class Artws_Sec_Feed_Updater {
 			$state = array(
 				'version'      => gmdate( 'Ymd.His', $now ),
 				'generated_at' => $generated_at,
-				// Deactivated while this run was in progress: nothing will update these files.
-				'stale'        => false !== self::fresh_option( self::DEACTIVATED_OPTION ),
+				'stale'        => false,
 				'files'        => $files,
 				'copyrights'   => $result['copyrights'],
 				'attribution'  => self::ATTRIBUTION,
@@ -378,7 +377,15 @@ class Artws_Sec_Feed_Updater {
 			wp_unschedule_hook( self::RETRY_HOOK );
 			Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
 
-			self::record_status( $now, 'success', '', $stats );
+			// Deactivated while this run was in progress: nothing will update these files. Checked
+			// after the manifest is written, so a deactivation at any point of the run is caught
+			// either here or by deactivate(), which sets the flag before writing its stale manifest.
+			$notice = '';
+			if ( false !== self::fresh_option( self::DEACTIVATED_OPTION ) ) {
+				$notice = self::mark_stale( 'The plugin was deactivated during this update, so the feed is marked stale.' );
+			}
+
+			self::record_status( $now, 'success', $notice, $stats );
 			return 'success';
 		} catch ( Throwable $e ) {
 			// Fatal errors such as running out of memory never get here; watchdog() covers them.

@@ -278,6 +278,12 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 				},
 				'would have no records',
 			),
+			'mismatched brackets'     => array(
+				static function ( $test ) {
+					$test->mock_wordfence( substr( rtrim( self::fixture_feed() ), 0, -1 ) . ',"20000000-0000-4000-8000-000000000998":[}}' );
+				},
+				'is not valid JSON',
+			),
 			'record with broken JSON' => array(
 				static function ( $test ) {
 					$test->mock_wordfence( substr( rtrim( self::fixture_feed() ), 0, -1 ) . ',"20000000-0000-4000-8000-000000000999":{"id":truX}}' );
@@ -743,6 +749,33 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 		$this->assertFalse( get_option( Artws_Sec_Feed_Updater::DEACTIVATED_OPTION ) );
 		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW + DAY_IN_SECONDS ) );
 		$this->assertFalse( self::read_manifest()->stale );
+	}
+
+	/**
+	 * Deactivated just before the run writes its manifest: the run sees the flag afterwards and the feed ends stale.
+	 */
+	public function test_deactivation_during_publication_leaves_the_feed_stale() {
+		$this->publish_fixture();
+		$deactivated = false;
+		add_action(
+			'update_option_' . Artws_Sec_Feed_Updater::STATE_OPTION,
+			static function () use ( &$deactivated ) {
+				if ( ! $deactivated ) {
+					$deactivated = true;
+					Artws_Sec_Feed_Updater::deactivate();
+				}
+			}
+		);
+		$this->mock_wordfence( self::fixture_feed() );
+
+		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW + DAY_IN_SECONDS ) );
+
+		$this->assertTrue( $deactivated );
+		$manifest = self::read_manifest();
+		$this->assertTrue( $manifest->stale );
+		$this->assertSame( '20261023.030000', $manifest->version, 'The new data is published, as stale.' );
+		$this->assertTrue( Artws_Sec_Feed_Updater::get_state()['stale'] );
+		$this->assertStringContainsString( 'deactivated during this update', Artws_Sec_Feed_Updater::get_status()['message'] );
 	}
 
 	/**
