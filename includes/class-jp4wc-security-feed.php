@@ -23,10 +23,11 @@ require_once __DIR__ . '/class-jp4wc-security-scanner.php';
  * WooCommerce and PHP. The format is defined in tests/fixtures/security-feed/.
  *
  * The sync and the rescan both run as WP-Cron events, which WP-Cron's own lock
- * runs one at a time. Should two runs still overlap, each writes its own
- * temporary files and renames them into place, and the next sync downloads
- * again whatever no longer matches the stored checksums, so there is no lock
- * of its own.
+ * runs one at a time. Should two syncs still overlap, each writes its own
+ * temporary files and renames them into place, so the stored files can come
+ * from both. The state keeps the sha256 of each stored file, and the next sync
+ * downloads again any file that no longer matches it, so there is no lock of
+ * its own.
  */
 class JP4WC_Security_Feed {
 
@@ -122,21 +123,50 @@ class JP4WC_Security_Feed {
 	}
 
 	/**
-	 * Whether the security check is on, read from the database.
+	 * Returns the setting as stored in the database.
 	 *
-	 * A sync or a match takes seconds, and the check can be turned off in the
-	 * meantime. The options this process loaded when it started do not show
-	 * that, and writing the state back then would restore the data the
-	 * turning off removed, with no event left to remove it again.
+	 * A sync or a match takes seconds, and the check can be turned off, or the
+	 * plugin uninstalled, in the meantime. The options this process loaded
+	 * when it started do not show that.
 	 *
-	 * @return bool
+	 * @return string|null Null when there is no setting row.
 	 */
-	private static function is_enabled_in_database() {
+	private static function setting_in_database() {
 		global $wpdb;
 		// get_row(), not get_var(): get_var() returns null for '' as well as for a missing row.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Must not read the options this process cached.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::SETTING ) );
-		return null === $row || '1' === $row->option_value;
+		return null === $row ? null : (string) $row->option_value;
+	}
+
+	/**
+	 * Whether the stored data may stay, judged after writing it.
+	 *
+	 * Turning the check off saves the setting first and then purges, and
+	 * uninstall purges and then deletes the setting. Checking the database
+	 * after each write therefore either sees the change and purges here, or
+	 * the change's own purge runs after the write. A missing setting row
+	 * counts as off: start_run() stores the default before a run begins.
+	 *
+	 * @return bool False when the data was purged.
+	 */
+	private static function keep_written_data() {
+		if ( '1' === self::setting_in_database() ) {
+			return true;
+		}
+		self::purge();
+		return false;
+	}
+
+	/**
+	 * Stores the default setting for a run when the site has no setting row,
+	 * for example after it was deleted by hand, so that keep_written_data()
+	 * can tell it from a check turned off or uninstalled meanwhile.
+	 */
+	private static function start_run() {
+		if ( null === self::setting_in_database() ) {
+			add_option( self::SETTING, '1' );
+		}
 	}
 
 	/**
@@ -330,6 +360,7 @@ class JP4WC_Security_Feed {
 			return;
 		}
 
+		self::start_run();
 		$state                 = self::get_state();
 		$state['last_attempt'] = time();
 
@@ -340,12 +371,11 @@ class JP4WC_Security_Feed {
 			$state = $result;
 		}
 
+		update_option( self::STATE_OPTION, $state, false );
 		// The check may have been turned off while the files were downloading.
-		if ( ! self::is_enabled_in_database() ) {
-			self::purge();
+		if ( ! self::keep_written_data() ) {
 			return;
 		}
-		update_option( self::STATE_OPTION, $state, false );
 
 		self::rescan();
 	}
@@ -357,6 +387,7 @@ class JP4WC_Security_Feed {
 		if ( ! self::is_enabled() ) {
 			return;
 		}
+		self::start_run();
 		$state = self::get_state();
 		if ( ! is_array( $state['files'] ) || array() === $state['files'] ) {
 			return;
@@ -377,11 +408,6 @@ class JP4WC_Security_Feed {
 			$count += count( $item['vulnerabilities'] );
 		}
 
-		// The check may have been turned off while the files were read.
-		if ( ! self::is_enabled_in_database() ) {
-			self::purge();
-			return;
-		}
 		update_option(
 			self::FINDINGS_OPTION,
 			array(
@@ -397,6 +423,8 @@ class JP4WC_Security_Feed {
 			),
 			false
 		);
+		// The check may have been turned off while the files were read.
+		self::keep_written_data();
 	}
 
 	/**
@@ -443,12 +471,12 @@ class JP4WC_Security_Feed {
 		self::remove_old_temporary_files( $directory );
 
 		$temporary = array();
+		$stored    = array();
 		try {
 			foreach ( self::TYPES as $type ) {
 				$entry = $manifest['files'][ $type ];
-				if ( isset( $state['files'][ $type ]['sha256'] ) && is_string( $state['files'][ $type ]['sha256'] )
-					&& hash_equals( $state['files'][ $type ]['sha256'], $entry['sha256'] )
-					&& is_file( $directory . '/' . $type . '.json' ) ) {
+				if ( self::is_stored( $state, $type, $entry['sha256'], $directory . '/' . $type . '.json' ) ) {
+					$stored[ $type ] = $state['files'][ $type ]['json_sha256'];
 					continue;
 				}
 				$temporary[ $type ] = $directory . '/' . $type . '.json.' . wp_generate_password( 12, false ) . '.tmp';
@@ -457,6 +485,7 @@ class JP4WC_Security_Feed {
 				if ( is_wp_error( $downloaded ) ) {
 					return $downloaded;
 				}
+				$stored[ $type ] = $downloaded;
 			}
 
 			foreach ( $temporary as $type => $path ) {
@@ -476,8 +505,9 @@ class JP4WC_Security_Feed {
 		$files = array();
 		foreach ( self::TYPES as $type ) {
 			$files[ $type ] = array(
-				'sha256' => $manifest['files'][ $type ]['sha256'],
-				'count'  => $manifest['files'][ $type ]['count'],
+				'sha256'      => $manifest['files'][ $type ]['sha256'],
+				'count'       => $manifest['files'][ $type ]['count'],
+				'json_sha256' => $stored[ $type ],
 			);
 		}
 
@@ -494,6 +524,31 @@ class JP4WC_Security_Feed {
 				'last_error'   => '',
 			)
 		);
+	}
+
+	/**
+	 * Whether the stored file of a type is the one the manifest lists.
+	 *
+	 * Compares the manifest's checksum with the stored state, and the stored
+	 * file with the checksum it had when it was written: two syncs that ran
+	 * at once may have left another run's file under a state that is not its own.
+	 *
+	 * @param array  $state  Stored state.
+	 * @param string $type   File type.
+	 * @param string $sha256 Checksum of the .json.gz in the manifest.
+	 * @param string $path   Stored file.
+	 * @return bool
+	 */
+	private static function is_stored( array $state, $type, $sha256, $path ) {
+		$file = isset( $state['files'][ $type ] ) && is_array( $state['files'][ $type ] ) ? $state['files'][ $type ] : array();
+		if ( ! isset( $file['sha256'], $file['json_sha256'] ) || ! is_string( $file['sha256'] ) || ! is_string( $file['json_sha256'] ) ) {
+			return false;
+		}
+		if ( ! hash_equals( $file['sha256'], $sha256 ) || ! is_file( $path ) ) {
+			return false;
+		}
+		$actual = hash_file( 'sha256', $path );
+		return is_string( $actual ) && hash_equals( $file['json_sha256'], $actual );
 	}
 
 	/**
@@ -620,7 +675,7 @@ class JP4WC_Security_Feed {
 	 * @param string $type  File type.
 	 * @param array  $entry The type's entry of the manifest.
 	 * @param string $path  Temporary file to write.
-	 * @return true|WP_Error
+	 * @return string|WP_Error SHA-256 of the decompressed file written.
 	 */
 	private static function download( $type, array $entry, $path ) {
 		$response = wp_remote_get(
@@ -652,7 +707,8 @@ class JP4WC_Security_Feed {
 			return new WP_Error( $inflated->get_error_code(), sprintf( 'The %s vulnerability file %s', $type, $inflated->get_error_message() ) );
 		}
 
-		return self::check_file( $type, $path );
+		$checked = self::check_file( $type, $path );
+		return is_wp_error( $checked ) ? $checked : $inflated;
 	}
 
 	/**
@@ -663,7 +719,7 @@ class JP4WC_Security_Feed {
 	 *
 	 * @param string $gzip Gzip data.
 	 * @param string $path File to write.
-	 * @return true|WP_Error
+	 * @return string|WP_Error SHA-256 of the decompressed data.
 	 */
 	private static function inflate_to_file( $gzip, $path ) {
 		if ( ! function_exists( 'inflate_init' ) ) {
@@ -680,6 +736,7 @@ class JP4WC_Security_Feed {
 
 		$written = 0;
 		$length  = strlen( $gzip );
+		$hash    = hash_init( 'sha256' );
 		// inflate_add() also raises a warning for damaged data; the return value reports it.
 		set_error_handler( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Turns the warning of damaged data into an error result.
 			static function () {
@@ -700,6 +757,7 @@ class JP4WC_Security_Feed {
 				if ( '' !== $piece && strlen( $piece ) !== fwrite( $handle, $piece ) ) {
 					return new WP_Error( 'jp4wc_security_feed_write', 'could not be written.' );
 				}
+				hash_update( $hash, $piece );
 				if ( ZLIB_STREAM_END === inflate_get_status( $context ) ) {
 					break;
 				}
@@ -712,7 +770,7 @@ class JP4WC_Security_Feed {
 			fclose( $handle );
 		}
 
-		return true;
+		return hash_final( $hash );
 	}
 
 	/**
@@ -733,8 +791,10 @@ class JP4WC_Security_Feed {
 					}
 				},
 				static function ( $slug, $json ) {
-					if ( '[' !== $json[0] ) {
-						throw new UnexpectedValueException( 'The records of a slug are not a list.' );
+					// The reader finds where a value ends but does not parse it.
+					$records = json_decode( $json, true );
+					if ( ! is_array( $records ) || array() === $records || ! array_is_list( $records ) ) {
+						throw new UnexpectedValueException( 'The records of a slug are not a list of records.' );
 					}
 				}
 			);
@@ -758,6 +818,7 @@ class JP4WC_Security_Feed {
 	 * Returns the arguments of a feed request.
 	 *
 	 * The User-Agent replaces WordPress's default one, which holds the site URL.
+	 * Redirects are not followed, so the requests go nowhere but the feed URL.
 	 *
 	 * @param array $args Arguments of this request.
 	 * @return array
@@ -765,7 +826,8 @@ class JP4WC_Security_Feed {
 	private static function request_args( array $args ) {
 		return array_merge(
 			array(
-				'redirection' => 3,
+				// The feed is served as static files: a redirect would only send the request elsewhere.
+				'redirection' => 0,
 				'user-agent'  => self::user_agent(),
 			),
 			$args
