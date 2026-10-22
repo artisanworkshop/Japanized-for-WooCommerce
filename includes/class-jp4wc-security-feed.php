@@ -122,6 +122,24 @@ class JP4WC_Security_Feed {
 	}
 
 	/**
+	 * Whether the security check is on, read from the database.
+	 *
+	 * A sync or a match takes seconds, and the check can be turned off in the
+	 * meantime. The options this process loaded when it started do not show
+	 * that, and writing the state back then would restore the data the
+	 * turning off removed, with no event left to remove it again.
+	 *
+	 * @return bool
+	 */
+	private static function is_enabled_in_database() {
+		global $wpdb;
+		// get_row(), not get_var(): get_var() returns null for '' as well as for a missing row.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Must not read the options this process cached.
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::SETTING ) );
+		return null === $row || '1' === $row->option_value;
+	}
+
+	/**
 	 * Sets up the setting on install and update, and matches the WP-Cron
 	 * event and the stored data to it.
 	 */
@@ -191,6 +209,34 @@ class JP4WC_Security_Feed {
 		}
 		if ( 0 === $left ) {
 			rmdir( $directory );
+		}
+	}
+
+	/**
+	 * Removes everything the security check stored, on every site of a network (uninstall.php).
+	 *
+	 * Each site of a network has its own setting, events and directory under
+	 * its uploads directory.
+	 */
+	public static function uninstall() {
+		if ( ! is_multisite() ) {
+			self::purge();
+			delete_option( self::SETTING );
+			return;
+		}
+		foreach ( get_sites(
+			array(
+				'fields' => 'ids',
+				'number' => 0,
+			)
+		) as $site_id ) {
+			switch_to_blog( (int) $site_id );
+			try {
+				self::purge();
+				delete_option( self::SETTING );
+			} finally {
+				restore_current_blog();
+			}
 		}
 	}
 
@@ -293,6 +339,12 @@ class JP4WC_Security_Feed {
 		} else {
 			$state = $result;
 		}
+
+		// The check may have been turned off while the files were downloading.
+		if ( ! self::is_enabled_in_database() ) {
+			self::purge();
+			return;
+		}
 		update_option( self::STATE_OPTION, $state, false );
 
 		self::rescan();
@@ -325,6 +377,11 @@ class JP4WC_Security_Feed {
 			$count += count( $item['vulnerabilities'] );
 		}
 
+		// The check may have been turned off while the files were read.
+		if ( ! self::is_enabled_in_database() ) {
+			self::purge();
+			return;
+		}
 		update_option(
 			self::FINDINGS_OPTION,
 			array(

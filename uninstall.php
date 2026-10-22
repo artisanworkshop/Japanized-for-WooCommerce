@@ -36,10 +36,9 @@ wp_clear_scheduled_hook( 'wc4jp_tracker_send_event' );
 delete_option( 'wc4jp-tracking' );
 delete_option( 'jp4wc_tracker_last_send' );
 
-// The security check: its WP-Cron events, options, downloaded files and closed notices.
+// The security check: its WP-Cron events, options and downloaded files on every site, and closed notices.
 require_once __DIR__ . '/includes/admin/class-jp4wc-security-notice.php';
-JP4WC_Security_Feed::purge();
-delete_option( JP4WC_Security_Feed::SETTING );
+JP4WC_Security_Feed::uninstall();
 delete_metadata( 'user', 0, JP4WC_Security_Notice::DISMISSED_META, '', true );
 
 /**
