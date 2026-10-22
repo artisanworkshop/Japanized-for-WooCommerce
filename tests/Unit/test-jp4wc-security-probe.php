@@ -27,6 +27,13 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	private $answer = 200;
 
 	/**
+	 * Answer to the request for the home page that starts a run: an HTTP code, or a WP_Error.
+	 *
+	 * @var int|WP_Error
+	 */
+	private $home = 200;
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -34,6 +41,8 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 		$this->assertTrue( class_exists( 'JP4WC_Security_Probe' ), 'The plugin loads the probe at plugins_loaded.' );
 		delete_option( JP4WC_Security_Probe::OPTION );
 		$this->requests = array();
+		$this->answer   = 200;
+		$this->home     = 200;
 		add_filter( 'pre_http_request', array( $this, 'respond' ), 10, 3 );
 	}
 
@@ -59,14 +68,15 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 			'url'  => $url,
 			'args' => $args,
 		);
-		if ( is_wp_error( $this->answer ) ) {
-			return $this->answer;
+		$answer           = home_url( '/' ) === $url ? $this->home : $this->answer;
+		if ( is_wp_error( $answer ) ) {
+			return $answer;
 		}
 		return array(
 			'headers'  => array(),
 			'body'     => '',
 			'response' => array(
-				'code'    => $this->answer,
+				'code'    => $answer,
 				'message' => '',
 			),
 			'cookies'  => array(),
@@ -128,20 +138,89 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * One HEAD request, without following redirects, with a short timeout and
-	 * a User-Agent that names the check.
+	 * A run asks for the home page first, then sends one HEAD request per
+	 * check, without following redirects, with a short timeout and a
+	 * User-Agent that names the check.
 	 */
 	public function test_request_is_one_head_without_redirects() {
 		$probe = new JP4WC_Security_Probe();
 		$probe->status( 'A-04', self::own_url( '/xmlrpc.php' ), array( __CLASS__, 'open_on_200' ) );
+		$probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) );
 
-		$this->assertCount( 1, $this->requests );
-		$args = $this->requests[0]['args'];
-		$this->assertSame( 'HEAD', $args['method'] );
-		$this->assertSame( 0, $args['redirection'] );
-		$this->assertSame( JP4WC_Security_Probe::TIMEOUT, $args['timeout'] );
-		$this->assertFalse( $args['sslverify'], 'As WordPress requests itself.' );
-		$this->assertSame( 'JP4WC/' . JP4WC_VERSION . ' (security check)', $args['user-agent'] );
+		$this->assertSame( array( home_url( '/' ), self::own_url( '/xmlrpc.php' ), self::own_url( '/wp-content/uploads/' ) ), wp_list_pluck( $this->requests, 'url' ), 'The home page once per run.' );
+		foreach ( $this->requests as $request ) {
+			$args = $request['args'];
+			$this->assertSame( 'HEAD', $args['method'] );
+			$this->assertSame( 0, $args['redirection'] );
+			$this->assertSame( JP4WC_Security_Probe::TIMEOUT, $args['timeout'] );
+			$this->assertFalse( $args['sslverify'], 'As WordPress requests itself.' );
+			$this->assertSame( 'JP4WC/' . JP4WC_VERSION . ' (security check)', $args['user-agent'] );
+		}
+	}
+
+	/**
+	 * Home page answers that show the site's own requests are refused.
+	 *
+	 * @return array<string, array{int|WP_Error}>
+	 */
+	public function refused_home_provider() {
+		return array(
+			'authentication' => array( 401 ),
+			'challenge'      => array( 403 ),
+			'HEAD refused'   => array( 405 ),
+			'rate limited'   => array( 429 ),
+			'server error'   => array( 500 ),
+			'unavailable'    => array( 503 ),
+			'no connection'  => array( new WP_Error( 'http_request_failed', 'cURL error 7: Failed to connect' ) ),
+		);
+	}
+
+	/**
+	 * When the home page refuses the site's own request, no check is requested
+	 * and every result is unknown: a 403 from a firewall says nothing about the URL (R1-1).
+	 *
+	 * @dataProvider refused_home_provider
+	 *
+	 * @param int|WP_Error $home Answer of the home page.
+	 */
+	public function test_refused_home_page_makes_every_result_unknown( $home ) {
+		$this->home   = $home;
+		$this->answer = 403;
+		$probe        = new JP4WC_Security_Probe();
+
+		$this->assertSame( 'unknown', $probe->status( 'A-02', self::own_url( '/wp-login.php' ), array( __CLASS__, 'open_on_200' ) ) );
+		$this->assertSame( 'unknown', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ) );
+		$this->assertSame( array( home_url( '/' ) ), wp_list_pluck( $this->requests, 'url' ) );
+	}
+
+	/**
+	 * A redirect or a 404 of the home page is a normal answer.
+	 */
+	public function test_redirected_home_page_is_a_normal_answer() {
+		foreach ( array( 301, 302, 404 ) as $home ) {
+			delete_option( JP4WC_Security_Probe::OPTION );
+			$this->home   = $home;
+			$this->answer = 403;
+			$probe        = new JP4WC_Security_Probe();
+			$this->assertSame( 'pass', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ), (string) $home );
+		}
+	}
+
+	/**
+	 * A pre_http_request filter that answers with something else gives unknown, not a TypeError (R1-5).
+	 */
+	public function test_malformed_response_is_unknown() {
+		$junk = static function () {
+			return true;
+		};
+		// After respond(), which answers every request.
+		add_filter( 'pre_http_request', $junk, 20 );
+		try {
+			$probe = new JP4WC_Security_Probe();
+			$this->assertSame( 'unknown', $probe->status( 'A-04', self::own_url( '/xmlrpc.php' ), array( __CLASS__, 'open_on_200' ) ) );
+		} finally {
+			remove_filter( 'pre_http_request', $junk, 20 );
+		}
 	}
 
 	/**
@@ -155,7 +234,7 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 		$this->answer = 403;
 		$probe        = new JP4WC_Security_Probe();
 		$this->assertSame( 'fail', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ), 'The stored result is used.' );
-		$this->assertCount( 1, $this->requests );
+		$this->assertCount( 2, $this->requests, 'The home page and the uploads directory, once.' );
 
 		$stored                       = get_option( JP4WC_Security_Probe::OPTION );
 		$stored['D-01']['checked_at'] = time() - JP4WC_Security_Probe::TTL;
@@ -163,7 +242,7 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 
 		$probe = new JP4WC_Security_Probe();
 		$this->assertSame( 'pass', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ), 'An old result is requested again.' );
-		$this->assertCount( 2, $this->requests );
+		$this->assertCount( 4, $this->requests );
 	}
 
 	/**
@@ -183,7 +262,7 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 
 		$probe = new JP4WC_Security_Probe();
 		$this->assertSame( 'fail', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ) );
-		$this->assertCount( 1, $this->requests );
+		$this->assertCount( 2, $this->requests );
 	}
 
 	/**
@@ -229,7 +308,7 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 
 		$this->assertSame( 'unknown', $probe->status( 'A-02', self::own_url( '/wp-login.php' ), array( __CLASS__, 'open_on_200' ) ) );
 		$this->assertSame( 'unknown', $probe->status( 'A-04', self::own_url( '/xmlrpc.php' ), array( __CLASS__, 'open_on_200' ) ) );
-		$this->assertCount( 1, $this->requests );
+		$this->assertSame( array( home_url( '/' ), self::own_url( '/wp-login.php' ) ), wp_list_pluck( $this->requests, 'url' ) );
 
 		$probe->save();
 		$stored = get_option( JP4WC_Security_Probe::OPTION );
