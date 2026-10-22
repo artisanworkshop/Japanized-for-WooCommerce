@@ -165,3 +165,6 @@
 | 2026-10-23 | R1-L8 | Low | includes/admin/class-jp4wc-security-notice.php（`record_details()`） | 区切りの `, `・` (`・` / ` が翻訳できない。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L9 | Low | 設計（#257 クライアント） | マルチサイトでは各サイトが毎日フィードを取得して自分の uploads に保存する（照合結果はネットワーク共通）。メインサイトだけで取得・照合する余地。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L10 | Low | includes/admin/class-jp4wc-security-notice.php（`software_url()`） | コアのリンク（`network_admin_url( 'update-core.php' )`）はサブサイトの管理者には開けない。#257 の対応ブランチ R1 | 未起票 |
+| 2026-10-23 | R2-2 | Low | includes/class-jp4wc-security-feed.php（`uninstall()`） | マルチサイト分岐にテストが無い（CI にマルチサイト実行が無い）。#257 の対応ブランチ R2 | 未起票 |
+| 2026-10-23 | R2-3 | Low | includes/class-jp4wc-security-feed.php（`uninstall()`） | サイトが数千あるネットワークでは各サイトの alloptions がランタイムキャッシュに積み上がり、アンインストールが memory_limit に当たりうる。ループ内で `wp_cache_flush_runtime()`。#257 の対応ブランチ R2 | 未起票 |
+| 2026-10-23 | R2-4 | Low | includes/class-jp4wc-security-feed.php（`is_enabled_in_database()`） | `pre_option_` / `option_` フィルターを通らないので、フィルターで有効を強制し DB が `''` のサイトでは毎日取得しては purge する（まれな構成）。#257 の対応ブランチ R2 | 未起票 |
