@@ -1,0 +1,17 @@
+# dev-cycle 状態: feat/271-php2shell-security-notice
+- タスク: issue #271 — PHP2Shell（CVE-2026-109618 / CVE-2026-109619）未対応の PHP で、管理画面に更新を促すモーダルを出す
+- 開始: 2026-10-22
+- PR: 未作成
+- 現在のステップ: 4(push と PR 作成)
+- オプション: auto-commit
+- Copilot: 依頼 0 回 / 未収束
+- Codex: 依頼 0 回 / 未収束
+
+## ログ
+| 日時(JST) | ステップ | 内容 |
+|---|---|---|
+| 2026-10-22 | 1 | 計画承認。changelog は bump PR に集約(この PR では readme.txt を変えない)、記事 URL は仮(`php2shell-php-update`)、`.phpcs.xml.dist` に `artws_` / `ArtisanWorkshop\PhpSecurityNotice` の prefix を追加、インライン CSS/JS は `wp_add_inline_*` で出す |
+| 2026-10-22 | 2 | 実装コミット 2 件(78a602f / 9ce110a)。PHPUnit 497 件 green、lint は main と同じ既存の 94 errors / 12 warnings、共通ディレクトリは PHPCompatibility 7.0- で指摘なし |
+| 2026-10-22 | 2 | wp-env(PHP 8.3.35)で目視確認: 表示・×/Esc は記録せず閉じる・ブロックエディターでは出ない・WooCommerce の React 画面でも最前面・「今後表示しない」で user meta 保存。**計画外の問題**: wp.org の日本語言語パックが同梱 .mo より優先され、新しい文字列が英語で出る → ユーザー判断で「同梱 .mo で補う」を採用(972d378、文言 callback の実行中だけ gettext フィルターで不足分を同梱 .mo から引く)。PHPUnit 498 件 green |
+| 2026-10-22 | 3 | review-loop R1: Medium 2(R1-1 マルチサイトの権限判定が無検証 / R1-2 dismiss の送信先が絶対 URL)を修正(7eda6ca)、Low 9 を backlog。`.pot`/`.po` の `#:` 行番号のずれ(この PR で入れた誤り)も修正 |
+| 2026-10-22 | 3 | review-loop R2: APPROVE(R1-1 / R1-2 解消をミューテーションで確認、新規 C/H/M なし)、Low 1 を backlog。PHPUnit 498 件 green |
