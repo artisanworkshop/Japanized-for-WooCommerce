@@ -29,7 +29,7 @@ class Artws_Sec_Feed_Converter {
 	 * @return array{informational: bool, records: array<int, array>, copyrights: mixed}
 	 *               The feed records (one per affected software) and the record's
 	 *               copyright holders without the V3 "message" key.
-	 * @throws UnexpectedValueException When the record has no software list.
+	 * @throws UnexpectedValueException When the record has no software list, or an empty one.
 	 */
 	public static function convert( array $record ) {
 		if ( ! isset( $record['software'] ) || ! is_array( $record['software'] ) || ! array_is_list( $record['software'] ) ) {
@@ -38,6 +38,11 @@ class Artws_Sec_Feed_Converter {
 
 		$informational = isset( $record['informational'] ) && true === $record['informational'];
 		$records       = array();
+
+		// A vulnerability that affects no software cannot be placed anywhere; count it as left out rather than lose it.
+		if ( ! $informational && array() === $record['software'] ) {
+			throw new UnexpectedValueException( 'software is empty' );
+		}
 
 		if ( ! $informational ) {
 			$id        = $record['id'] ?? null;

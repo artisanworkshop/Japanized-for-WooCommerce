@@ -440,7 +440,7 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 	}
 
 	/**
-	 * Undecodable records and records with uncarriable copyrights are left out too.
+	 * Records that are not objects, affect no software or have uncarriable copyrights are left out too.
 	 */
 	public function test_undecodable_and_uncarriable_records_are_left_out() {
 		$feed = self::generated_feed(
@@ -461,6 +461,8 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 						),
 					)
 				),
+				// A vulnerability that affects no software.
+				self::v3_record( 906, array() ),
 			)
 		);
 		// A member whose value is not an object.
@@ -470,10 +472,11 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW ) );
 
 		$stats = Artws_Sec_Feed_Updater::get_status()['stats'];
-		$this->assertSame( 2, $stats['excluded'] );
+		$this->assertSame( 3, $stats['excluded'] );
 		$this->assertSame(
 			array(
 				'copyrights.defiant.license_url' => 1,
+				'software is empty'              => 1,
 				'not a JSON object'              => 1,
 			),
 			$stats['excluded_reasons']
