@@ -17,6 +17,11 @@ defined( 'ABSPATH' ) || exit;
  * 12 hours. A request that fails gives "unknown", which costs the check no
  * points: many shared servers cannot connect to themselves.
  *
+ * Before its first request a run asks for the home page. When even that is
+ * refused (a firewall or CDN that challenges the server's own requests, a
+ * server that refuses HEAD), a 401 or 403 says nothing about the checked URL,
+ * so every result of the run is unknown.
+ *
  * Requests go only to this site's own host, so nothing is sent elsewhere
  * (uploads served from another host, for example, stay unknown). One instance
  * serves one run of the checks and saves the results once, at the end.
@@ -44,6 +49,13 @@ class JP4WC_Security_Probe {
 	const CLOSED_CODES = array( 401, 403, 404, 410 );
 
 	/**
+	 * HTTP codes of the home page that show the site's own requests are refused:
+	 * authentication required, forbidden, method not allowed, too many requests.
+	 * Server errors (5xx) count too.
+	 */
+	const REFUSED_CODES = array( 401, 403, 405, 429 );
+
+	/**
 	 * Results by check ID.
 	 *
 	 * @var array<string, array{status: string, checked_at: int}>
@@ -65,6 +77,13 @@ class JP4WC_Security_Probe {
 	private $unreachable = false;
 
 	/**
+	 * Whether the home page answered this run's first request normally; null before it was asked.
+	 *
+	 * @var bool|null
+	 */
+	private $answers = null;
+
+	/**
 	 * Reads the stored results.
 	 */
 	public function __construct() {
@@ -75,8 +94,9 @@ class JP4WC_Security_Probe {
 	/**
 	 * Returns the status a HEAD request gives a check, from the stored result while it is recent.
 	 *
-	 * Once a request of this run cannot connect, the others are not sent: on a
-	 * server that cannot reach itself each would wait for the timeout.
+	 * Once a request of this run cannot connect, or the home page refuses it,
+	 * the others are not sent: on a server that cannot reach itself each would
+	 * wait for the timeout.
 	 *
 	 * @param string   $check_id Check ID.
 	 * @param string   $url      URL on this site.
@@ -135,10 +155,44 @@ class JP4WC_Security_Probe {
 	 * @return string
 	 */
 	private function request( $url, callable $classify ) {
-		if ( $this->unreachable || ! self::is_own_url( $url ) ) {
+		if ( ! self::is_own_url( $url ) ) {
+			return 'unknown';
+		}
+		if ( null === $this->answers ) {
+			$this->answers = $this->home_answers();
+		}
+		if ( ! $this->answers ) {
 			return 'unknown';
 		}
 
+		$response = $this->head( $url );
+		return null === $response ? 'unknown' : self::classify( $classify, $response );
+	}
+
+	/**
+	 * Whether the home page answers the site's own request as it would a visitor's.
+	 *
+	 * @return bool
+	 */
+	private function home_answers() {
+		$response = $this->head( home_url( '/' ) );
+		if ( null === $response ) {
+			return false;
+		}
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		return $code >= 100 && $code < 500 && ! in_array( $code, self::REFUSED_CODES, true );
+	}
+
+	/**
+	 * Sends one HEAD request.
+	 *
+	 * @param string $url URL.
+	 * @return array|null The response; null when it could not connect (the rest of the run is then not sent).
+	 */
+	private function head( $url ) {
+		if ( $this->unreachable ) {
+			return null;
+		}
 		$response = wp_remote_head(
 			$url,
 			array(
@@ -150,11 +204,22 @@ class JP4WC_Security_Probe {
 				'user-agent'  => sprintf( 'JP4WC/%s (security check)', defined( 'JP4WC_VERSION' ) ? JP4WC_VERSION : '' ),
 			)
 		);
-		if ( is_wp_error( $response ) ) {
+		// A pre_http_request filter may answer with anything.
+		if ( is_wp_error( $response ) || ! is_array( $response ) ) {
 			$this->unreachable = true;
-			return 'unknown';
+			return null;
 		}
+		return $response;
+	}
 
+	/**
+	 * Classifies a response.
+	 *
+	 * @param callable $classify Classifier.
+	 * @param array    $response Response.
+	 * @return string
+	 */
+	private static function classify( callable $classify, array $response ) {
 		$status = $classify( $response );
 		return self::is_status( $status ) ? $status : 'unknown';
 	}
