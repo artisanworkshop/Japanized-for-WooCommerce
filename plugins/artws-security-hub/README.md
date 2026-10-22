@@ -30,7 +30,8 @@ API キーは `Authorization: Bearer <値>` でそのまま送る。wordfence-cl
 WP-Cron の日次イベント `artws_sec_feed_update` が Wordfence Intelligence V3 の production フィード（`https://www.wordfence.com/api/intelligence/v3/vulnerabilities/production`）を一時ファイルに落とし、契約 README の「V3 からの変換」どおりに `vuln-plugins.json.gz` / `vuln-themes.json.gz` / `vuln-core.json.gz` と `manifest.json` を作る。
 
 - フィードは数十 MB の1つの JSON オブジェクトなので、丸ごと `json_decode()` せず1件ずつ読む（`Artws_Sec_Json_Object_Reader`）。レコードは JSON 文字列のまま集める（4 万件で最大使用メモリ約 100 MB。`wp_raise_memory_limit()` で `WP_MAX_MEMORY_LIMIT` まで上げる）
-- 変換したレコードは1件ずつ契約の Schema と同じ条件で検査し（`Artws_Sec_Record_Validator`。実行時に Composer の依存は使わないので手書き。テストで Schema 本体と突き合わせている）、合わないものだけ除外して理由別に数える
+- 変換したレコードは1件ずつ契約の Schema と同じ条件で検査し（`Artws_Sec_Record_Validator`。実行時に Composer の依存は使わないので手書き。テストで Schema 本体と突き合わせている）、合わないものだけ除外して理由別に数える。UTF-8 でない文字列を含むレコードも除外する。構文の壊れたレコードはダウンロードの破損とみなし、実行全体を失敗にする（再試行の対象）
+- mbstring は使わない（WordPress が必須にしていない）。使うのは WordPress が無いときに補う `mb_strlen()` / `mb_substr()` だけ
 - 次のどれかに当たったら生成失敗とし、前回のファイルを残したまま manifest を `"stale": true` で書き直す（ほぼ空のフィードを出すと、クライアントは「脆弱性なし」と表示してしまう）
 
 | 条件 | 既定 | 変えるフィルター |
@@ -102,7 +103,7 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 [Wordfence Intelligence Terms and Conditions](https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/)（2026-01-26 更新版を 2026-10-22 に確認）:
 
 - 無償。複製・改変・公開・再配布・サブライセンスを許諾する（取消不能）。条件は、複製物に Defiant の著作権表示、この license、開示された他の licensor の license を含めること
-  - フィードの `copyrights` は、公開したレコードの V3 `copyrights`（`message` を除く）の和集合を manifest と3ファイルすべてに入れる。各保持者の `notice`（著作権表示）・`license`（本文）・`license_url` は V3 の値そのまま。形が契約に合わない保持者を持つレコードは公開しない
+  - フィードの `copyrights` は、公開したレコードの V3 `copyrights`（`message` を除く）の和集合を manifest と3ファイルすべてに入れる。各保持者の `notice`（著作権表示）・`license`（本文）・`license_url` は V3 の値そのまま。同じ保持者で文言の違う版があれば、`defiant-2` のようにキーを変えて全部残す。形が契約に合わない保持者を持つレコードは公開しない
   - レコードを表示する所では `reference`（wordfence.com のレコードのページ）にリンクする（契約 README）
 - 表記の文言は指定されていない。`attribution` は `Vulnerability data: Wordfence Intelligence`
 - API キーは第三者に渡さない（コード・ログ・管理画面に出さない）。Defiant はレート制限を課せる（取り込みは1日1回）

@@ -236,6 +236,37 @@ class Artws_Sec_Record_Validator_Test extends Artws_Sec_Feed_Test_Case {
 	}
 
 	/**
+	 * The UTF-8 check works without mbstring.
+	 */
+	public function test_is_utf8() {
+		$this->assertTrue( Artws_Sec_Record_Validator::is_utf8( 'plain' ) );
+		$this->assertTrue( Artws_Sec_Record_Validator::is_utf8( 'プラグイン 🐞' ) );
+		$this->assertTrue( Artws_Sec_Record_Validator::is_utf8( '' ) );
+		$this->assertFalse( Artws_Sec_Record_Validator::is_utf8( "bad \xff" ) );
+		$this->assertFalse( Artws_Sec_Record_Validator::is_utf8( "\xC3" ) );
+		$this->assertFalse( Artws_Sec_Record_Validator::is_utf8( "\xED\xA0\x80" ), 'An encoded UTF-16 surrogate.' );
+		$this->assertSame( 'title', Artws_Sec_Record_Validator::check_record( array_merge( self::valid_record(), array( 'title' => "bad \xff" ) ), 'plugin' ) );
+	}
+
+	/**
+	 * The plugin uses only the mbstring functions that WordPress provides when the extension is missing.
+	 *
+	 * WordPress does not require mbstring; wp-includes/compat.php defines
+	 * mb_strlen() and mb_substr() (and a few others) but not mb_check_encoding().
+	 */
+	public function test_uses_only_mbstring_functions_wordpress_provides() {
+		$used = array();
+		foreach ( glob( dirname( __DIR__, 2 ) . '/includes/*.php' ) as $file ) {
+			preg_match_all( '/\\bmb_[a-z_]+(?=\\s*\\()/', file_get_contents( $file ), $matches );
+			$used = array_merge( $used, $matches[0] );
+		}
+		$used = array_values( array_unique( $used ) );
+		sort( $used );
+
+		$this->assertSame( array( 'mb_strlen', 'mb_substr' ), $used );
+	}
+
+	/**
 	 * Every record in the contract's sample files passes.
 	 */
 	public function test_accepts_every_contract_sample_record() {

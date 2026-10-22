@@ -236,62 +236,68 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 	 */
 	public function failure_provider() {
 		return array(
-			'request error'        => array(
+			'request error'           => array(
 				static function ( $test ) {
 					$test->mock_wordfence( new WP_Error( 'http_request_failed', 'cURL error 28: Operation timed out' ) );
 				},
 				'The Wordfence request failed',
 			),
-			'HTTP 500'             => array(
+			'HTTP 500'                => array(
 				static function ( $test ) {
 					$test->mock_wordfence( 'Internal Server Error', 500 );
 				},
 				'HTTP 500',
 			),
-			'HTTP 401'             => array(
+			'HTTP 401'                => array(
 				static function ( $test ) {
 					$test->mock_wordfence( '{"message":"Unauthorized"}', 401 );
 				},
 				'HTTP 401',
 			),
-			'empty body'           => array(
+			'empty body'              => array(
 				static function ( $test ) {
 					$test->mock_wordfence( '' );
 				},
 				'empty body',
 			),
-			'truncated JSON'       => array(
+			'truncated JSON'          => array(
 				static function ( $test ) {
 					$test->mock_wordfence( substr( self::fixture_feed(), 0, 2000 ) );
 				},
 				'The feed ends',
 			),
-			'HTML instead of JSON' => array(
+			'HTML instead of JSON'    => array(
 				static function ( $test ) {
 					$test->mock_wordfence( '<html><body>Maintenance</body></html>' );
 				},
 				'not a JSON object',
 			),
-			'empty feed'           => array(
+			'empty feed'              => array(
 				static function ( $test ) {
 					$test->mock_wordfence( '{}' );
 				},
 				'would have no records',
 			),
-			'no API key'           => array(
+			'record with broken JSON' => array(
+				static function ( $test ) {
+					$test->mock_wordfence( substr( rtrim( self::fixture_feed() ), 0, -1 ) . ',"20000000-0000-4000-8000-000000000999":{"id":truX}}' );
+				},
+				'is not valid JSON',
+			),
+			'no API key'              => array(
 				static function ( $test ) {
 					remove_all_filters( 'artws_sec_wordfence_api_key' );
 					$test->mock_wordfence( self::fixture_feed() );
 				},
 				'ARTWS_SEC_WORDFENCE_API_KEY',
 			),
-			'no theme records'     => array(
+			'no theme records'        => array(
 				static function ( $test ) {
 					$test->mock_wordfence( self::generated_feed( 50, 0, 1 ) );
 				},
 				'The theme file would have no records.',
 			),
-			'no copyright holders' => array(
+			'no copyright holders'    => array(
 				static function ( $test ) {
 					$records = array();
 					foreach ( array(
@@ -467,6 +473,56 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 			$stats['excluded_reasons']
 		);
 		$this->assertSame( array( 'defiant' ), array_keys( (array) self::read_manifest()->copyrights ), 'Holders of left-out records are not added.' );
+	}
+
+	/**
+	 * A record whose text is not UTF-8 is left out on its own; the rest of the feed is published.
+	 */
+	public function test_record_with_invalid_utf8_is_left_out() {
+		$feed = self::generated_feed( 100 );
+		$feed = substr( $feed, 0, -1 ) . ',"20000000-0000-4000-8000-000000000905":{"id":"20000000-0000-4000-8000-000000000905","title":"bad ' . "\xff" . '"}}';
+		$this->mock_wordfence( $feed );
+
+		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW ) );
+
+		$this->assertSame( array( 'invalid UTF-8' => 1 ), Artws_Sec_Feed_Updater::get_status()['stats']['excluded_reasons'] );
+		$this->assertSame( 100, self::read_manifest()->files->plugin->count );
+	}
+
+	/**
+	 * When records carry different text for the same copyright holder, every version is published.
+	 */
+	public function test_keeps_every_version_of_a_copyright_holder() {
+		$other_year = array(
+			'copyrights' => array(
+				'defiant' => array(
+					'notice'      => 'Copyright 2012-2025 Defiant Inc.',
+					'license'     => 'Fixture license text.',
+					'license_url' => 'https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/',
+				),
+			),
+		);
+		$this->mock_wordfence(
+			self::generated_feed(
+				100,
+				1,
+				1,
+				array(
+					self::v3_record( 920, array( self::v3_software( 'plugin', 'other-year' ) ), $other_year ),
+					self::v3_record( 921, array( self::v3_software( 'plugin', 'other-year-again' ) ), $other_year ),
+				)
+			)
+		);
+
+		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW ) );
+
+		$manifest = self::read_manifest();
+		$this->assertSame( array( 'defiant', 'defiant-2' ), array_keys( (array) $manifest->copyrights ) );
+		$this->assertSame( 'Copyright 2012-2026 Defiant Inc.', $manifest->copyrights->defiant->notice );
+		$this->assertSame( 'Copyright 2012-2025 Defiant Inc.', $manifest->copyrights->{'defiant-2'}->notice );
+		$this->assert_matches_schema( $manifest, 'manifest' );
+		$this->assertEquals( $manifest->copyrights, self::read_vulnerability_file( 'vuln-plugins.json.gz' )->copyrights );
+		$this->assertSame( 1, Artws_Sec_Feed_Updater::get_status()['stats']['copyright_variants'] );
 	}
 
 	/**
