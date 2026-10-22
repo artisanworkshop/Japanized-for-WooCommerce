@@ -30,8 +30,13 @@ define( 'JP4WC_VERSION', '2.9.19' );
 require_once __DIR__ . '/class-jp4wc.php';
 
 // PHP security notice shared with other Artisan Workshop plugins. Shown without WooCommerce too.
-require_once __DIR__ . '/includes/artws-php-security-notice/register.php';
-artws_php_security_notice_register( '1.0.0', __DIR__ . '/includes/artws-php-security-notice/class-notice.php', 'jp4wc_php_security_notice_strings' );
+// Optional: a request that runs while this plugin is updated goes on without it.
+if ( is_readable( __DIR__ . '/includes/artws-php-security-notice/register.php' ) ) {
+	include_once __DIR__ . '/includes/artws-php-security-notice/register.php';
+}
+if ( function_exists( 'artws_php_security_notice_register' ) ) {
+	artws_php_security_notice_register( '1.0.0', __DIR__ . '/includes/artws-php-security-notice/class-notice.php', 'jp4wc_php_security_notice_strings' );
+}
 
 /**
  * Strings of the PHP security notice, translated with this plugin's text domain.

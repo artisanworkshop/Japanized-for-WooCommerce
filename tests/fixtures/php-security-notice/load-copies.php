@@ -65,7 +65,10 @@ list( , $dir_a, $version_a, $dir_b, $version_b ) = $argv;
 
 require $dir_a . '/register.php';
 artws_php_security_notice_register( $version_a, $dir_a . '/class-notice.php', 'strings_of_a' );
-require $dir_b . '/register.php';
+// Copy B's directory can be missing, as while its plugin is being updated.
+if ( is_readable( $dir_b . '/register.php' ) ) {
+	require $dir_b . '/register.php';
+}
 artws_php_security_notice_register( $version_b, $dir_b . '/class-notice.php', 'strings_of_b' );
 
 // plugins_loaded runs once per request; running it twice checks that boot() creates one instance.
