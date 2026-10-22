@@ -79,8 +79,9 @@ class JP4WC_Security_Notice {
 	}
 
 	/**
-	 * Identifies what the notice reports: the affected copies, their records and
-	 * whether the data is out of date.
+	 * Identifies what the notice reports: the affected copies, everything it
+	 * shows of their records, and whether the data is out of date. A record
+	 * whose severity or fix changes shows the closed notice again.
 	 *
 	 * @param array $items Affected copies.
 	 * @param bool  $stale Whether the data is out of date.
@@ -90,12 +91,25 @@ class JP4WC_Security_Notice {
 		$keys = array();
 		foreach ( $items as $item ) {
 			foreach ( $item['vulnerabilities'] as $vulnerability ) {
-				$keys[] = implode( "\n", array( $item['type'], $item['slug'], $item['version'], $vulnerability['id'] ) );
+				$keys[] = (string) wp_json_encode(
+					array(
+						$item['type'],
+						$item['slug'],
+						$item['name'],
+						$item['version'],
+						$vulnerability['id'],
+						$vulnerability['title'],
+						$vulnerability['reference'],
+						$vulnerability['rating'],
+						$vulnerability['patched'],
+						$vulnerability['patched_versions'],
+					)
+				);
 			}
 		}
 		sort( $keys );
 		$keys[] = $stale ? 'stale' : 'fresh';
-		return sha1( implode( "\n\n", $keys ) );
+		return sha1( implode( "\n", $keys ) );
 	}
 
 	/**
