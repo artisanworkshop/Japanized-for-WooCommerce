@@ -250,12 +250,16 @@ class JP4WC_Security_Scanner {
 			$score  = isset( $cvss['score'] ) && ( is_int( $cvss['score'] ) || is_float( $cvss['score'] ) ) ? (float) $cvss['score'] : null;
 		}
 
-		$patched_versions = array();
-		if ( isset( $record['patched_versions'] ) && is_array( $record['patched_versions'] ) ) {
-			foreach ( $record['patched_versions'] as $version ) {
-				if ( is_string( $version ) && '' !== $version ) {
-					$patched_versions[] = $version;
-				}
+		// The notice shows these as the fix: a wrong kind of value must not read as "no fix".
+		if ( ! isset( $record['patched'] ) || ! is_bool( $record['patched'] ) ) {
+			return null;
+		}
+		if ( ! isset( $record['patched_versions'] ) || ! is_array( $record['patched_versions'] ) || ! array_is_list( $record['patched_versions'] ) ) {
+			return null;
+		}
+		foreach ( $record['patched_versions'] as $version ) {
+			if ( ! is_string( $version ) || 1 !== preg_match( '/^\S+$/D', $version ) ) {
+				return null;
 			}
 		}
 
@@ -265,8 +269,8 @@ class JP4WC_Security_Scanner {
 			'reference'         => $record['reference'],
 			'rating'            => $rating,
 			'score'             => $score,
-			'patched'           => isset( $record['patched'] ) && true === $record['patched'],
-			'patched_versions'  => $patched_versions,
+			'patched'           => $record['patched'],
+			'patched_versions'  => $record['patched_versions'],
 			'affected_versions' => $ranges,
 		);
 	}
