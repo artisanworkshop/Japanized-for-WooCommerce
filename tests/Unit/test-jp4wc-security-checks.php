@@ -44,7 +44,8 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 
 		$this->dir = untrailingslashit( get_temp_dir() ) . '/jp4wc-security-checks-' . wp_generate_password( 8, false );
 		$this->assertTrue( wp_mkdir_p( $this->dir ) );
-		$this->answers   = array();
+		// The home page answers as usual, so the requests of the checks are sent (R1-1).
+		$this->answers   = array( home_url( '/' ) => array( 200, array() ) );
 		$this->requested = array();
 		delete_option( JP4WC_Security_Probe::OPTION );
 		add_filter( 'pre_http_request', array( $this, 'respond' ), 10, 3 );
@@ -174,6 +175,35 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			$this->assertContains( $check['status'], array( 'pass', 'fail', 'unknown' ), $check['check_id'] );
 		}
 		$this->assertSame( 1, $writes );
+	}
+
+	/**
+	 * A check that throws is unknown, and the other checks still run (R1-5).
+	 */
+	public function test_failing_check_is_unknown() {
+		$throw = static function () {
+			throw new RuntimeException( 'A broken filter.' );
+		};
+		add_filter( 'jp4wc_security_known_plugins', $throw );
+		try {
+			$checks = JP4WC_Security_Checks::run(
+				array(
+					'uploads'   => $this->uploads(),
+					'constants' => array(
+						'DISALLOW_FILE_EDIT' => true,
+						'DISALLOW_FILE_MODS' => null,
+					),
+				)
+			);
+		} finally {
+			remove_filter( 'jp4wc_security_known_plugins', $throw );
+		}
+
+		$statuses = wp_list_pluck( $checks, 'status', 'check_id' );
+		$this->assertCount( count( JP4WC_Security_Checks::CHECKS ), $statuses );
+		$this->assertSame( 'unknown', $statuses['A-03'] );
+		$this->assertSame( 'unknown', $statuses['M-02'] );
+		$this->assertSame( 'pass', $statuses['M-01'], 'The checks after it still run.' );
 	}
 
 	/**
@@ -562,6 +592,9 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			'another file restricted'         => array( '.htaccess', "<Files wp-config.php>\nRequire all denied\n</Files>\n<Files wp-login.php>\n</Files>\n", 'fail' ),
 			'wp-admin with authentication'    => array( 'wp-admin/.htaccess', "AuthType Basic\nAuthName \"Admin\"\nRequire valid-user\n", 'pass' ),
 			'wp-admin without a rule'         => array( 'wp-admin/.htaccess', "Options -Indexes\n", 'fail' ),
+			'wp-admin rule for one file'      => array( 'wp-admin/.htaccess', "<Files install.php>\nDeny from all\n</Files>\n<FilesMatch \"\\.(log|txt)$\">\nRequire all denied\n</FilesMatch>\n", 'fail' ),
+			'wp-admin rule after a file rule' => array( 'wp-admin/.htaccess', "<Files install.php>\nDeny from all\n</Files>\nAuthType Basic\nRequire valid-user\n", 'pass' ),
+			'Files that allows everyone'      => array( '.htaccess', "<Files wp-login.php>\nOrder Allow,Deny\nAllow from all\n</Files>\n", 'fail' ),
 		);
 	}
 
@@ -753,6 +786,8 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			'htaccess'               => array( '.htaccess', 'pass' ),
 			'image'                  => array( 'logo.png', 'pass' ),
 			'sql in the middle'      => array( 'sql-notes.txt', 'pass' ),
+			'compressed sitemap'     => array( 'sitemap.xml.gz', 'pass' ),
+			'compressed page cache'  => array( 'index.html.gz', 'pass' ),
 			'name ending like a log' => array( 'catalog', 'pass' ),
 		);
 	}
@@ -788,11 +823,13 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	 */
 	public function test_d02_default_directories() {
 		$this->write( 'wordpress/index.php', '<?php' );
+		$this->write( 'content/index.php', '<?php' );
 		$context = array(
-			'abspath' => $this->dir . '/wordpress',
-			'uploads' => $this->uploads(),
+			'abspath'     => $this->dir . '/wordpress',
+			'content_dir' => $this->dir . '/content',
+			'uploads'     => $this->uploads(),
 		);
-		$this->assertContains( $this->status( 'D-02', $context ), array( 'pass', 'fail' ) );
+		$this->assertSame( 'pass', $this->status( 'D-02', $context ) );
 
 		$this->write( 'uploads/export.sql', 'data' );
 		$this->assertSame( 'fail', $this->status( 'D-02', $context ), 'The uploads directory.' );
@@ -800,6 +837,27 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		wp_delete_file( $this->dir . '/uploads/export.sql' );
 		$this->write( 'wordpress/wp-config.php.save', 'data' );
 		$this->assertSame( 'fail', $this->status( 'D-02', $context ), 'The WordPress directory.' );
+
+		wp_delete_file( $this->dir . '/wordpress/wp-config.php.save' );
+		$this->write( 'content/debug.log', 'PHP Notice' );
+		$this->assertSame( 'fail', $this->status( 'D-02', $context ), 'The wp-content directory.' );
+	}
+
+	/**
+	 * D-02 reads a directory one name at a time and gives up at the limit (R1-4).
+	 */
+	public function test_d02_stops_at_the_limit() {
+		foreach ( array( 'a.jpg', 'b.jpg', 'c.jpg', 'd.jpg' ) as $name ) {
+			$this->write( 'big/' . $name, 'x' );
+		}
+		$context = array(
+			'public_directories' => array( $this->dir . '/big' ),
+			'scan_limit'         => 3,
+		);
+		$this->assertSame( 'unknown', $this->status( 'D-02', $context ), 'Six names with . and .., three read.' );
+
+		$context['scan_limit'] = 100;
+		$this->assertSame( 'pass', $this->status( 'D-02', $context ) );
 	}
 
 	/**
@@ -854,7 +912,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 
 		$this->answers[ $url ] = array( 200, array() );
 		$this->assertSame( 'fail', $this->status( 'D-04', $context ) );
-		$this->assertSame( array( $url ), $this->requested );
+		$this->assertSame( array( home_url( '/' ), $url ), $this->requested );
 
 		$this->answers[ $url ] = array( 403, array() );
 		$this->assertSame( 'pass', $this->status( 'D-04', $context ) );
@@ -1017,6 +1075,17 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			'halt compiler'             => array( 'data.php', "<?php __halt_compiler();\x00binary", 'pass' ),
 			'long comment then unknown' => array( 'index.php', "<?php\n/*" . str_repeat( 'x', 2000 ) . "*/\nsystem( 'id' );", 'unknown' ),
 			'not PHP'                   => array( '2026/10/photo.jpg', '<?php system( "id" );', 'pass' ),
+			'guard answering 404'       => array( 'backwpup-logs/index.php', "<?php\nheader( \$_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );\nheader( 'Status: 404 Not Found' );\n?>\n", 'pass' ),
+			'response code then exit'   => array( 'cache/index.php', "<?php http_response_code( 403 ); exit;\nsystem( 'id' );", 'pass' ),
+			'header calling a function' => array( 'cache/index.php', "<?php header( system( 'id' ) );", 'fail' ),
+			'header then code'          => array( 'cache/index.php', "<?php header( 'X-A: 1' ); system( 'id' );", 'fail' ),
+			'data file'                 => array( 'plugin/settings.php', "<?php\nreturn array( 'a' => 1, 'b' => array( 'c', -2, 3.5, true, null ), 'd' => [ 'e' ] );\n", 'pass' ),
+			'data file without ;'       => array( 'plugin/settings.php', "<?php return array( 'a' => 1 ) ?>", 'pass' ),
+			'return of a call'          => array( 'plugin/settings.php', "<?php return 'system'( 'id' );", 'fail' ),
+			'return with a call inside' => array( 'plugin/settings.php', "<?php return array( 'a' => system( 'id' ) );", 'fail' ),
+			'long data file'            => array( 'plugin/settings.php', "<?php return array(\n" . str_repeat( "\t'key' => 'value',\n", 100 ) . ');', 'unknown' ),
+			'compiled template'         => array( 'cache/twig/ab/abc.php', "<?php\n\nuse Twig\\Environment;\n\n/* index.twig */\nclass __TwigTemplate_abc extends Twig\\Template\n{\n}\n", 'unknown' ),
+			'namespace first'           => array( 'cache/x.php', "<?php namespace X; system( 'id' );", 'unknown' ),
 		);
 	}
 

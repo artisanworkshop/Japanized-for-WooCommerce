@@ -987,6 +987,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	public function written_option_provider() {
 		return array(
 			'state'    => array( JP4WC_Security_Feed::STATE_OPTION ),
+			'probes'   => array( JP4WC_Security_Probe::OPTION ),
 			'findings' => array( JP4WC_Security_Feed::FINDINGS_OPTION ),
 		);
 	}
@@ -1012,6 +1013,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Probe::OPTION ) );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
 	}
 

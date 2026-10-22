@@ -228,9 +228,10 @@ class JP4WC_Security_Checks {
 
 	/**
 	 * File names D-02 reports in a public directory: database dumps, archives,
-	 * backups, logs and copies of wp-config.php.
+	 * backups, logs and copies of wp-config.php. Other .gz files, such as
+	 * sitemap.xml.gz, are meant to be public.
 	 */
-	const EXPOSED_FILE_PATTERN = '/^(?:.+\.(?:sql|zip|tar|tgz|gz|7z|rar|bak|old|orig|save|swp|log)|wp-config\.php.+|error_log)$/iD';
+	const EXPOSED_FILE_PATTERN = '/^(?:.+\.(?:sql|sql\.gz|tar|tar\.gz|tgz|zip|7z|rar|bak|old|orig|save|swp|log)|wp-config\.php.+|error_log)$/iD';
 
 	/**
 	 * Runs every check.
@@ -246,8 +247,9 @@ class JP4WC_Security_Checks {
 	 *                       - constants: constant name => value (V-04, D-03, D-04, M-01).
 	 *                       - plugin_updates: the update_plugins transient; plugin_dir (V-02).
 	 *                       - active_plugins: active plugin slugs (A-02, A-03, M-02).
-	 *                       - abspath, public_directories (A-02, D-02); uploads: basedir and baseurl
-	 *                         (D-01, D-02, D-04, M-03); scan_limit (M-03); shop_urls (D-05).
+	 *                       - abspath, content_dir, public_directories (A-02, D-02); uploads: basedir
+	 *                         and baseurl (D-01, D-02, D-04, M-03); scan_limit (D-02, D-04, M-03);
+	 *                         shop_urls (D-05).
 	 *                       - probe: the JP4WC_Security_Probe of the run.
 	 * @return array<int, array{check_id: string, requirement: string, severity: string, status: string}>
 	 */
@@ -281,7 +283,13 @@ class JP4WC_Security_Checks {
 
 		$check  = self::CHECKS[ $check_id ];
 		$method = $check['method'];
-		$status = self::$method( $context );
+		try {
+			$status = self::$method( $context );
+		} catch ( Throwable $e ) {
+			// A check that breaks on an unexpected site must not stop the others, nor the
+			// vulnerability findings saved with them.
+			$status = 'unknown';
+		}
 		if ( $own_probe ) {
 			$context['probe']->save();
 		}
@@ -513,8 +521,8 @@ class JP4WC_Security_Checks {
 	private static function htaccess_restricts_login( $abspath ) {
 		$root = self::without_comments( self::read_head( $abspath . '.htaccess', self::HTACCESS_BYTES ) );
 		if ( '' !== $root ) {
-			// A <Files wp-login.php> block with an access rule.
-			if ( 1 === preg_match( '~<Files(?:Match)?\s[^>]*wp-login[^>]*>(?:(?!</Files).)*?(?:Require\s+(?:ip|host|all\s+denied|valid-user)|Deny\s+from|Allow\s+from|AuthType)~is', $root ) ) {
+			// A <Files wp-login.php> block with an access rule (Allow from alone may allow everyone).
+			if ( 1 === preg_match( '~<Files(?:Match)?\s[^>]*wp-login[^>]*>(?:(?!</Files).)*?(?:Require\s+(?:ip|host|all\s+denied|valid-user)|Deny\s+from|AuthType)~is', $root ) ) {
 				return true;
 			}
 			// A rewrite rule whose conditions and pattern name the login page and the client address.
@@ -527,6 +535,8 @@ class JP4WC_Security_Checks {
 		}
 
 		$admin = self::without_comments( self::read_head( $abspath . 'wp-admin/.htaccess', self::HTACCESS_BYTES ) );
+		// Rules inside <Files> blocks apply to those files only, such as install.php.
+		$admin = (string) preg_replace( '~<(Files(?:Match)?)\b[^>]*>.*?</\1\s*>~is', '', $admin );
 		return 1 === preg_match( '/^\s*(?:AuthType|Require\s+(?:ip|host|all\s+denied|valid-user)|Deny\s+from)\b/im', $admin );
 	}
 
@@ -623,29 +633,31 @@ class JP4WC_Security_Checks {
 			$directories = $context['public_directories'];
 		} else {
 			$uploads     = self::uploads( $context );
-			$directories = array( self::abspath( $context ), WP_CONTENT_DIR );
+			$directories = array( self::abspath( $context ), isset( $context['content_dir'] ) ? (string) $context['content_dir'] : WP_CONTENT_DIR );
 			if ( null !== $uploads ) {
 				$directories[] = $uploads['basedir'];
 			}
 		}
 
-		$unreadable = false;
+		$limit      = self::scan_limit( $context );
+		$incomplete = false;
 		foreach ( array_unique( array_map( 'untrailingslashit', array_map( 'wp_normalize_path', $directories ) ) ) as $directory ) {
 			if ( ! is_dir( $directory ) ) {
 				continue;
 			}
-			$names = is_readable( $directory ) ? scandir( $directory ) : false;
-			if ( false === $names ) {
-				$unreadable = true;
-				continue;
+			$found = self::find_entry(
+				$directory,
+				static function ( $name ) use ( $directory ) {
+					return 1 === preg_match( self::EXPOSED_FILE_PATTERN, $name ) && is_file( $directory . '/' . $name );
+				},
+				$limit
+			);
+			if ( is_string( $found ) ) {
+				return 'fail';
 			}
-			foreach ( $names as $name ) {
-				if ( 1 === preg_match( self::EXPOSED_FILE_PATTERN, $name ) && is_file( $directory . '/' . $name ) ) {
-					return 'fail';
-				}
-			}
+			$incomplete = $incomplete || null === $found;
 		}
-		return $unreadable ? 'unknown' : 'pass';
+		return $incomplete ? 'unknown' : 'pass';
 	}
 
 	/**
@@ -680,14 +692,14 @@ class JP4WC_Security_Checks {
 			return 'unknown';
 		}
 
-		$log = null;
-		foreach ( (array) scandir( $directory ) as $name ) {
-			if ( is_string( $name ) && 1 === preg_match( '/\.log$/iD', $name ) && is_file( $directory . '/' . $name ) ) {
-				$log = $name;
-				break;
-			}
-		}
-		if ( null === $log ) {
+		$log = self::find_entry(
+			$directory,
+			static function ( $name ) use ( $directory ) {
+				return 1 === preg_match( '/\.log$/iD', $name ) && is_file( $directory . '/' . $name );
+			},
+			self::scan_limit( $context )
+		);
+		if ( ! is_string( $log ) ) {
 			return 'unknown';
 		}
 
@@ -750,8 +762,7 @@ class JP4WC_Security_Checks {
 	/**
 	 * M-03: a PHP file in the uploads directory that can run code.
 	 *
-	 * Files that hold only comments, or stop at once (exit, die,
-	 * __halt_compiler, as data files of security plugins do), are left out.
+	 * Files that plugins leave there on purpose are left out (is_harmless_php()).
 	 * Unknown when the scan stops at its limits before it finds one, or a file
 	 * cannot be told apart.
 	 *
@@ -767,13 +778,7 @@ class JP4WC_Security_Checks {
 			return 'pass';
 		}
 
-		/**
-		 * Filters how many entries of the uploads directory the security check looks at for PHP files.
-		 *
-		 * @since 3.0.0
-		 * @param int $limit Entries (files and directories). Default 50000.
-		 */
-		$limit = (int) apply_filters( 'jp4wc_security_file_scan_limit', isset( $context['scan_limit'] ) ? (int) $context['scan_limit'] : self::SCAN_LIMIT );
+		$limit = self::scan_limit( $context );
 
 		$undecided = false;
 		$seen      = 0;
@@ -813,9 +818,16 @@ class JP4WC_Security_Checks {
 	/**
 	 * Whether a PHP file runs no code when requested.
 	 *
+	 * Harmless: comments and HTML only; a first statement that stops (exit,
+	 * die, __halt_compiler, as security plugins guard their data files);
+	 * header() or http_response_code() calls with plain values, as guard files
+	 * answer 404; and a data file that returns plain values. A file that starts
+	 * with declarations (namespace, use, class, as compiled template caches do)
+	 * runs nothing by itself, but only its first kilobyte is read, so it cannot
+	 * be told apart.
+	 *
 	 * @param string $path File.
-	 * @return bool|null True when it holds only comments or stops at once, false
-	 *                   when it runs code, null when that cannot be told.
+	 * @return bool|null True when harmless, false when it runs code, null when that cannot be told.
 	 */
 	public static function is_harmless_php( $path ) {
 		$head = self::read_head( $path, self::PHP_HEAD_BYTES + 1 );
@@ -824,29 +836,86 @@ class JP4WC_Security_Checks {
 		}
 		$whole = strlen( $head ) <= self::PHP_HEAD_BYTES;
 
+		$tokens = token_get_all( $head );
+		if ( ! $whole ) {
+			// The last token may be cut in two (a string that goes on, for example).
+			array_pop( $tokens );
+		}
 		$skip   = array( T_OPEN_TAG, T_CLOSE_TAG, T_WHITESPACE, T_COMMENT, T_DOC_COMMENT, T_INLINE_HTML );
 		$tokens = array_values(
 			array_filter(
-				token_get_all( $head ),
+				$tokens,
 				static function ( $token ) use ( $skip ) {
 					return ! is_array( $token ) || ! in_array( $token[0], $skip, true );
 				}
 			)
 		);
-		if ( array() === $tokens ) {
-			// No code in what was read: harmless if that was the whole file.
+
+		$i = 0;
+		while ( self::skip_header_call( $tokens, $i ) ) {
+			continue;
+		}
+		if ( ! isset( $tokens[ $i ] ) ) {
+			// Nothing else in what was read: harmless if that was the whole file.
 			return $whole ? true : null;
 		}
 
-		$first = $tokens[0];
-		if ( is_array( $first ) && T_HALT_COMPILER === $first[0] ) {
+		$type = is_array( $tokens[ $i ] ) ? $tokens[ $i ][0] : $tokens[ $i ];
+		if ( T_HALT_COMPILER === $type ) {
 			return true;
 		}
-		if ( ! is_array( $first ) || T_EXIT !== $first[0] ) {
+		if ( T_EXIT === $type ) {
+			return self::is_plain_exit( array_slice( $tokens, $i + 1, 4 ) );
+		}
+		if ( 0 === $i && T_RETURN === $type ) {
+			return self::is_literal_return( array_slice( $tokens, 1 ), $whole );
+		}
+		if ( 0 === $i && in_array( $type, array( T_NAMESPACE, T_USE, T_DECLARE, T_CLASS, T_ABSTRACT, T_FINAL, T_READONLY, T_INTERFACE, T_TRAIT, T_ENUM, T_FUNCTION, T_CONST, T_ATTRIBUTE ), true ) ) {
+			return null;
+		}
+		return false;
+	}
+
+	/**
+	 * Moves past a header() or http_response_code() call with plain values.
+	 *
+	 * The arguments may hold only strings, numbers, booleans, concatenation and
+	 * $_SERVER items, so they cannot call anything.
+	 *
+	 * @param array $tokens Tokens without whitespace and comments.
+	 * @param int   $i      Position; moved past the call when there is one.
+	 * @return bool Whether a call was skipped.
+	 */
+	private static function skip_header_call( array $tokens, &$i ) {
+		$name = isset( $tokens[ $i ] ) && is_array( $tokens[ $i ] ) && T_STRING === $tokens[ $i ][0] ? strtolower( $tokens[ $i ][1] ) : '';
+		if ( ! in_array( $name, array( 'header', 'http_response_code' ), true ) || ! isset( $tokens[ $i + 1 ] ) || '(' !== $tokens[ $i + 1 ] ) {
 			return false;
 		}
-		// exit; / exit( 0 ); / exit( 'Silence' ); — nothing that could run code first.
-		$rest = array_slice( $tokens, 1, 4 );
+		for ( $j = $i + 2; isset( $tokens[ $j ] ); $j++ ) {
+			$token = $tokens[ $j ];
+			if ( ')' === $token ) {
+				// The statement ends with ; or with the end of what was read.
+				if ( isset( $tokens[ $j + 1 ] ) && ';' !== $tokens[ $j + 1 ] ) {
+					return false;
+				}
+				$i = $j + 2;
+				return true;
+			}
+			$server = is_array( $token ) && T_VARIABLE === $token[0] && '$_SERVER' === $token[1];
+			if ( ! $server && ! self::is_plain_value( $token, array( '.', ',', '[', ']' ) ) ) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Whether the tokens after exit or die stop at once: exit; exit(); exit( 0 ); exit( 'Silence' );
+	 *
+	 * @param array $rest Up to four tokens after exit.
+	 * @return bool
+	 */
+	private static function is_plain_exit( array $rest ) {
 		$next = isset( $rest[0] ) ? $rest[0] : null;
 		if ( null === $next || ';' === $next ) {
 			return true;
@@ -860,6 +929,67 @@ class JP4WC_Security_Checks {
 		}
 		return is_array( $argument ) && in_array( $argument[0], array( T_LNUMBER, T_CONSTANT_ENCAPSED_STRING ), true )
 			&& isset( $rest[2] ) && ')' === $rest[2];
+	}
+
+	/**
+	 * Whether a return statement returns plain values only: return array( 'a' => 1 );
+	 *
+	 * A parenthesis is allowed only after array, so nothing can be called.
+	 *
+	 * @param array $tokens Tokens after return.
+	 * @param bool  $whole  Whether they are the whole file.
+	 * @return bool|null Null when the statement goes on past what was read.
+	 */
+	private static function is_literal_return( array $tokens, $whole ) {
+		$depth = 0;
+		for ( $k = 0; isset( $tokens[ $k ] ); $k++ ) {
+			$token = $tokens[ $k ];
+			if ( ';' === $token ) {
+				// Nothing after return runs.
+				return 0 === $depth;
+			}
+			if ( is_array( $token ) && T_ARRAY === $token[0] ) {
+				if ( ! isset( $tokens[ $k + 1 ] ) ) {
+					return $whole ? false : null;
+				}
+				if ( '(' !== $tokens[ $k + 1 ] ) {
+					return false;
+				}
+				++$depth;
+				++$k;
+				continue;
+			}
+			if ( ')' === $token ) {
+				if ( 0 === $depth ) {
+					return false;
+				}
+				--$depth;
+				continue;
+			}
+			$arrow = is_array( $token ) && T_DOUBLE_ARROW === $token[0];
+			if ( ! $arrow && ! self::is_plain_value( $token, array( ',', '[', ']', '-' ) ) ) {
+				return false;
+			}
+		}
+		// The statement ends with the file (or a closing tag), or goes on past what was read.
+		return $whole ? 0 === $depth : null;
+	}
+
+	/**
+	 * Whether a token is a plain value or one of the given characters.
+	 *
+	 * @param mixed    $token Token.
+	 * @param string[] $chars Characters allowed.
+	 * @return bool
+	 */
+	private static function is_plain_value( $token, array $chars ) {
+		if ( ! is_array( $token ) ) {
+			return in_array( $token, $chars, true );
+		}
+		if ( in_array( $token[0], array( T_CONSTANT_ENCAPSED_STRING, T_LNUMBER, T_DNUMBER ), true ) ) {
+			return true;
+		}
+		return T_STRING === $token[0] && in_array( strtolower( $token[1] ), array( 'true', 'false', 'null' ), true );
 	}
 
 	/**
@@ -914,6 +1044,54 @@ class JP4WC_Security_Checks {
 		 */
 		$slugs = apply_filters( 'jp4wc_security_known_plugins', $slugs, $category );
 		return is_array( $slugs ) ? array_values( array_filter( $slugs, 'is_string' ) ) : array();
+	}
+
+	/**
+	 * Returns how many entries of a directory the checks read.
+	 *
+	 * @param array $context Context.
+	 * @return int
+	 */
+	private static function scan_limit( array $context ) {
+		/**
+		 * Filters how many entries the security check reads in the uploads directory
+		 * and below when it looks for PHP files, and in each directory it looks into
+		 * for backups and logs.
+		 *
+		 * @since 3.0.0
+		 * @param int $limit Entries (files and directories). Default 50000.
+		 */
+		return (int) apply_filters( 'jp4wc_security_file_scan_limit', isset( $context['scan_limit'] ) ? (int) $context['scan_limit'] : self::SCAN_LIMIT );
+	}
+
+	/**
+	 * Looks for an entry of a directory, reading one name at a time.
+	 *
+	 * @param string   $directory Directory.
+	 * @param callable $is_match  Gets a name and returns whether it is the one looked for.
+	 * @param int      $limit     Names read before giving up.
+	 * @return string|false|null The name found; false when there is none; null when
+	 *                           the directory cannot be read or holds more names than the limit.
+	 */
+	private static function find_entry( $directory, callable $is_match, $limit ) {
+		$handle = is_readable( $directory ) ? opendir( $directory ) : false;
+		if ( false === $handle ) {
+			return null;
+		}
+		try {
+			$seen = 0;
+			for ( $name = readdir( $handle ); false !== $name; $name = readdir( $handle ) ) {
+				if ( ++$seen > $limit ) {
+					return null;
+				}
+				if ( $is_match( $name ) ) {
+					return $name;
+				}
+			}
+		} finally {
+			closedir( $handle );
+		}
+		return false;
 	}
 
 	/**
