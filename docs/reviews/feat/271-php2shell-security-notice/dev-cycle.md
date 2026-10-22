@@ -2,9 +2,9 @@
 - タスク: issue #271 — PHP2Shell（CVE-2026-109618 / CVE-2026-109619）未対応の PHP で、管理画面に更新を促すモーダルを出す
 - 開始: 2026-10-22
 - PR: #272 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/272
-- 現在のステップ: 7(G1 反映済み → Copilot に 2 回目を依頼)
+- 現在のステップ: 7(G2 反映済み → Copilot に 3 回目を依頼)
 - オプション: auto-commit
-- Copilot: 依頼 1 回 / 未収束(G1 で新規 5 件、修正 2 / 保留 3)
+- Copilot: 依頼 2 回 / 未収束(G1 で新規 5 件、修正 2 / 保留 3。G2 で新規 2 件、保留 2)
 - Codex: 依頼 1 回 / 収束(G1 で新規指摘なし)
 
 ## ログ
@@ -19,3 +19,4 @@
 | 2026-10-22 14:58 | 5 | CI red(run 39730832068、3 ジョブとも `test_only_administrators_see_the_notice`): `shop_manager` ロールで作ったユーザーが CI では `manage_woocommerce` を持たない。WooCommerce のロールに頼らず編集者に権限を足す形に修正(76a7e5c、T=2026-10-22T05:59:53Z)。PHPUnit 498 件 green |
 | 2026-10-22 15:07 | 6 | CI green、`@codex review` + Copilot を依頼。Codex「Didn't find any major issues」、Copilot はスレッド 3 件 + 本文 2 件 |
 | 2026-10-22 15:11 | 7 | G1: G1-2 / G1-3(更新中に register.php・クラスファイルが消えると fatal)を修正(9ee8001)、G1-1(`Requires Plugins` で読まれない)は誤検知として保留、G1-4 / G1-5 は Low で保留。PHPUnit 499 件 green。auto-commit のため確認ゲートは省略 |
+| 2026-10-22 15:20 | 7 | G2(Copilot のみ): スレッドなし、本文の見出しに 2 件(G2-1 CVE のフィルター / G2-2 changelog)→ どちらも保留。修正なしだが未収束のため 3 回目を依頼する |
