@@ -21,3 +21,4 @@
 | 2026-10-23 07:57 | 1 | 計画承認（V-02 はユーザー判断で mtime 方式） |
 | 2026-10-23 08:11 | 2 | 実装コミット 2 件（594c7fc, 0908031）、PHPUnit 775 件 green、lint は main と同数（既存のみ） |
 | 2026-10-23 08:38 | 3 | review-loop R1: Medium 7 件を修正（35a0aa1, f0939f5）、Low 10・対象外 1 を backlog。PHPUnit 803 件 green |
+| 2026-10-23 08:53 | 3 | review-loop R2: R1 指摘 7 件すべて解消（ミューテーションで実測）。新規 High 1・Medium 3 を修正（c752a90, 0d95940）、Low 4 を backlog。PHPUnit 818 件 green → R3 へ |
