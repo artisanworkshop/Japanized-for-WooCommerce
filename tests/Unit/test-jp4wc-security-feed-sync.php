@@ -840,6 +840,28 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A failed sync of a check turned off meanwhile stores no state either (R1-1).
+	 *
+	 * With no files there is nothing to match, so only the sync itself can
+	 * notice that the check is off.
+	 */
+	public function test_turning_off_during_a_failed_sync_leaves_nothing() {
+		$this->responses['manifest.json']['response']['code'] = 503;
+		$turn_off = function ( $pre ) {
+			$this->turn_off_from_another_request();
+			return $pre;
+		};
+		add_filter( 'pre_http_request', $turn_off, 5 );
+		try {
+			JP4WC_Security_Feed::sync();
+		} finally {
+			remove_filter( 'pre_http_request', $turn_off, 5 );
+		}
+
+		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
+	}
+
+	/**
 	 * A check turned off during a match stores no findings (R1-1).
 	 */
 	public function test_turning_off_during_a_match_leaves_nothing() {
