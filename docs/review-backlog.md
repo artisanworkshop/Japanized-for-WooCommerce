@@ -160,7 +160,7 @@
 | 2026-10-23 | R1-L3 | Low | includes/class-jp4wc-security-feed.php（`request_args()`） | `redirection => 3` は https→http のリダイレクトにも従い、リダイレクト先を検証しない。`redirection => 0` か `wp_safe_remote_get()`。#257 の対応ブランチ R1 | PR #276 の G1-3 で対応済み（`redirection => 0`） |
 | 2026-10-23 | R1-L4 | Low | includes/class-jp4wc-security-feed.php（`prepare_directory()`） | `.htaccess` は nginx では効かず、展開済みの数十 MB の JSON が全サイト共通の URL で取れる（公開データだが帯域を消費させられる）。サイトごとの乱数を名前に入れる、または gz のまま保存する。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L5 | Low | includes/class-jp4wc-security-feed.php（`check_file()`） | 値が空のメンバーで `$json[0]` が警告を出す（壊れたデータのときだけ。結果は正しく拒否）。#257 の対応ブランチ R1 | PR #276 の G1-5 で対応済み（slug ごとに decode して検査） |
-| 2026-10-23 | R1-L6 | Low | woocommerce-for-japan.php（`jp4wc_on_deactivation()`） | プラグインの無効化で `jp4wc_security_feed_sync` / `jp4wc_security_rescan` の予約が残る（コールバックが無いので何も起きない）。#257 の対応ブランチ R1 | 未起票 |
+| 2026-10-23 | R1-L6 | Low | woocommerce-for-japan.php（`jp4wc_on_deactivation()`） | プラグインの無効化で `jp4wc_security_feed_sync` / `jp4wc_security_rescan` の予約が残る（コールバックが無いので何も起きない）。#257 の対応ブランチ R1 | PR #276 の G2-6 で対応済み |
 | 2026-10-23 | R1-L7 | Low | includes/admin/class-jp4wc-security-notice.php | 新しい PHP の文字列は WordPress.org の言語パックに入るまで英語で出る。リリース前に translate.wordpress.org で翻訳する（または #272 の同梱 .mo フォールバック）。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L8 | Low | includes/admin/class-jp4wc-security-notice.php（`record_details()`） | 区切りの `, `・` (`・` / ` が翻訳できない。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L9 | Low | 設計（#257 クライアント） | マルチサイトでは各サイトが毎日フィードを取得して自分の uploads に保存する（照合結果はネットワーク共通）。メインサイトだけで取得・照合する余地。#257 の対応ブランチ R1 | 未起票 |
@@ -168,3 +168,7 @@
 | 2026-10-23 | R2-2 | Low | includes/class-jp4wc-security-feed.php（`uninstall()`） | マルチサイト分岐にテストが無い（CI にマルチサイト実行が無い）。#257 の対応ブランチ R2 | 未起票 |
 | 2026-10-23 | R2-3 | Low | includes/class-jp4wc-security-feed.php（`uninstall()`） | サイトが数千あるネットワークでは各サイトの alloptions がランタイムキャッシュに積み上がり、アンインストールが memory_limit に当たりうる。ループ内で `wp_cache_flush_runtime()`。#257 の対応ブランチ R2 | 未起票 |
 | 2026-10-23 | R2-4 | Low | includes/class-jp4wc-security-feed.php（`is_enabled_in_database()`） | `pre_option_` / `option_` フィルターを通らないので、フィルターで有効を強制し DB が `''` のサイトでは毎日取得しては purge する（まれな構成）。#257 の対応ブランチ R2 | 未起票 |
+| 2026-10-23 | G2-2 | Low | includes/class-jp4wc-security-feed.php（`update_files()`） | rename が途中で失敗すると、種類ごとに世代が混ざる（各ファイルは完全。次の同期で `json_sha256` から取り直す）。ロールバックするなら旧ファイルの退避と復元。PR #276 G2 | 未起票 |
+| 2026-10-23 | G2-3 | Low | includes/class-jp4wc-security-scanner.php（`scan()`） | 保存後に壊れたファイルは途中までの結果を使う。照合での破損を状態に記録し、#259 のセキュリティタブで見せる余地。PR #276 G2 | 未起票 |
+| 2026-10-23 | G2-4 | Low | includes/class-jp4wc-security-feed.php（`start_run()`） | 行が手で消されたサイトで、行の再作成とアンインストールが 2 クエリの間で重なると、走行中の同期のデータが残る。PR #276 G2 | 未起票 |
+| 2026-10-23 | G2-5 | Low | includes/admin/class-jp4wc-security-notice.php（`fingerprint()`） | 指紋に attribution・copyrights・プラグインファイルが含まれない（意図的: ライセンス文の変更で警告を出し直さない）。PR #276 G2 | 未起票 |
