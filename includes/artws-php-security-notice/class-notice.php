@@ -101,7 +101,7 @@ if ( ! class_exists( 'ArtisanWorkshop\PhpSecurityNotice\Notice', false ) ) :
 		/**
 		 * Article that explains the vulnerabilities and how to update PHP.
 		 */
-		const INFO_URL = 'https://wc4jp-pro.work/php2shell-php-update/';
+		const INFO_URL = 'https://wc4jp-pro.work/2026/10/22/php2shell-php-update/';
 
 		/**
 		 * Keys of the strings the strings callback returns.

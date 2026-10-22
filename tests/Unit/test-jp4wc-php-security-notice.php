@@ -221,7 +221,7 @@ class JP4WC_PHP_Security_Notice_Test extends WP_UnitTestCase {
 		$this->assertNotNull( $view );
 		$this->assertSame( $messages, $view['messages'] );
 		$this->assertSame( 'Update PHP now: critical security vulnerabilities', $view['title'] );
-		$this->assertSame( 'https://wc4jp-pro.work/php2shell-php-update/', $view['url'] );
+		$this->assertSame( 'https://wc4jp-pro.work/2026/10/22/php2shell-php-update/', $view['url'] );
 	}
 
 	/**
@@ -603,7 +603,7 @@ class JP4WC_PHP_Security_Notice_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<dialog id="artws-php-security-notice"', $html );
 		$this->assertStringContainsString( 'Update PHP now: critical security vulnerabilities', $html );
 		$this->assertStringContainsString( 'Update PHP to 8.3.36 or later right away.', $html );
-		$this->assertStringContainsString( 'href="https://wc4jp-pro.work/php2shell-php-update/"', $html );
+		$this->assertStringContainsString( 'href="https://wc4jp-pro.work/2026/10/22/php2shell-php-update/"', $html );
 		$this->assertStringContainsString( 'data-action="artws_php_security_notice_dismiss"', $html );
 		// Relative, like core's ajaxurl: the request must go to the host the admin is open on.
 		$this->assertStringContainsString( 'data-ajax-url="/wp-admin/admin-ajax.php"', $html );
