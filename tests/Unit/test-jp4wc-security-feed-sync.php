@@ -310,6 +310,9 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 			$this->assertArrayNotHasKey( 'body', array_filter( $request['args'] ), 'Nothing is posted.' );
 		}
 		$this->assertFalse( $this->requests[1]['args']['decompress'], 'The .json.gz is downloaded as served.' );
+		foreach ( $this->requests as $request ) {
+			$this->assertSame( 0, $request['args']['redirection'], 'Redirects are not followed (G1-3).' );
+		}
 	}
 
 	/**
@@ -353,6 +356,21 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		$this->assertSame( array( 'manifest.json', 'vuln-themes.json.gz' ), $this->requested_files() );
 		$this->assertFileExists( self::stored( 'theme' ) );
+	}
+
+	/**
+	 * A stored file that is not the one the state records is downloaded again,
+	 * as when two syncs ran at once (G1-2).
+	 */
+	public function test_stored_file_that_changed_is_downloaded_again() {
+		$this->sync_successfully();
+		copy( self::stored( 'core' ), self::stored( 'theme' ) );
+
+		JP4WC_Security_Feed::sync();
+
+		$this->assertSame( array( 'manifest.json', 'vuln-themes.json.gz' ), $this->requested_files() );
+		$this->assertFileEquals( TESTS_PLUGIN_DIR . '/tests/fixtures/security-feed/vuln-themes.json', self::stored( 'theme' ) );
+		$this->assertSame( hash_file( 'sha256', self::stored( 'theme' ) ), JP4WC_Security_Feed::get_state()['files']['theme']['json_sha256'] );
 	}
 
 	/**
@@ -450,34 +468,50 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	 */
 	public function damaged_gzip_provider() {
 		return array(
-			'cut in half'         => array(
+			'cut in half'            => array(
 				static function ( $gzip ) {
 					return substr( $gzip, 0, intdiv( strlen( $gzip ), 2 ) );
 				},
 			),
-			'trailer cut off'     => array(
+			'trailer cut off'        => array(
 				static function ( $gzip ) {
 					return substr( $gzip, 0, -4 );
 				},
 			),
-			'wrong CRC'           => array(
+			'wrong CRC'              => array(
 				static function ( $gzip ) {
 					return substr( $gzip, 0, -8 ) . "\0\0\0\0" . substr( $gzip, -4 );
 				},
 			),
-			'flipped byte'        => array(
+			'flipped byte'           => array(
 				static function ( $gzip ) {
 					return substr( $gzip, 0, 40 ) . chr( ord( $gzip[40] ) ^ 0xff ) . substr( $gzip, 41 );
 				},
 			),
-			'not gzip'            => array(
+			'not gzip'               => array(
 				static function () {
 					return '{"schema_version":1,"type":"plugin","vulnerabilities":{}}';
 				},
 			),
-			'gzip of broken JSON' => array(
+			'gzip of broken JSON'    => array(
 				static function () {
 					return gzencode( '{"schema_version":1,"type":"plugin","vulnerabilities":{"a":[' );
+				},
+			),
+			// The reader finds where these end; only decoding them shows they are broken (G1-5).
+			'records not valid JSON' => array(
+				static function () {
+					return gzencode( '{"schema_version":1,"type":"plugin","vulnerabilities":{"sample-plugin":[{"id":"x"},]}}' );
+				},
+			),
+			'records missing'        => array(
+				static function () {
+					return gzencode( '{"schema_version":1,"type":"plugin","vulnerabilities":{"sample-plugin":}}' );
+				},
+			),
+			'no records'             => array(
+				static function () {
+					return gzencode( '{"schema_version":1,"type":"plugin","vulnerabilities":{"sample-plugin":[]}}' );
 				},
 			),
 		);
@@ -880,6 +914,83 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
+	}
+
+	/**
+	 * Data written just as the check is turned off is removed (G1-6).
+	 *
+	 * The other request turns the check off between this run's last look at
+	 * the setting and its write, which only a check after the write catches.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function written_option_provider() {
+		return array(
+			'state'    => array( JP4WC_Security_Feed::STATE_OPTION ),
+			'findings' => array( JP4WC_Security_Feed::FINDINGS_OPTION ),
+		);
+	}
+
+	/**
+	 * Turning off while an option is written leaves nothing.
+	 *
+	 * @dataProvider written_option_provider
+	 *
+	 * @param string $option Option being written.
+	 */
+	public function test_turning_off_while_writing_leaves_nothing( $option ) {
+		$turn_off = function ( $value ) {
+			$this->turn_off_from_another_request();
+			return $value;
+		};
+		add_filter( 'pre_update_option_' . $option, $turn_off );
+		try {
+			JP4WC_Security_Feed::sync();
+		} finally {
+			remove_filter( 'pre_update_option_' . $option, $turn_off );
+		}
+
+		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
+	}
+
+	/**
+	 * Uninstall in another request during a sync leaves nothing behind (G1-1).
+	 */
+	public function test_uninstall_during_a_sync_leaves_nothing() {
+		$uninstall = function ( $pre, $args, $url ) {
+			global $wpdb;
+			if ( str_ends_with( $url, 'manifest.json' ) ) {
+				JP4WC_Security_Feed::purge();
+				// As uninstall does, in another request: this process still has the setting cached.
+				$wpdb->delete( $wpdb->options, array( 'option_name' => JP4WC_Security_Feed::SETTING ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Leaves this process's option cache as it was.
+			}
+			return $pre;
+		};
+		add_filter( 'pre_http_request', $uninstall, 5, 3 );
+		try {
+			JP4WC_Security_Feed::sync();
+		} finally {
+			remove_filter( 'pre_http_request', $uninstall, 5 );
+		}
+
+		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
+	}
+
+	/**
+	 * A site whose setting row is gone still has the check on, and a run stores the default (G1-1).
+	 */
+	public function test_missing_setting_row_keeps_the_check_on() {
+		delete_option( JP4WC_Security_Feed::SETTING );
+
+		JP4WC_Security_Feed::sync();
+
+		$this->assertSame( '1', get_option( JP4WC_Security_Feed::SETTING ) );
+		$this->assertSame( '', JP4WC_Security_Feed::get_state()['last_error'] );
+		$this->assertNotNull( JP4WC_Security_Feed::get_findings() );
 	}
 
 	/**
