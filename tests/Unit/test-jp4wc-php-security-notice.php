@@ -397,6 +397,50 @@ class JP4WC_PHP_Security_Notice_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Strings a WordPress.org language pack lacks come from the bundled translation.
+	 *
+	 * A language pack wins over the bundled file and has no translation for new
+	 * strings until they are translated on translate.wordpress.org, so the notice
+	 * was shown in English on Japanese sites.
+	 */
+	public function test_strings_missing_from_the_language_pack_use_the_bundled_translation() {
+		$pack = trailingslashit( get_temp_dir() ) . 'woocommerce-for-japan-ja-' . wp_generate_password( 12, false ) . '.mo';
+		$mo   = new MO();
+		$mo->add_entry(
+			new Translation_Entry(
+				array(
+					'singular'     => 'Close',
+					'translations' => array( 'Close (language pack)' ),
+				)
+			)
+		);
+		$this->assertTrue( $mo->export_to_file( $pack ) );
+
+		$controller      = WP_Translation_Controller::get_instance();
+		$previous_locale = $controller->get_locale();
+		$japanese        = static function () {
+			return 'ja';
+		};
+		add_filter( 'pre_determine_locale', $japanese );
+		unload_textdomain( 'woocommerce-for-japan', true );
+		try {
+			$this->assertTrue( load_textdomain( 'woocommerce-for-japan', $pack, 'ja' ) );
+
+			$strings = jp4wc_php_security_notice_strings();
+
+			$this->assertSame( 'Close (language pack)', $strings['close'], 'The language pack wins where it has a translation.' );
+			$this->assertSame( 'PHP の重大な脆弱性: 今すぐ更新してください', $strings['title'] );
+			$this->assertSame( '今後表示しない', $strings['dismiss'] );
+			$this->assertSame( 'Update PHP now: critical security vulnerabilities', __( 'Update PHP now: critical security vulnerabilities', 'woocommerce-for-japan' ), 'Other calls are left to the loaded translations.' );
+		} finally {
+			unload_textdomain( 'woocommerce-for-japan', true );
+			remove_filter( 'pre_determine_locale', $japanese );
+			$controller->set_locale( $previous_locale );
+			wp_delete_file( $pack );
+		}
+	}
+
+	/**
 	 * "Don't show again" hides the notice for the same PHP version and notice ID only.
 	 */
 	public function test_dismissed_notice_comes_back_when_php_or_notice_changes() {
