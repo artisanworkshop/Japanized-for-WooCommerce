@@ -307,4 +307,38 @@ class JP4WC_Security_Notice_Test extends WP_UnitTestCase {
 		self::store_findings( array( self::item( 'plugin', 'sample-plugin', array( self::record( '1' ) ) ) ), array( 'stale' => true ) );
 		$this->assertStringContainsString( 'has not been updated', self::render(), 'Data going out of date shows the notice again.' );
 	}
+
+	/**
+	 * What a record shows: a change to any of it shows a closed notice again (G1-4).
+	 *
+	 * @return array<string, array{string, mixed}>
+	 */
+	public function shown_field_provider() {
+		return array(
+			'severity'       => array( 'rating', 'Critical' ),
+			'fix available'  => array( 'patched_versions', array( '1.2.4', '1.3.0' ) ),
+			'no fix anymore' => array( 'patched', false ),
+			'title'          => array( 'title', 'Sample <= 1.2.4 - Cross-Site Scripting' ),
+		);
+	}
+
+	/**
+	 * A closed notice comes back when a record it showed changes.
+	 *
+	 * @dataProvider shown_field_provider
+	 *
+	 * @param string $field Record field.
+	 * @param mixed  $value New value.
+	 */
+	public function test_closed_notice_comes_back_when_a_record_changes( $field, $value ) {
+		$items = array( self::item( 'plugin', 'sample-plugin', array( self::record( '1' ) ) ) );
+		self::store_findings( $items );
+		update_user_meta( get_current_user_id(), JP4WC_Security_Notice::DISMISSED_META, JP4WC_Security_Notice::get_view()['fingerprint'] );
+		$this->assertSame( '', self::render() );
+
+		$items[0]['vulnerabilities'][0][ $field ] = $value;
+		self::store_findings( $items );
+
+		$this->assertStringContainsString( 'jp4wc-security-notice', self::render() );
+	}
 }
