@@ -128,12 +128,18 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	/**
 	 * Answers a request from $responses (pre_http_request).
 	 *
+	 * The local checks' requests to the site itself are not recorded: they
+	 * fail, so the checks that need them are unknown.
+	 *
 	 * @param false|array|WP_Error $pre  Response so far.
 	 * @param array                $args Request arguments.
 	 * @param string               $url  URL.
 	 * @return array|WP_Error
 	 */
 	public function answer( $pre, $args, $url ) {
+		if ( wp_parse_url( $url, PHP_URL_HOST ) === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+			return new WP_Error( 'http_request_failed', 'The site cannot connect to itself in this test.' );
+		}
 		$this->requests[] = array(
 			'url'  => $url,
 			'args' => $args,
@@ -966,6 +972,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		}
 
 		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Probe::OPTION ), 'The results of the requests to the site itself go too.' );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
 	}
 
@@ -1054,11 +1061,14 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		wp_schedule_single_event( time(), JP4WC_Security_Feed::RESCAN_HOOK );
 		$this->assertDirectoryExists( JP4WC_Security_Feed::directory_path() );
 
+		$this->assertIsArray( get_option( JP4WC_Security_Probe::OPTION ) );
+
 		JP4WC_Security_Feed::uninstall();
 
 		$this->assertFalse( get_option( JP4WC_Security_Feed::SETTING ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Probe::OPTION ) );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RESCAN_HOOK ) );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
@@ -1145,7 +1155,8 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A change of the installed software schedules one match, once there is data.
+	 * A change of the installed software schedules one match, also before the
+	 * first sync: the local checks need no vulnerability data (#258).
 	 *
 	 * The actions are not fired here: WordPress and WooCommerce act on them too.
 	 */
@@ -1155,12 +1166,8 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		}
 
 		JP4WC_Security_Feed::schedule_rescan();
-		$this->assertSame( 0, self::count_events( JP4WC_Security_Feed::RESCAN_HOOK ), 'Nothing to match before the first sync.' );
-
-		$this->sync_successfully();
 		JP4WC_Security_Feed::schedule_rescan();
-		JP4WC_Security_Feed::schedule_rescan();
-		$this->assertSame( 1, self::count_events( JP4WC_Security_Feed::RESCAN_HOOK ), 'Many changes at once run one match.' );
+		$this->assertSame( 1, self::count_events( JP4WC_Security_Feed::RESCAN_HOOK ), 'Many changes at once run one match, data or not.' );
 
 		wp_clear_scheduled_hook( JP4WC_Security_Feed::RESCAN_HOOK );
 		update_option( JP4WC_Security_Feed::SETTING, '' );
@@ -1180,7 +1187,9 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		JP4WC_Security_Feed::rescan();
 
-		$this->assertSame( $before, JP4WC_Security_Feed::get_findings() );
+		$vulnerability_keys = array_flip( array( 'version', 'generated_at', 'stale', 'copyrights', 'attribution', 'count', 'max_severity', 'items' ) );
+		$this->assertSame( array_intersect_key( $before, $vulnerability_keys ), array_intersect_key( JP4WC_Security_Feed::get_findings(), $vulnerability_keys ) );
+		$this->assertSame( 'fail', wp_list_filter( JP4WC_Security_Feed::get_checks()['checks'], array( 'check_id' => 'V-01' ) )[0]['status'], 'V-01 keeps counting the previous findings.' );
 
 		JP4WC_Security_Feed::sync();
 
@@ -1201,5 +1210,132 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		$core     = wp_list_filter( $findings['items'], array( 'slug' => 'wordpress' ) );
 		$this->assertSame( '00000000-0000-4000-8000-000000000202', reset( $core )['vulnerabilities'][0]['id'] );
 		$this->assertSame( array(), $this->requests, 'Matching makes no request.' );
+	}
+
+	/**
+	 * The local checks run and are scored without vulnerability data, and the
+	 * notice's findings stay empty (#258).
+	 */
+	public function test_local_checks_run_without_vulnerability_data() {
+		$this->responses['manifest.json']['response']['code'] = 404;
+
+		JP4WC_Security_Feed::sync();
+
+		$this->assertNull( JP4WC_Security_Feed::get_findings(), 'The notice still sees no vulnerability data.' );
+		$result = JP4WC_Security_Feed::get_checks();
+		$this->assertNotNull( $result );
+		$this->assertSame( array_keys( JP4WC_Security_Checks::CHECKS ), wp_list_pluck( $result['checks'], 'check_id' ) );
+		$this->assertSame( 'unknown', $result['checks'][0]['status'], 'V-01 without data.' );
+		$this->assertSame( 'unknown', $result['checks'][2]['status'], 'V-03 without the oldest supported versions.' );
+		$this->assertSame( JP4WC_Security_Checks::score( $result['checks'] ), $result['score'] );
+		$this->assertGreaterThanOrEqual( time() - 60, $result['checked_at'] );
+	}
+
+	/**
+	 * The findings keep only the ID, requirement, severity and status of each
+	 * check: no path, setting value or URL (#258).
+	 */
+	public function test_findings_keep_only_the_status_of_each_check() {
+		$this->sync_successfully();
+
+		$findings = get_option( JP4WC_Security_Feed::FINDINGS_OPTION );
+		$this->assertCount( count( JP4WC_Security_Checks::CHECKS ), $findings['checks'] );
+		foreach ( $findings['checks'] as $check ) {
+			$this->assertSame( array( 'check_id', 'requirement', 'severity', 'status' ), array_keys( $check ) );
+			$this->assertContains( $check['status'], array( 'pass', 'fail', 'unknown' ) );
+			$this->assertArrayHasKey( $check['severity'], JP4WC_Security_Checks::POINTS );
+			$this->assertMatchesRegularExpression( '/^[VADM]-[0-9]{2}$/D', $check['check_id'] );
+		}
+		$this->assertSame( array( 'total', 'vuln', 'admin', 'data', 'malware' ), array_keys( $findings['score'] ) );
+
+		$v01 = $findings['checks'][0];
+		$this->assertSame( 'V-01', $v01['check_id'] );
+		$this->assertSame( 'fail', $v01['status'] );
+		$this->assertSame( 'high', $v01['severity'], 'The most severe record found is High.' );
+
+		$stored = get_option( JP4WC_Security_Probe::OPTION );
+		foreach ( $stored as $result ) {
+			$this->assertSame( array( 'status', 'checked_at' ), array_keys( $result ) );
+		}
+	}
+
+	/**
+	 * The oldest supported versions of the manifest are stored for V-03.
+	 */
+	public function test_oldest_supported_versions_are_stored() {
+		$this->sync_successfully();
+
+		$this->assertSame(
+			array(
+				'php'         => '8.2',
+				'wordpress'   => '6.7',
+				'woocommerce' => '10.2',
+			),
+			JP4WC_Security_Feed::get_state()['eol']
+		);
+	}
+
+	/**
+	 * A manifest whose eol is missing or malformed is still used; V-03 is then unknown.
+	 *
+	 * @return array<string, array{callable, array}>
+	 */
+	public function eol_change_provider() {
+		return array(
+			'no eol'                 => array(
+				static function ( $manifest ) {
+					unset( $manifest['eol'] );
+					return $manifest;
+				},
+				array(),
+			),
+			'eol not an object'      => array(
+				static function ( $manifest ) {
+					$manifest['eol'] = '8.2';
+					return $manifest;
+				},
+				array(),
+			),
+			'one malformed entry'    => array(
+				static function ( $manifest ) {
+					$manifest['eol']['php']['min_supported'] = '8.x';
+					return $manifest;
+				},
+				array(
+					'wordpress'   => '6.7',
+					'woocommerce' => '10.2',
+				),
+			),
+			'one entry not a string' => array(
+				static function ( $manifest ) {
+					$manifest['eol']['woocommerce']['min_supported'] = 10.2;
+					return $manifest;
+				},
+				array(
+					'php'       => '8.2',
+					'wordpress' => '6.7',
+				),
+			),
+		);
+	}
+
+	/**
+	 * A manifest with a missing or malformed eol keeps its vulnerability data.
+	 *
+	 * @dataProvider eol_change_provider
+	 *
+	 * @param callable $change   Changes the sample manifest.
+	 * @param array    $expected Versions stored.
+	 */
+	public function test_malformed_eol_keeps_the_manifest( $change, $expected ) {
+		$this->serve_manifest( $change( self::manifest() ) );
+
+		JP4WC_Security_Feed::sync();
+
+		$state = JP4WC_Security_Feed::get_state();
+		$this->assertSame( '', $state['last_error'] );
+		$this->assertSame( $expected, $state['eol'] );
+		$this->assertNotNull( JP4WC_Security_Feed::get_findings() );
+		$this->assertSame( 'unknown', JP4WC_Security_Feed::get_checks()['checks'][2]['status'] );
 	}
 }

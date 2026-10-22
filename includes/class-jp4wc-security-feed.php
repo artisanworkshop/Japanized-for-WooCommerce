@@ -19,7 +19,8 @@ require_once __DIR__ . '/class-jp4wc-security-checks.php';
  *
  * Downloads the vulnerability feed of wc.artws.info once a day, keeps it in
  * wp-content/uploads/jp4wc-security/ and matches the installed software
- * against it (JP4WC_Security_Scanner). Nothing about the site is sent: the
+ * against it (JP4WC_Security_Scanner), then runs the local checks and scores
+ * them (JP4WC_Security_Checks). Nothing about the site is sent: the feed
  * requests carry only a User-Agent with the versions of JP4WC, WordPress,
  * WooCommerce and PHP. The format is defined in tests/fixtures/security-feed/.
  *
@@ -43,7 +44,7 @@ class JP4WC_Security_Feed {
 	const STATE_OPTION = 'jp4wc_security_feed_state';
 
 	/**
-	 * Option with the result of the last match (not autoloaded).
+	 * Option with the result of the last match and of the local checks (not autoloaded).
 	 */
 	const FINDINGS_OPTION = 'jp4wc_security_findings';
 
@@ -214,13 +215,15 @@ class JP4WC_Security_Feed {
 	}
 
 	/**
-	 * Removes the WP-Cron events, the stored state, the findings and the downloaded files.
+	 * Removes the WP-Cron events, the stored state, the findings, the results
+	 * of the requests to the site itself and the downloaded files.
 	 */
 	public static function purge() {
 		wp_clear_scheduled_hook( self::SYNC_HOOK );
 		wp_clear_scheduled_hook( self::RESCAN_HOOK );
 		delete_option( self::STATE_OPTION );
 		delete_option( self::FINDINGS_OPTION );
+		delete_option( JP4WC_Security_Probe::OPTION );
 
 		$directory = self::directory_path();
 		if ( '' === $directory || ! is_dir( $directory ) ) {
@@ -274,13 +277,16 @@ class JP4WC_Security_Feed {
 	}
 
 	/**
-	 * Matches the installed software again soon, in a WP-Cron event of its own.
+	 * Matches the installed software and runs the local checks again soon, in a
+	 * WP-Cron event of its own.
 	 *
-	 * WordPress drops an identical event scheduled within ten minutes of
-	 * another, so activating many plugins at once runs one match.
+	 * Also before the first sync: the local checks need no vulnerability data,
+	 * and activating a plugin can change them. WordPress drops an identical
+	 * event scheduled within ten minutes of another, so activating many plugins
+	 * at once runs one match.
 	 */
 	public static function schedule_rescan() {
-		if ( ! self::is_enabled() || ! self::has_data() ) {
+		if ( ! self::is_enabled() ) {
 			return;
 		}
 		wp_schedule_single_event( time(), self::RESCAN_HOOK );
@@ -290,8 +296,10 @@ class JP4WC_Security_Feed {
 	 * Returns what the last sync stored.
 	 *
 	 * @return array version, generated_at, stale, files (type => sha256, count,
-	 *               json_sha256), copyrights, attribution, synced_at, last_attempt,
-	 *               last_error and failing_since (when the syncs began to fail, or 0).
+	 *               json_sha256), copyrights, attribution, eol (php, WordPress,
+	 *               woocommerce => oldest supported version), synced_at,
+	 *               last_attempt, last_error and failing_since (when the syncs
+	 *               began to fail, or 0).
 	 */
 	public static function get_state() {
 		$state = get_option( self::STATE_OPTION, array() );
@@ -303,6 +311,7 @@ class JP4WC_Security_Feed {
 				'files'         => array(),
 				'copyrights'    => array(),
 				'attribution'   => '',
+				'eol'           => array(),
 				'synced_at'     => 0,
 				'last_attempt'  => 0,
 				'last_error'    => '',
@@ -310,16 +319,6 @@ class JP4WC_Security_Feed {
 			),
 			is_array( $state ) ? $state : array()
 		);
-	}
-
-	/**
-	 * Whether a sync has stored vulnerability files.
-	 *
-	 * @return bool
-	 */
-	private static function has_data() {
-		$state = self::get_state();
-		return is_array( $state['files'] ) && array() !== $state['files'];
 	}
 
 	/**
@@ -413,30 +412,73 @@ class JP4WC_Security_Feed {
 	}
 
 	/**
-	 * Matches the installed software against the stored files and saves the result.
+	 * Matches the installed software against the stored files, runs the local
+	 * checks and saves both, with the score, in one write.
+	 *
+	 * The local checks run without vulnerability data too; the findings then
+	 * have no items, and get_findings() stays null.
 	 */
 	public static function rescan() {
 		if ( ! self::is_enabled() ) {
 			return;
 		}
 		self::start_run();
-		$state = self::get_state();
+		$state    = self::get_state();
+		$findings = array( 'checked_at' => time() );
+
+		$matched = self::match( $state );
+		if ( is_array( $matched ) ) {
+			$findings = array_merge( $findings, $matched );
+		} elseif ( false === $matched ) {
+			// A stored file removed or made unreadable since the sync (an uploads clean-up,
+			// permissions) would drop every finding of its type: keep the previous findings
+			// until the next sync downloads it again.
+			$previous = self::get_findings();
+			if ( null !== $previous ) {
+				$findings = array_merge( array_diff_key( $previous, array_flip( array( 'checked_at', 'checks', 'score' ) ) ), $findings );
+			}
+		}
+
+		$checks             = JP4WC_Security_Checks::run(
+			array(
+				'vulnerabilities' => isset( $findings['items'] ) ? array(
+					'items' => $findings['items'],
+					'stale' => self::is_stale( $findings ),
+				) : null,
+				'eol'             => is_array( $state['eol'] ) ? $state['eol'] : array(),
+			)
+		);
+		$findings['checks'] = $checks;
+		$findings['score']  = JP4WC_Security_Checks::score( $checks );
+
+		update_option( self::FINDINGS_OPTION, $findings, false );
+		// The check may have been turned off while the files were read.
+		self::keep_written_data();
+	}
+
+	/**
+	 * Matches the installed software against the stored vulnerability files.
+	 *
+	 * @param array $state Stored state.
+	 * @return array|false|null The findings of the match (version, generated_at,
+	 *                          stale, copyrights, attribution, count, max_severity
+	 *                          and items); false when a stored file cannot be
+	 *                          read; null when no sync has stored any.
+	 */
+	private static function match( array $state ) {
 		if ( ! is_array( $state['files'] ) || array() === $state['files'] ) {
-			return;
+			return null;
 		}
 
 		$directory = self::directory_path();
 		if ( '' === $directory ) {
-			return;
+			return false;
 		}
 		$files = array();
 		foreach ( array_keys( $state['files'] ) as $type ) {
 			$files[ $type ] = $directory . '/' . $type . '.json';
-			// A file removed or made unreadable since the sync (an uploads clean-up, permissions)
-			// would drop every finding of its type: keep the previous findings until the next
-			// sync downloads it again.
 			if ( ! is_readable( $files[ $type ] ) ) {
-				return;
+				return false;
 			}
 		}
 
@@ -446,23 +488,16 @@ class JP4WC_Security_Feed {
 			$count += count( $item['vulnerabilities'] );
 		}
 
-		update_option(
-			self::FINDINGS_OPTION,
-			array(
-				'checked_at'   => time(),
-				'version'      => $state['version'],
-				'generated_at' => $state['generated_at'],
-				'stale'        => (bool) $state['stale'],
-				'copyrights'   => $state['copyrights'],
-				'attribution'  => $state['attribution'],
-				'count'        => $count,
-				'max_severity' => JP4WC_Security_Scanner::max_rating( $items ),
-				'items'        => $items,
-			),
-			false
+		return array(
+			'version'      => $state['version'],
+			'generated_at' => $state['generated_at'],
+			'stale'        => (bool) $state['stale'],
+			'copyrights'   => $state['copyrights'],
+			'attribution'  => $state['attribution'],
+			'count'        => $count,
+			'max_severity' => JP4WC_Security_Scanner::max_rating( $items ),
+			'items'        => $items,
 		);
-		// The check may have been turned off while the files were read.
-		self::keep_written_data();
 	}
 
 	/**
@@ -487,6 +522,25 @@ class JP4WC_Security_Feed {
 				'max_severity' => '',
 			),
 			$findings
+		);
+	}
+
+	/**
+	 * Returns the result of the last local checks.
+	 *
+	 * @return array|null checked_at, checks (check_id, requirement, severity and
+	 *                    status of each) and score (total, vuln, admin, data,
+	 *                    malware); null before the first run.
+	 */
+	public static function get_checks() {
+		$findings = get_option( self::FINDINGS_OPTION, null );
+		if ( ! is_array( $findings ) || ! isset( $findings['checks'], $findings['score'] ) || ! is_array( $findings['checks'] ) || ! is_array( $findings['score'] ) ) {
+			return null;
+		}
+		return array(
+			'checked_at' => isset( $findings['checked_at'] ) ? (int) $findings['checked_at'] : 0,
+			'checks'     => $findings['checks'],
+			'score'      => $findings['score'],
 		);
 	}
 
@@ -558,6 +612,7 @@ class JP4WC_Security_Feed {
 				'files'         => $files,
 				'copyrights'    => $manifest['copyrights'],
 				'attribution'   => $manifest['attribution'],
+				'eol'           => $manifest['eol'],
 				'synced_at'     => time(),
 				'last_error'    => '',
 				'failing_since' => 0,
@@ -624,7 +679,7 @@ class JP4WC_Security_Feed {
 	 * than plugin, theme and core.
 	 *
 	 * @param mixed $manifest Decoded manifest.json.
-	 * @return array|WP_Error version, generated_at, stale, files, copyrights and attribution.
+	 * @return array|WP_Error version, generated_at, stale, files, copyrights, attribution and eol.
 	 */
 	public static function parse_manifest( $manifest ) {
 		$invalid = static function ( $what ) {
@@ -701,7 +756,28 @@ class JP4WC_Security_Feed {
 			'files'        => $files,
 			'copyrights'   => $copyrights,
 			'attribution'  => $manifest['attribution'],
+			'eol'          => self::parse_eol( isset( $manifest['eol'] ) ? $manifest['eol'] : null ),
 		);
+	}
+
+	/**
+	 * Reads the oldest supported versions of the manifest (check V-03).
+	 *
+	 * A missing or malformed entry is left out rather than rejecting the
+	 * manifest: the vulnerability data matters more, and V-03 is then unknown.
+	 *
+	 * @param mixed $eol `eol` of the manifest.
+	 * @return array<string, string> php, WordPress, woocommerce => oldest supported version.
+	 */
+	private static function parse_eol( $eol ) {
+		$versions = array();
+		foreach ( array( 'php', 'wordpress', 'woocommerce' ) as $name ) {
+			$version = isset( $eol[ $name ]['min_supported'] ) ? $eol[ $name ]['min_supported'] : null;
+			if ( is_string( $version ) && strlen( $version ) <= 32 && 1 === preg_match( '/^[0-9]+(?:\.[0-9]+)*$/D', $version ) ) {
+				$versions[ $name ] = $version;
+			}
+		}
+		return $versions;
 	}
 
 	/**
