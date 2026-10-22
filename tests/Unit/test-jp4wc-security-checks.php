@@ -36,6 +36,13 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	private $requested = array();
 
 	/**
+	 * Checks that threw, by ID: a test that does not expect one fails (R2-4).
+	 *
+	 * @var array<string, Throwable>
+	 */
+	private $errors = array();
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -49,12 +56,17 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		$this->requested = array();
 		delete_option( JP4WC_Security_Probe::OPTION );
 		add_filter( 'pre_http_request', array( $this, 'respond' ), 10, 3 );
+		// phpunit.xml turns warnings into exceptions, which the checks report as unknown.
+		$this->errors = array();
+		add_action( 'jp4wc_security_check_error', array( $this, 'record_error' ), 10, 2 );
 	}
 
 	/**
 	 * Clean up after each test.
 	 */
 	public function tearDown(): void {
+		remove_action( 'jp4wc_security_check_error', array( $this, 'record_error' ), 10 );
+		$this->assertSame( array(), array_map( 'get_class', $this->errors ), 'No check threw.' );
 		remove_filter( 'pre_http_request', array( $this, 'respond' ), 10 );
 		delete_option( JP4WC_Security_Probe::OPTION );
 		self::remove( $this->dir );
@@ -84,6 +96,16 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			'cookies'  => array(),
 			'filename' => null,
 		);
+	}
+
+	/**
+	 * Records a check that threw (jp4wc_security_check_error).
+	 *
+	 * @param string    $check_id Check ID.
+	 * @param Throwable $error    What it threw.
+	 */
+	public function record_error( $check_id, $error ) {
+		$this->errors[ $check_id ] = $error;
 	}
 
 	/**
@@ -198,6 +220,10 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		} finally {
 			remove_filter( 'jp4wc_security_known_plugins', $throw );
 		}
+
+		$this->assertSame( array( 'A-02', 'A-03', 'M-02' ), array_keys( $this->errors ), 'Each check that threw is reported.' );
+		$this->assertInstanceOf( RuntimeException::class, $this->errors['A-03'] );
+		$this->errors = array();
 
 		$statuses = wp_list_pluck( $checks, 'status', 'check_id' );
 		$this->assertCount( count( JP4WC_Security_Checks::CHECKS ), $statuses );
@@ -1057,35 +1083,50 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	 */
 	public function php_file_provider() {
 		return array(
-			'web shell'                 => array( '2026/10/image.php', '<?php system( $_GET["c"] );', 'fail' ),
-			'short echo tag'            => array( '2026/10/x.php', '<?= `id` ?>', 'fail' ),
-			'phtml'                     => array( '2026/10/x.phtml', '<?php eval( $_POST["x"] );', 'fail' ),
-			'upper case extension'      => array( '2026/10/X.PHP', '<?php eval( $_POST["x"] );', 'fail' ),
-			'php5'                      => array( 'x.php5', '<?php eval( $_POST["x"] );', 'fail' ),
-			'guarded code'              => array( 'plugin/cache.php', "<?php\ndefined( 'ABSPATH' ) || exit;\nfunction x() {}\n", 'fail' ),
-			'exit with code'            => array( 'x.php', '<?php exit( system( "id" ) );', 'fail' ),
-			'silence is golden'         => array( 'jp4wc-security/index.php', "<?php\n// Silence is golden.\n", 'pass' ),
-			'empty'                     => array( 'index.php', '', 'pass' ),
-			'html only'                 => array( 'index.php', '<html></html>', 'pass' ),
-			'doc comment only'          => array( 'index.php', "<?php\n/**\n * Nothing here.\n */\n?>\n", 'pass' ),
-			'exit then data'            => array( 'sucuri/sucuri-auditqueue.php', '<?php exit(0); ?>{"a":"<?php system(1); ?>"}', 'pass' ),
-			'die with a message'        => array( 'data.php', "<?php die( 'Access denied' );\nsystem( 'id' );", 'pass' ),
-			'bare exit'                 => array( 'data.php', "<?php exit;\nsystem( 'id' );", 'pass' ),
-			'exit without arguments'    => array( 'data.php', '<?php exit(); system( "id" );', 'pass' ),
-			'halt compiler'             => array( 'data.php', "<?php __halt_compiler();\x00binary", 'pass' ),
-			'long comment then unknown' => array( 'index.php', "<?php\n/*" . str_repeat( 'x', 2000 ) . "*/\nsystem( 'id' );", 'unknown' ),
-			'not PHP'                   => array( '2026/10/photo.jpg', '<?php system( "id" );', 'pass' ),
-			'guard answering 404'       => array( 'backwpup-logs/index.php', "<?php\nheader( \$_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );\nheader( 'Status: 404 Not Found' );\n?>\n", 'pass' ),
-			'response code then exit'   => array( 'cache/index.php', "<?php http_response_code( 403 ); exit;\nsystem( 'id' );", 'pass' ),
-			'header calling a function' => array( 'cache/index.php', "<?php header( system( 'id' ) );", 'fail' ),
-			'header then code'          => array( 'cache/index.php', "<?php header( 'X-A: 1' ); system( 'id' );", 'fail' ),
-			'data file'                 => array( 'plugin/settings.php', "<?php\nreturn array( 'a' => 1, 'b' => array( 'c', -2, 3.5, true, null ), 'd' => [ 'e' ] );\n", 'pass' ),
-			'data file without ;'       => array( 'plugin/settings.php', "<?php return array( 'a' => 1 ) ?>", 'pass' ),
-			'return of a call'          => array( 'plugin/settings.php', "<?php return 'system'( 'id' );", 'fail' ),
-			'return with a call inside' => array( 'plugin/settings.php', "<?php return array( 'a' => system( 'id' ) );", 'fail' ),
-			'long data file'            => array( 'plugin/settings.php', "<?php return array(\n" . str_repeat( "\t'key' => 'value',\n", 100 ) . ');', 'unknown' ),
-			'compiled template'         => array( 'cache/twig/ab/abc.php', "<?php\n\nuse Twig\\Environment;\n\n/* index.twig */\nclass __TwigTemplate_abc extends Twig\\Template\n{\n}\n", 'unknown' ),
-			'namespace first'           => array( 'cache/x.php', "<?php namespace X; system( 'id' );", 'unknown' ),
+			'web shell'                  => array( '2026/10/image.php', '<?php system( $_GET["c"] );', 'fail' ),
+			'short echo tag'             => array( '2026/10/x.php', '<?= `id` ?>', 'fail' ),
+			'phtml'                      => array( '2026/10/x.phtml', '<?php eval( $_POST["x"] );', 'fail' ),
+			'upper case extension'       => array( '2026/10/X.PHP', '<?php eval( $_POST["x"] );', 'fail' ),
+			'php5'                       => array( 'x.php5', '<?php eval( $_POST["x"] );', 'fail' ),
+			'guarded code'               => array( 'plugin/cache.php', "<?php\ndefined( 'ABSPATH' ) || exit;\nfunction x() {}\n", 'fail' ),
+			'exit with code'             => array( 'x.php', '<?php exit( system( "id" ) );', 'fail' ),
+			'silence is golden'          => array( 'jp4wc-security/index.php', "<?php\n// Silence is golden.\n", 'pass' ),
+			'empty'                      => array( 'index.php', '', 'pass' ),
+			'html only'                  => array( 'index.php', '<html></html>', 'pass' ),
+			'doc comment only'           => array( 'index.php', "<?php\n/**\n * Nothing here.\n */\n?>\n", 'pass' ),
+			'exit then data'             => array( 'sucuri/sucuri-auditqueue.php', '<?php exit(0); ?>{"a":"<?php system(1); ?>"}', 'pass' ),
+			'die with a message'         => array( 'data.php', "<?php die( 'Access denied' );\nsystem( 'id' );", 'pass' ),
+			'bare exit'                  => array( 'data.php', "<?php exit;\nsystem( 'id' );", 'pass' ),
+			'exit without arguments'     => array( 'data.php', '<?php exit(); system( "id" );', 'pass' ),
+			'halt compiler'              => array( 'data.php', "<?php __halt_compiler();\x00binary", 'pass' ),
+			'long comment then code'     => array( 'index.php', "<?php\n/*" . str_repeat( 'x', 2000 ) . "*/\nsystem( 'id' );", 'fail' ),
+			'comment past the read'      => array( 'index.php', "<?php\n/*" . str_repeat( 'x', 70000 ) . "*/\nsystem( 'id' );", 'unknown' ),
+			'not PHP'                    => array( '2026/10/photo.jpg', '<?php system( "id" );', 'pass' ),
+			'guard answering 404'        => array( 'backwpup-logs/index.php', "<?php\nheader( \$_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found' );\nheader( 'Status: 404 Not Found' );\n?>\n", 'pass' ),
+			'response code then exit'    => array( 'cache/index.php', "<?php http_response_code( 403 ); exit;\nsystem( 'id' );", 'pass' ),
+			'header calling a function'  => array( 'cache/index.php', "<?php header( system( 'id' ) );", 'fail' ),
+			'header then code'           => array( 'cache/index.php', "<?php header( 'X-A: 1' ); system( 'id' );", 'fail' ),
+			'data file'                  => array( 'plugin/settings.php', "<?php\nreturn array( 'a' => 1, 'b' => array( 'c', -2, 3.5, true, null ), 'd' => [ 'e' ] );\n", 'pass' ),
+			'data file without ;'        => array( 'plugin/settings.php', "<?php return array( 'a' => 1 ) ?>", 'pass' ),
+			'return of a call'           => array( 'plugin/settings.php', "<?php return 'system'( 'id' );", 'fail' ),
+			'return with a call inside'  => array( 'plugin/settings.php', "<?php return array( 'a' => system( 'id' ) );", 'fail' ),
+			'long data file'             => array( 'plugin/settings.php', "<?php return array(\n" . str_repeat( "\t'key' => 'value',\n", 100 ) . ');', 'pass' ),
+			'data past the read'         => array( 'plugin/settings.php', "<?php return array(\n" . str_repeat( "\t'key' => 'value',\n", 4000 ) . ');', 'unknown' ),
+			'string cut by the read'     => array( 'plugin/settings.php', "<?php return array( '" . str_repeat( 'x', 70000 ) . "' );", 'unknown' ),
+			'double quotes cut'          => array( 'plugin/settings.php', '<?php return array( "' . str_repeat( 'x', 70000 ) . '" );', 'unknown' ),
+			'compiled template'          => array( 'cache/twig/ab/abc.php', "<?php\n\nuse Twig\\Environment;\n\n/* index.twig */\nclass __TwigTemplate_abc extends Twig\\Template\n{\n    public function display( \$context ) { echo 'x'; }\n}\n", 'pass' ),
+			'declarations only'          => array( 'cache/x.php', "<?php\ndeclare(strict_types=1);\nnamespace X;\nuse A\\{B, C};\n#[Attr( 1 )]\nfinal class Y { const A = 1; }\nfunction z( \$a = array( 1 ) ): void { system( 'id' ); }\nconst B = 2;\n", 'pass' ),
+			'namespace then code'        => array( 'cache/x.php', "<?php namespace X; system( 'id' );", 'fail' ),
+			'function then code'         => array( 'cache/x.php', "<?php function a() {} system( \$_GET['c'] );", 'fail' ),
+			'constant then code'         => array( 'cache/x.php', "<?php const A = 1; system( 'id' );", 'fail' ),
+			'attribute then code'        => array( 'cache/x.php', "<?php #[A] function a() {} system( 'id' );", 'fail' ),
+			'class then instance'        => array( 'cache/x.php', "<?php class X { function __destruct() { system( 'id' ); } } new X();", 'fail' ),
+			'namespace block'            => array( 'cache/x.php', "<?php namespace X { system( 'id' ); }", 'fail' ),
+			'declare block'              => array( 'cache/x.php', "<?php declare(ticks=1) { system( 'id' ); }", 'fail' ),
+			'declarations past the read' => array( 'cache/x.php', "<?php class X {\n" . str_repeat( "\tconst A = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';\n", 2000 ) . "}\nsystem( 'id' );", 'unknown' ),
+			'exit then a padded call'    => array( 'x.php', '<?php exit' . str_repeat( ' ', 1100 ) . "(system( \$_GET['c'] ));", 'fail' ),
+			'exit cut by the read'       => array( 'x.php', '<?php exit' . str_repeat( ' ', 70000 ) . "(system( \$_GET['c'] ));", 'unknown' ),
+			'die after header cut'       => array( 'x.php', "<?php header( 'X-A: 1' ); die" . str_repeat( ' ', 70000 ) . "(system( \$_GET['c'] ));", 'unknown' ),
 		);
 	}
 

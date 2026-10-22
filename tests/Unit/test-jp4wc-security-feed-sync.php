@@ -35,6 +35,13 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	private $installed = array();
 
 	/**
+	 * Local checks that threw, by ID: none is expected (#258).
+	 *
+	 * @var array<string, Throwable>
+	 */
+	private $errors = array();
+
+	/**
 	 * Set up test environment before each test.
 	 */
 	public function setUp(): void {
@@ -82,17 +89,31 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		add_filter( 'pre_http_request', array( $this, 'answer' ), 10, 3 );
 		add_filter( 'jp4wc_security_installed_software', array( $this, 'installed' ) );
+		$this->errors = array();
+		add_action( 'jp4wc_security_check_error', array( $this, 'record_error' ), 10, 2 );
 	}
 
 	/**
 	 * Clean up after each test.
 	 */
 	public function tearDown(): void {
+		remove_action( 'jp4wc_security_check_error', array( $this, 'record_error' ), 10 );
+		$this->assertSame( array(), array_map( 'get_class', $this->errors ), 'No local check threw.' );
 		remove_filter( 'pre_http_request', array( $this, 'answer' ), 10 );
 		remove_filter( 'jp4wc_security_installed_software', array( $this, 'installed' ) );
 		JP4WC_Security_Feed::purge();
 		update_option( JP4WC_Security_Feed::SETTING, '1' );
 		parent::tearDown();
+	}
+
+	/**
+	 * Records a local check that threw (jp4wc_security_check_error).
+	 *
+	 * @param string    $check_id Check ID.
+	 * @param Throwable $error    What it threw.
+	 */
+	public function record_error( $check_id, $error ) {
+		$this->errors[ $check_id ] = $error;
 	}
 
 	/**
