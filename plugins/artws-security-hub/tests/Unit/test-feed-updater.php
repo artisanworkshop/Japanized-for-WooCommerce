@@ -651,6 +651,45 @@ class Artws_Sec_Feed_Updater_Test extends Artws_Sec_Feed_Test_Case {
 	}
 
 	/**
+	 * Deactivation marks the feed stale even while another run holds the lock, and leaves that lock alone.
+	 */
+	public function test_deactivation_while_the_lock_is_held_marks_the_feed_stale() {
+		global $wpdb;
+		$this->publish_fixture();
+		$wpdb->insert(
+			$wpdb->options,
+			array(
+				'option_name'  => Artws_Sec_Feed_Updater::LOCK_OPTION,
+				'option_value' => (string) ( time() - HOUR_IN_SECONDS ),
+				'autoload'     => 'off',
+			)
+		);
+
+		Artws_Sec_Feed_Updater::deactivate();
+
+		$this->assertTrue( self::read_manifest()->stale );
+		$this->assertSame( 'stale', Artws_Sec_Feed_Updater::get_status()['result'] );
+		$this->assertNotNull( $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", Artws_Sec_Feed_Updater::LOCK_OPTION ) ) );
+	}
+
+	/**
+	 * A run that was in progress when the plugin was deactivated publishes its files as stale; activation clears that.
+	 */
+	public function test_run_finishing_after_deactivation_publishes_stale_files() {
+		update_option( Artws_Sec_Feed_Updater::DEACTIVATED_OPTION, self::NOW, false );
+		$this->mock_wordfence( self::fixture_feed() );
+
+		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW ) );
+		$this->assertTrue( self::read_manifest()->stale );
+		$this->assertTrue( Artws_Sec_Feed_Updater::get_state()['stale'] );
+
+		Artws_Sec_Feed_Updater::activate();
+		$this->assertFalse( get_option( Artws_Sec_Feed_Updater::DEACTIVATED_OPTION ) );
+		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW + DAY_IN_SECONDS ) );
+		$this->assertFalse( self::read_manifest()->stale );
+	}
+
+	/**
 	 * The cron event of "Update now" runs with the current time, not its "manual" argument.
 	 */
 	public function test_manual_event_runs_with_the_current_time() {
