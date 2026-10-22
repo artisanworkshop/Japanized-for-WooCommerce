@@ -38,6 +38,48 @@ msgstr ""
 msgid "https://wc.artws.info/"
 msgstr ""
 
+#: woocommerce-for-japan.php:46
+msgid "Update PHP now: critical security vulnerabilities"
+msgstr ""
+
+#. translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs
+#: woocommerce-for-japan.php:48
+#, php-format
+msgid "The PHP version of this site (%1$s) has critical vulnerabilities (%3$s) that let an attacker run code on the server with a single request. Update PHP to %2$s or later right away."
+msgstr ""
+
+#: woocommerce-for-japan.php:49
+msgid "Security support for PHP 8.2 ends at the end of 2026, so we recommend updating to PHP 8.3 or later."
+msgstr ""
+
+#: woocommerce-for-japan.php:50
+msgid "Your hosting company may have applied the fix without changing the PHP version number. Please check with your hosting company."
+msgstr ""
+
+#. translators: 1: PHP version of this site, 2: vulnerability IDs
+#: woocommerce-for-japan.php:52
+#, php-format
+msgid "The PHP version of this site (%1$s) has critical vulnerabilities (%2$s). Official support for this PHP version has ended, and no fixed version has been released for it. Some hosting companies apply their own security patches, but update to PHP 8.3 or later, which is supported longer, as soon as possible."
+msgstr ""
+
+#. translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs
+#: woocommerce-for-japan.php:54
+#, php-format
+msgid "This site runs a pre-release of PHP (%1$s) that has critical vulnerabilities (%3$s). Update it to %2$s or later."
+msgstr ""
+
+#: woocommerce-for-japan.php:55
+msgid "Learn more"
+msgstr ""
+
+#: woocommerce-for-japan.php:56
+msgid "Don't show again"
+msgstr ""
+
+#: woocommerce-for-japan.php:57
+msgid "Close"
+msgstr ""
+
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
 #: class-jp4wc.php:231
 #, php-format
