@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 2.9.18
+Stable tag: 2.9.19
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -156,6 +156,9 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 2.9.19 - 2026-10-22 =
+* **Fixed** - A request that was running while Japanized for WooCommerce was being updated could still stop with a fatal error ("Failed opening required …") after the 2.9.18 fix (#266), because some files were read only later in the request: the Checkout block support of Paidy and of this plugin's other payment methods, the delivery and yomigana fields of the Checkout block, the subscription price field, the settings screen's REST API and the dashboard PHP version notice; these files are now all loaded when the plugin starts, so updating from this version to a later one no longer causes this error (#268)
 
 = 2.9.18 - 2026-10-21 =
 * **Fixed** - In the Checkout block, a customer who came back from Paidy Checkout after Paidy declined the payment saw no message, because the notice was only added on the classic checkout; the Checkout block now shows it as an error notice, and the classic checkout no longer shows it twice (#248)
