@@ -327,7 +327,37 @@ class JP4WC_PHP_Security_Notice_Test extends WP_UnitTestCase {
 		$older  = $this->copy_notice( $source );
 		$newer  = $this->copy_notice( $source );
 
-		$args    = $newer_first ? array( $newer, '1.1.0', $older, '1.0.0' ) : array( $older, '1.0.0', $newer, '1.1.0' );
+		$result = $this->load_copies( $newer_first ? array( $newer, '1.1.0', $older, '1.0.0' ) : array( $older, '1.0.0', $newer, '1.1.0' ) );
+
+		$newer_file = realpath( $newer . '/class-notice.php' );
+		$this->assertSame( array( $newer_file ), $result['loaded_files'] );
+		$this->assertSame( $newer_file, $result['class_file'] );
+		$this->assertTrue( $result['instance_is_registered'] );
+		$this->assertSame( 1, $result['plugins_loaded_hooks'], 'Only the first register.php hooks the loader.' );
+		$this->assertSame( 1, $result['admin_init_hooks'], 'One notice is created.' );
+		$this->assertSame( $newer_first ? 'strings_of_a' : 'strings_of_b', $result['strings_callback'], 'The notice uses the strings of the plugin that registered the newer copy.' );
+	}
+
+	/**
+	 * A newest copy whose directory is missing, as during its plugin's update, stops nothing.
+	 */
+	public function test_loader_skips_a_missing_copy() {
+		$older   = $this->copy_notice( dirname( __DIR__, 2 ) . '/includes/artws-php-security-notice' );
+		$missing = trailingslashit( get_temp_dir() ) . 'jp4wc-php-security-notice-missing-' . wp_generate_password( 12, false );
+
+		$result = $this->load_copies( array( $older, '1.0.0', $missing, '1.1.0' ) );
+
+		$this->assertSame( array(), $result['loaded_files'] );
+		$this->assertFalse( $result['instance_is_registered'] );
+	}
+
+	/**
+	 * Runs tests/fixtures/php-security-notice/load-copies.php in a PHP process of its own.
+	 *
+	 * @param string[] $args Directory and version of copy A, then of copy B.
+	 * @return array The fixture's report.
+	 */
+	private function load_copies( $args ) {
 		$command = escapeshellarg( PHP_BINARY ) . ' ' . escapeshellarg( dirname( __DIR__ ) . '/fixtures/php-security-notice/load-copies.php' );
 		foreach ( $args as $arg ) {
 			$command .= ' ' . escapeshellarg( $arg );
@@ -338,14 +368,7 @@ class JP4WC_PHP_Security_Notice_Test extends WP_UnitTestCase {
 		$this->assertSame( 0, $exit_code, $output );
 		$result = json_decode( $output, true );
 		$this->assertIsArray( $result, $output );
-
-		$newer_file = realpath( $newer . '/class-notice.php' );
-		$this->assertSame( array( $newer_file ), $result['loaded_files'] );
-		$this->assertSame( $newer_file, $result['class_file'] );
-		$this->assertTrue( $result['instance_is_registered'] );
-		$this->assertSame( 1, $result['plugins_loaded_hooks'], 'Only the first register.php hooks the loader.' );
-		$this->assertSame( 1, $result['admin_init_hooks'], 'One notice is created.' );
-		$this->assertSame( $newer_first ? 'strings_of_a' : 'strings_of_b', $result['strings_callback'], 'The notice uses the strings of the plugin that registered the newer copy.' );
+		return $result;
 	}
 
 	/**

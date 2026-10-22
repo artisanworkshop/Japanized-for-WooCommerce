@@ -91,11 +91,13 @@ if ( ! function_exists( 'artws_php_security_notice_load' ) ) {
 			return;
 		}
 		if ( ! class_exists( 'ArtisanWorkshop\PhpSecurityNotice\Notice', false ) ) {
-			// The plugin's directory can be missing for a moment while the plugin is updated.
+			// The plugin's directory can be missing for a moment while the plugin is
+			// updated. include, not require, so that losing the file between the check
+			// and the include skips the notice instead of stopping the request.
 			if ( ! is_readable( $newest['class_file'] ) ) {
 				return;
 			}
-			require_once $newest['class_file'];
+			include_once $newest['class_file'];
 		}
 		if ( class_exists( 'ArtisanWorkshop\PhpSecurityNotice\Notice', false ) ) {
 			\ArtisanWorkshop\PhpSecurityNotice\Notice::boot( $newest['strings_callback'] );
