@@ -481,7 +481,10 @@ class JP4WC_PHP_Security_Notice_Test extends WP_UnitTestCase {
 	public function test_only_administrators_see_the_notice() {
 		$this->php_version = '8.3.35';
 
-		$this->log_in_as( 'shop_manager' );
+		// A shop manager. Granted by hand: WooCommerce's shop_manager role is not
+		// there in every test environment (CI).
+		$this->log_in_as( 'editor' );
+		wp_get_current_user()->add_cap( 'manage_woocommerce' );
 		$this->assertTrue( current_user_can( 'manage_woocommerce' ) ); // phpcs:ignore WordPress.WP.Capabilities.Unknown -- WooCommerce's capability.
 		$this->assertNull( Notice::instance()->get_view(), 'A shop manager does not see it.' );
 

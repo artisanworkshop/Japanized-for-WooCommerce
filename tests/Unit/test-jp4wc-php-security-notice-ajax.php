@@ -132,7 +132,10 @@ class JP4WC_PHP_Security_Notice_Ajax_Test extends WP_Ajax_UnitTestCase {
 	 * A user who cannot change the server's PHP is rejected and stores nothing.
 	 */
 	public function test_dismiss_requires_the_capability() {
-		$this->_setRole( 'shop_manager' );
+		// A shop manager. Granted by hand: WooCommerce's shop_manager role is not
+		// there in every test environment (CI).
+		$this->_setRole( 'editor' );
+		wp_get_current_user()->add_cap( 'manage_woocommerce' );
 		$_POST['nonce'] = wp_create_nonce( Notice::AJAX_ACTION );
 
 		$this->assertInstanceOf( WPAjaxDieContinueException::class, $this->send_dismiss() );
