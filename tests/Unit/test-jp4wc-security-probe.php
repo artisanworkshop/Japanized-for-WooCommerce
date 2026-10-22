@@ -210,14 +210,16 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	 * A pre_http_request filter that answers with something else gives unknown, not a TypeError (R1-5).
 	 */
 	public function test_malformed_response_is_unknown() {
-		$junk = static function () {
-			return true;
+		$xmlrpc = self::own_url( '/xmlrpc.php' );
+		$junk   = static function ( $response, $args, $url ) use ( $xmlrpc ) {
+			return $xmlrpc === $url ? true : $response;
 		};
-		// After respond(), which answers every request.
-		add_filter( 'pre_http_request', $junk, 20 );
+		// After respond(), which answers every request; the home page answers as usual.
+		add_filter( 'pre_http_request', $junk, 20, 3 );
 		try {
 			$probe = new JP4WC_Security_Probe();
-			$this->assertSame( 'unknown', $probe->status( 'A-04', self::own_url( '/xmlrpc.php' ), array( __CLASS__, 'open_on_200' ) ) );
+			$this->assertSame( 'unknown', $probe->status( 'A-04', $xmlrpc, array( __CLASS__, 'open_on_200' ) ) );
+			$this->assertSame( 'unknown', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ), 'Counted as a failed connection.' );
 		} finally {
 			remove_filter( 'pre_http_request', $junk, 20 );
 		}
