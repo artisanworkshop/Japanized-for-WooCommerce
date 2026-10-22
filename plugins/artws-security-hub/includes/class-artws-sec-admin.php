@@ -198,13 +198,13 @@ class Artws_Sec_Admin {
 								<?php
 								$stats = $status['stats'];
 								printf(
-									/* translators: 1: V3 records read, 2: informational records, 3: feed records checked, 4: feed records left out, 5: copyright conflicts. */
-									esc_html__( 'Wordfence records: %1$s / informational: %2$s / feed records checked: %3$s / left out: %4$s / copyright conflicts: %5$s', 'artws-security-hub' ),
+									/* translators: 1: V3 records read, 2: informational records, 3: feed records checked, 4: feed records left out, 5: extra copyright variants kept. */
+									esc_html__( 'Wordfence records: %1$s / informational: %2$s / feed records checked: %3$s / left out: %4$s / copyright variants: %5$s', 'artws-security-hub' ),
 									esc_html( number_format_i18n( (int) ( $stats['records'] ?? 0 ) ) ),
 									esc_html( number_format_i18n( (int) ( $stats['informational'] ?? 0 ) ) ),
 									esc_html( number_format_i18n( (int) ( $stats['candidates'] ?? 0 ) ) ),
 									esc_html( number_format_i18n( (int) ( $stats['excluded'] ?? 0 ) ) ),
-									esc_html( number_format_i18n( (int) ( $stats['copyright_conflicts'] ?? 0 ) ) )
+									esc_html( number_format_i18n( (int) ( $stats['copyright_variants'] ?? 0 ) ) )
 								);
 								foreach ( (array) ( $stats['excluded_reasons'] ?? array() ) as $reason => $count ) {
 									echo '<br>' . esc_html( $reason . ': ' . number_format_i18n( (int) $count ) );

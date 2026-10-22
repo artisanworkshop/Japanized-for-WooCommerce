@@ -7,6 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain-text messages, escaped where the settings page shows them.
+
 /**
  * Artws_Sec_Feed_Builder
  *
@@ -49,13 +51,13 @@ class Artws_Sec_Feed_Builder {
 	 * @var array
 	 */
 	private $stats = array(
-		'records'             => 0,
-		'informational'       => 0,
-		'candidates'          => 0,
-		'excluded'            => 0,
-		'excluded_reasons'    => array(),
-		'excluded_samples'    => array(),
-		'copyright_conflicts' => 0,
+		'records'            => 0,
+		'informational'      => 0,
+		'candidates'         => 0,
+		'excluded'           => 0,
+		'excluded_reasons'   => array(),
+		'excluded_samples'   => array(),
+		'copyright_variants' => 0,
 	);
 
 	/**
@@ -63,11 +65,21 @@ class Artws_Sec_Feed_Builder {
 	 *
 	 * @param string $key  Member name (the V3 record ID).
 	 * @param string $json The record as raw JSON.
+	 * @throws Artws_Sec_Feed_Exception When the record is not valid JSON, so the download is broken.
 	 */
 	public function add( $key, $json ) {
 		++$this->stats['records'];
 
-		$record = json_decode( $json, true );
+		try {
+			$record = json_decode( $json, true, 512, JSON_THROW_ON_ERROR );
+		} catch ( JsonException $e ) {
+			// Text that is not UTF-8 is a problem of one record; broken syntax means a broken download.
+			if ( JSON_ERROR_UTF8 === $e->getCode() || JSON_ERROR_UTF16 === $e->getCode() ) {
+				$this->exclude( $key, '', 'invalid UTF-8' );
+				return;
+			}
+			throw new Artws_Sec_Feed_Exception( sprintf( 'The record %1$s in the feed is not valid JSON (%2$s).', self::sample_text( $key ), $e->getMessage() ) );
+		}
 		if ( ! is_array( $record ) ) {
 			$this->exclude( $key, '', 'not a JSON object' );
 			return;
@@ -155,18 +167,26 @@ class Artws_Sec_Feed_Builder {
 	/**
 	 * Adds a published record's copyright holders.
 	 *
-	 * The same holder normally has the same notice in every record. When two
-	 * records disagree, the first one is kept and the conflict is counted.
+	 * The same holder normally has the same notice and license in every
+	 * record. When a record carries different text for a holder, that text is
+	 * kept as well, under "<holder>-2", "<holder>-3" and so on: the data
+	 * license asks for every disclosed licensor's license to be passed on.
 	 *
 	 * @param array $copyrights Holders that passed Artws_Sec_Record_Validator::check_copyrights().
 	 */
 	private function add_copyrights( array $copyrights ) {
 		foreach ( $copyrights as $holder => $copyright ) {
 			$holder = (string) $holder;
-			if ( ! isset( $this->copyrights[ $holder ] ) ) {
-				$this->copyrights[ $holder ] = $copyright;
-			} elseif ( $this->copyrights[ $holder ] !== $copyright ) {
-				++$this->stats['copyright_conflicts'];
+			$key    = $holder;
+			$number = 1;
+			while ( isset( $this->copyrights[ $key ] ) && $this->copyrights[ $key ] !== $copyright ) {
+				$key = $holder . '-' . ( ++$number );
+			}
+			if ( ! isset( $this->copyrights[ $key ] ) ) {
+				$this->copyrights[ $key ] = $copyright;
+				if ( $number > 1 ) {
+					++$this->stats['copyright_variants'];
+				}
 			}
 		}
 	}
@@ -182,6 +202,6 @@ class Artws_Sec_Feed_Builder {
 			return '';
 		}
 		$value = (string) $value;
-		return mb_check_encoding( $value, 'UTF-8' ) ? mb_substr( $value, 0, 200, 'UTF-8' ) : '';
+		return Artws_Sec_Record_Validator::is_utf8( $value ) ? mb_substr( $value, 0, 200, 'UTF-8' ) : '';
 	}
 }

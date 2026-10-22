@@ -209,6 +209,20 @@ class Artws_Sec_Record_Validator {
 	}
 
 	/**
+	 * Whether a string is valid UTF-8.
+	 *
+	 * PCRE checks the encoding of the subject in UTF mode, so this works
+	 * without the mbstring extension, which WordPress does not require.
+	 * (WordPress itself provides mb_strlen() and mb_substr() when it is missing.)
+	 *
+	 * @param string $value String to check.
+	 * @return bool
+	 */
+	public static function is_utf8( $value ) {
+		return 1 === preg_match( '//u', $value );
+	}
+
+	/**
 	 * Whether a value is a UTF-8 string whose length in code points is within bounds.
 	 *
 	 * @param mixed    $value Value to check.
@@ -217,7 +231,7 @@ class Artws_Sec_Record_Validator {
 	 * @return bool
 	 */
 	private static function is_text( $value, $min, $max ) {
-		if ( ! is_string( $value ) || ! mb_check_encoding( $value, 'UTF-8' ) ) {
+		if ( ! is_string( $value ) || ! self::is_utf8( $value ) ) {
 			return false;
 		}
 		$length = mb_strlen( $value, 'UTF-8' );
