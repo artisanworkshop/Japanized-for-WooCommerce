@@ -118,6 +118,9 @@ function jp4wc_activation_redirect() {
 function jp4wc_on_deactivation() {
 	add_option( 'paidy_do_activation_redirect', true );
 	flush_rewrite_rules();
+	// Events of the security check (JP4WC_Security_Feed, not loaded without WooCommerce). Scheduled again on activation.
+	wp_clear_scheduled_hook( 'jp4wc_security_feed_sync' );
+	wp_clear_scheduled_hook( 'jp4wc_security_rescan' );
 }
 
 /**

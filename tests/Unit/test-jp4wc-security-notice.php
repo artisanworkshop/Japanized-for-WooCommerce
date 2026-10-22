@@ -195,6 +195,29 @@ class JP4WC_Security_Notice_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Without data, a notice says so once the syncs have failed for days (G2-1).
+	 */
+	public function test_unavailable_data_is_shown() {
+		delete_option( JP4WC_Security_Feed::FINDINGS_OPTION );
+		update_option( JP4WC_Security_Feed::STATE_OPTION, array( 'failing_since' => time() - DAY_IN_SECONDS ), false );
+		try {
+			$this->assertSame( '', self::render(), 'Not after one day.' );
+
+			update_option( JP4WC_Security_Feed::STATE_OPTION, array( 'failing_since' => time() - 4 * DAY_IN_SECONDS ), false );
+			$html = self::render();
+
+			$this->assertStringContainsString( 'notice-warning', $html );
+			$this->assertStringContainsString( 'The vulnerability data could not be downloaded', $html );
+			$this->assertStringContainsString( 'can connect to wc.artws.info', $html );
+
+			update_user_meta( get_current_user_id(), JP4WC_Security_Notice::DISMISSED_META, JP4WC_Security_Notice::get_view()['fingerprint'] );
+			$this->assertSame( '', self::render(), 'It can be closed.' );
+		} finally {
+			delete_option( JP4WC_Security_Feed::STATE_OPTION );
+		}
+	}
+
+	/**
 	 * Data generated more than three days ago counts as out of date.
 	 */
 	public function test_old_data_is_shown_as_stale() {
