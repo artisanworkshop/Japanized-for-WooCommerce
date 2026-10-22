@@ -104,9 +104,15 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 		$option_map    = $this->get_option_map();
 		$settings      = array();
 
+		// Settings that are on until turned off. Reporting them as '' would let the
+		// first save of any tab turn them off (#218).
+		$defaults = array(
+			'security-scan' => '1',
+		);
+
 		foreach ( $settings_keys as $key ) {
 			$option_name      = isset( $option_map[ $key ] ) ? $option_map[ $key ] : $this->prefix . $key;
-			$settings[ $key ] = get_option( $option_name, '' );
+			$settings[ $key ] = get_option( $option_name, isset( $defaults[ $key ] ) ? $defaults[ $key ] : '' );
 		}
 
 		$settings = $this->fill_cod_fee_settings_in_force( $settings );
@@ -189,6 +195,10 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 					// Offered as a checkout option value and saved to orders as is.
 					$value = sanitize_text_field( $value );
 				}
+				if ( 'security-scan' === $key ) {
+					// Anything but on is off, the way the other checkboxes are saved.
+					$value = ( '1' === $value || true === $value ) ? '1' : '';
+				}
 				update_option( $option_name, $value );
 			}
 		}
@@ -240,6 +250,7 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'billing_address_1',
 			'billing_address_2',
 			'billing_phone',
+			'security-scan',
 			// Shipment settings.
 			'delivery-date',
 			'delivery-date-required',
