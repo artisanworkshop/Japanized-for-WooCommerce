@@ -12,6 +12,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once __DIR__ . '/class-jp4wc-security-feed-reader.php';
 require_once __DIR__ . '/class-jp4wc-security-scanner.php';
+require_once __DIR__ . '/class-jp4wc-security-checks.php';
 
 /**
  * JP4WC_Security_Feed

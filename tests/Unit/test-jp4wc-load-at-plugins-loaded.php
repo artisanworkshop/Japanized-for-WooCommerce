@@ -36,6 +36,8 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 			'security feed, WP-Cron'         => array( 'includes/class-jp4wc-security-feed.php', 'JP4WC_Security_Feed' ),
 			'security feed reader, WP-Cron'  => array( 'includes/class-jp4wc-security-feed-reader.php', 'JP4WC_Security_Feed_Reader' ),
 			'security scanner, WP-Cron'      => array( 'includes/class-jp4wc-security-scanner.php', 'JP4WC_Security_Scanner' ),
+			'security checks, WP-Cron'       => array( 'includes/class-jp4wc-security-checks.php', 'JP4WC_Security_Checks' ),
+			'security probe, WP-Cron'        => array( 'includes/class-jp4wc-security-probe.php', 'JP4WC_Security_Probe' ),
 			'security notice, admin'         => array( 'includes/admin/class-jp4wc-security-notice.php', 'JP4WC_Security_Notice' ),
 		);
 	}
