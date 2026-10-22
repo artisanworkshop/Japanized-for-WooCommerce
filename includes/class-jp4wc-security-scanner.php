@@ -246,8 +246,12 @@ class JP4WC_Security_Scanner {
 			if ( ! is_array( $cvss ) || ! isset( $cvss['rating'] ) || ! in_array( $cvss['rating'], self::RATINGS, true ) ) {
 				return null;
 			}
+			// A CVSS object always has a score from 0 to 10 in the contract.
+			if ( ! isset( $cvss['score'] ) || ! ( is_int( $cvss['score'] ) || is_float( $cvss['score'] ) ) || $cvss['score'] < 0 || $cvss['score'] > 10 ) {
+				return null;
+			}
 			$rating = $cvss['rating'];
-			$score  = isset( $cvss['score'] ) && ( is_int( $cvss['score'] ) || is_float( $cvss['score'] ) ) ? (float) $cvss['score'] : null;
+			$score  = (float) $cvss['score'];
 		}
 
 		// The notice shows these as the fix: a wrong kind of value must not read as "no fix".

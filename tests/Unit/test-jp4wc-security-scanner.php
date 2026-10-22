@@ -385,6 +385,24 @@ class JP4WC_Security_Scanner_Test extends WP_UnitTestCase {
 					return $record;
 				},
 			),
+			'score missing'             => array(
+				static function ( $record ) {
+					unset( $record['cvss']['score'] );
+					return $record;
+				},
+			),
+			'score as text'             => array(
+				static function ( $record ) {
+					$record['cvss']['score'] = '7.2';
+					return $record;
+				},
+			),
+			'score above 10'            => array(
+				static function ( $record ) {
+					$record['cvss']['score'] = 10.5;
+					return $record;
+				},
+			),
 			'not an object'             => array(
 				static function () {
 					return 'record';
