@@ -70,6 +70,10 @@ class JP4WC_Install {
 
 		self::remove_usage_tracking();
 		self::update_jp4wc_version();
+		// Set up the security check, or remove its events and data when it is off.
+		if ( class_exists( 'JP4WC_Security_Feed', false ) ) {
+			JP4WC_Security_Feed::install();
+		}
 
 		delete_transient( 'jp4wc_installing' );
 	}
