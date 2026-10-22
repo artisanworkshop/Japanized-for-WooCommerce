@@ -802,6 +802,83 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Turns the check off the way another request does while this one runs:
+	 * the database changes and the other request purges, but the options
+	 * this process loaded still say on.
+	 */
+	public function turn_off_from_another_request() {
+		global $wpdb;
+		JP4WC_Security_Feed::purge();
+		$updated = $wpdb->update( $wpdb->options, array( 'option_value' => '' ), array( 'option_name' => JP4WC_Security_Feed::SETTING ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Leaves this process's option cache as it was.
+		$this->assertSame( 1, $updated );
+		$this->assertTrue( JP4WC_Security_Feed::is_enabled(), 'This process still sees the check on.' );
+	}
+
+	/**
+	 * A check turned off during a sync stays off with nothing stored (R1-1).
+	 */
+	public function test_turning_off_during_a_sync_leaves_nothing() {
+		// Turned off once the manifest is requested: the files are downloaded after it.
+		$turn_off = function ( $pre, $args, $url ) {
+			if ( str_ends_with( $url, 'manifest.json' ) ) {
+				$this->turn_off_from_another_request();
+			}
+			return $pre;
+		};
+		add_filter( 'pre_http_request', $turn_off, 5, 3 );
+		try {
+			JP4WC_Security_Feed::sync();
+		} finally {
+			remove_filter( 'pre_http_request', $turn_off, 5 );
+		}
+
+		$this->assertCount( 4, $this->requests, 'The files were downloaded after the check was turned off.' );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
+	}
+
+	/**
+	 * A check turned off during a match stores no findings (R1-1).
+	 */
+	public function test_turning_off_during_a_match_leaves_nothing() {
+		$this->sync_successfully();
+		delete_option( JP4WC_Security_Feed::FINDINGS_OPTION );
+		$turn_off = function ( $installed ) {
+			$this->turn_off_from_another_request();
+			return $installed;
+		};
+		add_filter( 'jp4wc_security_installed_software', $turn_off, 5 );
+		try {
+			JP4WC_Security_Feed::rescan();
+		} finally {
+			remove_filter( 'jp4wc_security_installed_software', $turn_off, 5 );
+		}
+
+		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
+	}
+
+	/**
+	 * Uninstall removes the setting, the events, the options and the files (R1-3).
+	 */
+	public function test_uninstall_removes_everything() {
+		$this->sync_successfully();
+		wp_schedule_single_event( time(), JP4WC_Security_Feed::RESCAN_HOOK );
+		$this->assertDirectoryExists( JP4WC_Security_Feed::directory_path() );
+
+		JP4WC_Security_Feed::uninstall();
+
+		$this->assertFalse( get_option( JP4WC_Security_Feed::SETTING ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RESCAN_HOOK ) );
+		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
+	}
+
+	/**
 	 * Turning the check on schedules the daily sync.
 	 */
 	public function test_turning_on_schedules_the_daily_sync() {
