@@ -509,6 +509,29 @@ class JP4WC_PHP_Security_Notice_Test extends WP_UnitTestCase {
 		$this->assertFalse( user_can( $user, Notice::required_capability( true ) ), 'A site administrator is not a super administrator.' );
 		$user->add_cap( 'manage_network_options' );
 		$this->assertTrue( user_can( $user, Notice::required_capability( true ) ) );
+
+		// is_multisite() cannot change in a single-site run, so check on the source
+		// that the notice and the dismiss request ask for the capability of the
+		// current install, through the notice's only capability check.
+		$file = ( new ReflectionClass( Notice::class ) )->getFileName();
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local plugin file.
+		$this->assertSame( 1, substr_count( file_get_contents( $file ), 'current_user_can(' ), 'The notice has one capability check.' );
+		$this->assertStringContainsString( 'current_user_can( self::required_capability( is_multisite() ) )', $this->method_source( 'current_user_can_update_php' ) );
+		foreach ( array( 'get_view', 'ajax_dismiss' ) as $method ) {
+			$this->assertStringContainsString( '$this->current_user_can_update_php()', $this->method_source( $method ), $method );
+		}
+	}
+
+	/**
+	 * Source of a method of the notice.
+	 *
+	 * @param string $method Method name.
+	 * @return string
+	 */
+	private function method_source( $method ) {
+		$reflection = new ReflectionMethod( Notice::class, $method );
+		$lines      = file( $reflection->getFileName() );
+		return implode( '', array_slice( $lines, $reflection->getStartLine() - 1, $reflection->getEndLine() - $reflection->getStartLine() + 1 ) );
 	}
 
 	/**
@@ -556,6 +579,8 @@ class JP4WC_PHP_Security_Notice_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Update PHP to 8.3.36 or later right away.', $html );
 		$this->assertStringContainsString( 'href="https://wc4jp-pro.work/php2shell-php-update/"', $html );
 		$this->assertStringContainsString( 'data-action="artws_php_security_notice_dismiss"', $html );
+		// Relative, like core's ajaxurl: the request must go to the host the admin is open on.
+		$this->assertStringContainsString( 'data-ajax-url="/wp-admin/admin-ajax.php"', $html );
 		$this->assertSame( 1, preg_match( '/data-nonce="([^"]+)"/', $html, $matches ) );
 		$this->assertSame( 1, wp_verify_nonce( $matches[1], Notice::AJAX_ACTION ) );
 	}

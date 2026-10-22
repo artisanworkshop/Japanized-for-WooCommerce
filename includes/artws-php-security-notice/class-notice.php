@@ -310,6 +310,17 @@ if ( ! class_exists( 'ArtisanWorkshop\PhpSecurityNotice\Notice', false ) ) :
 		}
 
 		/**
+		 * Whether the current user can change the server's PHP, and so sees and dismisses the notice.
+		 *
+		 * The only capability check of the notice.
+		 *
+		 * @return bool
+		 */
+		public function current_user_can_update_php() {
+			return current_user_can( self::required_capability( is_multisite() ) );
+		}
+
+		/**
 		 * Whether the user dismissed the notice for this PHP version.
 		 *
 		 * @param int    $user_id     User ID.
@@ -336,7 +347,7 @@ if ( ! class_exists( 'ArtisanWorkshop\PhpSecurityNotice\Notice', false ) ) :
 			if ( null === $status ) {
 				return null;
 			}
-			if ( ! current_user_can( self::required_capability( is_multisite() ) ) ) {
+			if ( ! $this->current_user_can_update_php() ) {
 				return null;
 			}
 			if ( $this->is_excluded_screen() || $this->is_dismissed( get_current_user_id(), $status['php_version'] ) ) {
@@ -462,7 +473,7 @@ if ( ! class_exists( 'ArtisanWorkshop\PhpSecurityNotice\Notice', false ) ) :
 			}
 			$view = $this->view;
 			?>
-<dialog id="artws-php-security-notice" class="artws-php-security-notice" aria-labelledby="artws-php-security-notice-title" data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" data-action="<?php echo esc_attr( self::AJAX_ACTION ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( self::AJAX_ACTION ) ); ?>">
+<dialog id="artws-php-security-notice" class="artws-php-security-notice" aria-labelledby="artws-php-security-notice-title" data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php', 'relative' ) ); ?>" data-action="<?php echo esc_attr( self::AJAX_ACTION ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( self::AJAX_ACTION ) ); ?>">
 	<button type="button" class="artws-php-security-notice__close" aria-label="<?php echo esc_attr( $view['close'] ); ?>">&times;</button>
 	<h2 id="artws-php-security-notice-title"><?php echo esc_html( $view['title'] ); ?></h2>
 			<?php foreach ( $view['messages'] as $message ) : ?>
@@ -485,7 +496,7 @@ if ( ! class_exists( 'ArtisanWorkshop\PhpSecurityNotice\Notice', false ) ) :
 		 */
 		public function ajax_dismiss() {
 			check_ajax_referer( self::AJAX_ACTION, 'nonce' );
-			if ( ! current_user_can( self::required_capability( is_multisite() ) ) ) {
+			if ( ! $this->current_user_can_update_php() ) {
 				wp_send_json_error( null, 403 );
 			}
 			update_user_meta(
@@ -550,7 +561,7 @@ if ( ! class_exists( 'ArtisanWorkshop\PhpSecurityNotice\Notice', false ) ) :
 					var body = new URLSearchParams();
 					body.append( 'action', dialog.getAttribute( 'data-action' ) );
 					body.append( 'nonce', dialog.getAttribute( 'data-nonce' ) );
-					window.fetch( dialog.getAttribute( 'data-ajax-url' ), { method: 'POST', credentials: 'same-origin', body: body } ).catch( function () {} );
+					window.fetch( dialog.getAttribute( 'data-ajax-url' ), { method: 'POST', credentials: 'same-origin', keepalive: true, body: body } ).catch( function () {} );
 				}
 				closeDialog( dialog );
 			} );

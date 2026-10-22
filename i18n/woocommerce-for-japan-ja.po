@@ -42,12 +42,12 @@ msgstr "職人工房"
 msgid "https://wc.artws.info/"
 msgstr "https://wc.artws.info/"
 
-#: woocommerce-for-japan.php:50
+#: woocommerce-for-japan.php:51
 msgid "Update PHP now: critical security vulnerabilities"
 msgstr "PHP の重大な脆弱性: 今すぐ更新してください"
 
 #. translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs
-#: woocommerce-for-japan.php:52
+#: woocommerce-for-japan.php:53
 #, php-format
 msgid ""
 "The PHP version of this site (%1$s) has critical vulnerabilities (%3$s) that "
@@ -57,7 +57,7 @@ msgstr ""
 "このサイトの PHP（%1$s）には、1 回のリクエストでサーバー上のコードを実行され"
 "る重大な脆弱性（%3$s）があります。修正版（%2$s）以上へすぐ更新してください。"
 
-#: woocommerce-for-japan.php:53
+#: woocommerce-for-japan.php:54
 msgid ""
 "Security support for PHP 8.2 ends at the end of 2026, so we recommend "
 "updating to PHP 8.3 or later."
@@ -65,7 +65,7 @@ msgstr ""
 "PHP 8.2 は 2026 年末でサポートが終わるため、PHP 8.3 以上への更新をおすすめし"
 "ます。"
 
-#: woocommerce-for-japan.php:54
+#: woocommerce-for-japan.php:55
 msgid ""
 "Your hosting company may have applied the fix without changing the PHP "
 "version number. Please check with your hosting company."
@@ -74,7 +74,7 @@ msgstr ""
 "わりません）。サーバー会社に確認してください。"
 
 #. translators: 1: PHP version of this site, 2: vulnerability IDs
-#: woocommerce-for-japan.php:56
+#: woocommerce-for-japan.php:57
 #, php-format
 msgid ""
 "The PHP version of this site (%1$s) has critical vulnerabilities (%2$s). "
@@ -89,7 +89,7 @@ msgstr ""
 "へ早急に更新してください。"
 
 #. translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs
-#: woocommerce-for-japan.php:58
+#: woocommerce-for-japan.php:59
 #, php-format
 msgid ""
 "This site runs a pre-release of PHP (%1$s) that has critical vulnerabilities "
@@ -98,15 +98,15 @@ msgstr ""
 "このサイトの PHP（%1$s）は開発版で、重大な脆弱性（%3$s）があります。%2$s 以降"
 "へ更新してください。"
 
-#: woocommerce-for-japan.php:59
+#: woocommerce-for-japan.php:60
 msgid "Learn more"
 msgstr "詳しくはこちら"
 
-#: woocommerce-for-japan.php:60
+#: woocommerce-for-japan.php:61
 msgid "Don't show again"
 msgstr "今後表示しない"
 
-#: woocommerce-for-japan.php:61
+#: woocommerce-for-japan.php:62
 msgid "Close"
 msgstr "閉じる"
 
