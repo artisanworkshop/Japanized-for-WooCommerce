@@ -157,9 +157,9 @@
 | 2026-10-23 | R1-X2 | Low | uninstall.php（既存部分） | 既存のオプション削除がマルチサイトの各サイトを回らない。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L1 | Low | includes/class-jp4wc-security-feed.php（`download()`） | `decompress => false` は WP_Http が Requests に渡さないので効かない（Requests は Content-Encoding があれば必ず展開）。コメントとテストの assert を直す。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L2 | Low | includes/class-jp4wc-security-feed.php（`inflate_to_file()`） | zlib が無いホストでは毎日 gz をダウンロードしてから失敗する。manifest の取得前に `inflate_init` を確かめる。#257 の対応ブランチ R1 | 未起票 |
-| 2026-10-23 | R1-L3 | Low | includes/class-jp4wc-security-feed.php（`request_args()`） | `redirection => 3` は https→http のリダイレクトにも従い、リダイレクト先を検証しない。`redirection => 0` か `wp_safe_remote_get()`。#257 の対応ブランチ R1 | 未起票 |
+| 2026-10-23 | R1-L3 | Low | includes/class-jp4wc-security-feed.php（`request_args()`） | `redirection => 3` は https→http のリダイレクトにも従い、リダイレクト先を検証しない。`redirection => 0` か `wp_safe_remote_get()`。#257 の対応ブランチ R1 | PR #276 の G1-3 で対応済み（`redirection => 0`） |
 | 2026-10-23 | R1-L4 | Low | includes/class-jp4wc-security-feed.php（`prepare_directory()`） | `.htaccess` は nginx では効かず、展開済みの数十 MB の JSON が全サイト共通の URL で取れる（公開データだが帯域を消費させられる）。サイトごとの乱数を名前に入れる、または gz のまま保存する。#257 の対応ブランチ R1 | 未起票 |
-| 2026-10-23 | R1-L5 | Low | includes/class-jp4wc-security-feed.php（`check_file()`） | 値が空のメンバーで `$json[0]` が警告を出す（壊れたデータのときだけ。結果は正しく拒否）。#257 の対応ブランチ R1 | 未起票 |
+| 2026-10-23 | R1-L5 | Low | includes/class-jp4wc-security-feed.php（`check_file()`） | 値が空のメンバーで `$json[0]` が警告を出す（壊れたデータのときだけ。結果は正しく拒否）。#257 の対応ブランチ R1 | PR #276 の G1-5 で対応済み（slug ごとに decode して検査） |
 | 2026-10-23 | R1-L6 | Low | woocommerce-for-japan.php（`jp4wc_on_deactivation()`） | プラグインの無効化で `jp4wc_security_feed_sync` / `jp4wc_security_rescan` の予約が残る（コールバックが無いので何も起きない）。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L7 | Low | includes/admin/class-jp4wc-security-notice.php | 新しい PHP の文字列は WordPress.org の言語パックに入るまで英語で出る。リリース前に translate.wordpress.org で翻訳する（または #272 の同梱 .mo フォールバック）。#257 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L8 | Low | includes/admin/class-jp4wc-security-notice.php（`record_details()`） | 区切りの `, `・` (`・` / ` が翻訳できない。#257 の対応ブランチ R1 | 未起票 |
