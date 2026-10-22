@@ -248,6 +248,17 @@ class Artws_Sec_Feed_Converter_Test extends Artws_Sec_Feed_Test_Case {
 	}
 
 	/**
+	 * A vulnerability with an empty software list cannot be converted; an informational one is simply skipped.
+	 */
+	public function test_empty_software_list() {
+		$this->assertSame( array(), Artws_Sec_Feed_Converter::convert( self::v3_record( 10, array(), array( 'informational' => true ) ) )['records'] );
+
+		$this->expectException( UnexpectedValueException::class );
+		$this->expectExceptionMessage( 'software is empty' );
+		Artws_Sec_Feed_Converter::convert( self::v3_record( 11, array() ) );
+	}
+
+	/**
 	 * A record without a software list cannot be converted.
 	 */
 	public function test_record_without_software_list_throws() {
