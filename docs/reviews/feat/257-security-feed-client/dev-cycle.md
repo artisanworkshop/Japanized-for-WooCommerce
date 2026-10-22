@@ -3,9 +3,9 @@
 - 開始: 2026-10-23
 - オプション: auto-commit
 - PR: #276 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/276
-- 現在のステップ: 6（G3 依頼）
-- Copilot: 依頼 2 回 / 未収束
-- Codex: 依頼 2 回 / 未収束（G1 は応答なし）
+- 現在のステップ: 8（完了。マージは人間が行う）
+- Copilot: 依頼 3 回 / 上限（G3 でも新規指摘あり）
+- Codex: 依頼 3 回 / 上限（G1 は応答なしで未確認、G3 でも新規指摘あり）
 
 ## 計画で決めたこと
 - `@since 3.0.0`（ユーザー決定）。readme の規約類 URL はプライバシーポリシーのみ（ユーザー決定。利用規約は Phase 3 前に新設）
@@ -26,3 +26,6 @@
 | 2026-10-23 06:36 | 7 | G1: Copilot 7 件をすべて修正（c707506, f9ef0de, 4a531f8。auto-commit）。PHPUnit 644 件 green。返信と Resolve、サマリー投稿 |
 | 2026-10-23 06:37 | 6 | G2 依頼（CI green 後）。Copilot・Codex とも応答 |
 | 2026-10-23 06:55 | 7 | G2: 7 件（修正 3 = 84eaa6e, 2d4ecef / 保留 4）。PHPUnit 651 件 green。返信・Resolve・サマリー投稿 |
+| 2026-10-23 07:05 | 6 | G3 依頼（CI green 後）。Copilot・Codex とも応答 |
+| 2026-10-23 07:10 | 7 | G3: 3 件すべて修正（29788dd）。PHPUnit 652 件 green。返信・Resolve・サマリー投稿。両 bot とも上限のため再依頼なし |
+| 2026-10-23 07:12 | 8 | 最終報告 |
