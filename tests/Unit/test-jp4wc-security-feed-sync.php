@@ -1112,15 +1112,18 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Admin requests put back a missing daily event while the check is on.
+	 * Every request puts back a missing daily event while the check is on,
+	 * as after a reactivation that no admin page follows (G3-1).
 	 */
-	public function test_admin_init_restores_the_schedule() {
-		wp_clear_scheduled_hook( JP4WC_Security_Feed::SYNC_HOOK );
+	public function test_init_restores_the_schedule() {
+		jp4wc_on_deactivation();
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
 
+		// The init callback; firing init itself would register WooCommerce's blocks twice.
 		JP4WC_Security_Feed::ensure_schedule();
 
 		$this->assertNotFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
-		$this->assertNotFalse( has_action( 'admin_init', array( 'JP4WC_Security_Feed', 'ensure_schedule' ) ) );
+		$this->assertNotFalse( has_action( 'init', array( 'JP4WC_Security_Feed', 'ensure_schedule' ) ) );
 		$this->assertNotFalse( has_action( JP4WC_Security_Feed::SYNC_HOOK, array( 'JP4WC_Security_Feed', 'sync' ) ) );
 		$this->assertNotFalse( has_action( JP4WC_Security_Feed::RESCAN_HOOK, array( 'JP4WC_Security_Feed', 'rescan' ) ) );
 	}
@@ -1163,6 +1166,26 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		update_option( JP4WC_Security_Feed::SETTING, '' );
 		JP4WC_Security_Feed::schedule_rescan();
 		$this->assertSame( 0, self::count_events( JP4WC_Security_Feed::RESCAN_HOOK ), 'Nothing is matched while the check is off.' );
+	}
+
+	/**
+	 * A stored file that went missing keeps the previous findings until a sync
+	 * downloads it again, rather than dropping its type (G3-2).
+	 */
+	public function test_missing_file_keeps_the_previous_findings() {
+		$this->sync_successfully();
+		$before = JP4WC_Security_Feed::get_findings();
+		$this->assertContains( 'sample-plugin', wp_list_pluck( $before['items'], 'slug' ) );
+		wp_delete_file( self::stored( 'plugin' ) );
+
+		JP4WC_Security_Feed::rescan();
+
+		$this->assertSame( $before, JP4WC_Security_Feed::get_findings() );
+
+		JP4WC_Security_Feed::sync();
+
+		$this->assertFileExists( self::stored( 'plugin' ) );
+		$this->assertContains( 'sample-plugin', wp_list_pluck( JP4WC_Security_Feed::get_findings()['items'], 'slug' ) );
 	}
 
 	/**
