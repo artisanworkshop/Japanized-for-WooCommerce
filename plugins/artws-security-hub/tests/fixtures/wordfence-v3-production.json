@@ -1,0 +1,319 @@
+{
+    "10000000-0000-4000-8000-000000000001": {
+        "id": "10000000-0000-4000-8000-000000000001",
+        "title": "Example Forms <= 2.3.1 - Authenticated (Contributor+) Stored Cross-Site Scripting (fixture)",
+        "software": [
+            {
+                "type": "plugin",
+                "name": "Example Forms",
+                "slug": "example-forms",
+                "affected_versions": {
+                    "* - 2.3.1": {
+                        "from_version": "*",
+                        "from_inclusive": true,
+                        "to_version": "2.3.1",
+                        "to_inclusive": true
+                    }
+                },
+                "patched": true,
+                "patched_versions": [
+                    "2.3.2"
+                ],
+                "remediation": "Update to version 2.3.2, or a newer patched version"
+            }
+        ],
+        "informational": false,
+        "description": "Fixture record. Not a real vulnerability.",
+        "references": [
+            "https://www.wordfence.com/threat-intel/vulnerabilities/id/10000000-0000-4000-8000-000000000001?source=api-prod"
+        ],
+        "cwe": {
+            "id": 79,
+            "name": "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+            "description": "Fixture."
+        },
+        "cvss": {
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:N",
+            "score": 6.4,
+            "rating": "Medium"
+        },
+        "cve": null,
+        "cve_link": null,
+        "researchers": [
+            "Fixture Researcher"
+        ],
+        "published": "2026-09-30 14:05:00",
+        "updated": "2026-10-01 08:00:00",
+        "copyrights": {
+            "message": "This record contains material that is subject to copyright",
+            "defiant": {
+                "notice": "Copyright 2012-2026 Defiant Inc.",
+                "license": "Fixture license text. The real feed carries Defiant's license here.",
+                "license_url": "https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/"
+            }
+        }
+    },
+    "10000000-0000-4000-8000-000000000002": {
+        "id": "10000000-0000-4000-8000-000000000002",
+        "title": "Example Forms and Example Theme (various versions) - Missing Authorization (fixture)",
+        "software": [
+            {
+                "type": "plugin",
+                "name": "Example Forms",
+                "slug": "example-forms",
+                "affected_versions": {
+                    "2.0.0 - 2.0.4": {
+                        "from_version": "2.0.0",
+                        "from_inclusive": true,
+                        "to_version": "2.0.5",
+                        "to_inclusive": false
+                    }
+                },
+                "patched": true,
+                "patched_versions": [
+                    "2.0.5"
+                ],
+                "remediation": "Update to version 2.0.5, or a newer patched version"
+            },
+            {
+                "type": "plugin",
+                "name": "Example Forms Pro",
+                "slug": "example-forms-pro",
+                "affected_versions": {
+                    "* - 1.9.9": {
+                        "from_version": "*",
+                        "from_inclusive": true,
+                        "to_version": "1.9.9",
+                        "to_inclusive": true
+                    }
+                },
+                "patched": true,
+                "patched_versions": [
+                    "2.0.0"
+                ],
+                "remediation": "Update to version 2.0.0, or a newer patched version"
+            },
+            {
+                "type": "theme",
+                "name": "Example Theme",
+                "slug": "example-theme",
+                "affected_versions": {
+                    "* - 3.1": {
+                        "from_version": "*",
+                        "from_inclusive": true,
+                        "to_version": "3.1",
+                        "to_inclusive": true
+                    }
+                },
+                "patched": false,
+                "patched_versions": [],
+                "remediation": "No known patch available. Please review the vulnerability's details in depth and employ mitigations based on your organization's risk tolerance."
+            }
+        ],
+        "informational": false,
+        "description": "Fixture record. Not a real vulnerability.",
+        "references": [],
+        "cwe": null,
+        "cvss": {
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+            "score": 5.3,
+            "rating": "Medium"
+        },
+        "cve": "CVE-2026-00002",
+        "cve_link": "https://www.cve.org/CVERecord?id=CVE-2026-00002",
+        "researchers": [],
+        "published": "2026-10-01T03:00:00+00:00",
+        "updated": null,
+        "copyrights": {
+            "message": "This record contains material that is subject to copyright",
+            "defiant": {
+                "notice": "Copyright 2012-2026 Defiant Inc.",
+                "license": "Fixture license text. The real feed carries Defiant's license here.",
+                "license_url": "https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/"
+            },
+            "mitre": {
+                "notice": "Copyright 1999-2026 The MITRE Corporation",
+                "license": "Fixture license text. The real feed carries MITRE's CVE terms of use here.",
+                "license_url": "https://www.cve.org/Legal/TermsOfUse"
+            }
+        }
+    },
+    "10000000-0000-4000-8000-000000000003": {
+        "id": "10000000-0000-4000-8000-000000000003",
+        "title": "Example Forms - Informational Notice (fixture)",
+        "software": [
+            {
+                "type": "plugin",
+                "name": "Example Forms",
+                "slug": "example-forms",
+                "affected_versions": {
+                    "* - *": {
+                        "from_version": "*",
+                        "from_inclusive": true,
+                        "to_version": "*",
+                        "to_inclusive": true
+                    }
+                },
+                "patched": false,
+                "patched_versions": [],
+                "remediation": "No action needed."
+            }
+        ],
+        "informational": true,
+        "description": "Fixture record. Not a real vulnerability.",
+        "references": [],
+        "cwe": null,
+        "cvss": null,
+        "cve": null,
+        "cve_link": null,
+        "researchers": [],
+        "published": "2026-08-01 00:00:00",
+        "updated": null,
+        "copyrights": {
+            "message": "This record contains material that is subject to copyright",
+            "informational-only": {
+                "notice": "Copyright holder that appears only in an informational record (fixture)",
+                "license": "Fixture license text.",
+                "license_url": "https://example.com/license"
+            }
+        }
+    },
+    "10000000-0000-4000-8000-000000000004": {
+        "id": "10000000-0000-4000-8000-000000000004",
+        "title": "Example Theme 1.0 - 1.4.9, 1.5.1 - 1.5.3 - Reflected Cross-Site Scripting (fixture)",
+        "software": [
+            {
+                "type": "theme",
+                "name": "Example Theme",
+                "slug": "example-theme",
+                "affected_versions": {
+                    "1.0 - 1.4.9": {
+                        "from_version": "1.0",
+                        "from_inclusive": true,
+                        "to_version": "1.4.9",
+                        "to_inclusive": true
+                    },
+                    "1.5.0 - 1.5.3": {
+                        "from_version": "1.5.0",
+                        "from_inclusive": false,
+                        "to_version": "1.5.3",
+                        "to_inclusive": true
+                    }
+                },
+                "patched": true,
+                "patched_versions": [
+                    "1.4.10",
+                    "1.5.4"
+                ],
+                "remediation": "Update to version 1.5.4, or a newer patched version"
+            }
+        ],
+        "description": "Fixture record without the informational key and with no CVSS score.",
+        "references": [],
+        "cwe": null,
+        "cvss": null,
+        "cve": null,
+        "cve_link": null,
+        "researchers": [],
+        "published": null,
+        "updated": null,
+        "copyrights": {
+            "message": "This record contains material that is subject to copyright",
+            "defiant": {
+                "notice": "Copyright 2012-2026 Defiant Inc.",
+                "license": "Fixture license text. The real feed carries Defiant's license here.",
+                "license_url": "https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/"
+            }
+        }
+    },
+    "10000000-0000-4000-8000-000000000005": {
+        "id": "10000000-0000-4000-8000-000000000005",
+        "title": "WordPress Core < 6.7.2 - Authenticated (Author+) Stored Cross-Site Scripting (fixture)",
+        "software": [
+            {
+                "type": "core",
+                "name": "WordPress",
+                "slug": "wordpress",
+                "affected_versions": {
+                    "6.7 - 6.7.1": {
+                        "from_version": "6.7",
+                        "from_inclusive": true,
+                        "to_version": "6.7.1",
+                        "to_inclusive": true
+                    }
+                },
+                "patched": true,
+                "patched_versions": [
+                    "6.7.2"
+                ],
+                "remediation": "Update to version 6.7.2, or a newer patched version"
+            }
+        ],
+        "informational": false,
+        "description": "Fixture record. Not a real vulnerability.",
+        "references": [],
+        "cwe": null,
+        "cvss": {
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:N",
+            "score": 6.4,
+            "rating": "Medium"
+        },
+        "cve": null,
+        "cve_link": null,
+        "researchers": [],
+        "published": "2026-08-15 09:00:00.000000",
+        "updated": null,
+        "copyrights": {
+            "message": "This record contains material that is subject to copyright",
+            "defiant": {
+                "notice": "Copyright 2012-2026 Defiant Inc.",
+                "license": "Fixture license text. The real feed carries Defiant's license here.",
+                "license_url": "https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/"
+            }
+        }
+    },
+    "10000000-0000-4000-8000-000000000006": {
+        "id": "10000000-0000-4000-8000-000000000006",
+        "title": "Example Uploader (all versions) - Unauthenticated Arbitrary File Upload \"{fixture}\" [\\]",
+        "software": [
+            {
+                "type": "plugin",
+                "name": "Example Uploader",
+                "slug": "example-uploader",
+                "affected_versions": {
+                    "* - *": {
+                        "from_version": "*",
+                        "from_inclusive": true,
+                        "to_version": "*",
+                        "to_inclusive": true
+                    }
+                },
+                "patched": false,
+                "patched_versions": [],
+                "remediation": "No known patch available. Uninstall the affected software and find a replacement."
+            }
+        ],
+        "informational": false,
+        "description": "Fixture record whose published time cannot be read.",
+        "references": [],
+        "cwe": null,
+        "cvss": {
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "score": 9.8,
+            "rating": "Critical"
+        },
+        "cve": null,
+        "cve_link": null,
+        "researchers": [],
+        "published": "sometime in 2026",
+        "updated": null,
+        "copyrights": {
+            "message": "This record contains material that is subject to copyright",
+            "defiant": {
+                "notice": "Copyright 2012-2026 Defiant Inc.",
+                "license": "Fixture license text. The real feed carries Defiant's license here.",
+                "license_url": "https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/"
+            }
+        }
+    }
+}
