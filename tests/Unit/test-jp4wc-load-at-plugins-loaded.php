@@ -33,6 +33,10 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 			'COD block, init 5'              => array( 'includes/blocks/class-wc-payments-cod2-blocks-support.php', 'WC_Payments_Cod2_Blocks_Support' ),
 			'Paidy block, init 5'            => array( 'includes/gateways/paidy/class-wc-payments-paidy-blocks-support.php', 'WC_Payments_Paidy_Blocks_Support' ),
 			'PHP security notice, admin'     => array( 'includes/artws-php-security-notice/class-notice.php', 'ArtisanWorkshop\PhpSecurityNotice\Notice' ),
+			'security feed, WP-Cron'         => array( 'includes/class-jp4wc-security-feed.php', 'JP4WC_Security_Feed' ),
+			'security feed reader, WP-Cron'  => array( 'includes/class-jp4wc-security-feed-reader.php', 'JP4WC_Security_Feed_Reader' ),
+			'security scanner, WP-Cron'      => array( 'includes/class-jp4wc-security-scanner.php', 'JP4WC_Security_Scanner' ),
+			'security notice, admin'         => array( 'includes/admin/class-jp4wc-security-notice.php', 'JP4WC_Security_Notice' ),
 		);
 	}
 

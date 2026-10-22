@@ -175,6 +175,9 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-subscriptions.php';
 			// Add Virtual setting.
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-virtual.php';
+			// Security check: vulnerability feed, matching and admin notice.
+			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-security-feed.php';
+			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-security-notice.php';
 		}
 
 		/**
