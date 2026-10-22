@@ -4,8 +4,8 @@ wc.artws.info で動かす WordPress プラグイン。Japanized for WooCommerce
 
 | フェーズ | 内容 | 状態 |
 |---|---|---|
-| S0（#261） | 土台（lint・テスト・CI）と JSON 形式の確定 | このディレクトリ |
-| S1（#262） | Wordfence Intelligence V3 の取り込みと `/feed/v1/` の配信 | 未着手 |
+| S0（#261） | 土台（lint・テスト・CI）と JSON 形式の確定 | 完了 |
+| S1（#262） | Wordfence Intelligence V3 の取り込みと `/feed/v1/` の配信 | このディレクトリ（0.2.0） |
 | S2（#263） | REST `artws-sec/v1`（`POST /scan`・`GET /scan/{token}`・`DELETE /site`） | 未着手 |
 
 JP4WC とやり取りする JSON の形式は、リポジトリ直下の `tests/fixtures/security-feed/`（README と JSON Schema）で定める。
@@ -15,21 +15,108 @@ JP4WC とやり取りする JSON の形式は、リポジトリ直下の `tests/
 このリポジトリは公開されている。API キー・署名の共通鍵・DB 情報はコードにもテストにも書かず、wc.artws.info の `wp-config.php` の定数（または環境変数）から読む。
 
 ```php
-define( 'ARTWS_SEC_WORDFENCE_API_KEY', '...' ); // S1: Wordfence Intelligence V3 の API キー
+define( 'ARTWS_SEC_WORDFENCE_API_KEY', '...' ); // S1: Wordfence Intelligence V3 の API キー（必須）
+define( 'ARTWS_SEC_FEED_DIR', '/path/to/artws-security-feed/v1' ); // 任意。既定は wp-content/artws-security-feed/v1
 ```
 
+API キーは `Authorization: Bearer <値>` でそのまま送る。wordfence-cli の CLI ライセンスキーを使う場合は、CLI と同じく `cli-` を付けた値を定数に入れる。キーはエラーメッセージにも管理画面にも出さない。
+
 レート制限などの乱用対策は、コードを読まれても成り立つ作りにする。
+
+## 脆弱性フィード（S1）
+
+### 取り込み
+
+WP-Cron の日次イベント `artws_sec_feed_update` が Wordfence Intelligence V3 の production フィード（`https://www.wordfence.com/api/intelligence/v3/vulnerabilities/production`）を一時ファイルに落とし、契約 README の「V3 からの変換」どおりに `vuln-plugins.json.gz` / `vuln-themes.json.gz` / `vuln-core.json.gz` と `manifest.json` を作る。
+
+- フィードは数十 MB の1つの JSON オブジェクトなので、丸ごと `json_decode()` せず1件ずつ読む（`Artws_Sec_Json_Object_Reader`）。レコードは JSON 文字列のまま集める（4 万件で最大使用メモリ約 100 MB。`wp_raise_memory_limit()` で `WP_MAX_MEMORY_LIMIT` まで上げる）
+- 変換したレコードは1件ずつ契約の Schema と同じ条件で検査し（`Artws_Sec_Record_Validator`。実行時に Composer の依存は使わないので手書き。テストで Schema 本体と突き合わせている）、合わないものだけ除外して理由別に数える
+- 次のどれかに当たったら生成失敗とし、前回のファイルを残したまま manifest を `"stale": true` で書き直す（ほぼ空のフィードを出すと、クライアントは「脆弱性なし」と表示してしまう）
+
+| 条件 | 既定 | 変えるフィルター |
+|---|---|---|
+| 除外したレコードの割合が超えた | 2% | `artws_sec_feed_max_excluded_ratio` |
+| plugin / theme / core のどれかが 0 件 | — | — |
+| 前回成功時の件数に対して、種別ごとにこの割合を下回った | 90% | `artws_sec_feed_min_count_ratio` |
+| 著作権者が1つも無い | — | — |
+
+- Wordfence 側の正当な整理で件数が減ったときは、管理画面の「Allow fewer records on the next update」で次の1回だけ件数減少の検査を外す
+- メモリ不足・時間切れの fatal では失敗処理が走らないので、毎時の `artws_sec_feed_watchdog` が「最後の成功から 48 時間超」（`artws_sec_feed_stale_after`）で stale にする
+- 同時実行は options テーブルの1行（`INSERT IGNORE`）で防ぐ。2 時間たったロックは、死んだ実行の残りとして引き継ぐ
+- manifest の `version` は成功した生成ごとに変わる（`YYYYMMDD.HHMMSS`）。`generated_at` は最後に成功した生成の時刻で、stale にしたときや EOL を変えたときには変わらない
+
+### 管理画面（設定 > Security Hub）
+
+- 最後の成功（version・件数）、stale、最後の実行の結果とエラー、除外件数と除外例（最大 20 件）
+- 「Update now」: 取り込みを WP-Cron に積む。WP-CLI があれば `wp cron event run artws_sec_feed_update` でその場で走らせて結果を見られる
+- EOL（manifest の `eol.{php,wordpress,woocommerce}.min_supported`）: 数字とドットだけ。保存すると manifest を書き直す（既定 PHP 8.2 / WordPress 6.7 / WooCommerce 10.2）
+
+WP-Cron はアクセスが無いと走らない。取り込みは数十秒かかるので、`DISABLE_WP_CRON` とサーバーの cron（例: `*/15 * * * * wp --path=/path/to/wordpress cron event run --due-now`）で回すのがよい。
+
+### 配信
+
+ファイルは `ARTWS_SEC_FEED_DIR`（既定 `wp-content/artws-security-feed/v1/`）に置かれる。`/feed/v1/` は WordPress 本体の RSS（`/feed/`）と URL が重なるので、ドキュメントルートに実ディレクトリ `feed/` は作らず、`/feed/v1/` だけをこのディレクトリへの Alias で配信する（PHP を通さない静的配信）。
+
+- `.json.gz` は `Content-Type: application/gzip` で、`Content-Encoding` を付けない（付けるとクライアントが自動で展開し、sha256 が合わなくなる）
+- ファイルは一時名で書いてから rename で差し替え、gz を全部置いてから manifest を置く。CDN を挟む場合も、manifest と gz のキャッシュ時間は同じ程度に短くする（食い違うとクライアントは sha256 の不一致で前回のデータを使い続ける）
+- アクセスログに残るのは UA と IP だけ。サイト URL などは受け取らない
+
+nginx:
+
+```nginx
+location ^~ /feed/v1/ {
+    alias /path/to/wp-content/artws-security-feed/v1/;
+    location ~ /\. { deny all; }            # 書き込み途中の一時ファイル（.manifest.json.*.tmp など）
+    types {
+        application/json json;
+        application/gzip gz;
+    }
+    gzip off;                               # .json.gz を二重に圧縮しない
+    add_header Cache-Control "public, max-age=600";
+}
+```
+
+Apache（サーバー設定または VirtualHost。`.htaccess` では Alias を使えない）:
+
+```apache
+Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
+<Directory /path/to/wp-content/artws-security-feed/v1/>
+    Require all granted
+    Options -Indexes
+    RemoveEncoding .gz
+    AddType application/gzip .gz
+    AddType application/json .json
+    Header set Cache-Control "public, max-age=600"
+    <FilesMatch "^\.">
+        Require all denied
+    </FilesMatch>
+</Directory>
+```
+
+確認: `curl -sI https://wc.artws.info/feed/v1/vuln-plugins.json.gz` が `Content-Type: application/gzip` で `Content-Encoding` を含まないこと、`curl -s https://wc.artws.info/feed/v1/vuln-plugins.json.gz | shasum -a 256` が manifest の `sha256` と一致すること、`https://wc.artws.info/feed/` が今までどおり RSS を返すこと。
+
+### Wordfence Intelligence の利用規約
+
+[Wordfence Intelligence Terms and Conditions](https://www.wordfence.com/wordfence-intelligence-terms-and-conditions/)（2026-01-26 更新版を 2026-10-22 に確認）:
+
+- 無償。複製・改変・公開・再配布・サブライセンスを許諾する（取消不能）。条件は、複製物に Defiant の著作権表示、この license、開示された他の licensor の license を含めること
+  - フィードの `copyrights` は、公開したレコードの V3 `copyrights`（`message` を除く）の和集合を manifest と3ファイルすべてに入れる。各保持者の `notice`（著作権表示）・`license`（本文）・`license_url` は V3 の値そのまま。形が契約に合わない保持者を持つレコードは公開しない
+  - レコードを表示する所では `reference`（wordfence.com のレコードのページ）にリンクする（契約 README）
+- 表記の文言は指定されていない。`attribution` は `Vulnerability data: Wordfence Intelligence`
+- API キーは第三者に渡さない（コード・ログ・管理画面に出さない）。Defiant はレート制限を課せる（取り込みは1日1回）
 
 ## 開発
 
 ```bash
 cd plugins/artws-security-hub
 composer install
-composer lint     # phpcs（WordPress Coding Standards、prefix artws_sec_ / ARTWS_SEC_）
-composer test     # phpunit
+composer lint        # phpcs（WordPress Coding Standards、prefix artws_sec_ / ARTWS_SEC_。tests も対象）
+composer test-local  # phpunit（WordPress テストライブラリ上）
 ```
 
-CI は `.github/workflows/artws-security-hub.yml`。このディレクトリか `tests/fixtures/security-feed/` を変える PR でだけ走る。
+テストは WordPress のテストライブラリで動く（`pre_http_request` で Wordfence への要求を差し替え、実際の通信はしない）。`composer test-local`（`bin/test-local.sh`）は、リポジトリ直下の `composer test-local` が用意する環境（`~/.cache/jp4wc-tests` の WordPress とテストライブラリ、MySQL コンテナ `jp4wc-phpunit-db`）を借り、専用のデータベース `artws_sec_tests` で走らせる。その環境が無ければ、先にリポジトリ直下で `composer test-local` を一度実行する。
+
+CI は `.github/workflows/artws-security-hub.yml`。このディレクトリか `tests/fixtures/security-feed/`、`bin/install-wp-tests.sh` を変える PR でだけ走り、`bin/install-wp-tests.sh` でテストライブラリを入れて `composer test` を実行する。
 
 ## wc.artws.info への反映
 
@@ -44,5 +131,6 @@ rsync -a --exclude-from=.distignore ./ /tmp/artws-security-hub/
 
 1. wc.artws.info の管理画面 > プラグイン > 新規追加 > プラグインのアップロードで `/tmp/artws-security-hub.zip` を選び、「現在のものをアップロードしたもので置き換える」で更新する
 2. 有効化し、必要な定数が `wp-config.php` にあることを確認する
+3. 初回（S1）は、配信設定（上記）を入れてから「Update now」か `wp cron event run artws_sec_feed_update` で取り込み、管理画面の結果と除外例を確かめる。実データで除外が 2% を超えたら、除外例を見てから閾値か検査を見直す
 
 `Update URI: false` を指定しているので、WordPress.org の同名プラグインから更新が届くことはない。実行時に Composer の依存は使わない（`vendor/` はテスト用で、ZIP には入れない）。
