@@ -361,6 +361,30 @@ class JP4WC_Security_Scanner_Test extends WP_UnitTestCase {
 					return $record;
 				},
 			),
+			'patched as text'           => array(
+				static function ( $record ) {
+					$record['patched'] = 'true';
+					return $record;
+				},
+			),
+			'patched missing'           => array(
+				static function ( $record ) {
+					unset( $record['patched'] );
+					return $record;
+				},
+			),
+			'fixed version not text'    => array(
+				static function ( $record ) {
+					$record['patched_versions'] = array( 1.2 );
+					return $record;
+				},
+			),
+			'fixed versions not a list' => array(
+				static function ( $record ) {
+					$record['patched_versions'] = array( 'fix' => '1.2.4' );
+					return $record;
+				},
+			),
 			'not an object'             => array(
 				static function () {
 					return 'record';
