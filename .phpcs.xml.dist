@@ -42,6 +42,9 @@
 				<element value="JP4WC_"/>
 				<element value="JP4WC"/>
 				<element value="wc4jp_"/>
+				<!-- PHP security notice shared with other Artisan Workshop plugins (includes/artws-php-security-notice/). -->
+				<element value="artws_"/>
+				<element value="ArtisanWorkshop\PhpSecurityNotice"/>
 			</property>
 		</properties>
 		<exclude-pattern>/includes/gateways/</exclude-pattern>
