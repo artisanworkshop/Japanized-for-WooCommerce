@@ -103,7 +103,9 @@ class JP4WC_Security_Feed {
 	public static function init() {
 		add_action( self::SYNC_HOOK, array( __CLASS__, 'sync' ) );
 		add_action( self::RESCAN_HOOK, array( __CLASS__, 'rescan' ) );
-		add_action( 'admin_init', array( __CLASS__, 'ensure_schedule' ) );
+		// Every request, not only admin ones: deactivation clears the events, and a
+		// site reactivated with WP-CLI may not see an admin request for a long time.
+		add_action( 'init', array( __CLASS__, 'ensure_schedule' ) );
 		add_action( 'add_option_' . self::SETTING, array( __CLASS__, 'reconcile' ), 10, 0 );
 		add_action( 'update_option_' . self::SETTING, array( __CLASS__, 'reconcile' ), 10, 0 );
 
@@ -193,11 +195,11 @@ class JP4WC_Security_Feed {
 	}
 
 	/**
-	 * Keeps the daily sync scheduled while the check is on (admin_init).
+	 * Keeps the daily sync scheduled while the check is on (init).
 	 *
-	 * Lighter than reconcile(): when the check is off, it removes the data only
-	 * while the event is still scheduled, so it does not query the options on
-	 * every admin request.
+	 * Lighter than reconcile(), as it runs on every request: it reads only the
+	 * autoloaded setting and cron array, and when the check is off it removes
+	 * the data only while the event is still scheduled.
 	 */
 	public static function ensure_schedule() {
 		$scheduled = wp_next_scheduled( self::SYNC_HOOK );
@@ -429,6 +431,12 @@ class JP4WC_Security_Feed {
 		$files = array();
 		foreach ( array_keys( $state['files'] ) as $type ) {
 			$files[ $type ] = $directory . '/' . $type . '.json';
+			// A file removed or made unreadable since the sync (an uploads clean-up, permissions)
+			// would drop every finding of its type: keep the previous findings until the next
+			// sync downloads it again.
+			if ( ! is_readable( $files[ $type ] ) ) {
+				return;
+			}
 		}
 
 		$items = JP4WC_Security_Scanner::scan( $files, JP4WC_Security_Scanner::installed_software() );
