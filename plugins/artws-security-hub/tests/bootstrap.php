@@ -58,3 +58,4 @@ tests_add_filter(
 
 require $artws_sec_tests_dir . '/includes/bootstrap.php';
 require_once __DIR__ . '/includes/class-artws-sec-feed-test-case.php';
+require_once __DIR__ . '/includes/class-artws-sec-scan-test-case.php';

@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://wc.artws.info/schema/security/v1/report.schema.json",
     "title": "Free security check report (report_json)",
-    "description": "Body of a successful POST /wp-json/artws-sec/v1/scan and of GET /wp-json/artws-sec/v1/scan/{token}. Every string is plain text: the client escapes it and never renders it as HTML.",
+    "description": "The report in the response of POST /wp-json/artws-sec/v1/scan and GET /wp-json/artws-sec/v1/scan/{token} (scan-response.schema.json). Every string is plain text: the client escapes it and never renders it as HTML.",
     "type": "object",
     "required": [
         "schema_version",

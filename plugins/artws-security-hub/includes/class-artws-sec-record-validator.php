@@ -230,7 +230,7 @@ class Artws_Sec_Record_Validator {
 	 * @param int|null $max   Maximum length, or null for none.
 	 * @return bool
 	 */
-	private static function is_text( $value, $min, $max ) {
+	public static function is_text( $value, $min, $max ) {
 		if ( ! is_string( $value ) || ! self::is_utf8( $value ) ) {
 			return false;
 		}

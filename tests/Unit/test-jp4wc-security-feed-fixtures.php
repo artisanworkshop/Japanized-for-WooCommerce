@@ -62,13 +62,17 @@ class JP4WC_Security_Feed_Fixtures_Test extends WP_UnitTestCase {
 	public function test_contract_files_exist() {
 		$this->assertEqualsCanonicalizing(
 			array(
+				'error-rate-limited.json',
 				'manifest.json',
 				'report.json',
 				'scan-request.json',
+				'scan-response.json',
 				'schema/common.schema.json',
+				'schema/error.schema.json',
 				'schema/manifest.schema.json',
 				'schema/report.schema.json',
 				'schema/scan-request.schema.json',
+				'schema/scan-response.schema.json',
 				'schema/vuln-file.schema.json',
 				'vuln-core.json',
 				'vuln-plugins.json',

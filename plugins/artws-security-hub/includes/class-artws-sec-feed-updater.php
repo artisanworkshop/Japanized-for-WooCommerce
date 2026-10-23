@@ -289,7 +289,26 @@ class Artws_Sec_Feed_Updater {
 			return null;
 		}
 		$state['stale'] = ! empty( $state['stale'] );
+		// Feed version of the vulnerability index the free security check uses, '' before there is one (0.3.0).
+		$state['index_version'] = isset( $state['index_version'] ) && is_string( $state['index_version'] ) ? $state['index_version'] : '';
 		return $state;
+	}
+
+	/**
+	 * Returns the seconds after which data that has not been updated counts as stale.
+	 *
+	 * @return int
+	 */
+	public static function stale_after() {
+		/**
+		 * Filters the seconds without a successful run after which the feed is marked stale.
+		 *
+		 * The free security check also treats its vulnerability index as stale
+		 * when the index has not caught up with the feed for this long.
+		 *
+		 * @param int $seconds Default 48 hours.
+		 */
+		return (int) apply_filters( 'artws_sec_feed_stale_after', self::DEFAULT_STALE_AFTER );
 	}
 
 	/**
@@ -350,6 +369,9 @@ class Artws_Sec_Feed_Updater {
 			// What a run killed by a fatal error left behind.
 			Artws_Sec_Feed_Publisher::delete_stale_temp_files( $now - HOUR_IN_SECONDS );
 			self::delete_stale_downloads( $now - HOUR_IN_SECONDS );
+			// The published index stays; generations a run failed to finish go.
+			$previous = self::fresh_state();
+			Artws_Sec_Vuln_Index::delete_other_versions( null !== $previous && '' !== $previous['index_version'] ? array( $previous['index_version'] ) : array() );
 
 			$download = self::download();
 
@@ -360,22 +382,26 @@ class Artws_Sec_Feed_Updater {
 
 			self::check_result( $result, self::fresh_state() );
 
+			$version      = self::new_version( $now, $previous );
 			$generated_at = gmdate( 'Y-m-d\TH:i:s\Z', $now );
 			$files        = Artws_Sec_Feed_Publisher::write_vulnerability_files( $result['vulnerabilities'], $result['copyrights'], self::ATTRIBUTION, $generated_at );
 
 			$state = array(
-				'version'      => gmdate( 'Ymd.His', $now ),
-				'generated_at' => $generated_at,
-				'stale'        => false,
-				'files'        => $files,
-				'copyrights'   => $result['copyrights'],
-				'attribution'  => self::ATTRIBUTION,
-				'last_success' => $now,
+				'version'       => $version,
+				'generated_at'  => $generated_at,
+				'stale'         => false,
+				'files'         => $files,
+				'copyrights'    => $result['copyrights'],
+				'attribution'   => self::ATTRIBUTION,
+				'last_success'  => $now,
+				// Updated by update_index() once the new generation is written.
+				'index_version' => null === $previous ? '' : $previous['index_version'],
 			);
 			update_option( self::STATE_OPTION, $state, false );
 			delete_option( self::ACCEPT_DROP_OPTION );
 			wp_unschedule_hook( self::RETRY_HOOK );
 			Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
+			$index_error = self::update_index( $result['vulnerabilities'], $version );
 
 			// Deactivated while this run was in progress: nothing will update these files. Checked
 			// after the manifest is written, so a deactivation at any point of the run is caught
@@ -385,7 +411,7 @@ class Artws_Sec_Feed_Updater {
 				$notice = self::mark_stale( 'The plugin was deactivated during this update, so the feed is marked stale.' );
 			}
 
-			self::record_status( $now, 'success', $notice, $stats );
+			self::record_status( $now, 'success', trim( $notice . ' ' . $index_error ), $stats );
 			return 'success';
 		} catch ( Throwable $e ) {
 			// Fatal errors such as running out of memory never get here; watchdog() covers them.
@@ -410,6 +436,64 @@ class Artws_Sec_Feed_Updater {
 			}
 			self::release_lock();
 		}
+	}
+
+	/**
+	 * Returns the version of a new feed: the time of the run (Ymd.His, UTC).
+	 *
+	 * A run in the same second as the published or indexed version (a clock
+	 * set back) gets a suffix, so that a version always names one generation:
+	 * the index of the active version is then never rewritten in place.
+	 *
+	 * @param int        $now      Unix time of the run.
+	 * @param array|null $previous Published state.
+	 * @return string
+	 */
+	private static function new_version( $now, $previous ) {
+		$time    = gmdate( 'Ymd.His', $now );
+		$version = $time;
+		$taken   = null === $previous ? array() : array( $previous['version'], $previous['index_version'] );
+		$suffix  = 1;
+		while ( in_array( $version, $taken, true ) ) {
+			++$suffix;
+			$version = $time . '.' . $suffix;
+		}
+		return $version;
+	}
+
+	/**
+	 * Writes the vulnerability index of a published version and makes it the one scans use.
+	 *
+	 * The feed is already published: a failure here leaves the scans on the
+	 * previous generation instead of failing the run, so that the feed every
+	 * JP4WC site reads never goes stale because of the free security check.
+	 * The next run tries again. Call it while holding the lock.
+	 *
+	 * @param array  $vulnerabilities Type => slug => feed records as JSON text.
+	 * @param string $version         The published version.
+	 * @return string Why the index was not updated, or ''.
+	 */
+	private static function update_index( array $vulnerabilities, $version ) {
+		try {
+			Artws_Sec_Vuln_Index::write( $vulnerabilities, $version );
+		} catch ( Artws_Sec_Feed_Exception $e ) {
+			Artws_Sec_Vuln_Index::delete_version( $version );
+			return 'The feed was published, but the index of the free security check was not updated, so scans use the previous one: ' . $e->getMessage();
+		}
+
+		$state = self::fresh_state();
+		if ( null === $state ) {
+			return '';
+		}
+		$replaced               = $state['index_version'];
+		$state['index_version'] = $version;
+		if ( ! update_option( self::STATE_OPTION, $state, false ) ) {
+			// The value always changes here, so false means it was not saved: scans stay on the previous generation.
+			Artws_Sec_Vuln_Index::delete_version( $version );
+			return 'The feed was published, but the index of the free security check could not be switched to it, so scans use the previous one.';
+		}
+		Artws_Sec_Vuln_Index::delete_other_versions( '' === $replaced ? array( $version ) : array( $version, $replaced ) );
+		return '';
 	}
 
 	/**
@@ -614,14 +698,7 @@ class Artws_Sec_Feed_Updater {
 	 * @return bool
 	 */
 	private static function is_overdue( $state, $now ) {
-		/**
-		 * Filters the seconds without a successful run after which the feed is marked stale.
-		 *
-		 * @param int $seconds Default 48 hours.
-		 */
-		$stale_after = (int) apply_filters( 'artws_sec_feed_stale_after', self::DEFAULT_STALE_AFTER );
-
-		return null !== $state && ! $state['stale'] && $now - (int) $state['last_success'] > $stale_after;
+		return null !== $state && ! $state['stale'] && $now - (int) $state['last_success'] > self::stale_after();
 	}
 
 	/**

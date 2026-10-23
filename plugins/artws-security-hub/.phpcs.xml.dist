@@ -35,6 +35,7 @@
 		<properties>
 			<property name="custom_test_classes" type="array">
 				<element value="Artws_Sec_Feed_Test_Case"/>
+				<element value="Artws_Sec_Scan_Test_Case"/>
 			</property>
 		</properties>
 	</rule>
