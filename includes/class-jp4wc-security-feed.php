@@ -342,7 +342,8 @@ class JP4WC_Security_Feed {
 		update_option( self::RECHECK_OPTION, $requested_at, false );
 		if ( ! wp_next_scheduled( self::RECHECK_HOOK ) ) {
 			$scheduled = wp_schedule_single_event( $requested_at, self::RECHECK_HOOK, array(), true );
-			if ( is_wp_error( $scheduled ) ) {
+			// A request at the same moment may have scheduled it since wp_next_scheduled(): it runs, and reads the latest time.
+			if ( is_wp_error( $scheduled ) && 'duplicate_event' !== $scheduled->get_error_code() ) {
 				// Nothing will run: the request may be asked for again at once.
 				if ( $previous > 0 ) {
 					update_option( self::RECHECK_OPTION, $previous, false );
