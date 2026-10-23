@@ -162,6 +162,30 @@ class Artws_Sec_Vuln_Index_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * When the state cannot be switched to the new index, the run says so and scans keep the previous one.
+	 */
+	public function test_failed_index_switch_is_reported() {
+		$this->mock_wordfence( self::fixture_feed() );
+		Artws_Sec_Feed_Updater::update( self::NOW );
+		$first = Artws_Sec_Feed_Updater::get_state()['index_version'];
+		add_filter(
+			'pre_update_option_' . Artws_Sec_Feed_Updater::STATE_OPTION,
+			static function ( $value, $old ) {
+				// The write that switches index_version does not happen.
+				return is_array( $value ) && is_array( $old ) && ( $value['index_version'] ?? '' ) !== ( $old['index_version'] ?? '' ) ? $old : $value;
+			},
+			10,
+			2
+		);
+
+		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW + DAY_IN_SECONDS ) );
+
+		$this->assertSame( $first, Artws_Sec_Feed_Updater::get_state()['index_version'] );
+		$this->assertSame( array( $first ), self::index_versions() );
+		$this->assertSame( 'The feed was published, but the index of the free security check could not be switched to it, so scans use the previous one.', Artws_Sec_Feed_Updater::get_status()['message'] );
+	}
+
+	/**
 	 * A failed read is an error, not "no records".
 	 */
 	public function test_find_throws_when_the_index_cannot_be_read() {

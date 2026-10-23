@@ -487,7 +487,11 @@ class Artws_Sec_Feed_Updater {
 		}
 		$replaced               = $state['index_version'];
 		$state['index_version'] = $version;
-		update_option( self::STATE_OPTION, $state, false );
+		if ( ! update_option( self::STATE_OPTION, $state, false ) ) {
+			// The value always changes here, so false means it was not saved: scans stay on the previous generation.
+			Artws_Sec_Vuln_Index::delete_version( $version );
+			return 'The feed was published, but the index of the free security check could not be switched to it, so scans use the previous one.';
+		}
 		Artws_Sec_Vuln_Index::delete_other_versions( '' === $replaced ? array( $version ) : array( $version, $replaced ) );
 		return '';
 	}

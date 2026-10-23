@@ -140,6 +140,7 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 - **匿名の REST を止めるプラグイン**: ログインしていない要求の REST API を止めるセキュリティプラグインや、`Authorization: Bearer` を自分の認証（JWT など）として読むプラグインがあると、この API が動かない。`artws-sec/v1` を除外する
 - **CDN・リバースプロキシ**: 背後に置くと `REMOTE_ADDR` がプロキシの IP になり、全サイトが1つの送信元として数えられる。プロキシが上書きするヘッダーのキーを `ARTWS_SEC_CLIENT_IP_HEADER` に入れる（クライアントが自由に書ける `X-Forwarded-For` をそのまま信じない。リストなら最後の値を使う）。TLS をプロキシで終える場合は、`is_ssl()` が true になるよう wp-config.php で `$_SERVER['HTTPS']` を設定する（しないと全要求が 403）
 - **毎日の削除**: WP-Cron の `artws_sec_scan_cleanup` が、180 日より古い診断・180 日診断の無いサイト・終わったレート制限の窓を消す。無効化で止まる（データは残る）
+- **プラグインの削除**: `uninstall.php` が無料診断の4表と `artws_sec_db_version` を消す（診断データを保存期間より長く残さない）。脆弱性フィード（S1 の option と配信ファイル）は残る
 - **公開前に必要なもの**: wc.artws.info のプライバシーポリシーと利用規約（保存する項目・保存期間 180 日・削除の方法を書く。#256 の未決事項）
 
 ## 開発

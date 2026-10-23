@@ -116,6 +116,23 @@ class Artws_Sec_Db {
 	}
 
 	/**
+	 * Uninstall: drops the tables of the free security check and forgets their version.
+	 *
+	 * The scans hold site URLs, the data sites sent and the reports, which are
+	 * kept only for the retention period: they must not outlive the plugin.
+	 * Called from uninstall.php, which cannot be loaded in the tests.
+	 */
+	public static function uninstall() {
+		global $wpdb;
+
+		wp_unschedule_hook( Artws_Sec_Site_Store::CLEANUP_HOOK );
+		foreach ( array( self::sites_table(), self::scans_table(), self::limits_table(), self::vulns_table() ) as $table ) {
+			$wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Drops this plugin's own tables.
+		}
+		delete_option( self::VERSION_OPTION );
+	}
+
+	/**
 	 * Registered sites.
 	 *
 	 * @return string
