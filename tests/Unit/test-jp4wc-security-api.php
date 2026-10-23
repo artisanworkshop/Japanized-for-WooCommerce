@@ -354,6 +354,32 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A re-check WordPress does not schedule is reported as failed, and can be
+	 * asked for again at once (PR #279 G1-1).
+	 */
+	public function test_rescan_that_cannot_be_scheduled_fails() {
+		update_option( JP4WC_Security_Feed::RECHECK_OPTION, time() - HOUR_IN_SECONDS, false );
+		$previous = JP4WC_Security_Feed::recheck_requested_at();
+		$refuse   = static function ( $pre, $event ) {
+			return JP4WC_Security_Feed::RECHECK_HOOK === $event->hook ? false : $pre;
+		};
+		add_filter( 'pre_schedule_event', $refuse, 10, 2 );
+		try {
+			$response = $this->post_rescan( wp_create_nonce( 'wp_rest' ) );
+		} finally {
+			remove_filter( 'pre_schedule_event', $refuse, 10 );
+		}
+
+		$this->assertSame( 500, $response->get_status() );
+		$this->assertSame( 'jp4wc_security_recheck_not_scheduled', $response->get_data()['code'] );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
+		$this->assertSame( $previous, JP4WC_Security_Feed::recheck_requested_at(), 'The previous request time is kept.' );
+		$this->assertSame( array(), $this->requests, 'WP-Cron is not started.' );
+
+		$this->assertSame( 202, $this->post_rescan( wp_create_nonce( 'wp_rest' ) )->get_status(), 'Not refused as too soon.' );
+	}
+
+	/**
 	 * A second re-check within a minute is refused, with the seconds to wait.
 	 */
 	public function test_rescan_cannot_be_repeated_at_once() {

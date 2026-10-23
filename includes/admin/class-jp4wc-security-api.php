@@ -159,7 +159,15 @@ class JP4WC_Security_API extends WP_REST_Controller {
 			);
 		}
 
-		if ( 0 === JP4WC_Security_Feed::request_recheck() ) {
+		$requested_at = JP4WC_Security_Feed::request_recheck();
+		if ( is_wp_error( $requested_at ) ) {
+			return new WP_Error(
+				'jp4wc_security_recheck_not_scheduled',
+				__( 'The re-check could not be scheduled in WP-Cron. Try again later.', 'woocommerce-for-japan' ),
+				array( 'status' => 500 )
+			);
+		}
+		if ( 0 === $requested_at ) {
 			// Turned off by another request meanwhile.
 			return new WP_Error(
 				'jp4wc_security_disabled',

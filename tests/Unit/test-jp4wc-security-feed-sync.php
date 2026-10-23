@@ -1337,6 +1337,22 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A first re-check WordPress does not schedule leaves no request time behind (PR #279 G1-1).
+	 */
+	public function test_unscheduled_first_recheck_leaves_nothing() {
+		add_filter( 'pre_schedule_event', '__return_false' );
+		try {
+			$result = JP4WC_Security_Feed::request_recheck();
+		} finally {
+			remove_filter( 'pre_schedule_event', '__return_false' );
+		}
+
+		$this->assertWPError( $result );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_OPTION ) );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
+	}
+
+	/**
 	 * A re-check records the request it ran for; the automatic rescan does not (R1-1).
 	 */
 	public function test_recheck_records_the_request_it_ran_for() {

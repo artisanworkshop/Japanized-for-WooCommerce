@@ -329,16 +329,28 @@ class JP4WC_Security_Feed {
 	 * event waits for its next run: the alternative WP-Cron would redirect
 	 * this request.
 	 *
-	 * @return int Time the re-check was asked for; 0 when the check was turned
-	 *             off meanwhile, which leaves nothing scheduled.
+	 * @return int|WP_Error Time the re-check was asked for; 0 when the check was
+	 *                      turned off meanwhile, which leaves nothing scheduled;
+	 *                      the error when WordPress did not schedule the event
+	 *                      (a `pre_schedule_event` filter, the cron option not saved).
 	 */
 	public static function request_recheck() {
 		// A site without the setting row is on: keep_written_data() below would purge it.
 		self::start_run();
+		$previous     = self::recheck_requested_at();
 		$requested_at = time();
 		update_option( self::RECHECK_OPTION, $requested_at, false );
 		if ( ! wp_next_scheduled( self::RECHECK_HOOK ) ) {
-			wp_schedule_single_event( $requested_at, self::RECHECK_HOOK );
+			$scheduled = wp_schedule_single_event( $requested_at, self::RECHECK_HOOK, array(), true );
+			if ( is_wp_error( $scheduled ) ) {
+				// Nothing will run: the request may be asked for again at once.
+				if ( $previous > 0 ) {
+					update_option( self::RECHECK_OPTION, $previous, false );
+				} else {
+					delete_option( self::RECHECK_OPTION );
+				}
+				return $scheduled;
+			}
 		}
 		// Another request may have turned the check off since this one began.
 		if ( ! self::keep_written_data() ) {
