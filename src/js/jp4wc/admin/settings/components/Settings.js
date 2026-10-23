@@ -12,6 +12,7 @@ import ShipmentSettings from './ShipmentSettings';
 import PaymentSettings from './PaymentSettings';
 import LawSettings from './LawSettings';
 import AffiliateSettings from './AffiliateSettings';
+import SecuritySettings from './SecuritySettings';
 
 import './Settings.scss';
 
@@ -144,7 +145,20 @@ const Settings = () => {
 			title: __( 'Affiliate', 'woocommerce-for-japan' ),
 			className: 'jp4wc-tab-affiliate',
 		},
+		{
+			name: 'security',
+			title: __( 'Security', 'woocommerce-for-japan' ),
+			className: 'jp4wc-tab-security',
+		},
 	] );
+
+	// A link can open a tab: ?page=jp4wc-settings&tab=security (the security notice).
+	const requestedTab = new URLSearchParams( window.location.search ).get(
+		'tab'
+	);
+	const initialTabName = tabs.some( ( tab ) => tab.name === requestedTab )
+		? requestedTab
+		: undefined;
 
 	return (
 		<div className="jp4wc-settings-container">
@@ -181,6 +195,7 @@ const Settings = () => {
 				className="jp4wc-settings-tabs"
 				activeClass="is-active"
 				tabs={ tabs }
+				initialTabName={ initialTabName }
 			>
 				{ ( tab ) => (
 					<div className="jp4wc-settings-tab-content">
@@ -218,6 +233,14 @@ const Settings = () => {
 						) }
 						{ tab.name === 'affiliate' && (
 							<AffiliateSettings
+								settings={ settings }
+								updateSetting={ updateSetting }
+								saveSettings={ saveSettings }
+								saving={ saving }
+							/>
+						) }
+						{ tab.name === 'security' && (
+							<SecuritySettings
 								settings={ settings }
 								updateSetting={ updateSetting }
 								saveSettings={ saveSettings }

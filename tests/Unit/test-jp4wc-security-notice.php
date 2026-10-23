@@ -158,9 +158,10 @@ class JP4WC_Security_Notice_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Severity: High / Fixed in 1.2.4', $html );
 		$this->assertStringContainsString( 'No fixed version yet', $html );
 		$this->assertStringContainsString( 'Severity: Medium / Fixed in 6.4.3, 6.5.1', $html );
-		$this->assertStringContainsString( esc_url( admin_url( 'plugins.php' ) . '#checkbox_' . md5( 'sample-plugin/sample-plugin.php' ) ), $html );
-		$this->assertStringContainsString( esc_url( admin_url( 'themes.php?theme=sample-theme' ) ), $html );
-		$this->assertStringContainsString( esc_url( network_admin_url( 'update-core.php' ) ), $html );
+		// The software links to the Security tab, which links each copy to where it is updated (#259).
+		$this->assertSame( 4, substr_count( $html, '<a href="' . esc_url( admin_url( 'admin.php?page=jp4wc-settings&tab=security' ) ) . '">' ) );
+		$this->assertStringContainsString( 'Open the Security tab', $html );
+		$this->assertStringNotContainsString( 'plugins.php', $html );
 		$this->assertStringContainsString( 'Vulnerability data: Wordfence Intelligence', $html );
 		$this->assertStringContainsString( '<summary>Copyright 2012-2026 Defiant Inc.</summary>', $html );
 		$this->assertStringContainsString( 'Sample license text.', $html );
@@ -209,6 +210,7 @@ class JP4WC_Security_Notice_Test extends WP_UnitTestCase {
 			$this->assertStringContainsString( 'notice-warning', $html );
 			$this->assertStringContainsString( 'The vulnerability data could not be downloaded', $html );
 			$this->assertStringContainsString( 'can connect to wc.artws.info', $html );
+			$this->assertStringContainsString( '<a href="' . esc_url( JP4WC_Security_Notice::tab_url() ) . '">Open the Security tab</a>', $html );
 
 			update_user_meta( get_current_user_id(), JP4WC_Security_Notice::DISMISSED_META, JP4WC_Security_Notice::get_view()['fingerprint'] );
 			$this->assertSame( '', self::render(), 'It can be closed.' );
