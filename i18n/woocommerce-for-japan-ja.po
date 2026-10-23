@@ -2902,6 +2902,497 @@ msgstr ""
 "ヘッダーに含まれる、このプラグイン・WordPress・WooCommerce・PHP のバージョン"
 "だけです。"
 
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"No fixed version yet. Deactivate and delete it, or replace it with another "
+"plugin or theme."
+msgstr ""
+"修正版はまだありません。停止して削除するか、別のプラグインやテーマに置き換え"
+"てください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Update it to the latest version."
+msgstr "最新版に更新してください。"
+
+#. translators: 1: plugin, theme or WordPress name, 2: comma-separated versions that fix the vulnerability
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, js-format
+msgid "Update %1$s to a fixed version (%2$s) or later."
+msgstr "%1$s を修正版（%2$s）以降に更新してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Satisfied"
+msgstr "充足"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Action needed"
+msgstr "要対応"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Unconfirmed"
+msgstr "未確認"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Total score"
+msgstr "総合スコア"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The lowest score of the four requirements."
+msgstr "4要件のうち最も低い点数です。"
+
+#. translators: 1: checks passed, 2: checks that need action, 3: checks that could not be run
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, js-format
+msgid "Passed %1$d / Action needed %2$d / Unconfirmed %3$d"
+msgstr "問題なし %1$d / 要対応 %2$d / 未確認 %3$d"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "No items need action."
+msgstr "対応が必要な項目はありません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Some checks could not be run (see \"All checks\" below)."
+msgstr ""
+"一部のチェックは実行できませんでした（下の「すべてのチェック」を参照）。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Severity"
+msgstr "重大度"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Item"
+msgstr "項目"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Fixed version"
+msgstr "修正版"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "How to fix"
+msgstr "修正方法"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Reference"
+msgstr "参照"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "None"
+msgstr "なし"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Details"
+msgstr "詳細"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "All checks"
+msgstr "すべてのチェック"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Passed"
+msgstr "問題なし"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"\"Unconfirmed\" means the check could not be run on this site, for example "
+"because the server cannot send requests to itself. It costs no points."
+msgstr ""
+"「未確認」は、サーバーが自分自身にリクエストを送れないなどの理由で、このサイ"
+"トではチェックを実行できなかったことを表します。減点はしません。"
+
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, js-format
+msgid ""
+"The vulnerability data could not be downloaded for several days, so the "
+"installed software is not checked for known vulnerabilities. Make sure this "
+"server can connect to %s."
+msgstr ""
+"脆弱性データを数日間取得できていないため、インストール済みのソフトウェアを既"
+"知の脆弱性と照合できていません。このサーバーから %s に接続できるか確認してく"
+"ださい。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The vulnerability data has not been downloaded yet, so known vulnerabilities "
+"are not checked. It is downloaded once a day."
+msgstr ""
+"脆弱性データはまだ取得されていないため、既知の脆弱性は照合されていません。"
+"データは1日1回取得します。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The result of the security check could not be loaded."
+msgstr "セキュリティチェックの結果を読み込めませんでした。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The re-check could not be started."
+msgstr "再チェックを開始できませんでした。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The security check is off. Turn it on below and save the settings to check "
+"this site."
+msgstr ""
+"セキュリティチェックはオフです。このサイトをチェックするには、下でオンにして"
+"設定を保存してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"This check shows what needs attention. It does not guarantee compliance with "
+"the Credit Card Security Guidelines."
+msgstr ""
+"このチェックは対応が必要な箇所を示すものです。クレジットカード・セキュリティ"
+"ガイドラインへの準拠を保証するものではありません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"This site has not been checked yet. The first check runs shortly in WP-Cron, "
+"or start it with \"Re-check now\"."
+msgstr ""
+"このサイトはまだチェックされていません。最初のチェックはまもなく WP-Cron で実"
+"行されます。「今すぐ再チェック」で開始することもできます。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Re-checking…"
+msgstr "再チェック中…"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Re-check now"
+msgstr "今すぐ再チェック"
+
+#. translators: %s: date and time of the last check
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, js-format
+msgid "Last checked: %s"
+msgstr "最終チェック: %s"
+
+#. translators: %s: date and time the vulnerability data was generated
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, js-format
+msgid "Vulnerability data: %s"
+msgstr "脆弱性データ: %s"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The re-check runs in the background. The results appear here when it "
+"finishes."
+msgstr ""
+"再チェックはバックグラウンドで実行されます。終わるとここに結果が表示されま"
+"す。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The re-check has finished."
+msgstr "再チェックが終わりました。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The re-check has not finished yet. It runs with WP-Cron, so reload this page "
+"later to see the results."
+msgstr ""
+"再チェックはまだ終わっていません。WP-Cron で実行されるため、しばらくしてから"
+"このページを再読み込みして結果を確認してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Items that need action"
+msgstr "対応が必要な項目"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Settings"
+msgstr "設定"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Security check"
+msgstr "セキュリティチェック"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Turning it off also stops the checks on this tab and deletes their results."
+msgstr "オフにすると、このタブのチェックも止まり、結果は削除されます。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Vulnerability management"
+msgstr "脆弱性対策"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Admin access control"
+msgstr "管理画面のアクセス制限"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Data directory exposure"
+msgstr "データディレクトリの露見対策"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Malware protection"
+msgstr "マルウェア対策"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Known vulnerabilities in the installed software"
+msgstr "インストール済みソフトウェアの既知の脆弱性"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Plugin updates left uninstalled for 180 days or more"
+msgstr "180日以上適用されていないプラグインの更新"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Update the plugins on the Plugins screen, and delete the plugins you no "
+"longer use."
+msgstr ""
+"「プラグイン」画面でプラグインを更新し、使っていないプラグインは削除してくだ"
+"さい。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "PHP, WordPress or WooCommerce version that is no longer supported"
+msgstr "サポートが終了した PHP・WordPress・WooCommerce のバージョン"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Update WordPress and WooCommerce, and ask your hosting provider how to "
+"switch to a supported PHP version."
+msgstr ""
+"WordPress と WooCommerce を更新し、サポート中の PHP のバージョンへの切り替え"
+"方法をサーバー会社に確認してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Automatic updates of WordPress security releases and plugins"
+msgstr "WordPress のセキュリティリリースとプラグインの自動更新"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Turn on automatic updates for every plugin on the Plugins screen, and do not "
+"turn off the automatic security updates of WordPress (WP_AUTO_UPDATE_CORE or "
+"a filter)."
+msgstr ""
+"「プラグイン」画面ですべてのプラグインの自動更新を有効にし、WordPress のセ"
+"キュリティ更新の自動適用を止めないでください（WP_AUTO_UPDATE_CORE やフィル"
+"ター）。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "User named \"admin\""
+msgstr "「admin」という名前のユーザー"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Create an administrator with another user name, then delete the admin user "
+"and attribute its content to the new one."
+msgstr ""
+"別のユーザー名で管理者を作成してから admin ユーザーを削除し、そのコンテンツを"
+"新しい管理者に割り当ててください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Login page protection"
+msgstr "ログインページの保護"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Limit login attempts with a security plugin, or restrict wp-login.php to "
+"your IP addresses or a password in the server configuration."
+msgstr ""
+"セキュリティプラグインでログインの試行回数を制限するか、サーバーの設定で wp-"
+"login.php へのアクセスを IP アドレスやパスワードで制限してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Two-factor authentication"
+msgstr "二要素認証"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Install a two-factor authentication plugin and turn it on for administrators."
+msgstr "二要素認証のプラグインを導入し、管理者に対して有効にしてください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "XML-RPC open to anyone"
+msgstr "誰でも利用できる XML-RPC"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"If nothing uses XML-RPC (the WordPress mobile apps, Jetpack and some "
+"services do), block xmlrpc.php with a security plugin or the server "
+"configuration."
+msgstr ""
+"XML-RPC を使う連携（WordPress のモバイルアプリ、Jetpack、一部のサービス）が無"
+"ければ、セキュリティプラグインやサーバーの設定で xmlrpc.php へのアクセスを止"
+"めてください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "User list in the REST API"
+msgstr "REST API のユーザー一覧"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Stop the users REST route (/wp-json/wp/v2/users) from listing users to "
+"visitors who are not logged in, for example with a security plugin."
+msgstr ""
+"セキュリティプラグインなどで、ログインしていない訪問者に REST API のユーザー"
+"一覧（/wp-json/wp/v2/users）を返さないようにしてください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "File listing of the uploads directory"
+msgstr "アップロードディレクトリのファイル一覧表示"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Turn off directory listing in the server configuration (on Apache, add "
+"Options -Indexes to .htaccess)."
+msgstr ""
+"サーバーの設定でディレクトリの一覧表示を無効にしてください（Apache な"
+"ら .htaccess に Options -Indexes を追加）。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Backups, database dumps and logs in public directories"
+msgstr "公開ディレクトリにあるバックアップ・データベースのダンプ・ログ"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Move or delete the backups, archives, database dumps and log files in the "
+"WordPress, wp-content and uploads directories, or block them in the server "
+"configuration."
+msgstr ""
+"WordPress・wp-content・uploads の各ディレクトリにあるバックアップ・アーカイ"
+"ブ・データベースのダンプ・ログのファイルを移動または削除するか、サーバーの設"
+"定でアクセスを止めてください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Error messages shown on the site"
+msgstr "サイトに表示されるエラーメッセージ"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Set WP_DEBUG_DISPLAY (or WP_DEBUG) to false in wp-config.php."
+msgstr ""
+"wp-config.php で WP_DEBUG_DISPLAY（または WP_DEBUG）を false にしてください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "WooCommerce log files that can be downloaded"
+msgstr "ダウンロードできる WooCommerce のログファイル"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Block wp-content/uploads/wc-logs/ in the server configuration (nginx does "
+"not read the .htaccess file WooCommerce puts there)."
+msgstr ""
+"サーバーの設定で wp-content/uploads/wc-logs/ へのアクセスを止めてください"
+"（WooCommerce がそこに置く .htaccess を nginx は読みません）。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "HTTPS on the checkout and My account pages"
+msgstr "決済ページとマイアカウントページの HTTPS"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Install an SSL certificate and change the WordPress Address and Site Address "
+"in Settings > General to https://."
+msgstr ""
+"SSL 証明書を導入し、「設定」>「一般」の WordPress アドレスとサイトアドレスを "
+"https:// に変更してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "File editing in the admin screens"
+msgstr "管理画面からのファイル編集"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Add define( 'DISALLOW_FILE_EDIT', true ); to wp-config.php."
+msgstr ""
+"wp-config.php に define( 'DISALLOW_FILE_EDIT', true ); を追加してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Malware scanning or a web application firewall"
+msgstr "マルウェアのスキャンまたは WAF"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Install a security plugin that scans for malware or filters attacks."
+msgstr ""
+"マルウェアをスキャンするか攻撃を遮断するセキュリティプラグインを導入してくだ"
+"さい。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "PHP files in the uploads directory"
+msgstr "アップロードディレクトリ内の PHP ファイル"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Check the PHP files in the uploads directory and delete the ones you do not "
+"know, which may be malware. Also stop PHP from running there in the server "
+"configuration."
+msgstr ""
+"アップロードディレクトリにある PHP ファイルを確認し、心当たりの無いものは削除"
+"してください（マルウェアの可能性があります）。サーバーの設定で、このディレク"
+"トリでの PHP の実行も止めてください。"
+
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44
 #: src/js/blocks/delivery-block-editor.js:65
@@ -3811,3 +4302,31 @@ msgstr "修正版: %s"
 #: includes/admin/class-jp4wc-security-notice.php:311
 msgid "License"
 msgstr "ライセンス"
+
+#: includes/admin/class-jp4wc-security-notice.php:330
+msgid "Open the Security tab"
+msgstr "セキュリティタブを開く"
+
+#: includes/admin/class-jp4wc-security-api.php:85
+msgid "Sorry, you are not allowed to view the security check."
+msgstr "セキュリティチェックを表示する権限がありません。"
+
+#: includes/admin/class-jp4wc-security-api.php:106
+msgid "Sorry, you are not allowed to run the security check."
+msgstr "セキュリティチェックを実行する権限がありません。"
+
+#: includes/admin/class-jp4wc-security-api.php:114
+msgid "The page has expired. Reload it and try again."
+msgstr ""
+"ページの有効期限が切れました。再読み込みしてからもう一度お試しください。"
+
+#: includes/admin/class-jp4wc-security-api.php:141
+msgid "The security check is off."
+msgstr "セキュリティチェックはオフです。"
+
+#. translators: %d: seconds to wait
+#: includes/admin/class-jp4wc-security-api.php:152
+#, php-format
+msgid "A re-check was asked for a moment ago. Try again in %d second."
+msgid_plural "A re-check was asked for a moment ago. Try again in %d seconds."
+msgstr[0] "少し前に再チェックを依頼しました。%d 秒後にもう一度お試しください。"
