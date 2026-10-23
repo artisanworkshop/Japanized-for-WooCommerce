@@ -3,7 +3,7 @@
 - 開始: 2026-10-23
 - オプション: auto-commit
 - PR: #279 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/279
-- 現在のステップ: 8（最終報告）
+- 現在のステップ: 8（完了。マージは人間が行う）
 - Copilot: 依頼 3 回 / 上限（G3 でも新規指摘 1 件、Low で保留）
 - Codex: 依頼 1 回 / 収束（G1 で新規指摘なし）
 
@@ -27,3 +27,4 @@
 | 2026-10-23 | 7 | G1: Codex 指摘なし（収束）、Copilot 2 件（backlog R1-L1 / R1-L5 と同じ。Medium に見直して修正 45ff982 / 0bdd665 / 9cf0071） |
 | 2026-10-23 | 7 | G2: Copilot 1 件（同時リクエストの duplicate_event）を修正 b790ed8 |
 | 2026-10-23 | 7 | G3: Copilot 1 件（同時リクエストの依頼時刻の逆順保存）を Low で保留、backlog G3-1。Copilot は上限 |
+| 2026-10-23 | 8 | 最終報告（final-report.md）。CI green（run 39903052211、890b3ef） |
