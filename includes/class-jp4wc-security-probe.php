@@ -164,7 +164,8 @@ class JP4WC_Security_Probe {
 	 * @return bool
 	 */
 	private function home_answers() {
-		$response = $this->head( home_url( '/' ) );
+		// The stored address, not home_url(): a filter may point it at another host (a CDN).
+		$response = $this->head( trailingslashit( (string) get_option( 'home' ) ) );
 		if ( null === $response ) {
 			return false;
 		}
