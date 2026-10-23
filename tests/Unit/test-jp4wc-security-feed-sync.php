@@ -825,12 +825,14 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	 */
 	public function test_deactivation_clears_the_events() {
 		wp_schedule_single_event( time(), JP4WC_Security_Feed::RESCAN_HOOK );
+		wp_schedule_single_event( time(), JP4WC_Security_Feed::RECHECK_HOOK );
 		$this->assertNotFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
 
 		jp4wc_on_deactivation();
 
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RESCAN_HOOK ) );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
 	}
 
 	/**
@@ -939,18 +941,22 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	public function test_turning_off_removes_everything_and_stops_requests() {
 		$this->sync_successfully();
 		wp_schedule_single_event( time(), JP4WC_Security_Feed::RESCAN_HOOK );
+		JP4WC_Security_Feed::request_recheck();
 		$this->assertNotFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ), 'Turned on in setUp().' );
 
 		update_option( JP4WC_Security_Feed::SETTING, '' );
 
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RESCAN_HOOK ) );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
 
 		JP4WC_Security_Feed::sync();
 		JP4WC_Security_Feed::rescan();
+		JP4WC_Security_Feed::recheck();
 		JP4WC_Security_Feed::ensure_schedule();
 
 		$this->assertSame( array(), $this->requests );
@@ -1125,6 +1131,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	public function test_uninstall_removes_everything() {
 		$this->sync_successfully();
 		wp_schedule_single_event( time(), JP4WC_Security_Feed::RESCAN_HOOK );
+		JP4WC_Security_Feed::request_recheck();
 		$this->assertDirectoryExists( JP4WC_Security_Feed::directory_path() );
 
 		$this->assertNotSame( array(), $this->probe_results_left() );
@@ -1137,6 +1144,8 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		$this->assertSame( array(), $this->probe_results_left() );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RESCAN_HOOK ) );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_OPTION ) );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
 	}
 
@@ -1276,6 +1285,65 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		$core     = wp_list_filter( $findings['items'], array( 'slug' => 'wordpress' ) );
 		$this->assertSame( '00000000-0000-4000-8000-000000000202', reset( $core )['vulnerabilities'][0]['id'] );
 		$this->assertSame( array(), $this->requests, 'Matching makes no request.' );
+	}
+
+	/**
+	 * A re-check is one WP-Cron event of its own, however often it is asked for (#259).
+	 */
+	public function test_recheck_is_scheduled_once() {
+		$this->assertSame( 10, has_action( JP4WC_Security_Feed::RECHECK_HOOK, array( 'JP4WC_Security_Feed', 'recheck' ) ) );
+		JP4WC_Security_Feed::schedule_rescan();
+
+		$requested_at = JP4WC_Security_Feed::request_recheck();
+		JP4WC_Security_Feed::request_recheck();
+
+		$this->assertSame( 1, self::count_events( JP4WC_Security_Feed::RECHECK_HOOK ), 'Not dropped as a copy of the automatic rescan, nor scheduled twice.' );
+		$this->assertSame( 1, self::count_events( JP4WC_Security_Feed::RESCAN_HOOK ) );
+		$this->assertEqualsWithDelta( time(), $requested_at, 5 );
+		$this->assertGreaterThanOrEqual( $requested_at, JP4WC_Security_Feed::recheck_requested_at() );
+	}
+
+	/**
+	 * A re-check requests the site again instead of using the kept results,
+	 * which the automatic rescan uses for 12 hours (#258 G1-5, #259).
+	 */
+	public function test_recheck_requests_the_site_again() {
+		$this->sync_successfully();
+		$kept = $this->probe_results_left();
+		$this->assertNotSame( array(), $kept );
+		foreach ( $kept as $key ) {
+			$result           = get_option( JP4WC_Security_Probe::option_name( $key ) );
+			$result['status'] = 'pass';
+			update_option( JP4WC_Security_Probe::option_name( $key ), $result, false );
+		}
+		$statuses = static function () use ( $kept ) {
+			return array_map(
+				static function ( $key ) {
+					return get_option( JP4WC_Security_Probe::option_name( $key ) )['status'];
+				},
+				$kept
+			);
+		};
+
+		JP4WC_Security_Feed::rescan();
+		$this->assertSame( array_fill( 0, count( $kept ), 'pass' ), $statuses(), 'The automatic rescan uses the kept results.' );
+
+		do_action( JP4WC_Security_Feed::RECHECK_HOOK );
+
+		$this->assertSame( array_fill( 0, count( $kept ), 'unknown' ), $statuses(), 'Requested again: the site cannot reach itself in this test.' );
+		$this->assertSame( array(), $this->requested_files(), 'With stored data, the feed is not downloaded.' );
+		$this->assertGreaterThanOrEqual( time() - 60, JP4WC_Security_Feed::get_checks()['checked_at'] );
+	}
+
+	/**
+	 * Without stored vulnerability data, a re-check downloads the feed first (#259).
+	 */
+	public function test_recheck_without_data_downloads_the_feed() {
+		JP4WC_Security_Feed::recheck();
+
+		$this->assertContains( 'manifest.json', $this->requested_files() );
+		$this->assertNotNull( JP4WC_Security_Feed::get_findings() );
+		$this->assertNotNull( JP4WC_Security_Feed::get_checks() );
 	}
 
 	/**

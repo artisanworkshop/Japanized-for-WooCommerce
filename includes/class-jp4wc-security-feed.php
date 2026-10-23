@@ -59,6 +59,20 @@ class JP4WC_Security_Feed {
 	const RESCAN_HOOK = 'jp4wc_security_rescan';
 
 	/**
+	 * Single WP-Cron event of a re-check asked for on the Security tab.
+	 *
+	 * Not RESCAN_HOOK: WordPress drops an event identical to one scheduled
+	 * within ten minutes, so a re-check would be lost to an automatic rescan
+	 * that does not request the site again.
+	 */
+	const RECHECK_HOOK = 'jp4wc_security_recheck';
+
+	/**
+	 * Option with the time of the last re-check asked for (not autoloaded).
+	 */
+	const RECHECK_OPTION = 'jp4wc_security_recheck_requested_at';
+
+	/**
 	 * Feed location; the `jp4wc_security_feed_base_url` filter changes it.
 	 */
 	const DEFAULT_BASE_URL = 'https://wc.artws.info/feed/v1/';
@@ -105,6 +119,7 @@ class JP4WC_Security_Feed {
 	public static function init() {
 		add_action( self::SYNC_HOOK, array( __CLASS__, 'sync' ) );
 		add_action( self::RESCAN_HOOK, array( __CLASS__, 'rescan' ) );
+		add_action( self::RECHECK_HOOK, array( __CLASS__, 'recheck' ) );
 		// Every request, not only admin ones: deactivation clears the events, and a
 		// site reactivated with WP-CLI may not see an admin request for a long time.
 		add_action( 'init', array( __CLASS__, 'ensure_schedule' ) );
@@ -221,8 +236,10 @@ class JP4WC_Security_Feed {
 	public static function purge() {
 		wp_clear_scheduled_hook( self::SYNC_HOOK );
 		wp_clear_scheduled_hook( self::RESCAN_HOOK );
+		wp_clear_scheduled_hook( self::RECHECK_HOOK );
 		delete_option( self::STATE_OPTION );
 		delete_option( self::FINDINGS_OPTION );
+		delete_option( self::RECHECK_OPTION );
 		JP4WC_Security_Checks::delete_probe_results();
 
 		$directory = self::directory_path();
@@ -290,6 +307,60 @@ class JP4WC_Security_Feed {
 			return;
 		}
 		wp_schedule_single_event( time(), self::RESCAN_HOOK );
+	}
+
+	/**
+	 * Asks for a re-check, which runs in a WP-Cron event of its own (the Security tab).
+	 *
+	 * The checks scan the uploads directory and request the site itself, so
+	 * they do not run in the admin request. WP-Cron is started at once, and
+	 * the tab waits for the findings to show a newer check. Where WP-Cron is
+	 * disabled or alternative, the event waits for its next run: the
+	 * alternative WP-Cron would redirect this request.
+	 *
+	 * @return int Time the re-check was asked for.
+	 */
+	public static function request_recheck() {
+		$requested_at = time();
+		update_option( self::RECHECK_OPTION, $requested_at, false );
+		if ( ! wp_next_scheduled( self::RECHECK_HOOK ) ) {
+			wp_schedule_single_event( $requested_at, self::RECHECK_HOOK );
+		}
+		if ( ! ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ) && ! ( defined( 'ALTERNATE_WP_CRON' ) && ALTERNATE_WP_CRON ) ) {
+			spawn_cron();
+		}
+		return $requested_at;
+	}
+
+	/**
+	 * Returns when the last re-check was asked for.
+	 *
+	 * @return int Unix time, or 0.
+	 */
+	public static function recheck_requested_at() {
+		return (int) get_option( self::RECHECK_OPTION, 0 );
+	}
+
+	/**
+	 * Runs a re-check asked for on the Security tab (WP-Cron).
+	 *
+	 * The kept results of the requests to the site are removed first, so that
+	 * they are requested again rather than used for up to 12 hours. Without
+	 * any stored vulnerability data, the feed is downloaded first: the sync
+	 * then matches and checks.
+	 */
+	public static function recheck() {
+		if ( ! self::is_enabled() ) {
+			return;
+		}
+		JP4WC_Security_Checks::delete_probe_results();
+
+		$state = self::get_state();
+		if ( ! is_array( $state['files'] ) || array() === $state['files'] ) {
+			self::sync();
+			return;
+		}
+		self::rescan();
 	}
 
 	/**

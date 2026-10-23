@@ -122,6 +122,7 @@ function jp4wc_on_deactivation() {
 	// After activation, JP4WC_Security_Feed::ensure_schedule() schedules the sync again on the next request.
 	wp_clear_scheduled_hook( 'jp4wc_security_feed_sync' );
 	wp_clear_scheduled_hook( 'jp4wc_security_rescan' );
+	wp_clear_scheduled_hook( 'jp4wc_security_recheck' );
 }
 
 /**
