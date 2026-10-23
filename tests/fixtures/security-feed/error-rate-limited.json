@@ -1,0 +1,9 @@
+{
+    "schema_version": 1,
+    "code": "artws_sec_rate_limited",
+    "message": "This site can run the check once an hour. Try again after 2026-10-20T04:15:00Z.",
+    "data": {
+        "status": 429,
+        "retry_at": "2026-10-20T04:15:00Z"
+    }
+}

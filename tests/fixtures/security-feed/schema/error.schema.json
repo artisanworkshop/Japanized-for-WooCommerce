@@ -1,0 +1,72 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://wc.artws.info/schema/security/v1/error.schema.json",
+    "title": "Error response of artws-sec/v1",
+    "description": "The WordPress REST API error shape plus schema_version, as artws-security-hub writes it. The client decides by the HTTP status, and uses code only where one status has several meanings. WordPress itself may answer some requests (an unknown route, a body that is not JSON) in its own shape without schema_version, so the client handles any 4xx or 5xx by its status.",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "code",
+        "message",
+        "data"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "code": {
+            "description": "One of the codes listed in the README (artws_sec_rate_limited, ...).",
+            "type": "string",
+            "pattern": "^artws_sec_[a-z_]+$"
+        },
+        "message": {
+            "description": "English plain text for logs and support, not for the store owner: the client shows its own text for the status.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+        },
+        "data": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "status": {
+                    "description": "The HTTP status of the response.",
+                    "type": "integer",
+                    "minimum": 400,
+                    "maximum": 599
+                },
+                "retry_at": {
+                    "description": "429 only: the earliest time the site may run the check again (the Retry-After header carries the same time in seconds).",
+                    "$ref": "common.schema.json#/$defs/timestamp"
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "status": {
+                                "const": 429
+                            }
+                        }
+                    },
+                    "then": {
+                        "required": [
+                            "retry_at"
+                        ]
+                    },
+                    "else": {
+                        "not": {
+                            "required": [
+                                "retry_at"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

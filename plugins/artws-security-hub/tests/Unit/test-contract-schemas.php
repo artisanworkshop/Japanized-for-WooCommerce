@@ -58,7 +58,9 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 			'theme feed'   => array( 'vuln-themes.json', 'vuln-file' ),
 			'core feed'    => array( 'vuln-core.json', 'vuln-file' ),
 			'scan request' => array( 'scan-request.json', 'scan-request' ),
+			'response'     => array( 'scan-response.json', 'scan-response' ),
 			'report'       => array( 'report.json', 'report' ),
+			'error'        => array( 'error-rate-limited.json', 'error' ),
 		);
 	}
 
@@ -110,6 +112,11 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 			'locale with a variant'                  => array(
 				static function ( $d ) {
 					$d->locale = 'de_DE_formal';
+				},
+			),
+			'registering again'                      => array(
+				static function ( $d ) {
+					$d->reregister = true;
 				},
 			),
 		);
@@ -521,6 +528,85 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 				'scan-request',
 				static function ( $d ) {
 					$d->software = array_fill( 0, 1001, $d->software[0] );
+				},
+			),
+			'request: reregister as a string'              => array(
+				'scan-request.json',
+				'scan-request',
+				static function ( $d ) {
+					$d->reregister = 'yes';
+				},
+			),
+			// Scan response.
+			'response: without the report'                 => array(
+				'scan-response.json',
+				'scan-response',
+				static function ( $d ) {
+					unset( $d->report );
+				},
+			),
+			'response: site token without the prefix'      => array(
+				'scan-response.json',
+				'scan-response',
+				static function ( $d ) {
+					$d->site_token = substr( $d->site_token, 4 );
+				},
+			),
+			'response: short site token'                   => array(
+				'scan-response.json',
+				'scan-response',
+				static function ( $d ) {
+					$d->site_token = 'sit_' . str_repeat( 'a', 42 );
+				},
+			),
+			'response: site token with a trailing newline' => array(
+				'scan-response.json',
+				'scan-response',
+				static function ( $d ) {
+					$d->site_token .= "\n";
+				},
+			),
+			'response: invalid report'                     => array(
+				'scan-response.json',
+				'scan-response',
+				static function ( $d ) {
+					$d->report->score->total = 101;
+				},
+			),
+			'response: unknown top-level key'              => array(
+				'scan-response.json',
+				'scan-response',
+				static function ( $d ) {
+					$d->scan_token = $d->report->token;
+				},
+			),
+			// Error.
+			'error: 429 without retry_at'                  => array(
+				'error-rate-limited.json',
+				'error',
+				static function ( $d ) {
+					unset( $d->data->retry_at );
+				},
+			),
+			'error: retry_at on another status'            => array(
+				'error-rate-limited.json',
+				'error',
+				static function ( $d ) {
+					$d->data->status = 401;
+				},
+			),
+			'error: code of another plugin'                => array(
+				'error-rate-limited.json',
+				'error',
+				static function ( $d ) {
+					$d->code = 'rest_forbidden';
+				},
+			),
+			'error: success status'                        => array(
+				'error-rate-limited.json',
+				'error',
+				static function ( $d ) {
+					$d->data = (object) array( 'status' => 200 );
 				},
 			),
 			// Report.

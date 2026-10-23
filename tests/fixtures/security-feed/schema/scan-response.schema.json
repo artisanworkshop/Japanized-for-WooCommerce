@@ -1,0 +1,25 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://wc.artws.info/schema/security/v1/scan-response.schema.json",
+    "title": "Free security check response (200 of POST /scan and GET /scan/{token})",
+    "description": "Wraps the report so that the site token never becomes part of it: a client may keep and show the report, but must keep the token secret.",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "report"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "site_token": {
+            "description": "Secret token of the site, only in the response of the POST /scan that registered or re-registered the site. The client keeps it, sends it as Authorization: Bearer, and never shows or logs it. The server keeps only its SHA-256 hash.",
+            "type": "string",
+            "pattern": "^sit_[A-Za-z0-9_-]{43,128}$"
+        },
+        "report": {
+            "$ref": "report.schema.json"
+        }
+    }
+}

@@ -7,7 +7,9 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 | フィードの manifest（`GET /feed/v1/manifest.json`） | `schema/manifest.schema.json` | `manifest.json` |
 | 脆弱性ファイル（`GET /feed/v1/vuln-{plugins,themes,core}.json.gz` を展開したもの） | `schema/vuln-file.schema.json` | `vuln-*.json`（`vuln-*.json.gz` はそのまま配信される形） |
 | 無料診断の送信データ（`POST /wp-json/artws-sec/v1/scan` の本文） | `schema/scan-request.schema.json` | `scan-request.json` |
-| レポート（`POST /scan` の 200 応答と `GET /scan/{token}`） | `schema/report.schema.json` | `report.json` |
+| 診断の応答（`POST /scan` と `GET /scan/{token}` の 200。レポートと、登録時だけ `site_token`） | `schema/scan-response.schema.json` | `scan-response.json` |
+| レポート（診断の応答の `report`） | `schema/report.schema.json` | `report.json` |
+| `artws-sec/v1` のエラー応答 | `schema/error.schema.json` | `error-rate-limited.json` |
 
 共通の定義は `schema/common.schema.json`。Schema は JSON Schema draft 2020-12 で、`$id` の `https://wc.artws.info/schema/security/v1/` は識別子（配信はしない）。サンプルの slug・UUID・トークンは架空の値。
 
@@ -55,11 +57,42 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 - `software[].version` は各プラグイン・テーマの Version ヘッダーの値をそのまま送る。64 文字（コードポイント数。PHP では `mb_strlen( $v, 'UTF-8' )`）を超えるもの、または制御文字（U+0000〜U+001F、U+007F〜U+009F）を含むものは空文字で送り、サーバーはそのソフトウェアを照合しない。
 - `wp_ver`・`wc_ver`・`php_ver`・`jp4wc_ver` は空にできない（Schema が拒否する）。WordPress・WooCommerce・PHP・JP4WC 自身の版で、上の条件に当たる値は無い前提で、空文字で送る規則は適用しない。
 - `consent_version` はサーバーが知っている版だけを受け付ける。
+- `reregister` はトークンを失ったサイトが登録し直す時だけ `true` で付ける（下記「REST」）。
 
 ### レポート
 - 文字列はすべてプレーンテキスト。クライアントはエスケープして表示し、HTML として解釈しない。URL（`reference`）は https のみ。
 - `findings` は優先順に並んでおり、クライアントはその順に表示する。`score.total` は4要件のスコアの最小値。
-- エラー応答（レート制限の 429 など）の形式は S2（#263）で定める。
+- スコアは JP4WC のセキュリティタブと同じ計算（各要件 100 点から、失敗したチェックごとに重大度で critical 25 / high 15 / medium 8 / low 3 点を引く。V-01 は脆弱性の件数によらず1チェックとして、見つかった中で最も重い重大度で1回引く）。ただし V-01（既知の脆弱性）と V-03（サポート終了）はサーバーが自分で判定し、送信データの `local_findings` のその2つは使わない。
+- V-01 は脆弱性レコード1件につき1件の finding で、`reference` はそのレコードのページ。
+- 文言は `locale` が `ja` で始まれば日本語、それ以外は英語。
+
+### REST（`artws-sec/v1`、S2）
+- HTTPS のみ（http の要求は 403）。応答はすべて `Cache-Control: no-store`。
+- 認証はサイトごとのトークン（`site_token`）。サーバーが発行し、自分は SHA-256 のハッシュだけを持つ。クライアントは `Authorization: Bearer <site_token>` で送り、画面・ログ・自分の REST 応答に出さない。
+- サイトは `site_url` で見分ける。スキームの違い（http / https）、ホストの大文字小文字、末尾の `/` は同じサイトとみなす。
+- `POST /scan`:
+  - 初回（`site_url` が未登録で `Authorization` なし）はサイトを登録し、応答に `site_token` を入れる。`site_token` が応答に入るのは登録した時と再登録した時だけ。
+  - 2回目以降は `Authorization` が必須。登録済みの `site_url` にトークンなし・不一致で来たら 401。未登録の `site_url` にトークン付きで来た場合（サイトの移転、ステージングへの複製）も 401。
+  - 401 を受けたクライアントは、利用者の操作で `reregister: true` を付けて送り直せる。再登録はその `site_url` の過去の診断データをすべて削除してから新しい `site_token` を発行する（旧トークンは使えなくなる）。
+  - 知らないキーは 400 にせず捨てる（保存もしない）。Schema に合わない値・未知の `consent_version` は 400。本文が 1 MB を超えたら 413。
+  - レート制限: 1サイト（`site_url`）1時間1回、送信元 IP（IPv6 は /64）1時間20回。初回登録と再登録も数える。400・401・403・413・503 になった要求は数えない。超過したら 429 で、`data.retry_at` と `Retry-After` ヘッダーに次に実行できる時刻を入れる。
+  - サーバーがまだ脆弱性データを持っていないときは 503（何も登録しない）。
+- `GET /scan/{token}`: `Authorization` が必須。トークンの形式が違う・診断が無い（期限切れ・削除済みを含む）なら 404、診断はあるがトークンが一致しないなら 401。
+- `DELETE /site`: `Authorization` のトークンのサイトと、その診断をすべて削除して 204（本文なし）。未知のトークンは 401（削除済みの場合を含むので、クライアントは 401 を「削除済み」として扱ってよい）。
+- 診断は 180 日保存し、それより古いものは毎日削除する。180 日診断の無いサイトはトークンごと削除する（その後の診断は 401 になり、再登録が要る）。
+- エラーの本文は `{schema_version, code, message, data: {status, retry_at?}}`（`schema/error.schema.json`）。`message` は英語のログ用で、クライアントは画面に出さず、ステータスに応じた自分の文言を出す。WordPress 自身が返すエラー（存在しない経路、JSON でない本文など）はこの形でないので、クライアントはステータスで判断する。`code`:
+
+| ステータス | `code` | 意味 |
+|---|---|---|
+| 400 | `artws_sec_invalid_request` | 本文が Schema に合わない |
+| 400 | `artws_sec_unknown_consent_version` | サーバーが知らない `consent_version` |
+| 401 | `artws_sec_unauthorized` | トークンが無い・合わない |
+| 403 | `artws_sec_https_required` | http で送った |
+| 404 | `artws_sec_scan_not_found` | 診断が無い |
+| 413 | `artws_sec_request_too_large` | 本文が大きすぎる |
+| 429 | `artws_sec_rate_limited` | レート制限 |
+| 500 | `artws_sec_server_error` | 保存に失敗した |
+| 503 | `artws_sec_unavailable` | 脆弱性データの準備ができていない |
 
 ## 形式を変えるとき
 - Schema とサンプルを同じ PR で変え、本体（`composer test-local`）とサーバー（`plugins/artws-security-hub` の `composer test`）の両方のテストを通す。このディレクトリを変える PR では、両方の CI（`testing.yml` と `artws-security-hub.yml`）が走る。
