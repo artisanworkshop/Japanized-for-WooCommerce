@@ -382,7 +382,7 @@ class Artws_Sec_Feed_Updater {
 
 			self::check_result( $result, self::fresh_state() );
 
-			$version      = gmdate( 'Ymd.His', $now );
+			$version      = self::new_version( $now, $previous );
 			$generated_at = gmdate( 'Y-m-d\TH:i:s\Z', $now );
 			$files        = Artws_Sec_Feed_Publisher::write_vulnerability_files( $result['vulnerabilities'], $result['copyrights'], self::ATTRIBUTION, $generated_at );
 
@@ -439,6 +439,29 @@ class Artws_Sec_Feed_Updater {
 	}
 
 	/**
+	 * Returns the version of a new feed: the time of the run (Ymd.His, UTC).
+	 *
+	 * A run in the same second as the published or indexed version (a clock
+	 * set back) gets a suffix, so that a version always names one generation:
+	 * the index of the active version is then never rewritten in place.
+	 *
+	 * @param int        $now      Unix time of the run.
+	 * @param array|null $previous Published state.
+	 * @return string
+	 */
+	private static function new_version( $now, $previous ) {
+		$time    = gmdate( 'Ymd.His', $now );
+		$version = $time;
+		$taken   = null === $previous ? array() : array( $previous['version'], $previous['index_version'] );
+		$suffix  = 1;
+		while ( in_array( $version, $taken, true ) ) {
+			++$suffix;
+			$version = $time . '.' . $suffix;
+		}
+		return $version;
+	}
+
+	/**
 	 * Writes the vulnerability index of a published version and makes it the one scans use.
 	 *
 	 * The feed is already published: a failure here leaves the scans on the
@@ -451,13 +474,6 @@ class Artws_Sec_Feed_Updater {
 	 * @return string Why the index was not updated, or ''.
 	 */
 	private static function update_index( array $vulnerabilities, $version ) {
-		$active = self::fresh_state();
-		if ( null !== $active && $version === $active['index_version'] ) {
-			// A run in the same second as the one that wrote the active generation (a clock set back):
-			// that generation is never rewritten in place, since a failure would leave scans without one.
-			return '';
-		}
-
 		try {
 			Artws_Sec_Vuln_Index::write( $vulnerabilities, $version );
 		} catch ( Artws_Sec_Feed_Exception $e ) {

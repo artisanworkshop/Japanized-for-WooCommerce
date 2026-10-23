@@ -7,6 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain-text messages; the REST API answers 500 without them.
+
 /**
  * Artws_Sec_Site_Store
  *
@@ -128,6 +130,7 @@ class Artws_Sec_Site_Store {
 	 *
 	 * @param string $site_key Key from site_key().
 	 * @return object|null Row of the sites table.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
 	 */
 	public static function find_site_by_key( $site_key ) {
 		global $wpdb;
@@ -135,6 +138,7 @@ class Artws_Sec_Site_Store {
 		$table = Artws_Sec_Db::sites_table();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE site_key = %s", $site_key ) );
+		self::check_read();
 		return is_object( $row ) ? $row : null;
 	}
 
@@ -143,6 +147,7 @@ class Artws_Sec_Site_Store {
 	 *
 	 * @param string $token Site token.
 	 * @return object|null Row of the sites table.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
 	 */
 	public static function find_site_by_token( $token ) {
 		global $wpdb;
@@ -153,6 +158,7 @@ class Artws_Sec_Site_Store {
 		$table = Artws_Sec_Db::sites_table();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE token_hash = %s", self::hash_token( $token ) ) );
+		self::check_read();
 		return is_object( $row ) && self::token_matches( $row, $token ) ? $row : null;
 	}
 
@@ -302,6 +308,7 @@ class Artws_Sec_Site_Store {
 	 *
 	 * @param string $scan_token Scan token.
 	 * @return object|null Row of the scans table.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
 	 */
 	public static function find_scan( $scan_token ) {
 		global $wpdb;
@@ -312,6 +319,7 @@ class Artws_Sec_Site_Store {
 		$table = Artws_Sec_Db::scans_table();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE scan_key = %s", self::hash_token( $scan_token ) ) );
+		self::check_read();
 		return is_object( $row ) ? $row : null;
 	}
 
@@ -320,6 +328,7 @@ class Artws_Sec_Site_Store {
 	 *
 	 * @param int $site_id Site ID.
 	 * @return object|null Row of the sites table.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
 	 */
 	public static function find_site( $site_id ) {
 		global $wpdb;
@@ -327,6 +336,7 @@ class Artws_Sec_Site_Store {
 		$table = Artws_Sec_Db::sites_table();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $site_id ) );
+		self::check_read();
 		return is_object( $row ) ? $row : null;
 	}
 
@@ -339,12 +349,19 @@ class Artws_Sec_Site_Store {
 	public static function delete_site( $site_id ) {
 		global $wpdb;
 
-		// The site first: from then on save_scan() saves nothing for it, so no scan is left behind.
+		// The scans, then the site (with its token, so that a failure until then can be retried), then the
+		// scans again: one saved in between (save_scan() checks the site as it inserts) goes too.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom tables.
-		$sites = $wpdb->delete( Artws_Sec_Db::sites_table(), array( 'id' => (int) $site_id ), array( '%d' ) );
-		$scans = $wpdb->delete( Artws_Sec_Db::scans_table(), array( 'site_id' => (int) $site_id ), array( '%d' ) );
+		if ( false === $wpdb->delete( Artws_Sec_Db::scans_table(), array( 'site_id' => (int) $site_id ), array( '%d' ) ) ) {
+			return false;
+		}
+		if ( false === $wpdb->delete( Artws_Sec_Db::sites_table(), array( 'id' => (int) $site_id ), array( '%d' ) ) ) {
+			return false;
+		}
+		// Left to the daily cleanup if it fails.
+		$wpdb->delete( Artws_Sec_Db::scans_table(), array( 'site_id' => (int) $site_id ), array( '%d' ) );
 		// phpcs:enable
-		return false !== $scans && false !== $sites;
+		return true;
 	}
 
 	/**
@@ -369,6 +386,19 @@ class Artws_Sec_Site_Store {
 		// phpcs:enable
 
 		Artws_Sec_Rate_Limiter::cleanup( $now, Artws_Sec_Rest_Controller::window() );
+	}
+
+	/**
+	 * Throws when the last query failed, so that a failed read is not taken for "no such row".
+	 *
+	 * @throws Artws_Sec_Feed_Exception When the last query failed.
+	 */
+	private static function check_read() {
+		global $wpdb;
+
+		if ( '' !== $wpdb->last_error ) {
+			throw new Artws_Sec_Feed_Exception( 'The stored scans could not be read.' );
+		}
 	}
 
 	/**

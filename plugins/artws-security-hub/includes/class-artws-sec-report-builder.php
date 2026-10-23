@@ -222,8 +222,8 @@ class Artws_Sec_Report_Builder {
 		if ( $state['index_version'] === $state['version'] ) {
 			return false;
 		}
-		// The version is the time of the run that wrote the index (Artws_Sec_Feed_Updater: Ymd.His, UTC).
-		$written = DateTimeImmutable::createFromFormat( '!Ymd.His', (string) $state['index_version'], new DateTimeZone( 'UTC' ) );
+		// The version starts with the time of the run that wrote the index (Artws_Sec_Feed_Updater: Ymd.His, UTC).
+		$written = DateTimeImmutable::createFromFormat( '!Ymd.His', substr( (string) $state['index_version'], 0, 15 ), new DateTimeZone( 'UTC' ) );
 		return false === $written || $now - $written->getTimestamp() > Artws_Sec_Feed_Updater::stale_after();
 	}
 

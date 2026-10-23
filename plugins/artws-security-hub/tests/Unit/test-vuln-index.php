@@ -122,15 +122,16 @@ class Artws_Sec_Vuln_Index_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * A run with the version of the active index (a clock set back) never rewrites that generation.
+	 * A run in the same second as the published version gets a version of its own, so the active index is never rewritten.
 	 */
-	public function test_same_version_keeps_the_active_index() {
+	public function test_same_second_run_gets_its_own_version() {
 		global $wpdb;
 		$this->mock_wordfence( self::fixture_feed() );
 		Artws_Sec_Feed_Updater::update( self::NOW );
-		$active = Artws_Sec_Feed_Updater::get_state()['index_version'];
-		$key    = Artws_Sec_Vuln_Index::lookup_key( 'core', 'wordpress' ); // phpcs:ignore WordPress.WP.CapitalPDangit.MisspelledInText -- The core slug.
+		$first = Artws_Sec_Feed_Updater::get_state()['index_version'];
+		$key   = Artws_Sec_Vuln_Index::lookup_key( 'core', 'wordpress' ); // phpcs:ignore WordPress.WP.CapitalPDangit.MisspelledInText -- The core slug.
 
+		// The index of the second run cannot be written: the first stays in use, untouched.
 		$table = Artws_Sec_Db::vulns_table();
 		add_filter(
 			'query',
@@ -144,9 +145,20 @@ class Artws_Sec_Vuln_Index_Test extends Artws_Sec_Scan_Test_Case {
 		} finally {
 			$wpdb->suppress_errors( $suppress );
 		}
+		$state = Artws_Sec_Feed_Updater::get_state();
+		$this->assertSame( gmdate( 'Ymd.His', self::NOW ) . '.2', $state['version'] );
+		$this->assertSame( $first, $state['index_version'] );
+		$this->assertArrayHasKey( $key, Artws_Sec_Vuln_Index::find( $first, array( $key ) ) );
 
-		$this->assertSame( $active, Artws_Sec_Feed_Updater::get_state()['index_version'] );
-		$this->assertArrayHasKey( $key, Artws_Sec_Vuln_Index::find( $active, array( $key ) ) );
+		// A third run in the same second publishes and indexes a version of its own.
+		remove_all_filters( 'query' );
+		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW ) );
+		$state = Artws_Sec_Feed_Updater::get_state();
+		$this->assertSame( gmdate( 'Ymd.His', self::NOW ) . '.3', $state['version'] );
+		$this->assertSame( $state['version'], $state['index_version'] );
+		$this->assertSame( $state['version'], self::read_manifest()->version );
+		$this->assertSame( array( $first, $state['version'] ), self::index_versions() );
+		$this->assertFalse( Artws_Sec_Report_Builder::is_stale( $state, self::NOW ) );
 	}
 
 	/**

@@ -600,6 +600,51 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * Stored data that cannot be read is 500, neither "not found" nor "unauthorized" (which would prompt a re-registration).
+	 */
+	public function test_read_failure_is_a_server_error() {
+		global $wpdb;
+		list( $token, $scan ) = $this->register_site();
+		self::reset_rate_limits();
+
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			self::break_queries( 'SELECT * FROM ' . Artws_Sec_Db::sites_table() );
+			$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $token ), 500, 'artws_sec_server_error' );
+			$this->assert_error( self::send( 'GET', '/scan/' . $scan, null, $token ), 500, 'artws_sec_server_error' );
+			$this->assert_error( self::send( 'DELETE', '/site', null, $token ), 500, 'artws_sec_server_error' );
+			remove_all_filters( 'query' );
+
+			self::break_queries( 'SELECT * FROM ' . Artws_Sec_Db::scans_table() );
+			$this->assert_error( self::send( 'GET', '/scan/' . $scan, null, $token ), 500, 'artws_sec_server_error' );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::scans_table() ) );
+	}
+
+	/**
+	 * When the scans cannot be deleted, the site and its token stay, so DELETE /site can be sent again.
+	 */
+	public function test_failed_delete_can_be_retried() {
+		global $wpdb;
+		list( $token, ) = $this->register_site();
+
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			self::break_queries( 'DELETE FROM `' . Artws_Sec_Db::scans_table() . '`' );
+			$this->assert_error( self::send( 'DELETE', '/site', null, $token ), 500, 'artws_sec_server_error' );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+
+		remove_all_filters( 'query' );
+		$this->assertSame( 204, self::send( 'DELETE', '/site', null, $token )->get_status() );
+		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::scans_table() ) );
+	}
+
+	/**
 	 * A registration whose scan cannot be saved is undone, so the site can register again.
 	 */
 	public function test_failed_save_undoes_the_registration() {

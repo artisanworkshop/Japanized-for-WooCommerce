@@ -92,6 +92,22 @@ class Artws_Sec_Rest_Controller {
 	 * @return WP_REST_Response
 	 */
 	public static function create_scan( WP_REST_Request $request ) {
+		try {
+			return self::scan( $request );
+		} catch ( Artws_Sec_Feed_Exception $e ) {
+			// The stored data could not be read: neither "not found" nor "unauthorized".
+			return self::server_error();
+		}
+	}
+
+	/**
+	 * Handles create_scan.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response
+	 * @throws Artws_Sec_Feed_Exception When the stored data cannot be read.
+	 */
+	private static function scan( WP_REST_Request $request ) {
 		$now = time();
 
 		if ( ! self::is_https() ) {
@@ -196,6 +212,22 @@ class Artws_Sec_Rest_Controller {
 	 * @return WP_REST_Response
 	 */
 	public static function get_scan( WP_REST_Request $request ) {
+		try {
+			return self::read_scan( $request );
+		} catch ( Artws_Sec_Feed_Exception $e ) {
+			// The stored data could not be read: neither "not found" nor "unauthorized".
+			return self::server_error();
+		}
+	}
+
+	/**
+	 * Handles get_scan.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response
+	 * @throws Artws_Sec_Feed_Exception When the stored data cannot be read.
+	 */
+	private static function read_scan( WP_REST_Request $request ) {
 		if ( ! self::is_https() ) {
 			return self::https_required();
 		}
@@ -230,6 +262,22 @@ class Artws_Sec_Rest_Controller {
 	 * @return WP_REST_Response
 	 */
 	public static function delete_site( WP_REST_Request $request ) {
+		try {
+			return self::delete_site_data( $request );
+		} catch ( Artws_Sec_Feed_Exception $e ) {
+			// The stored data could not be read: neither "not found" nor "unauthorized".
+			return self::server_error();
+		}
+	}
+
+	/**
+	 * Handles delete_site.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response
+	 * @throws Artws_Sec_Feed_Exception When the stored data cannot be read.
+	 */
+	private static function delete_site_data( WP_REST_Request $request ) {
 		if ( ! self::is_https() ) {
 			return self::https_required();
 		}
