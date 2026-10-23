@@ -139,10 +139,6 @@
             "description": "Version of the consent text the store owner agreed to (YYYY-MM).",
             "type": "string",
             "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
-        },
-        "reregister": {
-            "description": "true when the site lost its site_token and registers again: the server first deletes everything it holds for site_url, then issues a new site_token. Left out otherwise.",
-            "type": "boolean"
         }
     },
     "$defs": {

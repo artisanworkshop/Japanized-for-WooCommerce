@@ -50,53 +50,48 @@ class Artws_Sec_Scan_Request_Test extends Artws_Sec_Feed_Test_Case {
 	 */
 	public function valid_provider() {
 		return array(
-			'without the bands'               => array(
+			'without the bands'                => array(
 				static function ( &$d ) {
 					unset( $d['revenue_band'], $d['order_band'] );
 				},
 			),
-			'plugin without a Version header' => array(
+			'plugin without a Version header'  => array(
 				static function ( &$d ) {
 					$d['software'][2]['version'] = '';
 				},
 			),
-			'Version header with a space'     => array(
+			'Version header with a space'      => array(
 				static function ( &$d ) {
 					$d['software'][2]['version'] = '1.0 beta';
 				},
 			),
-			'PHP version with a suffix'       => array(
+			'PHP version with a suffix'        => array(
 				static function ( &$d ) {
 					$d['php_ver'] = '8.3.6-1+ubuntu24.04.1+deb.sury.org+1';
 				},
 			),
-			'locale with a variant'           => array(
+			'locale with a variant'            => array(
 				static function ( &$d ) {
 					$d['locale'] = 'de_DE_formal';
 				},
 			),
-			'no software and no findings'     => array(
+			'no software and no findings'      => array(
 				static function ( &$d ) {
 					$d['software']       = array();
 					$d['local_findings'] = array();
 				},
 			),
-			'registering again'               => array(
+			'reregister of 0.3.0, now unknown' => array(
 				static function ( &$d ) {
-					$d['reregister'] = true;
+					$d['reregister'] = 'yes';
 				},
 			),
-			'reregister false'                => array(
-				static function ( &$d ) {
-					$d['reregister'] = false;
-				},
-			),
-			'1000 software items'             => array(
+			'1000 software items'              => array(
 				static function ( &$d ) {
 					$d['software'] = array_fill( 0, 1000, $d['software'][0] );
 				},
 			),
-			'64-character Japanese version'   => array(
+			'64-character Japanese version'    => array(
 				static function ( &$d ) {
 					$d['software'][0]['version'] = str_repeat( 'あ', 64 );
 				},
@@ -314,12 +309,6 @@ class Artws_Sec_Scan_Request_Test extends Artws_Sec_Feed_Test_Case {
 				},
 				'consent_version',
 			),
-			'reregister as a string'              => array(
-				static function ( &$d ) {
-					$d['reregister'] = 'yes';
-				},
-				'reregister',
-			),
 		);
 	}
 
@@ -363,15 +352,5 @@ class Artws_Sec_Scan_Request_Test extends Artws_Sec_Feed_Test_Case {
 			}
 		);
 		$this->assertIsArray( Artws_Sec_Scan_Request::normalize( $data ) );
-	}
-
-	/**
-	 * Only reregister true asks to register again.
-	 */
-	public function test_wants_reregister() {
-		$this->assertFalse( Artws_Sec_Scan_Request::wants_reregister( self::sample() ) );
-		$this->assertFalse( Artws_Sec_Scan_Request::wants_reregister( array( 'reregister' => false ) ) );
-		$this->assertFalse( Artws_Sec_Scan_Request::wants_reregister( array( 'reregister' => 1 ) ) );
-		$this->assertTrue( Artws_Sec_Scan_Request::wants_reregister( array( 'reregister' => true ) ) );
 	}
 }

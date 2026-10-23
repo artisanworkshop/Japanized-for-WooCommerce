@@ -83,10 +83,9 @@ class Artws_Sec_Rest_Controller {
 	 *
 	 * Nothing is registered and no rate limit is used up until the request is
 	 * valid, authenticated and its report built, so that a refused request
-	 * costs the site nothing. A re-registration needs no token (the contract
-	 * lets a site that lost its token ask for one), so anyone who knows a
-	 * site's URL can re-register it: that uses up its hourly scan and deletes
-	 * its scans, but never hands out a report it made before.
+	 * costs the site nothing. A request without a token is a new registration
+	 * even when its site_url is registered already: knowing a site's URL lets
+	 * nobody delete its scans, replace its token or use up its hourly scan.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return WP_REST_Response
@@ -117,22 +116,25 @@ class Artws_Sec_Rest_Controller {
 			return self::error( 'artws_sec_request_too_large', 'The request body is too large.', 413 );
 		}
 		// Only the JSON body: the query string is not part of the contract.
-		$data       = $request->get_json_params();
-		$normalized = Artws_Sec_Scan_Request::normalize( $data );
+		$normalized = Artws_Sec_Scan_Request::normalize( $request->get_json_params() );
 		if ( is_wp_error( $normalized ) ) {
 			return self::error( $normalized->get_error_code(), $normalized->get_error_message(), 400 );
 		}
 
-		$token      = self::bearer_token( $request );
-		$site_key   = Artws_Sec_Site_Store::site_key( $normalized['site_url'] );
-		$site       = Artws_Sec_Site_Store::find_site_by_key( $site_key );
-		$reregister = Artws_Sec_Scan_Request::wants_reregister( $data );
-		if ( ! $reregister ) {
-			// A token for a site that is not registered: it moved, or the token came with a copy of the site.
-			$authorized = null === $site ? null === $token : Artws_Sec_Site_Store::token_matches( $site, $token );
-			if ( ! $authorized ) {
+		$token = self::bearer_token( $request );
+		if ( null === $token ) {
+			// A new registration, with the token it will get: its first scan counts against that token.
+			$site       = null;
+			$site_token = Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SITE_TOKEN_PREFIX );
+			$token_hash = Artws_Sec_Site_Store::hash_token( $site_token );
+		} else {
+			// A token issued to another site_url is refused too: the site moved, or the token came with a copy of it.
+			$site = Artws_Sec_Site_Store::find_site_by_token( $token );
+			if ( null === $site || Artws_Sec_Site_Store::site_key( $normalized['site_url'] ) !== $site->site_key ) {
 				return self::unauthorized();
 			}
+			$site_token = null;
+			$token_hash = (string) $site->token_hash;
 		}
 
 		// After authentication, so that a request without a valid token is 401 whatever the data.
@@ -143,7 +145,7 @@ class Artws_Sec_Rest_Controller {
 
 		// A request over the limit is refused before the work of matching it; the hit is taken after.
 		// A limit that cannot be checked refuses the request rather than letting it through.
-		$limits = self::limits( $site_key );
+		$limits = self::limits( $token_hash );
 		try {
 			$retry_at = Artws_Sec_Rate_Limiter::blocked_until( $limits, $now );
 		} catch ( Artws_Sec_Feed_Exception $e ) {
@@ -169,30 +171,19 @@ class Artws_Sec_Rest_Controller {
 			return self::rate_limited( $retry_at, $now );
 		}
 
-		$site_token = null;
 		if ( null === $site ) {
-			$registered = Artws_Sec_Site_Store::register( $normalized['site_url'], $now );
-			if ( null === $registered ) {
+			$site_id = Artws_Sec_Site_Store::register( $normalized['site_url'], $site_token, $now );
+			if ( null === $site_id ) {
 				return self::server_error();
 			}
-			list( $site_id, $site_token ) = $registered;
 		} else {
 			$site_id = (int) $site->id;
-			if ( $reregister ) {
-				$site_token = Artws_Sec_Site_Store::reregister( $site, $normalized['site_url'], $now );
-				if ( null === $site_token ) {
-					return self::server_error();
-				}
-			}
 		}
 
 		if ( ! Artws_Sec_Site_Store::save_scan( $site_id, $normalized['site_url'], $scan_token, $normalized, $report, $now ) ) {
-			// The new token cannot be handed out with an error, so the site is left as the client knows it:
-			// not registered, or (its scans already deleted) still on its previous token.
+			// The new token cannot be handed out with an error, so a new registration is taken back.
 			if ( null === $site ) {
 				Artws_Sec_Site_Store::delete_site( $site_id );
-			} elseif ( $reregister ) {
-				Artws_Sec_Site_Store::restore_token( $site );
 			}
 			return self::server_error();
 		}
@@ -282,7 +273,7 @@ class Artws_Sec_Rest_Controller {
 			return self::https_required();
 		}
 
-		// The rate limit rows stay, so that deleting and registering again does not reset the limit.
+		// The rate limit rows stay: deleting does not give the client address its scans back.
 		$site = Artws_Sec_Site_Store::find_site_by_token( self::bearer_token( $request ) );
 		if ( null === $site ) {
 			return self::unauthorized();
@@ -310,18 +301,18 @@ class Artws_Sec_Rest_Controller {
 	/**
 	 * Returns the rate limits of a scan of a site.
 	 *
-	 * @param string $site_key Site key.
+	 * @param string $token_hash Hash of the site token (of the new one for a registration).
 	 * @return array<int, array{key: string, max: int, window: int}>
 	 */
-	private static function limits( $site_key ) {
+	private static function limits( $token_hash ) {
 		$window = self::window();
 		return array(
 			array(
-				'key'    => Artws_Sec_Rate_Limiter::key( 'site', $site_key ),
+				'key'    => Artws_Sec_Rate_Limiter::key( 'site', $token_hash ),
 				/**
-				 * Filters how many scans a site may run per window.
+				 * Filters how many scans a registered site (one site token) may run per window.
 				 *
-				 * @param int $max Default 1.
+				 * @param int $max Default 1. The scan that registers the site is its first.
 				 */
 				'max'    => max( 1, (int) apply_filters( 'artws_sec_scans_per_site', self::SCANS_PER_SITE ) ),
 				'window' => $window,

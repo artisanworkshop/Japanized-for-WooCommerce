@@ -112,7 +112,7 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * A registered site needs its token for each route: none or a wrong one is 401.
+	 * A wrong token is 401 on each route, and GET and DELETE need one (POST without one registers).
 	 */
 	public function test_registered_site_needs_its_token() {
 		list( $token, $scan ) = $this->register_site();
@@ -120,7 +120,9 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 		self::reset_rate_limits();
 
 		foreach ( array( null, $wrong, 'not-a-token', substr( $token, 0, -1 ) ) as $bad ) {
-			$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $bad ), 401, 'artws_sec_unauthorized' );
+			if ( null !== $bad ) {
+				$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $bad ), 401, 'artws_sec_unauthorized' );
+			}
 			$this->assert_error( self::send( 'GET', '/scan/' . $scan, null, $bad ), 401, 'artws_sec_unauthorized' );
 			$this->assert_error( self::send( 'DELETE', '/site', null, $bad ), 401, 'artws_sec_unauthorized' );
 		}
@@ -128,6 +130,7 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 
 		// The refused requests used up nothing: the site can still scan this hour.
 		$this->assertSame( 200, self::send( 'POST', '/scan', self::sample_request(), $token )->get_status() );
+		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::sites_table() ) );
 		$this->assertSame( 2, self::count_rows( Artws_Sec_Db::scans_table() ) );
 	}
 
@@ -201,11 +204,11 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * DELETE /site removes the site and its scans; its reports are then 404 and its token 401.
+	 * DELETE /site removes the registration and its scans (its reports are then 404 and its token 401); another registration of the same site_url stays.
 	 */
 	public function test_delete_site() {
 		list( $token, $scan ) = $this->register_site();
-		list( $other, )       = $this->register_site( array( 'site_url' => 'https://other.example.jp' ) );
+		list( $other, )       = $this->register_site();
 
 		$response = self::send( 'DELETE', '/site', null, $token );
 
@@ -220,58 +223,85 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * Deleting a site keeps its rate limit, so that registering again does not reset it.
+	 * Deleting a site does not give the client address its scans back.
 	 */
 	public function test_delete_site_keeps_the_rate_limit() {
+		add_filter(
+			'artws_sec_scans_per_address',
+			static function () {
+				return 1;
+			}
+		);
 		list( $token, ) = $this->register_site();
 		$this->assertSame( 204, self::send( 'DELETE', '/site', null, $token )->get_status() );
 
 		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 429, 'artws_sec_rate_limited' );
+		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::sites_table() ) );
 	}
 
 	/**
-	 * Registering again deletes the site's scans and makes the old token useless.
+	 * A request without a token registers the same site_url again; the first registration keeps its token and scans.
 	 */
-	public function test_reregister() {
-		list( $old_token, $old_scan ) = $this->register_site();
-		self::reset_rate_limits();
+	public function test_registering_the_same_url_again() {
+		list( $first_token, $first_scan ) = $this->register_site();
 
-		$response = self::send( 'POST', '/scan', self::sample_request( array( 'reregister' => true ) ) );
+		$response = self::send( 'POST', '/scan', self::sample_request() );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assert_matches_schema( self::as_json( $response ), 'scan-response' );
-		$new_token = $response->get_data()['site_token'];
-		$new_scan  = $response->get_data()['report']['token'];
-		$this->assertNotSame( $old_token, $new_token );
-		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::sites_table() ) );
-		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::scans_table() ) );
+		$second_token = $response->get_data()['site_token'];
+		$second_scan  = $response->get_data()['report']['token'];
+		$this->assertNotSame( $first_token, $second_token );
+		$this->assertSame( 2, self::count_rows( Artws_Sec_Db::sites_table() ) );
+		$this->assertSame( 2, self::count_rows( Artws_Sec_Db::scans_table() ) );
 
-		$this->assert_error( self::send( 'GET', '/scan/' . $old_scan, null, $new_token ), 404, 'artws_sec_scan_not_found' );
-		$this->assert_error( self::send( 'GET', '/scan/' . $new_scan, null, $old_token ), 401, 'artws_sec_unauthorized' );
-		$this->assert_error( self::send( 'DELETE', '/site', null, $old_token ), 401, 'artws_sec_unauthorized' );
-		self::reset_rate_limits();
-		$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $old_token ), 401, 'artws_sec_unauthorized' );
-		$this->assertSame( 200, self::send( 'GET', '/scan/' . $new_scan, null, $new_token )->get_status() );
-		$this->assertStringNotContainsString( $new_token, self::dump_tables() );
+		$this->assertSame( 200, self::send( 'GET', '/scan/' . $first_scan, null, $first_token )->get_status() );
+		$this->assertSame( 200, self::send( 'GET', '/scan/' . $second_scan, null, $second_token )->get_status() );
+		$this->assert_error( self::send( 'GET', '/scan/' . $first_scan, null, $second_token ), 401, 'artws_sec_unauthorized' );
+		$this->assert_error( self::send( 'GET', '/scan/' . $second_scan, null, $first_token ), 401, 'artws_sec_unauthorized' );
+		$this->assertStringNotContainsString( $second_token, self::dump_tables() );
 	}
 
 	/**
-	 * A token for a site that is not registered is 401; registering again registers it.
+	 * Knowing a site's URL lets nobody delete its scans, replace its token or use up its hourly scan (backlog R1-X1).
 	 */
-	public function test_unregistered_site_with_a_token() {
+	public function test_others_cannot_touch_a_registered_site() {
+		list( $token, $scan ) = $this->register_site();
+		self::reset_rate_limits();
+
+		// Another client sends the site's URL; reregister (0.3.0) is now an unknown key.
+		$_SERVER['REMOTE_ADDR'] = '198.51.100.7';
+		$other                  = self::send( 'POST', '/scan', self::sample_request( array( 'reregister' => true ) ) );
+		$this->assertSame( 200, $other->get_status() );
+		$this->assertNotSame( $token, $other->get_data()['site_token'] );
+
+		$_SERVER['REMOTE_ADDR'] = self::CLIENT_IP;
+		$this->assertSame( 200, self::send( 'GET', '/scan/' . $scan, null, $token )->get_status() );
+		$response = self::send( 'POST', '/scan', self::sample_request(), $token );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertArrayNotHasKey( 'site_token', $response->get_data() );
+		$site = Artws_Sec_Site_Store::find_site_by_token( $token );
+		$this->assertNotNull( $site );
+		$this->assertSame( 2, (int) $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT COUNT(*) FROM ' . Artws_Sec_Db::scans_table() . ' WHERE site_id = %d', $site->id ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- Test.
+	}
+
+	/**
+	 * A token sent with another site_url (the site moved, or the token came with a copy of the site) is 401 and changes nothing.
+	 */
+	public function test_token_for_another_site_url() {
 		list( $token, ) = $this->register_site();
-		$moved          = self::sample_request( array( 'site_url' => 'https://moved.example.jp' ) );
+		self::reset_rate_limits();
+		$moved = self::sample_request( array( 'site_url' => 'https://moved.example.jp' ) );
 
 		$this->assert_error( self::send( 'POST', '/scan', $moved, $token ), 401, 'artws_sec_unauthorized' );
-		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::sites_table() ) );
+		// Also when that URL is registered.
+		$this->register_site( array( 'site_url' => 'https://moved.example.jp' ) );
+		$this->assert_error( self::send( 'POST', '/scan', $moved, $token ), 401, 'artws_sec_unauthorized' );
 
-		$moved['reregister'] = true;
-		$response            = self::send( 'POST', '/scan', $moved, $token );
-		$this->assertSame( 200, $response->get_status() );
-		$this->assertArrayHasKey( 'site_token', $response->get_data() );
-		$this->assertSame( 2, self::count_rows( Artws_Sec_Db::sites_table() ) );
-		// The first site keeps its token.
-		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+		$this->assertSame( 'https://example.jp', Artws_Sec_Site_Store::find_site_by_token( $token )->site_url );
+		$this->assertSame( 2, self::count_rows( Artws_Sec_Db::scans_table() ) );
+		// The refusals used up nothing: the token still scans its own site.
+		$this->assertSame( 200, self::send( 'POST', '/scan', self::sample_request(), $token )->get_status() );
 	}
 
 	/**
@@ -385,16 +415,6 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * Registering again is rate limited too.
-	 */
-	public function test_rate_limit_of_reregistering() {
-		list( $token, ) = $this->register_site();
-
-		$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'reregister' => true ) ) ), 429, 'artws_sec_rate_limited' );
-		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
-	}
-
-	/**
 	 * One address can register 20 sites an hour; another address is counted apart.
 	 */
 	public function test_rate_limit_per_address() {
@@ -419,12 +439,14 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 				return 1;
 			}
 		);
+		list( $token, ) = $this->register_site();
+		self::reset_rate_limits();
 		$this->register_site( array( 'site_url' => 'https://first.example.jp' ) );
 
-		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 429, 'artws_sec_rate_limited' );
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $token ), 429, 'artws_sec_rate_limited' );
 
 		$_SERVER['REMOTE_ADDR'] = '198.51.100.7';
-		$this->register_site();
+		$this->assertSame( 200, self::send( 'POST', '/scan', self::sample_request(), $token )->get_status() );
 	}
 
 	/**
@@ -558,12 +580,12 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	 * A token problem is 401 even while the vulnerability data is not ready.
 	 */
 	public function test_unauthorized_comes_before_unavailable() {
-		$this->register_site();
+		list( $token, ) = $this->register_site();
 		delete_option( Artws_Sec_Feed_Updater::STATE_OPTION );
 
-		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 401, 'artws_sec_unauthorized' );
-		$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'site_url' => 'https://moved.example.jp' ) ), 'sit_' . str_repeat( 'a', 43 ) ), 401, 'artws_sec_unauthorized' );
-		$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'site_url' => 'https://new.example.jp' ) ) ), 503, 'artws_sec_unavailable' );
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), 'sit_' . str_repeat( 'a', 43 ) ), 401, 'artws_sec_unauthorized' );
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'site_url' => 'https://moved.example.jp' ) ), $token ), 401, 'artws_sec_unauthorized' );
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 503, 'artws_sec_unavailable' );
 	}
 
 	/**
@@ -664,26 +686,6 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * A re-registration whose scan cannot be saved leaves the site on its previous token.
-	 */
-	public function test_failed_save_keeps_the_previous_token() {
-		global $wpdb;
-		list( $token, ) = $this->register_site();
-		self::reset_rate_limits();
-
-		$suppress = $wpdb->suppress_errors( true );
-		try {
-			self::break_queries( 'INSERT INTO ' . Artws_Sec_Db::scans_table() . ' (' );
-			$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'reregister' => true ) ) ), 500, 'artws_sec_server_error' );
-		} finally {
-			$wpdb->suppress_errors( $suppress );
-		}
-
-		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
-		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::sites_table() ) );
-	}
-
-	/**
 	 * Requests over http are refused unless the filter allows them.
 	 */
 	public function test_http_is_refused() {
@@ -709,12 +711,7 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_header( 'Authorization', 'Bearer ' . $token );
 		$request->set_body( wp_json_encode( self::sample_request() ) );
-		$request->set_query_params(
-			array(
-				'reregister'   => true,
-				'revenue_band' => 'B9',
-			)
-		);
+		$request->set_query_params( array( 'revenue_band' => 'B9' ) );
 
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertSame( 200, $response->get_status() );
@@ -743,7 +740,14 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 		);
 
 		$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $token ), 429, 'artws_sec_rate_limited' );
-		$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'reregister' => true ) ) ), 429, 'artws_sec_rate_limited' );
+		// A registration over the address limit.
+		add_filter(
+			'artws_sec_scans_per_address',
+			static function () {
+				return 1;
+			}
+		);
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 429, 'artws_sec_rate_limited' );
 		$this->assertSame( 0, $lookups );
 	}
 }

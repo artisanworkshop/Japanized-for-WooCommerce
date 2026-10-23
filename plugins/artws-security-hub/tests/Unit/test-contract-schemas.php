@@ -114,11 +114,6 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 					$d->locale = 'de_DE_formal';
 				},
 			),
-			'registering again'                      => array(
-				static function ( $d ) {
-					$d->reregister = true;
-				},
-			),
 		);
 	}
 
@@ -530,11 +525,11 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 					$d->software = array_fill( 0, 1001, $d->software[0] );
 				},
 			),
-			'request: reregister as a string'              => array(
+			'request: reregister (removed in 0.4.0)'       => array(
 				'scan-request.json',
 				'scan-request',
 				static function ( $d ) {
-					$d->reregister = 'yes';
+					$d->reregister = true;
 				},
 			),
 			// Scan response.

@@ -9,3 +9,4 @@ phpunit.xml.dist
 composer.json
 composer.lock
 README.md
+DEPLOY.md

@@ -62,8 +62,7 @@ class Artws_Sec_Scan_Request {
 	 * Returns the request with only the contract's keys, or why it is invalid.
 	 *
 	 * @param mixed $data Body decoded with json_decode( …, true ).
-	 * @return array|WP_Error The request (without reregister, which is read by wants_reregister()),
-	 *                        or a WP_Error with status 400.
+	 * @return array|WP_Error The request, or a WP_Error with status 400.
 	 */
 	public static function normalize( $data ) {
 		if ( ! is_array( $data ) || ( array() !== $data && array_is_list( $data ) ) ) {
@@ -116,10 +115,6 @@ class Artws_Sec_Scan_Request {
 			return new WP_Error( 'artws_sec_unknown_consent_version', sprintf( 'The consent text %s is not known to the server.', $consent ), array( 'status' => 400 ) );
 		}
 
-		if ( array_key_exists( 'reregister', $data ) && ! is_bool( $data['reregister'] ) ) {
-			return self::invalid( 'reregister' );
-		}
-
 		$request = array(
 			'schema_version' => 1,
 			'site_url'       => $data['site_url'],
@@ -138,16 +133,6 @@ class Artws_Sec_Scan_Request {
 		$request['consent_version'] = $consent;
 
 		return $request;
-	}
-
-	/**
-	 * Whether the site asks to register again (checked by normalize()).
-	 *
-	 * @param array $data Decoded body.
-	 * @return bool
-	 */
-	public static function wants_reregister( array $data ) {
-		return isset( $data['reregister'] ) && true === $data['reregister'];
 	}
 
 	/**

@@ -6,9 +6,11 @@ wc.artws.info で動かす WordPress プラグイン。Japanized for WooCommerce
 |---|---|---|
 | S0（#261） | 土台（lint・テスト・CI）と JSON 形式の確定 | 完了 |
 | S1（#262） | Wordfence Intelligence V3 の取り込みと `/feed/v1/` の配信 | 完了（0.2.0） |
-| S2（#263） | REST `artws-sec/v1`（`POST /scan`・`GET /scan/{token}`・`DELETE /site`） | このディレクトリ（0.3.0） |
+| S2（#263） | REST `artws-sec/v1`（`POST /scan`・`GET /scan/{token}`・`DELETE /site`） | このディレクトリ（0.3.0。0.4.0 で登録をトークン単位に変更） |
 
 JP4WC とやり取りする JSON の形式は、リポジトリ直下の `tests/fixtures/security-feed/`（README と JSON Schema）で定める。
+
+wc.artws.info への入れ方・設定・確認・更新は、作業順の手順書 [DEPLOY.md](DEPLOY.md) にまとめた。この README は仕組みと設定値の理由を書く。
 
 ## 秘密情報
 
@@ -111,7 +113,7 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 
 ## 無料診断の REST API（S2）
 
-`/wp-json/artws-sec/v1/` の `POST /scan`・`GET /scan/{token}`・`DELETE /site`。認証（サイトごとのトークン）、判定の順序、ステータスコード、エラーの形、レート制限、保存期間は契約 README（`tests/fixtures/security-feed/README.md` の「REST」）に書いたとおり。ここにはサーバー側の作りと運用だけを書く。
+`/wp-json/artws-sec/v1/` の `POST /scan`・`GET /scan/{token}`・`DELETE /site`。認証（登録ごとのトークン）、判定の順序、ステータスコード、エラーの形、レート制限、保存期間は契約 README（`tests/fixtures/security-feed/README.md` の「REST」）に書いたとおり。ここにはサーバー側の作りと運用だけを書く。
 
 ### 作り
 
@@ -119,16 +121,16 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 - `Artws_Sec_Scan_Request`: 送信データの検査。契約の Schema を手書きで写したもの（テストで Schema 本体と突き合わせている）。Schema に無いキーはどの階層でも捨て、保存しない
 - `Artws_Sec_Report_Builder` / `Artws_Sec_Report_Templates`: レポートの組み立てと文言（チェック ID ごとに日本語と英語）。V-01（既知の脆弱性）と V-03（サポート終了）はサーバーが判定し、ほかのチェックは送られた状態を使う。チェックの重大度・点数・範囲の判定は JP4WC の `JP4WC_Security_Checks` / `JP4WC_Security_Scanner` と同じで、テストがクライアントのクラスを読み込んで突き合わせる
 - `Artws_Sec_Vuln_Index`: 照合用のインデックス。`.json.gz` を診断のたびに展開すると数百 MB 使うので、取り込み（S1）が公開するデータを slug ごとに1行ずつ表に書き、診断は送られたソフトウェアの行だけを読む。取り込みはフィードを公開した後に新しい世代を書き、書き終えてから state の `index_version` を切り替える。置き換えた1つ前の世代は残す（直前の状態を読んだ診断が空振りしない）。インデックスを書けなくてもフィードの公開は成功のままで、診断は前の世代を使い続ける（管理画面の結果にメッセージが出て、次の取り込みでやり直す）。インデックスが公開中のフィードに追いつかないまま `artws_sec_feed_stale_after`（48 時間）を過ぎると、診断は脆弱性データを古いものとして扱う（何も見つからなければ V-01 は「確認できず」、次の手順に「データが古い」旨）。インデックスが読めない・WordPress コアの行が無いときは、「脆弱性なし」と答えずに 503 を返す
-- `Artws_Sec_Site_Store`: サイト（`site_url` の正規化と `site_token` の SHA-256）と診断の保存、保存期間による削除
+- `Artws_Sec_Site_Store`: 登録（`site_token` の SHA-256 と、トークン付きの要求が発行先のサイトから来たかを確かめる正規化した `site_url`）と診断の保存、保存期間による削除。同じ `site_url` の登録はいくつあってもよい
 - `Artws_Sec_Rate_Limiter`: 固定窓のレート制限。キーは `wp_salt()` の HMAC で、IP アドレスを生で残さない。1回の `INSERT … ON DUPLICATE KEY UPDATE` の影響行数で、同時の要求が最後の1回を取り合わないようにする
-- `Artws_Sec_Db`: 表（`{prefix}artws_sec_sites` / `_scans` / `_limits` / `_vulns`）。`artws_sec_db_version` が違えば `init` で `dbDelta()` する（ZIP の置き換えでは有効化フックが走らないため）
+- `Artws_Sec_Db`: 表（`{prefix}artws_sec_sites` / `_scans` / `_limits` / `_vulns`）。`artws_sec_db_version` が違えば `init` で `dbDelta()` する（ZIP の置き換えでは有効化フックが走らないため）。版 2（0.4.0）は sites 表の `site_key` の一意制約を外す（`dbDelta()` は索引を消せないので先に `DROP INDEX`。外せるまで版を記録せず、次の要求でやり直す）
 
 | フィルター | 既定 | 内容 |
 |---|---|---|
-| `artws_sec_scans_per_site` | 1 | 1サイトが窓ごとに実行できる回数 |
+| `artws_sec_scans_per_site` | 1 | 1登録（`site_token`）が窓ごとに実行できる回数。登録した要求の診断が1回目 |
 | `artws_sec_scans_per_address` | 20 | 1つの送信元（IPv6 は /64）から窓ごとに受け付ける回数。共用サーバーでは多数のショップが同じ IP を使う |
 | `artws_sec_scan_window` | 3600 | 窓の長さ（秒） |
-| `artws_sec_retention_days` | 180 | 診断と、診断の無いサイトを残す日数（プライバシーポリシーに書く値） |
+| `artws_sec_retention_days` | 180 | 診断と、診断の無い登録を残す日数（プライバシーポリシーに書く値） |
 | `artws_sec_consent_versions` | `2026-10` | 受け付ける同意文の版。JP4WC が同意文を改訂したら足す |
 | `artws_sec_client_ip` | — | レート制限が数える送信元アドレス |
 | `artws_sec_require_https` | true | http の要求を 403 にするか |
@@ -139,9 +141,9 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 - **Authorization ヘッダー**: Apache の CGI / FastCGI では `Authorization` が PHP に届かないことがある。WordPress 標準の `.htaccess`（`RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]`）があれば WordPress が `REDIRECT_HTTP_AUTHORIZATION` から読む。確認: 登録済みのトークンで `curl -s -H "Authorization: Bearer <token>" https://wc.artws.info/wp-json/artws-sec/v1/scan/<scan_token>` が 401 にならないこと
 - **匿名の REST を止めるプラグイン**: ログインしていない要求の REST API を止めるセキュリティプラグインや、`Authorization: Bearer` を自分の認証（JWT など）として読むプラグインがあると、この API が動かない。`artws-sec/v1` を除外する
 - **CDN・リバースプロキシ**: 背後に置くと `REMOTE_ADDR` がプロキシの IP になり、全サイトが1つの送信元として数えられる。プロキシが上書きするヘッダーのキーを `ARTWS_SEC_CLIENT_IP_HEADER` に入れる（クライアントが自由に書ける `X-Forwarded-For` をそのまま信じない。リストなら最後の値を使う）。TLS をプロキシで終える場合は、`is_ssl()` が true になるよう wp-config.php で `$_SERVER['HTTPS']` を設定する（しないと全要求が 403）
-- **毎日の削除**: WP-Cron の `artws_sec_scan_cleanup` が、180 日より古い診断・180 日診断の無いサイト・終わったレート制限の窓を消す。無効化で止まる（データは残る）
+- **毎日の削除**: WP-Cron の `artws_sec_scan_cleanup` が、180 日より古い診断・180 日診断の無い登録・終わったレート制限の窓を消す。無効化で止まる（データは残る）
 - **プラグインの削除**: `uninstall.php` が無料診断の4表と `artws_sec_db_version` を消す（診断データを保存期間より長く残さない）。脆弱性フィード（S1 の option と配信ファイル）は残る
-- **公開前に必要なもの**: wc.artws.info のプライバシーポリシーと利用規約（保存する項目・保存期間 180 日・削除の方法を書く。#256 の未決事項）
+- **公開前に必要なもの**: wc.artws.info のプライバシーポリシーと利用規約（保存する項目・保存期間 180 日・削除の方法を書く。#256 の未決事項）。トークンを失った登録の診断は API では消せず、保存期間で消えることも書く。問い合わせで削除を受けるなら `site_url` で登録を探して手で消すが、同じ URL の登録には他人のもの（開発環境など）も含まれうるので、サイトの持ち主であることを確かめてから消す
 
 ## 開発
 
@@ -158,18 +160,6 @@ CI は `.github/workflows/artws-security-hub.yml`。このディレクトリか 
 
 ## wc.artws.info への反映
 
-JP4WC のタグやリリースとは連動しない。手動で ZIP を作ってアップロードする。
-
-```bash
-cd plugins/artws-security-hub
-rm -rf /tmp/artws-security-hub && mkdir -p /tmp/artws-security-hub
-rsync -a --exclude-from=.distignore ./ /tmp/artws-security-hub/
-(cd /tmp && rm -f artws-security-hub.zip && zip -r artws-security-hub.zip artws-security-hub)
-```
-
-1. wc.artws.info の管理画面 > プラグイン > 新規追加 > プラグインのアップロードで `/tmp/artws-security-hub.zip` を選び、「現在のものをアップロードしたもので置き換える」で更新する
-2. 有効化し、必要な定数が `wp-config.php` にあることを確認する
-3. 初回（S1）は、配信設定（上記）を入れてから「Update now」か `wp cron event run artws_sec_feed_update` で取り込み、管理画面の結果と除外例を確かめる。実データで除外が 2% を超えたら、除外例を見てから閾値か検査を見直す
-4. S2（0.3.0）を入れたときも、取り込みを1回走らせて照合用のインデックスを作る（それまで `POST /scan` は 503）。「運用」の Authorization ヘッダーと送信元 IP の確認もする
+JP4WC のタグやリリースとは連動しない。手動で ZIP を作ってアップロードする。初めて入れるとき・更新するときの手順（ZIP の作り方、版ごとの追加作業、確認のコマンド）は [DEPLOY.md](DEPLOY.md) を見る。
 
 `Update URI: false` を指定しているので、WordPress.org の同名プラグインから更新が届くことはない。実行時に Composer の依存は使わない（`vendor/` はテスト用で、ZIP には入れない）。

@@ -22,8 +22,10 @@ class Artws_Sec_Db {
 
 	/**
 	 * Version of the table definitions; bump it when they change.
+	 *
+	 * 2: sites.site_key is no longer unique, so a site_url can be registered more than once.
 	 */
-	const VERSION = '1';
+	const VERSION = '2';
 
 	/**
 	 * Option holding the installed version (autoloaded: read on every request).
@@ -60,9 +62,14 @@ class Artws_Sec_Db {
 		$limits  = self::limits_table();
 		$vulns   = self::vulns_table();
 
+		// dbDelta() never drops an index, so it cannot turn the unique site_key of version 1 into a plain one.
+		if ( true === self::has_unique_site_key() ) {
+			$wpdb->query( "ALTER TABLE {$sites} DROP INDEX site_key" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Upgrades this plugin's own table.
+		}
+
 		dbDelta(
 			array(
-				// One row per site: the hash of its normalized site_url and of its site_token.
+				// One row per registration: the hash of its normalized site_url and of its site_token.
 				"CREATE TABLE {$sites} (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   site_key char(64) NOT NULL,
@@ -71,7 +78,7 @@ class Artws_Sec_Db {
   created_at bigint(20) unsigned NOT NULL,
   last_scan_at bigint(20) unsigned NOT NULL,
   PRIMARY KEY  (id),
-  UNIQUE KEY site_key (site_key),
+  KEY site_key (site_key),
   UNIQUE KEY token_hash (token_hash),
   KEY last_scan_at (last_scan_at)
 ) {$collate};",
@@ -106,13 +113,51 @@ class Artws_Sec_Db {
 			)
 		);
 
-		// Recorded only once every table is there, so that a failed dbDelta() is tried again.
+		// Recorded only once every table is there and upgraded, so that a failed dbDelta() is tried again.
 		foreach ( array( $sites, $scans, $limits, $vulns ) as $table ) {
-			if ( $table !== $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Checks the schema.
+			if ( ! self::table_exists( $table ) ) {
 				return;
 			}
 		}
+		if ( false !== self::has_unique_site_key() ) {
+			return;
+		}
 		update_option( self::VERSION_OPTION, self::VERSION, true );
+	}
+
+	/**
+	 * Whether a table exists.
+	 *
+	 * The name is compared without case: with lower_case_table_names=1,
+	 * SHOW TABLES answers in lower case whatever the case of the prefix.
+	 *
+	 * @param string $table Table name.
+	 * @return bool
+	 */
+	private static function table_exists( $table ) {
+		global $wpdb;
+		$found = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Checks the schema.
+		return is_string( $found ) && 0 === strcasecmp( $table, $found );
+	}
+
+	/**
+	 * Whether the sites table still has the unique site_key of version 1.
+	 *
+	 * A failed query returns null just as "no such index" does, so it is
+	 * reported as unknown and the upgrade is not taken as done.
+	 *
+	 * @return bool|null Null when it cannot be told.
+	 */
+	private static function has_unique_site_key() {
+		global $wpdb;
+
+		$sites = self::sites_table();
+		if ( ! self::table_exists( $sites ) ) {
+			return '' === $wpdb->last_error ? false : null;
+		}
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Checks the schema of this plugin's own table.
+		$index = $wpdb->get_row( "SHOW INDEX FROM {$sites} WHERE Key_name = 'site_key' AND Non_unique = 0" );
+		return '' === $wpdb->last_error ? null !== $index : null;
 	}
 
 	/**

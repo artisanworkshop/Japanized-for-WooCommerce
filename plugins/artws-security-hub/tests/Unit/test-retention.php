@@ -256,6 +256,150 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * The upgrade from version 1 drops the unique site_key, which dbDelta() cannot change, and is tried again until it does.
+	 *
+	 * ALTER TABLE commits the transaction the test runs in, so the version
+	 * option is set back to the current version before each statement that
+	 * really runs, and finally puts the table back as the current version has it.
+	 */
+	public function test_upgrade_from_version_1() {
+		global $wpdb;
+		$sites      = Artws_Sec_Db::sites_table();
+		$non_unique = static function () use ( $wpdb, $sites ) {
+			return $wpdb->get_row( "SHOW INDEX FROM {$sites} WHERE Key_name = 'site_key'" )->Non_unique; // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Test.
+		};
+
+		try {
+			// The sites table as version 1 made it.
+			$wpdb->query( "ALTER TABLE {$sites} DROP INDEX site_key, ADD UNIQUE KEY site_key (site_key)" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Test.
+			$this->assertSame( '0', (string) $non_unique() );
+
+			// An upgrade that cannot change the table is not recorded, so the next request tries again.
+			update_option( Artws_Sec_Db::VERSION_OPTION, '1' );
+			add_filter(
+				'query',
+				static function ( $query ) {
+					return 0 === stripos( ltrim( $query ), 'ALTER TABLE' ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+				}
+			);
+			$suppress = $wpdb->suppress_errors( true );
+			Artws_Sec_Db::maybe_install();
+			$wpdb->suppress_errors( $suppress );
+			$this->assertSame( '1', get_option( Artws_Sec_Db::VERSION_OPTION ) );
+			$this->assertSame( '0', (string) $non_unique() );
+
+			remove_all_filters( 'query' );
+			update_option( Artws_Sec_Db::VERSION_OPTION, Artws_Sec_Db::VERSION );
+			$recorded = 0;
+			add_filter(
+				'pre_update_option_' . Artws_Sec_Db::VERSION_OPTION,
+				static function ( $value ) use ( &$recorded ) {
+					++$recorded;
+					return $value;
+				}
+			);
+			Artws_Sec_Db::install();
+			$this->assertSame( '1', (string) $non_unique() );
+			$this->assertSame( 1, $recorded );
+			$this->assertIsInt( Artws_Sec_Site_Store::register( 'https://example.jp', Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SITE_TOKEN_PREFIX ), self::NOW ) );
+			$this->assertIsInt( Artws_Sec_Site_Store::register( 'https://example.jp', Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SITE_TOKEN_PREFIX ), self::NOW ) );
+		} finally {
+			remove_all_filters( 'query' );
+			update_option( Artws_Sec_Db::VERSION_OPTION, Artws_Sec_Db::VERSION );
+			Artws_Sec_Db::install();
+		}
+	}
+
+	/**
+	 * Runs maybe_install() on version 1 with some queries failing, and asserts it neither changed the table nor recorded the upgrade.
+	 *
+	 * ALTER statements are recorded and then turned into a no-op, so that even
+	 * a broken guard cannot commit the test's transaction.
+	 *
+	 * @param callable $fail Query filter that makes the queries to fail fail.
+	 */
+	private function assert_upgrade_is_not_recorded( callable $fail ) {
+		global $wpdb;
+		update_option( Artws_Sec_Db::VERSION_OPTION, '1' );
+		$queries = array();
+		add_filter(
+			'query',
+			static function ( $query ) use ( &$queries ) {
+				$queries[] = $query;
+				return $query;
+			}
+		);
+		add_filter( 'query', $fail, 11 );
+		add_filter(
+			'query',
+			static function ( $query ) {
+				return 0 === stripos( ltrim( $query ), 'ALTER' ) ? 'SELECT 1' : $query;
+			},
+			12
+		);
+
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			Artws_Sec_Db::maybe_install();
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+			remove_all_filters( 'query' );
+		}
+
+		// A failed query is not "no unique index": nothing is dropped, and the next request tries again.
+		$this->assertSame( array(), preg_grep( '/^\s*ALTER\b/i', $queries ) );
+		$this->assertSame( '1', get_option( Artws_Sec_Db::VERSION_OPTION ) );
+
+		Artws_Sec_Db::maybe_install();
+		$this->assertSame( Artws_Sec_Db::VERSION, get_option( Artws_Sec_Db::VERSION_OPTION ) );
+	}
+
+	/**
+	 * When the index cannot be read, the upgrade is neither done nor recorded.
+	 */
+	public function test_upgrade_is_not_recorded_when_the_index_cannot_be_read() {
+		$sites = Artws_Sec_Db::sites_table();
+		$this->assert_upgrade_is_not_recorded(
+			static function ( $query ) use ( $sites ) {
+				return 0 === strpos( $query, "SHOW INDEX FROM {$sites} WHERE" ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			}
+		);
+	}
+
+	/**
+	 * When the sites table cannot be found in the last check of the upgrade, the upgrade is not recorded.
+	 */
+	public function test_upgrade_is_not_recorded_when_the_table_cannot_be_read() {
+		$lookups = 0;
+		$this->assert_upgrade_is_not_recorded(
+			static function ( $query ) use ( &$lookups ) {
+				if ( 0 !== strpos( $query, 'SHOW TABLES LIKE' ) || false === strpos( $query, 'sites' ) ) {
+					return $query;
+				}
+				// The first two lookups (before dbDelta() and in the check of every table) succeed.
+				return ++$lookups > 2 ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			}
+		);
+	}
+
+	/**
+	 * Table names are compared without case: with lower_case_table_names=1, SHOW TABLES answers in lower case.
+	 */
+	public function test_table_names_are_compared_without_case() {
+		update_option( Artws_Sec_Db::VERSION_OPTION, '1' );
+		add_filter(
+			'query',
+			static function ( $query ) {
+				return preg_replace( '/^SHOW TABLES LIKE (.+)$/s', 'SELECT UPPER(TABLE_NAME) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME LIKE $1', $query );
+			}
+		);
+
+		Artws_Sec_Db::maybe_install();
+
+		$this->assertSame( Artws_Sec_Db::VERSION, get_option( Artws_Sec_Db::VERSION_OPTION ) );
+	}
+
+	/**
 	 * Deleting the plugin drops its tables, its version option and the cleanup event.
 	 *
 	 * The test library turns DROP TABLE into DROP TEMPORARY TABLE, so the
