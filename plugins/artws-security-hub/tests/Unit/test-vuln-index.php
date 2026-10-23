@@ -36,7 +36,7 @@ class Artws_Sec_Vuln_Index_Test extends Artws_Sec_Scan_Test_Case {
 		$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW ) );
 
 		$state = Artws_Sec_Feed_Updater::get_state();
-		$this->assertTrue( $state['indexed'] );
+		$this->assertSame( $state['version'], $state['index_version'] );
 		$this->assertSame( array( $state['version'] ), self::index_versions() );
 
 		// The index holds what the published files hold.
@@ -52,7 +52,7 @@ class Artws_Sec_Vuln_Index_Test extends Artws_Sec_Scan_Test_Case {
 				$this->assertSame( $published['vulnerabilities'][ $keys[ $key ] ], $records );
 			}
 		}
-		$this->assertObjectNotHasProperty( 'indexed', self::read_manifest() );
+		$this->assertObjectNotHasProperty( 'index_version', self::read_manifest() );
 	}
 
 	/**
@@ -87,13 +87,13 @@ class Artws_Sec_Vuln_Index_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * A run that cannot write the index fails, is retried, and leaves the published state as it was.
+	 * A run that cannot write the index still publishes the feed; scans keep the previous index.
 	 */
-	public function test_index_write_failure_fails_the_run() {
+	public function test_index_write_failure_keeps_the_feed() {
 		global $wpdb;
 		$this->mock_wordfence( self::fixture_feed() );
 		Artws_Sec_Feed_Updater::update( self::NOW );
-		$published = Artws_Sec_Feed_Updater::get_state();
+		$first = Artws_Sec_Feed_Updater::get_state()['version'];
 
 		$table = Artws_Sec_Db::vulns_table();
 		add_filter(
@@ -104,18 +104,62 @@ class Artws_Sec_Vuln_Index_Test extends Artws_Sec_Scan_Test_Case {
 		);
 		$suppress = $wpdb->suppress_errors( true );
 		try {
-			$this->assertSame( 'failure', Artws_Sec_Feed_Updater::update( self::NOW + DAY_IN_SECONDS ) );
+			$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW + DAY_IN_SECONDS ) );
 		} finally {
 			$wpdb->suppress_errors( $suppress );
 		}
 
-		$status = Artws_Sec_Feed_Updater::get_status();
-		$this->assertStringStartsWith( 'The vulnerability index could not be written', $status['message'] );
-		$this->assertGreaterThan( 0, $status['retry_at'] );
 		$state = Artws_Sec_Feed_Updater::get_state();
-		$this->assertSame( $published['version'], $state['version'] );
-		$this->assertTrue( $state['stale'] );
-		$this->assertSame( array( $published['version'] ), self::index_versions() );
+		$this->assertNotSame( $first, $state['version'] );
+		$this->assertFalse( $state['stale'] );
+		$this->assertSame( $first, $state['index_version'] );
+		$this->assertSame( $state['version'], self::read_manifest()->version );
+		$this->assertSame( array( $first ), self::index_versions() );
+		$status = Artws_Sec_Feed_Updater::get_status();
+		$this->assertSame( 'success', $status['result'] );
+		$this->assertStringStartsWith( 'The feed was published, but the index of the free security check was not updated', $status['message'] );
+		$this->assertSame( 0, $status['retry_at'] );
+	}
+
+	/**
+	 * A failed read is an error, not "no records".
+	 */
+	public function test_find_throws_when_the_index_cannot_be_read() {
+		global $wpdb;
+		$table = Artws_Sec_Db::vulns_table();
+		add_filter(
+			'query',
+			static function ( $query ) use ( $table ) {
+				return 0 === strpos( $query, "SELECT lookup_key, records FROM {$table}" ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			}
+		);
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			$this->expectException( Artws_Sec_Feed_Exception::class );
+			Artws_Sec_Vuln_Index::find( 'any', array( Artws_Sec_Vuln_Index::lookup_key( 'plugin', 'a' ) ) );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+	}
+
+	/**
+	 * A row larger than a batch is sent on its own, and every row arrives.
+	 */
+	public function test_large_rows_are_written() {
+		$big = array( wp_json_encode( array( 'text' => str_repeat( 'x', Artws_Sec_Vuln_Index::BATCH_BYTES ) ) ) );
+		Artws_Sec_Vuln_Index::write(
+			array(
+				'plugin' => array(
+					'small' => array( '{"n":1}' ),
+					'big'   => $big,
+					'after' => array( '{"n":2}' ),
+				),
+			),
+			'large'
+		);
+
+		$found = Artws_Sec_Vuln_Index::find( 'large', array( Artws_Sec_Vuln_Index::lookup_key( 'plugin', 'small' ), Artws_Sec_Vuln_Index::lookup_key( 'plugin', 'big' ), Artws_Sec_Vuln_Index::lookup_key( 'plugin', 'after' ) ) );
+		$this->assertCount( 3, $found );
 	}
 
 	/**

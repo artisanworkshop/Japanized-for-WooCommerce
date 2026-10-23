@@ -82,8 +82,11 @@ class Artws_Sec_Rest_Controller {
 	 * POST /scan: runs the free security check.
 	 *
 	 * Nothing is registered and no rate limit is used up until the request is
-	 * known to be valid and authenticated, so that nobody can use up a site's
-	 * hourly scan without its token.
+	 * valid, authenticated and its report built, so that a refused request
+	 * costs the site nothing. A re-registration needs no token (the contract
+	 * lets a site that lost its token ask for one), so anyone who knows a
+	 * site's URL can re-register it: that uses up its hourly scan and deletes
+	 * its scans, but never hands out a report it made before.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return WP_REST_Response
@@ -105,8 +108,8 @@ class Artws_Sec_Rest_Controller {
 		}
 
 		$state = Artws_Sec_Feed_Updater::get_state();
-		if ( null === $state || ! $state['indexed'] ) {
-			return self::error( 'artws_sec_unavailable', 'The vulnerability data is not ready yet.', 503 );
+		if ( null === $state || '' === $state['index_version'] ) {
+			return self::unavailable();
 		}
 
 		$token      = self::bearer_token( $request );
@@ -121,13 +124,17 @@ class Artws_Sec_Rest_Controller {
 			}
 		}
 
+		$scan_token = Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SCAN_TOKEN_PREFIX );
+		try {
+			$report = Artws_Sec_Report_Builder::build( $normalized, $state, Artws_Sec_Feed_Updater::get_eol(), $scan_token, $now );
+		} catch ( Artws_Sec_Feed_Exception $e ) {
+			return self::unavailable();
+		}
+
 		$retry_at = Artws_Sec_Rate_Limiter::hit( self::limits( $site_key ), $now );
 		if ( $retry_at > 0 ) {
 			return self::rate_limited( $retry_at, $now );
 		}
-
-		$scan_token = Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SCAN_TOKEN_PREFIX );
-		$report     = Artws_Sec_Report_Builder::build( $normalized, $state, Artws_Sec_Feed_Updater::get_eol(), $scan_token, $now );
 
 		$site_token = null;
 		if ( null === $site ) {
@@ -169,7 +176,8 @@ class Artws_Sec_Rest_Controller {
 			return self::https_required();
 		}
 
-		$scan = Artws_Sec_Site_Store::find_scan( $request->get_param( 'token' ) );
+		// From the route only: get_param() would let a "token" in the query string replace it.
+		$scan = Artws_Sec_Site_Store::find_scan( $request->get_url_params()['token'] ?? null );
 		$site = null === $scan ? null : Artws_Sec_Site_Store::find_site( (int) $scan->site_id );
 		if ( null === $site ) {
 			return self::error( 'artws_sec_scan_not_found', 'No such scan.', 404 );
@@ -359,6 +367,15 @@ class Artws_Sec_Rest_Controller {
 		$response = self::error( 'artws_sec_rate_limited', sprintf( 'Too many scans. Try again after %s.', $at ), 429, array( 'retry_at' => $at ) );
 		$response->header( 'Retry-After', (string) max( 1, $retry_at - $now ) );
 		return $response;
+	}
+
+	/**
+	 * 503: the vulnerability data is not ready, or cannot be read.
+	 *
+	 * @return WP_REST_Response
+	 */
+	private static function unavailable() {
+		return self::error( 'artws_sec_unavailable', 'The vulnerability data is not available.', 503 );
 	}
 
 	/**

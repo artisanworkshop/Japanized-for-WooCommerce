@@ -340,6 +340,61 @@ class Artws_Sec_Report_Builder_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * Combinations of CVSS ratings (null for a record without one).
+	 *
+	 * @return array<string, array{array}>
+	 */
+	public function rating_provider() {
+		return array(
+			'one Low and one unrated'     => array( array( 'Low', null ) ),
+			'only unrated'                => array( array( null, null ) ),
+			'None'                        => array( array( 'None' ) ),
+			'High and Critical'           => array( array( 'High', 'Critical' ) ),
+			'Medium, unrated and Low'     => array( array( 'Medium', null, 'Low' ) ),
+			'unrated and High'            => array( array( null, 'High' ) ),
+			'one Medium'                  => array( array( 'Medium' ) ),
+			'unknown rating and one None' => array( array( 'Severe', 'None' ) ),
+		);
+	}
+
+	/**
+	 * V-01 takes the severity the Security tab gives it for the same records.
+	 *
+	 * @dataProvider rating_provider
+	 *
+	 * @param array $ratings CVSS ratings of the records found.
+	 */
+	public function test_vulnerability_severity_matches_the_client( array $ratings ) {
+		require_once dirname( ARTWS_SEC_CONTRACT_DIR, 3 ) . '/includes/class-jp4wc-security-checks.php';
+
+		$records         = array();
+		$vulnerabilities = array();
+		foreach ( $ratings as $rating ) {
+			$records[]         = null === $rating ? array( 'cvss' => null ) : array(
+				'cvss' => array(
+					'score'  => 5.0,
+					'rating' => $rating,
+				),
+			);
+			$vulnerabilities[] = array(
+				'rating' => null === $rating ? '' : $rating,
+				'score'  => null === $rating ? null : 5.0,
+			);
+		}
+		$client = JP4WC_Security_Checks::run_check(
+			'V-01',
+			array(
+				'vulnerabilities' => array(
+					'items' => array( array( 'vulnerabilities' => $vulnerabilities ) ),
+					'stale' => false,
+				),
+			)
+		);
+
+		$this->assertSame( $client['severity'], Artws_Sec_Report_Builder::vulnerability_severity( $records ) );
+	}
+
+	/**
 	 * The checks, severities and points are those of the client's JP4WC_Security_Checks.
 	 */
 	public function test_checks_match_the_client() {
@@ -529,10 +584,16 @@ class Artws_Sec_Report_Builder_Test extends Artws_Sec_Scan_Test_Case {
 				)
 			);
 		}
-		Artws_Sec_Vuln_Index::write( array( 'plugin' => array( 'many-plugin' => $records ) ), 'many' );
-		$state            = Artws_Sec_Feed_Updater::get_state();
-		$state['version'] = 'many';
-		$request          = Artws_Sec_Scan_Request::normalize( self::sample_request( array( 'software' => array( self::software( 'many-plugin', '1.0' ) ) ) ) );
+		Artws_Sec_Vuln_Index::write(
+			array(
+				'plugin' => array( 'many-plugin' => $records ),
+				'core'   => array( 'wordpress' => array( '{}' ) ), // phpcs:ignore WordPress.WP.CapitalPDangit.MisspelledInText -- The core slug.
+			),
+			'many'
+		);
+		$state                  = Artws_Sec_Feed_Updater::get_state();
+		$state['index_version'] = 'many';
+		$request                = Artws_Sec_Scan_Request::normalize( self::sample_request( array( 'software' => array( self::software( 'many-plugin', '1.0' ) ) ) ) );
 
 		$report = Artws_Sec_Report_Builder::build( $request, $state, Artws_Sec_Feed_Updater::get_eol(), self::SCAN_TOKEN, self::NOW );
 

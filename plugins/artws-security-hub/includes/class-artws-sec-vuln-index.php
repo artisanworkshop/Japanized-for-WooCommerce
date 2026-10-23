@@ -18,14 +18,18 @@ defined( 'ABSPATH' ) || exit;
  * and a hash of the type and slug, and a scan reads only the rows of the
  * software it lists.
  *
- * A run writes its generation before it publishes the state that names it,
- * and then deletes the generations older than the one it replaced: a scan
- * that read the previous state a moment before still finds its rows.
+ * The feed update writes a generation after it has published the feed, and
+ * only then records it as the state's index_version, so a scan always finds
+ * the rows of the version it read. It keeps the generation it replaced (a
+ * scan that read the previous state a moment before still finds its rows)
+ * and deletes older ones.
  */
 class Artws_Sec_Vuln_Index {
 
 	/**
-	 * Largest INSERT, in bytes of row values, before it is sent.
+	 * Largest INSERT, in bytes of escaped row values; a larger row is sent on its own.
+	 *
+	 * Well below the 4 MB max_allowed_packet of MySQL 5.7.
 	 */
 	const BATCH_BYTES = 1048576;
 
@@ -62,14 +66,14 @@ class Artws_Sec_Vuln_Index {
 		$bytes = 0;
 		foreach ( $vulnerabilities as $type => $by_slug ) {
 			foreach ( $by_slug as $slug => $records ) {
-				$json   = '[' . implode( ',', $records ) . ']';
-				$rows[] = $wpdb->prepare( '(%s, %s, %s)', $version, self::lookup_key( (string) $type, (string) $slug ), $json );
-				$bytes += strlen( $json );
-				if ( $bytes >= self::BATCH_BYTES ) {
+				$row = $wpdb->prepare( '(%s, %s, %s)', $version, self::lookup_key( (string) $type, (string) $slug ), '[' . implode( ',', $records ) . ']' );
+				if ( array() !== $rows && $bytes + strlen( $row ) > self::BATCH_BYTES ) {
 					self::insert( $rows );
 					$rows  = array();
 					$bytes = 0;
 				}
+				$rows[] = $row;
+				$bytes += strlen( $row );
 			}
 		}
 		if ( array() !== $rows ) {
@@ -103,6 +107,7 @@ class Artws_Sec_Vuln_Index {
 	 * @param string   $version Feed version.
 	 * @param string[] $keys    Keys from lookup_key().
 	 * @return array<string, array> Key => feed records (decoded); software without records is left out.
+	 * @throws Artws_Sec_Feed_Exception When the index cannot be read.
 	 */
 	public static function find( $version, array $keys ) {
 		global $wpdb;
@@ -114,7 +119,11 @@ class Artws_Sec_Vuln_Index {
 			$sql          = "SELECT lookup_key, records FROM {$table} WHERE feed_version = %s AND lookup_key IN ({$placeholders})";
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table; $sql has one %s per key.
 			$rows = $wpdb->get_results( $wpdb->prepare( $sql, array_merge( array( $version ), $chunk ) ) );
-			foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			// A failed query returns no rows, which must not read as "no vulnerabilities".
+			if ( ! is_array( $rows ) || '' !== $wpdb->last_error ) {
+				throw new Artws_Sec_Feed_Exception( 'The vulnerability index could not be read.' );
+			}
+			foreach ( $rows as $row ) {
 				$records = json_decode( $row->records, true );
 				if ( is_array( $records ) ) {
 					$found[ $row->lookup_key ] = $records;
@@ -165,7 +174,7 @@ class Artws_Sec_Vuln_Index {
 	 *
 	 * @param string $version Feed version.
 	 */
-	private static function delete_version( $version ) {
+	public static function delete_version( $version ) {
 		global $wpdb;
 
 		$wpdb->delete( Artws_Sec_Db::vulns_table(), array( 'feed_version' => $version ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table.

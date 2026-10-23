@@ -17,7 +17,9 @@ defined( 'ABSPATH' ) || exit;
  * A hit is taken with one INSERT … ON DUPLICATE KEY UPDATE whose number of
  * affected rows tells whether it counted (1 inserted, 2 updated, 0 when the
  * window was full and the row stayed as it was), so two requests at once
- * cannot both take the last hit.
+ * cannot both take the last hit. That relies on MySQL's default of counting
+ * changed rows: with MYSQLI_CLIENT_FOUND_ROWS in MYSQL_CLIENT_FLAGS an
+ * unchanged row counts as 1, and the request that loses the race would pass.
  */
 class Artws_Sec_Rate_Limiter {
 
@@ -97,17 +99,29 @@ class Artws_Sec_Rate_Limiter {
 	 *
 	 * REMOTE_ADDR, or the $_SERVER key named by ARTWS_SEC_CLIENT_IP_HEADER
 	 * when a proxy or CDN sits in front of the site (for example
-	 * HTTP_CF_CONNECTING_IP). From a list, the last address is taken: the one
-	 * the nearest proxy added, not one the client wrote. IPv6 addresses are
-	 * counted per /64, which one host can usually choose from.
+	 * HTTP_CF_CONNECTING_IP); a request without that key, which did not come
+	 * through the proxy, is counted by REMOTE_ADDR. From a list, the last
+	 * address is taken: the one the nearest proxy added, not one the client
+	 * wrote. IPv6 addresses are counted per /64, which one host can usually
+	 * choose from; an IPv4-mapped address (::ffff:192.0.2.1, from a server
+	 * that listens on IPv6 for both) is counted as its IPv4 address.
 	 *
 	 * @return string The address, or '' when there is none.
 	 */
 	public static function client_address() {
 		$header = defined( 'ARTWS_SEC_CLIENT_IP_HEADER' ) && is_string( ARTWS_SEC_CLIENT_IP_HEADER ) && '' !== ARTWS_SEC_CLIENT_IP_HEADER ? ARTWS_SEC_CLIENT_IP_HEADER : 'REMOTE_ADDR';
-		$value  = isset( $_SERVER[ $header ] ) ? sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) ) : '';
-		$parts  = explode( ',', $value );
-		$ip     = trim( (string) end( $parts ) );
+		/**
+		 * Filters the $_SERVER key that holds the client address.
+		 *
+		 * @param string $header ARTWS_SEC_CLIENT_IP_HEADER, or REMOTE_ADDR.
+		 */
+		$header = (string) apply_filters( 'artws_sec_client_ip_header', $header );
+		if ( ! isset( $_SERVER[ $header ] ) ) {
+			$header = 'REMOTE_ADDR';
+		}
+		$value = isset( $_SERVER[ $header ] ) ? sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) ) : '';
+		$parts = explode( ',', $value );
+		$ip    = trim( (string) end( $parts ) );
 
 		/**
 		 * Filters the client address the rate limit counts.
@@ -120,10 +134,13 @@ class Artws_Sec_Rate_Limiter {
 		}
 
 		$packed = inet_pton( $ip );
-		if ( false !== $packed && 16 === strlen( $packed ) ) {
-			return inet_ntop( substr( $packed, 0, 8 ) . str_repeat( "\0", 8 ) ) . '/64';
+		if ( false === $packed || 16 !== strlen( $packed ) ) {
+			return $ip;
 		}
-		return $ip;
+		if ( str_starts_with( $packed, str_repeat( "\0", 10 ) . "\xff\xff" ) ) {
+			return (string) inet_ntop( substr( $packed, 12 ) );
+		}
+		return inet_ntop( substr( $packed, 0, 8 ) . str_repeat( "\0", 8 ) ) . '/64';
 	}
 
 	/**

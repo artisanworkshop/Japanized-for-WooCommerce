@@ -106,6 +106,12 @@ class Artws_Sec_Db {
 			)
 		);
 
+		// Recorded only once every table is there, so that a failed dbDelta() is tried again.
+		foreach ( array( $sites, $scans, $limits, $vulns ) as $table ) {
+			if ( $table !== $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Checks the schema.
+				return;
+			}
+		}
 		update_option( self::VERSION_OPTION, self::VERSION, true );
 	}
 

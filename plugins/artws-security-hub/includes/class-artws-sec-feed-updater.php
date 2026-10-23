@@ -289,8 +289,8 @@ class Artws_Sec_Feed_Updater {
 			return null;
 		}
 		$state['stale'] = ! empty( $state['stale'] );
-		// Whether the run also wrote the vulnerability index (not before 0.3.0).
-		$state['indexed'] = ! empty( $state['indexed'] );
+		// Feed version of the vulnerability index the free security check uses, '' before there is one (0.3.0).
+		$state['index_version'] = isset( $state['index_version'] ) && is_string( $state['index_version'] ) ? $state['index_version'] : '';
 		return $state;
 	}
 
@@ -352,9 +352,9 @@ class Artws_Sec_Feed_Updater {
 			// What a run killed by a fatal error left behind.
 			Artws_Sec_Feed_Publisher::delete_stale_temp_files( $now - HOUR_IN_SECONDS );
 			self::delete_stale_downloads( $now - HOUR_IN_SECONDS );
+			// The published index stays; generations a run failed to finish go.
 			$previous = self::fresh_state();
-			$indexed  = null !== $previous && $previous['indexed'] ? array( $previous['version'] ) : array();
-			Artws_Sec_Vuln_Index::delete_other_versions( $indexed );
+			Artws_Sec_Vuln_Index::delete_other_versions( null !== $previous && '' !== $previous['index_version'] ? array( $previous['index_version'] ) : array() );
 
 			$download = self::download();
 
@@ -365,28 +365,26 @@ class Artws_Sec_Feed_Updater {
 
 			self::check_result( $result, self::fresh_state() );
 
-			// The scans match against the index of the published version, so it is written first.
-			$version = gmdate( 'Ymd.His', $now );
-			Artws_Sec_Vuln_Index::write( $result['vulnerabilities'], $version );
-
+			$version      = gmdate( 'Ymd.His', $now );
 			$generated_at = gmdate( 'Y-m-d\TH:i:s\Z', $now );
 			$files        = Artws_Sec_Feed_Publisher::write_vulnerability_files( $result['vulnerabilities'], $result['copyrights'], self::ATTRIBUTION, $generated_at );
 
 			$state = array(
-				'version'      => $version,
-				'generated_at' => $generated_at,
-				'stale'        => false,
-				'files'        => $files,
-				'copyrights'   => $result['copyrights'],
-				'attribution'  => self::ATTRIBUTION,
-				'last_success' => $now,
-				'indexed'      => true,
+				'version'       => $version,
+				'generated_at'  => $generated_at,
+				'stale'         => false,
+				'files'         => $files,
+				'copyrights'    => $result['copyrights'],
+				'attribution'   => self::ATTRIBUTION,
+				'last_success'  => $now,
+				// Updated by update_index() once the new generation is written.
+				'index_version' => null === $previous ? '' : $previous['index_version'],
 			);
 			update_option( self::STATE_OPTION, $state, false );
 			delete_option( self::ACCEPT_DROP_OPTION );
 			wp_unschedule_hook( self::RETRY_HOOK );
 			Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
-			Artws_Sec_Vuln_Index::delete_other_versions( array_merge( array( $version ), $indexed ) );
+			$index_error = self::update_index( $result['vulnerabilities'], $version );
 
 			// Deactivated while this run was in progress: nothing will update these files. Checked
 			// after the manifest is written, so a deactivation at any point of the run is caught
@@ -396,7 +394,7 @@ class Artws_Sec_Feed_Updater {
 				$notice = self::mark_stale( 'The plugin was deactivated during this update, so the feed is marked stale.' );
 			}
 
-			self::record_status( $now, 'success', $notice, $stats );
+			self::record_status( $now, 'success', trim( $notice . ' ' . $index_error ), $stats );
 			return 'success';
 		} catch ( Throwable $e ) {
 			// Fatal errors such as running out of memory never get here; watchdog() covers them.
@@ -421,6 +419,37 @@ class Artws_Sec_Feed_Updater {
 			}
 			self::release_lock();
 		}
+	}
+
+	/**
+	 * Writes the vulnerability index of a published version and makes it the one scans use.
+	 *
+	 * The feed is already published: a failure here leaves the scans on the
+	 * previous generation instead of failing the run, so that the feed every
+	 * JP4WC site reads never goes stale because of the free security check.
+	 * The next run tries again. Call it while holding the lock.
+	 *
+	 * @param array  $vulnerabilities Type => slug => feed records as JSON text.
+	 * @param string $version         The published version.
+	 * @return string Why the index was not updated, or ''.
+	 */
+	private static function update_index( array $vulnerabilities, $version ) {
+		try {
+			Artws_Sec_Vuln_Index::write( $vulnerabilities, $version );
+		} catch ( Artws_Sec_Feed_Exception $e ) {
+			Artws_Sec_Vuln_Index::delete_version( $version );
+			return 'The feed was published, but the index of the free security check was not updated, so scans use the previous one: ' . $e->getMessage();
+		}
+
+		$state = self::fresh_state();
+		if ( null === $state ) {
+			return '';
+		}
+		$replaced               = $state['index_version'];
+		$state['index_version'] = $version;
+		update_option( self::STATE_OPTION, $state, false );
+		Artws_Sec_Vuln_Index::delete_other_versions( '' === $replaced ? array( $version ) : array( $version, $replaced ) );
+		return '';
 	}
 
 	/**

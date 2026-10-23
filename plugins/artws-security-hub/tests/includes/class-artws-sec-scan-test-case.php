@@ -87,14 +87,14 @@ abstract class Artws_Sec_Scan_Test_Case extends Artws_Sec_Feed_Test_Case {
 		update_option(
 			Artws_Sec_Feed_Updater::STATE_OPTION,
 			array(
-				'version'      => self::FEED_VERSION,
-				'generated_at' => '2026-10-20T03:15:00Z',
-				'stale'        => $stale,
-				'files'        => array(),
-				'copyrights'   => array(),
-				'attribution'  => Artws_Sec_Feed_Updater::ATTRIBUTION,
-				'last_success' => time(),
-				'indexed'      => true,
+				'version'       => self::FEED_VERSION,
+				'generated_at'  => '2026-10-20T03:15:00Z',
+				'stale'         => $stale,
+				'files'         => array(),
+				'copyrights'    => array(),
+				'attribution'   => Artws_Sec_Feed_Updater::ATTRIBUTION,
+				'last_success'  => time(),
+				'index_version' => self::FEED_VERSION,
 			),
 			false
 		);

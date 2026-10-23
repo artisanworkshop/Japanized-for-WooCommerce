@@ -7,6 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain-text messages; the REST API answers 503 without them.
+
 /**
  * Artws_Sec_Report_Builder
  *
@@ -73,6 +75,11 @@ class Artws_Sec_Report_Builder {
 	const SERVER_CHECKS = array( 'V-01', 'V-03' );
 
 	/**
+	 * CVSS ratings from the least severe (JP4WC_Security_Scanner::RATINGS); a record without one ranks below them all.
+	 */
+	const RATINGS = array( 'None', 'Low', 'Medium', 'High', 'Critical' );
+
+	/**
 	 * Most findings in a report (report.schema.json).
 	 */
 	const MAX_FINDINGS = 500;
@@ -86,17 +93,18 @@ class Artws_Sec_Report_Builder {
 	 * Builds the report.
 	 *
 	 * @param array  $request    Request from Artws_Sec_Scan_Request::normalize().
-	 * @param array  $state      Published feed state (Artws_Sec_Feed_Updater::get_state(), indexed).
+	 * @param array  $state      Published feed state (Artws_Sec_Feed_Updater::get_state()) with an index_version.
 	 * @param array  $eol        Oldest supported versions (Artws_Sec_Feed_Updater::get_eol()).
 	 * @param string $scan_token Token of the report.
 	 * @param int    $now        Unix time.
 	 * @return array
+	 * @throws Artws_Sec_Feed_Exception When the vulnerability index cannot be read or is incomplete.
 	 */
 	public static function build( array $request, array $state, array $eol, $scan_token, $now ) {
 		$language = Artws_Sec_Report_Templates::language( $request['locale'] );
 
 		$statuses        = self::reported_statuses( $request['local_findings'] );
-		$vulnerabilities = self::vulnerabilities( $request, (string) $state['version'] );
+		$vulnerabilities = self::vulnerabilities( $request, (string) $state['index_version'] );
 		$unsupported     = self::unsupported_versions( $request, $eol );
 
 		if ( array() !== $vulnerabilities ) {
@@ -109,7 +117,7 @@ class Artws_Sec_Report_Builder {
 		$statuses         = self::in_check_order( $statuses );
 
 		$severities         = array_map( static fn( $check ) => $check[1], self::CHECKS );
-		$severities['V-01'] = self::vulnerability_severity( $vulnerabilities );
+		$severities['V-01'] = self::vulnerability_severity( array_column( $vulnerabilities, 'record' ) );
 
 		// Each finding with the CVSS score that orders vulnerabilities of the same severity.
 		$entries = array();
@@ -144,7 +152,8 @@ class Artws_Sec_Report_Builder {
 			'schema_version' => 1,
 			'token'          => $scan_token,
 			'generated_at'   => gmdate( 'Y-m-d\TH:i:s\Z', $now ),
-			'feed_version'   => (string) $state['version'],
+			// The version whose data the site was matched against.
+			'feed_version'   => (string) $state['index_version'],
 			'score'          => self::score( $statuses, $severities ),
 			'findings'       => $findings,
 			'next_steps'     => self::next_steps( $request, $statuses, $findings, $state, $language ),
@@ -240,9 +249,14 @@ class Artws_Sec_Report_Builder {
 	/**
 	 * Matches the site's software and WordPress version against the index.
 	 *
+	 * Every feed has records of WordPress core, so an index without them is
+	 * missing or incomplete: reporting "nothing found" from it would tell a
+	 * vulnerable site it is fine.
+	 *
 	 * @param array  $request Request.
-	 * @param string $version Feed version.
+	 * @param string $version Feed version of the index.
 	 * @return array<int, array{type: string, slug: string, version: string, record: array}>
+	 * @throws Artws_Sec_Feed_Exception When the index cannot be read or has no core records.
 	 */
 	private static function vulnerabilities( array $request, $version ) {
 		$installed = array();
@@ -257,14 +271,20 @@ class Artws_Sec_Report_Builder {
 				);
 			}
 		}
-		$installed[ Artws_Sec_Vuln_Index::lookup_key( 'core', Artws_Sec_Record_Validator::CORE_SLUG ) ] = array(
+		$core_key               = Artws_Sec_Vuln_Index::lookup_key( 'core', Artws_Sec_Record_Validator::CORE_SLUG );
+		$installed[ $core_key ] = array(
 			'type'    => 'core',
 			'slug'    => Artws_Sec_Record_Validator::CORE_SLUG,
 			'version' => $request['wp_ver'],
 		);
 
+		$records_by_key = Artws_Sec_Vuln_Index::find( $version, array_keys( $installed ) );
+		if ( ! isset( $records_by_key[ $core_key ] ) ) {
+			throw new Artws_Sec_Feed_Exception( sprintf( 'The vulnerability index %s has no WordPress core records.', $version ) );
+		}
+
 		$found = array();
-		foreach ( Artws_Sec_Vuln_Index::find( $version, array_keys( $installed ) ) as $key => $records ) {
+		foreach ( $records_by_key as $key => $records ) {
 			foreach ( $records as $record ) {
 				if ( is_array( $record ) && is_array( $record['affected_versions'] ?? null ) && Artws_Sec_Vuln_Index::is_affected( $installed[ $key ]['version'], $record['affected_versions'] ) ) {
 					$found[] = $installed[ $key ] + array( 'record' => $record );
@@ -299,20 +319,23 @@ class Artws_Sec_Report_Builder {
 	/**
 	 * Returns the severity of V-01: that of the most severe vulnerability found.
 	 *
-	 * @param array $vulnerabilities Matches from vulnerabilities().
+	 * As JP4WC_Security_Checks does: the highest CVSS rating among the
+	 * records, where a record without one ranks below None, so that it counts
+	 * as medium only when no record has a rating.
+	 *
+	 * @param array $records Feed records of the vulnerabilities found.
 	 * @return string
 	 */
-	private static function vulnerability_severity( array $vulnerabilities ) {
-		$severity = self::CHECKS['V-01'][1];
-		$best     = PHP_INT_MAX;
-		foreach ( $vulnerabilities as $vulnerability ) {
-			$rank = array_search( self::rating_severity( $vulnerability['record'] ), self::SEVERITIES, true );
-			if ( $rank < $best ) {
-				$best     = $rank;
-				$severity = self::SEVERITIES[ $rank ];
-			}
+	public static function vulnerability_severity( array $records ) {
+		if ( array() === $records ) {
+			return self::CHECKS['V-01'][1];
 		}
-		return $severity;
+		$highest = -1;
+		foreach ( $records as $record ) {
+			$rank    = array_search( $record['cvss']['rating'] ?? null, self::RATINGS, true );
+			$highest = max( $highest, false === $rank ? -1 : $rank );
+		}
+		return self::rating_severity( -1 === $highest ? array() : array( 'cvss' => array( 'rating' => self::RATINGS[ $highest ] ) ) );
 	}
 
 	/**

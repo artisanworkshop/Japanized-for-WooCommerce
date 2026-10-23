@@ -151,6 +151,36 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * A request that passed the look for full limits but lost the last hit to another one is refused.
+	 */
+	public function test_rate_limit_race() {
+		global $wpdb;
+		$limits = array(
+			array(
+				'key'    => 'race',
+				'max'    => 1,
+				'window' => 100,
+			),
+		);
+		$table  = Artws_Sec_Db::limits_table();
+		$racing = false;
+		add_filter(
+			'query',
+			static function ( $query ) use ( $table, &$racing, $wpdb ) {
+				if ( ! $racing && false !== strpos( $query, "INSERT INTO {$table}" ) ) {
+					// Another request takes the last hit just before this one.
+					$racing = true;
+					$wpdb->query( "INSERT INTO {$table} ( limit_key, window_start, hits ) VALUES ( 'race', 990, 1 )" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Test.
+				}
+				return $query;
+			}
+		);
+
+		$this->assertSame( 1090, Artws_Sec_Rate_Limiter::hit( $limits, 1000 ) );
+		$this->assertTrue( $racing );
+	}
+
+	/**
 	 * The cleanup runs daily and stops on deactivation.
 	 */
 	public function test_cleanup_event() {

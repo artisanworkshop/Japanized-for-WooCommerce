@@ -188,6 +188,19 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * The scan token is read from the route, never from the query string.
+	 */
+	public function test_scan_token_comes_from_the_route() {
+		list( $token, $scan ) = $this->register_site();
+
+		$request = new WP_REST_Request( 'GET', '/artws-sec/v1/scan/' . Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SCAN_TOKEN_PREFIX ) );
+		$request->set_header( 'Authorization', 'Bearer ' . $token );
+		$request->set_query_params( array( 'token' => $scan ) );
+
+		$this->assert_error( rest_get_server()->dispatch( $request ), 404, 'artws_sec_scan_not_found' );
+	}
+
+	/**
 	 * DELETE /site removes the site and its scans; its reports are then 404 and its token 401.
 	 */
 	public function test_delete_site() {
@@ -438,11 +451,32 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * Behind a proxy, the address comes from the header named by ARTWS_SEC_CLIENT_IP_HEADER (here the filter).
+	 * The address the rate limit counts.
 	 */
-	public function test_client_address_filter() {
+	public function test_client_address() {
 		$_SERVER['REMOTE_ADDR'] = '203.0.113.1';
 		$this->assertSame( '203.0.113.1', Artws_Sec_Rate_Limiter::client_address() );
+
+		// An IPv4-mapped address (a server listening on IPv6 for both) is its IPv4 address, not ::/64.
+		$_SERVER['REMOTE_ADDR'] = '::ffff:192.0.2.1';
+		$this->assertSame( '192.0.2.1', Artws_Sec_Rate_Limiter::client_address() );
+		$_SERVER['REMOTE_ADDR'] = '::ffff:198.51.100.7';
+		$this->assertSame( '198.51.100.7', Artws_Sec_Rate_Limiter::client_address() );
+
+		// Behind a proxy: the header it sets, the last of a list; without it, REMOTE_ADDR.
+		add_filter(
+			'artws_sec_client_ip_header',
+			static function () {
+				return 'HTTP_X_ARTWS_TEST_CLIENT';
+			}
+		);
+		$this->assertSame( '198.51.100.7', Artws_Sec_Rate_Limiter::client_address() );
+		$_SERVER['HTTP_X_ARTWS_TEST_CLIENT'] = '192.0.2.99, 203.0.113.50';
+		try {
+			$this->assertSame( '203.0.113.50', Artws_Sec_Rate_Limiter::client_address() );
+		} finally {
+			unset( $_SERVER['HTTP_X_ARTWS_TEST_CLIENT'] );
+		}
 
 		add_filter(
 			'artws_sec_client_ip',
@@ -463,12 +497,43 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 		// A feed published before 0.3.0 has no index yet.
 		self::publish_contract_feed();
 		$state = get_option( Artws_Sec_Feed_Updater::STATE_OPTION );
-		unset( $state['indexed'] );
+		unset( $state['index_version'] );
 		update_option( Artws_Sec_Feed_Updater::STATE_OPTION, $state, false );
 		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 503, 'artws_sec_unavailable' );
 
 		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::sites_table() ) );
 		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::limits_table() ) );
+	}
+
+	/**
+	 * An index that is gone or cannot be read is 503, not a report that finds nothing.
+	 */
+	public function test_unavailable_when_the_index_is_missing_or_unreadable() {
+		global $wpdb;
+		list( $token, ) = $this->register_site();
+		self::reset_rate_limits();
+
+		Artws_Sec_Vuln_Index::delete_version( self::FEED_VERSION );
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $token ), 503, 'artws_sec_unavailable' );
+
+		self::publish_contract_feed();
+		$table = Artws_Sec_Db::vulns_table();
+		add_filter(
+			'query',
+			static function ( $query ) use ( $table ) {
+				return 0 === strpos( $query, "SELECT lookup_key, records FROM {$table}" ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			}
+		);
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $token ), 503, 'artws_sec_unavailable' );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+
+		// Neither used up the site's hourly scan.
+		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::limits_table() ) );
+		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::scans_table() ) );
 	}
 
 	/**
@@ -490,8 +555,12 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	 * The query string is not read: the request is the JSON body.
 	 */
 	public function test_query_string_is_ignored() {
+		list( $token, ) = $this->register_site();
+		self::reset_rate_limits();
+
 		$request = new WP_REST_Request( 'POST', '/artws-sec/v1/scan' );
 		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_header( 'Authorization', 'Bearer ' . $token );
 		$request->set_body( wp_json_encode( self::sample_request() ) );
 		$request->set_query_params(
 			array(
@@ -502,6 +571,8 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertSame( 'B2', json_decode( $GLOBALS['wpdb']->get_var( 'SELECT request FROM ' . Artws_Sec_Db::scans_table() ), true )['revenue_band'] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- Test.
+		$this->assertArrayNotHasKey( 'site_token', $response->get_data() );
+		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+		$this->assertSame( 2, self::count_rows( Artws_Sec_Db::scans_table() ) );
 	}
 }
