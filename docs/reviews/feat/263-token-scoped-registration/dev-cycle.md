@@ -1,10 +1,10 @@
 # dev-cycle 状態: feat/263-token-scoped-registration
 - タスク: S2 仕様変更: 登録をトークン単位にする（backlog R1-X1 案D。reregister を廃止し site_url を一意にしない）
 - 開始: 2026-10-23
-- PR: 未作成
-- 現在のステップ: 4（push・PR 作成）
-- Copilot: 依頼 0 回 / 未収束
-- Codex: 依頼 0 回 / 未収束
+- PR: #282 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/282
+- 現在のステップ: 6（G2 依頼・CI 待ち）
+- Copilot: 依頼 1 回 / 未収束
+- Codex: 依頼 1 回 / 未収束
 - 確認ゲート: あり（auto-commit の指定なし）
 
 ## ログ
@@ -14,3 +14,5 @@
 | 2026-10-23 | 2 | ブランチ作成（main 682ecfa から） |
 | 2026-10-23 | 2 | 実装コミット bb88d00。server lint green / PHPUnit 418 件 green、ルート security_feed 114 件 green。ミューテーション 5 件すべて CAUGHT（枠のキーを URL に戻す・URL 不一致を通す・DROP INDEX なし・一意制約が残っても版を記録・IP 制限なし） |
 | 2026-10-23 | 3 | review-loop R1: Medium 3（R1-1 SHOW INDEX の失敗を一意制約なしと読む / R1-2 契約の版規則の例外 / R1-3 同じ URL の DELETE のテスト）を修正 608ea25、Low 3・範囲外 2 を backlog。R2: 3 件解消（ミューテーション CAUGHT）、新規 Low 2 を backlog → APPROVE |
+| 2026-10-23 | 4 | upstream へ push（f7d69a5、T=2026-10-23T13:27:13Z）、PR #282 作成。#260 の認証節・受け入れ条件と #256 の決定事項 1 行を案D に書き換え |
+| 2026-10-24 | 6-7 | G1: CI green（f7d69a5）。Copilot 3 件（2 本目のレビューを含む）、Codex 1 件を修正（2470128、ミューテーション 3 件 CAUGHT）。確認ゲートで commit & push を承認、返信・Resolve・サマリを投稿。保留なし |
