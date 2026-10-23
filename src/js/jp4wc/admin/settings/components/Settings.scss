@@ -446,6 +446,10 @@
 			vertical-align: top;
 		}
 
+		th {
+			white-space: nowrap;
+		}
+
 		td:first-child {
 			white-space: nowrap;
 		}
