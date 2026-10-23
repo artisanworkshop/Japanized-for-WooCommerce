@@ -290,9 +290,17 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 
 			remove_all_filters( 'query' );
 			update_option( Artws_Sec_Db::VERSION_OPTION, Artws_Sec_Db::VERSION );
+			$recorded = 0;
+			add_filter(
+				'pre_update_option_' . Artws_Sec_Db::VERSION_OPTION,
+				static function ( $value ) use ( &$recorded ) {
+					++$recorded;
+					return $value;
+				}
+			);
 			Artws_Sec_Db::install();
 			$this->assertSame( '1', (string) $non_unique() );
-			$this->assertSame( Artws_Sec_Db::VERSION, get_option( Artws_Sec_Db::VERSION_OPTION ) );
+			$this->assertSame( 1, $recorded );
 			$this->assertIsInt( Artws_Sec_Site_Store::register( 'https://example.jp', Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SITE_TOKEN_PREFIX ), self::NOW ) );
 			$this->assertIsInt( Artws_Sec_Site_Store::register( 'https://example.jp', Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SITE_TOKEN_PREFIX ), self::NOW ) );
 		} finally {
@@ -300,6 +308,33 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 			update_option( Artws_Sec_Db::VERSION_OPTION, Artws_Sec_Db::VERSION );
 			Artws_Sec_Db::install();
 		}
+	}
+
+	/**
+	 * When the index cannot be read, the upgrade is not recorded as done: a failed query is not "no unique index".
+	 */
+	public function test_upgrade_is_not_recorded_when_the_index_cannot_be_read() {
+		global $wpdb;
+		$sites = Artws_Sec_Db::sites_table();
+		update_option( Artws_Sec_Db::VERSION_OPTION, '1' );
+		add_filter(
+			'query',
+			static function ( $query ) use ( $sites ) {
+				return 0 === strpos( $query, "SHOW INDEX FROM {$sites} WHERE" ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			}
+		);
+
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			Artws_Sec_Db::maybe_install();
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+		$this->assertSame( '1', get_option( Artws_Sec_Db::VERSION_OPTION ) );
+
+		remove_all_filters( 'query' );
+		Artws_Sec_Db::maybe_install();
+		$this->assertSame( Artws_Sec_Db::VERSION, get_option( Artws_Sec_Db::VERSION_OPTION ) );
 	}
 
 	/**

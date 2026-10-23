@@ -23,6 +23,7 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 - 読む側は Schema を検査に使わず、知らない項目を無視する。項目の追加は後方互換な変更とし、`schema_version` は据え置く。配布済みの JP4WC は更新を強制できないので、新しい項目が無くても動く作りにする。
 - enum に値を足すこと（`severity`・`requirement`・`files` の種類・`check_id` の接頭辞など）、項目の削除・改名・意味の変更は互換を壊す変更とする。それでも読む側は、知らない値を持つ要素を読み飛ばし、全体をエラーにしない。
 - 互換を壊す変更は `schema_version: 2` とし、新しい URL で並行運用する（フィードは `/feed/v2/`、REST は `artws-sec/v2`）。`/feed/v1/` と `artws-sec/v1` は、使う JP4WC が無くなるまで提供し続ける。
+- ただし REST（`POST /scan` の送信データと応答、`artws-sec/v1`）は、それを使う JP4WC（#260）を出すまでは v1 のまま直接変える（サーバー 0.4.0 で `reregister` を削除し、トークンなしの `POST /scan` を常に新しい登録にした）。
 
 ### フィード
 - 配置: `https://wc.artws.info/feed/v1/manifest.json`。脆弱性ファイルは manifest の `files.<type>.file` を同じディレクトリからの相対名として取得する（`file` はディレクトリを含まない名前に限る）。クライアントは基底 URL をフィルタで差し替えられるようにする（#257）。

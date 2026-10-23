@@ -63,7 +63,7 @@ class Artws_Sec_Db {
 		$vulns   = self::vulns_table();
 
 		// dbDelta() never drops an index, so it cannot turn the unique site_key of version 1 into a plain one.
-		if ( self::has_unique_site_key() ) {
+		if ( true === self::has_unique_site_key() ) {
 			$wpdb->query( "ALTER TABLE {$sites} DROP INDEX site_key" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Upgrades this plugin's own table.
 		}
 
@@ -119,7 +119,7 @@ class Artws_Sec_Db {
 				return;
 			}
 		}
-		if ( self::has_unique_site_key() ) {
+		if ( false !== self::has_unique_site_key() ) {
 			return;
 		}
 		update_option( self::VERSION_OPTION, self::VERSION, true );
@@ -139,17 +139,21 @@ class Artws_Sec_Db {
 	/**
 	 * Whether the sites table still has the unique site_key of version 1.
 	 *
-	 * @return bool
+	 * A failed query returns null just as "no such index" does, so it is
+	 * reported as unknown and the upgrade is not taken as done.
+	 *
+	 * @return bool|null Null when it cannot be told.
 	 */
 	private static function has_unique_site_key() {
 		global $wpdb;
 
 		$sites = self::sites_table();
 		if ( ! self::table_exists( $sites ) ) {
-			return false;
+			return '' === $wpdb->last_error ? false : null;
 		}
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Checks the schema of this plugin's own table.
-		return null !== $wpdb->get_row( "SHOW INDEX FROM {$sites} WHERE Key_name = 'site_key' AND Non_unique = 0" );
+		$index = $wpdb->get_row( "SHOW INDEX FROM {$sites} WHERE Key_name = 'site_key' AND Non_unique = 0" );
+		return '' === $wpdb->last_error ? null !== $index : null;
 	}
 
 	/**

@@ -204,11 +204,11 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * DELETE /site removes the site and its scans; its reports are then 404 and its token 401.
+	 * DELETE /site removes the registration and its scans (its reports are then 404 and its token 401); another registration of the same site_url stays.
 	 */
 	public function test_delete_site() {
 		list( $token, $scan ) = $this->register_site();
-		list( $other, )       = $this->register_site( array( 'site_url' => 'https://other.example.jp' ) );
+		list( $other, )       = $this->register_site();
 
 		$response = self::send( 'DELETE', '/site', null, $token );
 
