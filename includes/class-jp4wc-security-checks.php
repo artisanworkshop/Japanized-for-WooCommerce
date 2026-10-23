@@ -907,7 +907,8 @@ class JP4WC_Security_Checks {
 	 * Whether every top-level statement is a declaration.
 	 *
 	 * Class and function bodies are skipped: they run only when called. A
-	 * namespace or declare block is not, since its statements run.
+	 * namespace block, and a declare that takes a statement or a block, are
+	 * not declarations, since their statements run.
 	 *
 	 * @param array $tokens Tokens without whitespace and comments.
 	 * @return bool
@@ -936,10 +937,19 @@ class JP4WC_Security_Checks {
 			if ( ! in_array( $type, self::DECLARATIONS, true ) ) {
 				return false;
 			}
+			if ( T_DECLARE === $type ) {
+				// Only declare( ... ); — a declare followed by a statement or a block runs it.
+				$end = self::closing_parenthesis( $tokens, $i + 1 );
+				if ( null === $end || ';' !== self::type_at( $tokens, $end + 1 ) ) {
+					return false;
+				}
+				$i = $end + 2;
+				continue;
+			}
 
 			// The statement ends at a semicolon outside braces and parentheses, or
 			// where the braces of its body close.
-			$block       = in_array( $type, array( T_NAMESPACE, T_DECLARE ), true );
+			$block       = T_NAMESPACE === $type;
 			$braces      = 0;
 			$parentheses = 0;
 			for ( ; $i < $count; $i++ ) {
@@ -1019,6 +1029,29 @@ class JP4WC_Security_Checks {
 		// The argument of exit( ... ) runs first: only a plain one keeps the guard harmless,
 		// and any other is code (false).
 		return self::is_plain_exit( array_slice( $tokens, $k + 1, 4 ), $whole );
+	}
+
+	/**
+	 * Returns the position of the parenthesis that closes the one at a position.
+	 *
+	 * @param array $tokens Tokens.
+	 * @param int   $open   Position of the opening parenthesis.
+	 * @return int|null Null when there is no opening parenthesis there, or it is not closed.
+	 */
+	private static function closing_parenthesis( array $tokens, $open ) {
+		if ( '(' !== self::type_at( $tokens, $open ) ) {
+			return null;
+		}
+		$depth = 0;
+		for ( $k = $open, $count = count( $tokens ); $k < $count; $k++ ) {
+			$type = self::token_type( $tokens[ $k ] );
+			if ( '(' === $type ) {
+				++$depth;
+			} elseif ( ')' === $type && 0 === --$depth ) {
+				return $k;
+			}
+		}
+		return null;
 	}
 
 	/**
