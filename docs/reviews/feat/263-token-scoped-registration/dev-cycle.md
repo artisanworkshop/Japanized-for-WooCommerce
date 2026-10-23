@@ -2,9 +2,9 @@
 - タスク: S2 仕様変更: 登録をトークン単位にする（backlog R1-X1 案D。reregister を廃止し site_url を一意にしない）
 - 開始: 2026-10-23
 - PR: #282 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/282
-- 現在のステップ: 6（G3 依頼・CI 待ち）
-- Copilot: 依頼 2 回 / 未収束
-- Codex: 依頼 2 回 / 未収束（G2 は応答なし＝未確認）
+- 現在のステップ: 8（完了）
+- Copilot: 依頼 3 回 / 上限（G3 は具体的な指摘なし）
+- Codex: 依頼 3 回 / 収束（G2・G3 とも指摘なし）
 - 確認ゲート: あり（auto-commit の指定なし）
 
 ## ログ
@@ -17,3 +17,4 @@
 | 2026-10-23 | 4 | upstream へ push（f7d69a5、T=2026-10-23T13:27:13Z）、PR #282 作成。#260 の認証節・受け入れ条件と #256 の決定事項 1 行を案D に書き換え |
 | 2026-10-24 | 6-7 | G1: CI green（f7d69a5）。Copilot 3 件（2 本目のレビューを含む）、Codex 1 件を修正（2470128、ミューテーション 3 件 CAUGHT）。確認ゲートで commit & push を承認、返信・Resolve・サマリを投稿。保留なし |
 | 2026-10-24 | 6-7 | G2: CI green（896e307）。Copilot の本文 1 件（G2-1 枠の窓の引き継ぎ）を Low で保留。Codex は Running のまま 2 回待っても応答なし → ユーザー判断で未確認のまま G3 へ |
+| 2026-10-24 | 6-8 | G3: CI green（eaa8082）。Codex は指摘なしで収束（G2 も 22:16Z に指摘なしで届いていた）。Copilot は本文に具体的でない記述のみで、上限で終了。最終報告 |
