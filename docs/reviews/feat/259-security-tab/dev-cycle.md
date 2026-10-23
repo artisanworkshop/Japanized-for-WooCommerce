@@ -3,7 +3,7 @@
 - 開始: 2026-10-23
 - オプション: auto-commit
 - PR: 未作成
-- 現在のステップ: 3（review-loop）
+- 現在のステップ: 4（push・PR 作成）
 - Copilot: 依頼 0 回 / 未収束
 - Codex: 依頼 0 回 / 未収束
 
@@ -21,3 +21,5 @@
 | 2026-10-23 | 1 | 計画承認（質問 4 件はすべて推奨案） |
 | 2026-10-23 | 2 | 実装コミット 5 件（0031016 / efe7659 / 24dadf5 / aa78b45 / 3774cb8）。PHPUnit 867 件 green、`npx wp-scripts build` OK、`composer lint` は main と同数（既存の 94 件のみ） |
 | 2026-10-23 | 2 | wp-env（:8890）で表示確認: 機能無効 / 未チェック / 再チェック→ポーリング→完了 / 脆弱性あり（表・リンク）/ unknown を含む全チェック一覧 / フィード取得失敗 / 幅 420px / 通知→タブ。見出しの折り返しを修正（3774cb8） |
+| 2026-10-23 | 3 | review-loop R1: Medium 2 / Low 10 + 対象外 2（backlog）。修正 3f42694 |
+| 2026-10-23 | 3 | review-loop R2: **APPROVE**（R1 全解消、新規 Medium 1・Low 2 も修正 ccaa16a）。PHPUnit 874 件 green |
