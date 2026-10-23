@@ -810,14 +810,6 @@ msgstr ""
 msgid "%1$sAn empty notification email has been sent. Order ID: %2$d"
 msgstr "%1$s必須入力が入っていない通知メールが送信されました。注文ID: %2$d"
 
-#: includes/class-jp4wc-security.php:61
-msgid ""
-"<strong>ERROR</strong>: This user has reached the maximum number of login "
-"attempts. Please try again later."
-msgstr ""
-"<strong>エラー</strong>: このユーザーはログイン試行回数の上限に達しました。し"
-"ばらくしてからもう一度お試しください。"
-
 #: includes/class-jp4wc-shortcodes.php:64 assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/LawSettings.js:57
 msgid "Shop Name"
