@@ -192,7 +192,9 @@ JS;
 					__( 'The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn the vulnerability check off in the JP4WC settings.', 'woocommerce-for-japan' ),
 					(string) wp_parse_url( JP4WC_Security_Feed::base_url(), PHP_URL_HOST )
 				)
-			) . '</p></div>';
+			) . '</p>';
+			self::render_tab_link();
+			echo '</div>';
 			return;
 		}
 		if ( array() !== $findings['items'] ) {
@@ -201,6 +203,7 @@ JS;
 		if ( $view['stale'] ) {
 			echo '<p>' . esc_html__( 'The vulnerability data has not been updated for a while, so vulnerabilities disclosed since then are not checked.', 'woocommerce-for-japan' ) . '</p>';
 		}
+		self::render_tab_link();
 		self::render_credits( $findings );
 
 		echo '</div>';
@@ -237,7 +240,7 @@ JS;
 			}
 			printf(
 				'<li><a href="%1$s">%2$s</a> %3$s<ul>',
-				esc_url( self::software_url( $item ) ),
+				esc_url( self::tab_url() ),
 				esc_html( $item['name'] ),
 				esc_html( $item['version'] )
 			);
@@ -302,24 +305,30 @@ JS;
 	}
 
 	/**
-	 * Returns where the affected software is managed.
+	 * Returns the URL of the Security tab of the JP4WC settings, which shows
+	 * the findings in full and links each affected copy to where it is updated.
 	 *
-	 * Until the Security tab exists, the plugins list row, the theme details
-	 * or the WordPress update screen.
-	 *
-	 * @param array $item Affected copy.
 	 * @return string
 	 */
-	private static function software_url( array $item ) {
-		switch ( $item['type'] ) {
-			case 'plugin':
-				// The id of the plugin's checkbox in the plugins list (WP_Plugins_List_Table::single_row()).
-				return admin_url( 'plugins.php' ) . ( '' !== $item['file'] ? '#checkbox_' . md5( $item['file'] ) : '' );
-			case 'theme':
-				return add_query_arg( 'theme', rawurlencode( $item['slug'] ), admin_url( 'themes.php' ) );
-			default:
-				return network_admin_url( 'update-core.php' );
-		}
+	public static function tab_url() {
+		return add_query_arg(
+			array(
+				'page' => 'jp4wc-settings',
+				'tab'  => 'security',
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+	/**
+	 * Prints the link to the Security tab.
+	 */
+	private static function render_tab_link() {
+		printf(
+			'<p><a href="%1$s">%2$s</a></p>',
+			esc_url( self::tab_url() ),
+			esc_html__( 'Open the Security tab', 'woocommerce-for-japan' )
+		);
 	}
 
 	/**

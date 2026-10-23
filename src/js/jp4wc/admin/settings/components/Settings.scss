@@ -272,6 +272,210 @@
 	}
 }
 
+// Security Settings Specific Styles
+.jp4wc-security-settings {
+	.components-notice {
+		margin: 0 0 16px;
+	}
+
+	.jp4wc-security-loading {
+		padding: 20px;
+		text-align: center;
+	}
+
+	.jp4wc-security-scorecard {
+		display: grid;
+		grid-template-columns: minmax(160px, 1fr) 4fr;
+		gap: 16px;
+		margin-bottom: 12px;
+
+		@media (max-width: 960px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.jp4wc-security-total,
+	.jp4wc-security-requirement {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding: 16px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		background: #fff;
+	}
+
+	.jp4wc-security-total {
+		justify-content: center;
+		background: #f6f7f7;
+	}
+
+	.jp4wc-security-total-label,
+	.jp4wc-security-requirement-name {
+		font-weight: 600;
+	}
+
+	.jp4wc-security-total-score,
+	.jp4wc-security-requirement-score {
+		font-size: 32px;
+		font-weight: 600;
+		line-height: 1.2;
+
+		small {
+			font-size: 14px;
+			font-weight: 400;
+			color: #646970;
+		}
+	}
+
+	.jp4wc-security-total-note,
+	.jp4wc-security-requirement-counts {
+		font-size: 12px;
+		color: #646970;
+	}
+
+	.jp4wc-security-requirements {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 16px;
+		margin: 0;
+
+		@media (max-width: 1280px) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		@media (max-width: 600px) {
+			grid-template-columns: 1fr;
+		}
+
+		li {
+			margin: 0;
+		}
+	}
+
+	.jp4wc-security-requirement {
+		border-top-width: 4px;
+
+		&.is-pass {
+			border-top-color: #00a32a;
+		}
+
+		&.is-action {
+			border-top-color: #d63638;
+		}
+
+		&.is-unknown {
+			border-top-color: #dba617;
+		}
+	}
+
+	.jp4wc-security-badge,
+	.jp4wc-security-severity {
+		display: inline-block;
+		align-self: flex-start;
+		padding: 2px 8px;
+		border-radius: 10px;
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 1.6;
+		white-space: nowrap;
+		background: #f0f0f1;
+		color: #1d2327;
+	}
+
+	.jp4wc-security-badge {
+		&.is-pass {
+			background: #edfaef;
+			color: #00450c;
+		}
+
+		&.is-action,
+		&.is-fail {
+			background: #fcf0f1;
+			color: #8a2424;
+		}
+
+		&.is-unknown {
+			background: #fcf9e8;
+			color: #614a19;
+		}
+	}
+
+	.jp4wc-security-severity {
+		&.is-critical {
+			background: #8a2424;
+			color: #fff;
+		}
+
+		&.is-high {
+			background: #d63638;
+			color: #fff;
+		}
+
+		&.is-medium {
+			background: #dba617;
+			color: #1d2327;
+		}
+
+		&.is-low {
+			background: #f0f0f1;
+			color: #1d2327;
+		}
+	}
+
+	.jp4wc-security-disclaimer {
+		margin: 0 0 16px;
+	}
+
+	.jp4wc-security-recheck {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px;
+		margin: 16px 0;
+	}
+
+	.jp4wc-security-findings-wrap {
+		overflow-x: auto;
+		margin-bottom: 16px;
+	}
+
+	.jp4wc-security-findings {
+		th,
+		td {
+			vertical-align: top;
+		}
+
+		td:first-child {
+			white-space: nowrap;
+		}
+	}
+
+	.jp4wc-security-check-group {
+		h4 {
+			margin: 12px 0 6px;
+		}
+	}
+
+	.jp4wc-security-checks {
+		margin: 0;
+
+		li {
+			margin: 0 0 6px;
+		}
+	}
+
+	.jp4wc-security-credits {
+		margin-top: 24px;
+		padding-top: 12px;
+		border-top: 1px solid #ddd;
+
+		details {
+			margin: 0 0 8px;
+		}
+	}
+}
+
 // Info Footer Styles
 .jp4wc-settings-info-footer {
 	margin-top: 40px;

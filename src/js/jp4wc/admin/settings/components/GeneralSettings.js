@@ -23,7 +23,6 @@ const GeneralSettings = ( {
 		const defaults = {
 			addressDisplay: true,
 			virtualOrder: true,
-			security: true,
 		};
 		const saved = localStorage.getItem( 'jp4wc-general-panel-states' );
 		// Saved states predate panels added later, which open by default.
@@ -376,30 +375,6 @@ const GeneralSettings = ( {
 							/>
 						</div>
 					</div>
-				</PanelRow>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Security', 'woocommerce-for-japan' ) }
-				opened={ panelStates.security }
-				onToggle={ () => togglePanel( 'security' ) }
-			>
-				<PanelRow>
-					<ToggleControl
-						__nextHasNoMarginBottom={ true }
-						label={ __(
-							'Vulnerability check',
-							'woocommerce-for-japan'
-						) }
-						help={ __(
-							'Once a day, download the list of known vulnerabilities from wc.artws.info (Artisan Workshop) and check the installed plugins, themes and WordPress against it. Only the versions of this plugin, WordPress, WooCommerce and PHP are sent, in the User-Agent header.',
-							'woocommerce-for-japan'
-						) }
-						checked={ settings?.[ 'security-scan' ] === '1' }
-						onChange={ ( value ) =>
-							updateSetting( 'security-scan', value ? '1' : '' )
-						}
-					/>
 				</PanelRow>
 			</PanelBody>
 
