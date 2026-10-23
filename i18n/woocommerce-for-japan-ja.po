@@ -3393,6 +3393,15 @@ msgstr ""
 "してください（マルウェアの可能性があります）。サーバーの設定で、このディレク"
 "トリでの PHP の実行も止めてください。"
 
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"No fixed version yet. Update WordPress as soon as its security release is "
+"out."
+msgstr ""
+"修正版はまだありません。WordPress のセキュリティリリースが出たらすぐに更新し"
+"てください。"
+
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44
 #: src/js/blocks/delivery-block-editor.js:65
@@ -4330,3 +4339,9 @@ msgstr "セキュリティチェックはオフです。"
 msgid "A re-check was asked for a moment ago. Try again in %d second."
 msgid_plural "A re-check was asked for a moment ago. Try again in %d seconds."
 msgstr[0] "少し前に再チェックを依頼しました。%d 秒後にもう一度お試しください。"
+
+#: includes/admin/class-jp4wc-security-api.php:166
+msgid "The re-check could not be scheduled in WP-Cron. Try again later."
+msgstr ""
+"再チェックを WP-Cron に予約できませんでした。しばらくしてからもう一度お試しく"
+"ださい。"

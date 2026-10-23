@@ -2627,6 +2627,11 @@ msgstr ""
 msgid "Check the PHP files in the uploads directory and delete the ones you do not know, which may be malware. Also stop PHP from running there in the server configuration."
 msgstr ""
 
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "No fixed version yet. Update WordPress as soon as its security release is out."
+msgstr ""
+
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44
 #: src/js/blocks/delivery-block-editor.js:65
@@ -3460,3 +3465,7 @@ msgid "A re-check was asked for a moment ago. Try again in %d second."
 msgid_plural "A re-check was asked for a moment ago. Try again in %d seconds."
 msgstr[0] ""
 msgstr[1] ""
+
+#: includes/admin/class-jp4wc-security-api.php:166
+msgid "The re-check could not be scheduled in WP-Cron. Try again later."
+msgstr ""
