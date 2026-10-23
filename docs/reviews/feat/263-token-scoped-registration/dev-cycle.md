@@ -18,3 +18,4 @@
 | 2026-10-24 | 6-7 | G1: CI green（f7d69a5）。Copilot 3 件（2 本目のレビューを含む）、Codex 1 件を修正（2470128、ミューテーション 3 件 CAUGHT）。確認ゲートで commit & push を承認、返信・Resolve・サマリを投稿。保留なし |
 | 2026-10-24 | 6-7 | G2: CI green（896e307）。Copilot の本文 1 件（G2-1 枠の窓の引き継ぎ）を Low で保留。Codex は Running のまま 2 回待っても応答なし → ユーザー判断で未確認のまま G3 へ |
 | 2026-10-24 | 6-8 | G3: CI green（eaa8082）。Codex は指摘なしで収束（G2 も 22:16Z に指摘なしで届いていた）。Copilot は本文に具体的でない記述のみで、上限で終了。最終報告 |
+| 2026-10-24 | 後追い | ユーザーの依頼で、wc.artws.info への反映手順書 `plugins/artws-security-hub/DEPLOY.md` を追加。README の反映手順は DEPLOY.md への案内に置き換え、`.distignore` で ZIP から除いた |

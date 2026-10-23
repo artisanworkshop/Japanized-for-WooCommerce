@@ -10,6 +10,8 @@ wc.artws.info で動かす WordPress プラグイン。Japanized for WooCommerce
 
 JP4WC とやり取りする JSON の形式は、リポジトリ直下の `tests/fixtures/security-feed/`（README と JSON Schema）で定める。
 
+wc.artws.info への入れ方・設定・確認・更新は、作業順の手順書 [DEPLOY.md](DEPLOY.md) にまとめた。この README は仕組みと設定値の理由を書く。
+
 ## 秘密情報
 
 このリポジトリは公開されている。API キー・署名の共通鍵・DB 情報はコードにもテストにも書かず、wc.artws.info の `wp-config.php` の定数（または環境変数）から読む。
@@ -158,19 +160,6 @@ CI は `.github/workflows/artws-security-hub.yml`。このディレクトリか 
 
 ## wc.artws.info への反映
 
-JP4WC のタグやリリースとは連動しない。手動で ZIP を作ってアップロードする。
-
-```bash
-cd plugins/artws-security-hub
-rm -rf /tmp/artws-security-hub && mkdir -p /tmp/artws-security-hub
-rsync -a --exclude-from=.distignore ./ /tmp/artws-security-hub/
-(cd /tmp && rm -f artws-security-hub.zip && zip -r artws-security-hub.zip artws-security-hub)
-```
-
-1. wc.artws.info の管理画面 > プラグイン > 新規追加 > プラグインのアップロードで `/tmp/artws-security-hub.zip` を選び、「現在のものをアップロードしたもので置き換える」で更新する
-2. 有効化し、必要な定数が `wp-config.php` にあることを確認する
-3. 初回（S1）は、配信設定（上記）を入れてから「Update now」か `wp cron event run artws_sec_feed_update` で取り込み、管理画面の結果と除外例を確かめる。実データで除外が 2% を超えたら、除外例を見てから閾値か検査を見直す
-4. S2（0.3.0）を入れたときも、取り込みを1回走らせて照合用のインデックスを作る（それまで `POST /scan` は 503）。「運用」の Authorization ヘッダーと送信元 IP の確認もする
-5. 0.4.0 は最初の要求の `init` で sites 表を版 2 にする。`wp option get artws_sec_db_version` が `2` になったことを確かめる
+JP4WC のタグやリリースとは連動しない。手動で ZIP を作ってアップロードする。初めて入れるとき・更新するときの手順（ZIP の作り方、版ごとの追加作業、確認のコマンド）は [DEPLOY.md](DEPLOY.md) を見る。
 
 `Update URI: false` を指定しているので、WordPress.org の同名プラグインから更新が届くことはない。実行時に Composer の依存は使わない（`vendor/` はテスト用で、ZIP には入れない）。
