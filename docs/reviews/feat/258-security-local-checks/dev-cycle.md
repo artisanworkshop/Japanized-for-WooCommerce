@@ -2,10 +2,10 @@
 - タスク: issue #258 セキュリティ診断 Phase 2a — ローカルチェック（V/A/D/M）とスコア計算
 - 開始: 2026-10-23
 - オプション: auto-commit
-- PR: 未作成
-- 現在のステップ: 4（push・PR 作成）
-- Copilot: 依頼 0 回 / 未収束
-- Codex: 依頼 0 回 / 未収束
+- PR: #277 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/277
+- 現在のステップ: 6（G2 依頼・CI 待ち）
+- Copilot: 依頼 1 回 / 未収束
+- Codex: 依頼 1 回 / 未収束
 
 ## 計画で決めたこと
 - `@since 3.0.0`。画面文字列は追加しない（文言は #259）。readme 変更なし
@@ -23,3 +23,6 @@
 | 2026-10-23 08:38 | 3 | review-loop R1: Medium 7 件を修正（35a0aa1, f0939f5）、Low 10・対象外 1 を backlog。PHPUnit 803 件 green |
 | 2026-10-23 08:53 | 3 | review-loop R2: R1 指摘 7 件すべて解消（ミューテーションで実測）。新規 High 1・Medium 3 を修正（c752a90, 0d95940）、Low 4 を backlog。PHPUnit 818 件 green → R3 へ |
 | 2026-10-23 09:02 | 3 | review-loop R3: APPROVE（R2 指摘 4 件解消、新規 Critical/High なし）。Low 1 を backlog |
+| 2026-10-23 09:03 | 4 | upstream へ push（aa07f09、T=2026-10-23T00:02:45Z）、PR #277 作成 |
+| 2026-10-23 09:07 | 6 | G1 依頼（CI green 後）。Copilot・Codex とも応答 |
+| 2026-10-23 09:18 | 7 | G1: Codex 2 件（修正 1 = a901cba / 保留 1）、Copilot インライン 3・本文のみ 3（すべて保留）。PHPUnit 825 件 green。返信・Resolve・サマリー投稿（auto-commit） |
