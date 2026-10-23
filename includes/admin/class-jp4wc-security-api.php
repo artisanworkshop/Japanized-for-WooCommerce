@@ -159,7 +159,14 @@ class JP4WC_Security_API extends WP_REST_Controller {
 			);
 		}
 
-		JP4WC_Security_Feed::request_recheck();
+		if ( 0 === JP4WC_Security_Feed::request_recheck() ) {
+			// Turned off by another request meanwhile.
+			return new WP_Error(
+				'jp4wc_security_disabled',
+				__( 'The security check is off.', 'woocommerce-for-japan' ),
+				array( 'status' => 409 )
+			);
+		}
 		$response = rest_ensure_response( self::view() );
 		$response->set_status( 202 );
 		return $response;
@@ -176,7 +183,7 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 *     checks: array<int, array{check_id: string, requirement: string, severity: string, status: string}>,
 	 *     vulnerabilities: array|null,
 	 *     feed: array{host: string, has_data: bool, synced_at: int, last_attempt: int, failing: bool, unavailable: bool},
-	 *     recheck: array{requested_at: int, pending: bool, retry_after: int}
+	 *     recheck: array{requested_at: int, done_at: int, pending: bool, retry_after: int}
 	 * }
 	 *         Requirement status: pass when every check passed, action when one
 	 *         failed, otherwise unknown. vulnerabilities is null without data.
@@ -199,6 +206,7 @@ class JP4WC_Security_API extends WP_REST_Controller {
 			),
 			'recheck'         => array(
 				'requested_at' => 0,
+				'done_at'      => 0,
 				'pending'      => false,
 				'retry_after'  => 0,
 			),
@@ -234,10 +242,12 @@ class JP4WC_Security_API extends WP_REST_Controller {
 		);
 
 		$requested_at    = JP4WC_Security_Feed::recheck_requested_at();
+		$done_at         = JP4WC_Security_Feed::recheck_done_at();
 		$view['recheck'] = array(
 			'requested_at' => $requested_at,
-			// Done once the findings come from a check that started after the request.
-			'pending'      => $requested_at > $view['checked_at']
+			'done_at'      => $done_at,
+			// WordPress removes the event before running it: then the time since the request tells.
+			'pending'      => $requested_at > $done_at
 				&& ( false !== wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) || time() - $requested_at < self::RECHECK_RUNNING_FOR ),
 			'retry_after'  => self::retry_after(),
 		);

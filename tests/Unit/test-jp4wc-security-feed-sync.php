@@ -1146,6 +1146,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RESCAN_HOOK ) );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_DONE_OPTION ) );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
 	}
 
@@ -1333,6 +1334,70 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		$this->assertSame( array_fill( 0, count( $kept ), 'unknown' ), $statuses(), 'Requested again: the site cannot reach itself in this test.' );
 		$this->assertSame( array(), $this->requested_files(), 'With stored data, the feed is not downloaded.' );
 		$this->assertGreaterThanOrEqual( time() - 60, JP4WC_Security_Feed::get_checks()['checked_at'] );
+	}
+
+	/**
+	 * A re-check records the request it ran for; the automatic rescan does not (R1-1).
+	 */
+	public function test_recheck_records_the_request_it_ran_for() {
+		$this->sync_successfully();
+		$requested_at = time() - 30;
+		update_option( JP4WC_Security_Feed::RECHECK_OPTION, $requested_at, false );
+
+		JP4WC_Security_Feed::rescan();
+		$this->assertSame( 0, JP4WC_Security_Feed::recheck_done_at(), 'The automatic rescan is not the re-check.' );
+
+		JP4WC_Security_Feed::recheck();
+		$this->assertSame( $requested_at, JP4WC_Security_Feed::recheck_done_at() );
+	}
+
+	/**
+	 * Asking for a re-check while another request turns the check off leaves
+	 * nothing behind; a re-check event that still runs while the check is off
+	 * removes what is left (R1-2).
+	 */
+	public function test_recheck_turned_off_meanwhile_leaves_nothing() {
+		$this->sync_successfully();
+		$this->turn_off_from_another_request();
+
+		$this->assertSame( 0, JP4WC_Security_Feed::request_recheck() );
+
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_OPTION ) );
+
+		// A later WP-Cron process sees the check off, with a re-check left behind from before.
+		wp_cache_delete( 'alloptions', 'options' );
+		$this->assertFalse( JP4WC_Security_Feed::is_enabled() );
+		update_option( JP4WC_Security_Feed::RECHECK_OPTION, time(), false );
+		update_option( JP4WC_Security_Feed::FINDINGS_OPTION, array( 'checked_at' => time() ), false );
+
+		JP4WC_Security_Feed::recheck();
+
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+		$this->assertSame( array(), $this->requests );
+	}
+
+	/**
+	 * A check turned off while a re-check runs keeps nothing of it (R1-2).
+	 */
+	public function test_turning_off_during_a_recheck_leaves_nothing() {
+		$this->sync_successfully();
+		update_option( JP4WC_Security_Feed::RECHECK_OPTION, time(), false );
+		$turn_off = function ( $installed ) {
+			$this->turn_off_from_another_request();
+			return $installed;
+		};
+		add_filter( 'jp4wc_security_installed_software', $turn_off, 5 );
+		try {
+			JP4WC_Security_Feed::recheck();
+		} finally {
+			remove_filter( 'jp4wc_security_installed_software', $turn_off, 5 );
+		}
+
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_DONE_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
 	}
 
 	/**
