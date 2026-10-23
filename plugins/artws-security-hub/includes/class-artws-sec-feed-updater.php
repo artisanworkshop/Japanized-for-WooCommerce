@@ -289,6 +289,8 @@ class Artws_Sec_Feed_Updater {
 			return null;
 		}
 		$state['stale'] = ! empty( $state['stale'] );
+		// Whether the run also wrote the vulnerability index (not before 0.3.0).
+		$state['indexed'] = ! empty( $state['indexed'] );
 		return $state;
 	}
 
@@ -350,6 +352,9 @@ class Artws_Sec_Feed_Updater {
 			// What a run killed by a fatal error left behind.
 			Artws_Sec_Feed_Publisher::delete_stale_temp_files( $now - HOUR_IN_SECONDS );
 			self::delete_stale_downloads( $now - HOUR_IN_SECONDS );
+			$previous = self::fresh_state();
+			$indexed  = null !== $previous && $previous['indexed'] ? array( $previous['version'] ) : array();
+			Artws_Sec_Vuln_Index::delete_other_versions( $indexed );
 
 			$download = self::download();
 
@@ -360,22 +365,28 @@ class Artws_Sec_Feed_Updater {
 
 			self::check_result( $result, self::fresh_state() );
 
+			// The scans match against the index of the published version, so it is written first.
+			$version = gmdate( 'Ymd.His', $now );
+			Artws_Sec_Vuln_Index::write( $result['vulnerabilities'], $version );
+
 			$generated_at = gmdate( 'Y-m-d\TH:i:s\Z', $now );
 			$files        = Artws_Sec_Feed_Publisher::write_vulnerability_files( $result['vulnerabilities'], $result['copyrights'], self::ATTRIBUTION, $generated_at );
 
 			$state = array(
-				'version'      => gmdate( 'Ymd.His', $now ),
+				'version'      => $version,
 				'generated_at' => $generated_at,
 				'stale'        => false,
 				'files'        => $files,
 				'copyrights'   => $result['copyrights'],
 				'attribution'  => self::ATTRIBUTION,
 				'last_success' => $now,
+				'indexed'      => true,
 			);
 			update_option( self::STATE_OPTION, $state, false );
 			delete_option( self::ACCEPT_DROP_OPTION );
 			wp_unschedule_hook( self::RETRY_HOOK );
 			Artws_Sec_Feed_Publisher::write_manifest( Artws_Sec_Feed_Publisher::render_manifest( $state, self::get_eol() ) );
+			Artws_Sec_Vuln_Index::delete_other_versions( array_merge( array( $version ), $indexed ) );
 
 			// Deactivated while this run was in progress: nothing will update these files. Checked
 			// after the manifest is written, so a deactivation at any point of the run is caught
