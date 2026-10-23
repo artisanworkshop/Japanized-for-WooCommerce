@@ -324,14 +324,17 @@ class JP4WC_Security_Feed {
 	 *
 	 * The checks scan the uploads directory and request the site itself, so
 	 * they do not run in the admin request. WP-Cron is started at once, and
-	 * the tab waits for the findings to show a newer check. Where WP-Cron is
-	 * disabled or alternative, the event waits for its next run: the
-	 * alternative WP-Cron would redirect this request.
+	 * the tab waits until the re-check records that it ran for this request
+	 * (RECHECK_DONE_OPTION). Where WP-Cron is disabled or alternative, the
+	 * event waits for its next run: the alternative WP-Cron would redirect
+	 * this request.
 	 *
 	 * @return int Time the re-check was asked for; 0 when the check was turned
 	 *             off meanwhile, which leaves nothing scheduled.
 	 */
 	public static function request_recheck() {
+		// A site without the setting row is on: keep_written_data() below would purge it.
+		self::start_run();
 		$requested_at = time();
 		update_option( self::RECHECK_OPTION, $requested_at, false );
 		if ( ! wp_next_scheduled( self::RECHECK_HOOK ) ) {
@@ -380,8 +383,13 @@ class JP4WC_Security_Feed {
 			self::purge();
 			return;
 		}
-		// Not a value this process may have read before the request was saved.
+		// Not a value this process may have read, or found missing, before the request was saved.
 		wp_cache_delete( self::RECHECK_OPTION, 'options' );
+		$notoptions = wp_cache_get( 'notoptions', 'options' );
+		if ( is_array( $notoptions ) && isset( $notoptions[ self::RECHECK_OPTION ] ) ) {
+			unset( $notoptions[ self::RECHECK_OPTION ] );
+			wp_cache_set( 'notoptions', $notoptions, 'options' );
+		}
 		$requested_at = self::recheck_requested_at();
 		JP4WC_Security_Checks::delete_probe_results();
 
