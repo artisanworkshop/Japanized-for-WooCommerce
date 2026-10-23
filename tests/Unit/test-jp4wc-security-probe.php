@@ -194,6 +194,29 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The home page is requested at the stored address, even when a filter
+	 * points home_url() at another host.
+	 */
+	public function test_home_page_request_stays_on_the_site() {
+		$xmlrpc = self::own_url( '/xmlrpc.php' );
+		$cdn    = static function () {
+			return 'https://cdn.example.net/';
+		};
+		add_filter( 'home_url', $cdn );
+		try {
+			$probe = new JP4WC_Security_Probe();
+			$probe->status( 'A-04', $xmlrpc, array( __CLASS__, 'open_on_200' ) );
+		} finally {
+			remove_filter( 'home_url', $cdn );
+		}
+
+		$this->assertSame( array( trailingslashit( get_option( 'home' ) ), $xmlrpc ), wp_list_pluck( $this->requests, 'url' ) );
+		foreach ( $this->requests as $request ) {
+			$this->assertStringNotContainsString( 'cdn.example.net', $request['url'] );
+		}
+	}
+
+	/**
 	 * A redirect or a 404 of the home page is a normal answer.
 	 */
 	public function test_redirected_home_page_is_a_normal_answer() {
