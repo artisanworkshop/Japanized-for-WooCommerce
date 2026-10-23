@@ -47,7 +47,7 @@ class Artws_Sec_Rate_Limiter {
 	 * @return int 0 when the request may go ahead, otherwise the Unix time from which it may.
 	 */
 	public static function hit( array $limits, $now ) {
-		$retry_at = self::retry_at( $limits, $now );
+		$retry_at = self::blocked_until( $limits, $now );
 		if ( $retry_at > 0 ) {
 			return $retry_at;
 		}
@@ -74,7 +74,7 @@ class Artws_Sec_Rate_Limiter {
 			);
 			// phpcs:enable
 			if ( 0 === $affected ) {
-				return max( $now + 1, self::retry_at( array( $limit ), $now ) );
+				return max( $now + 1, self::blocked_until( array( $limit ), $now ) );
 			}
 		}
 		return 0;
@@ -144,13 +144,16 @@ class Artws_Sec_Rate_Limiter {
 	}
 
 	/**
-	 * Returns when the first full limit opens again, or 0 when none is full.
+	 * Returns when the last of the full limits opens again, or 0 when none is full.
+	 *
+	 * Only reads: a request can be refused with it before any work is done,
+	 * and hit() then takes the hit.
 	 *
 	 * @param array $limits Limits as for hit().
 	 * @param int   $now    Unix time.
 	 * @return int
 	 */
-	private static function retry_at( array $limits, $now ) {
+	public static function blocked_until( array $limits, $now ) {
 		global $wpdb;
 
 		$by_key = array();

@@ -103,6 +103,7 @@ class Artws_Sec_Report_Builder {
 	public static function build( array $request, array $state, array $eol, $scan_token, $now ) {
 		$language = Artws_Sec_Report_Templates::language( $request['locale'] );
 
+		$stale           = self::is_stale( $state, $now );
 		$statuses        = self::reported_statuses( $request['local_findings'] );
 		$vulnerabilities = self::vulnerabilities( $request, (string) $state['index_version'] );
 		$unsupported     = self::unsupported_versions( $request, $eol );
@@ -111,7 +112,7 @@ class Artws_Sec_Report_Builder {
 			$statuses['V-01'] = 'fail';
 		} else {
 			// From out-of-date data "nothing found" is not a pass, as on the Security tab.
-			$statuses['V-01'] = $state['stale'] ? 'unknown' : 'pass';
+			$statuses['V-01'] = $stale ? 'unknown' : 'pass';
 		}
 		$statuses['V-03'] = array() !== $unsupported ? 'fail' : 'pass';
 		$statuses         = self::in_check_order( $statuses );
@@ -156,7 +157,7 @@ class Artws_Sec_Report_Builder {
 			'feed_version'   => (string) $state['index_version'],
 			'score'          => self::score( $statuses, $severities ),
 			'findings'       => $findings,
-			'next_steps'     => self::next_steps( $request, $statuses, $findings, $state, $language ),
+			'next_steps'     => self::next_steps( $request, $statuses, $findings, $stale, $language ),
 			'attribution'    => (string) $state['attribution'],
 		);
 	}
@@ -200,6 +201,30 @@ class Artws_Sec_Report_Builder {
 			default:
 				return 'medium';
 		}
+	}
+
+	/**
+	 * Whether the vulnerability data the site is matched against is out of date.
+	 *
+	 * It is when the feed is stale, and also when the index has not caught up
+	 * with the published feed (its update failed) for longer than a feed may
+	 * go without an update: otherwise a site with a vulnerability published
+	 * since would be told, without any warning, that nothing was found.
+	 *
+	 * @param array $state Feed state.
+	 * @param int   $now   Unix time.
+	 * @return bool
+	 */
+	public static function is_stale( array $state, $now ) {
+		if ( $state['stale'] ) {
+			return true;
+		}
+		if ( $state['index_version'] === $state['version'] ) {
+			return false;
+		}
+		// The version is the time of the run that wrote the index (Artws_Sec_Feed_Updater: Ymd.His, UTC).
+		$written = DateTimeImmutable::createFromFormat( '!Ymd.His', (string) $state['index_version'], new DateTimeZone( 'UTC' ) );
+		return false === $written || $now - $written->getTimestamp() > Artws_Sec_Feed_Updater::stale_after();
 	}
 
 	/**
@@ -464,11 +489,11 @@ class Artws_Sec_Report_Builder {
 	 * @param array  $request  Request.
 	 * @param array  $statuses Check ID => status.
 	 * @param array  $findings Findings in order.
-	 * @param array  $state    Feed state.
+	 * @param bool   $stale    Whether the vulnerability data is out of date.
 	 * @param string $language ja or en.
 	 * @return string[]
 	 */
-	private static function next_steps( array $request, array $statuses, array $findings, array $state, $language ) {
+	private static function next_steps( array $request, array $statuses, array $findings, $stale, $language ) {
 		$steps = array();
 		if ( array() === $findings ) {
 			$steps[] = Artws_Sec_Report_Templates::text( 'step_none', $language );
@@ -486,7 +511,7 @@ class Artws_Sec_Report_Builder {
 		if ( array() !== $unknown ) {
 			$steps[] = Artws_Sec_Report_Templates::text( 'step_unknown', $language, array( count( $unknown ), implode( ', ', $unknown ) ) );
 		}
-		if ( $state['stale'] ) {
+		if ( $stale ) {
 			$steps[] = Artws_Sec_Report_Templates::text( 'step_stale', $language );
 		}
 		$steps[] = Artws_Sec_Report_Templates::text( 'step_rescan', $language );

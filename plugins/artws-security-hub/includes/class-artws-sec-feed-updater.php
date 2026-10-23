@@ -295,6 +295,23 @@ class Artws_Sec_Feed_Updater {
 	}
 
 	/**
+	 * Returns the seconds after which data that has not been updated counts as stale.
+	 *
+	 * @return int
+	 */
+	public static function stale_after() {
+		/**
+		 * Filters the seconds without a successful run after which the feed is marked stale.
+		 *
+		 * The free security check also treats its vulnerability index as stale
+		 * when the index has not caught up with the feed for this long.
+		 *
+		 * @param int $seconds Default 48 hours.
+		 */
+		return (int) apply_filters( 'artws_sec_feed_stale_after', self::DEFAULT_STALE_AFTER );
+	}
+
+	/**
 	 * Returns the result of the last run.
 	 *
 	 * @return array{last_attempt?: int, result?: string, message?: string, stats?: array, retry_at?: int}
@@ -654,14 +671,7 @@ class Artws_Sec_Feed_Updater {
 	 * @return bool
 	 */
 	private static function is_overdue( $state, $now ) {
-		/**
-		 * Filters the seconds without a successful run after which the feed is marked stale.
-		 *
-		 * @param int $seconds Default 48 hours.
-		 */
-		$stale_after = (int) apply_filters( 'artws_sec_feed_stale_after', self::DEFAULT_STALE_AFTER );
-
-		return null !== $state && ! $state['stale'] && $now - (int) $state['last_success'] > $stale_after;
+		return null !== $state && ! $state['stale'] && $now - (int) $state['last_success'] > self::stale_after();
 	}
 
 	/**

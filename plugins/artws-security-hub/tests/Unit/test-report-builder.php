@@ -683,6 +683,56 @@ class Artws_Sec_Report_Builder_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * An index that has not caught up with the feed for longer than the stale limit is stale data.
+	 */
+	public function test_index_behind_the_feed() {
+		$state            = Artws_Sec_Feed_Updater::get_state();
+		$state['version'] = '20261023.031500';
+		$written          = gmmktime( 3, 15, 0, 10, 20, 2026 );
+		$request          = Artws_Sec_Scan_Request::normalize( self::sample_request( array( 'software' => array() ) ) );
+		$step             = '脆弱性データの更新が遅れているため、最近公開された脆弱性が含まれていない可能性があります。';
+
+		$recent = Artws_Sec_Report_Builder::build( $request, $state, Artws_Sec_Feed_Updater::get_eol(), self::SCAN_TOKEN, $written + 2 * DAY_IN_SECONDS );
+		$this->assertNotContains( $step, $recent['next_steps'] );
+		$this->assertSame( self::FEED_VERSION, $recent['feed_version'] );
+
+		$behind = Artws_Sec_Report_Builder::build( $request, $state, Artws_Sec_Feed_Updater::get_eol(), self::SCAN_TOKEN, $written + 2 * DAY_IN_SECONDS + 1 );
+		$this->assertContains( $step, $behind['next_steps'] );
+		$this->assertContains( '確認できなかった項目が 2 件あります（V-01, A-04）。JP4WC の「セキュリティ」タブで、もう一度チェックしてください。', $behind['next_steps'] );
+
+		$this->assertFalse(
+			Artws_Sec_Report_Builder::is_stale(
+				array(
+					'version'       => 'x',
+					'index_version' => 'x',
+					'stale'         => false,
+				),
+				PHP_INT_MAX
+			)
+		);
+		$this->assertTrue(
+			Artws_Sec_Report_Builder::is_stale(
+				array(
+					'version'       => 'x',
+					'index_version' => 'not-a-time',
+					'stale'         => false,
+				),
+				0
+			)
+		);
+		$this->assertTrue(
+			Artws_Sec_Report_Builder::is_stale(
+				array(
+					'version'       => 'x',
+					'index_version' => 'x',
+					'stale'         => true,
+				),
+				0
+			)
+		);
+	}
+
+	/**
 	 * Vulnerabilities found in stale data still count.
 	 */
 	public function test_stale_data_still_finds_vulnerabilities() {

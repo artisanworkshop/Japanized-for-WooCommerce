@@ -124,6 +124,13 @@ class Artws_Sec_Rest_Controller {
 			}
 		}
 
+		// A request over the limit is refused before the work of matching it; the hit is taken after.
+		$limits   = self::limits( $site_key );
+		$retry_at = Artws_Sec_Rate_Limiter::blocked_until( $limits, $now );
+		if ( $retry_at > 0 ) {
+			return self::rate_limited( $retry_at, $now );
+		}
+
 		$scan_token = Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SCAN_TOKEN_PREFIX );
 		try {
 			$report = Artws_Sec_Report_Builder::build( $normalized, $state, Artws_Sec_Feed_Updater::get_eol(), $scan_token, $now );
@@ -131,7 +138,7 @@ class Artws_Sec_Rest_Controller {
 			return self::unavailable();
 		}
 
-		$retry_at = Artws_Sec_Rate_Limiter::hit( self::limits( $site_key ), $now );
+		$retry_at = Artws_Sec_Rate_Limiter::hit( $limits, $now );
 		if ( $retry_at > 0 ) {
 			return self::rate_limited( $retry_at, $now );
 		}

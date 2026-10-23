@@ -574,5 +574,29 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 		$this->assertArrayNotHasKey( 'site_token', $response->get_data() );
 		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
 		$this->assertSame( 2, self::count_rows( Artws_Sec_Db::scans_table() ) );
+		$stored = $GLOBALS['wpdb']->get_var( 'SELECT request FROM ' . Artws_Sec_Db::scans_table() . ' ORDER BY id DESC LIMIT 1' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- Test.
+		$this->assertSame( 'B2', json_decode( $stored, true )['revenue_band'] );
+	}
+
+	/**
+	 * A request over the rate limit is refused before the site's software is matched.
+	 */
+	public function test_rate_limited_request_is_not_matched() {
+		list( $token, ) = $this->register_site();
+		$table          = Artws_Sec_Db::vulns_table();
+		$lookups        = 0;
+		add_filter(
+			'query',
+			static function ( $query ) use ( $table, &$lookups ) {
+				if ( false !== strpos( $query, "FROM {$table}" ) ) {
+					++$lookups;
+				}
+				return $query;
+			}
+		);
+
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request(), $token ), 429, 'artws_sec_rate_limited' );
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'reregister' => true ) ) ), 429, 'artws_sec_rate_limited' );
+		$this->assertSame( 0, $lookups );
 	}
 }
