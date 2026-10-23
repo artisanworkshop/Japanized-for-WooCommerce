@@ -2,10 +2,10 @@
 - タスク: issue #259 セキュリティ診断 Phase 2b — 「セキュリティ」タブ UI（4要件スコアカード）
 - 開始: 2026-10-23
 - オプション: auto-commit
-- PR: 未作成
-- 現在のステップ: 4（push・PR 作成）
-- Copilot: 依頼 0 回 / 未収束
-- Codex: 依頼 0 回 / 未収束
+- PR: #279 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/279
+- 現在のステップ: 6（G2 依頼・CI 待ち）
+- Copilot: 依頼 1 回 / 未収束
+- Codex: 依頼 1 回 / 収束（G1 で新規指摘なし）
 
 ## 計画で決めたこと
 - `@since 3.0.0`
@@ -23,3 +23,5 @@
 | 2026-10-23 | 2 | wp-env（:8890）で表示確認: 機能無効 / 未チェック / 再チェック→ポーリング→完了 / 脆弱性あり（表・リンク）/ unknown を含む全チェック一覧 / フィード取得失敗 / 幅 420px / 通知→タブ。見出しの折り返しを修正（3774cb8） |
 | 2026-10-23 | 3 | review-loop R1: Medium 2 / Low 10 + 対象外 2（backlog）。修正 3f42694 |
 | 2026-10-23 | 3 | review-loop R2: **APPROVE**（R1 全解消、新規 Medium 1・Low 2 も修正 ccaa16a）。PHPUnit 874 件 green |
+| 2026-10-23 | 4 | upstream に push（e7a4a85、T=2026-10-23T04:33:30Z）、PR #279 作成 |
+| 2026-10-23 | 7 | G1: Codex 指摘なし（収束）、Copilot 2 件（backlog R1-L1 / R1-L5 と同じ。Medium に見直して修正 45ff982 / 0bdd665 / 9cf0071） |
