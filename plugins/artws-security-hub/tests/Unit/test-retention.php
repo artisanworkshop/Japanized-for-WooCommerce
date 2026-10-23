@@ -256,6 +256,53 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * The upgrade from version 1 drops the unique site_key, which dbDelta() cannot change, and is tried again until it does.
+	 *
+	 * ALTER TABLE commits the transaction the test runs in, so the version
+	 * option is set back to the current version before each statement that
+	 * really runs, and finally puts the table back as the current version has it.
+	 */
+	public function test_upgrade_from_version_1() {
+		global $wpdb;
+		$sites      = Artws_Sec_Db::sites_table();
+		$non_unique = static function () use ( $wpdb, $sites ) {
+			return $wpdb->get_row( "SHOW INDEX FROM {$sites} WHERE Key_name = 'site_key'" )->Non_unique; // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Test.
+		};
+
+		try {
+			// The sites table as version 1 made it.
+			$wpdb->query( "ALTER TABLE {$sites} DROP INDEX site_key, ADD UNIQUE KEY site_key (site_key)" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Test.
+			$this->assertSame( '0', (string) $non_unique() );
+
+			// An upgrade that cannot change the table is not recorded, so the next request tries again.
+			update_option( Artws_Sec_Db::VERSION_OPTION, '1' );
+			add_filter(
+				'query',
+				static function ( $query ) {
+					return 0 === stripos( ltrim( $query ), 'ALTER TABLE' ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+				}
+			);
+			$suppress = $wpdb->suppress_errors( true );
+			Artws_Sec_Db::maybe_install();
+			$wpdb->suppress_errors( $suppress );
+			$this->assertSame( '1', get_option( Artws_Sec_Db::VERSION_OPTION ) );
+			$this->assertSame( '0', (string) $non_unique() );
+
+			remove_all_filters( 'query' );
+			update_option( Artws_Sec_Db::VERSION_OPTION, Artws_Sec_Db::VERSION );
+			Artws_Sec_Db::install();
+			$this->assertSame( '1', (string) $non_unique() );
+			$this->assertSame( Artws_Sec_Db::VERSION, get_option( Artws_Sec_Db::VERSION_OPTION ) );
+			$this->assertIsInt( Artws_Sec_Site_Store::register( 'https://example.jp', Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SITE_TOKEN_PREFIX ), self::NOW ) );
+			$this->assertIsInt( Artws_Sec_Site_Store::register( 'https://example.jp', Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SITE_TOKEN_PREFIX ), self::NOW ) );
+		} finally {
+			remove_all_filters( 'query' );
+			update_option( Artws_Sec_Db::VERSION_OPTION, Artws_Sec_Db::VERSION );
+			Artws_Sec_Db::install();
+		}
+	}
+
+	/**
 	 * Deleting the plugin drops its tables, its version option and the cleanup event.
 	 *
 	 * The test library turns DROP TABLE into DROP TEMPORARY TABLE, so the

@@ -29,7 +29,7 @@ class Artws_Sec_Rate_Limiter {
 	 * Returns the key of something to count.
 	 *
 	 * @param string $scope What is counted ("site", "ip").
-	 * @param string $value The site key or the client address.
+	 * @param string $value The hash of the site token or the client address.
 	 * @return string
 	 */
 	public static function key( $scope, $value ) {

@@ -12,10 +12,13 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Artws_Sec_Site_Store
  *
- * A site is registered by its first scan and gets a site_token, of which only
- * the SHA-256 hash is stored. Scans are kept for the retention period and
- * then deleted by a daily cron event, together with the sites that have not
- * run a scan in that time.
+ * Each POST /scan without a token registers a site and gets a site_token, of
+ * which only the SHA-256 hash is stored. A registration is identified by its
+ * token alone: several may carry the same site_url (local environments share
+ * http://localhost:8888, a site that lost its token registers again), and none
+ * of them can touch another's scans or rate limit. Scans are kept for the
+ * retention period and then deleted by a daily cron event, together with the
+ * sites that have not run a scan in that time.
  */
 class Artws_Sec_Site_Store {
 
@@ -102,7 +105,7 @@ class Artws_Sec_Site_Store {
 	}
 
 	/**
-	 * Returns the key that identifies a site by its URL.
+	 * Returns the key that tells whether a request with a token comes from the site it was issued to.
 	 *
 	 * The scheme is left out, so a site that moves from http to https (as the
 	 * report advises) stays the same site; so are the case of the host and a
@@ -123,23 +126,6 @@ class Artws_Sec_Site_Store {
 			. untrailingslashit( $parts['path'] ?? '' )
 			. ( isset( $parts['query'] ) ? '?' . $parts['query'] : '' );
 		return hash( 'sha256', $site );
-	}
-
-	/**
-	 * Returns the site registered under a site key.
-	 *
-	 * @param string $site_key Key from site_key().
-	 * @return object|null Row of the sites table.
-	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
-	 */
-	public static function find_site_by_key( $site_key ) {
-		global $wpdb;
-
-		$table = Artws_Sec_Db::sites_table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table.
-		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE site_key = %s", $site_key ) );
-		self::check_read();
-		return is_object( $row ) ? $row : null;
 	}
 
 	/**
@@ -174,16 +160,16 @@ class Artws_Sec_Site_Store {
 	}
 
 	/**
-	 * Registers a site.
+	 * Registers a site, whether or not its site_url is registered already.
 	 *
 	 * @param string $site_url Site URL from the request.
+	 * @param string $token    New site token from new_token().
 	 * @param int    $now      Unix time.
-	 * @return array{0: int, 1: string}|null The new site ID and its token, or null when it could not be saved.
+	 * @return int|null The new site ID, or null when it could not be saved.
 	 */
-	public static function register( $site_url, $now ) {
+	public static function register( $site_url, $token, $now ) {
 		global $wpdb;
 
-		$token    = self::new_token( self::SITE_TOKEN_PREFIX );
 		$inserted = $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table.
 			Artws_Sec_Db::sites_table(),
 			array(
@@ -195,55 +181,7 @@ class Artws_Sec_Site_Store {
 			),
 			array( '%s', '%s', '%s', '%d', '%d' )
 		);
-		return 1 === $inserted ? array( (int) $wpdb->insert_id, $token ) : null;
-	}
-
-	/**
-	 * Registers a site again: deletes its scans, then replaces its token.
-	 *
-	 * The scans go first, so that a failure in between never leaves them
-	 * readable with the new token.
-	 *
-	 * @param object $site     Row of the sites table.
-	 * @param string $site_url Site URL from the request.
-	 * @param int    $now      Unix time.
-	 * @return string|null The new token, or null when it could not be saved.
-	 */
-	public static function reregister( $site, $site_url, $now ) {
-		global $wpdb;
-
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom tables.
-		if ( false === $wpdb->delete( Artws_Sec_Db::scans_table(), array( 'site_id' => (int) $site->id ), array( '%d' ) ) ) {
-			return null;
-		}
-		$token   = self::new_token( self::SITE_TOKEN_PREFIX );
-		$updated = $wpdb->update(
-			Artws_Sec_Db::sites_table(),
-			array(
-				'site_url'     => $site_url,
-				'token_hash'   => self::hash_token( $token ),
-				'created_at'   => $now,
-				'last_scan_at' => $now,
-			),
-			array( 'id' => (int) $site->id ),
-			array( '%s', '%s', '%d', '%d' ),
-			array( '%d' )
-		);
-		// phpcs:enable
-		return 1 === $updated ? $token : null;
-	}
-
-	/**
-	 * Puts back the token a site had before reregister(), when the scan that came with it could not be saved.
-	 *
-	 * @param object $site Row of the sites table as it was before reregister().
-	 * @return bool
-	 */
-	public static function restore_token( $site ) {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table.
-		return false !== $wpdb->update( Artws_Sec_Db::sites_table(), array( 'token_hash' => (string) $site->token_hash ), array( 'id' => (int) $site->id ), array( '%s' ), array( '%d' ) );
+		return 1 === $inserted ? (int) $wpdb->insert_id : null;
 	}
 
 	/**

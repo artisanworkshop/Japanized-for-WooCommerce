@@ -14,7 +14,7 @@
             "$ref": "common.schema.json#/$defs/schema_version"
         },
         "site_token": {
-            "description": "Secret token of the site, only in the response of the POST /scan that registered or re-registered the site. The client keeps it, sends it as Authorization: Bearer, and never shows or logs it. The server keeps only its SHA-256 hash.",
+            "description": "Secret token of the registration, only in the response of the POST /scan that registered the site (one sent without a token). The client keeps it together with the site_url it was issued for, sends it as Authorization: Bearer, and never shows or logs it. The server keeps only its SHA-256 hash.",
             "type": "string",
             "pattern": "^sit_[A-Za-z0-9_-]{43,128}$"
         },
