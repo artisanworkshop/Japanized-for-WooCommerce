@@ -1130,6 +1130,8 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			'attribute then code'        => array( 'cache/x.php', "<?php #[A] function a() {} system( 'id' );", 'fail' ),
 			'class then instance'        => array( 'cache/x.php', "<?php class X { function __destruct() { system( 'id' ); } } new X();", 'fail' ),
 			'namespace block'            => array( 'cache/x.php', "<?php namespace X { system( 'id' ); }", 'fail' ),
+			'exit then a short open tag' => array( 'x.php', "<?php exit; ?>\n<? system( 'id' ); ?>", 'unknown' ),
+			'XML declaration'            => array( 'x.php', "<?php exit; ?>\n<?xml version=\"1.0\"?><a/>", 'pass' ),
 			'declare before a statement' => array( 'cache/x.php', "<?php declare(ticks=1) system( 'id' );", 'fail' ),
 			'declare alternative syntax' => array( 'cache/x.php', "<?php declare(ticks=1): system( 'id' ); enddeclare;", 'fail' ),
 			'declare then a class'       => array( 'cache/x.php', "<?php declare(strict_types=1);\nclass X {}\n", 'pass' ),
@@ -1153,6 +1155,18 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	public function test_m03_php_in_uploads( $path, $contents, $expected ) {
 		$this->write( 'uploads/' . $path, $contents );
 
+		$this->assertSame( $expected, $this->status( 'M-03', array( 'uploads' => $this->uploads() ) ) );
+	}
+
+	/**
+	 * M-03 does not call short open tag code harmless, whatever this process's
+	 * short_open_tag (G3-1): with it on the code is read and fails, with it off
+	 * the code reads as HTML and is unknown.
+	 */
+	public function test_m03_short_open_tag() {
+		$this->write( 'uploads/2026/10/x.php', "<? system( \$_GET['c'] ); ?>" );
+
+		$expected = filter_var( ini_get( 'short_open_tag' ), FILTER_VALIDATE_BOOLEAN ) ? 'fail' : 'unknown';
 		$this->assertSame( $expected, $this->status( 'M-03', array( 'uploads' => $this->uploads() ) ) );
 	}
 

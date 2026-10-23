@@ -843,6 +843,11 @@ class JP4WC_Security_Checks {
 	 * (namespace, use, class, function), as compiled template caches hold.
 	 * A file larger than PHP_HEAD_BYTES that its start does not decide is unknown.
 	 *
+	 * A harmless file that holds a short open tag (`<?` other than `<?php`,
+	 * `<?=` and `<?xml`) is unknown: the tokenizer follows this process's
+	 * short_open_tag, and WP-Cron run from the command line may not share the
+	 * web server's, which would run that code.
+	 *
 	 * @param string $path File.
 	 * @return bool|null True when harmless, false when it runs code, null when that cannot be told.
 	 */
@@ -851,8 +856,21 @@ class JP4WC_Security_Checks {
 		if ( null === $head || ! function_exists( 'token_get_all' ) ) {
 			return null;
 		}
-		$whole = strlen( $head ) <= self::PHP_HEAD_BYTES;
+		$harmless = self::judge_php( $head, strlen( $head ) <= self::PHP_HEAD_BYTES );
+		if ( true === $harmless && 1 === preg_match( '/<\?(?!php\b|=|xml\b)/i', $head ) ) {
+			return null;
+		}
+		return $harmless;
+	}
 
+	/**
+	 * Judges PHP source as is_harmless_php() describes.
+	 *
+	 * @param string $head  Source read.
+	 * @param bool   $whole Whether it is the whole file.
+	 * @return bool|null
+	 */
+	private static function judge_php( $head, $whole ) {
 		$tokens = token_get_all( $head );
 		if ( ! $whole ) {
 			// The last token may be cut in two, and a cut string leaves its opening quote behind.
