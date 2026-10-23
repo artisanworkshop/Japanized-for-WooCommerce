@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Loaded here rather than in JP4WC::includes(), because during an update the
 // previous version's includes() can load this file.
 require_once __DIR__ . '/class-jp4wc-settings-api.php';
+require_once __DIR__ . '/class-jp4wc-security-api.php';
 require_once __DIR__ . '/class-jp4wc-admin-php-notice.php';
 
 /**
@@ -123,6 +124,9 @@ class JP4WC_Admin_Settings {
 	public function register_rest_routes() {
 		$controller = new JP4WC_Settings_API();
 		$controller->register_routes();
+
+		$security = new JP4WC_Security_API();
+		$security->register_routes();
 	}
 
 	/**
