@@ -103,6 +103,12 @@ const findingRows = ( view ) => {
  */
 const recordFix = ( item, record ) => {
 	if ( ! record.patched ) {
+		if ( item.type === 'core' ) {
+			return __(
+				'No fixed version yet. Update WordPress as soon as its security release is out.',
+				'woocommerce-for-japan'
+			);
+		}
 		return __(
 			'No fixed version yet. Deactivate and delete it, or replace it with another plugin or theme.',
 			'woocommerce-for-japan'
