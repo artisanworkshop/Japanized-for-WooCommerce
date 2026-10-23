@@ -517,29 +517,202 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * V-04 fails when plugin or minor core automatic updates are off.
+	 * The update_plugins transient of a site with two plugins WordPress can
+	 * update: one with an update, one without.
+	 *
+	 * @param array $flags Extra properties of the entry with an update (autoupdate, disable_autoupdate).
+	 * @return object
 	 */
-	public function test_v04_automatic_updates() {
-		$this->assertSame( 'fail', $this->status( 'V-04' ), 'The WordPress test library turns every automatic update off.' );
+	private static function plugin_updates( array $flags = array() ) {
+		$transient               = new stdClass();
+		$transient->last_checked = time();
+		$transient->response     = array(
+			'shop-plugin/shop-plugin.php' => (object) array_merge(
+				array(
+					'slug'        => 'shop-plugin',
+					'plugin'      => 'shop-plugin/shop-plugin.php',
+					'new_version' => '2.0.0',
+				),
+				$flags
+			),
+		);
+		$transient->no_update    = array(
+			'forms/forms.php' => (object) array(
+				'slug'        => 'forms',
+				'plugin'      => 'forms/forms.php',
+				'new_version' => '1.0.0',
+			),
+		);
+		return $transient;
+	}
 
-		// As on a site: the test library's automatic_updater_disabled filter removed.
-		$this->assertSame( 10, has_filter( 'automatic_updater_disabled', '__return_true' ) );
+	/**
+	 * Runs V-04 as on a site: without the test library's automatic_updater_disabled filter.
+	 *
+	 * @param array $context Context.
+	 * @return string
+	 */
+	private function v04( array $context ) {
+		$this->assertSame( 10, has_filter( 'automatic_updater_disabled', '__return_true' ), 'The WordPress test library turns every automatic update off.' );
 		remove_filter( 'automatic_updater_disabled', '__return_true' );
 		try {
-			$this->assertSame( 'pass', $this->status( 'V-04' ) );
-			$this->assertSame( 'pass', $this->status( 'V-04', array( 'constants' => array( 'WP_AUTO_UPDATE_CORE' => 'minor' ) ) ) );
-			$this->assertSame( 'fail', $this->status( 'V-04', array( 'constants' => array( 'WP_AUTO_UPDATE_CORE' => false ) ) ) );
-
-			foreach ( array( 'plugins_auto_update_enabled', 'allow_minor_auto_core_updates' ) as $filter ) {
-				add_filter( $filter, '__return_false' );
-				try {
-					$this->assertSame( 'fail', $this->status( 'V-04' ), $filter );
-				} finally {
-					remove_filter( $filter, '__return_false' );
-				}
-			}
+			return $this->status( 'V-04', $context );
 		} finally {
 			add_filter( 'automatic_updater_disabled', '__return_true' );
+		}
+	}
+
+	/**
+	 * V-04 passes only when every plugin WordPress can update is updated automatically.
+	 */
+	public function test_v04_every_plugin_updates_automatically() {
+		$both = array( 'shop-plugin/shop-plugin.php', 'forms/forms.php' );
+
+		$this->assertSame(
+			'pass',
+			$this->v04(
+				array(
+					'plugin_updates'      => self::plugin_updates(),
+					'auto_update_plugins' => $both,
+				)
+			)
+		);
+		$this->assertSame(
+			'fail',
+			$this->v04(
+				array(
+					'plugin_updates'      => self::plugin_updates(),
+					'auto_update_plugins' => array( 'shop-plugin/shop-plugin.php' ),
+				)
+			),
+			'A plugin without an update counts too: its next update would wait.'
+		);
+		$this->assertSame(
+			'fail',
+			$this->v04(
+				array(
+					'plugin_updates'      => self::plugin_updates(),
+					'auto_update_plugins' => array( 'forms/forms.php' ),
+				)
+			)
+		);
+		$this->assertSame(
+			'pass',
+			$this->v04(
+				array(
+					'plugin_updates'      => self::plugin_updates( array( 'autoupdate' => true ) ),
+					'auto_update_plugins' => array( 'forms/forms.php' ),
+				)
+			),
+			'WordPress.org asks for this update to be installed automatically.'
+		);
+		$this->assertSame(
+			'fail',
+			$this->v04(
+				array(
+					'plugin_updates'      => self::plugin_updates( array( 'disable_autoupdate' => true ) ),
+					'auto_update_plugins' => $both,
+				)
+			),
+			'The update says not to install it automatically.'
+		);
+
+		$none            = self::plugin_updates();
+		$none->response  = array();
+		$none->no_update = array();
+		$this->assertSame( 'pass', $this->v04( array( 'plugin_updates' => $none ) ), 'No plugin WordPress can update.' );
+		$this->assertSame( 'unknown', $this->v04( array( 'plugin_updates' => false ) ), 'WordPress has not looked for updates.' );
+	}
+
+	/**
+	 * The auto_update_plugin filter decides, as it does for WordPress.
+	 */
+	public function test_v04_follows_the_auto_update_filter() {
+		$items     = array();
+		$all       = static function ( $update, $item ) use ( &$items ) {
+			$items[] = $item;
+			return true;
+		};
+		$transient = self::plugin_updates();
+		add_filter( 'auto_update_plugin', $all, 10, 2 );
+		try {
+			$this->assertSame(
+				'pass',
+				$this->v04(
+					array(
+						'plugin_updates'      => $transient,
+						'auto_update_plugins' => array(),
+					)
+				),
+				'A host that updates every plugin.'
+			);
+		} finally {
+			remove_filter( 'auto_update_plugin', $all, 10 );
+		}
+		$this->assertSame( array( 'shop-plugin', 'forms' ), wp_list_pluck( $items, 'slug' ) );
+		$this->assertNotSame( $transient->response['shop-plugin/shop-plugin.php'], $items[0], 'The filter gets a copy of the entry.' );
+
+		$one = static function ( $update, $item ) {
+			return 'forms' === $item->slug ? false : $update;
+		};
+		add_filter( 'auto_update_plugin', $one, 10, 2 );
+		try {
+			$this->assertSame(
+				'fail',
+				$this->v04(
+					array(
+						'plugin_updates'      => self::plugin_updates(),
+						'auto_update_plugins' => array( 'shop-plugin/shop-plugin.php', 'forms/forms.php' ),
+					)
+				)
+			);
+		} finally {
+			remove_filter( 'auto_update_plugin', $one, 10 );
+		}
+	}
+
+	/**
+	 * V-04 fails when automatic updates are off for plugins as a whole or for
+	 * WordPress security releases, whatever the plugins' own settings.
+	 */
+	public function test_v04_automatic_updates_turned_off() {
+		$this->assertSame( 'fail', $this->status( 'V-04' ), 'The WordPress test library turns every automatic update off.' );
+
+		$context = array(
+			'plugin_updates'      => self::plugin_updates(),
+			'auto_update_plugins' => array( 'shop-plugin/shop-plugin.php', 'forms/forms.php' ),
+		);
+		$this->assertSame( 'pass', $this->v04( $context + array( 'constants' => array( 'WP_AUTO_UPDATE_CORE' => 'minor' ) ) ) );
+		$this->assertSame( 'fail', $this->v04( $context + array( 'constants' => array( 'WP_AUTO_UPDATE_CORE' => false ) ) ) );
+		foreach ( array( 'plugins_auto_update_enabled', 'allow_minor_auto_core_updates' ) as $filter ) {
+			add_filter( $filter, '__return_false' );
+			try {
+				$this->assertSame( 'fail', $this->v04( $context ), $filter );
+			} finally {
+				remove_filter( $filter, '__return_false' );
+			}
+		}
+	}
+
+	/**
+	 * V-04 reads the update_plugins transient and the auto_update_plugins option of the site.
+	 */
+	public function test_v04_reads_the_site_settings() {
+		$transient = static function () {
+			return self::plugin_updates();
+		};
+		$option    = static function () {
+			return array( 'shop-plugin/shop-plugin.php', 'forms/forms.php' );
+		};
+		add_filter( 'pre_site_transient_update_plugins', $transient );
+		add_filter( 'pre_site_option_auto_update_plugins', $option );
+		try {
+			$this->assertSame( 'pass', $this->v04( array() ) );
+			remove_filter( 'pre_site_option_auto_update_plugins', $option );
+			$this->assertSame( 'fail', $this->v04( array() ), 'No plugin has auto-updates on.' );
+		} finally {
+			remove_filter( 'pre_site_transient_update_plugins', $transient );
+			remove_filter( 'pre_site_option_auto_update_plugins', $option );
 		}
 	}
 
