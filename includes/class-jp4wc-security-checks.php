@@ -251,7 +251,8 @@ class JP4WC_Security_Checks {
 	 *                       - eol: name (php, WordPress, woocommerce) => oldest supported version (V-03).
 	 *                       - versions: name => running version, null when not installed (V-03).
 	 *                       - constants: constant name => value (V-04, D-03, D-04, M-01).
-	 *                       - plugin_updates: the update_plugins transient; plugin_dir (V-02).
+	 *                       - plugin_updates: the update_plugins transient (V-02, V-04); plugin_dir (V-02);
+	 *                         auto_update_plugins: plugin files with auto-updates on (V-04).
 	 *                       - active_plugins: active plugin slugs (A-02, A-03, M-02).
 	 *                       - abspath, content_dir, public_directories (A-02, D-02); uploads: basedir
 	 *                         and baseurl (D-01, D-02, D-04, M-03); scan_limit (D-02, D-04, M-03);
@@ -471,7 +472,13 @@ class JP4WC_Security_Checks {
 	}
 
 	/**
-	 * V-04: automatic updates turned off, for plugins or for WordPress security releases.
+	 * V-04: automatic updates that are not on: for WordPress security releases,
+	 * for plugins as a whole, or for any plugin WordPress can update.
+	 *
+	 * A plugin WordPress can update is one the update_plugins transient lists,
+	 * with or without an update; whether it is updated automatically is decided
+	 * as WP_Automatic_Updater::should_update() decides it. Unknown when
+	 * WordPress has not looked for updates.
 	 *
 	 * @param array $context Context.
 	 * @return string
@@ -488,7 +495,56 @@ class JP4WC_Security_Checks {
 		// As Core_Upgrader::should_update_to_version() decides for minor (security) releases.
 		$minor = false !== self::constant( $context, 'WP_AUTO_UPDATE_CORE' );
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
-		return apply_filters( 'allow_minor_auto_core_updates', $minor ) ? 'pass' : 'fail';
+		if ( ! apply_filters( 'allow_minor_auto_core_updates', $minor ) ) {
+			return 'fail';
+		}
+
+		$updates = array_key_exists( 'plugin_updates', $context ) ? $context['plugin_updates'] : get_site_transient( 'update_plugins' );
+		if ( ! is_object( $updates ) || ! isset( $updates->last_checked ) ) {
+			return 'unknown';
+		}
+		// The plugins the site admin turned auto-updates on for, on the Plugins screen.
+		$enabled = array_key_exists( 'auto_update_plugins', $context ) ? $context['auto_update_plugins'] : get_site_option( 'auto_update_plugins', array() );
+		$enabled = is_array( $enabled ) ? $enabled : array();
+
+		foreach ( array( 'response', 'no_update' ) as $list ) {
+			if ( ! isset( $updates->$list ) || ! is_array( $updates->$list ) ) {
+				continue;
+			}
+			foreach ( $updates->$list as $file => $item ) {
+				if ( ! self::updates_automatically( (string) $file, $item, $enabled ) ) {
+					return 'fail';
+				}
+			}
+		}
+		return 'pass';
+	}
+
+	/**
+	 * Whether WordPress updates a plugin automatically.
+	 *
+	 * As WP_Automatic_Updater::should_update(): on when WordPress.org asks for it
+	 * (autoupdate) or the site admin turned it on, off when the update says so
+	 * (disable_autoupdate), and the auto_update_plugin filter has the last word.
+	 *
+	 * @param string $file    Plugin file, relative to the plugins directory.
+	 * @param mixed  $item    The plugin's entry in the update_plugins transient.
+	 * @param array  $enabled Plugin files with auto-updates turned on.
+	 * @return bool
+	 */
+	private static function updates_automatically( $file, $item, array $enabled ) {
+		// A copy: the filter's callbacks get the entry, which must not change the transient.
+		$item = is_object( $item ) ? clone $item : new stdClass();
+		if ( ! isset( $item->plugin ) ) {
+			$item->plugin = $file;
+		}
+
+		$update = ! empty( $item->autoupdate ) || in_array( $file, $enabled, true );
+		if ( ! empty( $item->disable_autoupdate ) ) {
+			$update = false;
+		}
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
+		return (bool) apply_filters( 'auto_update_plugin', $update, $item );
 	}
 
 	/**
