@@ -218,6 +218,13 @@ class JP4WC_Security_Checks {
 	const PHP_HEAD_BYTES = 65536;
 
 	/**
+	 * Directories D-02 sends requests for (WordPress, wp-content, uploads), and
+	 * kinds of file per directory it requests.
+	 */
+	const EXPOSED_DIRECTORIES = 3;
+	const EXPOSED_PROBES      = 3;
+
+	/**
 	 * Bytes of an .htaccess file read.
 	 */
 	const HTACCESS_BYTES = 65536;
@@ -248,15 +255,16 @@ class JP4WC_Security_Checks {
 	 * @param array $context Optional values:
 	 *                       - vulnerabilities: array( 'items' => matched software, 'stale' => bool ),
 	 *                         or null when no vulnerability data was matched (V-01).
-	 *                       - eol: name (php, WordPress, woocommerce) => oldest supported version (V-03).
+	 *                       - eol: name (php, WordPress, woocommerce) => oldest supported version, and
+	 *                         eol_stale: whether they come from out-of-date data (V-03).
 	 *                       - versions: name => running version, null when not installed (V-03).
 	 *                       - constants: constant name => value (V-04, D-03, D-04, M-01).
 	 *                       - plugin_updates: the update_plugins transient (V-02, V-04); plugin_dir (V-02);
 	 *                         auto_update_plugins: plugin files with auto-updates on (V-04).
 	 *                       - active_plugins: active plugin slugs (A-02, A-03, M-02).
-	 *                       - abspath, content_dir, public_directories (A-02, D-02); uploads: basedir
-	 *                         and baseurl (D-01, D-02, D-04, M-03); scan_limit (D-02, D-04, M-03);
-	 *                         shop_urls (D-05).
+	 *                       - abspath, content_dir, public_directories (directory => its URL, or
+	 *                         null) (A-02, D-02); uploads: basedir and baseurl (D-01, D-02, D-04,
+	 *                         M-03); scan_limit (D-02, D-04, M-03); shop_urls (D-05).
 	 *                       - probe: the JP4WC_Security_Probe of the run.
 	 * @return array<int, array{check_id: string, requirement: string, severity: string, status: string}>
 	 */
@@ -268,7 +276,6 @@ class JP4WC_Security_Checks {
 		foreach ( array_keys( self::CHECKS ) as $check_id ) {
 			$checks[] = self::run_check( $check_id, $context );
 		}
-		$context['probe']->save();
 		return $checks;
 	}
 
@@ -283,8 +290,7 @@ class JP4WC_Security_Checks {
 		if ( ! is_string( $check_id ) || ! array_key_exists( $check_id, self::CHECKS ) ) {
 			return null;
 		}
-		$own_probe = ! isset( $context['probe'] ) || ! $context['probe'] instanceof JP4WC_Security_Probe;
-		if ( $own_probe ) {
+		if ( ! isset( $context['probe'] ) || ! $context['probe'] instanceof JP4WC_Security_Probe ) {
 			$context['probe'] = new JP4WC_Security_Probe();
 		}
 
@@ -305,9 +311,6 @@ class JP4WC_Security_Checks {
 			 * @param Throwable $error    What the check threw.
 			 */
 			do_action( 'jp4wc_security_check_error', $check_id, $e );
-		}
-		if ( $own_probe ) {
-			$context['probe']->save();
 		}
 
 		return array(
@@ -417,6 +420,7 @@ class JP4WC_Security_Checks {
 		}
 		$response   = isset( $updates->response ) && is_array( $updates->response ) ? $updates->response : array();
 		$plugin_dir = isset( $context['plugin_dir'] ) ? (string) $context['plugin_dir'] : WP_PLUGIN_DIR;
+		$undecided  = false;
 
 		foreach ( array_keys( $response ) as $file ) {
 			$file = (string) $file;
@@ -428,11 +432,14 @@ class JP4WC_Security_Checks {
 				continue;
 			}
 			$modified = filemtime( $path );
-			if ( false !== $modified && time() - $modified >= self::NEGLECTED_AFTER ) {
+			if ( false === $modified ) {
+				// The age of this plugin cannot be told (the file is being replaced, for example).
+				$undecided = true;
+			} elseif ( time() - $modified >= self::NEGLECTED_AFTER ) {
 				return 'fail';
 			}
 		}
-		return 'pass';
+		return $undecided ? 'unknown' : 'pass';
 	}
 
 	/**
@@ -440,6 +447,8 @@ class JP4WC_Security_Checks {
 	 *
 	 * The oldest supported versions come with the vulnerability feed; unknown
 	 * when one of them is missing. WooCommerce counts only when it is active.
+	 * From out-of-date data a pass is unknown, as for V-01: a version may have
+	 * reached its end of life since. A fail stands, since that never reverses.
 	 *
 	 * @param array $context Context.
 	 * @return string
@@ -468,12 +477,14 @@ class JP4WC_Security_Checks {
 				return 'fail';
 			}
 		}
-		return $unknown ? 'unknown' : 'pass';
+		return $unknown || ! empty( $context['eol_stale'] ) ? 'unknown' : 'pass';
 	}
 
 	/**
-	 * V-04: automatic updates that are not on: for WordPress security releases,
-	 * for plugins as a whole, or for any plugin WordPress can update.
+	 * V-04: automatic updates that are not on: for WordPress security releases
+	 * (WP_AUTO_UPDATE_CORE, allow_minor_auto_core_updates, auto_update_core,
+	 * wp_version_check removed), for plugins as a whole, or for any plugin
+	 * WordPress can update.
 	 *
 	 * A plugin WordPress can update is one the update_plugins transient lists,
 	 * with or without an update; whether it is updated automatically is decided
@@ -496,6 +507,24 @@ class JP4WC_Security_Checks {
 		$minor = false !== self::constant( $context, 'WP_AUTO_UPDATE_CORE' );
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
 		if ( ! apply_filters( 'allow_minor_auto_core_updates', $minor ) ) {
+			return 'fail';
+		}
+		// auto_update_core turns every core update off (add_filter( 'auto_update_core', '__return_false' )).
+		// It is asked about a release of the running version, so that a filter that allows
+		// only minor releases lets it through.
+		$version = (string) get_bloginfo( 'version' );
+		$offer   = (object) array(
+			'response' => 'autoupdate',
+			'current'  => $version,
+			'version'  => $version,
+			'locale'   => get_locale(),
+		);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
+		if ( ! apply_filters( 'auto_update_core', true, $offer ) ) {
+			return 'fail';
+		}
+		// As Site Health: without wp_version_check() WordPress never looks for an update.
+		if ( ( ! is_multisite() || is_main_site() ) && ! has_action( 'wp_version_check', 'wp_version_check' ) ) {
 			return 'fail';
 		}
 
@@ -692,9 +721,16 @@ class JP4WC_Security_Checks {
 	}
 
 	/**
-	 * D-02: a database dump, archive, backup or log file in a public directory.
+	 * D-02: a database dump, archive, backup or log file a public directory serves.
 	 *
-	 * Looks only at the files directly in the WordPress, wp-content and uploads directories.
+	 * Looks only at the files directly in the WordPress, wp-content and uploads
+	 * directories, and requests each kind of file found (up to EXPOSED_PROBES
+	 * per directory) from the site itself. A file the server refuses (401, 403,
+	 * 404, 410) passes. One it serves fails, and so does one whose request tells
+	 * nothing (the site cannot reach itself, a directory without a known URL):
+	 * the file lies in a public directory and nothing shows that it is blocked.
+	 * Unknown when a directory cannot be read in full, or holds more kinds of
+	 * such files than are requested.
 	 *
 	 * @param array $context Context.
 	 * @return string
@@ -703,32 +739,82 @@ class JP4WC_Security_Checks {
 		if ( isset( $context['public_directories'] ) && is_array( $context['public_directories'] ) ) {
 			$directories = $context['public_directories'];
 		} else {
+			$directories = array(
+				self::abspath( $context ) => (string) get_option( 'siteurl' ),
+				( isset( $context['content_dir'] ) ? (string) $context['content_dir'] : WP_CONTENT_DIR ) => content_url(),
+			);
 			$uploads     = self::uploads( $context );
-			$directories = array( self::abspath( $context ), isset( $context['content_dir'] ) ? (string) $context['content_dir'] : WP_CONTENT_DIR );
 			if ( null !== $uploads ) {
-				$directories[] = $uploads['basedir'];
+				$directories[ $uploads['basedir'] ] = $uploads['baseurl'];
+			}
+		}
+		$urls = array();
+		foreach ( $directories as $directory => $url ) {
+			$directory = untrailingslashit( wp_normalize_path( (string) $directory ) );
+			if ( ! array_key_exists( $directory, $urls ) ) {
+				$urls[ $directory ] = is_string( $url ) && '' !== $url ? untrailingslashit( $url ) : null;
 			}
 		}
 
 		$limit      = self::scan_limit( $context );
 		$incomplete = false;
-		foreach ( array_unique( array_map( 'untrailingslashit', array_map( 'wp_normalize_path', $directories ) ) ) as $directory ) {
+		$index      = -1;
+		foreach ( $urls as $directory => $url ) {
+			++$index;
 			if ( ! is_dir( $directory ) ) {
 				continue;
 			}
-			$found = self::find_entry(
+			$kinds = array();
+			$names = self::find_entries(
 				$directory,
-				static function ( $name ) use ( $directory ) {
-					return 1 === preg_match( self::EXPOSED_FILE_PATTERN, $name ) && is_file( $directory . '/' . $name );
+				static function ( $name ) use ( $directory, &$kinds ) {
+					if ( 1 !== preg_match( self::EXPOSED_FILE_PATTERN, $name ) || ! is_file( $directory . '/' . $name ) ) {
+						return false;
+					}
+					// One file per kind: .sql, .sql.gz, .log, error_log...
+					$kind = strtolower( (string) preg_replace( '/^.*?(\.[^.]+(?:\.gz)?)$/', '$1', $name ) );
+					if ( isset( $kinds[ $kind ] ) ) {
+						return false;
+					}
+					$kinds[ $kind ] = true;
+					return true;
 				},
-				$limit
+				$limit,
+				self::EXPOSED_PROBES + 1,
+				$complete
 			);
-			if ( is_string( $found ) ) {
-				return 'fail';
+			foreach ( array_slice( $names, 0, self::EXPOSED_PROBES ) as $position => $name ) {
+				if ( 'pass' !== self::exposed_file_status( $context, $index, $position, $url, $name ) ) {
+					return 'fail';
+				}
 			}
-			$incomplete = $incomplete || null === $found;
+			$incomplete = $incomplete || ! $complete || count( $names ) > self::EXPOSED_PROBES;
 		}
 		return $incomplete ? 'unknown' : 'pass';
+	}
+
+	/**
+	 * Returns whether the server refuses one file D-02 found (pass) or not (fail).
+	 *
+	 * @param array       $context   Context.
+	 * @param int         $directory Position of the directory.
+	 * @param int         $position  Position of the file among those found in it.
+	 * @param string|null $url       URL of the directory, or null when it is not known.
+	 * @param string      $name      File name.
+	 * @return string
+	 */
+	private static function exposed_file_status( array $context, $directory, $position, $url, $name ) {
+		if ( null === $url || $directory >= self::EXPOSED_DIRECTORIES ) {
+			return 'fail';
+		}
+		$status = $context['probe']->status(
+			'D-02-' . ( $directory * self::EXPOSED_PROBES + $position ),
+			$url . '/' . rawurlencode( $name ),
+			static function ( $response ) {
+				return JP4WC_Security_Probe::status_for_code( $response, array( 200 ) );
+			}
+		);
+		return 'pass' === $status ? 'pass' : 'fail';
 	}
 
 	/**
@@ -788,7 +874,8 @@ class JP4WC_Security_Checks {
 	/**
 	 * D-05: the checkout or My account page not served over HTTPS.
 	 *
-	 * Reads the pages' addresses: is_ssl() describes only the current request.
+	 * Reads the pages' addresses with the scheme the site stores: is_ssl()
+	 * describes only the current request.
 	 *
 	 * @param array $context Context.
 	 * @return string
@@ -797,7 +884,18 @@ class JP4WC_Security_Checks {
 		if ( isset( $context['shop_urls'] ) && is_array( $context['shop_urls'] ) ) {
 			$urls = $context['shop_urls'];
 		} elseif ( function_exists( 'wc_get_page_permalink' ) ) {
-			$urls = array( wc_get_page_permalink( 'checkout' ), wc_get_page_permalink( 'myaccount' ) );
+			// get_home_url() switches to https when this request is over HTTPS (is_ssl()), as a
+			// cron request may be while visitors are not: keep the scheme the site stores.
+			$stored = static function ( $url, $path, $scheme ) {
+				$home = wp_parse_url( (string) get_option( 'home' ), PHP_URL_SCHEME );
+				return null === $scheme && is_string( $home ) ? set_url_scheme( $url, $home ) : $url;
+			};
+			add_filter( 'home_url', $stored, PHP_INT_MIN, 3 );
+			try {
+				$urls = array( wc_get_page_permalink( 'checkout' ), wc_get_page_permalink( 'myaccount' ) );
+			} finally {
+				remove_filter( 'home_url', $stored, PHP_INT_MIN );
+			}
 		} else {
 			return 'unknown';
 		}
@@ -855,7 +953,7 @@ class JP4WC_Security_Checks {
 		$seen      = 0;
 		try {
 			$iterator = new RecursiveIteratorIterator(
-				// Symbolic links to directories are not followed.
+				// Symbolic links to directories are not followed (the result is then unknown).
 				new RecursiveDirectoryIterator( $uploads['basedir'], FilesystemIterator::SKIP_DOTS ),
 				RecursiveIteratorIterator::SELF_FIRST,
 				RecursiveIteratorIterator::CATCH_GET_CHILD
@@ -866,8 +964,9 @@ class JP4WC_Security_Checks {
 					return 'unknown';
 				}
 				if ( $entry->isDir() ) {
-					// What lies below the last level is not looked at.
-					$undecided = $undecided || $iterator->getDepth() >= self::SCAN_DEPTH;
+					// What lies below the last level, in a directory that cannot be read, or
+					// behind a link is not looked at, though a web server may serve it.
+					$undecided = $undecided || $iterator->getDepth() >= self::SCAN_DEPTH || $entry->isLink() || ! $entry->isReadable();
 					continue;
 				}
 				if ( ! $entry->isFile() || 1 !== preg_match( self::PHP_FILE_PATTERN, $entry->getFilename() ) ) {
@@ -1363,24 +1462,72 @@ class JP4WC_Security_Checks {
 	 *                           the directory cannot be read or holds more names than the limit.
 	 */
 	private static function find_entry( $directory, callable $is_match, $limit ) {
-		$handle = is_readable( $directory ) ? opendir( $directory ) : false;
+		$names = self::find_entries( $directory, $is_match, $limit, 1, $complete );
+		if ( array() !== $names ) {
+			return $names[0];
+		}
+		return $complete ? false : null;
+	}
+
+	/**
+	 * Looks for entries of a directory, reading one name at a time.
+	 *
+	 * @param string   $directory Directory.
+	 * @param callable $is_match  Gets a name and returns whether to keep it.
+	 * @param int      $limit     Names read before giving up.
+	 * @param int      $max       Names kept before stopping.
+	 * @param bool     $complete  Set to false when the directory cannot be read,
+	 *                            or holds more names than the limit.
+	 * @return string[] Names kept.
+	 */
+	private static function find_entries( $directory, callable $is_match, $limit, $max, &$complete ) {
+		$complete = true;
+		$found    = array();
+		$handle   = is_readable( $directory ) ? opendir( $directory ) : false;
 		if ( false === $handle ) {
-			return null;
+			$complete = false;
+			return $found;
 		}
 		try {
 			$seen = 0;
 			for ( $name = readdir( $handle ); false !== $name; $name = readdir( $handle ) ) {
 				if ( ++$seen > $limit ) {
-					return null;
+					$complete = false;
+					break;
 				}
 				if ( $is_match( $name ) ) {
-					return $name;
+					$found[] = $name;
+					if ( count( $found ) >= $max ) {
+						break;
+					}
 				}
 			}
 		} finally {
 			closedir( $handle );
 		}
-		return false;
+		return $found;
+	}
+
+	/**
+	 * Returns the keys under which the checks keep the results of their requests to the site.
+	 *
+	 * @return string[]
+	 */
+	public static function probe_keys() {
+		$keys = array( 'A-02', 'A-04', 'A-05', 'D-01', 'D-04' );
+		for ( $key = 0; $key < self::EXPOSED_DIRECTORIES * self::EXPOSED_PROBES; $key++ ) {
+			$keys[] = 'D-02-' . $key;
+		}
+		return $keys;
+	}
+
+	/**
+	 * Removes every kept result of the requests to the site.
+	 */
+	public static function delete_probe_results() {
+		foreach ( self::probe_keys() as $key ) {
+			delete_option( JP4WC_Security_Probe::option_name( $key ) );
+		}
 	}
 
 	/**

@@ -13,9 +13,12 @@ defined( 'ABSPATH' ) || exit;
  *
  * Asks the site itself, with one HEAD request per check, whether a URL that
  * should be closed answers: the login page, XML-RPC, the users REST route,
- * the uploads directory and a WooCommerce log file. Each result is kept for
- * 12 hours. A request that fails gives "unknown", which costs the check no
- * points: many shared servers cannot connect to themselves.
+ * the uploads directory, a WooCommerce log file and backups found in public
+ * directories. Each result is kept for 12 hours, in an option of its own per
+ * check (runs at the same time cannot overwrite each other's results) with a
+ * hash of the URL (a changed URL is requested again). A request that fails
+ * gives "unknown", which costs the check no points: many shared servers
+ * cannot connect to themselves.
  *
  * Before its first request a run asks for the home page. When even that is
  * refused (a firewall or CDN that challenges the server's own requests, a
@@ -24,14 +27,15 @@ defined( 'ABSPATH' ) || exit;
  *
  * Requests go only to this site's own host, so nothing is sent elsewhere
  * (uploads served from another host, for example, stay unknown). One instance
- * serves one run of the checks and saves the results once, at the end.
+ * serves one run of the checks.
  */
 class JP4WC_Security_Probe {
 
 	/**
-	 * Option with the results by check ID: status and checked_at (not autoloaded).
+	 * Start of the name of the option that holds one check's result: status,
+	 * checked_at and url_hash (not autoloaded). option_name() makes the name.
 	 */
-	const OPTION = 'jp4wc_security_probes';
+	const OPTION_PREFIX = 'jp4wc_security_probe_';
 
 	/**
 	 * How long a result is used, in seconds (12 hours).
@@ -56,20 +60,6 @@ class JP4WC_Security_Probe {
 	const REFUSED_CODES = array( 401, 403, 405, 429 );
 
 	/**
-	 * Results by check ID.
-	 *
-	 * @var array<string, array{status: string, checked_at: int}>
-	 */
-	private $results;
-
-	/**
-	 * Whether a result changed since the instance was created.
-	 *
-	 * @var bool
-	 */
-	private $changed = false;
-
-	/**
 	 * Whether a request of this run could not connect.
 	 *
 	 * @var bool
@@ -84,11 +74,13 @@ class JP4WC_Security_Probe {
 	private $answers = null;
 
 	/**
-	 * Reads the stored results.
+	 * Returns the name of the option that holds a check's result.
+	 *
+	 * @param string $check_id Check ID, or a key of its own (D-02-0).
+	 * @return string
 	 */
-	public function __construct() {
-		$results       = get_option( self::OPTION, array() );
-		$this->results = is_array( $results ) ? $results : array();
+	public static function option_name( $check_id ) {
+		return self::OPTION_PREFIX . strtolower( (string) preg_replace( '/[^A-Za-z0-9]+/', '_', (string) $check_id ) );
 	}
 
 	/**
@@ -104,31 +96,28 @@ class JP4WC_Security_Probe {
 	 * @return string pass, fail or unknown.
 	 */
 	public function status( $check_id, $url, callable $classify ) {
-		$stored = isset( $this->results[ $check_id ] ) && is_array( $this->results[ $check_id ] ) ? $this->results[ $check_id ] : array();
-		if ( isset( $stored['status'], $stored['checked_at'] ) && self::is_status( $stored['status'] ) ) {
+		$option   = self::option_name( $check_id );
+		$url_hash = md5( (string) $url );
+		$stored   = get_option( $option, array() );
+		if ( is_array( $stored ) && isset( $stored['status'], $stored['checked_at'], $stored['url_hash'] )
+			&& self::is_status( $stored['status'] ) && is_string( $stored['url_hash'] ) && hash_equals( $stored['url_hash'], $url_hash ) ) {
 			$age = time() - (int) $stored['checked_at'];
 			if ( $age >= 0 && $age < self::TTL ) {
 				return $stored['status'];
 			}
 		}
 
-		$status                     = $this->request( $url, $classify );
-		$this->results[ $check_id ] = array(
-			'status'     => $status,
-			'checked_at' => time(),
+		$status = $this->request( $url, $classify );
+		update_option(
+			$option,
+			array(
+				'status'     => $status,
+				'checked_at' => time(),
+				'url_hash'   => $url_hash,
+			),
+			false
 		);
-		$this->changed              = true;
 		return $status;
-	}
-
-	/**
-	 * Saves the results when one changed.
-	 */
-	public function save() {
-		if ( $this->changed ) {
-			update_option( self::OPTION, $this->results, false );
-			$this->changed = false;
-		}
 	}
 
 	/**
