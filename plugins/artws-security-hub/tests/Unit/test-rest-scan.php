@@ -537,6 +537,90 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * A token problem is 401 even while the vulnerability data is not ready.
+	 */
+	public function test_unauthorized_comes_before_unavailable() {
+		$this->register_site();
+		delete_option( Artws_Sec_Feed_Updater::STATE_OPTION );
+
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 401, 'artws_sec_unauthorized' );
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'site_url' => 'https://moved.example.jp' ) ), 'sit_' . str_repeat( 'a', 43 ) ), 401, 'artws_sec_unauthorized' );
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'site_url' => 'https://new.example.jp' ) ) ), 503, 'artws_sec_unavailable' );
+	}
+
+	/**
+	 * Breaks the queries that start with a text, until the test ends.
+	 *
+	 * @param string $start Start of the queries to break.
+	 */
+	private static function break_queries( $start ) {
+		add_filter(
+			'query',
+			static function ( $query ) use ( $start ) {
+				return 0 === strpos( ltrim( $query ), $start ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			}
+		);
+	}
+
+	/**
+	 * Rate limits that cannot be read or counted refuse the scan instead of letting it through.
+	 */
+	public function test_rate_limit_fails_closed() {
+		global $wpdb;
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			self::break_queries( 'SELECT limit_key, window_start, hits FROM ' . Artws_Sec_Db::limits_table() );
+			$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 500, 'artws_sec_server_error' );
+			remove_all_filters( 'query' );
+
+			self::break_queries( 'INSERT INTO ' . Artws_Sec_Db::limits_table() );
+			$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 500, 'artws_sec_server_error' );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::sites_table() ) );
+	}
+
+	/**
+	 * A registration whose scan cannot be saved is undone, so the site can register again.
+	 */
+	public function test_failed_save_undoes_the_registration() {
+		global $wpdb;
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			self::break_queries( 'INSERT INTO `' . Artws_Sec_Db::scans_table() . '`' );
+			$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 500, 'artws_sec_server_error' );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::sites_table() ) );
+
+		remove_all_filters( 'query' );
+		self::reset_rate_limits();
+		$this->register_site();
+	}
+
+	/**
+	 * A re-registration whose scan cannot be saved leaves the site on its previous token.
+	 */
+	public function test_failed_save_keeps_the_previous_token() {
+		global $wpdb;
+		list( $token, ) = $this->register_site();
+		self::reset_rate_limits();
+
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			self::break_queries( 'INSERT INTO `' . Artws_Sec_Db::scans_table() . '`' );
+			$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'reregister' => true ) ) ), 500, 'artws_sec_server_error' );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+
+		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::sites_table() ) );
+	}
+
+	/**
 	 * Requests over http are refused unless the filter allows them.
 	 */
 	public function test_http_is_refused() {

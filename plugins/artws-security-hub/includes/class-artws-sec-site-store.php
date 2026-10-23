@@ -228,6 +228,19 @@ class Artws_Sec_Site_Store {
 	}
 
 	/**
+	 * Puts back the token a site had before reregister(), when the scan that came with it could not be saved.
+	 *
+	 * @param object $site Row of the sites table as it was before reregister().
+	 * @return bool
+	 */
+	public static function restore_token( $site ) {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table.
+		return false !== $wpdb->update( Artws_Sec_Db::sites_table(), array( 'token_hash' => (string) $site->token_hash ), array( 'id' => (int) $site->id ), array( '%s' ), array( '%d' ) );
+	}
+
+	/**
 	 * Saves a scan and records it as the site's latest.
 	 *
 	 * @param int    $site_id    Site ID.

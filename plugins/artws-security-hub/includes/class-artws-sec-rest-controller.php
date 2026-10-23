@@ -107,11 +107,6 @@ class Artws_Sec_Rest_Controller {
 			return self::error( $normalized->get_error_code(), $normalized->get_error_message(), 400 );
 		}
 
-		$state = Artws_Sec_Feed_Updater::get_state();
-		if ( null === $state || '' === $state['index_version'] ) {
-			return self::unavailable();
-		}
-
 		$token      = self::bearer_token( $request );
 		$site_key   = Artws_Sec_Site_Store::site_key( $normalized['site_url'] );
 		$site       = Artws_Sec_Site_Store::find_site_by_key( $site_key );
@@ -124,9 +119,20 @@ class Artws_Sec_Rest_Controller {
 			}
 		}
 
+		// After authentication, so that a request without a valid token is 401 whatever the data.
+		$state = Artws_Sec_Feed_Updater::get_state();
+		if ( null === $state || '' === $state['index_version'] ) {
+			return self::unavailable();
+		}
+
 		// A request over the limit is refused before the work of matching it; the hit is taken after.
-		$limits   = self::limits( $site_key );
-		$retry_at = Artws_Sec_Rate_Limiter::blocked_until( $limits, $now );
+		// A limit that cannot be checked refuses the request rather than letting it through.
+		$limits = self::limits( $site_key );
+		try {
+			$retry_at = Artws_Sec_Rate_Limiter::blocked_until( $limits, $now );
+		} catch ( Artws_Sec_Feed_Exception $e ) {
+			return self::server_error();
+		}
 		if ( $retry_at > 0 ) {
 			return self::rate_limited( $retry_at, $now );
 		}
@@ -138,7 +144,11 @@ class Artws_Sec_Rest_Controller {
 			return self::unavailable();
 		}
 
-		$retry_at = Artws_Sec_Rate_Limiter::hit( $limits, $now );
+		try {
+			$retry_at = Artws_Sec_Rate_Limiter::hit( $limits, $now );
+		} catch ( Artws_Sec_Feed_Exception $e ) {
+			return self::server_error();
+		}
 		if ( $retry_at > 0 ) {
 			return self::rate_limited( $retry_at, $now );
 		}
@@ -161,6 +171,13 @@ class Artws_Sec_Rest_Controller {
 		}
 
 		if ( ! Artws_Sec_Site_Store::save_scan( $site_id, $normalized['site_url'], $scan_token, $normalized, $report, $now ) ) {
+			// The new token cannot be handed out with an error, so the site is left as the client knows it:
+			// not registered, or (its scans already deleted) still on its previous token.
+			if ( null === $site ) {
+				Artws_Sec_Site_Store::delete_site( $site_id );
+			} elseif ( $reregister ) {
+				Artws_Sec_Site_Store::restore_token( $site );
+			}
 			return self::server_error();
 		}
 

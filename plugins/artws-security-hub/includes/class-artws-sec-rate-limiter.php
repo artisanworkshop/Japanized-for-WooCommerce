@@ -7,6 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain-text messages; the REST API answers 500 without them.
+
 /**
  * Artws_Sec_Rate_Limiter
  *
@@ -45,6 +47,7 @@ class Artws_Sec_Rate_Limiter {
 	 * @param array<int, array{key: string, max: int, window: int}> $limits Limits to take a hit from.
 	 * @param int                                                   $now    Unix time.
 	 * @return int 0 when the request may go ahead, otherwise the Unix time from which it may.
+	 * @throws Artws_Sec_Feed_Exception When a limit cannot be read or counted: the caller refuses the request.
 	 */
 	public static function hit( array $limits, $now ) {
 		$retry_at = self::blocked_until( $limits, $now );
@@ -73,6 +76,9 @@ class Artws_Sec_Rate_Limiter {
 				)
 			);
 			// phpcs:enable
+			if ( false === $affected ) {
+				throw new Artws_Sec_Feed_Exception( 'The rate limit could not be counted.' );
+			}
 			if ( 0 === $affected ) {
 				return max( $now + 1, self::blocked_until( array( $limit ), $now ) );
 			}
@@ -152,6 +158,7 @@ class Artws_Sec_Rate_Limiter {
 	 * @param array $limits Limits as for hit().
 	 * @param int   $now    Unix time.
 	 * @return int
+	 * @throws Artws_Sec_Feed_Exception When the limits cannot be read.
 	 */
 	public static function blocked_until( array $limits, $now ) {
 		global $wpdb;
@@ -169,9 +176,12 @@ class Artws_Sec_Rate_Limiter {
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Custom table; one %s per key.
 		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT limit_key, window_start, hits FROM {$table} WHERE limit_key IN ({$placeholders})", array_keys( $by_key ) ) );
 		// phpcs:enable
+		if ( ! is_array( $rows ) || '' !== $wpdb->last_error ) {
+			throw new Artws_Sec_Feed_Exception( 'The rate limits could not be read.' );
+		}
 
 		$retry_at = 0;
-		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+		foreach ( $rows as $row ) {
 			$limit = $by_key[ $row->limit_key ] ?? null;
 			if ( null === $limit ) {
 				continue;
