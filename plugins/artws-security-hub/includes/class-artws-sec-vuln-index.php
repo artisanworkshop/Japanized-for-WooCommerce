@@ -125,9 +125,11 @@ class Artws_Sec_Vuln_Index {
 			}
 			foreach ( $rows as $row ) {
 				$records = json_decode( $row->records, true );
-				if ( is_array( $records ) ) {
-					$found[ $row->lookup_key ] = $records;
+				// A row that cannot be read could hide a vulnerability, so it fails the lookup too.
+				if ( ! is_array( $records ) || ! array_is_list( $records ) ) {
+					throw new Artws_Sec_Feed_Exception( 'A row of the vulnerability index could not be read.' );
 				}
+				$found[ $row->lookup_key ] = $records;
 			}
 		}
 		return $found;

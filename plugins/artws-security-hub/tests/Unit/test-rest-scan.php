@@ -537,6 +537,24 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * An index row that cannot be read is 503, since it could hide a vulnerability.
+	 */
+	public function test_unavailable_when_an_index_row_is_broken() {
+		global $wpdb;
+		$wpdb->replace( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Test fixture.
+			Artws_Sec_Db::vulns_table(),
+			array(
+				'feed_version' => self::FEED_VERSION,
+				'lookup_key'   => Artws_Sec_Vuln_Index::lookup_key( 'plugin', 'sample-plugin' ),
+				'records'      => '{"not":"a list"}',
+			)
+		);
+
+		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 503, 'artws_sec_unavailable' );
+		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::sites_table() ) );
+	}
+
+	/**
 	 * A token problem is 401 even while the vulnerability data is not ready.
 	 */
 	public function test_unauthorized_comes_before_unavailable() {
@@ -588,7 +606,7 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 		global $wpdb;
 		$suppress = $wpdb->suppress_errors( true );
 		try {
-			self::break_queries( 'INSERT INTO `' . Artws_Sec_Db::scans_table() . '`' );
+			self::break_queries( 'INSERT INTO ' . Artws_Sec_Db::scans_table() . ' (' );
 			$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 500, 'artws_sec_server_error' );
 		} finally {
 			$wpdb->suppress_errors( $suppress );
@@ -610,7 +628,7 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 
 		$suppress = $wpdb->suppress_errors( true );
 		try {
-			self::break_queries( 'INSERT INTO `' . Artws_Sec_Db::scans_table() . '`' );
+			self::break_queries( 'INSERT INTO ' . Artws_Sec_Db::scans_table() . ' (' );
 			$this->assert_error( self::send( 'POST', '/scan', self::sample_request( array( 'reregister' => true ) ) ), 500, 'artws_sec_server_error' );
 		} finally {
 			$wpdb->suppress_errors( $suppress );

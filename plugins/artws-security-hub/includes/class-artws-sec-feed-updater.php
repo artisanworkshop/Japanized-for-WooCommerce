@@ -451,6 +451,13 @@ class Artws_Sec_Feed_Updater {
 	 * @return string Why the index was not updated, or ''.
 	 */
 	private static function update_index( array $vulnerabilities, $version ) {
+		$active = self::fresh_state();
+		if ( null !== $active && $version === $active['index_version'] ) {
+			// A run in the same second as the one that wrote the active generation (a clock set back):
+			// that generation is never rewritten in place, since a failure would leave scans without one.
+			return '';
+		}
+
 		try {
 			Artws_Sec_Vuln_Index::write( $vulnerabilities, $version );
 		} catch ( Artws_Sec_Feed_Exception $e ) {

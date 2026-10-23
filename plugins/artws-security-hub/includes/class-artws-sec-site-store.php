@@ -260,23 +260,26 @@ class Artws_Sec_Site_Store {
 			return false;
 		}
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom tables.
-		$inserted = $wpdb->insert(
-			Artws_Sec_Db::scans_table(),
-			array(
-				'site_id'    => (int) $site_id,
-				'scan_key'   => self::hash_token( $scan_token ),
-				'created_at' => $now,
-				'request'    => $request_json,
-				'report'     => $report_json,
-			),
-			array( '%d', '%s', '%d', '%s', '%s' )
+		$scans = Artws_Sec_Db::scans_table();
+		$sites = Artws_Sec_Db::sites_table();
+		$key   = self::hash_token( $scan_token );
+		// Only while the site exists: a scan saved after DELETE /site would outlive the data the site asked to delete.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom tables.
+		$inserted = $wpdb->query(
+			$wpdb->prepare(
+				"INSERT INTO {$scans} ( site_id, scan_key, created_at, request, report ) SELECT id, %s, %d, %s, %s FROM {$sites} WHERE id = %d",
+				$key,
+				$now,
+				$request_json,
+				$report_json,
+				(int) $site_id
+			)
 		);
 		if ( 1 !== $inserted ) {
 			return false;
 		}
-		$wpdb->update(
-			Artws_Sec_Db::sites_table(),
+		$updated = $wpdb->update(
+			$sites,
 			array(
 				'site_url'     => $site_url,
 				'last_scan_at' => $now,
@@ -285,6 +288,11 @@ class Artws_Sec_Site_Store {
 			array( '%s', '%d' ),
 			array( '%d' )
 		);
+		if ( false === $updated ) {
+			// The cleanup reads last_scan_at, so a scan it does not cover is taken back.
+			$wpdb->delete( $scans, array( 'scan_key' => $key ), array( '%s' ) );
+			return false;
+		}
 		// phpcs:enable
 		return true;
 	}
@@ -331,9 +339,10 @@ class Artws_Sec_Site_Store {
 	public static function delete_site( $site_id ) {
 		global $wpdb;
 
+		// The site first: from then on save_scan() saves nothing for it, so no scan is left behind.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom tables.
-		$scans = $wpdb->delete( Artws_Sec_Db::scans_table(), array( 'site_id' => (int) $site_id ), array( '%d' ) );
 		$sites = $wpdb->delete( Artws_Sec_Db::sites_table(), array( 'id' => (int) $site_id ), array( '%d' ) );
+		$scans = $wpdb->delete( Artws_Sec_Db::scans_table(), array( 'site_id' => (int) $site_id ), array( '%d' ) );
 		// phpcs:enable
 		return false !== $scans && false !== $sites;
 	}
@@ -355,6 +364,8 @@ class Artws_Sec_Site_Store {
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$scans} WHERE created_at < %d", $cutoff ) );
 		// A scan is saved before last_scan_at is updated, so a site that has a scan left is kept.
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$sites} WHERE last_scan_at < %d AND NOT EXISTS ( SELECT 1 FROM {$scans} c WHERE c.site_id = {$sites}.id )", $cutoff ) );
+		// Scans whose site is gone (a scan saved while the site was being deleted).
+		$wpdb->query( "DELETE c FROM {$scans} c LEFT JOIN {$sites} s ON s.id = c.site_id WHERE s.id IS NULL" );
 		// phpcs:enable
 
 		Artws_Sec_Rate_Limiter::cleanup( $now, Artws_Sec_Rest_Controller::window() );

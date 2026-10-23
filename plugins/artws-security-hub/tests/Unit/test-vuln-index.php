@@ -122,6 +122,34 @@ class Artws_Sec_Vuln_Index_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * A run with the version of the active index (a clock set back) never rewrites that generation.
+	 */
+	public function test_same_version_keeps_the_active_index() {
+		global $wpdb;
+		$this->mock_wordfence( self::fixture_feed() );
+		Artws_Sec_Feed_Updater::update( self::NOW );
+		$active = Artws_Sec_Feed_Updater::get_state()['index_version'];
+		$key    = Artws_Sec_Vuln_Index::lookup_key( 'core', 'wordpress' ); // phpcs:ignore WordPress.WP.CapitalPDangit.MisspelledInText -- The core slug.
+
+		$table = Artws_Sec_Db::vulns_table();
+		add_filter(
+			'query',
+			static function ( $query ) use ( $table ) {
+				return 0 === strpos( $query, "INSERT INTO {$table}" ) ? 'INSERT INTO artws_sec_no_such_table VALUES (1)' : $query;
+			}
+		);
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			$this->assertSame( 'success', Artws_Sec_Feed_Updater::update( self::NOW ) );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+
+		$this->assertSame( $active, Artws_Sec_Feed_Updater::get_state()['index_version'] );
+		$this->assertArrayHasKey( $key, Artws_Sec_Vuln_Index::find( $active, array( $key ) ) );
+	}
+
+	/**
 	 * A failed read is an error, not "no records".
 	 */
 	public function test_find_throws_when_the_index_cannot_be_read() {

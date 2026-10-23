@@ -84,11 +84,44 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 		// A scan saved just before its site's last_scan_at was updated.
 		$racing = self::insert_site( 'https://racing.example.jp', $limit - 10 );
 		self::insert_scan( $racing, self::NOW );
+		// A scan whose site was deleted while it was being saved.
+		self::insert_scan( $racing + 1000, self::NOW );
 
 		Artws_Sec_Site_Store::cleanup( self::NOW );
 
 		$this->assertSame( array( 'https://active.example.jp', 'https://edge.example.jp', 'https://racing.example.jp' ), self::site_urls() );
 		$this->assertSame( 3, self::count_rows( Artws_Sec_Db::scans_table() ) );
+	}
+
+	/**
+	 * A scan is saved only while its site exists, and taken back when the site cannot be updated.
+	 */
+	public function test_save_scan_needs_the_site() {
+		global $wpdb;
+		$site = self::insert_site( 'https://example.jp', self::NOW );
+
+		$this->assertTrue( Artws_Sec_Site_Store::save_scan( $site, 'https://example.jp', 'scn_' . str_repeat( 'a', 43 ), array(), array(), self::NOW ) );
+		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::scans_table() ) );
+
+		$sites = Artws_Sec_Db::sites_table();
+		add_filter(
+			'query',
+			static function ( $query ) use ( $sites ) {
+				return 0 === strpos( $query, "UPDATE `{$sites}`" ) ? 'UPDATE artws_sec_no_such_table SET a = 1' : $query;
+			}
+		);
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			$this->assertFalse( Artws_Sec_Site_Store::save_scan( $site, 'https://example.jp', 'scn_' . str_repeat( 'b', 43 ), array(), array(), self::NOW + 1 ) );
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+		$this->assertSame( 1, self::count_rows( Artws_Sec_Db::scans_table() ) );
+		remove_all_filters( 'query' );
+
+		Artws_Sec_Site_Store::delete_site( $site );
+		$this->assertFalse( Artws_Sec_Site_Store::save_scan( $site, 'https://example.jp', 'scn_' . str_repeat( 'c', 43 ), array(), array(), self::NOW ) );
+		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::scans_table() ) );
 	}
 
 	/**
