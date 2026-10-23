@@ -204,3 +204,4 @@
 | 2026-10-23 | R1-L8 | Low | includes/admin/class-jp4wc-security-api.php（ルート名） | 手動の再チェックが `security/rescan`・`jp4wc_security_rescan_too_soon` で、自動の `RESCAN_HOOK` と紛らわしい（ルート名は issue #259 の指定）。#259 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L9 | Low | SecuritySettings.js（`Credits`） | `key={ copyright.notice }` は notice が重複すると React の key が衝突する。#259 の対応ブランチ R1 | 未起票 |
 | 2026-10-23 | R1-L10 | Low | includes/admin/class-jp4wc-security-api.php（429） | `Retry-After` ヘッダーを付けていない（`retry_after` は本文のみ）。#259 の対応ブランチ R1 | 未起票 |
+| 2026-10-23 | G3-1 | Low | includes/class-jp4wc-security-feed.php（`request_recheck()`） | 連打防止を同時にすり抜けた 2 リクエストが依頼時刻を逆順に保存すると、後のタブが `done_at >= requestedAt` を満たさず 3 分でタイムアウトする（再チェックは実行される）。画面の完了判定に「POST 時の done_at から変わり、pending でない」を加える案。PR #279 G3（Copilot） | 未起票 |
