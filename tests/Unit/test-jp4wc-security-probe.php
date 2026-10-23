@@ -39,7 +39,7 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 		$this->assertTrue( class_exists( 'JP4WC_Security_Probe' ), 'The plugin loads the probe at plugins_loaded.' );
-		delete_option( JP4WC_Security_Probe::OPTION );
+		JP4WC_Security_Checks::delete_probe_results();
 		$this->requests = array();
 		$this->answer   = 200;
 		$this->home     = 200;
@@ -51,7 +51,7 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	 */
 	public function tearDown(): void {
 		remove_filter( 'pre_http_request', array( $this, 'respond' ), 10 );
-		delete_option( JP4WC_Security_Probe::OPTION );
+		JP4WC_Security_Checks::delete_probe_results();
 		parent::tearDown();
 	}
 
@@ -198,7 +198,7 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	 */
 	public function test_redirected_home_page_is_a_normal_answer() {
 		foreach ( array( 301, 302, 404 ) as $home ) {
-			delete_option( JP4WC_Security_Probe::OPTION );
+			JP4WC_Security_Checks::delete_probe_results();
 			$this->home   = $home;
 			$this->answer = 403;
 			$probe        = new JP4WC_Security_Probe();
@@ -231,16 +231,15 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	public function test_result_is_kept_for_twelve_hours() {
 		$probe = new JP4WC_Security_Probe();
 		$this->assertSame( 'fail', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ) );
-		$probe->save();
 
 		$this->answer = 403;
 		$probe        = new JP4WC_Security_Probe();
 		$this->assertSame( 'fail', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ), 'The stored result is used.' );
 		$this->assertCount( 2, $this->requests, 'The home page and the uploads directory, once.' );
 
-		$stored                       = get_option( JP4WC_Security_Probe::OPTION );
-		$stored['D-01']['checked_at'] = time() - JP4WC_Security_Probe::TTL;
-		update_option( JP4WC_Security_Probe::OPTION, $stored, false );
+		$stored               = get_option( JP4WC_Security_Probe::option_name( 'D-01' ) );
+		$stored['checked_at'] = time() - JP4WC_Security_Probe::TTL;
+		update_option( JP4WC_Security_Probe::option_name( 'D-01' ), $stored, false );
 
 		$probe = new JP4WC_Security_Probe();
 		$this->assertSame( 'pass', $probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) ), 'An old result is requested again.' );
@@ -252,12 +251,11 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	 */
 	public function test_result_from_the_future_is_requested_again() {
 		update_option(
-			JP4WC_Security_Probe::OPTION,
+			JP4WC_Security_Probe::option_name( 'D-01' ),
 			array(
-				'D-01' => array(
-					'status'     => 'pass',
-					'checked_at' => time() + DAY_IN_SECONDS,
-				),
+				'status'     => 'pass',
+				'checked_at' => time() + DAY_IN_SECONDS,
+				'url_hash'   => md5( self::own_url( '/wp-content/uploads/' ) ),
 			),
 			false
 		);
@@ -268,36 +266,45 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Results are saved once, without autoload, and hold only the status and the time.
+	 * Each result is kept at once in an option of its own, without autoload,
+	 * with a hash of the URL and not the URL itself (A4, B5).
 	 */
-	public function test_results_are_saved_once_without_the_url() {
+	public function test_each_result_is_kept_in_its_own_option() {
 		global $wpdb;
-		$writes = 0;
-		$count  = static function ( $value ) use ( &$writes ) {
-			++$writes;
-			return $value;
-		};
-		add_filter( 'pre_update_option_' . JP4WC_Security_Probe::OPTION, $count );
-		try {
-			$probe = new JP4WC_Security_Probe();
-			$probe->status( 'A-04', self::own_url( '/xmlrpc.php' ), array( __CLASS__, 'open_on_200' ) );
-			$probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) );
-			$this->assertFalse( get_option( JP4WC_Security_Probe::OPTION ), 'Nothing is written before save().' );
-			$probe->save();
-			$probe->save();
-		} finally {
-			remove_filter( 'pre_update_option_' . JP4WC_Security_Probe::OPTION, $count );
-		}
+		$first  = new JP4WC_Security_Probe();
+		$second = new JP4WC_Security_Probe();
+		$first->status( 'A-04', self::own_url( '/xmlrpc.php' ), array( __CLASS__, 'open_on_200' ) );
+		$second->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) );
 
-		$this->assertSame( 1, $writes );
-		$stored = get_option( JP4WC_Security_Probe::OPTION );
-		$this->assertSame( array( 'A-04', 'D-01' ), array_keys( $stored ) );
-		foreach ( $stored as $result ) {
-			$this->assertSame( array( 'status', 'checked_at' ), array_keys( $result ) );
+		foreach ( array(
+			'A-04' => '/xmlrpc.php',
+			'D-01' => '/wp-content/uploads/',
+		) as $check_id => $path ) {
+			$option = JP4WC_Security_Probe::option_name( $check_id );
+			$stored = get_option( $option );
+			$this->assertSame( array( 'status', 'checked_at', 'url_hash' ), array_keys( $stored ), $check_id );
+			$this->assertSame( 'fail', $stored['status'] );
+			$this->assertSame( md5( self::own_url( $path ) ), $stored['url_hash'] );
+			$this->assertStringNotContainsString( 'example.org', wp_json_encode( $stored ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Reads the autoload flag.
+			$autoload = $wpdb->get_var( $wpdb->prepare( "SELECT autoload FROM {$wpdb->options} WHERE option_name = %s", $option ) );
+			$this->assertContains( $autoload, array( 'no', 'off' ) );
 		}
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Reads the autoload flag.
-		$autoload = $wpdb->get_var( $wpdb->prepare( "SELECT autoload FROM {$wpdb->options} WHERE option_name = %s", JP4WC_Security_Probe::OPTION ) );
-		$this->assertContains( $autoload, array( 'no', 'off' ) );
+		$this->assertSame( 'jp4wc_security_probe_d_02_4', JP4WC_Security_Probe::option_name( 'D-02-4' ) );
+	}
+
+	/**
+	 * A stored result for another URL is not used (A4).
+	 */
+	public function test_changed_url_is_requested_again() {
+		$probe = new JP4WC_Security_Probe();
+		$probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) );
+		$probe->status( 'D-01', self::own_url( '/wp-content/uploads/' ), array( __CLASS__, 'open_on_200' ) );
+		$this->assertCount( 2, $this->requests, 'The home page and the uploads directory, once.' );
+
+		$this->answer = 403;
+		$this->assertSame( 'pass', $probe->status( 'D-01', self::own_url( '/files/' ), array( __CLASS__, 'open_on_200' ) ) );
+		$this->assertSame( self::own_url( '/files/' ), end( $this->requests )['url'] );
 	}
 
 	/**
@@ -312,10 +319,8 @@ class JP4WC_Security_Probe_Test extends WP_UnitTestCase {
 		$this->assertSame( 'unknown', $probe->status( 'A-04', self::own_url( '/xmlrpc.php' ), array( __CLASS__, 'open_on_200' ) ) );
 		$this->assertSame( array( home_url( '/' ), self::own_url( '/wp-login.php' ) ), wp_list_pluck( $this->requests, 'url' ) );
 
-		$probe->save();
-		$stored = get_option( JP4WC_Security_Probe::OPTION );
-		$this->assertSame( 'unknown', $stored['A-02']['status'] );
-		$this->assertSame( 'unknown', $stored['A-04']['status'], 'Kept as unknown, so the next run within 12 hours sends nothing either.' );
+		$this->assertSame( 'unknown', get_option( JP4WC_Security_Probe::option_name( 'A-02' ) )['status'] );
+		$this->assertSame( 'unknown', get_option( JP4WC_Security_Probe::option_name( 'A-04' ) )['status'], 'Kept as unknown, so the next run within 12 hours sends nothing either.' );
 	}
 
 	/**

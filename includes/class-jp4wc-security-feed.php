@@ -111,8 +111,8 @@ class JP4WC_Security_Feed {
 		add_action( 'add_option_' . self::SETTING, array( __CLASS__, 'reconcile' ), 10, 0 );
 		add_action( 'update_option_' . self::SETTING, array( __CLASS__, 'reconcile' ), 10, 0 );
 
-		// Installed versions change: match again.
-		foreach ( array( 'upgrader_process_complete', 'activated_plugin', 'deleted_plugin', 'switch_theme', 'deleted_theme' ) as $hook ) {
+		// Installed versions or active plugins change: match and check again.
+		foreach ( array( 'upgrader_process_complete', 'activated_plugin', 'deactivated_plugin', 'deleted_plugin', 'switch_theme', 'deleted_theme' ) as $hook ) {
 			add_action( $hook, array( __CLASS__, 'schedule_rescan' ), 10, 0 );
 		}
 	}
@@ -223,7 +223,7 @@ class JP4WC_Security_Feed {
 		wp_clear_scheduled_hook( self::RESCAN_HOOK );
 		delete_option( self::STATE_OPTION );
 		delete_option( self::FINDINGS_OPTION );
-		delete_option( JP4WC_Security_Probe::OPTION );
+		JP4WC_Security_Checks::delete_probe_results();
 
 		$directory = self::directory_path();
 		if ( '' === $directory || ! is_dir( $directory ) ) {
@@ -446,6 +446,7 @@ class JP4WC_Security_Feed {
 					'stale' => self::is_stale( $findings ),
 				) : null,
 				'eol'             => is_array( $state['eol'] ) ? $state['eol'] : array(),
+				'eol_stale'       => self::is_stale( $state ),
 			)
 		);
 		$findings['checks'] = $checks;

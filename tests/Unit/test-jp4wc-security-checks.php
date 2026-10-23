@@ -54,7 +54,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		// The home page answers as usual, so the requests of the checks are sent (R1-1).
 		$this->answers   = array( home_url( '/' ) => array( 200, array() ) );
 		$this->requested = array();
-		delete_option( JP4WC_Security_Probe::OPTION );
+		JP4WC_Security_Checks::delete_probe_results();
 		add_filter( 'pre_http_request', array( $this, 'respond' ), 10, 3 );
 		// phpunit.xml turns warnings into exceptions, which the checks report as unknown.
 		$this->errors = array();
@@ -68,7 +68,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		remove_action( 'jp4wc_security_check_error', array( $this, 'record_error' ), 10 );
 		$this->assertSame( array(), array_map( 'get_class', $this->errors ), 'No check threw.' );
 		remove_filter( 'pre_http_request', array( $this, 'respond' ), 10 );
-		delete_option( JP4WC_Security_Probe::OPTION );
+		JP4WC_Security_Checks::delete_probe_results();
 		self::remove( $this->dir );
 		parent::tearDown();
 	}
@@ -116,7 +116,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	 * @return string
 	 */
 	private function status( $check_id, array $context = array() ) {
-		delete_option( JP4WC_Security_Probe::OPTION );
+		JP4WC_Security_Checks::delete_probe_results();
 		$result = JP4WC_Security_Checks::run_check( $check_id, $context );
 		$this->assertSame( $check_id, $result['check_id'] );
 		return $result['status'];
@@ -173,17 +173,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	 * Every check runs in order, with its requirement, and the probe is saved once.
 	 */
 	public function test_run_returns_every_check_in_order() {
-		$writes = 0;
-		$count  = static function ( $value ) use ( &$writes ) {
-			++$writes;
-			return $value;
-		};
-		add_filter( 'pre_update_option_' . JP4WC_Security_Probe::OPTION, $count );
-		try {
-			$checks = JP4WC_Security_Checks::run( array( 'uploads' => $this->uploads() ) );
-		} finally {
-			remove_filter( 'pre_update_option_' . JP4WC_Security_Probe::OPTION, $count );
-		}
+		$checks = JP4WC_Security_Checks::run( array( 'uploads' => $this->uploads() ) );
 
 		$this->assertSame( array( 'V-01', 'V-02', 'V-03', 'V-04', 'A-01', 'A-02', 'A-03', 'A-04', 'A-05', 'D-01', 'D-02', 'D-03', 'D-04', 'D-05', 'M-01', 'M-02', 'M-03' ), wp_list_pluck( $checks, 'check_id' ) );
 		$prefixes = array(
@@ -196,7 +186,18 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			$this->assertSame( $prefixes[ $check['check_id'][0] ], $check['requirement'], $check['check_id'] );
 			$this->assertContains( $check['status'], array( 'pass', 'fail', 'unknown' ), $check['check_id'] );
 		}
-		$this->assertSame( 1, $writes );
+
+		// Each request's result is kept in an option of its own, without the URL itself.
+		$kept = 0;
+		foreach ( JP4WC_Security_Checks::probe_keys() as $key ) {
+			$stored = get_option( JP4WC_Security_Probe::option_name( $key ) );
+			if ( false === $stored ) {
+				continue;
+			}
+			++$kept;
+			$this->assertSame( array( 'status', 'checked_at', 'url_hash' ), array_keys( $stored ), $key );
+		}
+		$this->assertGreaterThan( 0, $kept );
 	}
 
 	/**
@@ -502,6 +503,36 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * V-03 does not pass on out-of-date oldest supported versions, as V-01 does
+	 * not pass on out-of-date vulnerability data; a fail stands (A2).
+	 */
+	public function test_v03_out_of_date_data() {
+		$versions = array(
+			'php'         => '8.3.12',
+			'wordpress'   => '6.9.1',
+			'woocommerce' => '10.6.2',
+		);
+		$eol      = array(
+			'php'         => '8.2',
+			'wordpress'   => '6.7',
+			'woocommerce' => '10.2',
+		);
+		$context  = array(
+			'versions'  => $versions,
+			'eol'       => $eol,
+			'eol_stale' => true,
+		);
+		$this->assertSame( 'unknown', $this->status( 'V-03', $context ) );
+
+		$context['versions']['php'] = '8.1.30';
+		$this->assertSame( 'fail', $this->status( 'V-03', $context ) );
+
+		$context['eol_stale'] = false;
+		$context['versions']  = $versions;
+		$this->assertSame( 'pass', $this->status( 'V-03', $context ) );
+	}
+
+	/**
 	 * V-03 reads the versions of the site.
 	 */
 	public function test_v03_reads_the_running_versions() {
@@ -684,13 +715,34 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		);
 		$this->assertSame( 'pass', $this->v04( $context + array( 'constants' => array( 'WP_AUTO_UPDATE_CORE' => 'minor' ) ) ) );
 		$this->assertSame( 'fail', $this->v04( $context + array( 'constants' => array( 'WP_AUTO_UPDATE_CORE' => false ) ) ) );
-		foreach ( array( 'plugins_auto_update_enabled', 'allow_minor_auto_core_updates' ) as $filter ) {
+		foreach ( array( 'plugins_auto_update_enabled', 'allow_minor_auto_core_updates', 'auto_update_core' ) as $filter ) {
 			add_filter( $filter, '__return_false' );
 			try {
 				$this->assertSame( 'fail', $this->v04( $context ), $filter );
 			} finally {
 				remove_filter( $filter, '__return_false' );
 			}
+		}
+
+		// A filter that allows only minor core releases lets V-04 pass (B2).
+		$minor_only = static function ( $update, $item ) {
+			// Allows a release of the running branch only, as some update managers do.
+			return isset( $item->current ) && get_bloginfo( 'version' ) === $item->current ? $update : false;
+		};
+		add_filter( 'auto_update_core', $minor_only, 10, 2 );
+		try {
+			$this->assertSame( 'pass', $this->v04( $context ) );
+		} finally {
+			remove_filter( 'auto_update_core', $minor_only, 10 );
+		}
+
+		// WordPress never looks for updates without wp_version_check(), as Site Health reports (B2).
+		$this->assertSame( 10, has_action( 'wp_version_check', 'wp_version_check' ) );
+		remove_action( 'wp_version_check', 'wp_version_check' );
+		try {
+			$this->assertSame( 'fail', $this->v04( $context ) );
+		} finally {
+			add_action( 'wp_version_check', 'wp_version_check' );
 		}
 	}
 
@@ -1003,7 +1055,18 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		wp_mkdir_p( $this->dir . '/root' );
 		$this->write( 'content/' . $name, 'data' );
 
-		$this->assertSame( $expected, $this->status( 'D-02', array( 'public_directories' => array( $this->dir . '/root', $this->dir . '/content' ) ) ) );
+		$this->assertSame(
+			$expected,
+			$this->status(
+				'D-02',
+				array(
+					'public_directories' => array(
+						$this->dir . '/root'    => null,
+						$this->dir . '/content' => null,
+					),
+				)
+			)
+		);
 	}
 
 	/**
@@ -1012,7 +1075,12 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	public function test_d02_looks_only_at_the_top_level() {
 		$this->write( 'root/backups/site.zip', 'data' );
 		wp_mkdir_p( $this->dir . '/root/old.zip' );
-		$context = array( 'public_directories' => array( $this->dir . '/root', $this->dir . '/missing' ) );
+		$context = array(
+			'public_directories' => array(
+				$this->dir . '/root'    => null,
+				$this->dir . '/missing' => null,
+			),
+		);
 
 		$this->assertSame( 'pass', $this->status( 'D-02', $context ) );
 	}
@@ -1050,13 +1118,75 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			$this->write( 'big/' . $name, 'x' );
 		}
 		$context = array(
-			'public_directories' => array( $this->dir . '/big' ),
+			'public_directories' => array( $this->dir . '/big' => null ),
 			'scan_limit'         => 3,
 		);
 		$this->assertSame( 'unknown', $this->status( 'D-02', $context ), 'Six names with . and .., three read.' );
 
 		$context['scan_limit'] = 100;
 		$this->assertSame( 'pass', $this->status( 'D-02', $context ) );
+	}
+
+	/**
+	 * D-02 requests a file it finds: one the server refuses passes (B4).
+	 */
+	public function test_d02_requests_the_files_found() {
+		$this->write( 'public/backup 1.sql', 'data' );
+		$base    = untrailingslashit( home_url() ) . '/public';
+		$url     = $base . '/backup%201.sql';
+		$context = array( 'public_directories' => array( $this->dir . '/public' => $base ) );
+
+		$this->answers[ $url ] = array( 403, array() );
+		$this->assertSame( 'pass', $this->status( 'D-02', $context ), 'The server refuses it.' );
+		$this->assertSame( $url, end( $this->requested ) );
+
+		$this->answers[ $url ] = array( 200, array() );
+		$this->assertSame( 'fail', $this->status( 'D-02', $context ), 'The server serves it.' );
+
+		unset( $this->answers[ $url ] );
+		$this->assertSame( 'fail', $this->status( 'D-02', $context ), 'The request tells nothing.' );
+
+		$this->answers[ $url ]            = array( 403, array() );
+		$this->answers[ home_url( '/' ) ] = array( 403, array() );
+		$this->assertSame( 'fail', $this->status( 'D-02', $context ), 'The site refuses its own requests.' );
+
+		$this->answers[ home_url( '/' ) ] = array( 200, array() );
+		$this->assertSame( 'fail', $this->status( 'D-02', array( 'public_directories' => array( $this->dir . '/public' => null ) ) ), 'No URL to request.' );
+	}
+
+	/**
+	 * D-02 requests one file of each kind, up to three per directory (B4).
+	 */
+	public function test_d02_requests_each_kind_of_file() {
+		$base    = untrailingslashit( home_url() ) . '/public';
+		$context = array( 'public_directories' => array( $this->dir . '/public' => $base ) );
+		foreach ( array( 'a.sql', 'b.sql', 'site.zip' ) as $name ) {
+			$this->write( 'public/' . $name, 'data' );
+			$this->answers[ $base . '/' . $name ] = array( 403, array() );
+		}
+
+		$this->requested = array();
+		$this->assertSame( 'pass', $this->status( 'D-02', $context ) );
+		$this->assertCount(
+			2,
+			array_filter(
+				$this->requested,
+				static function ( $url ) use ( $base ) {
+					return 0 === strpos( $url, $base );
+				}
+			),
+			'One .sql and one .zip.'
+		);
+
+		$this->answers[ $base . '/site.zip' ] = array( 200, array() );
+		$this->assertSame( 'fail', $this->status( 'D-02', $context ), 'Another kind is served.' );
+
+		$this->answers[ $base . '/site.zip' ] = array( 403, array() );
+		foreach ( array( 'debug.log', 'old.bak' ) as $name ) {
+			$this->write( 'public/' . $name, 'data' );
+			$this->answers[ $base . '/' . $name ] = array( 403, array() );
+		}
+		$this->assertSame( 'unknown', $this->status( 'D-02', $context ), 'Four kinds: one was not requested.' );
 	}
 
 	/**
@@ -1067,10 +1197,9 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		chmod( $this->dir . '/locked', 0000 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Test fixture.
 		try {
 			if ( is_readable( $this->dir . '/locked' ) ) {
-				$this->assertTrue( true, 'Running as a user who reads any directory.' );
-				return;
+				$this->markTestSkipped( 'Running as a user who reads any directory.' );
 			}
-			$this->assertSame( 'unknown', $this->status( 'D-02', array( 'public_directories' => array( $this->dir . '/locked' ) ) ) );
+			$this->assertSame( 'unknown', $this->status( 'D-02', array( 'public_directories' => array( $this->dir . '/locked' => null ) ) ) );
 		} finally {
 			chmod( $this->dir . '/locked', 0755 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Test clean-up.
 		}
@@ -1194,6 +1323,24 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		} finally {
 			remove_filter( 'woocommerce_get_checkout_page_permalink', $https );
 			remove_filter( 'woocommerce_get_myaccount_page_permalink', $https );
+		}
+	}
+
+	/**
+	 * D-05 reads the scheme the site stores, not the one of this request (B3).
+	 */
+	public function test_d05_ignores_the_scheme_of_this_request() {
+		$https            = isset( $_SERVER['HTTPS'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTPS'] ) ) : null;
+		$_SERVER['HTTPS'] = 'on';
+		try {
+			$this->assertTrue( is_ssl() );
+			$this->assertSame( 'fail', $this->status( 'D-05' ), 'The test site stores http.' );
+		} finally {
+			if ( null === $https ) {
+				unset( $_SERVER['HTTPS'] );
+			} else {
+				$_SERVER['HTTPS'] = $https;
+			}
 		}
 	}
 
@@ -1398,6 +1545,23 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			return;
 		}
 
-		$this->assertSame( 'pass', $this->status( 'M-03', array( 'uploads' => $uploads ) ) );
+		$this->assertSame( 'unknown', $this->status( 'M-03', array( 'uploads' => $uploads ) ), 'Not followed, so not looked into.' );
+	}
+
+	/**
+	 * M-03 is unknown when a directory under uploads cannot be read (B1).
+	 */
+	public function test_m03_unreadable_directory() {
+		$this->write( 'uploads/locked/shell.php', '<?php system( "id" );' );
+		$uploads = $this->uploads();
+		chmod( $uploads['basedir'] . '/locked', 0000 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Test fixture.
+		try {
+			if ( is_readable( $uploads['basedir'] . '/locked' ) ) {
+				$this->markTestSkipped( 'Running as a user who reads any directory.' );
+			}
+			$this->assertSame( 'unknown', $this->status( 'M-03', array( 'uploads' => $uploads ) ) );
+		} finally {
+			chmod( $uploads['basedir'] . '/locked', 0755 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_chmod -- Test clean-up.
+		}
 	}
 }

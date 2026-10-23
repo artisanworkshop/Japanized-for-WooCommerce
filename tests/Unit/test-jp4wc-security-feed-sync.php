@@ -117,6 +117,22 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Returns the keys of the requests to the site whose results are kept.
+	 *
+	 * @return string[]
+	 */
+	private function probe_results_left() {
+		return array_values(
+			array_filter(
+				JP4WC_Security_Checks::probe_keys(),
+				static function ( $key ) {
+					return false !== get_option( JP4WC_Security_Probe::option_name( $key ) );
+				}
+			)
+		);
+	}
+
+	/**
 	 * Reads a file of the contract directory.
 	 *
 	 * @param string $name File name.
@@ -847,6 +863,33 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * V-03 passes on current oldest supported versions only: out-of-date data
+	 * makes the pass unknown, as for V-01 (A2).
+	 */
+	public function test_out_of_date_data_makes_v03_unknown() {
+		// The sample was generated on 2026-10-20: keep its age out of the test.
+		$keep = static function () {
+			return 100 * YEAR_IN_SECONDS;
+		};
+		add_filter( 'jp4wc_security_feed_stale_after', $keep );
+		try {
+			$this->sync_successfully();
+			$v03 = wp_list_filter( JP4WC_Security_Feed::get_checks()['checks'], array( 'check_id' => 'V-03' ) );
+			$this->assertSame( 'pass', reset( $v03 )['status'], 'PHP, WordPress and WooCommerce of the test are supported.' );
+
+			$manifest          = self::manifest();
+			$manifest['stale'] = true;
+			$this->serve_manifest( $manifest );
+			JP4WC_Security_Feed::sync();
+
+			$v03 = wp_list_filter( JP4WC_Security_Feed::get_checks()['checks'], array( 'check_id' => 'V-03' ) );
+			$this->assertSame( 'unknown', reset( $v03 )['status'] );
+		} finally {
+			remove_filter( 'jp4wc_security_feed_stale_after', $keep );
+		}
+	}
+
+	/**
 	 * Data generated more than three days ago is out of date, even when the manifest says otherwise.
 	 */
 	public function test_old_data_is_stale() {
@@ -993,7 +1036,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		}
 
 		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
-		$this->assertFalse( get_option( JP4WC_Security_Probe::OPTION ), 'The results of the requests to the site itself go too.' );
+		$this->assertSame( array(), $this->probe_results_left(), 'The results of the requests to the site itself go too.' );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
 	}
 
@@ -1008,7 +1051,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	public function written_option_provider() {
 		return array(
 			'state'    => array( JP4WC_Security_Feed::STATE_OPTION ),
-			'probes'   => array( JP4WC_Security_Probe::OPTION ),
+			'probes'   => array( JP4WC_Security_Probe::option_name( 'A-02' ) ),
 			'findings' => array( JP4WC_Security_Feed::FINDINGS_OPTION ),
 		);
 	}
@@ -1034,7 +1077,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
-		$this->assertFalse( get_option( JP4WC_Security_Probe::OPTION ) );
+		$this->assertSame( array(), $this->probe_results_left() );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
 	}
 
@@ -1084,14 +1127,14 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		wp_schedule_single_event( time(), JP4WC_Security_Feed::RESCAN_HOOK );
 		$this->assertDirectoryExists( JP4WC_Security_Feed::directory_path() );
 
-		$this->assertIsArray( get_option( JP4WC_Security_Probe::OPTION ) );
+		$this->assertNotSame( array(), $this->probe_results_left() );
 
 		JP4WC_Security_Feed::uninstall();
 
 		$this->assertFalse( get_option( JP4WC_Security_Feed::SETTING ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::STATE_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
-		$this->assertFalse( get_option( JP4WC_Security_Probe::OPTION ) );
+		$this->assertSame( array(), $this->probe_results_left() );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ) );
 		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RESCAN_HOOK ) );
 		$this->assertDirectoryDoesNotExist( JP4WC_Security_Feed::directory_path() );
@@ -1184,7 +1227,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	 * The actions are not fired here: WordPress and WooCommerce act on them too.
 	 */
 	public function test_software_changes_schedule_one_match() {
-		foreach ( array( 'upgrader_process_complete', 'activated_plugin', 'deleted_plugin', 'switch_theme', 'deleted_theme' ) as $hook ) {
+		foreach ( array( 'upgrader_process_complete', 'activated_plugin', 'deactivated_plugin', 'deleted_plugin', 'switch_theme', 'deleted_theme' ) as $hook ) {
 			$this->assertSame( 10, has_action( $hook, array( 'JP4WC_Security_Feed', 'schedule_rescan' ) ), $hook );
 		}
 
@@ -1276,9 +1319,9 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		$this->assertSame( 'fail', $v01['status'] );
 		$this->assertSame( 'high', $v01['severity'], 'The most severe record found is High.' );
 
-		$stored = get_option( JP4WC_Security_Probe::OPTION );
-		foreach ( $stored as $result ) {
-			$this->assertSame( array( 'status', 'checked_at' ), array_keys( $result ) );
+		$this->assertNotSame( array(), $this->probe_results_left() );
+		foreach ( $this->probe_results_left() as $key ) {
+			$this->assertSame( array( 'status', 'checked_at', 'url_hash' ), array_keys( get_option( JP4WC_Security_Probe::option_name( $key ) ) ), $key );
 		}
 	}
 
