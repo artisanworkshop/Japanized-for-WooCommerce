@@ -128,12 +128,16 @@ class Artws_Sec_Db {
 	/**
 	 * Whether a table exists.
 	 *
+	 * The name is compared without case: with lower_case_table_names=1,
+	 * SHOW TABLES answers in lower case whatever the case of the prefix.
+	 *
 	 * @param string $table Table name.
 	 * @return bool
 	 */
 	private static function table_exists( $table ) {
 		global $wpdb;
-		return $table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Checks the schema.
+		$found = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Checks the schema.
+		return is_string( $found ) && 0 === strcasecmp( $table, $found );
 	}
 
 	/**

@@ -311,17 +311,31 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * When the index cannot be read, the upgrade is not recorded as done: a failed query is not "no unique index".
+	 * Runs maybe_install() on version 1 with some queries failing, and asserts it neither changed the table nor recorded the upgrade.
+	 *
+	 * ALTER statements are recorded and then turned into a no-op, so that even
+	 * a broken guard cannot commit the test's transaction.
+	 *
+	 * @param callable $fail Query filter that makes the queries to fail fail.
 	 */
-	public function test_upgrade_is_not_recorded_when_the_index_cannot_be_read() {
+	private function assert_upgrade_is_not_recorded( callable $fail ) {
 		global $wpdb;
-		$sites = Artws_Sec_Db::sites_table();
 		update_option( Artws_Sec_Db::VERSION_OPTION, '1' );
+		$queries = array();
 		add_filter(
 			'query',
-			static function ( $query ) use ( $sites ) {
-				return 0 === strpos( $query, "SHOW INDEX FROM {$sites} WHERE" ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			static function ( $query ) use ( &$queries ) {
+				$queries[] = $query;
+				return $query;
 			}
+		);
+		add_filter( 'query', $fail, 11 );
+		add_filter(
+			'query',
+			static function ( $query ) {
+				return 0 === stripos( ltrim( $query ), 'ALTER' ) ? 'SELECT 1' : $query;
+			},
+			12
 		);
 
 		$suppress = $wpdb->suppress_errors( true );
@@ -329,11 +343,59 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 			Artws_Sec_Db::maybe_install();
 		} finally {
 			$wpdb->suppress_errors( $suppress );
+			remove_all_filters( 'query' );
 		}
+
+		// A failed query is not "no unique index": nothing is dropped, and the next request tries again.
+		$this->assertSame( array(), preg_grep( '/^\s*ALTER\b/i', $queries ) );
 		$this->assertSame( '1', get_option( Artws_Sec_Db::VERSION_OPTION ) );
 
-		remove_all_filters( 'query' );
 		Artws_Sec_Db::maybe_install();
+		$this->assertSame( Artws_Sec_Db::VERSION, get_option( Artws_Sec_Db::VERSION_OPTION ) );
+	}
+
+	/**
+	 * When the index cannot be read, the upgrade is neither done nor recorded.
+	 */
+	public function test_upgrade_is_not_recorded_when_the_index_cannot_be_read() {
+		$sites = Artws_Sec_Db::sites_table();
+		$this->assert_upgrade_is_not_recorded(
+			static function ( $query ) use ( $sites ) {
+				return 0 === strpos( $query, "SHOW INDEX FROM {$sites} WHERE" ) ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			}
+		);
+	}
+
+	/**
+	 * When the sites table cannot be found in the last check of the upgrade, the upgrade is not recorded.
+	 */
+	public function test_upgrade_is_not_recorded_when_the_table_cannot_be_read() {
+		$lookups = 0;
+		$this->assert_upgrade_is_not_recorded(
+			static function ( $query ) use ( &$lookups ) {
+				if ( 0 !== strpos( $query, 'SHOW TABLES LIKE' ) || false === strpos( $query, 'sites' ) ) {
+					return $query;
+				}
+				// The first two lookups (before dbDelta() and in the check of every table) succeed.
+				return ++$lookups > 2 ? 'SELECT broken FROM artws_sec_no_such_table' : $query;
+			}
+		);
+	}
+
+	/**
+	 * Table names are compared without case: with lower_case_table_names=1, SHOW TABLES answers in lower case.
+	 */
+	public function test_table_names_are_compared_without_case() {
+		update_option( Artws_Sec_Db::VERSION_OPTION, '1' );
+		add_filter(
+			'query',
+			static function ( $query ) {
+				return preg_replace( '/^SHOW TABLES LIKE (.+)$/s', 'SELECT UPPER(TABLE_NAME) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME LIKE $1', $query );
+			}
+		);
+
+		Artws_Sec_Db::maybe_install();
+
 		$this->assertSame( Artws_Sec_Db::VERSION, get_option( Artws_Sec_Db::VERSION_OPTION ) );
 	}
 
