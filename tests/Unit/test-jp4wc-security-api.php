@@ -338,6 +338,22 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A site without the setting row is on, and a re-check there keeps its data (R2-1).
+	 */
+	public function test_rescan_without_setting_row() {
+		self::store( array() );
+		delete_option( JP4WC_Security_Feed::SETTING );
+		$this->assertTrue( JP4WC_Security_Feed::is_enabled() );
+
+		$this->assertSame( 202, $this->post_rescan( wp_create_nonce( 'wp_rest' ) )->get_status() );
+
+		$this->assertNotFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
+		$this->assertNotFalse( wp_next_scheduled( JP4WC_Security_Feed::SYNC_HOOK ), 'The daily sync stays scheduled.' );
+		$this->assertNotNull( JP4WC_Security_Feed::get_checks(), 'The findings stay.' );
+		$this->assertSame( '1', get_option( JP4WC_Security_Feed::SETTING ) );
+	}
+
+	/**
 	 * A second re-check within a minute is refused, with the seconds to wait.
 	 */
 	public function test_rescan_cannot_be_repeated_at_once() {

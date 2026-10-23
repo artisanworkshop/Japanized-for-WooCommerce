@@ -40,7 +40,7 @@ class JP4WC_Security_API extends WP_REST_Controller {
 
 	/**
 	 * Seconds a re-check asked for is shown as running once its event has
-	 * started, until the findings show it (10 minutes).
+	 * started, until it records that it ran (10 minutes).
 	 */
 	const RECHECK_RUNNING_FOR = 600;
 

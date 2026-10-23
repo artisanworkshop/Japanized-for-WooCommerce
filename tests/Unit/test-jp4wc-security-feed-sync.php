@@ -1352,6 +1352,36 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A re-check records the request saved by another process, not one this
+	 * process read or found missing before (R2-2).
+	 */
+	public function test_recheck_reads_the_request_from_the_database() {
+		global $wpdb;
+		$this->sync_successfully();
+
+		update_option( JP4WC_Security_Feed::RECHECK_OPTION, 100, false );
+		$this->assertSame( 100, JP4WC_Security_Feed::recheck_requested_at() );
+		$wpdb->update( $wpdb->options, array( 'option_value' => '200' ), array( 'option_name' => JP4WC_Security_Feed::RECHECK_OPTION ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Another process's write, behind this process's cache.
+
+		JP4WC_Security_Feed::recheck();
+		$this->assertSame( 200, JP4WC_Security_Feed::recheck_done_at() );
+
+		delete_option( JP4WC_Security_Feed::RECHECK_OPTION );
+		$this->assertSame( 0, JP4WC_Security_Feed::recheck_requested_at(), 'Cached as missing.' );
+		$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Another process's write, behind this process's cache.
+			$wpdb->options,
+			array(
+				'option_name'  => JP4WC_Security_Feed::RECHECK_OPTION,
+				'option_value' => '300',
+				'autoload'     => 'off',
+			)
+		);
+
+		JP4WC_Security_Feed::recheck();
+		$this->assertSame( 300, JP4WC_Security_Feed::recheck_done_at() );
+	}
+
+	/**
 	 * Asking for a re-check while another request turns the check off leaves
 	 * nothing behind; a re-check event that still runs while the check is off
 	 * removes what is left (R1-2).
