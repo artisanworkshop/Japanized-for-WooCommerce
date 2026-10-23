@@ -1213,7 +1213,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			array( true, true, 'fail' ),
 			array( true, 1, 'fail' ),
 			array( true, false, 'pass' ),
-			array( true, null, 'pass' ),
+			array( true, null, 'unknown' ),
 			array( false, true, 'pass' ),
 		);
 		foreach ( $cases as $case ) {

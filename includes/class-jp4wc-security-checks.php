@@ -820,11 +820,23 @@ class JP4WC_Security_Checks {
 	/**
 	 * D-03: errors shown on the site's pages (WP_DEBUG with WP_DEBUG_DISPLAY).
 	 *
+	 * WP_DEBUG_DISPLAY defaults to true (wp_initial_constants()). Defined as
+	 * null it leaves display_errors to php.ini, which this process (WP-Cron
+	 * may run on the command line) need not share with the web server, so
+	 * the check is then unknown.
+	 *
 	 * @param array $context Context.
 	 * @return string
 	 */
 	private static function debug_display( array $context ) {
-		return self::constant( $context, 'WP_DEBUG' ) && self::constant( $context, 'WP_DEBUG_DISPLAY' ) ? 'fail' : 'pass';
+		if ( ! self::constant( $context, 'WP_DEBUG' ) ) {
+			return 'pass';
+		}
+		$display = self::has_constant( $context, 'WP_DEBUG_DISPLAY' ) ? self::constant( $context, 'WP_DEBUG_DISPLAY' ) : true;
+		if ( null === $display ) {
+			return 'unknown';
+		}
+		return $display ? 'fail' : 'pass';
 	}
 
 	/**
@@ -1542,6 +1554,17 @@ class JP4WC_Security_Checks {
 			return $context['constants'][ $name ];
 		}
 		return defined( $name ) ? constant( $name ) : null;
+	}
+
+	/**
+	 * Whether a constant is set in the context or defined on the site.
+	 *
+	 * @param array  $context Context.
+	 * @param string $name    Constant.
+	 * @return bool
+	 */
+	private static function has_constant( array $context, $name ) {
+		return ( isset( $context['constants'] ) && is_array( $context['constants'] ) && array_key_exists( $name, $context['constants'] ) ) || defined( $name );
 	}
 
 	/**
