@@ -380,6 +380,29 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A re-check that another request scheduled at the same moment is not a
+	 * failure: the event runs and reads the latest request time (PR #279 G2-1).
+	 */
+	public function test_rescan_at_the_same_moment_as_another_succeeds() {
+		update_option( JP4WC_Security_Feed::RECHECK_OPTION, time() - HOUR_IN_SECONDS, false );
+		wp_schedule_single_event( time(), JP4WC_Security_Feed::RECHECK_HOOK );
+		// The other request scheduled the event after this one looked for it.
+		$unseen = static function ( $pre, $hook ) {
+			return JP4WC_Security_Feed::RECHECK_HOOK === $hook ? false : $pre;
+		};
+		add_filter( 'pre_get_scheduled_event', $unseen, 10, 2 );
+		try {
+			$response = $this->post_rescan( wp_create_nonce( 'wp_rest' ) );
+		} finally {
+			remove_filter( 'pre_get_scheduled_event', $unseen, 10 );
+		}
+
+		$this->assertSame( 202, $response->get_status() );
+		$this->assertEqualsWithDelta( time(), JP4WC_Security_Feed::recheck_requested_at(), 5, 'The request time is not put back.' );
+		$this->assertSame( 1, self::count_events( JP4WC_Security_Feed::RECHECK_HOOK ) );
+	}
+
+	/**
 	 * A second re-check within a minute is refused, with the seconds to wait.
 	 */
 	public function test_rescan_cannot_be_repeated_at_once() {
