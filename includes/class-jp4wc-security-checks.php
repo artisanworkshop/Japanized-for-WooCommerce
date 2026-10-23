@@ -834,8 +834,11 @@ class JP4WC_Security_Checks {
 	 * Whether a PHP file runs no code when requested.
 	 *
 	 * Harmless: comments and HTML only; a first statement that stops (exit,
-	 * die, __halt_compiler, as security plugins guard their data files);
-	 * header() or http_response_code() calls with plain values, as guard files
+	 * die, __halt_compiler, as security plugins guard their data files); the
+	 * usual guard against direct requests, `defined( 'ABSPATH' ) || exit;` or
+	 * `if ( ! defined( 'ABSPATH' ) ) { exit; }`, since a request for the file
+	 * itself does not load WordPress; header() or http_response_code() calls
+	 * with plain values, as guard files
 	 * answer 404; a data file that returns plain values; and declarations only
 	 * (namespace, use, class, function), as compiled template caches hold.
 	 * A file larger than PHP_HEAD_BYTES that its start does not decide is unknown.
@@ -883,6 +886,12 @@ class JP4WC_Security_Checks {
 		}
 		if ( T_EXIT === $type ) {
 			return self::is_plain_exit( array_slice( $tokens, $i + 1, 4 ), $whole );
+		}
+		if ( 0 === $i ) {
+			$guard = self::direct_request_guard( $tokens, $whole );
+			if ( false !== $guard ) {
+				return $guard;
+			}
 		}
 		if ( 0 === $i && T_RETURN === $type ) {
 			return self::is_literal_return( array_slice( $tokens, 1 ), $whole );
@@ -956,6 +965,71 @@ class JP4WC_Security_Checks {
 			++$i;
 		}
 		return true;
+	}
+
+	/**
+	 * Whether the file starts by stopping when WordPress is not loaded.
+	 *
+	 * Only ABSPATH and WPINC count: WordPress defines them, so a request for
+	 * the file itself stops, whereas a constant PHP always defines would not.
+	 *
+	 * @param array $tokens Tokens without whitespace and comments.
+	 * @param bool  $whole  Whether the tokens reach the end of the file.
+	 * @return bool|null True for a guard that stops at once, null when its exit
+	 *                   goes on past what was read, false otherwise (no such guard,
+	 *                   or an exit whose argument runs code).
+	 */
+	private static function direct_request_guard( array $tokens, $whole ) {
+		$k     = 0;
+		$is_if = T_IF === self::type_at( $tokens, 0 );
+		if ( $is_if ) {
+			// The if form: the condition is the negated defined() call.
+			if ( '(' !== self::type_at( $tokens, 1 ) || '!' !== self::type_at( $tokens, 2 ) ) {
+				return false;
+			}
+			$k = 3;
+		}
+
+		// The defined() call with ABSPATH or WPINC.
+		$function = isset( $tokens[ $k ] ) && is_array( $tokens[ $k ] ) && in_array( $tokens[ $k ][0], array( T_STRING, T_NAME_FULLY_QUALIFIED ), true ) ? strtolower( ltrim( $tokens[ $k ][1], '\\' ) ) : '';
+		$constant = T_CONSTANT_ENCAPSED_STRING === self::type_at( $tokens, $k + 2 ) ? trim( $tokens[ $k + 2 ][1], '\'"' ) : '';
+		if ( 'defined' !== $function || '(' !== self::type_at( $tokens, $k + 1 ) || ! in_array( $constant, array( 'ABSPATH', 'WPINC' ), true ) || ')' !== self::type_at( $tokens, $k + 3 ) ) {
+			return false;
+		}
+		$k += 4;
+
+		if ( $is_if ) {
+			if ( ')' !== self::type_at( $tokens, $k ) ) {
+				return false;
+			}
+			++$k;
+			if ( '{' === self::type_at( $tokens, $k ) ) {
+				++$k;
+			}
+		} elseif ( in_array( self::type_at( $tokens, $k ), array( T_BOOLEAN_OR, T_LOGICAL_OR ), true ) ) {
+			// The short form: the defined() call, || or or, then exit or die.
+			++$k;
+		} else {
+			return false;
+		}
+
+		if ( T_EXIT !== self::type_at( $tokens, $k ) ) {
+			return false;
+		}
+		// The argument of exit( ... ) runs first: only a plain one keeps the guard harmless,
+		// and any other is code (false).
+		return self::is_plain_exit( array_slice( $tokens, $k + 1, 4 ), $whole );
+	}
+
+	/**
+	 * Returns the type of the token at a position.
+	 *
+	 * @param array $tokens Tokens.
+	 * @param int   $k      Position.
+	 * @return int|string|null Null past the end.
+	 */
+	private static function type_at( array $tokens, $k ) {
+		return isset( $tokens[ $k ] ) ? self::token_type( $tokens[ $k ] ) : null;
 	}
 
 	/**
