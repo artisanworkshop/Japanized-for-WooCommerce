@@ -268,7 +268,7 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 
 	/**
 	 * A re-check is scheduled in WP-Cron, which is started at once, and the
-	 * findings say it is running until a check that started after it is saved.
+	 * findings say it is running until the re-check itself has run.
 	 */
 	public function test_rescan_schedules_a_recheck() {
 		self::store( array(), array(), array( 'checked_at' => time() - HOUR_IN_SECONDS ) );
@@ -294,8 +294,47 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 		$this->assertGreaterThan( 0, $data['recheck']['retry_after'] );
 		$this->assertTrue( $this->get_findings()->get_data()['recheck']['pending'] );
 
-		self::store( array(), array(), array( 'checked_at' => $requested_at ) );
-		$this->assertFalse( $this->get_findings()->get_data()['recheck']['pending'], 'Done once the findings come from a check that started after the request.' );
+		self::store( array(), array(), array( 'checked_at' => $requested_at + 1 ) );
+		$this->assertTrue( $this->get_findings()->get_data()['recheck']['pending'], 'An automatic rescan that WP-Cron runs first, with the kept results of the requests to the site, does not end it (R1-1).' );
+
+		update_option( JP4WC_Security_Feed::RECHECK_DONE_OPTION, $requested_at, false );
+		$data = $this->get_findings()->get_data();
+		$this->assertFalse( $data['recheck']['pending'], 'Done once the re-check has run.' );
+		$this->assertSame( $requested_at, $data['recheck']['done_at'] );
+	}
+
+	/**
+	 * WordPress removes an event before running it: a re-check whose event is
+	 * gone is still running for a while after it was asked for, then no longer.
+	 */
+	public function test_recheck_without_its_event_is_running_for_a_while() {
+		update_option( JP4WC_Security_Feed::RECHECK_OPTION, time() - 5 * MINUTE_IN_SECONDS, false );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
+		$this->assertTrue( $this->get_findings()->get_data()['recheck']['pending'] );
+
+		update_option( JP4WC_Security_Feed::RECHECK_OPTION, time() - JP4WC_Security_API::RECHECK_RUNNING_FOR - 1, false );
+		$this->assertFalse( $this->get_findings()->get_data()['recheck']['pending'], 'Not forever when WP-Cron never runs it.' );
+
+		wp_schedule_single_event( time(), JP4WC_Security_Feed::RECHECK_HOOK );
+		$this->assertTrue( $this->get_findings()->get_data()['recheck']['pending'], 'Still waiting while its event is scheduled.' );
+	}
+
+	/**
+	 * A check turned off by another request while a re-check is asked for
+	 * leaves nothing behind (R1-2).
+	 */
+	public function test_rescan_turned_off_meanwhile_is_refused() {
+		global $wpdb;
+		$this->assertTrue( JP4WC_Security_Feed::is_enabled() );
+		$wpdb->update( $wpdb->options, array( 'option_value' => '' ), array( 'option_name' => JP4WC_Security_Feed::SETTING ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Leaves this process's option cache as it was.
+		$this->assertTrue( JP4WC_Security_Feed::is_enabled(), 'This process still sees the check on.' );
+
+		$response = $this->post_rescan( wp_create_nonce( 'wp_rest' ) );
+
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertFalse( wp_next_scheduled( JP4WC_Security_Feed::RECHECK_HOOK ) );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::RECHECK_OPTION ) );
+		$this->assertSame( array(), $this->requests, 'WP-Cron is not started.' );
 	}
 
 	/**
@@ -323,7 +362,9 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 	public function test_request_time_in_the_future_waits_one_interval() {
 		update_option( JP4WC_Security_Feed::RECHECK_OPTION, time() + DAY_IN_SECONDS, false );
 
-		$this->assertLessThanOrEqual( JP4WC_Security_API::RECHECK_INTERVAL, $this->get_findings()->get_data()['recheck']['retry_after'] );
+		$retry_after = $this->get_findings()->get_data()['recheck']['retry_after'];
+		$this->assertGreaterThan( 0, $retry_after );
+		$this->assertLessThanOrEqual( JP4WC_Security_API::RECHECK_INTERVAL, $retry_after );
 	}
 
 	/**
@@ -355,6 +396,7 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 		$this->assertFalse( $data['feed']['unavailable'] );
 		$this->assertSame( 'wc.artws.info', $data['feed']['host'] );
 		$this->assertFalse( $data['recheck']['pending'] );
+		$this->assertSame( 0, $data['recheck']['done_at'] );
 		$this->assertSame( 0, $data['recheck']['retry_after'] );
 	}
 

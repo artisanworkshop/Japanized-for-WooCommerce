@@ -487,7 +487,7 @@ const SecuritySettings = ( {
 		return response;
 	};
 
-	// Asks for the result until it comes from a check that started after the re-check was asked for.
+	// Asks for the result until the re-check asked for at requestedAt has run.
 	const waitForRecheck = ( requestedAt, startedAt ) => {
 		clearTimeout( pollTimer.current );
 		pollTimer.current = setTimeout( async () => {
@@ -500,7 +500,7 @@ const SecuritySettings = ( {
 					setRecheck( { state: 'idle' } );
 					return;
 				}
-				if ( response.checked_at >= requestedAt ) {
+				if ( response.recheck.done_at >= requestedAt ) {
 					setRecheck( { state: 'done' } );
 					return;
 				}
