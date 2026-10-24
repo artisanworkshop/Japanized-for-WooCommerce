@@ -1,6 +1,6 @@
 # Japanized for WooCommerce — Claude Code Instructions
 
-`AGENTS.md` holds the review rules Codex and Copilot apply to pull requests (Codex reads only that file). When a pitfall added here is something a reviewer should check, add a short rule there too.
+`AGENTS.md` holds the review rules Codex and Copilot apply to pull requests (Codex reads only that file). When a pitfall added here is something a reviewer should check, add a short rule there too. Keep each rule true to the code: a rule stricter than the code (public `artws-sec/v1` routes, `mb_chr()`) makes the bots flag correct code (#283).
 
 ## Plugin Overview
 
