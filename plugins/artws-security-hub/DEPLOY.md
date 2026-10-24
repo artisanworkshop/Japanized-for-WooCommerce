@@ -59,17 +59,16 @@ if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === $_SERVER['HTTP_X
 JP4WC のタグやリリースとは連動しない。リポジトリの直下で次を実行する。
 
 ```bash
-cd plugins/artws-security-hub
-rm -rf /tmp/artws-security-hub && mkdir -p /tmp/artws-security-hub
-rsync -a --exclude-from=.distignore ./ /tmp/artws-security-hub/
-(cd /tmp && rm -f artws-security-hub.zip && zip -r artws-security-hub.zip artws-security-hub)
+rm -rf dist/artws-security-hub && mkdir -p dist/artws-security-hub
+rsync -a --exclude-from=plugins/artws-security-hub/.distignore plugins/artws-security-hub/ dist/artws-security-hub/
+(cd dist && rm -f artws-security-hub.zip && zip -r artws-security-hub.zip artws-security-hub && rm -rf artws-security-hub)
 ```
 
-`/tmp/artws-security-hub.zip` ができる。`vendor/`・`tests/`・README などは `.distignore` で除かれる（実行時に Composer の依存は使わない）。
+`dist/artws-security-hub.zip` ができる。`dist/` は `.gitignore` と JP4WC の `.distignore` に入っているので、コミットにも JP4WC の ZIP にも入らない。`vendor/`・`tests/`・README などは `plugins/artws-security-hub/.distignore` で除かれる（実行時に Composer の依存は使わない）。
 
 ## 4. アップロードして有効化する
 
-1. 管理画面 > プラグイン > 新規追加 > プラグインのアップロードで `/tmp/artws-security-hub.zip` を選ぶ。
+1. 管理画面 > プラグイン > 新規追加 > プラグインのアップロードで `dist/artws-security-hub.zip` を選ぶ。
    - 2 回目以降は「現在のものをアップロードしたもので置き換える」を選ぶ。
 2. 「Artws Security Hub」を有効化する。
    - 有効化で、表 4 つ（`{prefix}artws_sec_sites` / `_scans` / `_limits` / `_vulns`）を作る。
