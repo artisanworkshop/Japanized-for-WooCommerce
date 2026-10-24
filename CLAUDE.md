@@ -1,5 +1,7 @@
 # Japanized for WooCommerce — Claude Code Instructions
 
+`AGENTS.md` holds the review rules Codex and Copilot apply to pull requests (Codex reads only that file). When a pitfall added here is something a reviewer should check, add a short rule there too.
+
 ## Plugin Overview
 
 - **Plugin**: Japanized for WooCommerce (`woocommerce-for-japan`)
