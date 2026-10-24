@@ -22,7 +22,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 
 ### Security
 
-- Escape on output and sanitize on input; forms and AJAX need a nonce and a capability check, REST routes a `permission_callback` that really checks. Safe path: `esc_html()` / `esc_attr()` / `wp_kses_post()`, `sanitize_text_field()`, `absint()`, `wp_unslash()` (never `stripslashes()`).
+- Escape on output and sanitize on input; forms and AJAX need a nonce and a capability check, REST routes a `permission_callback` that really checks. A route that is public on purpose (`'__return_true'`, as every `artws-sec/v1` route is) authenticates inside its callback instead. Safe path: `esc_html()` / `esc_attr()` / `wp_kses_post()`, `sanitize_text_field()`, `absint()`, `wp_unslash()` (never `stripslashes()`).
 - A value covered by a signature or a token must come from the part that was verified. `WP_REST_Request::get_param()` lets the query string override the body and the route. Safe path: `get_json_params()` / `get_body_params()` / `get_url_params()`.
 - `$wpdb->get_results()` / `get_row()` / `get_var()` return the same value for "no rows" and for a failed query. Where "no rows" lets a request through or answers "not found" / "unauthorized", a read error must not be taken for it. Safe path: check `$wpdb->last_error`, and treat `false === $wpdb->query()` as a failure; fail closed.
 - Client input used as an array offset needs `is_string()` / `is_int()`. A format guard that keeps input out of a URL or path ends with `$/D` or `\z`.
@@ -40,9 +40,9 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - State written back by a job (cron, settings save) is read from the database under a lock, not from an earlier read. Do not keep independent values in one option updated by read-modify-write.
 - WP-Cron events are scheduled from an `init` check, not from the activation hook. A user-triggered job uses a hook of its own.
 - Never instantiate `WC_Gateway_Paidy` outside WooCommerce's gateway list, and register order side effects once. Paidy IDs use base64url including `-`; the only guard is `WC_Gateway_Paidy::paidy_payment_api_url()`.
-- Do not use `mb_*` functions other than `mb_strlen()` / `mb_substr()` (WordPress does not require mbstring). Safe path: `preg_match( '//u', $s )`.
+- Do not use `mb_*` functions other than `mb_strlen()` / `mb_substr()` / `mb_chr()` / `mb_ord()`, which `wp-includes/compat.php` defines (WordPress does not require mbstring). Safe path: `preg_match( '//u', $s )`.
 - New user-facing strings use the text domain `woocommerce-for-japan`. A `.po` is not resynced wholesale in a feature PR.
-- `@since` and "since x.y.z" name the first release tag that will contain the change (the last pushed tag + 1).
+- `@since` and "since x.y.z" name the first release tag that will contain the change. That is the next version after the last pushed tag, which may be a minor or major step (the security check code says 3.0.0 after 2.9.20). Once a bump PR merges, the readme `Stable tag` already names it.
 
 ### Packaging and disclosure
 
