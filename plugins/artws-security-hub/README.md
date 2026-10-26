@@ -79,7 +79,7 @@ location ^~ /feed/v1/ {
         application/gzip gz;
     }
     gzip off;                               # .json.gz を二重に圧縮しない
-    add_header Cache-Control "public, max-age=600";
+    add_header Cache-Control "no-store";    # CDN にもキャッシュさせない（上の CDN の項目）
 }
 ```
 
@@ -93,7 +93,8 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
     RemoveEncoding .gz
     AddType application/gzip .gz
     AddType application/json .json
-    Header set Cache-Control "public, max-age=600"
+    # CDN にもキャッシュさせない（上の CDN の項目）
+    Header set Cache-Control "no-store"
     <FilesMatch "^\.">
         Require all denied
     </FilesMatch>
