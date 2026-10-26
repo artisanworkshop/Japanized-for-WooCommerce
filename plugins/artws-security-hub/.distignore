@@ -2,6 +2,7 @@
 /vendor
 /tests
 /bin
+/hosting
 .distignore
 .phpcs.xml.dist
 .phpunit.result.cache
