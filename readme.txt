@@ -65,6 +65,12 @@ Works smoothly with WooCommerce core features and popular extensions. Fully comp
 * Shortcode support for legal information display
 * Customizable legal notice templates
 
+**Security Check**
+* Checks the installed plugins, themes and WordPress against known vulnerabilities once a day (data from Wordfence Intelligence, delivered by wc.artws.info)
+* 17 checks in all, including HTTPS on the checkout and My Account pages, two-factor authentication, file editing in the admin, and backups or logs left in public directories
+* A score for each of the four requirements of Japan's Credit Card Security Guidelines (クレジットカード・セキュリティガイドライン), with the items that need action and how to fix them; it shows what needs attention and does not guarantee compliance
+* "Re-check now" on the Security tab; on by default and can be turned off there
+
 **Additional Features**
 * Email template optimization for Japanese format
 * Address validation for Japanese postal codes
@@ -83,7 +89,7 @@ This plugin connects to the following third-party services:
 * **Paidy payment API** (api.paidy.com) — used by the Paidy (Buy Now, Pay Later) payment gateway to process and verify payments. Only active when the Paidy gateway is enabled. See Paidy's own site for their terms of service and privacy policy.
 * **Artisan Workshop Paidy onboarding intermediary** (paidy.artws.info) — used only while applying for a Paidy merchant account through this plugin's setup wizard (available even before the gateway is enabled, since onboarding is how it becomes eligible to be enabled). Submitting the application form sends the store's site name and URL, the merchant's contact details (email, phone), the representative's name and date of birth, the submitted screening survey answers, and a site-specific verification hash, to this Artisan Workshop-operated intermediary, which relays the application to Paidy and later delivers the issued API credentials back to the site.
 * **Artisan Workshop promotion service** (wc.artws.info) — the plugin's own first-party service. It is contacted automatically (no setting to disable it) to fetch promotional notice content shown in the WordPress admin dashboard to users who can manage WooCommerce, on stores with at least one order placed in the last 5 days. No order, customer, or site-configuration data is sent or received beyond the request itself.
-* **Artisan Workshop vulnerability feed** (wc.artws.info) — used by the vulnerability check (JP4WC Settings → General Settings → Security), which is on by default. Once a day, the site downloads the list of known vulnerabilities in WordPress plugins, themes and core from `https://wc.artws.info/feed/v1/` (data from Wordfence Intelligence) and compares it with the installed software on the site itself. The requests are plain downloads: they carry only a User-Agent header with the versions of this plugin, WordPress, WooCommerce and PHP, and like any request they reveal the server's IP address. The site URL, the list of installed plugins and themes, and the results of the check are not sent. Turning the vulnerability check off stops the requests and deletes the downloaded data. Privacy policy: https://wc.artws.info/privacy-policy/
+* **Artisan Workshop vulnerability feed** (wc.artws.info) — used by the security check (WooCommerce → JP4WC Settings → Security), which is on by default, including on sites updated from an earlier version. Shortly after the plugin is installed or updated, and then once a day, WP-Cron downloads the list of known vulnerabilities in WordPress plugins, themes and core from `https://wc.artws.info/feed/v1/` (data from Wordfence Intelligence) and compares it with the installed software on the site itself; "Re-check now" on the Security tab also downloads it at once when no list is stored yet. The requests are plain downloads: they carry only a User-Agent header with the versions of this plugin, WordPress, WooCommerce and PHP, and like any request they reveal the server's IP address. The site URL, the list of installed plugins and themes, and the results of the check are not sent; the other checks on the Security tab run on the site and send requests only to the site's own address. Turning the security check off on the Security tab stops the requests and deletes the downloaded data and the results. Terms of use: https://wc.artws.info/security-assessment-term/ Privacy policy: https://wc.artws.info/privacy-policy/
 
 == Installation ==
 
@@ -113,6 +119,7 @@ The manual installation method involves downloading and uploading our plugin to 
 5. Affiliate Settings - Set up affiliate tracking for Japanese affiliate networks including A8.net, Felmat (ValueCommerce), and Access Trade.
 6. Checkout Block - WooCommerce Blocks checkout page displaying Japanese address format, name reading fields, and delivery date/time selection.
 7. Classic Checkout - Traditional WooCommerce checkout page with Japanese localization features including address fields and delivery options.
+8. Security - Check installed plugins, themes and WordPress against known vulnerabilities, and see a score for each of the four requirements of the Credit Card Security Guidelines with the items that need action and how to fix them.
 
 == Frequently Asked Questions ==
 
@@ -294,6 +301,9 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 [View complete changelog](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
 == Upgrade Notice ==
+
+= 3.0.0 =
+3.0.0 adds a security check on a new Security tab, on by default: once a day it downloads a list of known vulnerabilities from wc.artws.info, sending only the versions of this plugin, WordPress, WooCommerce and PHP. You can turn it off on that tab. Make a full site backup before updating.
 
 = 2.9 =
 2.9 is a minor update, but delete PayPal Payment Gateway. Make a full site backup, update your theme and extensions.
