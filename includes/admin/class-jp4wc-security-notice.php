@@ -166,9 +166,17 @@ JS;
 	}
 
 	/**
-	 * Prints the notice.
+	 * Prints the notice, with the strings the WordPress.org language pack lacks
+	 * taken from the bundled translation.
 	 */
 	public static function render() {
+		jp4wc_with_bundled_translation( Closure::fromCallable( array( __CLASS__, 'print_notice' ) ) );
+	}
+
+	/**
+	 * Prints the notice (through render()).
+	 */
+	private static function print_notice() {
 		$view = self::get_view();
 		if ( null === $view ) {
 			return;

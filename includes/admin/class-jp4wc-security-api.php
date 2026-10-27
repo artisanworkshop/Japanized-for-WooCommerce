@@ -54,8 +54,8 @@ class JP4WC_Security_API extends WP_REST_Controller {
 			array(
 				array(
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_findings' ),
-					'permission_callback' => array( $this, 'get_findings_permissions_check' ),
+					'callback'            => self::with_bundled_translation( array( $this, 'get_findings' ) ),
+					'permission_callback' => self::with_bundled_translation( array( $this, 'get_findings_permissions_check' ) ),
 				),
 			)
 		);
@@ -65,11 +65,25 @@ class JP4WC_Security_API extends WP_REST_Controller {
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'rescan' ),
-					'permission_callback' => array( $this, 'rescan_permissions_check' ),
+					'callback'            => self::with_bundled_translation( array( $this, 'rescan' ) ),
+					'permission_callback' => self::with_bundled_translation( array( $this, 'rescan_permissions_check' ) ),
 				),
 			)
 		);
+	}
+
+	/**
+	 * Returns a route callback that runs with the strings the WordPress.org
+	 * language pack lacks taken from the bundled translation, so that the
+	 * Security tab does not show the error messages in English.
+	 *
+	 * @param callable $callback Route callback.
+	 * @return Closure
+	 */
+	private static function with_bundled_translation( callable $callback ) {
+		return static function ( $request ) use ( $callback ) {
+			return jp4wc_with_bundled_translation( $callback, $request );
+		};
 	}
 
 	/**
