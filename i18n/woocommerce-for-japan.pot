@@ -2439,6 +2439,11 @@ msgid "Turning it off also stops the checks on this tab and deletes their result
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The vulnerability data comes from wc.artws.info and is subject to its <a>Terms of Use</a>."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Vulnerability management"
 msgstr ""
