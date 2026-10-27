@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 2.9.20
+Stable tag: 3.0.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -164,6 +164,12 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 3.0.0 - 2026-10-28 =
+* **Added** - A security check for the site, on a new Security tab (WooCommerce → JP4WC Settings → Security). Once a day it downloads a list of known vulnerabilities from wc.artws.info (data from Wordfence Intelligence) and checks the installed plugins, themes and WordPress against it; only the versions of this plugin, WordPress, WooCommerce and PHP are sent, in the User-Agent header. Users who can manage WooCommerce see an admin notice when an installed version is affected, and dismissing it hides it until the findings change. The check is on by default, including on sites updated from an earlier version; turning it off on the Security tab stops the downloads and deletes the downloaded data and the results (#257)
+* **Added** - The security check also runs 16 checks of the site's own setup, such as HTTPS on the checkout and My account pages, two-factor authentication, a user named "admin", file editing in the admin, and backups, database dumps or logs left in public directories, and scores each of the four requirements of Japan's Credit Card Security Guidelines (クレジットカード・セキュリティガイドライン) out of 100; the checks that request the site's own pages send those requests only to the site's own address, and a check that cannot tell is shown as unconfirmed instead of being counted as a failure (#258)
+* **Added** - The Security tab shows the total score (the lowest of the four requirements) and a card for each requirement, the items that need action with the fixed version and how to fix each one, a list of all checks, and "Re-check now", which runs the check again in the background (WP-Cron) and shows the results when it finishes; it shows what needs attention and does not guarantee compliance with the guidelines (#259)
+* **Added** - The Security tab links to the terms of use of wc.artws.info, which apply to the vulnerability data (#286)
 
 = 2.9.20 - 2026-10-22 =
 * **Added** - Administrators now see a dialog on admin screens when the site's PHP is older than the fix for the critical PHP2Shell vulnerabilities (CVE-2026-109618 / CVE-2026-109619): PHP 8.2.35, 8.3.36, 8.4.27 or 8.5.12, with no fixed release for PHP 8.1 and older. It links to an article on updating PHP and notes that a hosting company may have patched PHP without changing its version number; "Don't show again" hides it for that user until the PHP version changes. It is shown only to users who can manage the site's options (super admins on multisite), and not in the block editor or the Customizer (#271)
