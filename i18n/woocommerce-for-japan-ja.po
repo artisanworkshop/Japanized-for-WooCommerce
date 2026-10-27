@@ -3140,6 +3140,15 @@ msgid ""
 msgstr "オフにすると、このタブのチェックも止まり、結果は削除されます。"
 
 #: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The vulnerability data comes from wc.artws.info and is subject to its "
+"<a>Terms of Use</a>."
+msgstr ""
+"脆弱性データは wc.artws.info から取得しており、その<a>利用規約</a>が適用され"
+"ます。"
+
+#: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Vulnerability management"
 msgstr "脆弱性対策"
