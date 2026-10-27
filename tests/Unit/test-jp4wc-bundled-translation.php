@@ -6,7 +6,8 @@
  * new strings until they are translated on translate.wordpress.org, so the
  * security check's notice and the Security tab's error messages were shown in
  * English on Japanese sites. Each test loads a language pack that translates
- * one string only, with the locale set to Japanese.
+ * three strings only (one each for __(), _x() and _n()), with the locale set
+ * to Japanese.
  *
  * @package Japanized_For_WooCommerce
  */
@@ -17,7 +18,7 @@
 class JP4WC_Bundled_Translation_Test extends WP_UnitTestCase {
 
 	/**
-	 * The one string the language pack translates, and its translation.
+	 * The string the language pack translates for __(), and its translation.
 	 */
 	const PACK_TEXT        = 'Open the Security tab';
 	const PACK_TRANSLATION = 'Open the Security tab (language pack)';
@@ -45,11 +46,30 @@ class JP4WC_Bundled_Translation_Test extends WP_UnitTestCase {
 
 		$this->pack = trailingslashit( get_temp_dir() ) . 'woocommerce-for-japan-ja-' . wp_generate_password( 12, false ) . '.mo';
 		$mo         = new MO();
+		$mo->set_header( 'Plural-Forms', 'nplurals=1; plural=0;' );
 		$mo->add_entry(
 			new Translation_Entry(
 				array(
 					'singular'     => self::PACK_TEXT,
 					'translations' => array( self::PACK_TRANSLATION ),
+				)
+			)
+		);
+		$mo->add_entry(
+			new Translation_Entry(
+				array(
+					'context'      => 'vulnerability severity',
+					'singular'     => 'Low',
+					'translations' => array( 'Low (language pack)' ),
+				)
+			)
+		);
+		$mo->add_entry(
+			new Translation_Entry(
+				array(
+					'singular'     => 'and %d more',
+					'plural'       => 'and %d more',
+					'translations' => array( 'and %d more (language pack)' ),
 				)
 			)
 		);
@@ -117,23 +137,33 @@ class JP4WC_Bundled_Translation_Test extends WP_UnitTestCase {
 		$strings = jp4wc_with_bundled_translation(
 			static function ( $count ) {
 				return array(
-					'pack'    => __( 'Open the Security tab', 'woocommerce-for-japan' ),
-					'escaped' => esc_html__( 'License', 'woocommerce-for-japan' ),
-					'context' => _x( 'High', 'vulnerability severity', 'woocommerce-for-japan' ),
+					'pack'         => __( 'Open the Security tab', 'woocommerce-for-japan' ),
+					'pack_context' => _x( 'Low', 'vulnerability severity', 'woocommerce-for-japan' ),
 					/* translators: %d: number of vulnerabilities not listed */
-					'one'     => _n( 'and %d more', 'and %d more', 1, 'woocommerce-for-japan' ),
+					'pack_one'     => _n( 'and %d more', 'and %d more', 1, 'woocommerce-for-japan' ),
+					/* translators: %d: number of vulnerabilities not listed */
+					'pack_plural'  => _n( 'and %d more', 'and %d more', $count, 'woocommerce-for-japan' ),
+					'escaped'      => esc_html__( 'License', 'woocommerce-for-japan' ),
+					'context'      => _x( 'High', 'vulnerability severity', 'woocommerce-for-japan' ),
 					/* translators: %d: number of vulnerabilities */
-					'plural'  => _n( '%d known vulnerability was found in the software installed on this site.', '%d known vulnerabilities were found in the software installed on this site.', $count, 'woocommerce-for-japan' ),
-					'missing' => __( 'A string with no translation anywhere', 'woocommerce-for-japan' ),
+					'one'          => _n( '%d known vulnerability was found in the software installed on this site.', '%d known vulnerabilities were found in the software installed on this site.', 1, 'woocommerce-for-japan' ),
+					/* translators: %d: number of vulnerabilities */
+					'plural'       => _n( '%d known vulnerability was found in the software installed on this site.', '%d known vulnerabilities were found in the software installed on this site.', $count, 'woocommerce-for-japan' ),
+					'missing'      => __( 'A string with no translation anywhere', 'woocommerce-for-japan' ),
 				);
 			},
 			3
 		);
 
-		$this->assertSame( self::PACK_TRANSLATION, $strings['pack'], 'The language pack wins where it has a translation.' );
+		// The language pack wins where it has a translation.
+		$this->assertSame( self::PACK_TRANSLATION, $strings['pack'] );
+		$this->assertSame( 'Low (language pack)', $strings['pack_context'] );
+		$this->assertSame( 'and %d more (language pack)', $strings['pack_one'] );
+		$this->assertSame( 'and %d more (language pack)', $strings['pack_plural'] );
+
 		$this->assertSame( 'ライセンス', $strings['escaped'] );
 		$this->assertSame( '高', $strings['context'] );
-		$this->assertSame( 'ほか %d 件', $strings['one'] );
+		$this->assertSame( 'このサイトにインストールされているソフトウェアに、既知の脆弱性が %d 件見つかりました。', $strings['one'] );
 		$this->assertSame( 'このサイトにインストールされているソフトウェアに、既知の脆弱性が %d 件見つかりました。', $strings['plural'] );
 		$this->assertSame( 'A string with no translation anywhere', $strings['missing'] );
 		$this->assert_filters_removed();
