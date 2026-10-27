@@ -122,7 +122,7 @@ export const checkLabels = () => ( {
 	'A-02': {
 		title: __( 'Login page protection', 'woocommerce-for-japan' ),
 		fix: __(
-			'Limit login attempts with a security plugin, or restrict wp-login.php to your IP addresses or a password in the server configuration.',
+			'Turn on the login attempt limiter under Settings on this tab, limit login attempts with a security plugin, or restrict wp-login.php to your IP addresses or a password in the server configuration.',
 			'woocommerce-for-japan'
 		),
 	},

@@ -70,6 +70,7 @@ Works smoothly with WooCommerce core features and popular extensions. Fully comp
 * 17 checks in all, including HTTPS on the checkout and My Account pages, two-factor authentication, file editing in the admin, and backups or logs left in public directories
 * A score for each of the four requirements of Japan's Credit Card Security Guidelines (クレジットカード・セキュリティガイドライン), with the items that need action and how to fix them; it shows what needs attention and does not guarantee compliance
 * "Re-check now" on the Security tab; on by default and can be turned off there
+* Login attempt limiter (off by default): counts failed logins per IP address and per user name on the WordPress and WooCommerce login forms, and stays out of the way when a security plugin, Jetpack or the server already protects the login page
 
 **Additional Features**
 * Email template optimization for Japanese format

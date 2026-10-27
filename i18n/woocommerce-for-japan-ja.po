@@ -3238,15 +3238,6 @@ msgstr "ログインページの保護"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid ""
-"Limit login attempts with a security plugin, or restrict wp-login.php to "
-"your IP addresses or a password in the server configuration."
-msgstr ""
-"セキュリティプラグインでログインの試行回数を制限するか、サーバーの設定で wp-"
-"login.php へのアクセスを IP アドレスやパスワードで制限してください。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Two-factor authentication"
 msgstr "二要素認証"
 
@@ -3402,6 +3393,114 @@ msgid ""
 msgstr ""
 "修正版はまだありません。WordPress のセキュリティリリースが出たらすぐに更新し"
 "てください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Turn on the login attempt limiter under Settings on this tab, limit login "
+"attempts with a security plugin, or restrict wp-login.php to your IP "
+"addresses or a password in the server configuration."
+msgstr ""
+"このタブの「設定」でログイン試行回数の制限を有効にするか、セキュリティプラグ"
+"インでログインの試行回数を制限するか、サーバーの設定で wp-login.php へのアク"
+"セスを IP アドレスやパスワードで制限してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Failures allowed per IP address"
+msgstr "IP アドレスごとに許可する失敗回数"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Behind a proxy or CDN that hides the visitor address, every visitor shares "
+"one address: keep this one the looser limit."
+msgstr ""
+"訪問者のアドレスを隠すプロキシや CDN の背後では、すべての訪問者が 1 つのアド"
+"レスを共有します。こちらを緩い方の上限にしてください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Failures allowed per user name"
+msgstr "ユーザー名ごとに許可する失敗回数"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Lockout time (minutes)"
+msgstr "ロック時間（分）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Logins are refused for this long once a limit is reached. Failures further "
+"apart than this are not added up."
+msgstr ""
+"上限に達すると、この時間だけログインを拒否します。この時間より間隔が空いた失"
+"敗は合算しません。"
+
+#. translators: %s: plugin slug
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, php-format
+msgid ""
+"The plugin \"%s\" already protects the login page, so this limiter does "
+"nothing while it is active."
+msgstr ""
+"プラグイン「%s」がログインページを保護しているため、そのプラグインが有効な間"
+"はこの制限は動きません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Jetpack's brute force protection already protects the login page, so this "
+"limiter does nothing while it is on."
+msgstr ""
+"Jetpack の総当たり攻撃の防御がログインページを保護しているため、それが有効な"
+"間はこの制限は動きません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The server configuration (.htaccess) already restricts the login page, so "
+"this limiter does nothing while it does."
+msgstr ""
+"サーバーの設定（.htaccess）がログインページを制限しているため、その間はこの制"
+"限は動きません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Login attempt limiter"
+msgstr "ログイン試行回数の制限"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Count failed logins per IP address and per user name, and refuse logins for "
+"a while once a limit is reached. Covers the WordPress login page, the "
+"WooCommerce My Account and checkout login forms and XML-RPC."
+msgstr ""
+"IP アドレスごととユーザー名ごとにログインの失敗を数え、上限に達したらしばらく"
+"ログインを拒否します。WordPress のログインページ、WooCommerce のマイアカウン"
+"ト・購入手続きのログインフォーム、XML-RPC が対象です。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"It does nothing while a security plugin, Jetpack or the server configuration "
+"already protects the login page. If you lock yourself out, define "
+"JP4WC_LOGIN_LIMIT_DISABLE as true in wp-config.php."
+msgstr ""
+"セキュリティプラグイン・Jetpack・サーバーの設定がログインページを保護している"
+"間は何もしません。自分がロックされたときは、wp-config.php で "
+"JP4WC_LOGIN_LIMIT_DISABLE を true に定義してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"An e-mail address used to log in counts against the same name as the user "
+"name."
+msgstr ""
+"メールアドレスでログインした場合も、そのユーザー名と同じ名前として数えます。"
 
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44
@@ -4346,3 +4445,16 @@ msgid "The re-check could not be scheduled in WP-Cron. Try again later."
 msgstr ""
 "再チェックを WP-Cron に予約できませんでした。しばらくしてからもう一度お試しく"
 "ださい。"
+
+#. translators: %d: minutes until logins are accepted again
+#: includes/class-jp4wc-login-limiter.php:181
+#, php-format
+msgid ""
+"<strong>Error:</strong> Too many login attempts. Please try again in %d "
+"minute."
+msgid_plural ""
+"<strong>Error:</strong> Too many login attempts. Please try again in %d "
+"minutes."
+msgstr[0] ""
+"<strong>エラー:</strong> ログインの試行回数が多すぎます。%d 分後にやり直して"
+"ください。"

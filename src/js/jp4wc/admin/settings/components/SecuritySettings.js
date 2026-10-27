@@ -13,6 +13,7 @@ import {
 	Button,
 	Notice,
 	Spinner,
+	TextControl,
 } from '@wordpress/components';
 import {
 	useState,
@@ -47,6 +48,79 @@ const ATTRIBUTION = 'Vulnerability data: Wordfence Intelligence';
  * Terms of use of wc.artws.info, which cover the vulnerability feed.
  */
 const TERMS_URL = 'https://wc.artws.info/security-assessment-term/';
+
+/**
+ * The limits of the login attempt limiter: setting key, label, default and range
+ * (the same ranges as JP4WC_Login_Limiter::LIMITS, which the server applies).
+ */
+const loginLimitFields = () => [
+	{
+		key: 'login-limit-ip-attempts',
+		label: __( 'Failures allowed per IP address', 'woocommerce-for-japan' ),
+		help: __(
+			'Behind a proxy or CDN that hides the visitor address, every visitor shares one address: keep this one the looser limit.',
+			'woocommerce-for-japan'
+		),
+		fallback: '10',
+		min: 1,
+		max: 100,
+	},
+	{
+		key: 'login-limit-user-attempts',
+		label: __( 'Failures allowed per user name', 'woocommerce-for-japan' ),
+		help: __(
+			'An e-mail address used to log in counts against the same name as the user name.',
+			'woocommerce-for-japan'
+		),
+		fallback: '5',
+		min: 1,
+		max: 100,
+	},
+	{
+		key: 'login-limit-lockout-minutes',
+		label: __( 'Lockout time (minutes)', 'woocommerce-for-japan' ),
+		help: __(
+			'Logins are refused for this long once a limit is reached. Failures further apart than this are not added up.',
+			'woocommerce-for-japan'
+		),
+		fallback: '15',
+		min: 1,
+		max: 1440,
+	},
+];
+
+/**
+ * Returns the text that says what else protects the login page.
+ *
+ * @param {Object|null} protectedBy login_limit.protected_by of the findings view.
+ * @return {string} Text, empty when nothing else protects it.
+ */
+const protectedByText = ( protectedBy ) => {
+	if ( ! protectedBy ) {
+		return '';
+	}
+	switch ( protectedBy.type ) {
+		case 'plugin':
+			return sprintf(
+				/* translators: %s: plugin slug */
+				__(
+					'The plugin "%s" already protects the login page, so this limiter does nothing while it is active.',
+					'woocommerce-for-japan'
+				),
+				protectedBy.name
+			);
+		case 'jetpack':
+			return __(
+				"Jetpack's brute force protection already protects the login page, so this limiter does nothing while it is on.",
+				'woocommerce-for-japan'
+			);
+		default:
+			return __(
+				'The server configuration (.htaccess) already restricts the login page, so this limiter does nothing while it does.',
+				'woocommerce-for-japan'
+			);
+	}
+};
 
 /**
  * Formats a time for display in the site's date and time format.
@@ -604,6 +678,8 @@ const SecuritySettings = ( {
 	};
 
 	const enabled = view?.enabled;
+	const loginLimitOn = settings?.[ 'login-limit' ] === '1';
+	const protectedBy = protectedByText( view?.login_limit?.protected_by );
 
 	return (
 		<div className="jp4wc-security-settings">
@@ -772,6 +848,52 @@ const SecuritySettings = ( {
 						}
 					/>
 				</PanelRow>
+				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'Login attempt limiter',
+							'woocommerce-for-japan'
+						) }
+						help={
+							__(
+								'Count failed logins per IP address and per user name, and refuse logins for a while once a limit is reached. Covers the WordPress login page, the WooCommerce My Account and checkout login forms and XML-RPC.',
+								'woocommerce-for-japan'
+							) +
+							' ' +
+							__(
+								'It does nothing while a security plugin, Jetpack or the server configuration already protects the login page. If you lock yourself out, define JP4WC_LOGIN_LIMIT_DISABLE as true in wp-config.php.',
+								'woocommerce-for-japan'
+							) +
+							( protectedBy ? ' ' + protectedBy : '' )
+						}
+						checked={ loginLimitOn }
+						onChange={ ( value ) =>
+							updateSetting( 'login-limit', value ? '1' : '' )
+						}
+					/>
+				</PanelRow>
+				{ loginLimitOn &&
+					loginLimitFields().map( ( field ) => (
+						<PanelRow key={ field.key }>
+							<TextControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom={ true }
+								type="number"
+								label={ field.label }
+								help={ field.help }
+								value={
+									settings?.[ field.key ] || field.fallback
+								}
+								onChange={ ( value ) =>
+									updateSetting( field.key, value )
+								}
+								min={ field.min }
+								max={ field.max }
+								disabled={ Boolean( protectedBy ) }
+							/>
+						</PanelRow>
+					) ) }
 				<PanelRow>
 					<p className="description">
 						{ createInterpolateElement(
