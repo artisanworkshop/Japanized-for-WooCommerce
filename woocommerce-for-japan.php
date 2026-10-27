@@ -41,59 +41,136 @@ if ( function_exists( 'artws_php_security_notice_register' ) ) {
 /**
  * Strings of the PHP security notice, translated with this plugin's text domain.
  *
- * The shared notice calls this when it displays, after init. A WordPress.org
- * language pack wins over the bundled translation but has no translation for
- * new strings until they are translated there, so the strings it lacks are
- * taken from the bundled file instead of being shown in English.
+ * The shared notice calls this when it displays, after init. The strings a
+ * WordPress.org language pack lacks come from the bundled translation.
  *
  * @since 2.9.20
  * @return array
  */
 function jp4wc_php_security_notice_strings() {
-	add_filter( 'gettext_woocommerce-for-japan', 'jp4wc_php_security_notice_bundled_translation', 10, 2 );
+	return jp4wc_with_bundled_translation(
+		static function () {
+			return array(
+				'title'          => __( 'Update PHP now: critical security vulnerabilities', 'woocommerce-for-japan' ),
+				/* translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs */
+				'vulnerable'     => __( 'The PHP version of this site (%1$s) has critical vulnerabilities (%3$s) that let an attacker run code on the server with a single request. Update PHP to %2$s or later right away.', 'woocommerce-for-japan' ),
+				'support_ending' => __( 'Security support for PHP 8.2 ends at the end of 2026, so we recommend updating to PHP 8.3 or later.', 'woocommerce-for-japan' ),
+				'vendor_patch'   => __( 'Your hosting company may have applied the fix without changing the PHP version number. Please check with your hosting company.', 'woocommerce-for-japan' ),
+				/* translators: 1: PHP version of this site, 2: vulnerability IDs */
+				'unsupported'    => __( 'The PHP version of this site (%1$s) has critical vulnerabilities (%2$s). Official support for this PHP version has ended, and no fixed version has been released for it. Some hosting companies apply their own security patches, but update to PHP 8.3 or later, which is supported longer, as soon as possible.', 'woocommerce-for-japan' ),
+				/* translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs */
+				'prerelease'     => __( 'This site runs a pre-release of PHP (%1$s) that has critical vulnerabilities (%3$s). Update it to %2$s or later.', 'woocommerce-for-japan' ),
+				'learn_more'     => __( 'Learn more', 'woocommerce-for-japan' ),
+				'dismiss'        => __( 'Don\'t show again', 'woocommerce-for-japan' ),
+				'close'          => __( 'Close', 'woocommerce-for-japan' ),
+			);
+		}
+	);
+}
+
+/**
+ * Runs a callback with the strings the loaded translations lack taken from the bundled translation.
+ *
+ * A WordPress.org language pack wins over the bundled translation but has no
+ * translation for new strings until they are translated there, so they would
+ * be shown in English. Only the strings built while the callback runs are
+ * looked up in the bundled file: __(), _x() and _n() and their esc_ variants
+ * (_nx() is not covered).
+ *
+ * @since 3.0.0
+ * @param callable $callback Callback that builds the strings.
+ * @param mixed    ...$args  Arguments passed to the callback.
+ * @return mixed What the callback returns.
+ */
+function jp4wc_with_bundled_translation( callable $callback, ...$args ) {
+	// A nested call leaves the filters to the outer one, which removes them.
+	$added = false === has_filter( 'gettext_woocommerce-for-japan', 'jp4wc_bundled_translation' );
+	if ( $added ) {
+		add_filter( 'gettext_woocommerce-for-japan', 'jp4wc_bundled_translation', 10, 2 );
+		add_filter( 'gettext_with_context_woocommerce-for-japan', 'jp4wc_bundled_translation', 10, 3 );
+		add_filter( 'ngettext_woocommerce-for-japan', 'jp4wc_bundled_plural_translation', 10, 4 );
+	}
 	try {
-		return array(
-			'title'          => __( 'Update PHP now: critical security vulnerabilities', 'woocommerce-for-japan' ),
-			/* translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs */
-			'vulnerable'     => __( 'The PHP version of this site (%1$s) has critical vulnerabilities (%3$s) that let an attacker run code on the server with a single request. Update PHP to %2$s or later right away.', 'woocommerce-for-japan' ),
-			'support_ending' => __( 'Security support for PHP 8.2 ends at the end of 2026, so we recommend updating to PHP 8.3 or later.', 'woocommerce-for-japan' ),
-			'vendor_patch'   => __( 'Your hosting company may have applied the fix without changing the PHP version number. Please check with your hosting company.', 'woocommerce-for-japan' ),
-			/* translators: 1: PHP version of this site, 2: vulnerability IDs */
-			'unsupported'    => __( 'The PHP version of this site (%1$s) has critical vulnerabilities (%2$s). Official support for this PHP version has ended, and no fixed version has been released for it. Some hosting companies apply their own security patches, but update to PHP 8.3 or later, which is supported longer, as soon as possible.', 'woocommerce-for-japan' ),
-			/* translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs */
-			'prerelease'     => __( 'This site runs a pre-release of PHP (%1$s) that has critical vulnerabilities (%3$s). Update it to %2$s or later.', 'woocommerce-for-japan' ),
-			'learn_more'     => __( 'Learn more', 'woocommerce-for-japan' ),
-			'dismiss'        => __( 'Don\'t show again', 'woocommerce-for-japan' ),
-			'close'          => __( 'Close', 'woocommerce-for-japan' ),
-		);
+		return $callback( ...$args );
 	} finally {
-		remove_filter( 'gettext_woocommerce-for-japan', 'jp4wc_php_security_notice_bundled_translation', 10 );
+		if ( $added ) {
+			remove_filter( 'gettext_woocommerce-for-japan', 'jp4wc_bundled_translation', 10 );
+			remove_filter( 'gettext_with_context_woocommerce-for-japan', 'jp4wc_bundled_translation', 10 );
+			remove_filter( 'ngettext_woocommerce-for-japan', 'jp4wc_bundled_plural_translation', 10 );
+		}
 	}
 }
 
 /**
  * Returns the bundled translation of a string the loaded translations lack.
  *
- * @since 2.9.20
+ * @since 3.0.0
  * @param string $translation Translation from the loaded files.
  * @param string $text        Text to translate.
+ * @param string $context     Context of _x(), passed by gettext_with_context only.
  * @return string
  */
-function jp4wc_php_security_notice_bundled_translation( $translation, $text ) {
-	static $files = array();
+function jp4wc_bundled_translation( $translation, $text, $context = '' ) {
 	if ( $translation !== $text ) {
 		return $translation;
 	}
-	$locale = determine_locale();
+	$forms = jp4wc_bundled_translation_forms( '' === $context ? $text : $context . "\4" . $text );
+	return null !== $forms ? $forms[0] : $translation;
+}
+
+/**
+ * Returns the bundled translation of a plural string the loaded translations lack.
+ *
+ * @since 3.0.0
+ * @param string $translation Translation from the loaded files.
+ * @param string $single      Singular text.
+ * @param string $plural      Plural text.
+ * @param int    $number      Number the form is chosen for.
+ * @return string
+ */
+function jp4wc_bundled_plural_translation( $translation, $single, $plural, $number ) {
+	// Without a translation, _n() returns one of the texts.
+	if ( $translation !== $single && $translation !== $plural ) {
+		return $translation;
+	}
+	$forms = jp4wc_bundled_translation_forms( $single );
+	if ( null === $forms ) {
+		return $translation;
+	}
+	$form = jp4wc_bundled_translation_file()->get_plural_form( (int) $number );
+	return isset( $forms[ $form ] ) && '' !== $forms[ $form ] ? $forms[ $form ] : $forms[0];
+}
+
+/**
+ * Returns the forms of an entry of the bundled translation for the current locale.
+ *
+ * @since 3.0.0
+ * @param string $key Text, context and text joined by "\4", or the singular of a plural string.
+ * @return string[]|null Forms (one for a string without plurals), or null without a translation.
+ */
+function jp4wc_bundled_translation_forms( $key ) {
+	$file    = jp4wc_bundled_translation_file();
+	$bundled = $file ? $file->translate( $key ) : false;
+	if ( ! is_string( $bundled ) || '' === $bundled ) {
+		return null;
+	}
+	return explode( "\0", $bundled );
+}
+
+/**
+ * Returns the bundled translation file for the current locale.
+ *
+ * @since 3.0.0
+ * @return WP_Translation_File|false False when the plugin bundles none for the locale.
+ */
+function jp4wc_bundled_translation_file() {
+	static $files = array();
+	$locale       = determine_locale();
 	if ( ! array_key_exists( $locale, $files ) ) {
 		$mofile           = __DIR__ . '/i18n/woocommerce-for-japan-' . $locale . '.mo';
 		$files[ $locale ] = is_readable( $mofile ) ? WP_Translation_File::create( $mofile ) : false;
 	}
-	if ( ! $files[ $locale ] ) {
-		return $translation;
-	}
-	$bundled = $files[ $locale ]->translate( $text );
-	return is_string( $bundled ) && '' !== $bundled ? $bundled : $translation;
+	return $files[ $locale ];
 }
 
 // Register activation hook.
