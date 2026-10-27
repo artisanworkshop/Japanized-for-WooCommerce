@@ -114,4 +114,83 @@ class JP4WC_Settings_API_Security_Scan_Test extends WP_UnitTestCase {
 
 		$this->assertSame( $saved, get_option( 'wc4jp-security-scan' ) );
 	}
+
+	/**
+	 * The login attempt limiter is off until turned on, and its limits are reported with their defaults (3.1.0).
+	 */
+	public function test_login_limit_is_reported_off_with_default_limits() {
+		delete_option( 'wc4jp-login-limit' );
+		delete_option( 'wc4jp-login-limit-ip-attempts' );
+		$settings = $this->reported_settings();
+
+		$this->assertSame( '', $settings['login-limit'] );
+		$this->assertSame( '10', $settings['login-limit-ip-attempts'] );
+		$this->assertSame( '5', $settings['login-limit-user-attempts'] );
+		$this->assertSame( '15', $settings['login-limit-lockout-minutes'] );
+	}
+
+	/**
+	 * Only on is on, for the login attempt limiter as well.
+	 *
+	 * @dataProvider posted_value_provider
+	 *
+	 * @param mixed  $posted Posted value.
+	 * @param string $saved  Saved value.
+	 */
+	public function test_login_limit_is_saved_as_on_or_off( $posted, $saved ) {
+		try {
+			$this->save( array( 'login-limit' => $posted ) );
+			$this->assertSame( $saved, get_option( 'wc4jp-login-limit' ) );
+		} finally {
+			delete_option( 'wc4jp-login-limit' );
+		}
+	}
+
+	/**
+	 * Posted limits.
+	 *
+	 * @return array<string, array{mixed, string}>
+	 */
+	public function posted_limit_provider() {
+		return array(
+			'in range'     => array( '20', '20' ),
+			'number'       => array( 20, '20' ),
+			'below range'  => array( '0', '1' ),
+			'above range'  => array( '1000', '100' ),
+			'not a number' => array( 'many', '10' ),
+			'empty'        => array( '', '10' ),
+			'array'        => array( array( '20' ), '10' ),
+			'true'         => array( true, '10' ),
+		);
+	}
+
+	/**
+	 * A limit is saved within its range; anything that is not a number as the default.
+	 *
+	 * @dataProvider posted_limit_provider
+	 *
+	 * @param mixed  $posted Posted value.
+	 * @param string $saved  Saved value.
+	 */
+	public function test_login_limits_are_saved_within_their_ranges( $posted, $saved ) {
+		try {
+			$this->save( array( 'login-limit-ip-attempts' => $posted ) );
+			$this->assertSame( $saved, get_option( 'wc4jp-login-limit-ip-attempts' ) );
+			$this->assertSame( $saved, $this->reported_settings()['login-limit-ip-attempts'] );
+		} finally {
+			delete_option( 'wc4jp-login-limit-ip-attempts' );
+		}
+	}
+
+	/**
+	 * The lockout time has its own range (up to a day).
+	 */
+	public function test_lockout_minutes_range() {
+		try {
+			$this->save( array( 'login-limit-lockout-minutes' => '5000' ) );
+			$this->assertSame( '1440', get_option( 'wc4jp-login-limit-lockout-minutes' ) );
+		} finally {
+			delete_option( 'wc4jp-login-limit-lockout-minutes' );
+		}
+	}
 }
