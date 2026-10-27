@@ -198,7 +198,7 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	public function test_email_and_login_are_counted_together() {
 		$this->attempt( 'Limited@Example.com' );
 		$this->attempt( 'LIMITED' );
-		$this->attempt( 'limited@example.com' );
+		$this->attempt( ' limited@example.com ' );
 		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'limited', 'right-password' ) ), 'Two e-mail failures and one login failure lock the one name (R1-4).' );
 		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'limited@example.com', 'right-password' ) ) );
 
@@ -446,16 +446,17 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Expired failures of any key are removed on the next failure and once a day (R2-1).
+	 * Expired failures of the same key are removed on the next failure, of every key once a day (R2-1, G1-2).
 	 */
-	public function test_expired_failures_of_other_keys_are_removed() {
+	public function test_expired_failures_are_removed() {
 		global $wpdb;
 		$this->attempt( 'nobody' );
 		$wpdb->query( "UPDATE {$wpdb->options} SET option_value = '0000000001' WHERE option_name LIKE 'jp4wc_login_fail_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$_SERVER['REMOTE_ADDR'] = '198.51.100.9';
 		$this->attempt( 'limited' );
-		$this->assertSame( 0, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%' AND option_value = '0000000001'" ), 'The other address and name were swept with the new failure.' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$this->assertSame( 2, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%'" ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$this->assertSame( 2, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%' AND option_value = '0000000001'" ), 'Other keys are not swept on a failure (the login path stays cheap).' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$this->attempt( 'nobody' );
+		$this->assertSame( 1, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%' AND option_value = '0000000001'" ), 'The expired failure of the name that failed again is gone; the other address keeps its expired row.' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 		$wpdb->query( "UPDATE {$wpdb->options} SET option_value = '0000000001' WHERE option_name LIKE 'jp4wc_login_fail_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$this->assertSame( 10, has_action( 'delete_expired_transients', array( 'JP4WC_Login_Limiter', 'delete_expired' ) ) );

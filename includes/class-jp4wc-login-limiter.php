@@ -78,7 +78,7 @@ class JP4WC_Login_Limiter {
 		add_filter( 'authenticate', array( __CLASS__, 'authenticate' ), self::AUTHENTICATE_PRIORITY, 2 );
 		add_action( 'wp_login_failed', array( __CLASS__, 'record_failure' ), 10, 2 );
 		add_action( 'wp_login', array( __CLASS__, 'clear' ) );
-		// WordPress fires this once a day: the failures of keys that never fail again are removed then.
+		// WordPress fires this once a day: the expired failures of every key are removed then.
 		add_action( 'delete_expired_transients', array( __CLASS__, 'delete_expired' ) );
 	}
 
@@ -299,14 +299,21 @@ class JP4WC_Login_Limiter {
 	}
 
 	/**
-	 * Removes the failures that no longer count (every key), on each failure and once a day.
+	 * Removes the failures that no longer count: of one key on each failure of
+	 * that key, of every key once a day (delete_expired_transients).
+	 *
+	 * @param string $prefix Option name prefix; the whole set by default.
 	 */
-	public static function delete_expired() {
+	public static function delete_expired( $prefix = self::OPTION_PREFIX ) {
 		global $wpdb;
+		if ( ! is_string( $prefix ) || 0 !== strpos( $prefix, self::OPTION_PREFIX ) ) {
+			// The action passes nothing of use.
+			$prefix = self::OPTION_PREFIX;
+		}
 		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Expired failures, found by their name prefix; never cached.
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value <= %s",
-				$wpdb->esc_like( self::OPTION_PREFIX ) . '%',
+				$wpdb->esc_like( $prefix ) . '%',
 				self::stamp( time() )
 			)
 		);
@@ -325,23 +332,27 @@ class JP4WC_Login_Limiter {
 	/**
 	 * Returns the key a user name or e-mail address is counted by.
 	 *
-	 * An e-mail address is the user's login name, as wp_authenticate_email_password()
-	 * resolves it, so both ways of logging in share one count. A login name
-	 * in the form of an e-mail address stays as it is, as wp_authenticate_username_password()
-	 * finds that user first.
+	 * An existing user is counted by the login name as stored, whichever way
+	 * it was typed: the login name in any case (the lookup is case-insensitive,
+	 * as the password check is), or the e-mail address, which
+	 * wp_authenticate_email_password() resolves the same way. A login name in
+	 * the form of an e-mail address is found first, as wp_authenticate_username_password()
+	 * finds it. A name that is no user is counted as typed, in lower case.
 	 *
 	 * @param string $username User name or e-mail address.
 	 * @return string
 	 */
 	private static function user_key( $username ) {
 		$name = trim( (string) $username );
-		if ( is_email( $name ) && ! get_user_by( 'login', $name ) ) {
+		$user = get_user_by( 'login', $name );
+		if ( ! $user && is_email( $name ) ) {
 			$user = get_user_by( 'email', $name );
-			if ( $user instanceof WP_User ) {
-				$name = $user->user_login;
-			}
 		}
-		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $name, 'UTF-8' ) : strtolower( $name );
+		if ( $user instanceof WP_User ) {
+			$name = $user->user_login;
+		}
+		// ASCII only on purpose: the same key on every host, with or without mbstring.
+		return strtolower( $name );
 	}
 
 	/**
@@ -406,7 +417,9 @@ class JP4WC_Login_Limiter {
 	 * Adds a failure to an address or user name, and logs the lock at the limit.
 	 *
 	 * A failure counts for the lockout time, so failures further apart than
-	 * that do not add up. Expired failures are removed on the way.
+	 * that do not add up. The expired failures of the same key are removed on
+	 * the way (those of other keys once a day: a sweep of every row on each
+	 * failure would grow with the number of addresses and names failing).
 	 *
 	 * @param string $type    ip or user.
 	 * @param string $key     Address or user name.
@@ -419,7 +432,7 @@ class JP4WC_Login_Limiter {
 			return;
 		}
 		$prefix = self::row_prefix( $type, $key );
-		self::delete_expired();
+		self::delete_expired( $prefix );
 		$inserted = $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- One row per failure: an atomic count, unlike a value read and written back.
 			$wpdb->options,
 			array(
