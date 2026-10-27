@@ -14,7 +14,12 @@ import {
 	Notice,
 	Spinner,
 } from '@wordpress/components';
-import { useState, useEffect, useRef } from '@wordpress/element';
+import {
+	useState,
+	useEffect,
+	useRef,
+	createInterpolateElement,
+} from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { dateI18n, getSettings } from '@wordpress/date';
 
@@ -37,6 +42,11 @@ const POLL_TIMEOUT = 180000;
  * Credit line the Wordfence Intelligence terms ask for, shown as is.
  */
 const ATTRIBUTION = 'Vulnerability data: Wordfence Intelligence';
+
+/**
+ * Terms of use of wc.artws.info, which cover the vulnerability feed.
+ */
+const TERMS_URL = 'https://wc.artws.info/security-assessment-term/';
 
 /**
  * Formats a time for display in the site's date and time format.
@@ -761,6 +771,26 @@ const SecuritySettings = ( {
 							updateSetting( 'security-scan', value ? '1' : '' )
 						}
 					/>
+				</PanelRow>
+				<PanelRow>
+					<p className="description">
+						{ createInterpolateElement(
+							__(
+								'The vulnerability data comes from wc.artws.info and is subject to its <a>Terms of Use</a>.',
+								'woocommerce-for-japan'
+							),
+							{
+								a: (
+									// eslint-disable-next-line jsx-a11y/anchor-has-content -- createInterpolateElement() puts the translated words inside.
+									<a
+										href={ TERMS_URL }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							}
+						) }
+					</p>
 				</PanelRow>
 			</PanelBody>
 
