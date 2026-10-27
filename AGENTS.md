@@ -41,7 +41,8 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - WP-Cron events are scheduled from an `init` check, not from the activation hook. A user-triggered job uses a hook of its own.
 - Never instantiate `WC_Gateway_Paidy` outside WooCommerce's gateway list, and register order side effects once. Paidy IDs use base64url including `-`; the only guard is `WC_Gateway_Paidy::paidy_payment_api_url()`.
 - Do not use `mb_*` functions other than `mb_strlen()` / `mb_substr()` / `mb_chr()` / `mb_ord()`, which `wp-includes/compat.php` defines (WordPress does not require mbstring). Safe path: `preg_match( '//u', $s )`.
-- New user-facing strings use the text domain `woocommerce-for-japan`. A `.po` is not resynced wholesale in a feature PR.
+- New user-facing strings use the text domain `woocommerce-for-japan`. A `.po` is not resynced wholesale in a feature PR. The settings app's JavaScript strings are translated from `i18n/woocommerce-for-japan-ja-<md5>.json`; check that file before reporting a missing JS translation.
+- `wp_login_failed` is fired by `wp_authenticate()` itself, so XML-RPC and the WooCommerce login forms reach it as well as wp-login.php.
 - `@since` and "since x.y.z" name the first release tag that will contain the change. That is the next version after the last pushed tag, which may be a minor or major step (the security check code says 3.0.0 after 2.9.20). Once a bump PR merges, the readme `Stable tag` already names it.
 
 ### Packaging and disclosure
