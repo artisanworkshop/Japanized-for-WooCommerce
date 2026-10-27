@@ -36,7 +36,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - `class_exists()` takes the fully-qualified class name; `use` aliases are not resolved.
 - Block checkout DOM belongs to React: no `appendChild`, `insertAdjacentElement`, `removeChild` or `MutationObserver` moves there. Safe path: CSS `order`.
 - Store API routes are matched under both `wc/store` and `wc/store/v1`, case-insensitively. The payment method of a checkout comes from the request or `chosen_payment_method`, never from a session key of our own.
-- Every class file is loaded at `plugins_loaded` (a plugin update swaps the directory while requests run). A new class file is added to `tests/Unit/test-jp4wc-load-at-plugins-loaded.php`.
+- Every class file is loaded at `plugins_loaded` (a plugin update swaps the directory while requests run). A new class file is added to `tests/Unit/test-jp4wc-load-at-plugins-loaded.php`. A file under `includes/` may be loaded by the previous version's `includes()` during an update, so it checks `function_exists()` before calling a main-file function added in this version.
 - State written back by a job (cron, settings save) is read from the database under a lock, not from an earlier read. Do not keep independent values in one option updated by read-modify-write.
 - WP-Cron events are scheduled from an `init` check, not from the activation hook. A user-triggered job uses a hook of its own.
 - Never instantiate `WC_Gateway_Paidy` outside WooCommerce's gateway list, and register order side effects once. Paidy IDs use base64url including `-`; the only guard is `WC_Gateway_Paidy::paidy_payment_api_url()`.
