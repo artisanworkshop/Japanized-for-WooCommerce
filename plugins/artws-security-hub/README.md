@@ -57,14 +57,15 @@ WP-Cron の日次イベント `artws_sec_feed_update` が Wordfence Intelligence
 - 「Update now」: 取り込みを WP-Cron に積む。WP-CLI があれば `wp cron event run artws_sec_feed_update` でその場で走らせて結果を見られる
 - EOL（manifest の `eol.{php,wordpress,woocommerce}.min_supported`）: 数字とドットだけ。保存すると manifest を書き直す（取り込みの実行中なら 1 分後に `artws_sec_feed_republish` で書き直す。既定 PHP 8.2 / WordPress 6.7 / WooCommerce 10.2）
 
-WP-Cron はアクセスが無いと走らない。取り込みは数十秒かかるので、`DISABLE_WP_CRON` とサーバーの cron（例: `*/15 * * * * wp --path=/path/to/wordpress cron event run --due-now`）で回すのがよい。
+WP-Cron はアクセスが無いと走らない。取り込みは数十秒かかるので、`DISABLE_WP_CRON` とサーバーの cron（例: `*/15 * * * * wp --path=/path/to/wordpress cron event run --due-now`）で回すのがよい。`DISABLE_WP_CRON` はサイトのすべての予定（WordPress・WooCommerce を含む）に効く。Pressable では最初から true で、Pressable 側が予定を走らせているので、何も設定しない（DEPLOY.md の 6-2）。
 
 ### 配信
 
-ファイルは `ARTWS_SEC_FEED_DIR`（既定 `wp-content/artws-security-feed/v1/`）に置かれる。`/feed/v1/` は WordPress 本体の RSS（`/feed/`）と URL が重なるので、ドキュメントルートに実ディレクトリ `feed/` は作らず、`/feed/v1/` だけをこのディレクトリへの Alias で配信する（PHP を通さない静的配信）。
+ファイルは `ARTWS_SEC_FEED_DIR`（既定 `wp-content/artws-security-feed/v1/`）に置かれる。`/feed/v1/` は WordPress 本体の RSS（`/feed/`）と URL が重なるので、ドキュメントルートに実ディレクトリ `feed/` は作らず、`/feed/v1/` だけをこのディレクトリへの Alias で配信する（PHP を通さない静的配信。Pressable では下のとおり PHP で返す）。
 
 - `.json.gz` は `Content-Type: application/gzip` で、`Content-Encoding` を付けない（付けるとクライアントが自動で展開し、sha256 が合わなくなる）
-- ファイルは一時名で書いてから rename で差し替え、gz を全部置いてから manifest を置く。CDN を挟む場合も、manifest と gz のキャッシュ時間は同じ程度に短くする（食い違うとクライアントは sha256 の不一致で前回のデータを使い続ける）
+- ファイルは一時名で書いてから rename で差し替え、gz を全部置いてから manifest を置く。CDN を挟む場合は `/feed/v1/` をキャッシュさせない。CDN は拡張子で gz だけをキャッシュすることがあり（Cloudflare の既定）、manifest と食い違うと、クライアントは sha256 の不一致でその日の更新を取り込めない（次に取りに行くのは翌日）
+- Web サーバーの設定を変えられない Pressable（wc.artws.info）では、WordPress より前に動く `htdocs/custom-redirects.php`（[hosting/pressable/custom-redirects.php](hosting/pressable/custom-redirects.php)）が、4 つの名前だけをこのディレクトリから読んで返す。リダイレクトにはしない（JP4WC はフィードのリダイレクトをたどらない）。Cloudflare は DNS only にする（手順と理由は DEPLOY.md の 5-2）
 - アクセスログに残るのは UA と IP だけ。サイト URL などは受け取らない
 
 nginx:
@@ -78,7 +79,7 @@ location ^~ /feed/v1/ {
         application/gzip gz;
     }
     gzip off;                               # .json.gz を二重に圧縮しない
-    add_header Cache-Control "public, max-age=600";
+    add_header Cache-Control "no-store";    # CDN にもキャッシュさせない（上の CDN の項目）
 }
 ```
 
@@ -92,7 +93,8 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
     RemoveEncoding .gz
     AddType application/gzip .gz
     AddType application/json .json
-    Header set Cache-Control "public, max-age=600"
+    # CDN にもキャッシュさせない（上の CDN の項目）
+    Header set Cache-Control "no-store"
     <FilesMatch "^\.">
         Require all denied
     </FilesMatch>
@@ -140,7 +142,7 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 - **反映した直後は 503 になる**: 0.2.0 までの取り込みはインデックスを書いていない。ZIP を置き換えたら「Update now」か `wp cron event run artws_sec_feed_update` で取り込みを1回走らせる
 - **Authorization ヘッダー**: Apache の CGI / FastCGI では `Authorization` が PHP に届かないことがある。WordPress 標準の `.htaccess`（`RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]`）があれば WordPress が `REDIRECT_HTTP_AUTHORIZATION` から読む。確認: 登録済みのトークンで `curl -s -H "Authorization: Bearer <token>" https://wc.artws.info/wp-json/artws-sec/v1/scan/<scan_token>` が 401 にならないこと
 - **匿名の REST を止めるプラグイン**: ログインしていない要求の REST API を止めるセキュリティプラグインや、`Authorization: Bearer` を自分の認証（JWT など）として読むプラグインがあると、この API が動かない。`artws-sec/v1` を除外する
-- **CDN・リバースプロキシ**: 背後に置くと `REMOTE_ADDR` がプロキシの IP になり、全サイトが1つの送信元として数えられる。プロキシが上書きするヘッダーのキーを `ARTWS_SEC_CLIENT_IP_HEADER` に入れる（クライアントが自由に書ける `X-Forwarded-For` をそのまま信じない。リストなら最後の値を使う）。TLS をプロキシで終える場合は、`is_ssl()` が true になるよう wp-config.php で `$_SERVER['HTTPS']` を設定する（しないと全要求が 403）
+- **CDN・リバースプロキシ**: 背後に置くと `REMOTE_ADDR` がプロキシの IP になり、全サイトが1つの送信元として数えられる。プロキシが上書きするヘッダーのキーを `ARTWS_SEC_CLIENT_IP_HEADER` に入れる（クライアントが自由に書ける `X-Forwarded-For` をそのまま信じない。リストなら最後の値を使う）。プロキシを通らずに届く要求はどのヘッダーも書けるので、プロキシを置かないとき（wc.artws.info）は入れない。TLS をプロキシで終える場合は、`is_ssl()` が true になるよう wp-config.php で `$_SERVER['HTTPS']` を設定する（しないと全要求が 403）
 - **毎日の削除**: WP-Cron の `artws_sec_scan_cleanup` が、180 日より古い診断・180 日診断の無い登録・終わったレート制限の窓を消す。無効化で止まる（データは残る）
 - **プラグインの削除**: `uninstall.php` が無料診断の4表と `artws_sec_db_version` を消す（診断データを保存期間より長く残さない）。脆弱性フィード（S1 の option と配信ファイル）は残る
 - **公開前に必要なもの**: wc.artws.info のプライバシーポリシーと利用規約（保存する項目・保存期間 180 日・削除の方法を書く。#256 の未決事項）。トークンを失った登録の診断は API では消せず、保存期間で消えることも書く。問い合わせで削除を受けるなら `site_url` で登録を探して手で消すが、同じ URL の登録には他人のもの（開発環境など）も含まれうるので、サイトの持ち主であることを確かめてから消す
