@@ -18,7 +18,7 @@ npx wp-scripts build               # JS bundle (not `npm run build` in feature P
 
 ## Code Review Rules
 
-Report defects that change behaviour: security holes, data loss, wrong results, broken compatibility, contract violations, and tests that cannot fail. Formatting and lint are checked in CI; leave them out.
+Report defects that change behaviour: security holes, data loss, wrong results, broken compatibility, contract violations, and tests that cannot fail. Leave formatting and lint out (`composer lint` covers them, though CI does not run it).
 
 ### Security
 
@@ -48,6 +48,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 
 - Anything local-only at the top level is listed in `.distignore` (the release ZIP and the WordPress.org deploy copy the tree with `rsync --exclude-from=.distignore`). `plugins/` never ships.
 - The readme `== External Services ==` section must match what the code actually sends, when and where.
+- The terms of use and the privacy policy on wc.artws.info describe what the client sends, how long it is kept and how it is deleted, and the terms rely on the Security tab's link to them. A PR that changes any of these says in its description that both pages need the same change.
 
 ### Tests
 
