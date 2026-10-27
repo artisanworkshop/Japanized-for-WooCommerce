@@ -3502,6 +3502,15 @@ msgid ""
 msgstr ""
 "メールアドレスでログインした場合も、そのユーザー名と同じ名前として数えます。"
 
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The limiter is turned off by JP4WC_LOGIN_LIMIT_DISABLE in wp-config.php or "
+"by a filter."
+msgstr ""
+"wp-config.php の JP4WC_LOGIN_LIMIT_DISABLE またはフィルターで、この制限は止め"
+"られています。"
+
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44
 #: src/js/blocks/delivery-block-editor.js:65

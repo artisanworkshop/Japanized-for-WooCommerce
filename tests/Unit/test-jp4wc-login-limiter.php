@@ -29,6 +29,13 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	private $names = array();
 
 	/**
+	 * REMOTE_ADDR before the test (the test library sets 127.0.0.1).
+	 *
+	 * @var string|null
+	 */
+	private $remote_addr;
+
+	/**
 	 * Set up: the limiter on with small limits, a user, a client address.
 	 */
 	public function setUp(): void {
@@ -39,7 +46,7 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 		$this->assertTrue( class_exists( 'JP4WC_Login_Limiter' ) );
 		$this->assertTrue( class_exists( 'JP4WC_Security_Checks' ) );
 
-		$this->user = self::factory()->user->create_and_get(
+		$this->user             = self::factory()->user->create_and_get(
 			array(
 				'user_login' => 'limited',
 				'user_pass'  => 'right-password',
@@ -47,6 +54,7 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 			)
 		);
 		$this->names            = array( 'limited', 'limited@example.com', 'nobody' );
+		$this->remote_addr      = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : null; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Kept as it is, to put back.
 		$_SERVER['REMOTE_ADDR'] = '203.0.113.7';
 		update_option( 'wc4jp-login-limit', '1' );
 		update_option( 'wc4jp-login-limit-ip-attempts', '4' );
@@ -66,7 +74,11 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 		delete_option( 'wc4jp-login-limit-ip-attempts' );
 		delete_option( 'wc4jp-login-limit-user-attempts' );
 		delete_option( 'wc4jp-login-limit-lockout-minutes' );
-		unset( $_SERVER['REMOTE_ADDR'] );
+		if ( null === $this->remote_addr ) {
+			unset( $_SERVER['REMOTE_ADDR'] );
+		} else {
+			$_SERVER['REMOTE_ADDR'] = $this->remote_addr;
+		}
 		parent::tearDown();
 	}
 
@@ -79,6 +91,24 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	 */
 	private function attempt( $username, $password = 'wrong-password' ) {
 		return wp_authenticate( $username, $password );
+	}
+
+	/**
+	 * Logs in as wp-login.php and the WooCommerce forms do (fires wp_login on success).
+	 *
+	 * @param string $username User name or e-mail address.
+	 * @param string $password Password.
+	 * @return WP_User|WP_Error
+	 */
+	private function sign_on( $username, $password ) {
+		return wp_signon(
+			array(
+				'user_login'    => $username,
+				'user_password' => $password,
+				'remember'      => false,
+			),
+			false
+		);
 	}
 
 	/**
@@ -97,8 +127,8 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	public function test_hooks_are_registered() {
 		$this->assertSame( 50, has_filter( 'authenticate', array( 'JP4WC_Login_Limiter', 'authenticate' ) ) );
 		$this->assertSame( 10, has_action( 'wp_login_failed', array( 'JP4WC_Login_Limiter', 'record_failure' ) ) );
-		$this->assertSame( 10, has_action( 'application_password_failed_authentication', array( 'JP4WC_Login_Limiter', 'record_app_password_failure' ) ) );
 		$this->assertSame( 10, has_action( 'wp_login', array( 'JP4WC_Login_Limiter', 'clear' ) ) );
+		$this->assertFalse( has_action( 'application_password_failed_authentication', array( 'JP4WC_Login_Limiter', 'record_app_password_failure' ) ), 'Fires for every REST request with Basic auth, not only logins (R1-1).' );
 	}
 
 	/**
@@ -146,22 +176,20 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Logging in forgets the counts of the address and the name.
+	 * Logging in forgets the failures of that name, but not of the address.
 	 */
-	public function test_a_login_clears_the_counts() {
+	public function test_a_login_clears_the_name_but_not_the_address() {
+		update_option( 'wc4jp-login-limit-ip-attempts', '6' );
 		$this->attempt( 'limited' );
 		$this->attempt( 'limited' );
 		$this->attempt( 'nobody' );
-		$this->assertInstanceOf( 'WP_User', wp_signon(
-			array(
-				'user_login'    => 'limited',
-				'user_password' => 'right-password',
-			)
-		) );
+		$this->assertInstanceOf( 'WP_User', $this->sign_on( 'limited', 'right-password' ) );
 
 		$this->attempt( 'limited' );
 		$this->attempt( 'limited' );
-		$this->assertSame( 'incorrect_password', $this->code( $this->attempt( 'limited' ) ), 'The count started over.' );
+		$this->assertSame( 'incorrect_password', $this->code( $this->attempt( 'limited' ) ), 'The name count started over: the third failure after the login is not refused.' );
+		// The address has 3 + 3 = 6 failures, its limit: logging in did not reset it (R1-3).
+		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'other-name', 'x' ) ) );
 	}
 
 	/**
@@ -169,9 +197,16 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	 */
 	public function test_email_and_login_are_counted_together() {
 		$this->attempt( 'Limited@Example.com' );
+		$this->attempt( 'LIMITED' );
 		$this->attempt( 'limited@example.com' );
-		$this->attempt( 'limited@example.com' );
+		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'limited', 'right-password' ) ), 'Two e-mail failures and one login failure lock the one name (R1-4).' );
 		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'limited@example.com', 'right-password' ) ) );
+
+		$_SERVER['REMOTE_ADDR'] = '198.51.100.9';
+		$this->attempt( 'unknown@example.com' );
+		$this->attempt( 'unknown@example.com' );
+		$this->attempt( 'unknown@example.com' );
+		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'unknown@example.com' ) ), 'An address that is no user is counted as itself.' );
 	}
 
 	/**
@@ -191,17 +226,30 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A failed application password counts against the address only.
+	 * A REST request with Basic auth that is no login is not counted (R1-1).
 	 */
-	public function test_application_password_failure_counts_against_the_address() {
-		do_action( 'application_password_failed_authentication', new WP_Error( 'invalid_password', 'x' ) );
-		do_action( 'application_password_failed_authentication', new WP_Error( 'invalid_password', 'x' ) );
-		do_action( 'application_password_failed_authentication', new WP_Error( 'invalid_password', 'x' ) );
-		do_action( 'application_password_failed_authentication', new WP_Error( 'invalid_password', 'x' ) );
-		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'limited', 'right-password' ) ) );
+	public function test_basic_auth_rest_requests_are_not_counted() {
+		for ( $i = 0; $i < 6; $i++ ) {
+			do_action( 'application_password_failed_authentication', new WP_Error( 'invalid_username', 'x' ) );
+		}
+		$this->assertInstanceOf( 'WP_User', $this->attempt( 'limited', 'right-password' ) );
+	}
 
-		$_SERVER['REMOTE_ADDR'] = '198.51.100.9';
-		$this->assertInstanceOf( 'WP_User', $this->attempt( 'limited', 'right-password' ), 'No user name was counted.' );
+	/**
+	 * Parallel failures are all counted: each one is a row of its own (R1-5).
+	 */
+	public function test_each_failure_is_a_row() {
+		global $wpdb;
+		$this->attempt( 'limited' );
+		$this->attempt( 'nobody' );
+		$rows = $wpdb->get_results( "SELECT option_name, option_value, autoload FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%' ORDER BY option_name" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$this->assertCount( 4, $rows, 'Two for the address, one per name.' );
+		foreach ( $rows as $row ) {
+			$this->assertSame( 'off', $row->autoload );
+			$this->assertGreaterThan( time() + 14 * MINUTE_IN_SECONDS, (int) $row->option_value );
+			$this->assertStringNotContainsString( 'limited', $row->option_name, 'The name is hashed.' );
+		}
+		$this->assertArrayNotHasKey( $rows[0]->option_name, (array) wp_load_alloptions(), 'Not autoloaded.' );
 	}
 
 	/**
@@ -324,7 +372,7 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 		$this->assertSame( 100, JP4WC_Login_Limiter::limit( 'wc4jp-login-limit-ip-attempts' ) );
 		update_option( 'wc4jp-login-limit-ip-attempts', 'many' );
 		$this->assertSame( 10, JP4WC_Login_Limiter::limit( 'wc4jp-login-limit-ip-attempts' ), 'Not a number: the default.' );
-		delete_option( 'wc4jc-login-limit-lockout-minutes' );
+		delete_option( 'wc4jp-login-limit-lockout-minutes' );
 		$this->assertSame( 15, JP4WC_Login_Limiter::limit( 'wc4jp-login-limit-lockout-minutes' ) );
 		$this->assertSame( 0, JP4WC_Login_Limiter::limit( 'wc4jp-no-such-limit' ) );
 	}
@@ -341,11 +389,11 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 		$this->assertSame( 'jp4wc_login_locked', $this->code( $result ) );
 		$this->assertStringContainsString( '1 minute.', $result->get_error_message() );
 
-		// The transients expire: WordPress deletes an expired transient when it is read.
+		// One failure expires: the count drops below the limit of 3 and the lock ends.
 		global $wpdb;
-		$wpdb->query( "UPDATE {$wpdb->options} SET option_value = '1' WHERE option_name LIKE '_transient_timeout_jp4wc_login_fail_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		wp_cache_flush();
-		$this->assertInstanceOf( 'WP_User', $this->attempt( 'limited', 'right-password' ) );
+		$wpdb->query( "UPDATE {$wpdb->options} SET option_value = '0000000001' WHERE option_name LIKE 'jp4wc_login_fail_user_%' ORDER BY option_name LIMIT 1" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$this->assertInstanceOf( 'WP_User', $this->sign_on( 'limited', 'right-password' ) );
+		$this->assertSame( 0, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_user_%'" ), 'The user logged in: that name has no rows left, expired or not.' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 	}
 
 	/**
@@ -371,7 +419,7 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 				$this->entries[] = array( $level, $message, $context );
 			}
 		};
-		$use = static function () use ( $logger ) {
+		$use    = static function () use ( $logger ) {
 			return $logger;
 		};
 		add_filter( 'woocommerce_logging_class', $use );
@@ -398,14 +446,14 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * delete_counts() removes every count, uninstall() the settings too.
+	 * Removing the counts (delete_counts) and the settings too (uninstall).
 	 */
 	public function test_uninstall_removes_counts_and_settings() {
 		global $wpdb;
 		$this->attempt( 'limited' );
 		$this->attempt( 'nobody' );
-		// The address, and the two names.
-		$this->assertSame( 3, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_jp4wc_login_fail_%'" ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		// Two for the address, one per name.
+		$this->assertSame( 4, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%'" ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 		JP4WC_Login_Limiter::uninstall();
 		$this->assertSame( 0, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '%jp4wc_login_fail_%'" ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery

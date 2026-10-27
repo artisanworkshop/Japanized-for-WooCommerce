@@ -680,6 +680,16 @@ const SecuritySettings = ( {
 	const enabled = view?.enabled;
 	const loginLimitOn = settings?.[ 'login-limit' ] === '1';
 	const protectedBy = protectedByText( view?.login_limit?.protected_by );
+	// Saved as on, nothing else protects the page, yet not running: the constant or a filter.
+	const disabledOutside =
+		view?.login_limit?.enabled === true &&
+		view?.login_limit?.active === false &&
+		! view?.login_limit?.protected_by
+			? __(
+					'The limiter is turned off by JP4WC_LOGIN_LIMIT_DISABLE in wp-config.php or by a filter.',
+					'woocommerce-for-japan'
+			  )
+			: '';
 
 	return (
 		<div className="jp4wc-security-settings">
@@ -865,7 +875,8 @@ const SecuritySettings = ( {
 								'It does nothing while a security plugin, Jetpack or the server configuration already protects the login page. If you lock yourself out, define JP4WC_LOGIN_LIMIT_DISABLE as true in wp-config.php.',
 								'woocommerce-for-japan'
 							) +
-							( protectedBy ? ' ' + protectedBy : '' )
+							( protectedBy ? ' ' + protectedBy : '' ) +
+							( disabledOutside ? ' ' + disabledOutside : '' )
 						}
 						checked={ loginLimitOn }
 						onChange={ ( value ) =>
@@ -883,7 +894,7 @@ const SecuritySettings = ( {
 								label={ field.label }
 								help={ field.help }
 								value={
-									settings?.[ field.key ] || field.fallback
+									settings?.[ field.key ] ?? field.fallback
 								}
 								onChange={ ( value ) =>
 									updateSetting( field.key, value )

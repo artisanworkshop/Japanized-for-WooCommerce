@@ -19,8 +19,14 @@ require_once __DIR__ . '/class-jp4wc-security-checks.php';
  * Counts failed logins per client address and per user name, and refuses
  * logins for a while once either count reaches its limit. Every login goes
  * through wp_authenticate(): wp-login.php, the WooCommerce My Account and
- * checkout login forms (wp_signon()) and XML-RPC. The REST API's application
- * password failures count against the address only.
+ * checkout login forms (wp_signon()) and XML-RPC.
+ *
+ * Each failure is a row of its own in the options table (not autoloaded,
+ * written and read with $wpdb), holding the time it stops counting: an
+ * INSERT per failure and a COUNT per check, so that parallel attempts are
+ * all counted (a read-modify-write of one value would lose some). An
+ * address or a name is locked while at least its limit of failures count,
+ * and the lock lasts until enough of them expire.
  *
  * The limiter stays asleep while another measure protects the login page
  * (the security check's A-02 criteria: a known plugin, .htaccess, Jetpack's
@@ -53,9 +59,10 @@ class JP4WC_Login_Limiter {
 	const ERROR_CODE = 'jp4wc_login_locked';
 
 	/**
-	 * Prefix of the transients that hold the counts: jp4wc_login_fail_ip_<hash> and _user_<hash>.
+	 * Prefix of the option rows that hold the failures:
+	 * jp4wc_login_fail_<ip|user>_<hash of the address or name>_<unique id>.
 	 */
-	const TRANSIENT_PREFIX = 'jp4wc_login_fail_';
+	const OPTION_PREFIX = 'jp4wc_login_fail_';
 
 	/**
 	 * Priority on the authenticate filter: after the password checks (20) and
@@ -70,8 +77,7 @@ class JP4WC_Login_Limiter {
 	public static function init() {
 		add_filter( 'authenticate', array( __CLASS__, 'authenticate' ), self::AUTHENTICATE_PRIORITY, 2 );
 		add_action( 'wp_login_failed', array( __CLASS__, 'record_failure' ), 10, 2 );
-		add_action( 'application_password_failed_authentication', array( __CLASS__, 'record_app_password_failure' ) );
-		add_action( 'wp_login', array( __CLASS__, 'clear' ), 10, 2 );
+		add_action( 'wp_login', array( __CLASS__, 'clear' ) );
 	}
 
 	/**
@@ -86,13 +92,17 @@ class JP4WC_Login_Limiter {
 	/**
 	 * Whether the limiter counts and refuses logins on this request.
 	 *
-	 * On when the setting is on, the constant is not defined, the filter
-	 * agrees and nothing else protects the login page.
+	 * On when the setting is on, the constant is not defined, nothing else
+	 * protects the login page and the filter agrees.
 	 *
 	 * @return bool
 	 */
 	public static function is_active() {
 		if ( ! self::is_enabled() || ( defined( 'JP4WC_LOGIN_LIMIT_DISABLE' ) && JP4WC_LOGIN_LIMIT_DISABLE ) ) {
+			return false;
+		}
+		// An earlier version's security checks class, loaded while this plugin is updated, cannot tell: stay asleep.
+		if ( ! method_exists( 'JP4WC_Security_Checks', 'login_protected_by_other_means' ) ) {
 			return false;
 		}
 		if ( null !== self::protected_by() ) {
@@ -120,6 +130,9 @@ class JP4WC_Login_Limiter {
 	 *                                                jetpack; name: what to show.
 	 */
 	public static function protected_by() {
+		if ( ! method_exists( 'JP4WC_Security_Checks', 'login_protected_by_other_means' ) ) {
+			return null;
+		}
 		return JP4WC_Security_Checks::login_protected_by_other_means();
 	}
 
@@ -133,8 +146,8 @@ class JP4WC_Login_Limiter {
 		if ( ! isset( self::LIMITS[ $setting ] ) ) {
 			return 0;
 		}
-		list( $default, $min, $max ) = self::LIMITS[ $setting ];
-		return self::clamp( get_option( $setting, $default ), $default, $min, $max );
+		list( $fallback, $min, $max ) = self::LIMITS[ $setting ];
+		return self::clamp( get_option( $setting, $fallback ), $fallback, $min, $max );
 	}
 
 	/**
@@ -169,14 +182,16 @@ class JP4WC_Login_Limiter {
 		if ( '' === (string) $username || ! self::is_active() ) {
 			return $user;
 		}
-		$locked_until = max( self::locked_until( 'ip', self::client_ip() ), self::locked_until( 'user', self::user_key( $username ) ) );
+		$locked_until = max(
+			self::locked_until( 'ip', self::client_ip(), self::limit( 'wc4jp-login-limit-ip-attempts' ) ),
+			self::locked_until( 'user', self::user_key( $username ), self::limit( 'wc4jp-login-limit-user-attempts' ) )
+		);
 		if ( $locked_until <= time() ) {
 			return $user;
 		}
 		$minutes = max( 1, (int) ceil( ( $locked_until - time() ) / 60 ) );
-		return new WP_Error(
-			self::ERROR_CODE,
-			sprintf(
+		$build   = static function () use ( $minutes ) {
+			return sprintf(
 				/* translators: %d: minutes until logins are accepted again */
 				_n(
 					'<strong>Error:</strong> Too many login attempts. Please try again in %d minute.',
@@ -185,8 +200,11 @@ class JP4WC_Login_Limiter {
 					'woocommerce-for-japan'
 				),
 				$minutes
-			)
-		);
+			);
+		};
+		// Shown to shoppers: the bundled translation stands in until the language pack has the string (#287).
+		$message = function_exists( 'jp4wc_with_bundled_translation' ) ? jp4wc_with_bundled_translation( $build ) : $build();
+		return new WP_Error( self::ERROR_CODE, $message );
 	}
 
 	/**
@@ -202,34 +220,24 @@ class JP4WC_Login_Limiter {
 		if ( ! self::is_active() ) {
 			return;
 		}
-		self::increment( 'ip', self::client_ip(), self::limit( 'wc4jp-login-limit-ip-attempts' ) );
+		$seconds = self::limit( 'wc4jp-login-limit-lockout-minutes' ) * MINUTE_IN_SECONDS;
+		self::add_failure( 'ip', self::client_ip(), self::limit( 'wc4jp-login-limit-ip-attempts' ), $seconds );
 		if ( '' !== (string) $username ) {
-			self::increment( 'user', self::user_key( $username ), self::limit( 'wc4jp-login-limit-user-attempts' ) );
+			self::add_failure( 'user', self::user_key( $username ), self::limit( 'wc4jp-login-limit-user-attempts' ), $seconds );
 		}
 	}
 
 	/**
-	 * Counts a failed application password against the address (REST API basic auth).
-	 */
-	public static function record_app_password_failure() {
-		if ( ! self::is_active() ) {
-			return;
-		}
-		self::increment( 'ip', self::client_ip(), self::limit( 'wc4jp-login-limit-ip-attempts' ) );
-	}
-
-	/**
-	 * Forgets the counts of the address and the user who just logged in (wp_login).
+	 * Forgets the failures of the user who just logged in (wp_login).
 	 *
-	 * @param string  $user_login User name.
-	 * @param WP_User $user       User.
+	 * The address keeps its failures: wp-login.php fires wp_login for a
+	 * visitor with a valid cookie on every GET, so a visitor with any account
+	 * could reset the address count between attempts on other names.
+	 *
+	 * @param string $user_login User name.
 	 */
-	public static function clear( $user_login, $user = null ) {
-		delete_transient( self::transient_name( 'ip', self::client_ip() ) );
-		delete_transient( self::transient_name( 'user', self::user_key( $user_login ) ) );
-		if ( $user instanceof WP_User && $user->user_email ) {
-			delete_transient( self::transient_name( 'user', self::user_key( $user->user_email ) ) );
-		}
+	public static function clear( $user_login ) {
+		self::delete_rows( self::row_prefix( 'user', self::user_key( $user_login ) ) );
 	}
 
 	/**
@@ -257,7 +265,7 @@ class JP4WC_Login_Limiter {
 	}
 
 	/**
-	 * Removes the counts of every site (uninstall).
+	 * Removes the failures and the settings of every site (uninstall).
 	 */
 	public static function uninstall() {
 		if ( ! is_multisite() ) {
@@ -282,20 +290,10 @@ class JP4WC_Login_Limiter {
 	}
 
 	/**
-	 * Removes every count of the current site.
+	 * Removes every failure of the current site.
 	 */
 	public static function delete_counts() {
-		global $wpdb;
-		$names = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- The transients are found by their name prefix (uninstall).
-			$wpdb->prepare(
-				"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$wpdb->esc_like( '_transient_' . self::TRANSIENT_PREFIX ) . '%'
-			)
-		);
-		foreach ( (array) $names as $name ) {
-			delete_transient( substr( (string) $name, strlen( '_transient_' ) ) );
-		}
-		// With a persistent object cache the counts are not in the table; they expire within a day by themselves.
+		self::delete_rows( self::OPTION_PREFIX );
 	}
 
 	/**
@@ -311,84 +309,156 @@ class JP4WC_Login_Limiter {
 	/**
 	 * Returns the key a user name or e-mail address is counted by.
 	 *
+	 * An e-mail address is the user's login name, as wp_authenticate_email_password()
+	 * resolves it, so both ways of logging in share one count.
+	 *
 	 * @param string $username User name or e-mail address.
 	 * @return string
 	 */
 	private static function user_key( $username ) {
-		return strtolower( trim( (string) $username ) );
+		$name = trim( (string) $username );
+		if ( is_email( $name ) ) {
+			$user = get_user_by( 'email', $name );
+			if ( $user instanceof WP_User ) {
+				$name = $user->user_login;
+			}
+		}
+		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $name, 'UTF-8' ) : strtolower( $name );
 	}
 
 	/**
-	 * Returns the transient of an address or user name.
+	 * Returns the prefix of the option rows of an address or user name.
 	 *
 	 * @param string $type ip or user.
 	 * @param string $key  Address or user name.
 	 * @return string
 	 */
-	private static function transient_name( $type, $key ) {
-		return self::TRANSIENT_PREFIX . $type . '_' . md5( $key );
+	private static function row_prefix( $type, $key ) {
+		return self::OPTION_PREFIX . $type . '_' . md5( $key ) . '_';
+	}
+
+	/**
+	 * Returns when the failures of an address or user name that still count expire, oldest first.
+	 *
+	 * @param string $type ip or user.
+	 * @param string $key  Address or user name.
+	 * @return int[]|null Null when the rows could not be read.
+	 */
+	private static function expiries( $type, $key ) {
+		global $wpdb;
+		$rows = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- One row per failure, found by its name prefix; never cached.
+			$wpdb->prepare(
+				"SELECT option_value FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value > %s ORDER BY option_value ASC",
+				$wpdb->esc_like( self::row_prefix( $type, $key ) ) . '%',
+				self::stamp( time() )
+			)
+		);
+		if ( '' !== $wpdb->last_error ) {
+			self::log( sprintf( 'Could not read the login failures: %s', $wpdb->last_error ) );
+			return null;
+		}
+		return array_map( 'intval', (array) $rows );
 	}
 
 	/**
 	 * Returns until when an address or user name is locked (0 when not).
 	 *
-	 * @param string $type ip or user.
-	 * @param string $key  Address or user name.
-	 * @return int
-	 */
-	private static function locked_until( $type, $key ) {
-		if ( '' === $key ) {
-			return 0;
-		}
-		$state = get_transient( self::transient_name( $type, $key ) );
-		return is_array( $state ) && isset( $state['locked_until'] ) ? (int) $state['locked_until'] : 0;
-	}
-
-	/**
-	 * Adds a failure to an address or user name, and locks it at the limit.
-	 *
-	 * The count is kept for the lockout time: failures further apart than
-	 * that start over.
+	 * Locked while at least the limit of failures count; the lock ends when
+	 * enough of them have expired for the count to drop below the limit.
+	 * When the failures cannot be read, the login goes through (an outage
+	 * must not lock everyone out) and the error is logged.
 	 *
 	 * @param string $type  ip or user.
 	 * @param string $key   Address or user name.
 	 * @param int    $limit Failures allowed.
+	 * @return int
 	 */
-	private static function increment( $type, $key, $limit ) {
+	private static function locked_until( $type, $key, $limit ) {
 		if ( '' === $key ) {
-			return;
+			return 0;
 		}
-		$seconds = self::limit( 'wc4jp-login-limit-lockout-minutes' ) * MINUTE_IN_SECONDS;
-		$name    = self::transient_name( $type, $key );
-		$state   = get_transient( $name );
-		$count   = is_array( $state ) && isset( $state['count'] ) ? (int) $state['count'] : 0;
-		++$count;
-		$state = array(
-			'count'        => $count,
-			'locked_until' => 0,
-		);
-		if ( $count >= $limit ) {
-			$state['locked_until'] = time() + $seconds;
-			self::log( $type, $count, $seconds );
+		$expiries = self::expiries( $type, $key );
+		if ( null === $expiries || count( $expiries ) < $limit ) {
+			return 0;
 		}
-		set_transient( $name, $state, $seconds );
+		return $expiries[ count( $expiries ) - $limit ];
 	}
 
 	/**
-	 * Logs a lockout with WooCommerce's logger (source jp4wc-login-limit), without the address or name.
+	 * Adds a failure to an address or user name, and logs the lock at the limit.
+	 *
+	 * A failure counts for the lockout time, so failures further apart than
+	 * that do not add up. Expired failures of the same key are removed on the way.
 	 *
 	 * @param string $type    ip or user.
-	 * @param int    $count   Failures counted.
-	 * @param int    $seconds Lockout length.
+	 * @param string $key     Address or user name.
+	 * @param int    $limit   Failures allowed.
+	 * @param int    $seconds How long the failure counts.
 	 */
-	private static function log( $type, $count, $seconds ) {
+	private static function add_failure( $type, $key, $limit, $seconds ) {
+		global $wpdb;
+		if ( '' === $key ) {
+			return;
+		}
+		$prefix = self::row_prefix( $type, $key );
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Expired failures of this key; never cached.
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value <= %s",
+				$wpdb->esc_like( $prefix ) . '%',
+				self::stamp( time() )
+			)
+		);
+		$inserted = $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- One row per failure: an atomic count, unlike a value read and written back.
+			$wpdb->options,
+			array(
+				'option_name'  => $prefix . str_replace( '.', '', uniqid( '', true ) ) . wp_rand( 1000, 9999 ),
+				'option_value' => self::stamp( time() + $seconds ),
+				'autoload'     => 'off',
+			),
+			array( '%s', '%s', '%s' )
+		);
+		if ( false === $inserted ) {
+			self::log( sprintf( 'Could not record a login failure: %s', $wpdb->last_error ) );
+			return;
+		}
+		$expiries = self::expiries( $type, $key );
+		if ( null !== $expiries && count( $expiries ) >= $limit ) {
+			self::log( sprintf( 'Login attempts locked by %s after %d failures for %d seconds.', 'ip' === $type ? 'client address' : 'user name', count( $expiries ), $seconds ) );
+		}
+	}
+
+	/**
+	 * Removes the option rows whose name starts with a prefix.
+	 *
+	 * @param string $prefix Option name prefix.
+	 */
+	private static function delete_rows( $prefix ) {
+		global $wpdb;
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Rows found by their name prefix; never cached.
+			$wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( $prefix ) . '%' )
+		);
+	}
+
+	/**
+	 * Returns a time as the fixed-width string the rows hold, so that strings compare as numbers.
+	 *
+	 * @param int $time Unix time.
+	 * @return string
+	 */
+	private static function stamp( $time ) {
+		return sprintf( '%010d', $time );
+	}
+
+	/**
+	 * Logs with WooCommerce's logger (source jp4wc-login-limit), without the address or name.
+	 *
+	 * @param string $message Message.
+	 */
+	private static function log( $message ) {
 		if ( ! function_exists( 'wc_get_logger' ) ) {
 			return;
 		}
-		wc_get_logger()->warning(
-			sprintf( 'Login attempts locked by %s after %d failures for %d seconds.', 'ip' === $type ? 'client address' : 'user name', $count, $seconds ),
-			array( 'source' => 'jp4wc-login-limit' )
-		);
+		wc_get_logger()->warning( $message, array( 'source' => 'jp4wc-login-limit' ) );
 	}
 }
 
