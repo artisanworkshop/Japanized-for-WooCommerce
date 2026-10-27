@@ -602,7 +602,7 @@ class JP4WC_Security_Checks {
 		if ( null !== self::login_protected_by_other_means( $context ) ) {
 			return 'pass';
 		}
-		// This plugin's own limiter (3.1.0). class_exists: an earlier version's includes() may have loaded this file.
+		// This plugin's own limiter (3.0.0). class_exists: an earlier version's includes() may have loaded this file.
 		if ( class_exists( 'JP4WC_Login_Limiter', false ) && JP4WC_Login_Limiter::is_active() ) {
 			return 'pass';
 		}
@@ -680,13 +680,18 @@ class JP4WC_Security_Checks {
 	/**
 	 * A-05: the users REST route lists users to anyone.
 	 *
-	 * A route that lists nobody (X-WP-Total: 0) passes.
+	 * A route that lists nobody (X-WP-Total: 0) passes. With this plugin's own
+	 * setting that hides the route from visitors, the route is still requested
+	 * (another plugin could put it back): a list of users fails, anything
+	 * else passes.
 	 *
 	 * @param array $context Context.
 	 * @return string
 	 */
 	private static function rest_users( array $context ) {
-		return $context['probe']->status(
+		// This plugin's own setting (3.0.0). class_exists: an earlier version's includes() may have loaded this file.
+		$hidden = class_exists( 'JP4WC_Security_Hardening', false ) && JP4WC_Security_Hardening::hides_rest_users();
+		$status = $context['probe']->status(
 			'A-05',
 			get_rest_url( null, 'wp/v2/users' ),
 			static function ( $response ) {
@@ -696,6 +701,8 @@ class JP4WC_Security_Checks {
 				return JP4WC_Security_Probe::status_for_code( $response, array() );
 			}
 		);
+		// With the setting on, the route is gone for visitors: only a list of users seen by the probe says otherwise.
+		return $hidden && 'fail' !== $status ? 'pass' : $status;
 	}
 
 	/**
@@ -1429,7 +1436,7 @@ class JP4WC_Security_Checks {
 	 * attempt limiter (JP4WC_Login_Limiter) sleeps while one of these is in
 	 * place, so that two limiters never count the same failure.
 	 *
-	 * @since 3.1.0
+	 * @since 3.0.0
 	 * @param array $context Context: active_plugins and abspath (A-02).
 	 * @return array{type: string, name: string}|null type: plugin, htaccess or
 	 *                                                jetpack; name: the plugin
@@ -1459,21 +1466,62 @@ class JP4WC_Security_Checks {
 	}
 
 	/**
-	 * Whether Jetpack's brute force protection is on.
+	 * Whether Jetpack's brute force protection is on and running.
 	 *
 	 * Jetpack and the Jetpack Protect plugin both bundle the jetpack-waf
 	 * package, whose Brute_Force_Protection class knows whether it is on
 	 * (Jetpack 12.6+, Jetpack Protect 3.0+); older Jetpack versions have it
-	 * as the "protect" module. Neither plugin is in KNOWN_PLUGINS: active
-	 * with the protection off, they do not protect the login page.
+	 * as the "protect" module. The package runs the protection only while
+	 * the site is connected to WordPress.com (its initialize() checks
+	 * Connection\Manager::is_connected()), so the connection is required too.
+	 * Neither plugin is in KNOWN_PLUGINS: active with the protection off or
+	 * unconnected, they do not protect the login page.
 	 *
-	 * @param array $context Context; jetpack_protect (bool) overrides the lookup (tests).
+	 * @param array $context Context; jetpack_protect and jetpack_connected (bool) override the lookups (tests).
 	 * @return bool
 	 */
 	private static function jetpack_protects_login( array $context ) {
-		if ( isset( $context['jetpack_protect'] ) ) {
-			return (bool) $context['jetpack_protect'];
+		$enabled = isset( $context['jetpack_protect'] ) ? (bool) $context['jetpack_protect'] : self::jetpack_protection_enabled();
+		if ( ! $enabled ) {
+			return false;
 		}
+		if ( isset( $context['jetpack_connected'] ) ) {
+			return (bool) $context['jetpack_connected'];
+		}
+		return self::jetpack_connected();
+	}
+
+	/**
+	 * Whether the site is connected to WordPress.com, as Jetpack sees it.
+	 *
+	 * @return bool
+	 */
+	private static function jetpack_connected() {
+		$manager = 'Automattic\Jetpack\Connection\Manager';
+		if ( class_exists( $manager ) && method_exists( $manager, 'is_connected' ) ) {
+			try {
+				return (bool) ( new $manager() )->is_connected();
+			} catch ( Throwable $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- Unknown Jetpack version: fall through to the plugin class.
+				// Fall through.
+			}
+		}
+		if ( class_exists( 'Jetpack' ) ) {
+			if ( method_exists( 'Jetpack', 'is_connection_ready' ) ) {
+				return (bool) Jetpack::is_connection_ready();
+			}
+			if ( method_exists( 'Jetpack', 'is_active' ) ) {
+				return (bool) Jetpack::is_active();
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Whether Jetpack's brute force protection module is on.
+	 *
+	 * @return bool
+	 */
+	private static function jetpack_protection_enabled() {
 		$class = 'Automattic\Jetpack\Waf\Brute_Force_Protection\Brute_Force_Protection';
 		if ( class_exists( $class ) && method_exists( $class, 'is_enabled' ) ) {
 			try {

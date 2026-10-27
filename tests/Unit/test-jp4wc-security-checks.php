@@ -828,7 +828,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A-02 passes with this plugin's own login attempt limiter on, without a request (3.1.0).
+	 * A-02 passes with this plugin's own login attempt limiter on, without a request (3.0.0).
 	 */
 	public function test_a02_own_login_limiter() {
 		$context                            = array(
@@ -860,13 +860,19 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	 */
 	public function test_a02_jetpack_and_what_protects_the_page() {
 		$context                            = array(
-			'abspath'         => $this->dir,
-			'active_plugins'  => array( 'jetpack' ),
-			'jetpack_protect' => true,
+			'abspath'           => $this->dir,
+			'active_plugins'    => array( 'jetpack' ),
+			'jetpack_protect'   => true,
+			'jetpack_connected' => true,
 		);
 		$this->answers[ self::login_url() ] = array( 200, array() );
 		$this->assertSame( 'pass', $this->status( 'A-02', $context ) );
 		$this->assertSame( array(), $this->requested );
+
+		$context['jetpack_connected'] = false;
+		$this->assertSame( 'fail', $this->status( 'A-02', $context ), 'Jetpack runs the protection only while connected to WordPress.com (3.0.0).' );
+		$this->assertNull( JP4WC_Security_Checks::login_protected_by_other_means( $context ) );
+		$context['jetpack_connected'] = true;
 		$this->assertSame(
 			array(
 				'type' => 'jetpack',
@@ -897,6 +903,31 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			),
 			JP4WC_Security_Checks::login_protected_by_other_means( $context )
 		);
+	}
+
+	/**
+	 * A-05 passes with this plugin's own setting that hides the users routes, without a request (3.0.0).
+	 */
+	public function test_a05_own_setting() {
+		$url = get_rest_url( null, 'wp/v2/users' );
+		update_option( 'wc4jp-hide-rest-users', '1' );
+		try {
+			$this->answers[ $url ] = array( 404, array() );
+			$this->assertSame( 'pass', $this->status( 'A-05' ) );
+			$this->assertContains( $url, $this->requested, 'The route is still requested (after the home page).' );
+
+			unset( $this->answers[ $url ] );
+			$this->assertSame( 'pass', $this->status( 'A-05' ), 'Unreachable: the setting is trusted.' );
+
+			$this->answers[ $url ] = array( 200, array( 'x-wp-total' => '3' ) );
+			$this->assertSame( 'fail', $this->status( 'A-05' ), 'Another plugin put the route back: the list is what counts.' );
+
+			update_option( 'wc4jp-hide-rest-users', '' );
+			unset( $this->answers[ $url ] );
+			$this->assertSame( 'unknown', $this->status( 'A-05' ), 'Off: unreachable is unknown, as before.' );
+		} finally {
+			delete_option( 'wc4jp-hide-rest-users' );
+		}
 	}
 
 	/**

@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Loaded here as well: an earlier version's JP4WC::includes() may load this file through class-jp4wc-admin-settings.php (#266).
 require_once dirname( __DIR__ ) . '/class-jp4wc-login-limiter.php';
+require_once dirname( __DIR__ ) . '/class-jp4wc-security-hardening.php';
 
 /**
  * JP4WC_Settings_API class.
@@ -202,7 +203,7 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 					// Offered as a checkout option value and saved to orders as is.
 					$value = sanitize_text_field( $value );
 				}
-				if ( 'security-scan' === $key || 'login-limit' === $key ) {
+				if ( in_array( $key, array( 'security-scan', 'login-limit', 'hide-rest-users', 'disallow-file-edit' ), true ) ) {
 					// Anything but on is off, the way the other checkboxes are saved.
 					$value = ( '1' === $value || true === $value ) ? '1' : '';
 				}
@@ -267,6 +268,8 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'login-limit-ip-attempts',
 			'login-limit-user-attempts',
 			'login-limit-lockout-minutes',
+			'hide-rest-users',
+			'disallow-file-edit',
 			// Shipment settings.
 			'delivery-date',
 			'delivery-date-required',

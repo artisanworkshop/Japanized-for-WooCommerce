@@ -680,6 +680,19 @@ const SecuritySettings = ( {
 	const enabled = view?.enabled;
 	const loginLimitOn = settings?.[ 'login-limit' ] === '1';
 	const protectedBy = protectedByText( view?.login_limit?.protected_by );
+	const fileEdit = view?.hardening?.file_edit;
+	let fileEditElsewhere = '';
+	if ( fileEdit?.defined_elsewhere ) {
+		fileEditElsewhere = __(
+			'File editing is already forbidden by wp-config.php or another plugin (DISALLOW_FILE_EDIT or DISALLOW_FILE_MODS), so this setting changes nothing while that stays.',
+			'woocommerce-for-japan'
+		);
+	} else if ( fileEdit?.allowed_by_constant ) {
+		fileEditElsewhere = __(
+			'wp-config.php defines DISALLOW_FILE_EDIT as false, so this setting cannot forbid file editing until that line is removed.',
+			'woocommerce-for-japan'
+		);
+	}
 	// Saved as on, nothing else protects the page, yet not running: the constant or a filter.
 	const disabledOutside =
 		view?.login_limit?.enabled === true &&
@@ -905,6 +918,46 @@ const SecuritySettings = ( {
 							/>
 						</PanelRow>
 					) ) }
+				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'Hide the user list from the REST API',
+							'woocommerce-for-japan'
+						) }
+						help={ __(
+							'Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who are not logged in. Logged-in users keep their WordPress permissions (a browser tab opened on the route without a nonce counts as a visitor). Turn it off if a public page of this site lists authors through the REST API.',
+							'woocommerce-for-japan'
+						) }
+						checked={ settings?.[ 'hide-rest-users' ] === '1' }
+						onChange={ ( value ) =>
+							updateSetting( 'hide-rest-users', value ? '1' : '' )
+						}
+					/>
+				</PanelRow>
+				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'Forbid file editing in the admin screens',
+							'woocommerce-for-japan'
+						) }
+						help={
+							__(
+								'Define DISALLOW_FILE_EDIT when the plugin loads, so the theme and plugin file editors are gone from the admin screens. Updates and installs still work.',
+								'woocommerce-for-japan'
+							) +
+							( fileEditElsewhere ? ' ' + fileEditElsewhere : '' )
+						}
+						checked={ settings?.[ 'disallow-file-edit' ] === '1' }
+						onChange={ ( value ) =>
+							updateSetting(
+								'disallow-file-edit',
+								value ? '1' : ''
+							)
+						}
+					/>
+				</PanelRow>
 				<PanelRow>
 					<p className="description">
 						{ createInterpolateElement(

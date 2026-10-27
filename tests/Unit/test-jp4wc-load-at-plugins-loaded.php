@@ -41,6 +41,7 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 			'security notice, admin'         => array( 'includes/admin/class-jp4wc-security-notice.php', 'JP4WC_Security_Notice' ),
 			'security REST API, admin'       => array( 'includes/admin/class-jp4wc-security-api.php', 'JP4WC_Security_API' ),
 			'login limiter, authenticate'    => array( 'includes/class-jp4wc-login-limiter.php', 'JP4WC_Login_Limiter' ),
+			'security hardening, REST'       => array( 'includes/class-jp4wc-security-hardening.php', 'JP4WC_Security_Hardening' ),
 		);
 	}
 
