@@ -82,6 +82,11 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 */
 	private static function with_bundled_translation( callable $callback ) {
 		return static function ( $request ) use ( $callback ) {
+			// During an update, the previous version's includes() can load this file
+			// with a main file that lacks the helper.
+			if ( ! function_exists( 'jp4wc_with_bundled_translation' ) ) {
+				return $callback( $request );
+			}
 			return jp4wc_with_bundled_translation( $callback, $request );
 		};
 	}
