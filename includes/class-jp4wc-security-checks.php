@@ -680,18 +680,18 @@ class JP4WC_Security_Checks {
 	/**
 	 * A-05: the users REST route lists users to anyone.
 	 *
-	 * A route that lists nobody (X-WP-Total: 0) passes, as does this plugin's
-	 * own setting that hides the route from visitors.
+	 * A route that lists nobody (X-WP-Total: 0) passes. With this plugin's own
+	 * setting that hides the route from visitors, the route is still requested
+	 * (another plugin could put it back): a list of users fails, anything
+	 * else passes.
 	 *
 	 * @param array $context Context.
 	 * @return string
 	 */
 	private static function rest_users( array $context ) {
 		// This plugin's own setting (3.0.0). class_exists: an earlier version's includes() may have loaded this file.
-		if ( class_exists( 'JP4WC_Security_Hardening', false ) && JP4WC_Security_Hardening::hides_rest_users() ) {
-			return 'pass';
-		}
-		return $context['probe']->status(
+		$hidden = class_exists( 'JP4WC_Security_Hardening', false ) && JP4WC_Security_Hardening::hides_rest_users();
+		$status = $context['probe']->status(
 			'A-05',
 			get_rest_url( null, 'wp/v2/users' ),
 			static function ( $response ) {
@@ -701,6 +701,8 @@ class JP4WC_Security_Checks {
 				return JP4WC_Security_Probe::status_for_code( $response, array() );
 			}
 		);
+		// With the setting on, the route is gone for visitors: only a list of users seen by the probe says otherwise.
+		return $hidden && 'fail' !== $status ? 'pass' : $status;
 	}
 
 	/**

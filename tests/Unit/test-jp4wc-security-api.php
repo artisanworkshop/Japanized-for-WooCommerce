@@ -493,6 +493,8 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 			$this->assertFalse( $data['hardening']['rest_users']['enabled'] );
 			$this->assertFalse( $data['hardening']['file_edit']['enabled'] );
 			$this->assertIsBool( $data['hardening']['file_edit']['defined_elsewhere'] );
+			$this->assertIsBool( $data['hardening']['file_edit']['forbidden'] );
+			$this->assertIsBool( $data['hardening']['file_edit']['allowed_by_constant'] );
 
 			update_option( 'wc4jp-hide-rest-users', '1' );
 			update_option( 'wc4jp-disallow-file-edit', '1' );

@@ -909,13 +909,22 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	 * A-05 passes with this plugin's own setting that hides the users routes, without a request (3.0.0).
 	 */
 	public function test_a05_own_setting() {
-		$this->answers[ get_rest_url( null, 'wp/v2/users' ) ] = array( 200, array( 'x-wp-total' => '3' ) );
+		$url = get_rest_url( null, 'wp/v2/users' );
 		update_option( 'wc4jp-hide-rest-users', '1' );
 		try {
+			$this->answers[ $url ] = array( 404, array() );
 			$this->assertSame( 'pass', $this->status( 'A-05' ) );
-			$this->assertSame( array(), $this->requested );
+			$this->assertContains( $url, $this->requested, 'The route is still requested (after the home page).' );
+
+			unset( $this->answers[ $url ] );
+			$this->assertSame( 'pass', $this->status( 'A-05' ), 'Unreachable: the setting is trusted.' );
+
+			$this->answers[ $url ] = array( 200, array( 'x-wp-total' => '3' ) );
+			$this->assertSame( 'fail', $this->status( 'A-05' ), 'Another plugin put the route back: the list is what counts.' );
+
 			update_option( 'wc4jp-hide-rest-users', '' );
-			$this->assertSame( 'fail', $this->status( 'A-05' ) );
+			unset( $this->answers[ $url ] );
+			$this->assertSame( 'unknown', $this->status( 'A-05' ), 'Off: unreachable is unknown, as before.' );
 		} finally {
 			delete_option( 'wc4jp-hide-rest-users' );
 		}

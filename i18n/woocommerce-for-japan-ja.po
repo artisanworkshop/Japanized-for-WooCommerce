@@ -3523,18 +3523,6 @@ msgstr "REST API のユーザー一覧を隠す"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid ""
-"Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who "
-"are not logged in. Logged-in users keep their WordPress permissions. Turn it "
-"off if a public page of this site lists authors through the REST API."
-msgstr ""
-"ログインしていない訪問者には、ユーザー一覧の REST ルート（/wp-json/wp/v2/"
-"users）を返しません。ログイン済みのユーザーの権限は WordPress のままです。こ"
-"のサイトの公開ページが REST API で著者一覧を取得している場合はオフにしてくだ"
-"さい。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
 msgid "Forbid file editing in the admin screens"
 msgstr "管理画面からのファイル編集を禁止"
 
@@ -3559,6 +3547,29 @@ msgstr ""
 "wp-config.php または他のプラグインが既にファイル編集を禁止しています"
 "（DISALLOW_FILE_EDIT または DISALLOW_FILE_MODS）。その間、この設定は何も変え"
 "ません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who "
+"are not logged in. Logged-in users keep their WordPress permissions (a "
+"browser tab opened on the route without a nonce counts as a visitor). Turn "
+"it off if a public page of this site lists authors through the REST API."
+msgstr ""
+"ログインしていない訪問者には、ユーザー一覧の REST ルート（/wp-json/wp/v2/"
+"users）を返しません。ログイン済みのユーザーの権限は WordPress のままです"
+"（nonce の無いブラウザのタブで直接開いた場合は訪問者として扱われます）。この"
+"サイトの公開ページが REST API で著者一覧を取得している場合はオフにしてくださ"
+"い。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"wp-config.php defines DISALLOW_FILE_EDIT as false, so this setting cannot "
+"forbid file editing until that line is removed."
+msgstr ""
+"wp-config.php が DISALLOW_FILE_EDIT を false で定義しているため、その行を消す"
+"までこの設定ではファイル編集を禁止できません。"
 
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44

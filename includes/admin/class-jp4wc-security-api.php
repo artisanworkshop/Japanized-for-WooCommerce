@@ -214,7 +214,7 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 *     feed: array{host: string, has_data: bool, synced_at: int, last_attempt: int, failing: bool, unavailable: bool},
 	 *     recheck: array{requested_at: int, done_at: int, pending: bool, retry_after: int},
 	 *     login_limit: array{enabled: bool, active: bool, protected_by: array{type: string, name: string}|null},
-	 *     hardening: array{rest_users: array{enabled: bool}, file_edit: array{enabled: bool, defined_elsewhere: bool}}
+	 *     hardening: array{rest_users: array{enabled: bool}, file_edit: array{enabled: bool, defined_elsewhere: bool, forbidden: bool, allowed_by_constant: bool}}
 	 * }
 	 *         Requirement status: pass when every check passed, action when one
 	 *         failed, otherwise unknown. vulnerabilities is null without data.
@@ -232,8 +232,12 @@ class JP4WC_Security_API extends WP_REST_Controller {
 			'hardening'       => array(
 				'rest_users' => array( 'enabled' => JP4WC_Security_Hardening::hides_rest_users() ),
 				'file_edit'  => array(
-					'enabled'           => JP4WC_Security_Hardening::disallows_file_edit(),
-					'defined_elsewhere' => JP4WC_Security_Hardening::file_edit_defined_elsewhere(),
+					'enabled'             => JP4WC_Security_Hardening::disallows_file_edit(),
+					'defined_elsewhere'   => JP4WC_Security_Hardening::file_edit_defined_elsewhere(),
+					// What this request sees, whoever defined the constants.
+					'forbidden'           => JP4WC_Security_Hardening::file_edit_forbidden(),
+					// wp-config.php defines DISALLOW_FILE_EDIT as false: the setting cannot change it.
+					'allowed_by_constant' => JP4WC_Security_Hardening::file_edit_allowed_by_constant(),
 				),
 			),
 			'enabled'         => JP4WC_Security_Feed::is_enabled(),

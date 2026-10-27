@@ -2707,11 +2707,6 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who are not logged in. Logged-in users keep their WordPress permissions. Turn it off if a public page of this site lists authors through the REST API."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
 msgid "Forbid file editing in the admin screens"
 msgstr ""
 
@@ -2723,6 +2718,16 @@ msgstr ""
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
 msgid "File editing is already forbidden by wp-config.php or another plugin (DISALLOW_FILE_EDIT or DISALLOW_FILE_MODS), so this setting changes nothing while that stays."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who are not logged in. Logged-in users keep their WordPress permissions (a browser tab opened on the route without a nonce counts as a visitor). Turn it off if a public page of this site lists authors through the REST API."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "wp-config.php defines DISALLOW_FILE_EDIT as false, so this setting cannot forbid file editing until that line is removed."
 msgstr ""
 
 #: assets/js/build/blocks/delivery-block-editor.js:1

@@ -102,6 +102,24 @@ class JP4WC_Security_Hardening {
 	}
 
 	/**
+	 * Whether file editing is forbidden on this request, whoever defined the constant.
+	 *
+	 * @return bool
+	 */
+	public static function file_edit_forbidden() {
+		return ( defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT ) || ( defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS );
+	}
+
+	/**
+	 * Whether DISALLOW_FILE_EDIT is defined as false (wp-config.php), which the setting cannot change.
+	 *
+	 * @return bool
+	 */
+	public static function file_edit_allowed_by_constant() {
+		return defined( 'DISALLOW_FILE_EDIT' ) && ! DISALLOW_FILE_EDIT && ! self::$defined_file_edit;
+	}
+
+	/**
 	 * Removes the users REST routes for a visitor who is not logged in (rest_endpoints).
 	 *
 	 * The filter runs in WP_REST_Server::get_routes(), after the request was
@@ -128,7 +146,9 @@ class JP4WC_Security_Hardening {
 	 *
 	 * Runs when the file loads (plugins_loaded): wp-admin/menu.php and
 	 * map_meta_cap() read the constant later in the request. Code that reads
-	 * it before plugins load (a must-use plugin) does not see it.
+	 * it before plugins load (a must-use plugin) does not see it. A constant
+	 * lasts for the process: on a long-lived PHP worker, turning the setting
+	 * off takes effect when the worker restarts (the safe direction).
 	 *
 	 * @return bool Whether the constant was defined by this call.
 	 */
