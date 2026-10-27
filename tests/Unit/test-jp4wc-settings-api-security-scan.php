@@ -116,7 +116,7 @@ class JP4WC_Settings_API_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The login attempt limiter is off until turned on, and its limits are reported with their defaults (3.1.0).
+	 * The login attempt limiter is off until turned on, and its limits are reported with their defaults (3.0.0).
 	 */
 	public function test_login_limit_is_reported_off_with_default_limits() {
 		delete_option( 'wc4jp-login-limit' );
@@ -179,6 +179,32 @@ class JP4WC_Settings_API_Security_Scan_Test extends WP_UnitTestCase {
 			$this->assertSame( $saved, $this->reported_settings()['login-limit-ip-attempts'] );
 		} finally {
 			delete_option( 'wc4jp-login-limit-ip-attempts' );
+		}
+	}
+
+	/**
+	 * The hardening options are off until turned on, and saved as on or off only (3.0.0).
+	 *
+	 * @dataProvider posted_value_provider
+	 *
+	 * @param mixed  $posted Posted value.
+	 * @param string $saved  Saved value.
+	 */
+	public function test_hardening_options_are_saved_as_on_or_off( $posted, $saved ) {
+		try {
+			$this->assertSame( '', $this->reported_settings()['hide-rest-users'] );
+			$this->assertSame( '', $this->reported_settings()['disallow-file-edit'] );
+			$this->save(
+				array(
+					'hide-rest-users'    => $posted,
+					'disallow-file-edit' => $posted,
+				)
+			);
+			$this->assertSame( $saved, get_option( 'wc4jp-hide-rest-users' ) );
+			$this->assertSame( $saved, get_option( 'wc4jp-disallow-file-edit' ) );
+		} finally {
+			delete_option( 'wc4jp-hide-rest-users' );
+			delete_option( 'wc4jp-disallow-file-edit' );
 		}
 	}
 

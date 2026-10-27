@@ -3,7 +3,7 @@
  * Login attempt limiter.
  *
  * @package Japanized_For_WooCommerce
- * @since 3.1.0
+ * @since 3.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,7 +35,7 @@ require_once __DIR__ . '/class-jp4wc-security-checks.php';
  * JP4WC_LOGIN_LIMIT_DISABLE in wp-config.php turns it off from outside when
  * an administrator locked themselves out.
  *
- * @since 3.1.0
+ * @since 3.0.0
  */
 class JP4WC_Login_Limiter {
 
@@ -119,7 +119,7 @@ class JP4WC_Login_Limiter {
 		 * `jp4wc_security_known_plugins` filter adds a plugin to that list, which
 		 * also makes check A-02 pass).
 		 *
-		 * @since 3.1.0
+		 * @since 3.0.0
 		 * @param bool $active Whether the limiter runs.
 		 */
 		return (bool) apply_filters( 'jp4wc_login_limit_enabled', true );
@@ -260,7 +260,7 @@ class JP4WC_Login_Limiter {
 		 * A site behind a proxy it trusts can take the address from the header
 		 * that proxy sets. Return an empty string to count by address no more.
 		 *
-		 * @since 3.1.0
+		 * @since 3.0.0
 		 * @param string $ip The address (REMOTE_ADDR).
 		 */
 		return (string) apply_filters( 'jp4wc_login_limit_client_ip', $ip );

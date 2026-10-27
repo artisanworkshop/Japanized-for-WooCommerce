@@ -3270,15 +3270,6 @@ msgstr "REST API のユーザー一覧"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid ""
-"Stop the users REST route (/wp-json/wp/v2/users) from listing users to "
-"visitors who are not logged in, for example with a security plugin."
-msgstr ""
-"セキュリティプラグインなどで、ログインしていない訪問者に REST API のユーザー"
-"一覧（/wp-json/wp/v2/users）を返さないようにしてください。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "File listing of the uploads directory"
 msgstr "アップロードディレクトリのファイル一覧表示"
 
@@ -3350,12 +3341,6 @@ msgstr ""
 #: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "File editing in the admin screens"
 msgstr "管理画面からのファイル編集"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Add define( 'DISALLOW_FILE_EDIT', true ); to wp-config.php."
-msgstr ""
-"wp-config.php に define( 'DISALLOW_FILE_EDIT', true ); を追加してください。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
@@ -3510,6 +3495,70 @@ msgid ""
 msgstr ""
 "失敗はこの時間だけ数えます。数えている失敗が上限に達している間はログインを拒"
 "否します。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Turn on \"Hide the user list from the REST API\" under Settings on this tab, "
+"or stop the users REST route (/wp-json/wp/v2/users) from listing users to "
+"visitors who are not logged in with a security plugin."
+msgstr ""
+"このタブの「設定」で「REST API のユーザー一覧を隠す」を有効にするか、セキュリ"
+"ティプラグインで /wp-json/wp/v2/users がログインしていない訪問者にユーザー一"
+"覧を返さないようにしてください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid ""
+"Turn on \"Forbid file editing in the admin screens\" under Settings on this "
+"tab, or add define( 'DISALLOW_FILE_EDIT', true ); to wp-config.php."
+msgstr ""
+"このタブの「設定」で「管理画面からのファイル編集を禁止」を有効にするか、wp-"
+"config.php に define( 'DISALLOW_FILE_EDIT', true ); を追加してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Hide the user list from the REST API"
+msgstr "REST API のユーザー一覧を隠す"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who "
+"are not logged in. Logged-in users keep their WordPress permissions. Turn it "
+"off if a public page of this site lists authors through the REST API."
+msgstr ""
+"ログインしていない訪問者には、ユーザー一覧の REST ルート（/wp-json/wp/v2/"
+"users）を返しません。ログイン済みのユーザーの権限は WordPress のままです。こ"
+"のサイトの公開ページが REST API で著者一覧を取得している場合はオフにしてくだ"
+"さい。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Forbid file editing in the admin screens"
+msgstr "管理画面からのファイル編集を禁止"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Define DISALLOW_FILE_EDIT when the plugin loads, so the theme and plugin "
+"file editors are gone from the admin screens. Updates and installs still "
+"work."
+msgstr ""
+"プラグインの読み込み時に DISALLOW_FILE_EDIT を定義し、管理画面のテーマ・プラ"
+"グインファイルエディターを無効にします。更新とインストールはそのまま使えま"
+"す。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"File editing is already forbidden by wp-config.php or another plugin "
+"(DISALLOW_FILE_EDIT or DISALLOW_FILE_MODS), so this setting changes nothing "
+"while that stays."
+msgstr ""
+"wp-config.php または他のプラグインが既にファイル編集を禁止しています"
+"（DISALLOW_FILE_EDIT または DISALLOW_FILE_MODS）。その間、この設定は何も変え"
+"ません。"
 
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44

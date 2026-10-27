@@ -45,6 +45,10 @@ delete_metadata( 'user', 0, JP4WC_Security_Notice::DISMISSED_META, '', true );
 require_once __DIR__ . '/includes/class-jp4wc-login-limiter.php';
 JP4WC_Login_Limiter::uninstall();
 
+// The hardening options on every site.
+require_once __DIR__ . '/includes/class-jp4wc-security-hardening.php';
+JP4WC_Security_Hardening::uninstall();
+
 /**
  * Deletes the Paidy plugin options from the database.
  */
