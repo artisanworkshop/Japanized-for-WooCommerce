@@ -2653,11 +2653,6 @@ msgstr ""
 msgid "Lockout time (minutes)"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Logins are refused for this long once a limit is reached. Failures further apart than this are not added up."
-msgstr ""
-
 #. translators: %s: plugin slug
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
@@ -2698,6 +2693,11 @@ msgstr ""
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
 msgid "The limiter is turned off by JP4WC_LOGIN_LIMIT_DISABLE in wp-config.php or by a filter."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "A failure counts for this long. Logins are refused while the failures that still count reach a limit."
 msgstr ""
 
 #: assets/js/build/blocks/delivery-block-editor.js:1

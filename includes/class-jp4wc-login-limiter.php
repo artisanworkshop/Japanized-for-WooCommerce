@@ -78,6 +78,8 @@ class JP4WC_Login_Limiter {
 		add_filter( 'authenticate', array( __CLASS__, 'authenticate' ), self::AUTHENTICATE_PRIORITY, 2 );
 		add_action( 'wp_login_failed', array( __CLASS__, 'record_failure' ), 10, 2 );
 		add_action( 'wp_login', array( __CLASS__, 'clear' ) );
+		// WordPress fires this once a day: the failures of keys that never fail again are removed then.
+		add_action( 'delete_expired_transients', array( __CLASS__, 'delete_expired' ) );
 	}
 
 	/**
@@ -297,6 +299,20 @@ class JP4WC_Login_Limiter {
 	}
 
 	/**
+	 * Removes the failures that no longer count (every key), on each failure and once a day.
+	 */
+	public static function delete_expired() {
+		global $wpdb;
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Expired failures, found by their name prefix; never cached.
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value <= %s",
+				$wpdb->esc_like( self::OPTION_PREFIX ) . '%',
+				self::stamp( time() )
+			)
+		);
+	}
+
+	/**
 	 * Removes the settings of the current site.
 	 */
 	private static function delete_settings() {
@@ -310,14 +326,16 @@ class JP4WC_Login_Limiter {
 	 * Returns the key a user name or e-mail address is counted by.
 	 *
 	 * An e-mail address is the user's login name, as wp_authenticate_email_password()
-	 * resolves it, so both ways of logging in share one count.
+	 * resolves it, so both ways of logging in share one count. A login name
+	 * in the form of an e-mail address stays as it is, as wp_authenticate_username_password()
+	 * finds that user first.
 	 *
 	 * @param string $username User name or e-mail address.
 	 * @return string
 	 */
 	private static function user_key( $username ) {
 		$name = trim( (string) $username );
-		if ( is_email( $name ) ) {
+		if ( is_email( $name ) && ! get_user_by( 'login', $name ) ) {
 			$user = get_user_by( 'email', $name );
 			if ( $user instanceof WP_User ) {
 				$name = $user->user_login;
@@ -388,7 +406,7 @@ class JP4WC_Login_Limiter {
 	 * Adds a failure to an address or user name, and logs the lock at the limit.
 	 *
 	 * A failure counts for the lockout time, so failures further apart than
-	 * that do not add up. Expired failures of the same key are removed on the way.
+	 * that do not add up. Expired failures are removed on the way.
 	 *
 	 * @param string $type    ip or user.
 	 * @param string $key     Address or user name.
@@ -401,13 +419,7 @@ class JP4WC_Login_Limiter {
 			return;
 		}
 		$prefix = self::row_prefix( $type, $key );
-		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Expired failures of this key; never cached.
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value <= %s",
-				$wpdb->esc_like( $prefix ) . '%',
-				self::stamp( time() )
-			)
-		);
+		self::delete_expired();
 		$inserted = $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- One row per failure: an atomic count, unlike a value read and written back.
 			$wpdb->options,
 			array(

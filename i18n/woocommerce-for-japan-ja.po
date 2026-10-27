@@ -3429,15 +3429,6 @@ msgstr "ユーザー名ごとに許可する失敗回数"
 msgid "Lockout time (minutes)"
 msgstr "ロック時間（分）"
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid ""
-"Logins are refused for this long once a limit is reached. Failures further "
-"apart than this are not added up."
-msgstr ""
-"上限に達すると、この時間だけログインを拒否します。この時間より間隔が空いた失"
-"敗は合算しません。"
-
 #. translators: %s: plugin slug
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
@@ -3510,6 +3501,15 @@ msgid ""
 msgstr ""
 "wp-config.php の JP4WC_LOGIN_LIMIT_DISABLE またはフィルターで、この制限は止め"
 "られています。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"A failure counts for this long. Logins are refused while the failures that "
+"still count reach a limit."
+msgstr ""
+"失敗はこの時間だけ数えます。数えている失敗が上限に達している間はログインを拒"
+"否します。"
 
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44

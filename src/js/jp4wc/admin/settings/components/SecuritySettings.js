@@ -80,7 +80,7 @@ const loginLimitFields = () => [
 		key: 'login-limit-lockout-minutes',
 		label: __( 'Lockout time (minutes)', 'woocommerce-for-japan' ),
 		help: __(
-			'Logins are refused for this long once a limit is reached. Failures further apart than this are not added up.',
+			'A failure counts for this long. Logins are refused while the failures that still count reach a limit.',
 			'woocommerce-for-japan'
 		),
 		fallback: '15',

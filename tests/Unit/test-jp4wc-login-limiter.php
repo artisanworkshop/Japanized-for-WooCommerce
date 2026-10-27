@@ -446,6 +446,42 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Expired failures of any key are removed on the next failure and once a day (R2-1).
+	 */
+	public function test_expired_failures_of_other_keys_are_removed() {
+		global $wpdb;
+		$this->attempt( 'nobody' );
+		$wpdb->query( "UPDATE {$wpdb->options} SET option_value = '0000000001' WHERE option_name LIKE 'jp4wc_login_fail_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$_SERVER['REMOTE_ADDR'] = '198.51.100.9';
+		$this->attempt( 'limited' );
+		$this->assertSame( 0, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%' AND option_value = '0000000001'" ), 'The other address and name were swept with the new failure.' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$this->assertSame( 2, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%'" ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+
+		$wpdb->query( "UPDATE {$wpdb->options} SET option_value = '0000000001' WHERE option_name LIKE 'jp4wc_login_fail_%'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$this->assertSame( 10, has_action( 'delete_expired_transients', array( 'JP4WC_Login_Limiter', 'delete_expired' ) ) );
+		JP4WC_Login_Limiter::delete_expired();
+		$this->assertSame( 0, (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'jp4wc_login_fail_%'" ), 'The daily sweep removes them without a failure.' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+
+	/**
+	 * A login name in the form of an e-mail address is counted as itself, not as the user whose e-mail it is (R2-3).
+	 */
+	public function test_login_name_shaped_like_an_email_is_itself() {
+		self::factory()->user->create(
+			array(
+				'user_login' => 'limited@example.com',
+				'user_pass'  => 'other-password',
+				'user_email' => 'other@example.com',
+			)
+		);
+		$this->attempt( 'limited@example.com' );
+		$this->attempt( 'limited@example.com' );
+		$this->attempt( 'limited@example.com' );
+		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'limited@example.com', 'other-password' ) ) );
+		$this->assertInstanceOf( 'WP_User', $this->attempt( 'limited', 'right-password' ), 'The user whose e-mail that is was not counted.' );
+	}
+
+	/**
 	 * Removing the counts (delete_counts) and the settings too (uninstall).
 	 */
 	public function test_uninstall_removes_counts_and_settings() {
