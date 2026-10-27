@@ -63,3 +63,4 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - `dbDelta()` never drops or changes an index: a table version that does runs `DROP INDEX` itself and records the version only once the change is seen.
 - Code under test uses no explicit transactions (the WordPress test library wraps each test in one); undo with compensating writes.
 - A change that needs a step on the server adds it to `DEPLOY.md`.
+- `hosting/pressable/custom-redirects.php` repeats the feed file names and the default feed directory: a change to `Artws_Sec_Feed_Publisher::FILES` / `MANIFEST` or to that directory changes it in the same PR. It never redirects (the client sends `redirection => 0`) and never sends `Content-Encoding` with a `.json.gz`.
