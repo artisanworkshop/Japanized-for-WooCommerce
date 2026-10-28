@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Loaded here as well: an earlier version's JP4WC::includes() may load this file through class-jp4wc-admin-settings.php (#266).
+require_once dirname( __DIR__ ) . '/class-jp4wc-login-limiter.php';
+require_once dirname( __DIR__ ) . '/class-jp4wc-security-hardening.php';
+
 /**
  * JP4WC_Settings_API class.
  */
@@ -109,6 +113,10 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 		$defaults = array(
 			'security-scan' => '1',
 		);
+		// The login attempt limits: reported within their ranges, as they are used.
+		foreach ( JP4WC_Login_Limiter::LIMITS as $option_name => $range ) {
+			$defaults[ substr( $option_name, strlen( $this->prefix ) ) ] = (string) $range[0];
+		}
 
 		foreach ( $settings_keys as $key ) {
 			$option_name      = isset( $option_map[ $key ] ) ? $option_map[ $key ] : $this->prefix . $key;
@@ -195,9 +203,14 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 					// Offered as a checkout option value and saved to orders as is.
 					$value = sanitize_text_field( $value );
 				}
-				if ( 'security-scan' === $key ) {
+				if ( in_array( $key, array( 'security-scan', 'login-limit', 'hide-rest-users', 'disallow-file-edit' ), true ) ) {
 					// Anything but on is off, the way the other checkboxes are saved.
 					$value = ( '1' === $value || true === $value ) ? '1' : '';
+				}
+				if ( isset( JP4WC_Login_Limiter::LIMITS[ $option_name ] ) ) {
+					// Within its range; the default for anything that is not a number.
+					list( $default, $min, $max ) = JP4WC_Login_Limiter::LIMITS[ $option_name ];
+					$value                       = (string) JP4WC_Login_Limiter::clamp( $value, $default, $min, $max );
 				}
 				update_option( $option_name, $value );
 			}
@@ -251,6 +264,12 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'billing_address_2',
 			'billing_phone',
 			'security-scan',
+			'login-limit',
+			'login-limit-ip-attempts',
+			'login-limit-user-attempts',
+			'login-limit-lockout-minutes',
+			'hide-rest-users',
+			'disallow-file-edit',
 			// Shipment settings.
 			'delivery-date',
 			'delivery-date-required',

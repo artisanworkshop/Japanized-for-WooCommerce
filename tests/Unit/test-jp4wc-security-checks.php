@@ -828,6 +828,124 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A-02 passes with this plugin's own login attempt limiter on, without a request (3.0.0).
+	 */
+	public function test_a02_own_login_limiter() {
+		$context                            = array(
+			'abspath'        => $this->dir,
+			'active_plugins' => array( 'akismet' ),
+		);
+		$this->answers[ self::login_url() ] = array( 200, array() );
+		update_option( 'wc4jp-login-limit', '1' );
+		update_option( 'active_plugins', array() );
+		try {
+			$this->assertSame( 'pass', $this->status( 'A-02', $context ) );
+			$this->assertSame( array(), $this->requested );
+
+			add_filter( 'jp4wc_login_limit_enabled', '__return_false' );
+			try {
+				$this->assertSame( 'fail', $this->status( 'A-02', $context ), 'A limiter turned off by the filter does not protect the page.' );
+			} finally {
+				remove_filter( 'jp4wc_login_limit_enabled', '__return_false' );
+			}
+			update_option( 'wc4jp-login-limit', '' );
+			$this->assertSame( 'fail', $this->status( 'A-02', $context ) );
+		} finally {
+			delete_option( 'wc4jp-login-limit' );
+		}
+	}
+
+	/**
+	 * A-02 passes with Jetpack's brute force protection, and login_protected_by_other_means() names what protects the page.
+	 */
+	public function test_a02_jetpack_and_what_protects_the_page() {
+		$context                            = array(
+			'abspath'           => $this->dir,
+			'active_plugins'    => array( 'jetpack' ),
+			'jetpack_protect'   => true,
+			'jetpack_connected' => true,
+		);
+		$this->answers[ self::login_url() ] = array( 200, array() );
+		$this->assertSame( 'pass', $this->status( 'A-02', $context ) );
+		$this->assertSame( array(), $this->requested );
+
+		$context['jetpack_connected'] = false;
+		$this->assertSame( 'fail', $this->status( 'A-02', $context ), 'Jetpack runs the protection only while connected to WordPress.com (3.0.0).' );
+		$this->assertNull( JP4WC_Security_Checks::login_protected_by_other_means( $context ) );
+		$context['jetpack_connected'] = true;
+		$this->assertSame(
+			array(
+				'type' => 'jetpack',
+				'name' => 'Jetpack',
+			),
+			JP4WC_Security_Checks::login_protected_by_other_means( $context )
+		);
+
+		$context['jetpack_protect'] = false;
+		$this->assertSame( 'fail', $this->status( 'A-02', $context ), 'Jetpack with the protection off does not protect the page.' );
+		$this->assertNull( JP4WC_Security_Checks::login_protected_by_other_means( $context ) );
+
+		$context['active_plugins'] = array( 'jetpack', 'siteguard' );
+		$this->assertSame(
+			array(
+				'type' => 'plugin',
+				'name' => 'siteguard',
+			),
+			JP4WC_Security_Checks::login_protected_by_other_means( $context )
+		);
+
+		$context['active_plugins'] = array();
+		$this->write( '.htaccess', "<Files wp-login.php>\nRequire ip 192.0.2.1\n</Files>\n" );
+		$this->assertSame(
+			array(
+				'type' => 'htaccess',
+				'name' => '.htaccess',
+			),
+			JP4WC_Security_Checks::login_protected_by_other_means( $context )
+		);
+	}
+
+	/**
+	 * A-05 passes with this plugin's own setting that hides the users routes, without a request (3.0.0).
+	 */
+	public function test_a05_own_setting() {
+		$url = get_rest_url( null, 'wp/v2/users' );
+		update_option( 'wc4jp-hide-rest-users', '1' );
+		try {
+			$this->answers[ $url ] = array( 404, array() );
+			$this->assertSame( 'pass', $this->status( 'A-05' ) );
+			$this->assertContains( $url, $this->requested, 'The route is still requested (after the home page).' );
+
+			unset( $this->answers[ $url ] );
+			$this->assertSame( 'pass', $this->status( 'A-05' ), 'Unreachable: the setting is trusted.' );
+
+			$this->answers[ $url ] = array( 200, array( 'x-wp-total' => '3' ) );
+			$this->assertSame( 'fail', $this->status( 'A-05' ), 'Another plugin put the route back: the list is what counts.' );
+
+			update_option( 'wc4jp-hide-rest-users', '' );
+			unset( $this->answers[ $url ] );
+			$this->assertSame( 'unknown', $this->status( 'A-05' ), 'Off: unreachable is unknown, as before.' );
+		} finally {
+			delete_option( 'wc4jp-hide-rest-users' );
+		}
+	}
+
+	/**
+	 * Without Jetpack loaded, the Jetpack lookup says no (the test suite has no Jetpack).
+	 */
+	public function test_jetpack_lookup_without_jetpack() {
+		$this->assertFalse( class_exists( 'Jetpack' ) );
+		$this->assertNull(
+			JP4WC_Security_Checks::login_protected_by_other_means(
+				array(
+					'abspath'        => $this->dir,
+					'active_plugins' => array( 'jetpack' ),
+				)
+			)
+		);
+	}
+
+	/**
 	 * .htaccess rules that restrict the login page.
 	 *
 	 * @return array<string, array{string, string, string}>

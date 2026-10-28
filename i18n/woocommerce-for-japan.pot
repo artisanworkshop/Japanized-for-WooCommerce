@@ -2515,11 +2515,6 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Limit login attempts with a security plugin, or restrict wp-login.php to your IP addresses or a password in the server configuration."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Two-factor authentication"
 msgstr ""
 
@@ -2541,11 +2536,6 @@ msgstr ""
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "User list in the REST API"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Stop the users REST route (/wp-json/wp/v2/users) from listing users to visitors who are not logged in, for example with a security plugin."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
@@ -2605,11 +2595,6 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Add define( 'DISALLOW_FILE_EDIT', true ); to wp-config.php."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Malware scanning or a web application firewall"
 msgstr ""
 
@@ -2631,6 +2616,118 @@ msgstr ""
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
 msgid "No fixed version yet. Update WordPress as soon as its security release is out."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Turn on the login attempt limiter under Settings on this tab, limit login attempts with a security plugin, or restrict wp-login.php to your IP addresses or a password in the server configuration."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Failures allowed per IP address"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Behind a proxy or CDN that hides the visitor address, every visitor shares one address: keep this one the looser limit."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Failures allowed per user name"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Lockout time (minutes)"
+msgstr ""
+
+#. translators: %s: plugin slug
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, php-format
+msgid "The plugin \"%s\" already protects the login page, so this limiter does nothing while it is active."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Jetpack's brute force protection already protects the login page, so this limiter does nothing while it is on."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The server configuration (.htaccess) already restricts the login page, so this limiter does nothing while it does."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Login attempt limiter"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Count failed logins per IP address and per user name, and refuse logins for a while once a limit is reached. Covers the WordPress login page, the WooCommerce My Account and checkout login forms and XML-RPC."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "It does nothing while a security plugin, Jetpack or the server configuration already protects the login page. If you lock yourself out, define JP4WC_LOGIN_LIMIT_DISABLE as true in wp-config.php."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "An e-mail address used to log in counts against the same name as the user name."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The limiter is turned off by JP4WC_LOGIN_LIMIT_DISABLE in wp-config.php or by a filter."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "A failure counts for this long. Logins are refused while the failures that still count reach a limit."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Turn on \"Hide the user list from the REST API\" under Settings on this tab, or stop the users REST route (/wp-json/wp/v2/users) from listing users to visitors who are not logged in with a security plugin."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "Turn on \"Forbid file editing in the admin screens\" under Settings on this tab, or add define( 'DISALLOW_FILE_EDIT', true ); to wp-config.php."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Hide the user list from the REST API"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Forbid file editing in the admin screens"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Define DISALLOW_FILE_EDIT when the plugin loads, so the theme and plugin file editors are gone from the admin screens. Updates and installs still work."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "File editing is already forbidden by wp-config.php or another plugin (DISALLOW_FILE_EDIT or DISALLOW_FILE_MODS), so this setting changes nothing while that stays."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who are not logged in. Logged-in users keep their WordPress permissions (a browser tab opened on the route without a nonce counts as a visitor). Turn it off if a public page of this site lists authors through the REST API."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "wp-config.php defines DISALLOW_FILE_EDIT as false, so this setting cannot forbid file editing until that line is removed."
 msgstr ""
 
 #: assets/js/build/blocks/delivery-block-editor.js:1
@@ -3470,3 +3567,11 @@ msgstr[1] ""
 #: includes/admin/class-jp4wc-security-api.php:166
 msgid "The re-check could not be scheduled in WP-Cron. Try again later."
 msgstr ""
+
+#. translators: %d: minutes until logins are accepted again
+#: includes/class-jp4wc-login-limiter.php:181
+#, php-format
+msgid "<strong>Error:</strong> Too many login attempts. Please try again in %d minute."
+msgid_plural "<strong>Error:</strong> Too many login attempts. Please try again in %d minutes."
+msgstr[0] ""
+msgstr[1] ""

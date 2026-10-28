@@ -9,6 +9,8 @@
 defined( 'ABSPATH' ) || exit;
 
 require_once dirname( __DIR__ ) . '/class-jp4wc-security-feed.php';
+require_once dirname( __DIR__ ) . '/class-jp4wc-login-limiter.php';
+require_once dirname( __DIR__ ) . '/class-jp4wc-security-hardening.php';
 
 /**
  * JP4WC_Security_API
@@ -210,13 +212,34 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 *     checks: array<int, array{check_id: string, requirement: string, severity: string, status: string}>,
 	 *     vulnerabilities: array|null,
 	 *     feed: array{host: string, has_data: bool, synced_at: int, last_attempt: int, failing: bool, unavailable: bool},
-	 *     recheck: array{requested_at: int, done_at: int, pending: bool, retry_after: int}
+	 *     recheck: array{requested_at: int, done_at: int, pending: bool, retry_after: int},
+	 *     login_limit: array{enabled: bool, active: bool, protected_by: array{type: string, name: string}|null},
+	 *     hardening: array{rest_users: array{enabled: bool}, file_edit: array{enabled: bool, defined_elsewhere: bool, forbidden: bool, allowed_by_constant: bool}}
 	 * }
 	 *         Requirement status: pass when every check passed, action when one
 	 *         failed, otherwise unknown. vulnerabilities is null without data.
+	 *         login_limit (3.0.0): the login attempt limiter's setting, whether
+	 *         it runs, and what else protects the login page (then it sleeps).
 	 */
 	public static function view() {
-		$view = array(
+		$protected_by = JP4WC_Login_Limiter::protected_by();
+		$view         = array(
+			'login_limit'     => array(
+				'enabled'      => JP4WC_Login_Limiter::is_enabled(),
+				'active'       => JP4WC_Login_Limiter::is_active(),
+				'protected_by' => $protected_by,
+			),
+			'hardening'       => array(
+				'rest_users' => array( 'enabled' => JP4WC_Security_Hardening::hides_rest_users() ),
+				'file_edit'  => array(
+					'enabled'             => JP4WC_Security_Hardening::disallows_file_edit(),
+					'defined_elsewhere'   => JP4WC_Security_Hardening::file_edit_defined_elsewhere(),
+					// What this request sees, whoever defined the constants.
+					'forbidden'           => JP4WC_Security_Hardening::file_edit_forbidden(),
+					// wp-config.php defines DISALLOW_FILE_EDIT as false: the setting cannot change it.
+					'allowed_by_constant' => JP4WC_Security_Hardening::file_edit_allowed_by_constant(),
+				),
+			),
 			'enabled'         => JP4WC_Security_Feed::is_enabled(),
 			'checked_at'      => 0,
 			'score'           => null,

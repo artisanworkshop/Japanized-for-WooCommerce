@@ -590,15 +590,20 @@ class JP4WC_Security_Checks {
 	 * A-02: the login page open to everyone.
 	 *
 	 * Passes with a plugin that limits login attempts or hides the page, with
-	 * an access rule in .htaccess, or when the page does not answer the site's
-	 * own request (an IP restriction or password in the server configuration,
-	 * which .htaccess does not show on nginx).
+	 * Jetpack's brute force protection, with an access rule in .htaccess, with
+	 * this plugin's own login attempt limiter, or when the page does not answer
+	 * the site's own request (an IP restriction or password in the server
+	 * configuration, which .htaccess does not show on nginx).
 	 *
 	 * @param array $context Context.
 	 * @return string
 	 */
 	private static function login_protection( array $context ) {
-		if ( self::has_active_plugin( $context, 'login' ) || self::htaccess_restricts_login( self::abspath( $context ) ) ) {
+		if ( null !== self::login_protected_by_other_means( $context ) ) {
+			return 'pass';
+		}
+		// This plugin's own limiter (3.0.0). class_exists: an earlier version's includes() may have loaded this file.
+		if ( class_exists( 'JP4WC_Login_Limiter', false ) && JP4WC_Login_Limiter::is_active() ) {
 			return 'pass';
 		}
 		// The address as stored: the site_url filter is how some plugins hide the page.
@@ -675,13 +680,18 @@ class JP4WC_Security_Checks {
 	/**
 	 * A-05: the users REST route lists users to anyone.
 	 *
-	 * A route that lists nobody (X-WP-Total: 0) passes.
+	 * A route that lists nobody (X-WP-Total: 0) passes. With this plugin's own
+	 * setting that hides the route from visitors, the route is still requested
+	 * (another plugin could put it back): a list of users fails, anything
+	 * else passes.
 	 *
 	 * @param array $context Context.
 	 * @return string
 	 */
 	private static function rest_users( array $context ) {
-		return $context['probe']->status(
+		// This plugin's own setting (3.0.0). class_exists: an earlier version's includes() may have loaded this file.
+		$hidden = class_exists( 'JP4WC_Security_Hardening', false ) && JP4WC_Security_Hardening::hides_rest_users();
+		$status = $context['probe']->status(
 			'A-05',
 			get_rest_url( null, 'wp/v2/users' ),
 			static function ( $response ) {
@@ -691,6 +701,8 @@ class JP4WC_Security_Checks {
 				return JP4WC_Security_Probe::status_for_code( $response, array() );
 			}
 		);
+		// With the setting on, the route is gone for visitors: only a list of users seen by the probe says otherwise.
+		return $hidden && 'fail' !== $status ? 'pass' : $status;
 	}
 
 	/**
@@ -1400,8 +1412,131 @@ class JP4WC_Security_Checks {
 	 * @return bool
 	 */
 	private static function has_active_plugin( array $context, $category ) {
+		return null !== self::active_known_plugin( $context, $category );
+	}
+
+	/**
+	 * Returns the first active plugin of a category, or null.
+	 *
+	 * @param array  $context  Context.
+	 * @param string $category login, 2fa or security.
+	 * @return string|null Plugin slug.
+	 */
+	private static function active_known_plugin( array $context, $category ) {
 		$active = isset( $context['active_plugins'] ) && is_array( $context['active_plugins'] ) ? $context['active_plugins'] : self::active_plugin_slugs();
-		return array() !== array_intersect( $active, self::known_plugins( $category ) );
+		$found  = array_values( array_intersect( $active, self::known_plugins( $category ) ) );
+		return array() === $found ? null : (string) $found[0];
+	}
+
+	/**
+	 * Returns what protects the login page apart from this plugin's own limiter.
+	 *
+	 * The A-02 criteria: a known plugin that limits or hides logins, a
+	 * restriction in .htaccess, or Jetpack's brute force protection. The login
+	 * attempt limiter (JP4WC_Login_Limiter) sleeps while one of these is in
+	 * place, so that two limiters never count the same failure.
+	 *
+	 * @since 3.0.0
+	 * @param array $context Context: active_plugins and abspath (A-02).
+	 * @return array{type: string, name: string}|null type: plugin, htaccess or
+	 *                                                jetpack; name: the plugin
+	 *                                                slug, '.htaccess' or 'Jetpack'.
+	 */
+	public static function login_protected_by_other_means( array $context = array() ) {
+		$plugin = self::active_known_plugin( $context, 'login' );
+		if ( null !== $plugin ) {
+			return array(
+				'type' => 'plugin',
+				'name' => $plugin,
+			);
+		}
+		if ( self::jetpack_protects_login( $context ) ) {
+			return array(
+				'type' => 'jetpack',
+				'name' => 'Jetpack',
+			);
+		}
+		if ( self::htaccess_restricts_login( self::abspath( $context ) ) ) {
+			return array(
+				'type' => 'htaccess',
+				'name' => '.htaccess',
+			);
+		}
+		return null;
+	}
+
+	/**
+	 * Whether Jetpack's brute force protection is on and running.
+	 *
+	 * Jetpack and the Jetpack Protect plugin both bundle the jetpack-waf
+	 * package, whose Brute_Force_Protection class knows whether it is on
+	 * (Jetpack 12.6+, Jetpack Protect 3.0+); older Jetpack versions have it
+	 * as the "protect" module. The package runs the protection only while
+	 * the site is connected to WordPress.com (its initialize() checks
+	 * Connection\Manager::is_connected()), so the connection is required too.
+	 * Neither plugin is in KNOWN_PLUGINS: active with the protection off or
+	 * unconnected, they do not protect the login page.
+	 *
+	 * @param array $context Context; jetpack_protect and jetpack_connected (bool) override the lookups (tests).
+	 * @return bool
+	 */
+	private static function jetpack_protects_login( array $context ) {
+		$enabled = isset( $context['jetpack_protect'] ) ? (bool) $context['jetpack_protect'] : self::jetpack_protection_enabled();
+		if ( ! $enabled ) {
+			return false;
+		}
+		if ( isset( $context['jetpack_connected'] ) ) {
+			return (bool) $context['jetpack_connected'];
+		}
+		return self::jetpack_connected();
+	}
+
+	/**
+	 * Whether the site is connected to WordPress.com, as Jetpack sees it.
+	 *
+	 * @return bool
+	 */
+	private static function jetpack_connected() {
+		$manager = 'Automattic\Jetpack\Connection\Manager';
+		if ( class_exists( $manager ) && method_exists( $manager, 'is_connected' ) ) {
+			try {
+				return (bool) ( new $manager() )->is_connected();
+			} catch ( Throwable $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- Unknown Jetpack version: fall through to the plugin class.
+				// Fall through.
+			}
+		}
+		if ( class_exists( 'Jetpack' ) ) {
+			if ( method_exists( 'Jetpack', 'is_connection_ready' ) ) {
+				return (bool) Jetpack::is_connection_ready();
+			}
+			if ( method_exists( 'Jetpack', 'is_active' ) ) {
+				return (bool) Jetpack::is_active();
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Whether Jetpack's brute force protection module is on.
+	 *
+	 * @return bool
+	 */
+	private static function jetpack_protection_enabled() {
+		$class = 'Automattic\Jetpack\Waf\Brute_Force_Protection\Brute_Force_Protection';
+		if ( class_exists( $class ) && method_exists( $class, 'is_enabled' ) ) {
+			try {
+				$method = new ReflectionMethod( $class, 'is_enabled' );
+				if ( $method->isStatic() ) {
+					return (bool) $class::is_enabled();
+				}
+				if ( method_exists( $class, 'instance' ) ) {
+					return (bool) $class::instance()->is_enabled();
+				}
+			} catch ( Throwable $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- Unknown Jetpack version: fall through to the module check.
+				// Fall through.
+			}
+		}
+		return class_exists( 'Jetpack' ) && method_exists( 'Jetpack', 'is_module_active' ) && Jetpack::is_module_active( 'protect' );
 	}
 
 	/**

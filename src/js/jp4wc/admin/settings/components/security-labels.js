@@ -122,7 +122,7 @@ export const checkLabels = () => ( {
 	'A-02': {
 		title: __( 'Login page protection', 'woocommerce-for-japan' ),
 		fix: __(
-			'Limit login attempts with a security plugin, or restrict wp-login.php to your IP addresses or a password in the server configuration.',
+			'Turn on the login attempt limiter under Settings on this tab, limit login attempts with a security plugin, or restrict wp-login.php to your IP addresses or a password in the server configuration.',
 			'woocommerce-for-japan'
 		),
 	},
@@ -143,7 +143,7 @@ export const checkLabels = () => ( {
 	'A-05': {
 		title: __( 'User list in the REST API', 'woocommerce-for-japan' ),
 		fix: __(
-			'Stop the users REST route (/wp-json/wp/v2/users) from listing users to visitors who are not logged in, for example with a security plugin.',
+			'Turn on "Hide the user list from the REST API" under Settings on this tab, or stop the users REST route (/wp-json/wp/v2/users) from listing users to visitors who are not logged in with a security plugin.',
 			'woocommerce-for-japan'
 		),
 	},
@@ -203,7 +203,7 @@ export const checkLabels = () => ( {
 			'woocommerce-for-japan'
 		),
 		fix: __(
-			"Add define( 'DISALLOW_FILE_EDIT', true ); to wp-config.php.",
+			'Turn on "Forbid file editing in the admin screens" under Settings on this tab, or add define( \'DISALLOW_FILE_EDIT\', true ); to wp-config.php.',
 			'woocommerce-for-japan'
 		),
 	},

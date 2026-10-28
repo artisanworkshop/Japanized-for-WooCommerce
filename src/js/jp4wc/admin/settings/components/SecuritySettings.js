@@ -13,6 +13,7 @@ import {
 	Button,
 	Notice,
 	Spinner,
+	TextControl,
 } from '@wordpress/components';
 import {
 	useState,
@@ -47,6 +48,79 @@ const ATTRIBUTION = 'Vulnerability data: Wordfence Intelligence';
  * Terms of use of wc.artws.info, which cover the vulnerability feed.
  */
 const TERMS_URL = 'https://wc.artws.info/security-assessment-term/';
+
+/**
+ * The limits of the login attempt limiter: setting key, label, default and range
+ * (the same ranges as JP4WC_Login_Limiter::LIMITS, which the server applies).
+ */
+const loginLimitFields = () => [
+	{
+		key: 'login-limit-ip-attempts',
+		label: __( 'Failures allowed per IP address', 'woocommerce-for-japan' ),
+		help: __(
+			'Behind a proxy or CDN that hides the visitor address, every visitor shares one address: keep this one the looser limit.',
+			'woocommerce-for-japan'
+		),
+		fallback: '10',
+		min: 1,
+		max: 100,
+	},
+	{
+		key: 'login-limit-user-attempts',
+		label: __( 'Failures allowed per user name', 'woocommerce-for-japan' ),
+		help: __(
+			'An e-mail address used to log in counts against the same name as the user name.',
+			'woocommerce-for-japan'
+		),
+		fallback: '5',
+		min: 1,
+		max: 100,
+	},
+	{
+		key: 'login-limit-lockout-minutes',
+		label: __( 'Lockout time (minutes)', 'woocommerce-for-japan' ),
+		help: __(
+			'A failure counts for this long. Logins are refused while the failures that still count reach a limit.',
+			'woocommerce-for-japan'
+		),
+		fallback: '15',
+		min: 1,
+		max: 1440,
+	},
+];
+
+/**
+ * Returns the text that says what else protects the login page.
+ *
+ * @param {Object|null} protectedBy login_limit.protected_by of the findings view.
+ * @return {string} Text, empty when nothing else protects it.
+ */
+const protectedByText = ( protectedBy ) => {
+	if ( ! protectedBy ) {
+		return '';
+	}
+	switch ( protectedBy.type ) {
+		case 'plugin':
+			return sprintf(
+				/* translators: %s: plugin slug */
+				__(
+					'The plugin "%s" already protects the login page, so this limiter does nothing while it is active.',
+					'woocommerce-for-japan'
+				),
+				protectedBy.name
+			);
+		case 'jetpack':
+			return __(
+				"Jetpack's brute force protection already protects the login page, so this limiter does nothing while it is on.",
+				'woocommerce-for-japan'
+			);
+		default:
+			return __(
+				'The server configuration (.htaccess) already restricts the login page, so this limiter does nothing while it does.',
+				'woocommerce-for-japan'
+			);
+	}
+};
 
 /**
  * Formats a time for display in the site's date and time format.
@@ -604,6 +678,31 @@ const SecuritySettings = ( {
 	};
 
 	const enabled = view?.enabled;
+	const loginLimitOn = settings?.[ 'login-limit' ] === '1';
+	const protectedBy = protectedByText( view?.login_limit?.protected_by );
+	const fileEdit = view?.hardening?.file_edit;
+	let fileEditElsewhere = '';
+	if ( fileEdit?.defined_elsewhere ) {
+		fileEditElsewhere = __(
+			'File editing is already forbidden by wp-config.php or another plugin (DISALLOW_FILE_EDIT or DISALLOW_FILE_MODS), so this setting changes nothing while that stays.',
+			'woocommerce-for-japan'
+		);
+	} else if ( fileEdit?.allowed_by_constant ) {
+		fileEditElsewhere = __(
+			'wp-config.php defines DISALLOW_FILE_EDIT as false, so this setting cannot forbid file editing until that line is removed.',
+			'woocommerce-for-japan'
+		);
+	}
+	// Saved as on, nothing else protects the page, yet not running: the constant or a filter.
+	const disabledOutside =
+		view?.login_limit?.enabled === true &&
+		view?.login_limit?.active === false &&
+		! view?.login_limit?.protected_by
+			? __(
+					'The limiter is turned off by JP4WC_LOGIN_LIMIT_DISABLE in wp-config.php or by a filter.',
+					'woocommerce-for-japan'
+			  )
+			: '';
 
 	return (
 		<div className="jp4wc-security-settings">
@@ -769,6 +868,93 @@ const SecuritySettings = ( {
 						checked={ settings?.[ 'security-scan' ] === '1' }
 						onChange={ ( value ) =>
 							updateSetting( 'security-scan', value ? '1' : '' )
+						}
+					/>
+				</PanelRow>
+				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'Login attempt limiter',
+							'woocommerce-for-japan'
+						) }
+						help={
+							__(
+								'Count failed logins per IP address and per user name, and refuse logins for a while once a limit is reached. Covers the WordPress login page, the WooCommerce My Account and checkout login forms and XML-RPC.',
+								'woocommerce-for-japan'
+							) +
+							' ' +
+							__(
+								'It does nothing while a security plugin, Jetpack or the server configuration already protects the login page. If you lock yourself out, define JP4WC_LOGIN_LIMIT_DISABLE as true in wp-config.php.',
+								'woocommerce-for-japan'
+							) +
+							( protectedBy ? ' ' + protectedBy : '' ) +
+							( disabledOutside ? ' ' + disabledOutside : '' )
+						}
+						checked={ loginLimitOn }
+						onChange={ ( value ) =>
+							updateSetting( 'login-limit', value ? '1' : '' )
+						}
+					/>
+				</PanelRow>
+				{ loginLimitOn &&
+					loginLimitFields().map( ( field ) => (
+						<PanelRow key={ field.key }>
+							<TextControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom={ true }
+								type="number"
+								label={ field.label }
+								help={ field.help }
+								value={
+									settings?.[ field.key ] ?? field.fallback
+								}
+								onChange={ ( value ) =>
+									updateSetting( field.key, value )
+								}
+								min={ field.min }
+								max={ field.max }
+								disabled={ Boolean( protectedBy ) }
+							/>
+						</PanelRow>
+					) ) }
+				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'Hide the user list from the REST API',
+							'woocommerce-for-japan'
+						) }
+						help={ __(
+							'Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who are not logged in. Logged-in users keep their WordPress permissions (a browser tab opened on the route without a nonce counts as a visitor). Turn it off if a public page of this site lists authors through the REST API.',
+							'woocommerce-for-japan'
+						) }
+						checked={ settings?.[ 'hide-rest-users' ] === '1' }
+						onChange={ ( value ) =>
+							updateSetting( 'hide-rest-users', value ? '1' : '' )
+						}
+					/>
+				</PanelRow>
+				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'Forbid file editing in the admin screens',
+							'woocommerce-for-japan'
+						) }
+						help={
+							__(
+								'Define DISALLOW_FILE_EDIT when the plugin loads, so the theme and plugin file editors are gone from the admin screens. Updates and installs still work.',
+								'woocommerce-for-japan'
+							) +
+							( fileEditElsewhere ? ' ' + fileEditElsewhere : '' )
+						}
+						checked={ settings?.[ 'disallow-file-edit' ] === '1' }
+						onChange={ ( value ) =>
+							updateSetting(
+								'disallow-file-edit',
+								value ? '1' : ''
+							)
 						}
 					/>
 				</PanelRow>

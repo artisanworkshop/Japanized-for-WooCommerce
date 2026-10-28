@@ -446,6 +446,68 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The view says whether the login attempt limiter is on and runs, and what else protects the login page (3.0.0).
+	 */
+	public function test_view_reports_the_login_limiter() {
+		update_option( 'active_plugins', array() );
+		try {
+			$data = $this->get_findings()->get_data();
+			$this->assertFalse( $data['login_limit']['enabled'] );
+			$this->assertFalse( $data['login_limit']['active'] );
+			$this->assertNull( $data['login_limit']['protected_by'] );
+
+			update_option( 'wc4jp-login-limit', '1' );
+			$data = $this->get_findings()->get_data();
+			$this->assertTrue( $data['login_limit']['enabled'] );
+			$this->assertTrue( $data['login_limit']['active'] );
+
+			update_option( 'active_plugins', array( 'wordfence/wordfence.php' ) );
+			$data = $this->get_findings()->get_data();
+			$this->assertTrue( $data['login_limit']['enabled'] );
+			$this->assertFalse( $data['login_limit']['active'], 'Asleep while Wordfence protects the page.' );
+			$this->assertSame(
+				array(
+					'type' => 'plugin',
+					'name' => 'wordfence',
+				),
+				$data['login_limit']['protected_by']
+			);
+
+			update_option( 'wc4jp-security-scan', '' );
+			$data = $this->get_findings()->get_data();
+			$this->assertFalse( $data['enabled'] );
+			$this->assertArrayHasKey( 'login_limit', $data, 'Reported with the security check off as well.' );
+			$this->assertArrayHasKey( 'hardening', $data );
+		} finally {
+			delete_option( 'wc4jp-login-limit' );
+			update_option( 'wc4jp-security-scan', '1' );
+		}
+	}
+
+	/**
+	 * The view says whether the hardening options are on, and whether file editing is forbidden elsewhere (3.0.0).
+	 */
+	public function test_view_reports_the_hardening_options() {
+		try {
+			$data = $this->get_findings()->get_data();
+			$this->assertFalse( $data['hardening']['rest_users']['enabled'] );
+			$this->assertFalse( $data['hardening']['file_edit']['enabled'] );
+			$this->assertIsBool( $data['hardening']['file_edit']['defined_elsewhere'] );
+			$this->assertIsBool( $data['hardening']['file_edit']['forbidden'] );
+			$this->assertIsBool( $data['hardening']['file_edit']['allowed_by_constant'] );
+
+			update_option( 'wc4jp-hide-rest-users', '1' );
+			update_option( 'wc4jp-disallow-file-edit', '1' );
+			$data = $this->get_findings()->get_data();
+			$this->assertTrue( $data['hardening']['rest_users']['enabled'] );
+			$this->assertTrue( $data['hardening']['file_edit']['enabled'] );
+		} finally {
+			delete_option( 'wc4jp-hide-rest-users' );
+			delete_option( 'wc4jp-disallow-file-edit' );
+		}
+	}
+
+	/**
 	 * Before the first check, nothing is reported.
 	 */
 	public function test_not_checked_yet() {
