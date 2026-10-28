@@ -634,24 +634,49 @@ class JP4WC_Security_Scan {
 	 * can run. A store manager who agreed to the current text runs it again
 	 * without ticking the box; whether the bands are sent is asked each time.
 	 *
+	 * The consent is read and written under the lock, from the database: a
+	 * deletion in another request takes the same lock, and a consent read
+	 * before it ended would be written back by a tab opened earlier.
+	 *
 	 * @param bool $consent       Whether the consent box was ticked.
 	 * @param bool $include_bands Whether the bands may be sent.
 	 * @return array{reregistered: bool}|WP_Error
 	 */
 	public static function run( $consent, $include_bands ) {
-		if ( ! $consent && ! self::has_consent() ) {
-			return new WP_Error(
-				'jp4wc_security_scan_consent_required',
-				__( 'Agree to the terms of use and the privacy policy to run the check.', 'woocommerce-for-japan' ),
-				array( 'status' => 400 )
-			);
+		if ( ! self::lock() ) {
+			return self::busy_error();
 		}
-		if ( ! self::can_scan() ) {
-			return self::not_ready_error();
+		try {
+			self::forget_cached_consent();
+			if ( ! $consent && ! self::has_consent() ) {
+				return new WP_Error(
+					'jp4wc_security_scan_consent_required',
+					__( 'Agree to the terms of use and the privacy policy to run the check.', 'woocommerce-for-japan' ),
+					array( 'status' => 400 )
+				);
+			}
+			if ( ! self::can_scan() ) {
+				return self::not_ready_error();
+			}
+			$include_bands = $include_bands && self::bands_available();
+			self::record_consent( $include_bands );
+			return self::scan( $include_bands );
+		} finally {
+			self::unlock();
 		}
-		$include_bands = $include_bands && self::bands_available();
-		self::record_consent( $include_bands );
-		return self::scan( $include_bands );
+	}
+
+	/**
+	 * Drops the consent from this process's option cache, so that the next
+	 * read comes from the database.
+	 */
+	private static function forget_cached_consent() {
+		wp_cache_delete( self::CONSENT_OPTION, 'options' );
+		$notoptions = wp_cache_get( 'notoptions', 'options' );
+		if ( is_array( $notoptions ) && isset( $notoptions[ self::CONSENT_OPTION ] ) ) {
+			unset( $notoptions[ self::CONSENT_OPTION ] );
+			wp_cache_set( 'notoptions', $notoptions, 'options' );
+		}
 	}
 
 	/**
@@ -664,6 +689,8 @@ class JP4WC_Security_Scan {
 	 * used to delete the old registration: a staging copy holds the production
 	 * site's token. The old registration's data expires on the server.
 	 *
+	 * The caller holds the lock.
+	 *
 	 * @param bool $include_bands Whether the bands are sent.
 	 * @return array{reregistered: bool}|WP_Error reregistered is true when an
 	 *         earlier registration can no longer be used. When a refused token
@@ -672,76 +699,66 @@ class JP4WC_Security_Scan {
 	 *         and the next check registers the site.
 	 */
 	private static function scan( $include_bands ) {
-		if ( ! self::can_scan() ) {
-			return self::not_ready_error();
+		$payload = self::payload( $include_bands );
+		$invalid = self::payload_error( $payload );
+		if ( null !== $invalid ) {
+			return $invalid;
 		}
-		if ( ! self::lock() ) {
-			return self::busy_error();
+
+		$token = self::usable_token();
+		// A token of another URL stays until this site registers: it belongs to that site.
+		$reregistered = null !== self::stored_token() && null === $token;
+		$reset        = false;
+		$response     = self::request( 'POST', 'scan', $token, $payload );
+		if ( null !== $token && 401 === self::status( $response ) ) {
+			self::forget_registration();
+			$token        = null;
+			$reregistered = true;
+			$reset        = true;
+			$response     = self::request( 'POST', 'scan', null, $payload );
 		}
-		try {
-			$payload = self::payload( $include_bands );
-			$invalid = self::payload_error( $payload );
-			if ( null !== $invalid ) {
-				return $invalid;
-			}
 
-			$token = self::usable_token();
-			// A token of another URL stays until this site registers: it belongs to that site.
-			$reregistered = null !== self::stored_token() && null === $token;
-			$reset        = false;
-			$response     = self::request( 'POST', 'scan', $token, $payload );
-			if ( null !== $token && 401 === self::status( $response ) ) {
-				self::forget_registration();
-				$token        = null;
-				$reregistered = true;
-				$reset        = true;
-				$response     = self::request( 'POST', 'scan', null, $payload );
+		$result = self::parse_scan_response( $response, null === $token );
+		if ( is_wp_error( $result ) ) {
+			if ( $reset ) {
+				$result->add_data( array_merge( (array) $result->get_error_data(), array( 'registration_reset' => true ) ) );
 			}
+			return $result;
+		}
 
-			$result = self::parse_scan_response( $response, null === $token );
-			if ( is_wp_error( $result ) ) {
-				if ( $reset ) {
-					$result->add_data( array_merge( (array) $result->get_error_data(), array( 'registration_reset' => true ) ) );
-				}
-				return $result;
-			}
-
-			if ( null === $token ) {
-				update_option(
-					self::TOKEN_OPTION,
-					array(
-						'token'    => $result['site_token'],
-						'site_url' => $payload['site_url'],
-					),
-					false
-				);
-			}
+		if ( null === $token ) {
 			update_option(
-				self::REPORT_OPTION,
+				self::TOKEN_OPTION,
 				array(
-					'report'     => $result['report'],
-					'site_url'   => $payload['site_url'],
-					'scanned_at' => time(),
+					'token'    => $result['site_token'],
+					'site_url' => $payload['site_url'],
 				),
 				false
 			);
-
-			// Uninstall does not wait for the lock: when it removed the consent while
-			// this request ran, what was just written goes too, and the registration is
-			// deleted, as uninstall promises.
-			if ( ! self::consent_in_database() ) {
-				self::forget_registration();
-				self::request( 'DELETE', 'site', null === $token ? $result['site_token'] : $token, null, self::UNINSTALL_TIMEOUT );
-				return new WP_Error(
-					'jp4wc_security_scan_cancelled',
-					__( 'The check data was deleted while the check ran, so its result was not kept.', 'woocommerce-for-japan' ),
-					array( 'status' => 409 )
-				);
-			}
-			return array( 'reregistered' => $reregistered );
-		} finally {
-			self::unlock();
 		}
+		update_option(
+			self::REPORT_OPTION,
+			array(
+				'report'     => $result['report'],
+				'site_url'   => $payload['site_url'],
+				'scanned_at' => time(),
+			),
+			false
+		);
+
+		// Uninstall does not wait for the lock: when it removed the consent while
+		// this request ran, what was just written goes too, and the registration is
+		// deleted, as uninstall promises.
+		if ( ! self::consent_in_database() ) {
+			self::forget_registration();
+			self::request( 'DELETE', 'site', null === $token ? $result['site_token'] : $token, null, self::UNINSTALL_TIMEOUT );
+			return new WP_Error(
+				'jp4wc_security_scan_cancelled',
+				__( 'The check data was deleted while the check ran, so its result was not kept.', 'woocommerce-for-japan' ),
+				array( 'status' => 409 )
+			);
+		}
+		return array( 'reregistered' => $reregistered );
 	}
 
 	/**

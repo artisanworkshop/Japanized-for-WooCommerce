@@ -678,6 +678,39 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The consent is read from the database under the lock: a consent this
+	 * process cached before another request deleted it does not count, and a
+	 * check that cannot take the lock records no consent.
+	 */
+	public function test_consent_is_read_under_the_lock() {
+		global $wpdb;
+		self::consent();
+		$this->assertNotNull( JP4WC_Security_Scan::consent(), 'The consent is cached.' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- A deletion by another request, which this process's cache does not see.
+		$wpdb->delete( $wpdb->options, array( 'option_name' => JP4WC_Security_Scan::CONSENT_OPTION ) );
+
+		$response = $this->dispatch( 'POST' );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'jp4wc_security_scan_consent_required', $response->get_data()['code'] );
+		$this->assertSame( array(), $this->requests );
+		$this->assertNull( JP4WC_Security_Scan::consent() );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Sets the lock as another request would.
+		$wpdb->insert(
+			$wpdb->options,
+			array(
+				'option_name'  => JP4WC_Security_Scan::LOCK_OPTION,
+				'option_value' => (string) time(),
+				'autoload'     => 'off',
+			)
+		);
+		$this->assertSame( 409, $this->dispatch( 'POST', array( 'consent' => true ) )->get_status() );
+		$this->assertNull( JP4WC_Security_Scan::consent(), 'No consent is recorded while another request holds the lock.' );
+		$this->assertSame( array(), $this->requests );
+	}
+
+	/**
 	 * The check needs the security check on and its results; nothing is sent
 	 * or stored before.
 	 */
