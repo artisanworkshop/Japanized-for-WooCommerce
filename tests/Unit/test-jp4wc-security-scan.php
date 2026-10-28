@@ -963,6 +963,34 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Uninstall in another request removes the consent while the check runs:
+	 * what the check writes afterwards is removed again, and the registration
+	 * it made is deleted with its token.
+	 */
+	public function test_check_overlapping_uninstall_leaves_nothing() {
+		$uninstall = static function ( $pre, $args ) {
+			if ( 'POST' === $args['method'] ) {
+				delete_option( JP4WC_Security_Scan::CONSENT_OPTION );
+			}
+			return $pre;
+		};
+		add_filter( 'pre_http_request', $uninstall, 5, 2 );
+		$this->responses = array( self::registered(), self::response( 204 ) );
+		try {
+			$response = $this->dispatch( 'POST', array( 'consent' => true ) );
+		} finally {
+			remove_filter( 'pre_http_request', $uninstall, 5 );
+		}
+
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertSame( 'jp4wc_security_scan_cancelled', $response->get_data()['code'] );
+		$this->assertSame( array( 'POST', 'DELETE' ), wp_list_pluck( $this->requests, 'method' ) );
+		$this->assertSame( 'Bearer ' . self::fixture( 'scan-response.json' )['site_token'], $this->authorization( 1 ) );
+		$this->assertFalse( get_option( JP4WC_Security_Scan::TOKEN_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Scan::REPORT_OPTION ) );
+	}
+
+	/**
 	 * Another request to wc.artws.info holds the lock: nothing is sent. A
 	 * lock left by a request that died is taken over.
 	 */

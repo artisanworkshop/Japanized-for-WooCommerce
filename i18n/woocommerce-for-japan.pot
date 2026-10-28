@@ -4092,6 +4092,10 @@ msgstr ""
 msgid "Agree to the terms of use and the privacy policy to run the check."
 msgstr ""
 
+#: includes/class-jp4wc-security-scan.php:737
+msgid "The check data was deleted while the check ran, so its result was not kept."
+msgstr ""
+
 #: includes/class-jp4wc-security-scan.php:860
 msgid "This site cannot be checked: its address or a version of WordPress, WooCommerce, PHP or this plugin cannot be sent as the check requires."
 msgstr ""

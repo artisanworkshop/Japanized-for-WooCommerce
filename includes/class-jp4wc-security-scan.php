@@ -527,6 +527,21 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
+	 * Whether the consent row is in the database, read past the options this
+	 * process cached: uninstall in another request may have removed it.
+	 *
+	 * @return bool True also when the row cannot be read, so that a failed
+	 *              read deletes nothing.
+	 */
+	private static function consent_in_database() {
+		global $wpdb;
+		// get_row(), not get_var(): get_var() returns null for '' as well as for a missing row.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Must not read the options this process cached.
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::CONSENT_OPTION ) );
+		return null !== $row || '' !== $wpdb->last_error;
+	}
+
+	/**
 	 * Whether the store manager agreed to the current consent text.
 	 *
 	 * @return bool
@@ -710,6 +725,19 @@ class JP4WC_Security_Scan {
 				),
 				false
 			);
+
+			// Uninstall does not wait for the lock: when it removed the consent while
+			// this request ran, what was just written goes too, and the registration is
+			// deleted, as uninstall promises.
+			if ( ! self::consent_in_database() ) {
+				self::forget_registration();
+				self::request( 'DELETE', 'site', null === $token ? $result['site_token'] : $token, null, self::UNINSTALL_TIMEOUT );
+				return new WP_Error(
+					'jp4wc_security_scan_cancelled',
+					__( 'The check data was deleted while the check ran, so its result was not kept.', 'woocommerce-for-japan' ),
+					array( 'status' => 409 )
+				);
+			}
 			return array( 'reregistered' => $reregistered );
 		} finally {
 			self::unlock();

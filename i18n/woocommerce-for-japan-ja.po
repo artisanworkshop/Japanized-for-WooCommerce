@@ -5139,6 +5139,11 @@ msgstr "このサイトでは XML-RPC サービスが無効になっています
 msgid "Agree to the terms of use and the privacy policy to run the check."
 msgstr "診断するには、利用規約とプライバシーポリシーに同意してください。"
 
+#: includes/class-jp4wc-security-scan.php:737
+msgid ""
+"The check data was deleted while the check ran, so its result was not kept."
+msgstr "診断の実行中に診断データが削除されたため、結果は保存しませんでした。"
+
 #: includes/class-jp4wc-security-scan.php:860
 msgid ""
 "This site cannot be checked: its address or a version of WordPress, "
