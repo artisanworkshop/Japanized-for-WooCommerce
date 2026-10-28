@@ -651,9 +651,10 @@ class JP4WC_Security_Scan {
 	 *
 	 * @param bool $include_bands Whether the bands are sent.
 	 * @return array{reregistered: bool}|WP_Error reregistered is true when an
-	 *         earlier registration can no longer be used; an error says so in
-	 *         its data too, since the old token and report are gone even when
-	 *         the request that registers again fails.
+	 *         earlier registration can no longer be used. When a refused token
+	 *         was thrown away and the request that registers again fails, the
+	 *         error's data has registration_reset: the earlier report is gone,
+	 *         and the next check registers the site.
 	 */
 	private static function scan( $include_bands ) {
 		if ( ! self::can_scan() ) {
@@ -669,20 +670,23 @@ class JP4WC_Security_Scan {
 				return $invalid;
 			}
 
-			$token        = self::usable_token();
+			$token = self::usable_token();
+			// A token of another URL stays until this site registers: it belongs to that site.
 			$reregistered = null !== self::stored_token() && null === $token;
+			$reset        = false;
 			$response     = self::request( 'POST', 'scan', $token, $payload );
 			if ( null !== $token && 401 === self::status( $response ) ) {
 				self::forget_registration();
 				$token        = null;
 				$reregistered = true;
+				$reset        = true;
 				$response     = self::request( 'POST', 'scan', null, $payload );
 			}
 
 			$result = self::parse_scan_response( $response, null === $token );
 			if ( is_wp_error( $result ) ) {
-				if ( $reregistered ) {
-					$result->add_data( array_merge( (array) $result->get_error_data(), array( 'reregistered' => true ) ) );
+				if ( $reset ) {
+					$result->add_data( array_merge( (array) $result->get_error_data(), array( 'registration_reset' => true ) ) );
 				}
 				return $result;
 			}

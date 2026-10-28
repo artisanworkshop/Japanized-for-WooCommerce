@@ -838,7 +838,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 
 		$this->assertSame( $status, $response->get_status() );
 		$this->assertSame( $code, $response->get_data()['code'] );
-		$this->assertTrue( $response->get_data()['data']['reregistered'] );
+		$this->assertTrue( $response->get_data()['data']['registration_reset'] );
 		$this->assertCount( 2, $this->requests );
 		$this->assertNotContains( 'DELETE', wp_list_pluck( $this->requests, 'method' ) );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::TOKEN_OPTION ) );
@@ -859,18 +859,37 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * An error that did not throw a registration away does not say so.
+	 * An error that did not throw a registration away does not say so: one
+	 * with the stored token, and one of a site whose stored token belongs to
+	 * another URL, which is kept.
+	 *
+	 * @dataProvider kept_registration_provider
+	 *
+	 * @param string $site_url The site URL the stored token was issued for, or '' for home_url().
 	 */
-	public function test_error_without_reregistration_does_not_say_so() {
-		self::store_token( home_url() );
+	public function test_error_without_reset_does_not_say_so( $site_url ) {
+		self::store_token( '' === $site_url ? home_url() : $site_url );
 		self::consent();
 		$this->responses = array( self::response( 503 ) );
 
 		$response = $this->dispatch( 'POST' );
 
 		$this->assertSame( 503, $response->get_status() );
-		$this->assertArrayNotHasKey( 'reregistered', $response->get_data()['data'] );
+		$this->assertCount( 1, $this->requests );
+		$this->assertArrayNotHasKey( 'registration_reset', $response->get_data()['data'] );
 		$this->assertSame( self::TOKEN, get_option( JP4WC_Security_Scan::TOKEN_OPTION )['token'] );
+	}
+
+	/**
+	 * Stored tokens that a failed check keeps.
+	 *
+	 * @return array
+	 */
+	public function kept_registration_provider() {
+		return array(
+			'this site'    => array( '' ),
+			'another site' => array( 'https://production.example.jp' ),
+		);
 	}
 
 	/**

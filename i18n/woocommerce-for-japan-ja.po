@@ -4163,6 +4163,17 @@ msgstr "キャンセル"
 msgid "Delete check data"
 msgstr "診断データを削除"
 
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"wc.artws.info no longer accepts the earlier registration of this site, so "
+"earlier results can no longer be shown. The next check registers this site "
+"again. wc.artws.info deletes the earlier results after 180 days."
+msgstr ""
+"wc.artws.info が以前の登録を受け付けなかったため、以前の診断結果は表示できな"
+"くなりました。次の診断で登録し直します。サーバー側では以前の診断結果を 180 日"
+"後に削除します。"
+
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44
 #: src/js/blocks/delivery-block-editor.js:65

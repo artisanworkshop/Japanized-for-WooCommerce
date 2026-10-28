@@ -502,35 +502,19 @@ const SecurityScan = ( { checkedAt } ) => {
 	const [ action, setAction ] = useState( { state: 'idle' } );
 	const mounted = useRef( true );
 	const bandsChosen = useRef( false );
-	// Number of the last request for the state: the answer to an older one is dropped.
+	// Number of the last state asked for: the answer to an older request is dropped.
 	const loadCount = useRef( 0 );
 
 	/**
-	 * Loads the state of the free check.
+	 * Shows a state the server sent, in place of any request still running.
 	 *
-	 * @param {boolean} withBands Whether the preview includes the bands.
-	 * @return {Promise<Object|null>} The state, or null when a later request replaced this one.
+	 * @param {Object} response State of the free check.
 	 */
-	const load = async ( withBands ) => {
-		const number = ++loadCount.current;
-		const current = () => mounted.current && number === loadCount.current;
-		let response;
-		try {
-			response = await apiFetch( {
-				path: withBands ? `${ PATH }?bands=1` : PATH,
-			} );
-		} catch ( err ) {
-			if ( ! current() ) {
-				return null;
-			}
-			throw err;
-		}
-		if ( ! current() ) {
-			return null;
-		}
+	const show = ( response ) => {
+		loadCount.current++;
 		setScan( response );
 		setLoadError( null );
-		return response;
+		setLoadingBands( false );
 	};
 
 	const reportLoadError = ( err ) => {
@@ -546,37 +530,42 @@ const SecurityScan = ( { checkedAt } ) => {
 	};
 
 	/**
-	 * Shows the preview with or without the bands.
+	 * Loads the state, with the bands in the preview or not.
 	 *
-	 * The check cannot be run until the preview shows what is sent, and when
-	 * the bands cannot be loaded they are not sent.
+	 * Every load goes through here, so that the bands sent are those the
+	 * preview shows: the check cannot run until the latest load is done, and
+	 * when it fails the bands are not sent.
 	 *
 	 * @param {boolean} value Whether the bands are sent.
+	 * @return {Promise<Object|null>} The state, or null when it failed or a
+	 *                                later request replaced it.
 	 */
 	const loadBands = async ( value ) => {
+		const number = ++loadCount.current;
+		const current = () => mounted.current && number === loadCount.current;
 		setBands( value );
 		setLoadingBands( true );
+		let response;
 		try {
-			if ( null === ( await load( value ) ) ) {
-				// A later request is running; it ends the loading.
-				return;
-			}
+			response = await apiFetch( {
+				path: value ? `${ PATH }?bands=1` : PATH,
+			} );
 		} catch ( err ) {
-			if ( mounted.current ) {
+			if ( current() ) {
 				setBands( false );
+				setLoadingBands( false );
+				reportLoadError( err );
 			}
-			reportLoadError( err );
+			return null;
 		}
-		if ( mounted.current ) {
-			setLoadingBands( false );
+		if ( ! current() ) {
+			return null;
 		}
+		setScan( response );
+		setLoadError( null );
+		setLoadingBands( false );
+		return response;
 	};
-
-	/**
-	 * Loads the state again, keeping the bands as chosen.
-	 */
-	const refresh = () =>
-		bands ? loadBands( true ) : load( false ).catch( reportLoadError );
 
 	useEffect( () => {
 		mounted.current = true;
@@ -586,27 +575,19 @@ const SecurityScan = ( { checkedAt } ) => {
 	}, [] );
 
 	useEffect( () => {
-		// The bands chosen on this screen stay; until then, those of the last check.
-		const chosen = bandsChosen.current;
+		// Until the bands are chosen on this screen, those of the last check are offered.
+		const restore = ! bandsChosen.current && ! bands;
 		( async () => {
-			if ( chosen && bands ) {
+			const response = await loadBands( bands );
+			if (
+				restore &&
+				response &&
+				! bandsChosen.current &&
+				response.bands_available &&
+				response.consent?.current &&
+				response.consent.bands
+			) {
 				await loadBands( true );
-				return;
-			}
-			try {
-				const response = await load( false );
-				if (
-					response &&
-					! chosen &&
-					! bandsChosen.current &&
-					response.bands_available &&
-					response.consent?.current &&
-					response.consent.bands
-				) {
-					await loadBands( true );
-				}
-			} catch ( err ) {
-				reportLoadError( err );
 			}
 		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -630,7 +611,7 @@ const SecurityScan = ( { checkedAt } ) => {
 			if ( ! mounted.current ) {
 				return;
 			}
-			setScan( response );
+			show( response );
 			setAgreed( false );
 			setAction( {
 				state: response.reregistered ? 'reregistered' : 'done',
@@ -647,10 +628,10 @@ const SecurityScan = ( { checkedAt } ) => {
 						'The check could not be run.',
 						'woocommerce-for-japan'
 					),
-				reregistered: err.data?.reregistered === true,
+				reset: err.data?.registration_reset === true,
 			} );
 			// The consent, the token or the report may have changed.
-			refresh();
+			loadBands( bands );
 		}
 	};
 
@@ -664,7 +645,7 @@ const SecurityScan = ( { checkedAt } ) => {
 			if ( ! mounted.current ) {
 				return;
 			}
-			setScan( response );
+			show( response );
 			setAgreed( false );
 			setBands( false );
 			bandsChosen.current = false;
@@ -682,7 +663,7 @@ const SecurityScan = ( { checkedAt } ) => {
 						'woocommerce-for-japan'
 					),
 			} );
-			refresh();
+			loadBands( bands );
 		}
 	};
 
@@ -753,10 +734,10 @@ const SecurityScan = ( { checkedAt } ) => {
 					{ action.message }
 				</Notice>
 			) }
-			{ action.state === 'error' && action.reregistered && (
+			{ action.state === 'error' && action.reset && (
 				<Notice status="warning" isDismissible={ false }>
 					{ __(
-						'This site was registered with wc.artws.info again, so earlier results can no longer be shown. wc.artws.info deletes them after 180 days.',
+						'wc.artws.info no longer accepts the earlier registration of this site, so earlier results can no longer be shown. The next check registers this site again. wc.artws.info deletes the earlier results after 180 days.',
 						'woocommerce-for-japan'
 					) }
 				</Notice>
