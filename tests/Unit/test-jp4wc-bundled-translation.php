@@ -281,6 +281,18 @@ class JP4WC_Bundled_Translation_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The XML-RPC guard's refusal, which the WordPress apps show, comes in Japanese (#293).
+	 */
+	public function test_xmlrpc_refusal_uses_the_bundled_translation() {
+		require_once dirname( __DIR__, 2 ) . '/includes/class-jp4wc-xmlrpc-guard.php';
+		require_once ABSPATH . WPINC . '/class-IXR.php';
+		$error = JP4WC_XMLRPC_Guard::refuse();
+		$this->assertSame( 405, $error->code );
+		$this->assertSame( 'このサイトでは XML-RPC サービスが無効になっています。', $error->message );
+		$this->assert_filters_removed();
+	}
+
+	/**
 	 * The Security tab's error messages come in Japanese.
 	 */
 	public function test_security_api_errors_use_the_bundled_translation() {

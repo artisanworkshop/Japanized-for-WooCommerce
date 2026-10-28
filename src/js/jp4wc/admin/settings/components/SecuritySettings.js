@@ -14,6 +14,7 @@ import {
 	Notice,
 	Spinner,
 	TextControl,
+	TextareaControl,
 } from '@wordpress/components';
 import {
 	useState,
@@ -552,6 +553,230 @@ const Credits = ( { view } ) => (
 	</div>
 );
 
+/**
+ * Returns the entries of an allow list as typed: one per line, commas and spaces also separate.
+ *
+ * @param {string} value Allow list.
+ * @return {string[]} Entries.
+ */
+const allowEntries = ( value ) =>
+	( typeof value === 'string' ? value : '' )
+		.split( /[\s,]+/ )
+		.filter( ( entry ) => entry !== '' );
+
+/**
+ * Returns who added an XML-RPC method, as the usage list shows it.
+ *
+ * @param {Object} provider      Provider.
+ * @param {string} provider.type core, plugin, mu-plugin, theme or unknown.
+ * @param {string} provider.name Name.
+ * @return {string} Text.
+ */
+const providerText = ( provider ) => {
+	switch ( provider?.type ) {
+		case 'core':
+			return 'WordPress';
+		case 'plugin':
+			return provider.name;
+		case 'mu-plugin':
+			return sprintf(
+				/* translators: %s: file or directory of a must-use plugin */
+				__( '%s (must-use plugin)', 'woocommerce-for-japan' ),
+				provider.name
+			);
+		case 'theme':
+			return sprintf(
+				/* translators: %s: theme name */
+				__( '%s (theme)', 'woocommerce-for-japan' ),
+				provider.name
+			);
+		default:
+			return __( 'Unknown source', 'woocommerce-for-japan' );
+	}
+};
+
+/**
+ * Returns what turning XML-RPC off means for a recorded method.
+ *
+ * @param {Object}  entry   Recorded method.
+ * @param {boolean} enabled Whether XML-RPC is turned off.
+ * @return {string} Text.
+ */
+const usageStatus = ( entry, enabled ) => {
+	if ( entry.refusable === false ) {
+		return __(
+			'Answered whatever the setting (no login)',
+			'woocommerce-for-japan'
+		);
+	}
+	if ( entry.calls > 0 && entry.outcomes.jetpack === entry.calls ) {
+		return __(
+			'Jetpack: keeps working when XML-RPC is off',
+			'woocommerce-for-japan'
+		);
+	}
+	if ( entry.allowed ) {
+		return __( 'Allowed', 'woocommerce-for-japan' );
+	}
+	if ( enabled && entry.outcomes.refused > 0 ) {
+		return __( 'Refused', 'woocommerce-for-japan' );
+	}
+	if ( entry.outcomes.login > 0 ) {
+		return __(
+			'Logs in: stops when XML-RPC is off unless allowed',
+			'woocommerce-for-japan'
+		);
+	}
+	if ( entry.outcomes.failed > 0 ) {
+		return __(
+			'Only failed logins: likely password guessing',
+			'woocommerce-for-japan'
+		);
+	}
+	return __( 'No login', 'woocommerce-for-japan' );
+};
+
+/**
+ * Headings of the XML-RPC usage list.
+ *
+ * @return {string[]} Headings.
+ */
+const usageHeadings = () => [
+	__( 'Method', 'woocommerce-for-japan' ),
+	__( 'Added by', 'woocommerce-for-japan' ),
+	__( 'Calls', 'woocommerce-for-japan' ),
+	__( 'Logins (worked / failed)', 'woocommerce-for-japan' ),
+	__( 'Last call', 'woocommerce-for-japan' ),
+	__( 'Client', 'woocommerce-for-japan' ),
+	__( 'Status', 'woocommerce-for-japan' ),
+];
+
+/**
+ * One method of the XML-RPC usage list.
+ *
+ * @param {Object}   props         Props.
+ * @param {Object}   props.entry   Recorded method.
+ * @param {boolean}  props.enabled Whether XML-RPC is turned off.
+ * @param {boolean}  props.listed  Whether the allow list as edited has the method.
+ * @param {Function} props.onAllow Adds a method to the allow list.
+ * @return {Element} Element.
+ */
+const UsageRow = ( { entry, enabled, listed, onAllow } ) => {
+	const onlyJetpack =
+		entry.calls > 0 && entry.outcomes.jetpack === entry.calls;
+	const canAllow =
+		entry.refusable !== false && ! entry.allowed && ! onlyJetpack;
+	// The client of the last login that worked is the integration; failed attempts cannot hide it.
+	const client = entry.login_user_agent || entry.user_agent || '—';
+	const label = listed
+		? __( 'Added', 'woocommerce-for-japan' )
+		: __( 'Allow', 'woocommerce-for-japan' );
+	return (
+		<tr>
+			<td>
+				<code>{ entry.method }</code>
+			</td>
+			<td>{ providerText( entry.provider ) }</td>
+			<td>{ entry.calls }</td>
+			<td>{ `${ entry.outcomes.login } / ${ entry.outcomes.failed }` }</td>
+			<td>{ formatTime( entry.last_at ) }</td>
+			<td className="jp4wc-xmlrpc-client">{ client }</td>
+			<td>{ usageStatus( entry, enabled ) }</td>
+			<td>
+				{ canAllow && (
+					<Button
+						variant="secondary"
+						size="small"
+						onClick={ () => onAllow( entry.method ) }
+						disabled={ listed }
+					>
+						{ label }
+					</Button>
+				) }
+			</td>
+		</tr>
+	);
+};
+
+/**
+ * The XML-RPC calls of the last 30 days, with a button that adds a method to the allow list.
+ *
+ * @param {Object}   props           Props.
+ * @param {Object}   props.xmlrpc    The xmlrpc part of the result.
+ * @param {string[]} props.allowList Entries of the allow list as edited.
+ * @param {Function} props.onAllow   Adds a method to the allow list.
+ * @return {Element} Element.
+ */
+const XmlrpcUsage = ( { xmlrpc, allowList, onAllow } ) => {
+	const usage = xmlrpc.usage || [];
+	return (
+		<PanelBody
+			title={ __(
+				'XML-RPC usage (last 30 days)',
+				'woocommerce-for-japan'
+			) }
+			initialOpen={ usage.length > 0 }
+		>
+			<p className="description">
+				{ __(
+					'The XML-RPC calls this site answered, by method. Methods that log in are used by an integration (the WordPress mobile apps, an offline editor, a service): allow them before turning XML-RPC off. Methods with only failed logins are usually password guessing.',
+					'woocommerce-for-japan'
+				) }
+			</p>
+			{ ! xmlrpc.readable && (
+				<Notice status="error" isDismissible={ false }>
+					{ __(
+						'The record of the XML-RPC calls could not be read.',
+						'woocommerce-for-japan'
+					) }
+				</Notice>
+			) }
+			{ xmlrpc.readable && usage.length === 0 && (
+				<p>
+					{ __(
+						'No XML-RPC calls were recorded in the last 30 days.',
+						'woocommerce-for-japan'
+					) }
+				</p>
+			) }
+			{ usage.length > 0 && (
+				<div className="jp4wc-security-findings-wrap">
+					<table className="widefat striped jp4wc-security-findings jp4wc-xmlrpc-usage">
+						<thead>
+							<tr>
+								{ usageHeadings().map( ( heading ) => (
+									<th key={ heading }>{ heading }</th>
+								) ) }
+								<th>
+									<span className="screen-reader-text">
+										{ __(
+											'Allow list',
+											'woocommerce-for-japan'
+										) }
+									</span>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							{ usage.map( ( entry ) => (
+								<UsageRow
+									key={ entry.method }
+									entry={ entry }
+									enabled={ xmlrpc.enabled }
+									listed={ allowList.includes(
+										entry.method
+									) }
+									onAllow={ onAllow }
+								/>
+							) ) }
+						</tbody>
+					</table>
+				</div>
+			) }
+		</PanelBody>
+	);
+};
+
 const SecuritySettings = ( {
 	settings,
 	updateSetting,
@@ -690,6 +915,34 @@ const SecuritySettings = ( {
 	} else if ( fileEdit?.allowed_by_constant ) {
 		fileEditElsewhere = __(
 			'wp-config.php defines DISALLOW_FILE_EDIT as false, so this setting cannot forbid file editing until that line is removed.',
+			'woocommerce-for-japan'
+		);
+	}
+	const xmlrpcOff = settings?.[ 'disable-xmlrpc' ] === '1';
+	const allowList = allowEntries( settings?.[ 'xmlrpc-allow' ] );
+	const addToAllowList = ( method ) => {
+		if ( ! allowList.includes( method ) ) {
+			updateSetting(
+				'xmlrpc-allow',
+				[ ...allowList, method ].join( '\n' )
+			);
+		}
+	};
+	// Allowed methods still accept a password: say so while nothing limits login attempts through XML-RPC.
+	const allowedUnprotected =
+		xmlrpcOff &&
+		allowList.length > 0 &&
+		view?.xmlrpc?.login_protected === false;
+	let allowedNote = '';
+	if ( allowedUnprotected && view?.login_limit?.protected_by ) {
+		// The limiter sleeps behind what protects the login page, which does not cover xmlrpc.php.
+		allowedNote = __(
+			'The allowed methods still accept a password, and what protects the login page does not cover XML-RPC (the login attempt limiter stays asleep behind it): use a security plugin that limits login attempts, or leave the allow list empty.',
+			'woocommerce-for-japan'
+		);
+	} else if ( allowedUnprotected ) {
+		allowedNote = __(
+			'The allowed methods still accept a password, and nothing limits login attempts through XML-RPC: turn on the login attempt limiter or use a security plugin that limits login attempts.',
 			'woocommerce-for-japan'
 		);
 	}
@@ -843,6 +1096,14 @@ const SecuritySettings = ( {
 				</>
 			) }
 
+			{ view?.xmlrpc && (
+				<XmlrpcUsage
+					xmlrpc={ view.xmlrpc }
+					allowList={ allowList }
+					onAllow={ addToAllowList }
+				/>
+			) }
+
 			<PanelBody
 				title={ __( 'Settings', 'woocommerce-for-japan' ) }
 				initialOpen={ true }
@@ -958,6 +1219,45 @@ const SecuritySettings = ( {
 						}
 					/>
 				</PanelRow>
+				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
+							'Disable XML-RPC',
+							'woocommerce-for-japan'
+						) }
+						help={ __(
+							'Refuse every XML-RPC method except the allowed ones, so that no password can be tried and no pingback sent through XML-RPC. Jetpack keeps working: it checks its own signature. The WordPress mobile apps, offline editors and services that log in through XML-RPC stop unless their methods are allowed. The REST API, with the application passwords used for it, is not affected.',
+							'woocommerce-for-japan'
+						) }
+						checked={ xmlrpcOff }
+						onChange={ ( value ) =>
+							updateSetting( 'disable-xmlrpc', value ? '1' : '' )
+						}
+					/>
+				</PanelRow>
+				{ xmlrpcOff && (
+					<PanelRow>
+						<TextareaControl
+							__nextHasNoMarginBottom={ true }
+							label={ __(
+								'Allowed methods',
+								'woocommerce-for-japan'
+							) }
+							help={
+								__(
+									'One method per line, such as wp.getUsersBlogs. A name ending in * allows every method that starts with it, such as metaWeblog.*. "Allow" in the XML-RPC usage list above adds a method. Leave it empty to refuse every method.',
+									'woocommerce-for-japan'
+								) + ( allowedNote ? ' ' + allowedNote : '' )
+							}
+							value={ settings?.[ 'xmlrpc-allow' ] ?? '' }
+							onChange={ ( value ) =>
+								updateSetting( 'xmlrpc-allow', value )
+							}
+							rows={ 4 }
+						/>
+					</PanelRow>
+				) }
 				<PanelRow>
 					<p className="description">
 						{ createInterpolateElement(

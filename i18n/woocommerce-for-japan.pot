@@ -2530,7 +2530,7 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "If nothing uses XML-RPC (the WordPress mobile apps, Jetpack and some services do), block xmlrpc.php with a security plugin or the server configuration."
+msgid "Turn on \"Disable XML-RPC\" under Settings on this tab: Jetpack keeps working, and the XML-RPC usage list shows what else still uses it so that you can allow those methods. Or block xmlrpc.php with a security plugin or the server configuration if nothing uses XML-RPC."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
@@ -2708,6 +2708,160 @@ msgstr ""
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
 msgid "Forbid file editing in the admin screens"
+msgstr ""
+
+#. translators: %s: file or directory of a must-use plugin
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, js-format
+msgid "%s (must-use plugin)"
+msgstr ""
+
+#. translators: %s: theme name
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#, js-format
+msgid "%s (theme)"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Unknown source"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Answered whatever the setting (no login)"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Jetpack: keeps working when XML-RPC is off"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Allowed"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Refused"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Logs in: stops when XML-RPC is off unless allowed"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Only failed logins: likely password guessing"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "No login"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Method"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Added by"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Calls"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Logins (worked / failed)"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Last call"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Client"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Status"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Added"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Allow"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "XML-RPC usage (last 30 days)"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The XML-RPC calls this site answered, by method. Methods that log in are used by an integration (the WordPress mobile apps, an offline editor, a service): allow them before turning XML-RPC off. Methods with only failed logins are usually password guessing."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The record of the XML-RPC calls could not be read."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "No XML-RPC calls were recorded in the last 30 days."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Allow list"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Disable XML-RPC"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Refuse every XML-RPC method except the allowed ones, so that no password can be tried and no pingback sent through XML-RPC. Jetpack keeps working: it checks its own signature. The WordPress mobile apps, offline editors and services that log in through XML-RPC stop unless their methods are allowed. The REST API, with the application passwords used for it, is not affected."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Allowed methods"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "One method per line, such as wp.getUsersBlogs. A name ending in * allows every method that starts with it, such as metaWeblog.*. \"Allow\" in the XML-RPC usage list above adds a method. Leave it empty to refuse every method."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The allowed methods still accept a password, and what protects the login page does not cover XML-RPC (the login attempt limiter stays asleep behind it): use a security plugin that limits login attempts, or leave the allow list empty."
+msgstr ""
+
+msgid "The allowed methods still accept a password, and nothing limits login attempts through XML-RPC: turn on the login attempt limiter or use a security plugin that limits login attempts."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
@@ -3575,3 +3729,7 @@ msgid "<strong>Error:</strong> Too many login attempts. Please try again in %d m
 msgid_plural "<strong>Error:</strong> Too many login attempts. Please try again in %d minutes."
 msgstr[0] ""
 msgstr[1] ""
+
+#: includes/class-jp4wc-xmlrpc-guard.php:272
+msgid "XML-RPC services are disabled on this site."
+msgstr ""

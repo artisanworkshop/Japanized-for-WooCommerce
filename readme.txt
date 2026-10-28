@@ -71,7 +71,8 @@ Works smoothly with WooCommerce core features and popular extensions. Fully comp
 * A score for each of the four requirements of Japan's Credit Card Security Guidelines (クレジットカード・セキュリティガイドライン), with the items that need action and how to fix them; it shows what needs attention and does not guarantee compliance
 * "Re-check now" on the Security tab; on by default and can be turned off there
 * Login attempt limiter (off by default): counts failed logins per IP address and per user name on the WordPress and WooCommerce login forms, and stays out of the way when a security plugin, Jetpack or the server already protects the login page
-* Two more hardening options (off by default): hide the user list of the REST API from visitors who are not logged in, and forbid file editing in the admin screens (DISALLOW_FILE_EDIT)
+* More hardening options (off by default): hide the user list of the REST API from visitors who are not logged in, forbid file editing in the admin screens (DISALLOW_FILE_EDIT), and turn XML-RPC off except for the methods you allow (Jetpack keeps working)
+* A record of the XML-RPC calls of the last 30 days, kept on the site, that shows which methods are used, by which client and whether they log in, so that you can tell integrations from password guessing before turning XML-RPC off
 
 **Additional Features**
 * Email template optimization for Japanese format
@@ -121,7 +122,7 @@ The manual installation method involves downloading and uploading our plugin to 
 5. Affiliate Settings - Set up affiliate tracking for Japanese affiliate networks including A8.net, Felmat (ValueCommerce), and Access Trade.
 6. Checkout Block - WooCommerce Blocks checkout page displaying Japanese address format, name reading fields, and delivery date/time selection.
 7. Classic Checkout - Traditional WooCommerce checkout page with Japanese localization features including address fields and delivery options.
-8. Security - Check installed plugins, themes and WordPress against known vulnerabilities, see a score for each of the four requirements of the Credit Card Security Guidelines with the items that need action and how to fix them, and turn on the login attempt limiter and the hardening options.
+8. Security - Check installed plugins, themes and WordPress against known vulnerabilities, see a score for each of the four requirements of the Credit Card Security Guidelines with the items that need action and how to fix them, turn on the login attempt limiter and the hardening options, and see what uses XML-RPC.
 
 == Frequently Asked Questions ==
 
