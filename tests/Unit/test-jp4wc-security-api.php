@@ -515,13 +515,19 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 			$data = $this->get_findings()->get_data();
 			$this->assertSame(
 				array(
-					'enabled'  => false,
-					'allow'    => array(),
-					'readable' => true,
-					'usage'    => array(),
+					'enabled'         => false,
+					'allow'           => array(),
+					'readable'        => true,
+					'usage'           => array(),
+					'login_protected' => false,
 				),
 				$data['xmlrpc']
 			);
+
+			update_option( 'wc4jp-login-limit', '1' );
+			update_option( 'active_plugins', array() );
+			$this->assertTrue( $this->get_findings()->get_data()['xmlrpc']['login_protected'], 'The login attempt limiter counts XML-RPC logins.' );
+			update_option( 'wc4jp-login-limit', '' );
 
 			update_option( 'wc4jp-disable-xmlrpc', '1' );
 			update_option( 'wc4jp-xmlrpc-allow', "wp.getUsersBlogs\nmetaWeblog.*" );
@@ -533,6 +539,7 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 		} finally {
 			delete_option( 'wc4jp-disable-xmlrpc' );
 			delete_option( 'wc4jp-xmlrpc-allow' );
+			delete_option( 'wc4jp-login-limit' );
 			update_option( 'wc4jp-security-scan', '1' );
 		}
 	}

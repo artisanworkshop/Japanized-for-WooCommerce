@@ -216,7 +216,7 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 *     recheck: array{requested_at: int, done_at: int, pending: bool, retry_after: int},
 	 *     login_limit: array{enabled: bool, active: bool, protected_by: array{type: string, name: string}|null},
 	 *     hardening: array{rest_users: array{enabled: bool}, file_edit: array{enabled: bool, defined_elsewhere: bool, forbidden: bool, allowed_by_constant: bool}},
-	 *     xmlrpc: array{enabled: bool, allow: string[], readable: bool, usage: array}
+	 *     xmlrpc: array{enabled: bool, allow: string[], readable: bool, usage: array, login_protected: bool}
 	 * }
 	 *         Requirement status: pass when every check passed, action when one
 	 *         failed, otherwise unknown. vulnerabilities is null without data.
@@ -224,7 +224,8 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 *         it runs, and what else protects the login page (then it sleeps).
 	 *         xmlrpc (3.0.0): the XML-RPC setting, its allow list and the
 	 *         record of the calls (JP4WC_XMLRPC_Guard::view()); readable is
-	 *         false when the record could not be read.
+	 *         false when the record could not be read; login_protected says
+	 *         whether login attempts through XML-RPC are limited.
 	 */
 	public static function view() {
 		$protected_by = JP4WC_Login_Limiter::protected_by();
@@ -245,7 +246,10 @@ class JP4WC_Security_API extends WP_REST_Controller {
 					'allowed_by_constant' => JP4WC_Security_Hardening::file_edit_allowed_by_constant(),
 				),
 			),
-			'xmlrpc'          => JP4WC_XMLRPC_Guard::view(),
+			// An earlier version's checks class, loaded while this plugin is updated, cannot tell.
+			'xmlrpc'          => JP4WC_XMLRPC_Guard::view() + array(
+				'login_protected' => method_exists( 'JP4WC_Security_Checks', 'xmlrpc_login_protected' ) && JP4WC_Security_Checks::xmlrpc_login_protected(),
+			),
 			'enabled'         => JP4WC_Security_Feed::is_enabled(),
 			'checked_at'      => 0,
 			'score'           => null,

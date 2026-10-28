@@ -666,6 +666,8 @@ const UsageRow = ( { entry, enabled, listed, onAllow } ) => {
 		entry.calls > 0 && entry.outcomes.jetpack === entry.calls;
 	const canAllow =
 		entry.refusable !== false && ! entry.allowed && ! onlyJetpack;
+	// The client of the last login that worked is the integration; failed attempts cannot hide it.
+	const client = entry.login_user_agent || entry.user_agent || '—';
 	const label = listed
 		? __( 'Added', 'woocommerce-for-japan' )
 		: __( 'Allow', 'woocommerce-for-japan' );
@@ -678,7 +680,7 @@ const UsageRow = ( { entry, enabled, listed, onAllow } ) => {
 			<td>{ entry.calls }</td>
 			<td>{ `${ entry.outcomes.login } / ${ entry.outcomes.failed }` }</td>
 			<td>{ formatTime( entry.last_at ) }</td>
-			<td className="jp4wc-xmlrpc-client">{ entry.user_agent || '—' }</td>
+			<td className="jp4wc-xmlrpc-client">{ client }</td>
 			<td>{ usageStatus( entry, enabled ) }</td>
 			<td>
 				{ canAllow && (
@@ -926,12 +928,11 @@ const SecuritySettings = ( {
 			);
 		}
 	};
-	// Allowed methods still accept a password: say so while nothing limits login attempts.
+	// Allowed methods still accept a password: say so while nothing limits login attempts through XML-RPC.
 	const allowedUnprotected =
 		xmlrpcOff &&
 		allowList.length > 0 &&
-		view?.login_limit?.active === false &&
-		! view?.login_limit?.protected_by;
+		view?.xmlrpc?.login_protected === false;
 	// Saved as on, nothing else protects the page, yet not running: the constant or a filter.
 	const disabledOutside =
 		view?.login_limit?.enabled === true &&
@@ -1213,7 +1214,7 @@ const SecuritySettings = ( {
 							'woocommerce-for-japan'
 						) }
 						help={ __(
-							'Refuse every XML-RPC method except the allowed ones, so that no password can be tried and no pingback sent through XML-RPC. Jetpack keeps working: it checks its own signature. The WordPress mobile apps, offline editors and services that log in through XML-RPC stop unless their methods are allowed. The REST API and application passwords are not affected.',
+							'Refuse every XML-RPC method except the allowed ones, so that no password can be tried and no pingback sent through XML-RPC. Jetpack keeps working: it checks its own signature. The WordPress mobile apps, offline editors and services that log in through XML-RPC stop unless their methods are allowed. The REST API, with the application passwords used for it, is not affected.',
 							'woocommerce-for-japan'
 						) }
 						checked={ xmlrpcOff }
@@ -1238,7 +1239,7 @@ const SecuritySettings = ( {
 								( allowedUnprotected
 									? ' ' +
 									  __(
-											'The allowed methods still accept a password: turn on the login attempt limiter as well.',
+											'The allowed methods still accept a password, and nothing limits login attempts through XML-RPC: turn on the login attempt limiter or use a security plugin that limits login attempts.',
 											'woocommerce-for-japan'
 									  )
 									: '' )

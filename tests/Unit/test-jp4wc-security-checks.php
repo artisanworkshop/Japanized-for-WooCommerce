@@ -1100,7 +1100,30 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			$this->assertSame( 'pass', $this->status( 'A-04', $context ), 'The login attempt limiter covers XML-RPC.' );
 
 			update_option( 'wc4jp-login-limit', '' );
-			$this->assertSame( 'pass', $this->status( 'A-04', array( 'active_plugins' => array( 'wordfence' ) ) + $context ), 'A security plugin protects the login.' );
+			$this->assertSame( 'pass', $this->status( 'A-04', array( 'active_plugins' => array( 'wordfence' ) ) + $context ), 'A security plugin limits XML-RPC logins too.' );
+			$this->assertSame( 'pass', $this->status( 'A-04', array( 'active_plugins' => array( 'wps-hide-login', 'loginizer' ) ) + $context ), 'A limiting plugin next to a hiding one.' );
+			$this->assertSame(
+				'pass',
+				$this->status(
+					'A-04',
+					array(
+						'jetpack_protect'   => true,
+						'jetpack_connected' => true,
+					) + $context
+				),
+				'Jetpack\'s brute force protection.'
+			);
+
+			// What protects wp-login.php but not xmlrpc.php.
+			$this->assertSame( 'fail', $this->status( 'A-04', array( 'active_plugins' => array( 'wps-hide-login' ) ) + $context ), 'Moving the login page does not limit XML-RPC.' );
+			$this->assertSame( 'fail', $this->status( 'A-04', array( 'active_plugins' => array( 'rename-wp-login' ) ) + $context ) );
+			$this->write( 'wordpress/.htaccess', "<Files wp-login.php>\nRequire ip 192.0.2.1\n</Files>\n" );
+			$htaccess = array(
+				'abspath'        => $this->dir . '/wordpress',
+				'active_plugins' => array(),
+			);
+			$this->assertNotNull( JP4WC_Security_Checks::login_protected_by_other_means( $htaccess ), 'The login page is restricted.' );
+			$this->assertSame( 'fail', $this->status( 'A-04', $htaccess ), 'A restriction of wp-login.php does not reach xmlrpc.php.' );
 			$this->assertSame( array(), $this->requested, 'The setting is read, nothing is requested.' );
 
 			update_option( 'wc4jp-disable-xmlrpc', '' );

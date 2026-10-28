@@ -3670,13 +3670,13 @@ msgid ""
 "be tried and no pingback sent through XML-RPC. Jetpack keeps working: it "
 "checks its own signature. The WordPress mobile apps, offline editors and "
 "services that log in through XML-RPC stop unless their methods are allowed. "
-"The REST API and application passwords are not affected."
+"The REST API, with the application passwords used for it, is not affected."
 msgstr ""
 "許可したメソッド以外の XML-RPC をすべて拒否し、XML-RPC からのパスワードの試行"
 "とピンバックを止めます。Jetpack は独自の署名で認証するため、そのまま動きま"
 "す。XML-RPC でログインする WordPress のモバイルアプリ、オフラインエディター、"
-"外部サービスは、そのメソッドを許可しない限り止まります。REST API とアプリケー"
-"ションパスワードには影響しません。"
+"外部サービスは、そのメソッドを許可しない限り止まります。REST API（REST API で"
+"使うアプリケーションパスワードを含む）には影響しません。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
@@ -3697,11 +3697,13 @@ msgstr ""
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
 msgid ""
-"The allowed methods still accept a password: turn on the login attempt "
-"limiter as well."
+"The allowed methods still accept a password, and nothing limits login "
+"attempts through XML-RPC: turn on the login attempt limiter or use a "
+"security plugin that limits login attempts."
 msgstr ""
-"許可したメソッドではパスワードを受け付けます。ログイン試行回数の制限もオンに"
-"してください。"
+"許可したメソッドではパスワードを受け付けますが、XML-RPC からのログイン試行を"
+"制限するものがありません。ログイン試行回数の制限をオンにするか、ログイン試行"
+"を制限するセキュリティプラグインを使ってください。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js

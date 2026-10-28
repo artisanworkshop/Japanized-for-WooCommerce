@@ -36,6 +36,7 @@ class JP4WC_XMLRPC_Guard_Test extends WP_UnitTestCase {
 	 * Clean up.
 	 */
 	public function tearDown(): void {
+		( new ReflectionProperty( 'JP4WC_XMLRPC_Guard', 'xmlrpc_request' ) )->setValue( null, null );
 		unset( $_GET['for'] );
 		delete_option( 'wc4jp-disable-xmlrpc' );
 		delete_option( 'wc4jp-xmlrpc-allow' );
@@ -133,7 +134,8 @@ class JP4WC_XMLRPC_Guard_Test extends WP_UnitTestCase {
 			'names and a prefix'   => array( "wp.getUsersBlogs\nmetaWeblog.*", "wp.getUsersBlogs\nmetaWeblog.*" ),
 			'spaces and commas'    => array( "  wp.getUsersBlogs ,\r\n\twp.getPosts  ", "wp.getUsersBlogs\nwp.getPosts" ),
 			'duplicates'           => array( "wp.getPosts\nwp.getPosts\nwp.getPost", "wp.getPosts\nwp.getPost" ),
-			'invalid entries'      => array( "*\n**\nwp.*.x\na*b\nwp/getPosts\nx;y\n<b>\nwp.getPosts", 'wp.getPosts' ),
+			'invalid entries'      => array( "*\n**\nwp.*.x\na*b\nwp-getPosts\nx;y\n<b>\nwp.getPosts", 'wp.getPosts' ),
+			'colon and slash'      => array( 'my:plugin/method', 'my:plugin/method' ),
 			'case is kept'         => array( 'WP.GetPosts', 'WP.GetPosts' ),
 			'empty'                => array( '', '' ),
 			'array'                => array( array( 'wp.getPosts' ), '' ),
@@ -439,15 +441,24 @@ class JP4WC_XMLRPC_Guard_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The last call and client are written at most once a minute; the counts every time.
+	 * The last call and client are written at most once a minute; the counts every time; a login's client at once.
 	 */
 	public function test_record_touches_the_info_row_once_a_minute() {
 		$server = $this->server();
 		$now    = time();
 		$this->record( $server, 'demo.sayHello', array(), array( 'now' => $now ) );
-		$this->record( $server, 'demo.sayHello', array(), array( 'now' => $now + 30 ) );
+		$this->record(
+			$server,
+			'demo.sayHello',
+			array(),
+			array(
+				'now'        => $now + 30,
+				'user_agent' => 'Other client',
+			)
+		);
 		$entry = $this->entry( 'demo.sayHello', $now + 30 );
 		$this->assertSame( $now, $entry['last_at'] );
+		$this->assertSame( 'Test client', $entry['user_agent'], 'Another client does not rewrite the row within the minute.' );
 		$this->assertSame( 2, $entry['calls'] );
 
 		$this->record(
@@ -456,47 +467,157 @@ class JP4WC_XMLRPC_Guard_Test extends WP_UnitTestCase {
 			array(),
 			array(
 				'now'        => $now + 40,
-				'user_agent' => 'Other client',
+				'user_agent' => 'Mobile app',
+				'logins'     => array(
+					'ok'     => 1,
+					'failed' => 0,
+				),
 			)
 		);
-		$this->assertSame( 'Other client', $this->entry( 'demo.sayHello', $now + 40 )['user_agent'], 'Another client is written at once.' );
+		$entry = $this->entry( 'demo.sayHello', $now + 40 );
+		$this->assertSame( 'Mobile app', $entry['login_user_agent'], 'The client of a login that worked is written at once.' );
+		$this->assertSame( $now + 40, $entry['login_at'] );
+		$this->assertSame( 'Test client', $entry['user_agent'] );
 
-		$this->record( $server, 'demo.sayHello', array(), array( 'now' => $now + 120 ) );
+		$this->record(
+			$server,
+			'demo.sayHello',
+			array(),
+			array(
+				'now'        => $now + 120,
+				'user_agent' => 'Guesser',
+				'logins'     => array(
+					'ok'     => 0,
+					'failed' => 1,
+				),
+			)
+		);
 		$entry = $this->entry( 'demo.sayHello', $now + 120 );
 		$this->assertSame( $now + 120, $entry['last_at'] );
 		$this->assertSame( $now, $entry['first_at'] );
+		$this->assertSame( 'Guesser', $entry['user_agent'] );
+		$this->assertSame( 'Mobile app', $entry['login_user_agent'], 'Failed attempts do not replace the login client.' );
 		$this->assertSame( 4, $entry['calls'] );
-
-		$this->record( $server, 'demo.sayHello', array(), array( 'user_agent' => str_repeat( 'あ', 300 ) ) );
-		$this->assertSame( 200, mb_strlen( $this->entry( 'demo.sayHello' )['user_agent'] ), 'The client is cut to 200 characters.' );
 	}
 
 	/**
-	 * No more than METHOD_MAX methods are recorded; the recorded ones keep counting.
+	 * The client is kept as printable ASCII, cut to 200 characters.
+	 */
+	public function test_clean_user_agent() {
+		$this->assertSame( 'wp-android/25.2 (Android 15)', JP4WC_XMLRPC_Guard::clean_user_agent( "wp-android/25.2 (Android 15)\n" ) );
+		$this->assertSame( 'ab', JP4WC_XMLRPC_Guard::clean_user_agent( "aあ\u{1F600}b" ), 'Not ASCII: dropped, so a utf8 table never refuses the row.' );
+		$this->assertSame( 200, strlen( JP4WC_XMLRPC_Guard::clean_user_agent( str_repeat( 'x', 300 ) ) ) );
+		$this->assertSame( '', JP4WC_XMLRPC_Guard::clean_user_agent( '' ) );
+	}
+
+	/**
+	 * No more than METHOD_MAX methods are recorded; the recorded ones keep counting; expired ones make room.
 	 */
 	public function test_record_limits_the_number_of_methods() {
 		global $wpdb;
 		$server = $this->server();
 		$this->record( $server, 'demo.sayHello' );
-		for ( $i = 1; $i < JP4WC_XMLRPC_Guard::METHOD_MAX; $i++ ) {
-			$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-				$wpdb->options,
-				array(
-					'option_name'  => 'jp4wc_xmlrpc_use_' . md5( 'filler' . $i ) . '_info',
-					'option_value' => maybe_serialize(
-						array(
-							'method'  => 'filler' . $i,
-							'last_at' => time(),
-						)
-					),
-					'autoload'     => 'off',
-				)
-			);
-		}
+		$fill = static function ( $last_at ) use ( $wpdb ) {
+			for ( $i = 1; $i < JP4WC_XMLRPC_Guard::METHOD_MAX; $i++ ) {
+				$wpdb->replace( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+					$wpdb->options,
+					array(
+						'option_name'  => 'jp4wc_xmlrpc_use_' . md5( 'filler' . $i ) . '_info',
+						'option_value' => maybe_serialize(
+							array(
+								'method'  => 'filler' . $i,
+								'last_at' => $last_at,
+							)
+						),
+						'autoload'     => 'off',
+					)
+				);
+			}
+		};
+		$fill( time() );
 		$this->record( $server, 'demo.addTwoNumbers' );
 		$this->assertNull( $this->entry( 'demo.addTwoNumbers' ) );
 		$this->record( $server, 'demo.sayHello' );
 		$this->assertSame( 2, $this->entry( 'demo.sayHello' )['calls'] );
+
+		$fill( time() - JP4WC_XMLRPC_Guard::RETENTION - 1 );
+		$this->record( $server, 'demo.addTwoNumbers' );
+		$this->assertSame( 1, $this->entry( 'demo.addTwoNumbers' )['calls'], 'The expired methods were removed to make room.' );
+	}
+
+	/**
+	 * One request records no more than METHODS_PER_REQUEST methods.
+	 */
+	public function test_record_limits_the_methods_of_a_request() {
+		$server = $this->server();
+		$calls  = array();
+		foreach ( array_slice( array_keys( $server->methods ), 0, JP4WC_XMLRPC_Guard::METHODS_PER_REQUEST + 5 ) as $method ) {
+			$calls[] = array( 'methodName' => $method );
+		}
+		$calls[] = array( 'methodName' => $calls[0]['methodName'] );
+		$this->record( $server, 'system.multicall', array( $calls ) );
+		$usage = JP4WC_XMLRPC_Guard::usage();
+		$this->assertCount( JP4WC_XMLRPC_Guard::METHODS_PER_REQUEST, $usage );
+		$this->assertSame( 2, $this->entry( $calls[0]['methodName'] )['calls'], 'A recorded method counts every call of the request.' );
+	}
+
+	/**
+	 * A login WordPress refused because XML-RPC is off (xmlrpc_enabled) is counted as refused.
+	 */
+	public function test_record_counts_a_refusal_by_wordpress() {
+		$server        = $this->server();
+		$server->error = new IXR_Error( 405, 'XML-RPC services are disabled on this site.' );
+		$this->record( $server, 'wp.getPosts' );
+		$this->assertSame( 1, $this->entry( 'wp.getPosts' )['outcomes']['refused'] );
+	}
+
+	/**
+	 * The real path: the login hooks count, and the shutdown callback records the served request.
+	 */
+	public function test_hooks_record_the_request() {
+		self::factory()->user->create(
+			array(
+				'user_login' => 'xmlrpc-author',
+				'user_pass'  => 'right-password',
+				'role'       => 'author',
+			)
+		);
+		$flag = new ReflectionProperty( 'JP4WC_XMLRPC_Guard', 'xmlrpc_request' );
+		$flag->setValue( null, true );
+		$previous = isset( $GLOBALS['wp_xmlrpc_server'] ) ? $GLOBALS['wp_xmlrpc_server'] : null;
+		try {
+			$server = $this->server();
+			$this->assertInstanceOf( 'IXR_Error', $server->call( 'wp.getUsersBlogs', array( 'xmlrpc-author', 'wrong' ) ) );
+			$server->message             = (object) array(
+				'methodName' => 'wp.getUsersBlogs',
+				'params'     => array(),
+			);
+			$GLOBALS['wp_xmlrpc_server'] = $server;
+			JP4WC_XMLRPC_Guard::record_current_request();
+			$this->assertSame( 1, $this->entry( 'wp.getUsersBlogs' )['outcomes']['failed'], 'wp_login_failed was counted.' );
+
+			$server = $this->server();
+			$this->assertIsArray( $server->call( 'wp.getUsersBlogs', array( 'xmlrpc-author', 'right-password' ) ) );
+			$server->message             = (object) array(
+				'methodName' => 'wp.getUsersBlogs',
+				'params'     => array(),
+			);
+			$GLOBALS['wp_xmlrpc_server'] = $server;
+			JP4WC_XMLRPC_Guard::record_current_request();
+			$this->assertSame( 1, $this->entry( 'wp.getUsersBlogs' )['outcomes']['login'], 'The authenticate result was counted.' );
+
+			// The counts were reset after recording.
+			JP4WC_XMLRPC_Guard::record_current_request();
+			$this->assertSame( 1, $this->entry( 'wp.getUsersBlogs' )['outcomes']['login'] );
+			$this->assertSame( 1, $this->entry( 'wp.getUsersBlogs' )['outcomes']['open'] );
+
+			$flag->setValue( null, false );
+			JP4WC_XMLRPC_Guard::record_current_request();
+			$this->assertSame( 3, $this->entry( 'wp.getUsersBlogs' )['calls'], 'Not an XML-RPC request: nothing recorded.' );
+		} finally {
+			$flag->setValue( null, null );
+			$GLOBALS['wp_xmlrpc_server'] = $previous;
+		}
 	}
 
 	/**

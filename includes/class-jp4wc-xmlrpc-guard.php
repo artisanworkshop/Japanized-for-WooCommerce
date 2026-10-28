@@ -27,10 +27,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   With an empty allow list xmlrpc_enabled is false as well, and the
  *   pingback header and the RSD link are gone.
  *
- * A request that Jetpack took over (?for=jetpack, with WordPress's password
- * login removed and the methods chosen by Jetpack's XML-RPC server) is left
- * alone: Jetpack checks its signature, so Jetpack keeps working. A request
- * that only claims to be Jetpack's has neither and is guarded.
+ * A request that Jetpack's connection took over (?for=jetpack, with
+ * WordPress's password login removed and the methods chosen by its
+ * Jetpack_XMLRPC_Server) is left alone: Jetpack checks its signature, so
+ * Jetpack keeps working. WooCommerce bundles that connection, so on most
+ * sites any request with ?for=jetpack is taken over, and then offers only
+ * Jetpack's methods and no password login. Where nothing takes it over,
+ * the parameter changes nothing and the request is guarded.
  *
  * WordPress.com's own login and the REST API are not XML-RPC and are not
  * affected.
@@ -55,9 +58,9 @@ class JP4WC_XMLRPC_Guard {
 	const ALLOW_MAX = 50;
 
 	/**
-	 * An allow list entry: a method name (letters, digits, _ and .) with an optional * at the end.
+	 * An allow list entry: a method name (letters, digits, _ . : and /, as the XML-RPC specification allows) with an optional * at the end.
 	 */
-	const ALLOW_PATTERN = '/^[A-Za-z0-9_.]+\*?$/D';
+	const ALLOW_PATTERN = '/^[A-Za-z0-9_.:\/]+\*?$/D';
 
 	/**
 	 * Prefix of the option rows of the record: jp4wc_xmlrpc_use_<md5 of the method>_<info|outcome>.
@@ -82,6 +85,11 @@ class JP4WC_XMLRPC_Guard {
 	 * Methods recorded at most.
 	 */
 	const METHOD_MAX = 100;
+
+	/**
+	 * Methods recorded from one request at most.
+	 */
+	const METHODS_PER_REQUEST = 10;
 
 	/**
 	 * Seconds a method stays in the record after its last call (30 days).
@@ -115,6 +123,15 @@ class JP4WC_XMLRPC_Guard {
 		'jetpack'   => false,
 		'originals' => array(),
 	);
+
+	/**
+	 * Whether this request is an XML-RPC request, when set (tests); null reads XMLRPC_REQUEST.
+	 *
+	 * A test cannot define the constant: it would stay for the rest of the run.
+	 *
+	 * @var bool|null
+	 */
+	private static $xmlrpc_request = null;
 
 	/**
 	 * Password logins of this request: worked, failed.
@@ -394,6 +411,7 @@ class JP4WC_XMLRPC_Guard {
 			return;
 		}
 		$user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
+		// The server is a global only on xmlrpc.php; Jetpack's alternate endpoint keeps its own.
 		self::record_request( $wp_xmlrpc_server, $request, $logins, $user_agent );
 	}
 
@@ -401,11 +419,12 @@ class JP4WC_XMLRPC_Guard {
 	 * Records the calls of a served XML-RPC request.
 	 *
 	 * Only methods the server has are recorded, so a client cannot add
-	 * names of its own. A system.multicall counts each call inside it. The
-	 * login result is the request's: in a multicall that mixes methods, each
-	 * method gets the same one.
+	 * names of its own, and no more than METHODS_PER_REQUEST of them, so a
+	 * multicall listing every method costs a few queries. A system.multicall
+	 * counts each call inside it. The login result is the request's: in a
+	 * multicall that mixes methods, each method gets the same one.
 	 *
-	 * @param object                                 $server     The XML-RPC server, after serving (message, callbacks).
+	 * @param object                                 $server     The XML-RPC server, after serving (message, callbacks, error).
 	 * @param array{jetpack: bool, originals: array} $request    What the guard decided for the server.
 	 * @param array{ok: int, failed: int}            $logins     Password logins of the request.
 	 * @param string                                 $user_agent Client.
@@ -422,11 +441,23 @@ class JP4WC_XMLRPC_Guard {
 
 		$calls = array();
 		foreach ( self::requested_methods( $message->methodName, $params ) as $name ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- IXR's property.
-			if ( isset( $callbacks[ $name ] ) ) {
-				$calls[ $name ] = isset( $calls[ $name ] ) ? $calls[ $name ] + 1 : 1;
+			if ( ! isset( $callbacks[ $name ] ) ) {
+				continue;
 			}
+			if ( ! isset( $calls[ $name ] ) && count( $calls ) >= self::METHODS_PER_REQUEST ) {
+				continue;
+			}
+			$calls[ $name ] = isset( $calls[ $name ] ) ? $calls[ $name ] + 1 : 1;
+		}
+		if ( array() === $calls ) {
+			return;
 		}
 
+		// WordPress refused the login itself: XML-RPC turned off by xmlrpc_enabled (this guard or another plugin).
+		$error   = isset( $server->error ) ? $server->error : null;
+		$refused = is_object( $error ) && isset( $error->code ) && 405 === (int) $error->code;
+
+		$entries   = array();
 		$originals = isset( $request['originals'] ) && is_array( $request['originals'] ) ? $request['originals'] : array();
 		foreach ( $calls as $name => $count ) {
 			if ( ! empty( $request['jetpack'] ) ) {
@@ -437,14 +468,31 @@ class JP4WC_XMLRPC_Guard {
 				$outcome = 'failed';
 			} elseif ( ! empty( $logins['ok'] ) ) {
 				$outcome = 'login';
+			} elseif ( $refused ) {
+				$outcome = 'refused';
 			} else {
 				$outcome = 'open';
 			}
-			$callback = array_key_exists( $name, $originals ) ? $originals[ $name ] : $callbacks[ $name ];
-			if ( ! self::store( $name, $outcome, $count, self::provider_of( $callback, get_class( $server ) ), (string) $user_agent, $now ) ) {
-				return;
-			}
+			$entries[ $name ] = array(
+				'outcome'  => $outcome,
+				'count'    => $count,
+				'callback' => array_key_exists( $name, $originals ) ? $originals[ $name ] : $callbacks[ $name ],
+			);
 		}
+		self::store( $entries, get_class( $server ), self::clean_user_agent( $user_agent ), $now );
+	}
+
+	/**
+	 * Returns a client as it is kept: printable ASCII only, at most USER_AGENT_LENGTH characters.
+	 *
+	 * A User-Agent header is ASCII; anything else (or a 4-byte character a
+	 * utf8 table refuses) is dropped rather than failing the write.
+	 *
+	 * @param string $user_agent User-Agent header.
+	 * @return string
+	 */
+	public static function clean_user_agent( $user_agent ) {
+		return substr( (string) preg_replace( '/[^\x20-\x7E]/', '', (string) $user_agent ), 0, self::USER_AGENT_LENGTH );
 	}
 
 	/**
@@ -471,76 +519,114 @@ class JP4WC_XMLRPC_Guard {
 	}
 
 	/**
-	 * Adds calls of a method to the record.
+	 * Adds the calls of a request to the record.
 	 *
-	 * The count is one row per method and result, added to in the database
-	 * (parallel requests are all counted). The method's row with its last
-	 * call and client is written when it is new, older than TOUCH_INTERVAL or
-	 * different; parallel writes keep one of them, which is all it holds.
+	 * The methods' rows are read in one query and the counts written in one
+	 * statement, added to in the database (parallel requests are all
+	 * counted). A new method is recorded while fewer than METHOD_MAX are (the
+	 * methods unused for RETENTION are removed first when the limit is
+	 * reached). A method's row is written when it is new or its last call is
+	 * older than TOUCH_INTERVAL, so a client cannot make every call rewrite
+	 * it; the client of the last login that worked is kept apart from the
+	 * last client, so failed attempts cannot hide it. Parallel writes of a
+	 * row keep one of them, which is all it holds.
 	 *
-	 * @param string $method     Method.
-	 * @param string $outcome    One of OUTCOMES.
-	 * @param int    $count      Calls.
-	 * @param string $provider   Who added the method (provider_of()).
-	 * @param string $user_agent Client.
-	 * @param int    $now        Time.
-	 * @return bool False when the database refused a read or a write (the rest of the request is not recorded).
+	 * @param array<string, array{outcome: string, count: int, callback: mixed}> $entries      Method => calls.
+	 * @param string                                                             $server_class Class of the XML-RPC server.
+	 * @param string                                                             $user_agent   Client (clean_user_agent()).
+	 * @param int                                                                $now          Time.
 	 */
-	private static function store( $method, $outcome, $count, $provider, $user_agent, $now ) {
+	private static function store( array $entries, $server_class, $user_agent, $now ) {
 		global $wpdb;
-		$hash = md5( $method );
-		$name = self::OPTION_PREFIX . $hash . '_info';
-		$old  = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Read from the database: a cached copy may predate another request's write.
-			$wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $name )
-		);
-		if ( '' !== $wpdb->last_error ) {
-			return false;
+		$names = array();
+		foreach ( array_keys( $entries ) as $method ) {
+			$names[ self::OPTION_PREFIX . md5( $method ) . '_info' ] = $method;
 		}
-		$info = null === $old ? null : maybe_unserialize( $old );
-		if ( null === $old ) {
-			$methods = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Rows found by their name; never cached.
-				$wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( self::OPTION_PREFIX ) . '%' . $wpdb->esc_like( '_info' ) )
-			);
-			if ( '' !== $wpdb->last_error ) {
-				return false;
-			}
-			if ( (int) $methods >= self::METHOD_MAX ) {
-				return true;
+		$rows = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Read from the database: a cached copy may predate another request's write.
+			$wpdb->prepare(
+				"SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name IN (" . implode( ', ', array_fill( 0, count( $names ), '%s' ) ) . ')', // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- One placeholder per name.
+				array_keys( $names )
+			),
+			ARRAY_A
+		);
+		if ( '' !== $wpdb->last_error || ! is_array( $rows ) ) {
+			return;
+		}
+		$infos = array();
+		foreach ( $rows as $row ) {
+			$info = maybe_unserialize( $row['option_value'] );
+			if ( isset( $names[ $row['option_name'] ] ) && is_array( $info ) ) {
+				$infos[ $names[ $row['option_name'] ] ] = $info;
 			}
 		}
 
-		$user_agent = mb_substr( $user_agent, 0, self::USER_AGENT_LENGTH );
-		$fresh      = is_array( $info ) && isset( $info['last_at'] ) && $now - (int) $info['last_at'] < self::TOUCH_INTERVAL
-			&& isset( $info['user_agent'], $info['provider'] ) && $user_agent === $info['user_agent'] && $provider === $info['provider'];
-		if ( ! $fresh ) {
+		$new = array_diff( array_keys( $entries ), array_keys( $infos ) );
+		if ( array() !== $new ) {
+			$room = self::METHOD_MAX - self::count_methods();
+			if ( $room < count( $new ) ) {
+				self::delete_expired( null, $now );
+				$room = self::METHOD_MAX - self::count_methods();
+			}
+			foreach ( array_slice( $new, max( 0, $room ) ) as $method ) {
+				unset( $entries[ $method ] );
+			}
+			if ( array() === $entries ) {
+				return;
+			}
+		}
+
+		$args = array();
+		foreach ( $entries as $method => $entry ) {
+			$args[] = self::OPTION_PREFIX . md5( $method ) . '_' . $entry['outcome'];
+			$args[] = (string) (int) $entry['count'];
+		}
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Counts added to in the database, so that parallel requests are all counted.
+			$wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Two values per placeholder group, one group per count.
+				"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES " . implode( ', ', array_fill( 0, count( $entries ), "(%s, %s, 'off')" ) ) . ' ON DUPLICATE KEY UPDATE option_value = CAST(option_value AS UNSIGNED) + CAST(VALUES(option_value) AS UNSIGNED)', // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- One placeholder group per count.
+				$args
+			)
+		);
+		if ( '' !== $wpdb->last_error ) {
+			return;
+		}
+
+		foreach ( $entries as $method => $entry ) {
+			$info  = isset( $infos[ $method ] ) ? $infos[ $method ] : null;
+			$login = 'login' === $entry['outcome'];
+			$due   = null === $info || ! isset( $info['last_at'] ) || $now - (int) $info['last_at'] >= self::TOUCH_INTERVAL;
+			if ( ! $due && ! ( $login && ( ! isset( $info['login_user_agent'] ) || $user_agent !== $info['login_user_agent'] ) ) ) {
+				continue;
+			}
 			$value = array(
-				'method'     => $method,
-				'provider'   => $provider,
-				'first_at'   => is_array( $info ) && isset( $info['first_at'] ) ? (int) $info['first_at'] : $now,
-				'last_at'    => $now,
-				'user_agent' => $user_agent,
+				'method'           => $method,
+				'provider'         => self::provider_of( $entry['callback'], $server_class ),
+				'first_at'         => isset( $info['first_at'] ) ? (int) $info['first_at'] : $now,
+				'last_at'          => $due ? $now : (int) $info['last_at'],
+				'user_agent'       => $due ? $user_agent : ( isset( $info['user_agent'] ) ? (string) $info['user_agent'] : '' ),
+				'login_at'         => $login ? $now : ( isset( $info['login_at'] ) ? (int) $info['login_at'] : 0 ),
+				'login_user_agent' => $login ? $user_agent : ( isset( $info['login_user_agent'] ) ? (string) $info['login_user_agent'] : '' ),
 			);
 			$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- One row per method, written as a whole; never cached.
 				$wpdb->prepare(
 					"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'off') ON DUPLICATE KEY UPDATE option_value = VALUES(option_value)",
-					$name,
+					self::OPTION_PREFIX . md5( $method ) . '_info',
 					maybe_serialize( $value )
 				)
 			);
-			if ( '' !== $wpdb->last_error ) {
-				return false;
-			}
 		}
+	}
 
-		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- A count added to in the database, so that parallel requests are all counted.
-			$wpdb->prepare(
-				"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'off') ON DUPLICATE KEY UPDATE option_value = CAST(option_value AS UNSIGNED) + %d",
-				self::OPTION_PREFIX . $hash . '_' . $outcome,
-				(string) (int) $count,
-				(int) $count
-			)
+	/**
+	 * Returns how many methods are recorded (PHP_INT_MAX when the rows cannot be counted).
+	 *
+	 * @return int
+	 */
+	private static function count_methods() {
+		global $wpdb;
+		$count = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Rows found by their name; never cached.
+			$wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( self::OPTION_PREFIX ) . '%' . $wpdb->esc_like( '_info' ) )
 		);
-		return '' === $wpdb->last_error;
+		return '' === $wpdb->last_error ? (int) $count : PHP_INT_MAX;
 	}
 
 	/**
@@ -616,7 +702,7 @@ class JP4WC_XMLRPC_Guard {
 	 * Returns the record, newest call first.
 	 *
 	 * @param int|null $now Time (tests).
-	 * @return array<int, array{method: string, provider: string, first_at: int, last_at: int, user_agent: string, calls: int, outcomes: array<string, int>}>|null
+	 * @return array<int, array{method: string, provider: string, first_at: int, last_at: int, user_agent: string, login_at: int, login_user_agent: string, calls: int, outcomes: array<string, int>}>|null
 	 *         Null when the record could not be read.
 	 */
 	public static function usage( $now = null ) {
@@ -658,13 +744,15 @@ class JP4WC_XMLRPC_Guard {
 				$outcomes[ $outcome ] = $count;
 			}
 			$usage[] = array(
-				'method'     => $info['method'],
-				'provider'   => isset( $info['provider'] ) && is_string( $info['provider'] ) ? $info['provider'] : '',
-				'first_at'   => isset( $info['first_at'] ) ? (int) $info['first_at'] : (int) $info['last_at'],
-				'last_at'    => (int) $info['last_at'],
-				'user_agent' => isset( $info['user_agent'] ) && is_string( $info['user_agent'] ) ? $info['user_agent'] : '',
-				'calls'      => array_sum( $outcomes ),
-				'outcomes'   => $outcomes,
+				'method'           => $info['method'],
+				'provider'         => isset( $info['provider'] ) && is_string( $info['provider'] ) ? $info['provider'] : '',
+				'first_at'         => isset( $info['first_at'] ) ? (int) $info['first_at'] : (int) $info['last_at'],
+				'last_at'          => (int) $info['last_at'],
+				'user_agent'       => isset( $info['user_agent'] ) && is_string( $info['user_agent'] ) ? $info['user_agent'] : '',
+				'login_at'         => isset( $info['login_at'] ) ? (int) $info['login_at'] : 0,
+				'login_user_agent' => isset( $info['login_user_agent'] ) && is_string( $info['login_user_agent'] ) ? $info['login_user_agent'] : '',
+				'calls'            => array_sum( $outcomes ),
+				'outcomes'         => $outcomes,
 			);
 		}
 		usort(
@@ -831,6 +919,9 @@ class JP4WC_XMLRPC_Guard {
 	 * @return bool
 	 */
 	private static function is_xmlrpc_request() {
+		if ( null !== self::$xmlrpc_request ) {
+			return self::$xmlrpc_request;
+		}
 		return defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST;
 	}
 }
