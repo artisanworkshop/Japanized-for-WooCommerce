@@ -373,12 +373,13 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		update_option( 'admin_email', 'owner-260@example.jp' );
 		self::order( 123457, 'processing' );
 
-		$json = wp_json_encode( JP4WC_Security_Scan::payload( true ) );
+		// Without escaped slashes, so that a path inside any value is found.
+		$json = wp_json_encode( JP4WC_Security_Scan::payload( true ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 
 		$this->assertStringNotContainsString( 'owner-260@example.jp', $json );
 		$this->assertStringNotContainsString( '123457', $json );
-		$this->assertStringNotContainsString( wp_json_encode( untrailingslashit( ABSPATH ) ), $json );
-		$this->assertStringNotContainsString( trim( wp_json_encode( WP_CONTENT_DIR ), '"' ), $json );
+		$this->assertStringNotContainsString( untrailingslashit( ABSPATH ), $json );
+		$this->assertStringNotContainsString( WP_CONTENT_DIR, $json );
 	}
 
 	/**
@@ -817,20 +818,59 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A second 401 is not retried again: the check fails, the old token is gone.
+	 * A refused token whose new registration fails: the check fails without
+	 * retrying again, the old token and report are gone, and the error says
+	 * that the earlier results can no longer be shown.
+	 *
+	 * @dataProvider failed_reregistration_provider
+	 *
+	 * @param array|WP_Error $second Answer to the request without the token.
+	 * @param int            $status Status of this site's REST response.
+	 * @param string         $code   Error code.
 	 */
-	public function test_second_refusal_is_not_retried() {
+	public function test_failed_reregistration_is_not_retried( $second, $status, $code ) {
 		self::store_token( home_url() );
 		self::consent();
-		$this->responses = array( self::response( 401 ), self::response( 401 ) );
+		update_option( JP4WC_Security_Scan::REPORT_OPTION, array( 'report' => array( 'token' => 'old' ) ) );
+		$this->responses = array( self::response( 401 ), $second );
 
 		$response = $this->dispatch( 'POST' );
 
-		$this->assertSame( 502, $response->get_status() );
-		$this->assertSame( 'jp4wc_security_scan_failed', $response->get_data()['code'] );
+		$this->assertSame( $status, $response->get_status() );
+		$this->assertSame( $code, $response->get_data()['code'] );
+		$this->assertTrue( $response->get_data()['data']['reregistered'] );
 		$this->assertCount( 2, $this->requests );
 		$this->assertNotContains( 'DELETE', wp_list_pluck( $this->requests, 'method' ) );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::TOKEN_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Scan::REPORT_OPTION ) );
+	}
+
+	/**
+	 * Failures of the request that registers again.
+	 *
+	 * @return array
+	 */
+	public function failed_reregistration_provider() {
+		return array(
+			'refused again' => array( self::response( 401 ), 502, 'jp4wc_security_scan_failed' ),
+			'rate limited'  => array( self::response( 429 ), 429, 'jp4wc_security_scan_rate_limited' ),
+			'unreachable'   => array( new WP_Error( 'http_request_failed', 'timeout' ), 502, 'jp4wc_security_scan_unreachable' ),
+		);
+	}
+
+	/**
+	 * An error that did not throw a registration away does not say so.
+	 */
+	public function test_error_without_reregistration_does_not_say_so() {
+		self::store_token( home_url() );
+		self::consent();
+		$this->responses = array( self::response( 503 ) );
+
+		$response = $this->dispatch( 'POST' );
+
+		$this->assertSame( 503, $response->get_status() );
+		$this->assertArrayNotHasKey( 'reregistered', $response->get_data()['data'] );
+		$this->assertSame( self::TOKEN, get_option( JP4WC_Security_Scan::TOKEN_OPTION )['token'] );
 	}
 
 	/**

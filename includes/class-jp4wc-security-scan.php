@@ -651,7 +651,9 @@ class JP4WC_Security_Scan {
 	 *
 	 * @param bool $include_bands Whether the bands are sent.
 	 * @return array{reregistered: bool}|WP_Error reregistered is true when an
-	 *         earlier registration can no longer be used.
+	 *         earlier registration can no longer be used; an error says so in
+	 *         its data too, since the old token and report are gone even when
+	 *         the request that registers again fails.
 	 */
 	private static function scan( $include_bands ) {
 		if ( ! self::can_scan() ) {
@@ -679,6 +681,9 @@ class JP4WC_Security_Scan {
 
 			$result = self::parse_scan_response( $response, null === $token );
 			if ( is_wp_error( $result ) ) {
+				if ( $reregistered ) {
+					$result->add_data( array_merge( (array) $result->get_error_data(), array( 'reregistered' => true ) ) );
+				}
 				return $result;
 			}
 

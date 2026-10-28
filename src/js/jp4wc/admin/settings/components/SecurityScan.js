@@ -502,15 +502,34 @@ const SecurityScan = ( { checkedAt } ) => {
 	const [ action, setAction ] = useState( { state: 'idle' } );
 	const mounted = useRef( true );
 	const bandsChosen = useRef( false );
+	// Number of the last request for the state: the answer to an older one is dropped.
+	const loadCount = useRef( 0 );
 
+	/**
+	 * Loads the state of the free check.
+	 *
+	 * @param {boolean} withBands Whether the preview includes the bands.
+	 * @return {Promise<Object|null>} The state, or null when a later request replaced this one.
+	 */
 	const load = async ( withBands ) => {
-		const response = await apiFetch( {
-			path: withBands ? `${ PATH }?bands=1` : PATH,
-		} );
-		if ( mounted.current ) {
-			setScan( response );
-			setLoadError( null );
+		const number = ++loadCount.current;
+		const current = () => mounted.current && number === loadCount.current;
+		let response;
+		try {
+			response = await apiFetch( {
+				path: withBands ? `${ PATH }?bands=1` : PATH,
+			} );
+		} catch ( err ) {
+			if ( ! current() ) {
+				return null;
+			}
+			throw err;
 		}
+		if ( ! current() ) {
+			return null;
+		}
+		setScan( response );
+		setLoadError( null );
 		return response;
 	};
 
@@ -526,6 +545,39 @@ const SecurityScan = ( { checkedAt } ) => {
 		}
 	};
 
+	/**
+	 * Shows the preview with or without the bands.
+	 *
+	 * The check cannot be run until the preview shows what is sent, and when
+	 * the bands cannot be loaded they are not sent.
+	 *
+	 * @param {boolean} value Whether the bands are sent.
+	 */
+	const loadBands = async ( value ) => {
+		setBands( value );
+		setLoadingBands( true );
+		try {
+			if ( null === ( await load( value ) ) ) {
+				// A later request is running; it ends the loading.
+				return;
+			}
+		} catch ( err ) {
+			if ( mounted.current ) {
+				setBands( false );
+			}
+			reportLoadError( err );
+		}
+		if ( mounted.current ) {
+			setLoadingBands( false );
+		}
+	};
+
+	/**
+	 * Loads the state again, keeping the bands as chosen.
+	 */
+	const refresh = () =>
+		bands ? loadBands( true ) : load( false ).catch( reportLoadError );
+
 	useEffect( () => {
 		mounted.current = true;
 		return () => {
@@ -534,37 +586,35 @@ const SecurityScan = ( { checkedAt } ) => {
 	}, [] );
 
 	useEffect( () => {
-		// The bands asked for last time are offered again, until changed here.
-		const withBands = bandsChosen.current ? bands : null;
-		load( withBands === true )
-			.then( ( response ) => {
+		// The bands chosen on this screen stay; until then, those of the last check.
+		const chosen = bandsChosen.current;
+		( async () => {
+			if ( chosen && bands ) {
+				await loadBands( true );
+				return;
+			}
+			try {
+				const response = await load( false );
 				if (
-					withBands === null &&
+					response &&
+					! chosen &&
+					! bandsChosen.current &&
 					response.bands_available &&
 					response.consent?.current &&
 					response.consent.bands
 				) {
-					setBands( true );
-					return load( true );
+					await loadBands( true );
 				}
-			} )
-			.catch( reportLoadError );
+			} catch ( err ) {
+				reportLoadError( err );
+			}
+		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ checkedAt ] );
 
-	const toggleBands = async ( value ) => {
+	const toggleBands = ( value ) => {
 		bandsChosen.current = true;
-		setBands( value );
-		setLoadingBands( true );
-		try {
-			await load( value );
-		} catch ( err ) {
-			reportLoadError( err );
-		} finally {
-			if ( mounted.current ) {
-				setLoadingBands( false );
-			}
-		}
+		loadBands( value );
 	};
 
 	const run = async () => {
@@ -573,7 +623,9 @@ const SecurityScan = ( { checkedAt } ) => {
 			const response = await apiFetch( {
 				path: PATH,
 				method: 'POST',
-				data: { consent: true, bands },
+				// Only the consent box agrees: a screen opened before the consent was
+				// withdrawn or the text changed leaves it to the stored consent.
+				data: { consent: ! consented && agreed, bands },
 			} );
 			if ( ! mounted.current ) {
 				return;
@@ -584,17 +636,21 @@ const SecurityScan = ( { checkedAt } ) => {
 				state: response.reregistered ? 'reregistered' : 'done',
 			} );
 		} catch ( err ) {
-			if ( mounted.current ) {
-				setAction( {
-					state: 'error',
-					message:
-						err.message ||
-						__(
-							'The check could not be run.',
-							'woocommerce-for-japan'
-						),
-				} );
+			if ( ! mounted.current ) {
+				return;
 			}
+			setAction( {
+				state: 'error',
+				message:
+					err.message ||
+					__(
+						'The check could not be run.',
+						'woocommerce-for-japan'
+					),
+				reregistered: err.data?.reregistered === true,
+			} );
+			// The consent, the token or the report may have changed.
+			refresh();
 		}
 	};
 
@@ -614,17 +670,19 @@ const SecurityScan = ( { checkedAt } ) => {
 			bandsChosen.current = false;
 			setAction( { state: 'deleted' } );
 		} catch ( err ) {
-			if ( mounted.current ) {
-				setAction( {
-					state: 'error',
-					message:
-						err.message ||
-						__(
-							'The check data could not be deleted.',
-							'woocommerce-for-japan'
-						),
-				} );
+			if ( ! mounted.current ) {
+				return;
 			}
+			setAction( {
+				state: 'error',
+				message:
+					err.message ||
+					__(
+						'The check data could not be deleted.',
+						'woocommerce-for-japan'
+					),
+			} );
+			refresh();
 		}
 	};
 
@@ -693,6 +751,14 @@ const SecurityScan = ( { checkedAt } ) => {
 			{ action.state === 'error' && (
 				<Notice status="error" onRemove={ dismiss }>
 					{ action.message }
+				</Notice>
+			) }
+			{ action.state === 'error' && action.reregistered && (
+				<Notice status="warning" isDismissible={ false }>
+					{ __(
+						'This site was registered with wc.artws.info again, so earlier results can no longer be shown. wc.artws.info deletes them after 180 days.',
+						'woocommerce-for-japan'
+					) }
 				</Notice>
 			) }
 
@@ -791,7 +857,9 @@ const SecurityScan = ( { checkedAt } ) => {
 								variant="primary"
 								onClick={ run }
 								isBusy={ action.state === 'running' }
-								disabled={ busy || ! scan.ready }
+								disabled={
+									busy || loadingBands || ! scan.ready
+								}
 							>
 								{ __(
 									'Run the check again',
@@ -827,7 +895,10 @@ const SecurityScan = ( { checkedAt } ) => {
 									onClick={ run }
 									isBusy={ action.state === 'running' }
 									disabled={
-										busy || ! scan.ready || ! agreed
+										busy ||
+										loadingBands ||
+										! scan.ready ||
+										! agreed
 									}
 								>
 									{ __(
