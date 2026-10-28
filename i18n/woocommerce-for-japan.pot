@@ -2856,6 +2856,11 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The allowed methods still accept a password, and what protects the login page does not cover XML-RPC (the login attempt limiter stays asleep behind it): use a security plugin that limits login attempts, or leave the allow list empty."
+msgstr ""
+
 msgid "The allowed methods still accept a password, and nothing limits login attempts through XML-RPC: turn on the login attempt limiter or use a security plugin that limits login attempts."
 msgstr ""
 

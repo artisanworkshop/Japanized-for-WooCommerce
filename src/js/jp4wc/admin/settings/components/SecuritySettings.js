@@ -933,6 +933,19 @@ const SecuritySettings = ( {
 		xmlrpcOff &&
 		allowList.length > 0 &&
 		view?.xmlrpc?.login_protected === false;
+	let allowedNote = '';
+	if ( allowedUnprotected && view?.login_limit?.protected_by ) {
+		// The limiter sleeps behind what protects the login page, which does not cover xmlrpc.php.
+		allowedNote = __(
+			'The allowed methods still accept a password, and what protects the login page does not cover XML-RPC (the login attempt limiter stays asleep behind it): use a security plugin that limits login attempts, or leave the allow list empty.',
+			'woocommerce-for-japan'
+		);
+	} else if ( allowedUnprotected ) {
+		allowedNote = __(
+			'The allowed methods still accept a password, and nothing limits login attempts through XML-RPC: turn on the login attempt limiter or use a security plugin that limits login attempts.',
+			'woocommerce-for-japan'
+		);
+	}
 	// Saved as on, nothing else protects the page, yet not running: the constant or a filter.
 	const disabledOutside =
 		view?.login_limit?.enabled === true &&
@@ -1235,14 +1248,7 @@ const SecuritySettings = ( {
 								__(
 									'One method per line, such as wp.getUsersBlogs. A name ending in * allows every method that starts with it, such as metaWeblog.*. "Allow" in the XML-RPC usage list above adds a method. Leave it empty to refuse every method.',
 									'woocommerce-for-japan'
-								) +
-								( allowedUnprotected
-									? ' ' +
-									  __(
-											'The allowed methods still accept a password, and nothing limits login attempts through XML-RPC: turn on the login attempt limiter or use a security plugin that limits login attempts.',
-											'woocommerce-for-japan'
-									  )
-									: '' )
+								) + ( allowedNote ? ' ' + allowedNote : '' )
 							}
 							value={ settings?.[ 'xmlrpc-allow' ] ?? '' }
 							onChange={ ( value ) =>

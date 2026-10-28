@@ -1124,6 +1124,14 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			);
 			$this->assertNotNull( JP4WC_Security_Checks::login_protected_by_other_means( $htaccess ), 'The login page is restricted.' );
 			$this->assertSame( 'fail', $this->status( 'A-04', $htaccess ), 'A restriction of wp-login.php does not reach xmlrpc.php.' );
+
+			// The limiter turned on but asleep behind a plugin that only moves the login page.
+			update_option( 'wc4jp-login-limit', '1' );
+			update_option( 'active_plugins', array( 'wps-hide-login/wps-hide-login.php' ) );
+			$this->assertFalse( JP4WC_Login_Limiter::is_active() );
+			$this->assertSame( 'fail', $this->status( 'A-04', array( 'active_plugins' => array( 'wps-hide-login' ) ) + $context ), 'An asleep limiter counts nothing.' );
+			update_option( 'active_plugins', array() );
+			update_option( 'wc4jp-login-limit', '' );
 			$this->assertSame( array(), $this->requested, 'The setting is read, nothing is requested.' );
 
 			update_option( 'wc4jp-disable-xmlrpc', '' );

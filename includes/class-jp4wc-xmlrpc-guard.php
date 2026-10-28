@@ -575,6 +575,13 @@ class JP4WC_XMLRPC_Guard {
 			}
 		}
 
+		// Rows in one order in every request, so that two parallel statements never wait on each other's locks.
+		uksort(
+			$entries,
+			static function ( $a, $b ) {
+				return strcmp( md5( $a ), md5( $b ) );
+			}
+		);
 		$args = array();
 		foreach ( $entries as $method => $entry ) {
 			$args[] = self::OPTION_PREFIX . md5( $method ) . '_' . $entry['outcome'];
