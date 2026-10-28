@@ -369,7 +369,7 @@ class JP4WC_XMLRPC_Guard_Test extends WP_UnitTestCase {
 		$this->assertSame( 1, $this->entry( 'wp.getPosts', $now )['outcomes']['jetpack'] );
 
 		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT option_name, autoload FROM {$wpdb->options} WHERE option_name LIKE %s", 'jp4wc\_xmlrpc\_use\_%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$this->assertCount( 6, $rows, 'An info row and a row per result: 1 + 3 and 1 + 1.' );
+		$this->assertCount( 7, $rows, 'An info row, a row per result and the client of the login: 1 + 3 + 1 and 1 + 1.' );
 		foreach ( $rows as $row ) {
 			$this->assertSame( 'off', $row->autoload );
 		}
@@ -476,6 +476,7 @@ class JP4WC_XMLRPC_Guard_Test extends WP_UnitTestCase {
 		);
 		$entry = $this->entry( 'demo.sayHello', $now + 40 );
 		$this->assertSame( 'Mobile app', $entry['login_user_agent'], 'The client of a login that worked is written at once.' );
+		$client = get_option( 'jp4wc_xmlrpc_use_' . md5( 'demo.sayHello' ) . '_client' );
 		$this->assertSame( $now + 40, $entry['login_at'] );
 		$this->assertSame( 'Test client', $entry['user_agent'] );
 
@@ -497,6 +498,8 @@ class JP4WC_XMLRPC_Guard_Test extends WP_UnitTestCase {
 		$this->assertSame( $now, $entry['first_at'] );
 		$this->assertSame( 'Guesser', $entry['user_agent'] );
 		$this->assertSame( 'Mobile app', $entry['login_user_agent'], 'Failed attempts do not replace the login client.' );
+		wp_cache_delete( 'jp4wc_xmlrpc_use_' . md5( 'demo.sayHello' ) . '_client', 'options' );
+		$this->assertSame( $client, get_option( 'jp4wc_xmlrpc_use_' . md5( 'demo.sayHello' ) . '_client' ), 'A failed attempt never writes the login client\'s row, so it cannot put an older one back.' );
 		$this->assertSame( 4, $entry['calls'] );
 	}
 

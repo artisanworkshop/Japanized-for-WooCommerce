@@ -268,7 +268,12 @@ class JP4WC_XMLRPC_Guard {
 	 * @return IXR_Error
 	 */
 	public static function refuse( $args = null ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- IXR passes the arguments.
-		return new IXR_Error( 405, __( 'XML-RPC services are disabled on this site.', 'woocommerce-for-japan' ) );
+		$build = static function () {
+			return __( 'XML-RPC services are disabled on this site.', 'woocommerce-for-japan' );
+		};
+		// The WordPress apps show this to their users: the bundled translation stands in until the language pack has it (#287).
+		$message = function_exists( 'jp4wc_with_bundled_translation' ) ? jp4wc_with_bundled_translation( $build ) : $build();
+		return new IXR_Error( 405, $message );
 	}
 
 	/**
@@ -525,11 +530,13 @@ class JP4WC_XMLRPC_Guard {
 	 * statement, added to in the database (parallel requests are all
 	 * counted). A new method is recorded while fewer than METHOD_MAX are (the
 	 * methods unused for RETENTION are removed first when the limit is
-	 * reached). A method's row is written when it is new or its last call is
-	 * older than TOUCH_INTERVAL, so a client cannot make every call rewrite
-	 * it; the client of the last login that worked is kept apart from the
-	 * last client, so failed attempts cannot hide it. Parallel writes of a
-	 * row keep one of them, which is all it holds.
+	 * reached). A method's info row is written when it is new or its last
+	 * call is older than TOUCH_INTERVAL, so a client cannot make every call
+	 * rewrite it. The client of the last login that worked is a row of its
+	 * own (_client), written only by such logins and never merged with an
+	 * earlier read, so a failed attempt written at the same time cannot put
+	 * an older one back. Parallel writes of a row keep one of them, which is
+	 * all it holds.
 	 *
 	 * @param array<string, array{outcome: string, count: int, callback: mixed}> $entries      Method => calls.
 	 * @param string                                                             $server_class Class of the XML-RPC server.
@@ -540,7 +547,8 @@ class JP4WC_XMLRPC_Guard {
 		global $wpdb;
 		$names = array();
 		foreach ( array_keys( $entries ) as $method ) {
-			$names[ self::OPTION_PREFIX . md5( $method ) . '_info' ] = $method;
+			$names[ self::OPTION_PREFIX . md5( $method ) . '_info' ]   = array( $method, 'info' );
+			$names[ self::OPTION_PREFIX . md5( $method ) . '_client' ] = array( $method, 'client' );
 		}
 		$rows = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Read from the database: a cached copy may predate another request's write.
 			$wpdb->prepare(
@@ -552,11 +560,18 @@ class JP4WC_XMLRPC_Guard {
 		if ( '' !== $wpdb->last_error || ! is_array( $rows ) ) {
 			return;
 		}
-		$infos = array();
+		$infos   = array();
+		$clients = array();
 		foreach ( $rows as $row ) {
-			$info = maybe_unserialize( $row['option_value'] );
-			if ( isset( $names[ $row['option_name'] ] ) && is_array( $info ) ) {
-				$infos[ $names[ $row['option_name'] ] ] = $info;
+			$value = maybe_unserialize( $row['option_value'] );
+			if ( ! isset( $names[ $row['option_name'] ] ) || ! is_array( $value ) ) {
+				continue;
+			}
+			list( $method, $kind ) = $names[ $row['option_name'] ];
+			if ( 'info' === $kind ) {
+				$infos[ $method ] = $value;
+			} else {
+				$clients[ $method ] = $value;
 			}
 		}
 
@@ -598,29 +613,50 @@ class JP4WC_XMLRPC_Guard {
 		}
 
 		foreach ( $entries as $method => $entry ) {
-			$info  = isset( $infos[ $method ] ) ? $infos[ $method ] : null;
-			$login = 'login' === $entry['outcome'];
-			$due   = null === $info || ! isset( $info['last_at'] ) || $now - (int) $info['last_at'] >= self::TOUCH_INTERVAL;
-			if ( ! $due && ! ( $login && ( ! isset( $info['login_user_agent'] ) || $user_agent !== $info['login_user_agent'] ) ) ) {
-				continue;
+			$info = isset( $infos[ $method ] ) ? $infos[ $method ] : null;
+			if ( null === $info || ! isset( $info['last_at'] ) || $now - (int) $info['last_at'] >= self::TOUCH_INTERVAL ) {
+				self::write_row(
+					$method,
+					'info',
+					array(
+						'method'     => $method,
+						'provider'   => self::provider_of( $entry['callback'], $server_class ),
+						'first_at'   => isset( $info['first_at'] ) ? (int) $info['first_at'] : $now,
+						'last_at'    => $now,
+						'user_agent' => $user_agent,
+					)
+				);
 			}
-			$value = array(
-				'method'           => $method,
-				'provider'         => self::provider_of( $entry['callback'], $server_class ),
-				'first_at'         => isset( $info['first_at'] ) ? (int) $info['first_at'] : $now,
-				'last_at'          => $due ? $now : (int) $info['last_at'],
-				'user_agent'       => $due ? $user_agent : ( isset( $info['user_agent'] ) ? (string) $info['user_agent'] : '' ),
-				'login_at'         => $login ? $now : ( isset( $info['login_at'] ) ? (int) $info['login_at'] : 0 ),
-				'login_user_agent' => $login ? $user_agent : ( isset( $info['login_user_agent'] ) ? (string) $info['login_user_agent'] : '' ),
-			);
-			$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- One row per method, written as a whole; never cached.
-				$wpdb->prepare(
-					"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'off') ON DUPLICATE KEY UPDATE option_value = VALUES(option_value)",
-					self::OPTION_PREFIX . md5( $method ) . '_info',
-					maybe_serialize( $value )
-				)
-			);
+			$client = isset( $clients[ $method ] ) ? $clients[ $method ] : null;
+			if ( 'login' === $entry['outcome'] && ( null === $client || ! isset( $client['at'], $client['user_agent'] ) || $user_agent !== $client['user_agent'] || $now - (int) $client['at'] >= self::TOUCH_INTERVAL ) ) {
+				self::write_row(
+					$method,
+					'client',
+					array(
+						'at'         => $now,
+						'user_agent' => $user_agent,
+					)
+				);
+			}
 		}
+	}
+
+	/**
+	 * Writes one of a method's rows as a whole.
+	 *
+	 * @param string $method Method.
+	 * @param string $kind   info or client.
+	 * @param array  $value  Value.
+	 */
+	private static function write_row( $method, $kind, array $value ) {
+		global $wpdb;
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- One row, written as a whole; never cached.
+			$wpdb->prepare(
+				"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'off') ON DUPLICATE KEY UPDATE option_value = VALUES(option_value)",
+				self::OPTION_PREFIX . md5( $method ) . '_' . $kind,
+				maybe_serialize( $value )
+			)
+		);
 	}
 
 	/**
@@ -723,9 +759,10 @@ class JP4WC_XMLRPC_Guard {
 			return null;
 		}
 
-		$infos  = array();
-		$counts = array();
-		$length = strlen( self::OPTION_PREFIX );
+		$infos   = array();
+		$clients = array();
+		$counts  = array();
+		$length  = strlen( self::OPTION_PREFIX );
 		foreach ( $rows as $row ) {
 			$suffix = substr( (string) $row['option_name'], $length );
 			if ( 1 !== preg_match( '/^([0-9a-f]{32})_([a-z]+)$/D', $suffix, $parts ) ) {
@@ -735,6 +772,11 @@ class JP4WC_XMLRPC_Guard {
 				$info = maybe_unserialize( $row['option_value'] );
 				if ( is_array( $info ) && isset( $info['method'], $info['last_at'] ) && is_string( $info['method'] ) && md5( $info['method'] ) === $parts[1] ) {
 					$infos[ $parts[1] ] = $info;
+				}
+			} elseif ( 'client' === $parts[2] ) {
+				$client = maybe_unserialize( $row['option_value'] );
+				if ( is_array( $client ) && isset( $client['at'], $client['user_agent'] ) && is_string( $client['user_agent'] ) ) {
+					$clients[ $parts[1] ] = $client;
 				}
 			} elseif ( in_array( $parts[2], self::OUTCOMES, true ) ) {
 				$counts[ $parts[1] ][ $parts[2] ] = max( 0, (int) $row['option_value'] );
@@ -756,8 +798,8 @@ class JP4WC_XMLRPC_Guard {
 				'first_at'         => isset( $info['first_at'] ) ? (int) $info['first_at'] : (int) $info['last_at'],
 				'last_at'          => (int) $info['last_at'],
 				'user_agent'       => isset( $info['user_agent'] ) && is_string( $info['user_agent'] ) ? $info['user_agent'] : '',
-				'login_at'         => isset( $info['login_at'] ) ? (int) $info['login_at'] : 0,
-				'login_user_agent' => isset( $info['login_user_agent'] ) && is_string( $info['login_user_agent'] ) ? $info['login_user_agent'] : '',
+				'login_at'         => isset( $clients[ $hash ] ) ? (int) $clients[ $hash ]['at'] : 0,
+				'login_user_agent' => isset( $clients[ $hash ] ) ? $clients[ $hash ]['user_agent'] : '',
 				'calls'            => array_sum( $outcomes ),
 				'outcomes'         => $outcomes,
 			);

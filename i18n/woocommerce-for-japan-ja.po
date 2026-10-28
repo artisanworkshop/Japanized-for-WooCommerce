@@ -4720,6 +4720,6 @@ msgstr[0] ""
 "<strong>エラー:</strong> ログインの試行回数が多すぎます。%d 分後にやり直して"
 "ください。"
 
-#: includes/class-jp4wc-xmlrpc-guard.php:249
+#: includes/class-jp4wc-xmlrpc-guard.php:272
 msgid "XML-RPC services are disabled on this site."
 msgstr "このサイトでは XML-RPC サービスが無効になっています。"
