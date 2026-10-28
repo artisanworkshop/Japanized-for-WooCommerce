@@ -49,6 +49,10 @@ JP4WC_Login_Limiter::uninstall();
 require_once __DIR__ . '/includes/class-jp4wc-security-hardening.php';
 JP4WC_Security_Hardening::uninstall();
 
+// The XML-RPC setting, its allow list and the record of the calls on every site.
+require_once __DIR__ . '/includes/class-jp4wc-xmlrpc-guard.php';
+JP4WC_XMLRPC_Guard::uninstall();
+
 /**
  * Deletes the Paidy plugin options from the database.
  */

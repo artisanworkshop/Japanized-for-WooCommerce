@@ -194,17 +194,38 @@ class JP4WC_Settings_API_Security_Scan_Test extends WP_UnitTestCase {
 		try {
 			$this->assertSame( '', $this->reported_settings()['hide-rest-users'] );
 			$this->assertSame( '', $this->reported_settings()['disallow-file-edit'] );
+			$this->assertSame( '', $this->reported_settings()['disable-xmlrpc'] );
 			$this->save(
 				array(
 					'hide-rest-users'    => $posted,
 					'disallow-file-edit' => $posted,
+					'disable-xmlrpc'     => $posted,
 				)
 			);
 			$this->assertSame( $saved, get_option( 'wc4jp-hide-rest-users' ) );
 			$this->assertSame( $saved, get_option( 'wc4jp-disallow-file-edit' ) );
+			$this->assertSame( $saved, get_option( 'wc4jp-disable-xmlrpc' ) );
 		} finally {
 			delete_option( 'wc4jp-hide-rest-users' );
 			delete_option( 'wc4jp-disallow-file-edit' );
+			delete_option( 'wc4jp-disable-xmlrpc' );
+		}
+	}
+
+	/**
+	 * The XML-RPC allow list keeps one valid entry per line (3.0.0).
+	 */
+	public function test_xmlrpc_allow_list_is_normalized() {
+		try {
+			$this->assertSame( '', $this->reported_settings()['xmlrpc-allow'] );
+			$this->save( array( 'xmlrpc-allow' => "  wp.getUsersBlogs ,\r\nmetaWeblog.*\n<script>\nwp.getUsersBlogs" ) );
+			$this->assertSame( "wp.getUsersBlogs\nmetaWeblog.*", get_option( 'wc4jp-xmlrpc-allow' ) );
+			$this->assertSame( "wp.getUsersBlogs\nmetaWeblog.*", $this->reported_settings()['xmlrpc-allow'] );
+
+			$this->save( array( 'xmlrpc-allow' => array( 'wp.getUsersBlogs' ) ) );
+			$this->assertSame( '', get_option( 'wc4jp-xmlrpc-allow' ), 'Anything but a string is an empty list.' );
+		} finally {
+			delete_option( 'wc4jp-xmlrpc-allow' );
 		}
 	}
 

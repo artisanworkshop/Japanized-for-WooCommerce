@@ -138,6 +138,11 @@ class JP4WC_Security_Checks {
 	);
 
 	/**
+	 * Plugins of the login category that only move or hide the login page: they do not limit XML-RPC logins.
+	 */
+	const LOGIN_URL_PLUGINS = array( 'rename-wp-login', 'wps-hide-login' );
+
+	/**
 	 * Plugins the checks recognise, by category (directory names on WordPress.org).
 	 *
 	 * The `jp4wc_security_known_plugins` filter adds others.
@@ -658,12 +663,24 @@ class JP4WC_Security_Checks {
 	/**
 	 * A-04: XML-RPC turned on and answering.
 	 *
-	 * WordPress answers 405 to a request that is not a POST.
+	 * WordPress answers 405 to a request that is not a POST. With this
+	 * plugin's setting that turns XML-RPC off, nothing is requested: it
+	 * passes with an empty allow list, and with allowed methods while
+	 * something limits login attempts through XML-RPC
+	 * (xmlrpc_login_protected()), since those methods still accept a password.
 	 *
 	 * @param array $context Context.
 	 * @return string
 	 */
 	private static function xmlrpc( array $context ) {
+		// This plugin's own setting (3.0.0). class_exists: an earlier version's includes() may have loaded this file.
+		if ( class_exists( 'JP4WC_XMLRPC_Guard', false ) && JP4WC_XMLRPC_Guard::is_enabled() ) {
+			if ( array() === JP4WC_XMLRPC_Guard::allow_list() ) {
+				return 'pass';
+			}
+			// The allowed methods still accept a password.
+			return self::xmlrpc_login_protected( $context ) ? 'pass' : 'fail';
+		}
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
 		if ( ! apply_filters( 'xmlrpc_enabled', true ) ) {
 			return 'pass';
@@ -1463,6 +1480,30 @@ class JP4WC_Security_Checks {
 			);
 		}
 		return null;
+	}
+
+	/**
+	 * Whether login attempts through XML-RPC are limited.
+	 *
+	 * This plugin's login attempt limiter (it counts XML-RPC), Jetpack's brute
+	 * force protection or a known plugin that limits login attempts. A
+	 * restriction of wp-login.php in .htaccess and a plugin that only moves
+	 * the login page (LOGIN_URL_PLUGINS) do not reach xmlrpc.php.
+	 *
+	 * @since 3.0.0
+	 * @param array $context Context: active_plugins, jetpack_protect, jetpack_connected.
+	 * @return bool
+	 */
+	public static function xmlrpc_login_protected( array $context = array() ) {
+		// class_exists: an earlier version's includes() may have loaded this file.
+		if ( class_exists( 'JP4WC_Login_Limiter', false ) && JP4WC_Login_Limiter::is_active() ) {
+			return true;
+		}
+		if ( self::jetpack_protects_login( $context ) ) {
+			return true;
+		}
+		$active = isset( $context['active_plugins'] ) && is_array( $context['active_plugins'] ) ? $context['active_plugins'] : self::active_plugin_slugs();
+		return array() !== array_diff( array_intersect( $active, self::known_plugins( 'login' ) ), self::LOGIN_URL_PLUGINS );
 	}
 
 	/**

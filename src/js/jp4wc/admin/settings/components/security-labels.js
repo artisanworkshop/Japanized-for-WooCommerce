@@ -136,7 +136,7 @@ export const checkLabels = () => ( {
 	'A-04': {
 		title: __( 'XML-RPC open to anyone', 'woocommerce-for-japan' ),
 		fix: __(
-			'If nothing uses XML-RPC (the WordPress mobile apps, Jetpack and some services do), block xmlrpc.php with a security plugin or the server configuration.',
+			'Turn on "Disable XML-RPC" under Settings on this tab: Jetpack keeps working, and the XML-RPC usage list shows what else still uses it so that you can allow those methods. Or block xmlrpc.php with a security plugin or the server configuration if nothing uses XML-RPC.',
 			'woocommerce-for-japan'
 		),
 	},
