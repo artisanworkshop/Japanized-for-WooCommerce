@@ -333,6 +333,36 @@ class Artws_Sec_Scan_Request_Test extends Artws_Sec_Feed_Test_Case {
 	}
 
 	/**
+	 * Consent texts the server accepts: the first terms (JP4WC 3.0.0) and the revision in force from 2026-11-05.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function known_consent_version_provider() {
+		return array(
+			'2026-10' => array( '2026-10' ),
+			'2026-11' => array( '2026-11' ),
+		);
+	}
+
+	/**
+	 * Every known consent text is accepted and kept as sent.
+	 *
+	 * @dataProvider known_consent_version_provider
+	 *
+	 * @param string $version Consent text.
+	 */
+	public function test_known_consent_versions( $version ) {
+		$data                    = self::sample();
+		$data['consent_version'] = $version;
+
+		$request = Artws_Sec_Scan_Request::normalize( $data );
+
+		$this->assertIsArray( $request );
+		$this->assertSame( $version, $request['consent_version'] );
+		$this->assert_request_schema( $request );
+	}
+
+	/**
 	 * A consent text the server does not know is refused with its own code; the filter adds texts.
 	 */
 	public function test_unknown_consent_version() {
