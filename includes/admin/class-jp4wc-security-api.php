@@ -12,13 +12,16 @@ require_once dirname( __DIR__ ) . '/class-jp4wc-security-feed.php';
 require_once dirname( __DIR__ ) . '/class-jp4wc-login-limiter.php';
 require_once dirname( __DIR__ ) . '/class-jp4wc-security-hardening.php';
 require_once dirname( __DIR__ ) . '/class-jp4wc-xmlrpc-guard.php';
+require_once dirname( __DIR__ ) . '/class-jp4wc-security-scan.php';
 
 /**
  * JP4WC_Security_API
  *
  * Gives the Security tab of the settings screen the result of the last
  * security check (GET /jp4wc/v1/security/findings) and asks for a re-check
- * (POST /jp4wc/v1/security/rescan), which runs in WP-Cron.
+ * (POST /jp4wc/v1/security/rescan), which runs in WP-Cron. The free check of
+ * wc.artws.info (3.0.0) shows what it sends (GET /jp4wc/v1/security/scan),
+ * runs on the store manager's consent (POST) and deletes its data (DELETE).
  */
 class JP4WC_Security_API extends WP_REST_Controller {
 
@@ -69,6 +72,43 @@ class JP4WC_Security_API extends WP_REST_Controller {
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => self::with_bundled_translation( array( $this, 'rescan' ) ),
+					'permission_callback' => self::with_bundled_translation( array( $this, 'rescan_permissions_check' ) ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/scan',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => self::with_bundled_translation( array( $this, 'get_scan' ) ),
+					'permission_callback' => self::with_bundled_translation( array( $this, 'get_findings_permissions_check' ) ),
+					'args'                => array(
+						'bands' => array(
+							'type'    => 'boolean',
+							'default' => false,
+						),
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => self::with_bundled_translation( array( $this, 'run_scan' ) ),
+					'permission_callback' => self::with_bundled_translation( array( $this, 'rescan_permissions_check' ) ),
+					'args'                => array(
+						'consent' => array(
+							'type'    => 'boolean',
+							'default' => false,
+						),
+						'bands'   => array(
+							'type'    => 'boolean',
+							'default' => false,
+						),
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => self::with_bundled_translation( array( $this, 'delete_scan' ) ),
 					'permission_callback' => self::with_bundled_translation( array( $this, 'rescan_permissions_check' ) ),
 				),
 			)
@@ -200,6 +240,45 @@ class JP4WC_Security_API extends WP_REST_Controller {
 		$response = rest_ensure_response( self::view() );
 		$response->set_status( 202 );
 		return $response;
+	}
+
+	/**
+	 * Returns what the free check sends and its last report. Sends nothing.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_REST_Response
+	 */
+	public function get_scan( $request ) {
+		return rest_ensure_response( JP4WC_Security_Scan::view( true === $request->get_param( 'bands' ) ) );
+	}
+
+	/**
+	 * Runs the free check of wc.artws.info.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_REST_Response|WP_Error The view, with reregistered.
+	 */
+	public function run_scan( $request ) {
+		$bands  = true === $request->get_param( 'bands' );
+		$result = JP4WC_Security_Scan::run( true === $request->get_param( 'consent' ), $bands );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		return rest_ensure_response( array_merge( JP4WC_Security_Scan::view( $bands ), $result ) );
+	}
+
+	/**
+	 * Deletes the data of the free check on wc.artws.info and on this site.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function delete_scan( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- REST callback signature.
+		$result = JP4WC_Security_Scan::delete_site();
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		return rest_ensure_response( JP4WC_Security_Scan::view() );
 	}
 
 	/**

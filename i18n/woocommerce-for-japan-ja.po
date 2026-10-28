@@ -3763,6 +3763,417 @@ msgstr ""
 "wp-config.php が DISALLOW_FILE_EDIT を false で定義しているため、その行を消す"
 "までこの設定ではファイル編集を禁止できません。"
 
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "No revenue"
+msgstr "売上なし"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Up to 1 million yen"
+msgstr "100 万円まで"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Up to 10 million yen"
+msgstr "1,000 万円まで"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Up to 50 million yen"
+msgstr "5,000 万円まで"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Up to 100 million yen"
+msgstr "1 億円まで"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Over 100 million yen"
+msgstr "1 億円超"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "No orders"
+msgstr "注文なし"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Up to 100 orders"
+msgstr "100 件まで"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Up to 1,000 orders"
+msgstr "1,000 件まで"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Up to 10,000 orders"
+msgstr "10,000 件まで"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Over 10,000 orders"
+msgstr "10,000 件超"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Not sent"
+msgstr "送信しません"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Counting…"
+msgstr "集計中…"
+
+#. translators: 1: revenue band code, 2: its label, 3: order band code, 4: its label
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "%1$s (%2$s), %3$s (%4$s)"
+msgstr "%1$s（%2$s）、%3$s（%4$s）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Could not be counted, so they are not sent"
+msgstr "集計できなかったため送信しません"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Site address"
+msgstr "サイトのアドレス"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "WordPress version"
+msgstr "WordPress のバージョン"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "WooCommerce version"
+msgstr "WooCommerce のバージョン"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "PHP version"
+msgstr "PHP のバージョン"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Version of this plugin"
+msgstr "このプラグインのバージョン"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Language"
+msgstr "言語"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Plugins and themes"
+msgstr "プラグインとテーマ"
+
+#. translators: %d: number of plugins and themes
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid ""
+"%d installed, active or not: type, slug, version and whether it is active"
+msgstr ""
+"有効・無効を問わずインストール済みの %d 件（種類、スラッグ、バージョン、有効"
+"かどうか）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Type"
+msgstr "種類"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Slug"
+msgstr "スラッグ"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Version"
+msgstr "バージョン"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Active"
+msgstr "有効"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Theme"
+msgstr "テーマ"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Plugin"
+msgstr "プラグイン"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Results of the checks"
+msgstr "チェックの結果"
+
+#. translators: %d: number of checks
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "%d checks: ID and result only, never the settings behind them"
+msgstr "%d 件のチェック（ID と結果だけで、元になった設定値は送信しません）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Revenue and order bands"
+msgstr "売上・注文規模の帯"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Version of the consent text"
+msgstr "同意文の版"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Format of the data"
+msgstr "データ形式の版"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Site identification token"
+msgstr "サイト識別トークン"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Sent: the token wc.artws.info issued to this site on its first check. Its "
+"value is not shown."
+msgstr ""
+"送信します。初回の診断で wc.artws.info がこのサイトに発行したトークンです。値"
+"は表示しません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Not sent with the first check: wc.artws.info issues it then, and it is sent "
+"with later checks and with the deletion. Its value is not shown."
+msgstr ""
+"初回の診断では送信しません。そのときに wc.artws.info が発行し、2 回目以降の診"
+"断とデータの削除で送信します。値は表示しません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Report of the free security check"
+msgstr "無料セキュリティ診断のレポート"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Save as PDF"
+msgstr "PDF で保存"
+
+#. translators: %s: date and time of the check
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "Checked: %s"
+msgstr "診断日時: %s"
+
+#. translators: %s: date and time the report was made
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "Report made: %s"
+msgstr "レポート作成: %s"
+
+#. translators: %s: what can happen
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "Impact: %s"
+msgstr "影響: %s"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Next steps"
+msgstr "次にやること"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "The free check could not be loaded."
+msgstr "無料診断を読み込めませんでした。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "The check could not be run."
+msgstr "診断を実行できませんでした。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "The check data could not be deleted."
+msgstr "診断データを削除できませんでした。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Free security check by wc.artws.info"
+msgstr "wc.artws.info の無料セキュリティ診断"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Send the information below to wc.artws.info, operated by 職人工房 合同会社, "
+"and get a report on this site: the installed software checked against the "
+"latest vulnerability data on the server, the results of the checks above, "
+"and what to do first. Nothing is sent until you agree and click the button."
+msgstr ""
+"下の情報を職人工房 合同会社が運営する wc.artws.info に送信し、このサイトの診"
+"断レポートを受け取ります。インストール済みのソフトウェアをサーバー上の最新の"
+"脆弱性データと照合した結果、上のチェックの結果、まずやるべきことがわかりま"
+"す。同意してボタンを押すまで、何も送信しません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Running the check on wc.artws.info…"
+msgstr "wc.artws.info で診断しています…"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "The check has finished. The report is below."
+msgstr "診断が完了しました。レポートは下に表示しています。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"This site was registered with wc.artws.info again, so earlier results can no "
+"longer be shown. wc.artws.info deletes them after 180 days."
+msgstr ""
+"wc.artws.info に登録し直したため、以前の診断結果は表示できなくなりました。"
+"サーバー側では 180 日後に削除されます。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "The check data was deleted from wc.artws.info and from this site."
+msgstr "wc.artws.info とこのサイトから診断データを削除しました。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Information sent to wc.artws.info"
+msgstr "wc.artws.info に送信する情報"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"The administrator e-mail address, customer information, order amounts, API "
+"keys, the contents of wp-config.php and server paths are not sent. "
+"wc.artws.info keeps the data for 180 days."
+msgstr ""
+"管理者のメールアドレス、顧客の情報、注文の実額、API キー、wp-config.php の内"
+"容、サーバーの絶対パスは送りません。wc.artws.info はデータを 180 日間保存しま"
+"す。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Also send the revenue and order bands of the last 12 months (optional)"
+msgstr "売上・注文規模の帯（直近 12 か月）も送信する（任意）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Used to show which measures to take first for the size of the store. Only "
+"the band codes are sent, never the amounts."
+msgstr ""
+"規模に応じた対策の優先度の提示に使います。送信するのは帯の記号だけで、金額や"
+"件数は送りません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"The free check sends the results of the security check: turn the security "
+"check on and save the settings to use it."
+msgstr ""
+"無料診断はセキュリティチェックの結果を送信します。使うには、セキュリティ"
+"チェックをオンにして設定を保存してください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"The free check sends the results of the security check, which has not run "
+"yet. It can be used once the results appear above."
+msgstr ""
+"無料診断はセキュリティチェックの結果を送信しますが、セキュリティチェックがま"
+"だ実行されていません。上に結果が表示されると使えるようになります。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Read the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</"
+"privacy> of the free check."
+msgstr ""
+"無料診断の<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を"
+"お読みください。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Run the check again"
+msgstr "もう一度診断する"
+
+#. translators: %s: date and time of the consent
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "You agreed to the Terms of Use and the Privacy Policy on %s."
+msgstr "%s に利用規約とプライバシーポリシーに同意しました。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"I agree to the Terms of Use and the Privacy Policy, and send the information "
+"above."
+msgstr "利用規約とプライバシーポリシーに同意して、上の情報を送信します"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Agree and run the check"
+msgstr "同意して診断する"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"This deletes this site's data on wc.artws.info, and the consent and the "
+"report kept on this site."
+msgstr ""
+"wc.artws.info 上のこのサイトのデータと、このサイトに保存している同意の記録と"
+"レポートを削除します。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Delete"
+msgstr "削除"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Cancel"
+msgstr "キャンセル"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Delete check data"
+msgstr "診断データを削除"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"wc.artws.info no longer accepts the earlier registration of this site, so "
+"earlier results can no longer be shown. The next check registers this site "
+"again. wc.artws.info deletes the earlier results after 180 days."
+msgstr ""
+"wc.artws.info が以前の登録を受け付けなかったため、以前の診断結果は表示できな"
+"くなりました。次の診断で登録し直します。サーバー側では以前の診断結果を 180 日"
+"後に削除します。"
+
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: src/js/blocks/delivery-block-editor.js:44
 #: src/js/blocks/delivery-block-editor.js:65
@@ -4723,3 +5134,83 @@ msgstr[0] ""
 #: includes/class-jp4wc-xmlrpc-guard.php:272
 msgid "XML-RPC services are disabled on this site."
 msgstr "このサイトでは XML-RPC サービスが無効になっています。"
+
+#: includes/class-jp4wc-security-scan.php:630
+msgid "Agree to the terms of use and the privacy policy to run the check."
+msgstr "診断するには、利用規約とプライバシーポリシーに同意してください。"
+
+#: includes/class-jp4wc-security-scan.php:737
+msgid ""
+"The check data was deleted while the check ran, so its result was not kept."
+msgstr "診断の実行中に診断データが削除されたため、結果は保存しませんでした。"
+
+#: includes/class-jp4wc-security-scan.php:860
+msgid ""
+"This site cannot be checked: its address or a version of WordPress, "
+"WooCommerce, PHP or this plugin cannot be sent as the check requires."
+msgstr ""
+"このサイトは診断できません。サイトのアドレス、または WordPress・WooCommerce・"
+"PHP・このプラグインのバージョンを、診断に必要な形で送信できません。"
+
+#: includes/class-jp4wc-security-scan.php:887
+msgid "wc.artws.info sent a response that could not be read. Try again later."
+msgstr ""
+"wc.artws.info から読み取れない応答が返りました。しばらくしてからもう一度お試"
+"しください。"
+
+#. translators: %s: date and time
+#: includes/class-jp4wc-security-scan.php:1009
+#, php-format
+msgid "The check can run once an hour. Try again after %s."
+msgstr ""
+"診断は 1 時間に 1 回まで実行できます。%s 以降にもう一度お試しください。"
+
+#: includes/class-jp4wc-security-scan.php:1012
+msgid "The check can run once an hour. Try again later."
+msgstr ""
+"診断は 1 時間に 1 回まで実行できます。しばらくしてからもう一度お試しくださ"
+"い。"
+
+#: includes/class-jp4wc-security-scan.php:1022
+msgid ""
+"wc.artws.info did not accept the information sent. Update this plugin to the "
+"latest version and try again."
+msgstr ""
+"wc.artws.info が送信した情報を受け付けませんでした。このプラグインを最新版に"
+"更新してから、もう一度お試しください。"
+
+#: includes/class-jp4wc-security-scan.php:1028
+msgid "The check of wc.artws.info is not ready yet. Try again later."
+msgstr ""
+"wc.artws.info の診断の準備ができていません。しばらくしてからもう一度お試しく"
+"ださい。"
+
+#. translators: %d: HTTP status code
+#: includes/class-jp4wc-security-scan.php:1036
+#, php-format
+msgid "wc.artws.info answered with an error (HTTP %d). Try again later."
+msgstr ""
+"wc.artws.info がエラーを返しました（HTTP %d）。しばらくしてからもう一度お試し"
+"ください。"
+
+#: includes/class-jp4wc-security-scan.php:1070
+msgid ""
+"Could not connect to wc.artws.info. Make sure this server can connect to it, "
+"and try again later."
+msgstr ""
+"wc.artws.info に接続できませんでした。このサーバーから接続できることを確かめ"
+"て、しばらくしてからもう一度お試しください。"
+
+#: includes/class-jp4wc-security-scan.php:1083
+msgid ""
+"The free check sends the results of the security check: turn the security "
+"check on and wait for its first results."
+msgstr ""
+"無料診断はセキュリティチェックの結果を送信します。セキュリティチェックをオン"
+"にして、最初の結果が出るまでお待ちください。"
+
+#: includes/class-jp4wc-security-scan.php:1096
+msgid ""
+"Another request to wc.artws.info is running. Try again in a few minutes."
+msgstr ""
+"wc.artws.info への別の要求を実行中です。数分後にもう一度お試しください。"

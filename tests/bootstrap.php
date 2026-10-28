@@ -89,6 +89,13 @@ function _install_woocommerce() {
 			WC_Install::create_tables();
 		}
 
+		// The HPOS tables, so that a test can store orders there for a while:
+		// orders stay in the posts table, and a table a test creates is
+		// temporary, which MySQL cannot join to itself as HPOS queries do.
+		if ( function_exists( 'wc_get_container' ) && class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer' ) ) {
+			wc_get_container()->get( Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer::class )->create_database_tables();
+		}
+
 		// Set WooCommerce as installed.
 		update_option( 'woocommerce_db_version', WC()->version );
 
