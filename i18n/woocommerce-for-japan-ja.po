@@ -3255,13 +3255,15 @@ msgstr "誰でも利用できる XML-RPC"
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid ""
-"If nothing uses XML-RPC (the WordPress mobile apps, Jetpack and some "
-"services do), block xmlrpc.php with a security plugin or the server "
-"configuration."
+"Turn on \"Disable XML-RPC\" under Settings on this tab: Jetpack keeps "
+"working, and the XML-RPC usage list shows what else still uses it so that "
+"you can allow those methods. Or block xmlrpc.php with a security plugin or "
+"the server configuration if nothing uses XML-RPC."
 msgstr ""
-"XML-RPC を使う連携（WordPress のモバイルアプリ、Jetpack、一部のサービス）が無"
-"ければ、セキュリティプラグインやサーバーの設定で xmlrpc.php へのアクセスを止"
-"めてください。"
+"このタブの「設定」で「XML-RPC を無効化」をオンにしてください。Jetpack はその"
+"まま動き、XML-RPC の利用状況でほかに使っているものを確認して、そのメソッドを"
+"許可できます。XML-RPC を使うものが無ければ、セキュリティプラグインやサーバー"
+"の設定で xmlrpc.php を止めることもできます。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/security-labels.js
@@ -3525,6 +3527,181 @@ msgstr "REST API のユーザー一覧を隠す"
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
 msgid "Forbid file editing in the admin screens"
 msgstr "管理画面からのファイル編集を禁止"
+
+#. translators: %s: file or directory of a must-use plugin
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "%s (must-use plugin)"
+msgstr "%s（使用必須プラグイン）"
+
+#. translators: %s: theme name
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "%s (theme)"
+msgstr "%s（テーマ）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Unknown source"
+msgstr "不明"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Answered whatever the setting (no login)"
+msgstr "設定にかかわらず応答（ログインなし）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Jetpack: keeps working when XML-RPC is off"
+msgstr "Jetpack: XML-RPC を無効にしても動きます"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Allowed"
+msgstr "許可済み"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Refused"
+msgstr "拒否中"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Logs in: stops when XML-RPC is off unless allowed"
+msgstr "ログインあり: 許可しないと XML-RPC の無効化で止まります"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Only failed logins: likely password guessing"
+msgstr "ログイン失敗のみ: パスワードの総当たりと思われます"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "No login"
+msgstr "ログインなし"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Method"
+msgstr "メソッド"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Added by"
+msgstr "提供元"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Calls"
+msgstr "回数"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Logins (worked / failed)"
+msgstr "ログイン（成功 / 失敗）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Last call"
+msgstr "最終利用"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Client"
+msgstr "クライアント"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Status"
+msgstr "状態"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Added"
+msgstr "追加済み"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Allow"
+msgstr "許可"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "XML-RPC usage (last 30 days)"
+msgstr "XML-RPC の利用状況（直近 30 日）"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The XML-RPC calls this site answered, by method. Methods that log in are "
+"used by an integration (the WordPress mobile apps, an offline editor, a "
+"service): allow them before turning XML-RPC off. Methods with only failed "
+"logins are usually password guessing."
+msgstr ""
+"このサイトが応答した XML-RPC の呼び出しをメソッドごとに表示します。ログインし"
+"ているメソッドは連携（WordPress のモバイルアプリ、オフラインエディター、外部"
+"サービス）が使っているものなので、XML-RPC を無効にする前に許可してください。"
+"ログイン失敗だけのメソッドは、たいていパスワードの総当たりです。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "The record of the XML-RPC calls could not be read."
+msgstr "XML-RPC の呼び出しの記録を読み込めませんでした。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "No XML-RPC calls were recorded in the last 30 days."
+msgstr "直近 30 日に XML-RPC の呼び出しはありません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Allow list"
+msgstr "許可リスト"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Disable XML-RPC"
+msgstr "XML-RPC を無効化"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"Refuse every XML-RPC method except the allowed ones, so that no password can "
+"be tried and no pingback sent through XML-RPC. Jetpack keeps working: it "
+"checks its own signature. The WordPress mobile apps, offline editors and "
+"services that log in through XML-RPC stop unless their methods are allowed. "
+"The REST API and application passwords are not affected."
+msgstr ""
+"許可したメソッド以外の XML-RPC をすべて拒否し、XML-RPC からのパスワードの試行"
+"とピンバックを止めます。Jetpack は独自の署名で認証するため、そのまま動きま"
+"す。XML-RPC でログインする WordPress のモバイルアプリ、オフラインエディター、"
+"外部サービスは、そのメソッドを許可しない限り止まります。REST API とアプリケー"
+"ションパスワードには影響しません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid "Allowed methods"
+msgstr "許可するメソッド"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"One method per line, such as wp.getUsersBlogs. A name ending in * allows "
+"every method that starts with it, such as metaWeblog.*. \"Allow\" in the XML-"
+"RPC usage list above adds a method. Leave it empty to refuse every method."
+msgstr ""
+"1 行に 1 つ、wp.getUsersBlogs のように書きます。末尾が * の名前は、それで始ま"
+"るすべてのメソッドを許可します（metaWeblog.* など）。上の XML-RPC の利用状況"
+"の「許可」でも追加できます。空にするとすべてのメソッドを拒否します。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+msgid ""
+"The allowed methods still accept a password: turn on the login attempt "
+"limiter as well."
+msgstr ""
+"許可したメソッドではパスワードを受け付けます。ログイン試行回数の制限もオンに"
+"してください。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecuritySettings.js
@@ -4527,3 +4704,7 @@ msgid_plural ""
 msgstr[0] ""
 "<strong>エラー:</strong> ログインの試行回数が多すぎます。%d 分後にやり直して"
 "ください。"
+
+#: includes/class-jp4wc-xmlrpc-guard.php:249
+msgid "XML-RPC services are disabled on this site."
+msgstr "このサイトでは XML-RPC サービスが無効になっています。"
