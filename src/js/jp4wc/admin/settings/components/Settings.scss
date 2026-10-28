@@ -483,37 +483,120 @@
 			margin: 0 0 8px;
 		}
 	}
-}
 
-// Info Footer Styles
-.jp4wc-settings-info-footer {
-	margin-top: 40px;
-	padding-top: 30px;
-	border-top: 2px solid #ddd;
-
-	.jp4wc-consultation-notice {
-		background: #f8f9fa;
+	.jp4wc-scan-report {
+		margin: 0 0 24px;
+		padding: 16px;
 		border: 1px solid #ddd;
-		border-left: 4px solid #8E24AA;
-		padding: 20px;
 		border-radius: 4px;
+		background: #fff;
 
-		h3 {
-			margin-top: 0;
-			margin-bottom: 15px;
-			font-size: 18px;
-			font-weight: 600;
-			color: #333;
+		h4 {
+			margin: 0;
 		}
+
+		h5 {
+			margin: 16px 0 8px;
+			font-size: 14px;
+		}
+	}
+
+	.jp4wc-scan-report-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+
+	.jp4wc-scan-report-findings > li {
+		margin: 0 0 16px;
 
 		p {
-			margin-bottom: 20px;
-			line-height: 1.6;
-			color: #555;
+			margin: 4px 0;
+		}
+	}
+
+	.jp4wc-scan-report-fix,
+	.jp4wc-scan-report-steps {
+		margin: 4px 0 4px 20px;
+	}
+
+	.jp4wc-scan-report-steps {
+		list-style: disc;
+	}
+
+	.jp4wc-scan-sent {
+		margin: 0 0 12px;
+
+		th {
+			width: 220px;
+			vertical-align: top;
 		}
 
-		.jp4wc-consultation-button {
-			margin-top: 15px;
+		td {
+			word-break: break-word;
+		}
+
+		details summary {
+			cursor: pointer;
+		}
+	}
+
+	.jp4wc-scan-software {
+		margin-top: 8px;
+	}
+
+	.jp4wc-scan-findings-sent {
+		margin: 8px 0 0;
+	}
+
+	.jp4wc-scan-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px;
+		margin: 12px 0;
+	}
+
+	.jp4wc-scan-delete {
+		margin-top: 16px;
+		padding-top: 12px;
+		border-top: 1px solid #ddd;
+	}
+}
+
+// "Save as PDF" prints the report of the free check alone (SecurityScan.js):
+// everything but the report and the elements that hold it is left out.
+@media print {
+	html:has(body.jp4wc-print-scan-report) {
+		padding-top: 0 !important;
+		background: none !important;
+	}
+
+	body.jp4wc-print-scan-report {
+		*:not(:has(.jp4wc-scan-report)):not(.jp4wc-scan-report):not(.jp4wc-scan-report *) {
+			display: none !important;
+		}
+
+		:has(.jp4wc-scan-report) {
+			position: static !important;
+			width: auto !important;
+			min-width: 0 !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			border: 0 !important;
+			background: none !important;
+			box-shadow: none !important;
+		}
+
+		.jp4wc-scan-report {
+			border: 0;
+			padding: 0;
+		}
+
+		.jp4wc-scan-report-print {
+			display: none;
 		}
 	}
 }
