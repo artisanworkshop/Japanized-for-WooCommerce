@@ -508,6 +508,36 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The view has the XML-RPC setting, its allow list and the record, with the security check off as well (3.0.0).
+	 */
+	public function test_view_reports_xmlrpc() {
+		try {
+			$data = $this->get_findings()->get_data();
+			$this->assertSame(
+				array(
+					'enabled'  => false,
+					'allow'    => array(),
+					'readable' => true,
+					'usage'    => array(),
+				),
+				$data['xmlrpc']
+			);
+
+			update_option( 'wc4jp-disable-xmlrpc', '1' );
+			update_option( 'wc4jp-xmlrpc-allow', "wp.getUsersBlogs\nmetaWeblog.*" );
+			update_option( 'wc4jp-security-scan', '' );
+			$data = $this->get_findings()->get_data();
+			$this->assertFalse( $data['enabled'] );
+			$this->assertTrue( $data['xmlrpc']['enabled'] );
+			$this->assertSame( array( 'wp.getUsersBlogs', 'metaWeblog.*' ), $data['xmlrpc']['allow'] );
+		} finally {
+			delete_option( 'wc4jp-disable-xmlrpc' );
+			delete_option( 'wc4jp-xmlrpc-allow' );
+			update_option( 'wc4jp-security-scan', '1' );
+		}
+	}
+
+	/**
 	 * Before the first check, nothing is reported.
 	 */
 	public function test_not_checked_yet() {

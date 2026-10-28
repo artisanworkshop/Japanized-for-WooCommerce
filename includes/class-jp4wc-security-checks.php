@@ -658,12 +658,25 @@ class JP4WC_Security_Checks {
 	/**
 	 * A-04: XML-RPC turned on and answering.
 	 *
-	 * WordPress answers 405 to a request that is not a POST.
+	 * WordPress answers 405 to a request that is not a POST. With this
+	 * plugin's setting that turns XML-RPC off, nothing is requested: it
+	 * passes with an empty allow list, and with allowed methods while the
+	 * login page is protected (the login attempt limiter or A-02's means),
+	 * since those methods still accept a password.
 	 *
 	 * @param array $context Context.
 	 * @return string
 	 */
 	private static function xmlrpc( array $context ) {
+		// This plugin's own setting (3.0.0). class_exists: an earlier version's includes() may have loaded this file.
+		if ( class_exists( 'JP4WC_XMLRPC_Guard', false ) && JP4WC_XMLRPC_Guard::is_enabled() ) {
+			if ( array() === JP4WC_XMLRPC_Guard::allow_list() ) {
+				return 'pass';
+			}
+			// The allowed methods still log in with a password: they are as safe as the login page.
+			$limited = class_exists( 'JP4WC_Login_Limiter', false ) && JP4WC_Login_Limiter::is_active();
+			return $limited || null !== self::login_protected_by_other_means( $context ) ? 'pass' : 'fail';
+		}
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
 		if ( ! apply_filters( 'xmlrpc_enabled', true ) ) {
 			return 'pass';

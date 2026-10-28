@@ -1078,6 +1078,41 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A-04 with this plugin's setting that turns XML-RPC off (3.0.0): no request; allowed methods need a protected login page.
+	 */
+	public function test_a04_own_setting() {
+		require_once dirname( __DIR__, 2 ) . '/includes/class-jp4wc-xmlrpc-guard.php';
+		$url                   = untrailingslashit( get_option( 'siteurl' ) ) . '/xmlrpc.php';
+		$this->answers[ $url ] = array( 405, array() );
+		$context               = array(
+			'abspath'        => $this->dir,
+			'active_plugins' => array( 'akismet' ),
+		);
+		update_option( 'active_plugins', array() );
+		update_option( 'wc4jp-disable-xmlrpc', '1' );
+		try {
+			$this->assertSame( 'pass', $this->status( 'A-04', $context ), 'Nothing allowed.' );
+
+			update_option( 'wc4jp-xmlrpc-allow', 'wp.getUsersBlogs' );
+			$this->assertSame( 'fail', $this->status( 'A-04', $context ), 'An allowed method accepts passwords with nothing limiting them.' );
+
+			update_option( 'wc4jp-login-limit', '1' );
+			$this->assertSame( 'pass', $this->status( 'A-04', $context ), 'The login attempt limiter covers XML-RPC.' );
+
+			update_option( 'wc4jp-login-limit', '' );
+			$this->assertSame( 'pass', $this->status( 'A-04', array( 'active_plugins' => array( 'wordfence' ) ) + $context ), 'A security plugin protects the login.' );
+			$this->assertSame( array(), $this->requested, 'The setting is read, nothing is requested.' );
+
+			update_option( 'wc4jp-disable-xmlrpc', '' );
+			$this->assertSame( 'fail', $this->status( 'A-04', $context ), 'Off: XML-RPC is requested as before.' );
+		} finally {
+			delete_option( 'wc4jp-disable-xmlrpc' );
+			delete_option( 'wc4jp-xmlrpc-allow' );
+			delete_option( 'wc4jp-login-limit' );
+		}
+	}
+
+	/**
 	 * A-05 fails while the users route lists users to anyone.
 	 */
 	public function test_a05_rest_users() {
