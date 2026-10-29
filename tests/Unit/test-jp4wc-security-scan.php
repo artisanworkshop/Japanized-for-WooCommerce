@@ -328,7 +328,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertNull( $data['consent'] );
 		$this->assertFalse( $data['registered'] );
 		$this->assertTrue( $data['ready'] );
-		$this->assertSame( '2026-10', $data['consent_version'] );
+		$this->assertSame( '2026-11', $data['consent_version'] );
 		$this->assertSame( 'https://wc.artws.info/security-assessment-term/', $data['terms_url'] );
 		$this->assertSame( 'https://wc.artws.info/privacy-policy/', $data['privacy_url'] );
 
@@ -675,6 +675,53 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		);
 		$this->assertSame( 400, $this->dispatch( 'POST' )->get_status() );
 		$this->assertSame( array(), $this->requests );
+	}
+
+	/**
+	 * A consent to the text before the 2026-11-05 revision is asked again: the
+	 * check runs only once the store manager agrees to the current text, then
+	 * keeps the registration, and the bands allowed before are not sent.
+	 */
+	public function test_consent_to_the_earlier_text_is_asked_again() {
+		self::order( 1000, 'processing' );
+		self::store_token( home_url() );
+		update_option(
+			JP4WC_Security_Scan::CONSENT_OPTION,
+			array(
+				'version'      => '2026-10',
+				'consented_at' => time() - DAY_IN_SECONDS,
+				'bands'        => true,
+			),
+			false
+		);
+
+		$this->assertFalse( JP4WC_Security_Scan::has_consent() );
+		$view = $this->dispatch( 'GET' )->get_data();
+		$this->assertFalse( $view['consent']['current'], 'The settings screen asks for the consent again and does not restore the bands.' );
+
+		$response = $this->dispatch( 'POST', array( 'bands' => true ) );
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'jp4wc_security_scan_consent_required', $response->get_data()['code'] );
+		$this->assertSame( array(), $this->requests );
+		$this->assertSame( '2026-10', JP4WC_Security_Scan::consent()['version'] );
+
+		$this->responses = array( self::scanned() );
+		$before          = time();
+		$response        = $this->dispatch( 'POST', array( 'consent' => true ) );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 1, $this->requests );
+		$this->assertSame( 'Bearer ' . self::TOKEN, $this->authorization( 0 ), 'The site is not registered again.' );
+		$sent = json_decode( $this->requests[0]['body'], true );
+		$this->assertSame( '2026-11', $sent['consent_version'] );
+		$this->assertArrayNotHasKey( 'revenue_band', $sent );
+		$this->assertArrayNotHasKey( 'order_band', $sent );
+		$consent = JP4WC_Security_Scan::consent();
+		$this->assertSame( '2026-11', $consent['version'] );
+		$this->assertFalse( $consent['bands'] );
+		$this->assertGreaterThanOrEqual( $before, $consent['consented_at'], 'The time is that of the new consent.' );
+		$this->assertTrue( $response->get_data()['consent']['current'] );
+		$this->assertSame( self::TOKEN, get_option( JP4WC_Security_Scan::TOKEN_OPTION )['token'] );
 	}
 
 	/**

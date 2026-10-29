@@ -32,7 +32,7 @@ class JP4WC_Security_Scan {
 	/**
 	 * Version of the consent text, which wc.artws.info must know.
 	 */
-	const CONSENT_VERSION = '2026-10';
+	const CONSENT_VERSION = '2026-11';
 
 	/**
 	 * Base URL of the API, with a trailing slash.

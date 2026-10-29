@@ -770,6 +770,12 @@ const SecurityScan = ( { checkedAt } ) => {
 							'woocommerce-for-japan'
 						) }
 					</p>
+					<p>
+						{ __(
+							'Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems and confirm deletion requests. They are never used for sales or advertising.',
+							'woocommerce-for-japan'
+						) }
+					</p>
 
 					{ scan.bands_available && (
 						<CheckboxControl
@@ -779,7 +785,7 @@ const SecurityScan = ( { checkedAt } ) => {
 								'woocommerce-for-japan'
 							) }
 							help={ __(
-								'Used to show which measures to take first for the size of the store. Only the band codes are sent, never the amounts.',
+								'Used only to show which measures to take first for the size of the store and for the purposes the Terms of Use list for them, which include a review of that priority by staff of 職人工房 合同会社 for each registration. Only the band codes are sent, never the amounts.',
 								'woocommerce-for-japan'
 							) }
 							checked={ bands }
@@ -800,6 +806,14 @@ const SecurityScan = ( { checkedAt } ) => {
 						<Notice status="info" isDismissible={ false }>
 							{ __(
 								'The free check sends the results of the security check, which has not run yet. It can be used once the results appear above.',
+								'woocommerce-for-japan'
+							) }
+						</Notice>
+					) }
+					{ scan.consent && ! consented && (
+						<Notice status="info" isDismissible={ false }>
+							{ __(
+								'The Terms of Use and the Privacy Policy of the free check were revised. To run the check again, read them and agree again.',
 								'woocommerce-for-japan'
 							) }
 						</Notice>

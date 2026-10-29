@@ -4076,17 +4076,31 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Staff of 職人工房 合同会社 may look at the information sent and the reports "
+"of each registration to answer inquiries, investigate problems and confirm "
+"deletion requests. They are never used for sales or advertising."
+msgstr ""
+"お問い合わせへの対応、不具合の調査、削除の申込みの確認のため、職人工房の担当"
+"者が登録ごとに送信情報と診断結果を確認することがあります。送信情報と診断結果"
+"を営業や広告に使うことはありません。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid "Also send the revenue and order bands of the last 12 months (optional)"
 msgstr "売上・注文規模の帯（直近 12 か月）も送信する（任意）"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid ""
-"Used to show which measures to take first for the size of the store. Only "
-"the band codes are sent, never the amounts."
+"Used only to show which measures to take first for the size of the store and "
+"for the purposes the Terms of Use list for them, which include a review of "
+"that priority by staff of 職人工房 合同会社 for each registration. Only the "
+"band codes are sent, never the amounts."
 msgstr ""
-"規模に応じた対策の優先度の提示に使います。送信するのは帯の記号だけで、金額や"
-"件数は送りません。"
+"規模に応じた対策の優先度の提示と、利用規約に定める目的（職人工房の担当者が登"
+"録ごとに行う優先度の見直しを含みます）にだけ使います。送信するのは帯の記号だ"
+"けで、金額や件数は送りません。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
@@ -4105,6 +4119,15 @@ msgid ""
 msgstr ""
 "無料診断はセキュリティチェックの結果を送信しますが、セキュリティチェックがま"
 "だ実行されていません。上に結果が表示されると使えるようになります。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"The Terms of Use and the Privacy Policy of the free check were revised. To "
+"run the check again, read them and agree again."
+msgstr ""
+"無料診断の利用規約とプライバシーポリシーが改定されました。もう一度診断するに"
+"は、内容を確認して改めて同意してください。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
