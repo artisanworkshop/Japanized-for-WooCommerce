@@ -2,7 +2,7 @@
 
 wc.artws.info に artws-security-hub を入れて、脆弱性フィード（`/feed/v1/`）と無料診断の REST API（`/wp-json/artws-sec/v1/`）を動かすまでの手順。上から順に進め、各節の「確認」で結果を確かめる。
 
-- 対象の版: 0.4.0
+- 対象の版: 0.4.1
 - 仕組みや設定値の理由: [README.md](README.md)
 - JP4WC とやり取りする JSON の決まり: [契約 README](../../tests/fixtures/security-feed/README.md)
 
@@ -325,6 +325,29 @@ JP4WC の無料診断（#260）を出す前に、wc.artws.info にプライバ�
 |---|---|
 | 0.2.x 以前 → 0.3.0 以降 | 7 の取り込みを 1 回走らせて照合用のインデックスを作る（それまで `POST /scan` は 503）。8 の「無料診断の API」を確かめる |
 | 0.3.x → 0.4.0 以降 | `artws_sec_db_version` が `2` になったことと、8 の「データベース」を確かめる。0.3.x で登録したサイトのトークンはそのまま使える。ただし移行の直前 1 時間に診断したサイトは、移行の直後にもう 1 回診断できる（一度きり） |
+| 0.4.0 → 0.4.1 以降 | 追加の作業なし。下の「0.4.1 に更新したとき」で、同意の版 2026-11 の要求が Web から受け付けられることを確かめる。**同意の版 2026-11 を送る JP4WC（#298、2026-11-05 リリース）より前、2026-11-04 までに反映する。** 反映前にその JP4WC を出すと、同意し直した利用者の診断がすべて 400（`artws_sec_unknown_consent_version`）になり、画面には「最新版に更新して再試行」と出る（すでに最新版なので直せない）。2026-10 を送る JP4WC 3.0.0 は、0.4.0 でも 0.4.1 でも診断できる。その JP4WC を出した後は 0.4.0 以前に戻さず、3.0.0 が使われている間は `2026-10` を外さない |
+
+### 0.4.1 に更新したとき
+
+`wp eval` は CLI の PHP で動くので、Web の PHP（REST）が新しいコードで答えるかは、実際に要求を送って確かめる。8 の「無料診断の API」の 1 を、同意の版だけ 2026-11 にして送り、3 で消す。リポジトリの直下で実行する。
+
+```bash
+# サーバーの WP-CLI: 2026-10 と 2026-11 が出る
+wp eval 'var_export( Artws_Sec_Scan_Request::consent_versions() );'
+
+# 手元: 2026-11 の要求が 200 で site_token を返す（400 の artws_sec_unknown_consent_version なら古いコードが答えている）
+BASE=https://wc.artws.info/wp-json/artws-sec/v1
+jq '.consent_version = "2026-11"' tests/fixtures/security-feed/scan-request.json \
+  | curl -4 -s -X POST "$BASE/scan" -H 'Content-Type: application/json' --data @- > /tmp/artws-scan.json
+jq '{site_token, score: .report.score.total, error: .code}' /tmp/artws-scan.json
+
+# 後片付け: テストの登録を消す（204）
+TOKEN=$(jq -r .site_token /tmp/artws-scan.json)
+curl -s -o /dev/null -w '%{http_code}\n' -X DELETE -H "Authorization: Bearer $TOKEN" "$BASE/site"
+rm /tmp/artws-scan.json
+```
+
+この確認でも送信元 IP の枠（1 時間 20 回）を 1 回使う。
 
 ## 11. 困ったとき
 

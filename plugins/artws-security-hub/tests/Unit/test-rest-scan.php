@@ -323,6 +323,18 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * A check under the revised terms (2026-11) is accepted and stored with its consent text,
+	 * which tells the admin screen (#296) whether the staff may see the bands.
+	 */
+	public function test_revised_consent_version_is_stored() {
+		$this->register_site( array( 'consent_version' => '2026-11' ) );
+
+		global $wpdb;
+		$stored = $wpdb->get_var( 'SELECT request FROM ' . Artws_Sec_Db::scans_table() ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- Test.
+		$this->assertSame( '2026-11', json_decode( $stored, true )['consent_version'] );
+	}
+
+	/**
 	 * Keys the contract does not define are neither refused nor stored.
 	 */
 	public function test_unknown_keys_are_not_stored() {

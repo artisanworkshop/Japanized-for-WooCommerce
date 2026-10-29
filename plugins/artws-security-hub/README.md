@@ -133,7 +133,7 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 | `artws_sec_scans_per_address` | 20 | 1つの送信元（IPv6 は /64）から窓ごとに受け付ける回数。共用サーバーでは多数のショップが同じ IP を使う |
 | `artws_sec_scan_window` | 3600 | 窓の長さ（秒） |
 | `artws_sec_retention_days` | 180 | 診断と、診断の無い登録を残す日数（プライバシーポリシーに書く値） |
-| `artws_sec_consent_versions` | `2026-10` | 受け付ける同意文の版。JP4WC が同意文を改訂したら足す |
+| `artws_sec_consent_versions` | `2026-10`, `2026-11` | 受け付ける同意文の版。JP4WC が同意文を改訂したら足す（2026-11 は 2026-11-05 施行の改定。JP4WC 3.0.0 の利用者は 2026-10 を送り続ける） |
 | `artws_sec_client_ip` | — | レート制限が数える送信元アドレス |
 | `artws_sec_require_https` | true | http の要求を 403 にするか |
 
