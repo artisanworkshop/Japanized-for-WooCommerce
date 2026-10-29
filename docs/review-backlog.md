@@ -266,3 +266,5 @@
 | 2026-10-29 | R1-L2 | Low | plugins/artws-security-hub/includes/class-artws-sec-scan-request.php `CONSENT_VERSIONS` の docblock（feat/297-consent-version-2026-11 R1） | 「article 4.4.4」は節番号とも読める（「Article 4(4)(iv)」など）。第4条第5項で帯の用途を限ったことも一言 | 未起票 |
 | 2026-10-29 | R1-L3 | Low | plugins/artws-security-hub/tests/Unit/test-scan-request.php（feat/297-consent-version-2026-11 R1） | 知らない版の例に隣の月（`2026-12`）が無い。許可リストを範囲や正規表現に広げる変更は隣の月でしか捕まらない | 未起票 |
 | 2026-10-29 | G2-1 | — | plugins/artws-security-hub/DEPLOY.md:346（PR #299 G2、Copilot） | 「後片付けの DELETE が取り出したトークンでなく伏せ字 `******` を送る」との指摘。実際の行は `-H "Authorization: Bearer $TOKEN"`（a578a22 のファイルと PR の差分で確認）で、8 の手順 3 と同じ。Copilot の入力で `Bearer` の後ろが伏せられたための誤検知 | 対応不要（誤検知） |
+| 2026-10-30 | G1-1 | — | i18n/woocommerce-for-japan-ja-6d3c6b0664a2454846605529637d2ce3.json（PR #301 G1、Copilot） | 「同梱の日本語 JS カタログに新しい 3 件が無い」との指摘。3 件とも JSON にある（1 行の JSON の差分を Copilot が読み違える、#294 と同じ） | 対応不要（誤検知） |
+| 2026-10-30 | G1-2 | — | リリースの運用（PR #301 G1、Copilot） | リリースは 3.0.0 のタグ・0.4.1 での 2026-11 の受け付け・11-05 の施行を確かめてから | PR #301 本文に記載済み（マージの順序・リリース時の確認） |
