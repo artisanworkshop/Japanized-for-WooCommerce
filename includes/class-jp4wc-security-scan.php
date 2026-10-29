@@ -638,11 +638,23 @@ class JP4WC_Security_Scan {
 	 * deletion in another request takes the same lock, and a consent read
 	 * before it ended would be written back by a tab opened earlier.
 	 *
-	 * @param bool $consent       Whether the consent box was ticked.
-	 * @param bool $include_bands Whether the bands may be sent.
+	 * A ticked box counts only for the consent text the screen showed: a tab
+	 * opened before an update to another version of the text would otherwise
+	 * record a consent to a text the store manager has not read.
+	 *
+	 * @param bool   $consent         Whether the consent box was ticked.
+	 * @param bool   $include_bands   Whether the bands may be sent.
+	 * @param string $consent_version Version of the consent text the screen showed.
 	 * @return array{reregistered: bool}|WP_Error
 	 */
-	public static function run( $consent, $include_bands ) {
+	public static function run( $consent, $include_bands, $consent_version = '' ) {
+		if ( $consent && self::CONSENT_VERSION !== $consent_version ) {
+			return new WP_Error(
+				'jp4wc_security_scan_consent_outdated',
+				__( 'The Terms of Use and the Privacy Policy of the free check changed after this page was opened. Reload the page, read them and agree again.', 'woocommerce-for-japan' ),
+				array( 'status' => 409 )
+			);
+		}
 		if ( ! self::lock() ) {
 			return self::busy_error();
 		}

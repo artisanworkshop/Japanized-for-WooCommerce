@@ -248,9 +248,16 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	 * @return WP_REST_Response
 	 */
 	private function dispatch( $method, array $params = array(), $nonce = null ) {
+		if ( 'POST' === $method && ! array_key_exists( 'consent_version', $params ) ) {
+			// The settings screen sends the version of the consent text it showed.
+			$params['consent_version'] = JP4WC_Security_Scan::CONSENT_VERSION;
+		}
 		$request = new WP_REST_Request( $method, '/jp4wc/v1/security/scan' );
 		foreach ( $params as $key => $value ) {
-			$request->set_param( $key, $value );
+			// Null leaves the parameter out.
+			if ( null !== $value ) {
+				$request->set_param( $key, $value );
+			}
 		}
 		$request->set_header( 'X-WP-Nonce', null === $nonce ? wp_create_nonce( 'wp_rest' ) : $nonce );
 		return rest_get_server()->dispatch( $request );
@@ -678,9 +685,22 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The server (wc.artws.info) accepts the consent version this plugin
+	 * sends: an unknown version is refused with 400, so the server plugin in
+	 * this repository must accept it first (#297).
+	 */
+	public function test_server_accepts_the_consent_version() {
+		require_once TESTS_PLUGIN_DIR . '/plugins/artws-security-hub/includes/class-artws-sec-scan-request.php';
+
+		$this->assertContains( JP4WC_Security_Scan::CONSENT_VERSION, Artws_Sec_Scan_Request::CONSENT_VERSIONS );
+	}
+
+	/**
 	 * A consent to the text before the 2026-11-05 revision is asked again: the
 	 * check runs only once the store manager agrees to the current text, then
-	 * keeps the registration, and the bands allowed before are not sent.
+	 * keeps the registration. The view says the stored consent is not current,
+	 * so the settings screen does not tick the bands allowed before; they are
+	 * sent once the store manager ticks them again.
 	 */
 	public function test_consent_to_the_earlier_text_is_asked_again() {
 		self::order( 1000, 'processing' );
@@ -722,6 +742,43 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertGreaterThanOrEqual( $before, $consent['consented_at'], 'The time is that of the new consent.' );
 		$this->assertTrue( $response->get_data()['consent']['current'] );
 		$this->assertSame( self::TOKEN, get_option( JP4WC_Security_Scan::TOKEN_OPTION )['token'] );
+
+		$this->responses = array( self::scanned() );
+		$consented_at    = $consent['consented_at'];
+		$this->assertSame( 200, $this->dispatch( 'POST', array( 'bands' => true ) )->get_status() );
+		$sent = json_decode( $this->requests[1]['body'], true );
+		$this->assertSame( 'B1', $sent['revenue_band'] );
+		$this->assertSame( 'O1', $sent['order_band'] );
+		$this->assertTrue( JP4WC_Security_Scan::consent()['bands'] );
+		$this->assertSame( $consented_at, JP4WC_Security_Scan::consent()['consented_at'] );
+	}
+
+	/**
+	 * A ticked box agrees only to the consent text the screen showed: a tab
+	 * opened before the plugin was updated to another version of the text
+	 * (which sends no version, or the earlier one) records no consent and sends
+	 * nothing. A store manager who agreed to the current text runs the check
+	 * from such a tab without ticking the box.
+	 */
+	public function test_consent_from_a_screen_of_another_text_is_refused() {
+		foreach ( array( null, '', '2026-10' ) as $version ) {
+			$response = $this->dispatch(
+				'POST',
+				array(
+					'consent'         => true,
+					'consent_version' => $version,
+				)
+			);
+			$this->assertSame( 409, $response->get_status() );
+			$this->assertSame( 'jp4wc_security_scan_consent_outdated', $response->get_data()['code'] );
+		}
+		$this->assertSame( array(), $this->requests );
+		$this->assertNull( JP4WC_Security_Scan::consent() );
+
+		self::consent();
+		$this->responses = array( self::registered() );
+		$this->assertSame( 200, $this->dispatch( 'POST', array( 'consent_version' => '2026-10' ) )->get_status() );
+		$this->assertCount( 1, $this->requests );
 	}
 
 	/**

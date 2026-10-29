@@ -3168,7 +3168,7 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems and confirm deletion requests. They are never used for sales or advertising."
+msgid "Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store. They are never used for sales or advertising."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
@@ -4100,6 +4100,10 @@ msgstr ""
 
 #: includes/class-jp4wc-security-scan.php:630
 msgid "Agree to the terms of use and the privacy policy to run the check."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:654
+msgid "The Terms of Use and the Privacy Policy of the free check changed after this page was opened. Reload the page, read them and agree again."
 msgstr ""
 
 #: includes/class-jp4wc-security-scan.php:737

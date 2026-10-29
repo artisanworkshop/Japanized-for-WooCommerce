@@ -605,8 +605,13 @@ const SecurityScan = ( { checkedAt } ) => {
 				path: PATH,
 				method: 'POST',
 				// Only the consent box agrees: a screen opened before the consent was
-				// withdrawn or the text changed leaves it to the stored consent.
-				data: { consent: ! consented && agreed, bands },
+				// withdrawn or the text changed leaves it to the stored consent. The
+				// box agrees to the text this screen showed, which the server checks.
+				data: {
+					consent: ! consented && agreed,
+					consent_version: scan.consent_version,
+					bands,
+				},
 			} );
 			if ( ! mounted.current ) {
 				return;
@@ -772,7 +777,7 @@ const SecurityScan = ( { checkedAt } ) => {
 					</p>
 					<p>
 						{ __(
-							'Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems and confirm deletion requests. They are never used for sales or advertising.',
+							'Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store. They are never used for sales or advertising.',
 							'woocommerce-for-japan'
 						) }
 					</p>
