@@ -33,6 +33,14 @@ import {
 const PATH = '/jp4wc/v1/security/scan';
 
 /**
+ * Version of the consent text this screen shows: the same as
+ * JP4WC_Security_Scan::CONSENT_VERSION, raised together with it. The state
+ * loaded from the server cannot stand in for it, as it may come from a
+ * newer version of the plugin than this screen.
+ */
+const CONSENT_VERSION = '2026-11';
+
+/**
  * Class of the body while the report is printed (see Settings.scss).
  */
 const PRINT_CLASS = 'jp4wc-print-scan-report';
@@ -609,7 +617,7 @@ const SecurityScan = ( { checkedAt } ) => {
 				// box agrees to the text this screen showed, which the server checks.
 				data: {
 					consent: ! consented && agreed,
-					consent_version: scan.consent_version,
+					consent_version: CONSENT_VERSION,
 					bands,
 				},
 			} );

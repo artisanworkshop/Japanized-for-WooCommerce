@@ -696,6 +696,17 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The settings screen sends the version of the consent text it shows,
+	 * which is the one this plugin checks: the built script is what ships.
+	 */
+	public function test_settings_screen_sends_the_consent_version() {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file.
+		$script = file_get_contents( TESTS_PLUGIN_DIR . '/assets/js/build/admin/settings.js' );
+
+		$this->assertMatchesRegularExpression( '/consent_version:\s*["\']' . preg_quote( JP4WC_Security_Scan::CONSENT_VERSION, '/' ) . '["\']/', $script, 'Raise CONSENT_VERSION in SecurityScan.js and build it.' );
+	}
+
+	/**
 	 * A consent to the text before the 2026-11-05 revision is asked again: the
 	 * check runs only once the store manager agrees to the current text, then
 	 * keeps the registration. The view says the stored consent is not current,
