@@ -13,7 +13,7 @@
   - de91548 docs: record review-loop R2
   - 65b2851 docs: record dev-cycle gate round 1
 - 設計ドキュメントからの逸脱（issue の「変更」に無い追加）: 同意し直しを案内する Notice、画面に出した文面の版でだけ同意を受け付けるチェック（プラグイン内部の REST 引数 `consent_version` と 409 `jp4wc_security_scan_consent_outdated`。wc.artws.info との契約は変えない）
-- 要判断として残したもの: **マージの順序**（3.0.0 の bump PR #288 が未マージ・未タグ。タグ 3.0.0 の push と 0.4.1 のデプロイ確認の後にマージ。リリースのタグは 2026-11-05 以降）
+- 要判断として残したもの: **マージの順序**（3.0.0 の bump PR #288 が未マージ・未タグ。タグ 3.0.0 の push の後にマージ。リリースのタグは 2026-11-05 以降）。artws-security-hub 0.4.1 は wc.artws.info にデプロイ済み（2026-10-30、DEPLOY.md 10「0.4.1 に更新したとき」の確認で `2026-10`・`2026-11` が `artws_sec_unauthorized`、`2027-04` が `artws_sec_unknown_consent_version`）
 
 ## review-loop（PR 前）
 | ラウンド | 指摘 | 修正 | backlog |
@@ -42,7 +42,7 @@
 - 品質チェック: PHPUnit 1052 件 green（`composer test-local`）、`composer lint` は main と同じ 93 errors / 12 warnings（21 files）、変更した PHP・テストファイルの phpcs 指摘なし、lint-js 指摘なし、`npx wp-scripts build` 成功
 
 ## 次にできること（人間の判断）
-- マージ: **タグ 3.0.0 の push の後**、かつ artws-security-hub 0.4.1 のデプロイ確認（`wp eval 'var_export( Artws_Sec_Scan_Request::consent_versions() );'` に `2026-11`）の後に、GitHub 上で → `/post-merge`
+- マージ: **タグ 3.0.0 の push の後**に、GitHub 上で → `/post-merge`（0.4.1 のデプロイは確認済み）
 - リリース: `/release-bump start <次の版>`（3.0.1 の予定。changelog に本件、Upgrade Notice に同意のお願い）。タグの push は 2026-11-05 以降、指示があってから。wp.org の Release Confirmation も当日
 - translate.wordpress.org の ja に新しい 4 件の訳
 - 公開後: 本番で更新 → Notice と同意画面 → 同意し直して診断 → サーバーの最新の診断の `request.consent_version` が `2026-11`
