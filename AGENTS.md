@@ -51,6 +51,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - Anything local-only at the top level is listed in `.distignore` (the release ZIP and the WordPress.org deploy copy the tree with `rsync --exclude-from=.distignore`). `plugins/` never ships.
 - The readme `== External Services ==` section must match what the code actually sends, when and where.
 - What the free security check sends is built only by `JP4WC_Security_Scan::payload()`, which the consent screen also previews. A key sent from anywhere else, or one missing from the readme External Services list, is a defect.
+- A new `consent_version` sent by JP4WC must already be in `Artws_Sec_Scan_Request::CONSENT_VERSIONS`, and a version a released JP4WC sends stays there.
 - The terms of use and the privacy policy on wc.artws.info describe what the client sends, how long it is kept and how it is deleted, and the terms rely on the Security tab's link to them. A PR that changes any of these says in its description that both pages need the same change.
 
 ### Tests
