@@ -268,3 +268,7 @@
 | 2026-10-29 | G2-1 | — | plugins/artws-security-hub/DEPLOY.md:346（PR #299 G2、Copilot） | 「後片付けの DELETE が取り出したトークンでなく伏せ字 `******` を送る」との指摘。実際の行は `-H "Authorization: Bearer $TOKEN"`（a578a22 のファイルと PR の差分で確認）で、8 の手順 3 と同じ。Copilot の入力で `Bearer` の後ろが伏せられたための誤検知 | 対応不要（誤検知） |
 | 2026-10-30 | G1-1 | — | i18n/woocommerce-for-japan-ja-6d3c6b0664a2454846605529637d2ce3.json（PR #301 G1、Copilot） | 「同梱の日本語 JS カタログに新しい 3 件が無い」との指摘。3 件とも JSON にある（1 行の JSON の差分を Copilot が読み違える、#294 と同じ） | 対応不要（誤検知） |
 | 2026-10-30 | G1-2 | — | リリースの運用（PR #301 G1、Copilot） | リリースは 3.0.0 のタグ・0.4.1 での 2026-11 の受け付け・11-05 の施行を確かめてから | PR #301 本文に記載済み（マージの順序・リリース時の確認） |
+| 2026-10-30 | R1-L1 | Low | src/js/jp4wc/admin/settings/components/SecurityScan.js 「無料診断を受ける」「キャンセル」（feat/305-free-check-consent-toggle R1） | 押したボタン自体が消えてフォーカスが body に移り、`aria-controls` も無い。開いたら同意欄の見出しへ、キャンセルでボタンへフォーカスを移す | 未起票 |
+| 2026-10-30 | R1-L2 | Low | SecurityScan.js 冒頭の説明文（feat/305-free-check-consent-toggle R1） | 「下の情報を…送信し」は、送信する情報がボタンを押すまで出ない今の画面と合わない（直すと新しい msgid） | 未起票 |
+| 2026-10-30 | R1-L3 | Low | SecurityScan.js `compareWithLocal()`（feat/305-free-check-consent-toggle R1） | クライアントだけに新しいチェックを足すと、サーバーの `Artws_Sec_Report_Builder::CHECKS` が知らない ID は常に「上のチェックだけが見つけた項目」に出る。チェックを足すときはサーバーの CHECKS も同時に更新する | 未起票 |
+| 2026-10-30 | R1-L4 | Low | SecurityScan.js `compareWithLocal()`（feat/305-free-check-consent-toggle R1） | 自動テストが無い（JS のユニットテストの仕組みが無く、開発サイトでの手動確認だけ）。`tests/e2e/admin-settings.spec.ts` に REST をモックしたケースを足せる | 未起票 |
