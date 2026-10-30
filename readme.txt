@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -170,6 +170,9 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Changelog ==
 
+= 3.0.1 - 2026-11-05 =
+* **Changed** - The free security check by wc.artws.info asks for consent again under its revised terms of use and privacy policy (revised on 2026-10-29, in force from 2026-11-05): staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store, and they are never used for sales or advertising. Stores that agreed to the earlier text see the consent screen again with a notice and keep their registration; the revenue and order bands are sent again only when the box is ticked again. A Security tab opened before the update asks for a reload instead of recording a consent to a text it did not show (#298)
+
 = 3.0.0 - 2026-10-30 =
 * **Added** - A security check for the site, on a new Security tab (WooCommerce → JP4WC Settings → Security). Once a day it downloads a list of known vulnerabilities from wc.artws.info (data from Wordfence Intelligence) and checks the installed plugins, themes and WordPress against it; only the versions of this plugin, WordPress, WooCommerce and PHP are sent, in the User-Agent header. Users who can manage WooCommerce see an admin notice when an installed version is affected, and dismissing it hides it until the findings change. The check is on by default, including on sites updated from an earlier version; turning it off on the Security tab stops the downloads and deletes the downloaded data and the results (#257)
 * **Added** - The security check also runs the other 16 of its 17 checks on the site's own setup, such as HTTPS on the checkout and My account pages, two-factor authentication, a user named "admin", file editing in the admin, and backups, database dumps or logs left in public directories, and scores each of the four requirements of Japan's Credit Card Security Guidelines (クレジットカード・セキュリティガイドライン) out of 100; the checks that request the site's own pages send those requests only to the site's own address, and a check that cannot tell is shown as unconfirmed instead of being counted as a failure (#258)
@@ -316,6 +319,9 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 [View complete changelog](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
 == Upgrade Notice ==
+
+= 3.0.1 =
+3.0.1 follows the revised terms of use and privacy policy of the free security check, in force from 2026-11-05. If you used the free check, read them and agree again on the Security tab to run it again. The daily vulnerability check keeps running as before.
 
 = 3.0.0 =
 3.0.0 adds a security check on a new Security tab, on by default: once a day it downloads a list of known vulnerabilities from wc.artws.info, sending only the versions of this plugin, WordPress, WooCommerce and PHP. You can turn it off on that tab. Make a full site backup before updating.
