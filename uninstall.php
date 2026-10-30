@@ -41,6 +41,11 @@ require_once __DIR__ . '/includes/admin/class-jp4wc-security-notice.php';
 JP4WC_Security_Feed::uninstall();
 delete_metadata( 'user', 0, JP4WC_Security_Notice::DISMISSED_META, '', true );
 
+// The free security check: a deletion request to wc.artws.info for each site that has a
+// token for its URL (the terms of use promise it), then its consent, token and report.
+require_once __DIR__ . '/includes/class-jp4wc-security-scan.php';
+JP4WC_Security_Scan::uninstall();
+
 // The login attempt limiter: its counts and settings on every site.
 require_once __DIR__ . '/includes/class-jp4wc-login-limiter.php';
 JP4WC_Login_Limiter::uninstall();

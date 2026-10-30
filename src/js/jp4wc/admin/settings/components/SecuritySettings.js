@@ -4,6 +4,7 @@
  * The result of the security check (issue #259): the score of the four
  * requirements of the Credit Card Security Guidelines, the items that need
  * action, and a re-check, which runs in WP-Cron while this tab waits for it.
+ * The free check of wc.artws.info (issue #260) is in SecurityScan.
  */
 import { __, sprintf } from '@wordpress/i18n';
 import {
@@ -33,6 +34,7 @@ import {
 	severityLabels,
 	checkLabels,
 } from './security-labels';
+import SecurityScan from './SecurityScan';
 
 /**
  * How often the tab asks for the result while a re-check runs, and for how long.
@@ -1095,6 +1097,8 @@ const SecuritySettings = ( {
 					) }
 				</>
 			) }
+
+			{ view && <SecurityScan checkedAt={ view.checked_at } /> }
 
 			{ view?.xmlrpc && (
 				<XmlrpcUsage

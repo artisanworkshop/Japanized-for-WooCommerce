@@ -2,7 +2,7 @@
 
 wc.artws.info に artws-security-hub を入れて、脆弱性フィード（`/feed/v1/`）と無料診断の REST API（`/wp-json/artws-sec/v1/`）を動かすまでの手順。上から順に進め、各節の「確認」で結果を確かめる。
 
-- 対象の版: 0.4.0
+- 対象の版: 0.4.1
 - 仕組みや設定値の理由: [README.md](README.md)
 - JP4WC とやり取りする JSON の決まり: [契約 README](../../tests/fixtures/security-feed/README.md)
 
@@ -325,6 +325,41 @@ JP4WC の無料診断（#260）を出す前に、wc.artws.info にプライバ�
 |---|---|
 | 0.2.x 以前 → 0.3.0 以降 | 7 の取り込みを 1 回走らせて照合用のインデックスを作る（それまで `POST /scan` は 503）。8 の「無料診断の API」を確かめる |
 | 0.3.x → 0.4.0 以降 | `artws_sec_db_version` が `2` になったことと、8 の「データベース」を確かめる。0.3.x で登録したサイトのトークンはそのまま使える。ただし移行の直前 1 時間に診断したサイトは、移行の直後にもう 1 回診断できる（一度きり） |
+| 0.4.0 → 0.4.1 以降 | 追加の作業なし。下の「0.4.1 に更新したとき」で、同意の版 2026-11 の要求が Web から受け付けられることを確かめる。**同意の版 2026-11 を送る JP4WC（#298、2026-11-05 リリース）より前、2026-11-04 までに反映する。** 反映前にその JP4WC を出すと、同意し直した利用者の診断がすべて 400（`artws_sec_unknown_consent_version`）になり、画面には「最新版に更新して再試行」と出る（すでに最新版なので直せない）。2026-10 を送る JP4WC 3.0.0 は、0.4.0 でも 0.4.1 でも診断できる。その JP4WC を出した後は 0.4.0 以前に戻さず、3.0.0 が使われている間は `2026-10` を外さない |
+
+### 0.4.1 に更新したとき
+
+Web の PHP（REST）が同意の版 2026-11 を受け付けるかを、手元から確かめる。`wp eval` は CLI の PHP で動くので、Web が新しいコードで答えているかは分からない。
+
+要求には無効なトークン（`Bearer x`）を付ける。サーバーは同意の版を含む本文をトークンより先に確かめるので、受け付けた版は 401（`artws_sec_unauthorized`）、知らない版は 400（`artws_sec_unknown_consent_version`）になる。どちらも何も登録せず、送信元 IP の枠も使わない（400 と 401 は数えない）。`tests/fixtures/` はサーバーには無いので、手元のリポジトリの直下で実行する。
+
+```bash
+BASE=https://wc.artws.info/wp-json/artws-sec/v1
+for v in 2026-10 2026-11 2027-04; do
+  printf '%s: ' "$v"
+  jq -c --arg v "$v" '.consent_version = $v' tests/fixtures/security-feed/scan-request.json \
+    | curl -4 -s -X POST "$BASE/scan" -H 'Content-Type: application/json' -H 'Authorization: Bearer x' --data @- \
+    | jq -r .code
+done
+```
+
+次のように出れば 0.4.1 が答えている。
+
+```text
+2026-10: artws_sec_unauthorized
+2026-11: artws_sec_unauthorized
+2027-04: artws_sec_unknown_consent_version
+```
+
+- 2026-11 が `artws_sec_unknown_consent_version`: 0.4.0 のコードが答えている。プラグインの一覧で版を確かめ、4 の置き換えをやり直す。
+- 2027-04 も `artws_sec_unauthorized`: トークンが本文より先に確かめられているか、`artws_sec_consent_versions` フィルタが 2027-04 を足している。この方法では確かめられない。
+- どれも `artws_sec_invalid_request`: 本文が空か壊れている。手元のリポジトリの直下で実行したかを確かめる。
+
+サーバーの WP-CLI でも確かめるなら（任意）、wc.artws.info の SSH Username で入る（Username はサイトごと）。`wp option get home` が `https://wc.artws.info` であることを確かめてから実行すると、`2026-10` と `2026-11` が出る。
+
+```bash
+wp eval 'var_export( Artws_Sec_Scan_Request::consent_versions() );'
+```
 
 ## 11. 困ったとき
 
@@ -342,6 +377,7 @@ JP4WC の無料診断（#260）を出す前に、wc.artws.info にプライバ�
 | 管理画面に stale と出る | 最後の成功から 48 時間を超えた。取得の失敗は 1 時間後に 3 回まで自動で再試行する。続くなら管理画面のエラーを見る |
 | Wordfence 側の整理で件数が減り、取り込みが失敗した | 管理画面の「Allow fewer records on the next update」で、次の 1 回だけ件数の検査を外す |
 | `artws_sec_db_version` が古いまま | 表の作成・変更の権限が無いか、移行が失敗している。権限を確かめる。次の要求で自動でやり直す |
+| SSH で `wp eval` が何も出さない、`wp option get artws_sec_db_version` が「Does it exist?」になる | SSH で別のサイトに入っていないかを `wp option get home` で確かめる。MyPressable の SSH Username はサイトごとにある |
 
 ### 止める・消す
 

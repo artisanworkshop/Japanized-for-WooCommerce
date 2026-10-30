@@ -180,6 +180,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-login-limiter.php';
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-security-hardening.php';
 			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-xmlrpc-guard.php';
+			require_once JP4WC_INCLUDES_PATH . 'class-jp4wc-security-scan.php';
 			require_once JP4WC_INCLUDES_PATH . 'admin/class-jp4wc-security-notice.php';
 		}
 

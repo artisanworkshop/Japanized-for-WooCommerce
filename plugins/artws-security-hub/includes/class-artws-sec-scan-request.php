@@ -20,8 +20,12 @@ class Artws_Sec_Scan_Request {
 
 	/**
 	 * Consent texts the server knows (consent_version).
+	 *
+	 * 2026-10: the terms of use in force from 2026-10-28 (sent by JP4WC 3.0.0).
+	 * 2026-11: the revision of 2026-10-29, in force from 2026-11-05, which adds
+	 * the staff's check of each registration (article 4.4.4) to the purposes.
 	 */
-	const CONSENT_VERSIONS = array( '2026-10' );
+	const CONSENT_VERSIONS = array( '2026-10', '2026-11' );
 
 	/**
 	 * Revenue band codes.
