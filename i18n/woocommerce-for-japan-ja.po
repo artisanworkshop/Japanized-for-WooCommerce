@@ -4141,6 +4141,65 @@ msgstr "同意して診断する"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Get the free check"
+msgstr "無料診断を受ける"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Show the information sent"
+msgstr "送信する情報を見る"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Hide the information sent"
+msgstr "送信する情報を閉じる"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Compared with the checks above"
+msgstr "上のチェックとの比較"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Checked again against the latest vulnerability data on wc.artws.info, the "
+"result is the same as the checks above. The report below adds what each item "
+"means, what can happen and how to fix it, and can be saved as a PDF."
+msgstr ""
+"wc.artws.info の最新の脆弱性データで照合し直した結果も、上のチェックと同じで"
+"した。下のレポートでは、各項目の説明・影響・修正手順を確かめられ、PDF で保存"
+"できます。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Found only by wc.artws.info"
+msgstr "wc.artws.info だけが見つけた項目"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Found only by the checks above"
+msgstr "上のチェックだけが見つけた項目"
+
+#. translators: 1: plugin, theme or WordPress name, 2: its version
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "Known vulnerabilities in %1$s %2$s"
+msgstr "%1$s %2$s の既知の脆弱性"
+
+#. translators: 1: date and time of the checks above, 2: date and time of the free check
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid ""
+"The checks above are from %1$s and this check from %2$s. Updates and setting "
+"changes made in between also show as differences."
+msgstr ""
+"上のチェックは %1$s、この診断は %2$s の結果です。その間の更新や設定の変更も違"
+"いとして表れます。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid ""
 "This deletes this site's data on wc.artws.info, and the consent and the "
 "report kept on this site."

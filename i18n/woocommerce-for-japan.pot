@@ -3215,6 +3215,55 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Get the free check"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Show the information sent"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Hide the information sent"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Compared with the checks above"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Checked again against the latest vulnerability data on wc.artws.info, the result is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Found only by wc.artws.info"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Found only by the checks above"
+msgstr ""
+
+#. translators: 1: plugin, theme or WordPress name, 2: its version
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "Known vulnerabilities in %1$s %2$s"
+msgstr ""
+
+#. translators: 1: date and time of the checks above, 2: date and time of the free check
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "The checks above are from %1$s and this check from %2$s. Updates and setting changes made in between also show as differences."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid "This deletes this site's data on wc.artws.info, and the consent and the report kept on this site."
 msgstr ""
 
