@@ -272,3 +272,4 @@
 | 2026-10-30 | R1-L2 | Low | SecurityScan.js 冒頭の説明文（feat/305-free-check-consent-toggle R1） | 「下の情報を…送信し」は、送信する情報がボタンを押すまで出ない今の画面と合わない（直すと新しい msgid） | 未起票 |
 | 2026-10-30 | R1-L3 | Low | SecurityScan.js `compareWithLocal()`（feat/305-free-check-consent-toggle R1） | クライアントだけに新しいチェックを足すと、サーバーの `Artws_Sec_Report_Builder::CHECKS` が知らない ID は常に「上のチェックだけが見つけた項目」に出る。チェックを足すときはサーバーの CHECKS も同時に更新する | 未起票 |
 | 2026-10-30 | R1-L4 | Low | SecurityScan.js `compareWithLocal()`（feat/305-free-check-consent-toggle R1） | 自動テストが無い（JS のユニットテストの仕組みが無く、開発サイトでの手動確認だけ）。`tests/e2e/admin-settings.spec.ts` に REST をモックしたケースを足せる | 未起票 |
+| 2026-10-30 | G2-1 | — | readme.txt External Services（PR #307 G2、Copilot。差分は #306 のコミット） | 同意の版を 2026-10 に戻した readme の開示を、公開中の規約・プライバシーポリシーと突き合わせてからリリースするように。3.0.1（10-31）の時点で効力があるのは改定前の規約で一致しており、改定後の文言は 11-05 の 3.0.2 で戻す | 対応済み（PR #306・#307 本文） |
