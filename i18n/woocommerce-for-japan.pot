@@ -3240,6 +3240,11 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Apart from the items the checks above could not confirm, the result checked again against the latest vulnerability data on wc.artws.info is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid "Found only by wc.artws.info"
 msgstr ""
 
@@ -3253,6 +3258,11 @@ msgstr ""
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
 #, php-format
 msgid "Known vulnerabilities in %1$s %2$s"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Could not be confirmed by the checks above"
 msgstr ""
 
 #. translators: 1: date and time of the checks above, 2: date and time of the free check

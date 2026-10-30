@@ -501,15 +501,26 @@ const vulnerabilityKey = ( type, slug ) =>
  * Both sides are keyed alike: V-01 by the affected software (the report
  * holds one item per vulnerability record), the other checks by their ID.
  *
+ * The report holds findings only, so a check the checks above could not
+ * confirm cannot be compared: it is returned on its own.
+ *
  * @param {Object} report Report.
  * @param {Object} view   Result of GET /jp4wc/v1/security/findings.
- * @return {{onlyReport: string[], onlyLocal: string[]}} Names of the items
- *         that need action on one side only.
+ * @return {{onlyReport: string[], onlyLocal: string[], unconfirmed: string[]}}
+ *         Names of the items that need action on one side only, and of the
+ *         checks above that could not be confirmed.
  */
 const compareWithLocal = ( report, view ) => {
 	const checks = checkLabels();
 	const local = new Map();
+	const unconfirmed = [];
 	view.checks.forEach( ( check ) => {
+		if ( check.status === 'unknown' ) {
+			unconfirmed.push(
+				checks[ check.check_id ]?.title || check.check_id
+			);
+			return;
+		}
 		if ( check.status !== 'fail' ) {
 			return;
 		}
@@ -559,6 +570,7 @@ const compareWithLocal = ( report, view ) => {
 	return {
 		onlyReport: only( remote, local ),
 		onlyLocal: only( local, remote ),
+		unconfirmed,
 	};
 };
 
@@ -577,7 +589,10 @@ const LocalComparison = ( { report, scannedAt, view } ) => {
 	if ( view.checks.length === 0 ) {
 		return null;
 	}
-	const { onlyReport, onlyLocal } = compareWithLocal( report, view );
+	const { onlyReport, onlyLocal, unconfirmed } = compareWithLocal(
+		report,
+		view
+	);
 
 	return (
 		<div className="jp4wc-scan-comparison">
@@ -589,10 +604,15 @@ const LocalComparison = ( { report, scannedAt, view } ) => {
 			</h4>
 			{ onlyReport.length === 0 && onlyLocal.length === 0 ? (
 				<p>
-					{ __(
-						'Checked again against the latest vulnerability data on wc.artws.info, the result is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF.',
-						'woocommerce-for-japan'
-					) }
+					{ unconfirmed.length === 0
+						? __(
+								'Checked again against the latest vulnerability data on wc.artws.info, the result is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF.',
+								'woocommerce-for-japan'
+						  )
+						: __(
+								'Apart from the items the checks above could not confirm, the result checked again against the latest vulnerability data on wc.artws.info is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF.',
+								'woocommerce-for-japan'
+						  ) }
 				</p>
 			) : (
 				<>
@@ -643,6 +663,23 @@ const LocalComparison = ( { report, scannedAt, view } ) => {
 							) }
 						</p>
 					) }
+				</>
+			) }
+			{ unconfirmed.length > 0 && (
+				<>
+					<p>
+						<strong>
+							{ __(
+								'Could not be confirmed by the checks above',
+								'woocommerce-for-japan'
+							) }
+						</strong>
+					</p>
+					<ul>
+						{ unconfirmed.map( ( name, index ) => (
+							<li key={ index }>{ name }</li>
+						) ) }
+					</ul>
 				</>
 			) }
 		</div>
