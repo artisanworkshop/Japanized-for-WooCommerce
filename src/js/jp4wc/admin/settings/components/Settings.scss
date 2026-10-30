@@ -484,6 +484,30 @@
 		}
 	}
 
+	.jp4wc-scan-comparison {
+		margin: 0 0 16px;
+		padding: 12px 16px;
+		border-left: 4px solid #2271b1;
+		background: #f0f6fc;
+
+		h4 {
+			margin: 0 0 8px;
+		}
+
+		p {
+			margin: 4px 0;
+		}
+
+		ul {
+			margin: 4px 0 8px 20px;
+			list-style: disc;
+		}
+	}
+
+	.jp4wc-scan-consent {
+		margin-top: 12px;
+	}
+
 	.jp4wc-scan-report {
 		margin: 0 0 24px;
 		padding: 16px;
