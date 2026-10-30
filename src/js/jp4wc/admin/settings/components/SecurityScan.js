@@ -33,14 +33,6 @@ import {
 const PATH = '/jp4wc/v1/security/scan';
 
 /**
- * Version of the consent text this screen shows: the same as
- * JP4WC_Security_Scan::CONSENT_VERSION, raised together with it. The state
- * loaded from the server cannot stand in for it, as it may come from a
- * newer version of the plugin than this screen.
- */
-const CONSENT_VERSION = '2026-11';
-
-/**
  * Class of the body while the report is printed (see Settings.scss).
  */
 const PRINT_CLASS = 'jp4wc-print-scan-report';
@@ -613,13 +605,8 @@ const SecurityScan = ( { checkedAt } ) => {
 				path: PATH,
 				method: 'POST',
 				// Only the consent box agrees: a screen opened before the consent was
-				// withdrawn or the text changed leaves it to the stored consent. The
-				// box agrees to the text this screen showed, which the server checks.
-				data: {
-					consent: ! consented && agreed,
-					consent_version: CONSENT_VERSION,
-					bands,
-				},
+				// withdrawn or the text changed leaves it to the stored consent.
+				data: { consent: ! consented && agreed, bands },
 			} );
 			if ( ! mounted.current ) {
 				return;
@@ -783,12 +770,6 @@ const SecurityScan = ( { checkedAt } ) => {
 							'woocommerce-for-japan'
 						) }
 					</p>
-					<p>
-						{ __(
-							'Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store. They are never used for sales or advertising.',
-							'woocommerce-for-japan'
-						) }
-					</p>
 
 					{ scan.bands_available && (
 						<CheckboxControl
@@ -798,7 +779,7 @@ const SecurityScan = ( { checkedAt } ) => {
 								'woocommerce-for-japan'
 							) }
 							help={ __(
-								'Used only to show which measures to take first for the size of the store and for the purposes the Terms of Use list for them, which include a review of that priority by staff of 職人工房 合同会社 for each registration. Only the band codes are sent, never the amounts.',
+								'Used to show which measures to take first for the size of the store. Only the band codes are sent, never the amounts.',
 								'woocommerce-for-japan'
 							) }
 							checked={ bands }
@@ -819,14 +800,6 @@ const SecurityScan = ( { checkedAt } ) => {
 						<Notice status="info" isDismissible={ false }>
 							{ __(
 								'The free check sends the results of the security check, which has not run yet. It can be used once the results appear above.',
-								'woocommerce-for-japan'
-							) }
-						</Notice>
-					) }
-					{ scan.consent && ! consented && (
-						<Notice status="info" isDismissible={ false }>
-							{ __(
-								'The Terms of Use and the Privacy Policy of the free check were revised. To run the check again, read them and agree again.',
 								'woocommerce-for-japan'
 							) }
 						</Notice>

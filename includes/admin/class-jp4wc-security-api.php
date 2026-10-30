@@ -96,15 +96,11 @@ class JP4WC_Security_API extends WP_REST_Controller {
 					'callback'            => self::with_bundled_translation( array( $this, 'run_scan' ) ),
 					'permission_callback' => self::with_bundled_translation( array( $this, 'rescan_permissions_check' ) ),
 					'args'                => array(
-						'consent'         => array(
+						'consent' => array(
 							'type'    => 'boolean',
 							'default' => false,
 						),
-						'consent_version' => array(
-							'type'    => 'string',
-							'default' => '',
-						),
-						'bands'           => array(
+						'bands'   => array(
 							'type'    => 'boolean',
 							'default' => false,
 						),
@@ -264,7 +260,7 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 */
 	public function run_scan( $request ) {
 		$bands  = true === $request->get_param( 'bands' );
-		$result = JP4WC_Security_Scan::run( true === $request->get_param( 'consent' ), $bands, (string) $request->get_param( 'consent_version' ) );
+		$result = JP4WC_Security_Scan::run( true === $request->get_param( 'consent' ), $bands );
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
