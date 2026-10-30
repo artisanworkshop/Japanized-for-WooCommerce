@@ -843,6 +843,24 @@ const SecurityScan = ( { checkedAt, view } ) => {
 
 	const busy = action.state === 'running' || action.state === 'deleting';
 	const consented = scan?.consent?.current === true;
+	// Whether the bands are sent is asked on every check, so once the site has
+	// agreed the box stays in view beside "Run the check again".
+	const bandsControl = scan?.bands_available && (
+		<CheckboxControl
+			__nextHasNoMarginBottom={ true }
+			label={ __(
+				'Also send the revenue and order bands of the last 12 months (optional)',
+				'woocommerce-for-japan'
+			) }
+			help={ __(
+				'Used to show which measures to take first for the size of the store. Only the band codes are sent, never the amounts.',
+				'woocommerce-for-japan'
+			) }
+			checked={ bands }
+			onChange={ toggleBands }
+			disabled={ busy }
+		/>
+	);
 	const hasData =
 		scan &&
 		( scan.consent || scan.registered || scan.other_site || scan.report );
@@ -950,6 +968,7 @@ const SecurityScan = ( { checkedAt, view } ) => {
 
 			{ scan && consented && (
 				<>
+					{ bandsControl }
 					<div className="jp4wc-scan-actions">
 						<Button
 							variant="primary"
@@ -1024,22 +1043,7 @@ const SecurityScan = ( { checkedAt, view } ) => {
 						) }
 					</p>
 
-					{ scan.bands_available && (
-						<CheckboxControl
-							__nextHasNoMarginBottom={ true }
-							label={ __(
-								'Also send the revenue and order bands of the last 12 months (optional)',
-								'woocommerce-for-japan'
-							) }
-							help={ __(
-								'Used to show which measures to take first for the size of the store. Only the band codes are sent, never the amounts.',
-								'woocommerce-for-japan'
-							) }
-							checked={ bands }
-							onChange={ toggleBands }
-							disabled={ busy }
-						/>
-					) }
+					{ ! consented && bandsControl }
 
 					<p>
 						{ createInterpolateElement(
