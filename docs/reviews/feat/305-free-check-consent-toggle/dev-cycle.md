@@ -4,8 +4,8 @@
 - モード: auto-commit
 - ベース: `chore/304-hold-consent-version-2026-11`（PR #306、同意の版 2026-10）。PR の base は main
 - PR: #307 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/307（#306 を先にマージ）
-- 現在のステップ: 6（ゲート G3 の依頼・CI 待ち）
-- Copilot: 依頼 2 回 / 未収束
+- 現在のステップ: 完了（最終報告: final-report.md）
+- Copilot: 依頼 3 回 / 上限（G3 でも新規指摘 1 件、保留）
 - Codex: 依頼 1 回 / 収束（G1 で新規指摘なし）
 
 ## ログ
@@ -17,3 +17,5 @@
 | 2026-10-30 19:48 | 4 | upstream に push、PR #307 作成（base main、#306 のコミットを含む） |
 | 2026-10-30 20:07 | 7 | G1: Codex 0 件（収束）、Copilot 本文 1 件（G1-1 未確認の項目を比較から落として「同じ」と言う → e0c8dc8 で修正）。G2 を Copilot に依頼 |
 | 2026-10-30 20:23 | 7 | G2: Copilot 本文 1 件（G2-1 readme の開示と公開中の規約の突き合わせ = リリースの運用、対応済み）→ 保留、コードの修正なし。G3 を Copilot に依頼（最後） |
+| 2026-10-30 20:36 | 7 | G3: Copilot 本文 1 件（G3-1 V-01・V-03 が未確認かつレポートに指摘ありで両方の一覧に出る、Low）→ 保留。Copilot は上限 |
+| 2026-10-30 20:38 | 8 | 最終報告 |
