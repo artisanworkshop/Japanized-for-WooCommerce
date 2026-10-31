@@ -44,6 +44,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - New user-facing strings use the text domain `woocommerce-for-japan`. A `.po` is not resynced wholesale in a feature PR. The settings app's JavaScript strings are translated from `i18n/woocommerce-for-japan-ja-<md5>.json`; check that file before reporting a missing JS translation.
 - `wp_login_failed` is fired by `wp_authenticate()` itself, so XML-RPC and the WooCommerce login forms reach it as well as wp-login.php.
 - WooCommerce bundles Jetpack's connection package, so `class_exists()` on `Automattic\Jetpack\Connection\*` does not mean Jetpack is active. A `.htaccess` rule on wp-login.php or a plugin that only moves the login page does not protect xmlrpc.php.
+- `jp4wc_security_check_updates_automatically` and `jp4wc_security_findings_updated` are used by JP4WC Pro: keep their names and arguments. The action fires only when `JP4WC_Security_Feed::rescan()` kept its write (CLAUDE.md, #300).
 - `@since` and "since x.y.z" name the first release tag that will contain the change. That is the next version after the last pushed tag, which may be a minor or major step (the security check code says 3.0.0 after 2.9.20). Once a bump PR merges, the readme `Stable tag` already names it.
 
 ### Packaging and disclosure
