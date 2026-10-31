@@ -591,6 +591,10 @@ class JP4WC_Security_Checks {
 		 * as JP4WC Pro's scheduled updates do. JP4WC Pro uses this hook: keep
 		 * its name and arguments.
 		 *
+		 * Not applied while automatic updates are off for plugins as a whole
+		 * (AUTOMATIC_UPDATER_DISABLED, plugins_auto_update_enabled) or for
+		 * WordPress security releases: V-04 fails before it asks.
+		 *
 		 * @since 3.0.2
 		 * @param bool   $update Whether WordPress updates the plugin automatically.
 		 * @param string $file   Plugin file, relative to the plugins directory.

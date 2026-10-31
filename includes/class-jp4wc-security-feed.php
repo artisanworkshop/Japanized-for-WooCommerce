@@ -592,10 +592,16 @@ class JP4WC_Security_Feed {
 		 * were removed. JP4WC Pro's scheduled updates use this hook to update a
 		 * plugin with a known vulnerability at once: keep its name and arguments.
 		 *
+		 * When a stored vulnerability file cannot be read, the findings keep the
+		 * items of the previous match, so an item's version may not be the one
+		 * installed now.
+		 *
 		 * @since 3.0.2
 		 * @param array|null $findings The saved findings, as get_findings() returns
-		 *                             them; null while no sync has stored
-		 *                             vulnerability data.
+		 *                             them; null when they have no items: no sync
+		 *                             has stored vulnerability data, or a stored
+		 *                             file cannot be read and no earlier match had
+		 *                             items.
 		 */
 		do_action( 'jp4wc_security_findings_updated', self::get_findings() );
 	}
