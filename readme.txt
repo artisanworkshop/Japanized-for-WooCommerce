@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 3.0.0
+Stable tag: 3.0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -169,6 +169,10 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 3.0.1 - 2026-10-31 =
+* **Added** - The report of the free security check starts with a comparison with the checks on the Security tab: what only the free check found, what only the checks on the tab found and which checks on the tab could not be confirmed, or that the result is the same. The comparison is not included when the report is saved as a PDF (#305)
+* **Changed** - The free security check opens from a "Get the free check" button: the information to be sent and the consent appear only when it is clicked, and nothing is sent until a store manager agrees and clicks "Agree and run the check". Once the site has agreed, the box for the revenue and order bands stays next to "Run the check again", and the information sent opens from a link (#305)
 
 = 3.0.0 - 2026-10-30 =
 * **Added** - A security check for the site, on a new Security tab (WooCommerce → JP4WC Settings → Security). Once a day it downloads a list of known vulnerabilities from wc.artws.info (data from Wordfence Intelligence) and checks the installed plugins, themes and WordPress against it; only the versions of this plugin, WordPress, WooCommerce and PHP are sent, in the User-Agent header. Users who can manage WooCommerce see an admin notice when an installed version is affected, and dismissing it hides it until the findings change. The check is on by default, including on sites updated from an earlier version; turning it off on the Security tab stops the downloads and deletes the downloaded data and the results (#257)
