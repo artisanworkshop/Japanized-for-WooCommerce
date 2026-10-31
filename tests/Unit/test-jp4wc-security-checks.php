@@ -746,23 +746,39 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			remove_filter( 'jp4wc_security_check_updates_automatically', $filter, 10 );
 		}
 
+		// As JP4WC Pro does: auto_update_plugin takes forms out of WordPress's
+		// automatic updates, and the filter, run after it, counts it as updated.
+		$out_of_wordpress = static function ( $update, $item ) {
+			return 'forms' === $item->slug ? false : $update;
+		};
+		$on_schedule      = static function ( $update, $file ) {
+			return 'forms/forms.php' === $file ? true : $update;
+		};
+		$both             = array(
+			'plugin_updates'      => self::plugin_updates(),
+			'auto_update_plugins' => array( 'shop-plugin/shop-plugin.php', 'forms/forms.php' ),
+		);
+		add_filter( 'auto_update_plugin', $out_of_wordpress, 10, 2 );
+		try {
+			$this->assertSame( 'fail', $this->v04( $both ), 'Taken out of WordPress\'s automatic updates.' );
+			add_filter( 'jp4wc_security_check_updates_automatically', $on_schedule, 10, 2 );
+			$this->assertSame( 'pass', $this->v04( $both ), 'Updated on a schedule.' );
+		} finally {
+			remove_filter( 'jp4wc_security_check_updates_automatically', $on_schedule, 10 );
+			remove_filter( 'auto_update_plugin', $out_of_wordpress, 10 );
+		}
+
 		// The filter has the last word, after auto_update_plugin.
 		$deny = static function () {
 			return false;
 		};
+		add_filter( 'auto_update_plugin', '__return_true' );
 		add_filter( 'jp4wc_security_check_updates_automatically', $deny );
 		try {
-			$this->assertSame(
-				'fail',
-				$this->v04(
-					array(
-						'plugin_updates'      => self::plugin_updates(),
-						'auto_update_plugins' => array( 'shop-plugin/shop-plugin.php', 'forms/forms.php' ),
-					)
-				)
-			);
+			$this->assertSame( 'fail', $this->v04( $both ) );
 		} finally {
 			remove_filter( 'jp4wc_security_check_updates_automatically', $deny );
+			remove_filter( 'auto_update_plugin', '__return_true' );
 		}
 	}
 
