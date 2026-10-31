@@ -539,7 +539,8 @@ class JP4WC_Security_Feed {
 
 	/**
 	 * Matches the installed software against the stored files, runs the local
-	 * checks and saves both, with the score, in one write.
+	 * checks and saves both, with the score, in one write, then fires
+	 * jp4wc_security_findings_updated.
 	 *
 	 * The local checks run without vulnerability data too; the findings then
 	 * have no items, and get_findings() stays null.
@@ -580,7 +581,23 @@ class JP4WC_Security_Feed {
 
 		update_option( self::FINDINGS_OPTION, $findings, false );
 		// The check may have been turned off while the files were read.
-		self::keep_written_data();
+		if ( ! self::keep_written_data() ) {
+			return;
+		}
+
+		/**
+		 * Fires after the findings of a match and the local checks were saved.
+		 *
+		 * Not fired when the check was turned off meanwhile and the findings
+		 * were removed. JP4WC Pro's scheduled updates use this hook to update a
+		 * plugin with a known vulnerability at once: keep its name and arguments.
+		 *
+		 * @since 3.0.2
+		 * @param array|null $findings The saved findings, as get_findings() returns
+		 *                             them; null while no sync has stored
+		 *                             vulnerability data.
+		 */
+		do_action( 'jp4wc_security_findings_updated', self::get_findings() );
 	}
 
 	/**

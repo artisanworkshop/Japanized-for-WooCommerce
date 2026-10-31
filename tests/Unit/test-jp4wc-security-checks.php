@@ -703,6 +703,70 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A plugin that updates plugins on a schedule of its own, out of WordPress's
+	 * automatic updates, counts them as updated automatically (#300, JP4WC Pro).
+	 */
+	public function test_v04_follows_the_scheduled_update_filter() {
+		$context = array(
+			'plugin_updates'      => self::plugin_updates(),
+			'auto_update_plugins' => array( 'shop-plugin/shop-plugin.php' ),
+		);
+		$this->assertSame( 'fail', $this->v04( $context ), 'Without the filter, as before.' );
+
+		$calls     = array();
+		$scheduled = array( 'forms/forms.php' );
+		$filter    = static function ( $update, $file, $item ) use ( &$calls, &$scheduled ) {
+			$calls[ $file ] = array( $update, $item->slug );
+			return $update || in_array( $file, $scheduled, true );
+		};
+		add_filter( 'jp4wc_security_check_updates_automatically', $filter, 10, 3 );
+		try {
+			$this->assertSame( 'pass', $this->v04( $context ), 'Forms is updated on a schedule.' );
+			$this->assertSame(
+				array(
+					'shop-plugin/shop-plugin.php' => array( true, 'shop-plugin' ),
+					'forms/forms.php'             => array( false, 'forms' ),
+				),
+				$calls,
+				'The filter gets what WordPress decided, the plugin file and the entry.'
+			);
+
+			$scheduled = array();
+			$this->assertSame( 'fail', $this->v04( $context ) );
+
+			// Plugins as a whole may not be updated automatically: the filter does not change that.
+			add_filter( 'plugins_auto_update_enabled', '__return_false' );
+			$scheduled = array( 'forms/forms.php' );
+			try {
+				$this->assertSame( 'fail', $this->v04( $context ) );
+			} finally {
+				remove_filter( 'plugins_auto_update_enabled', '__return_false' );
+			}
+		} finally {
+			remove_filter( 'jp4wc_security_check_updates_automatically', $filter, 10 );
+		}
+
+		// The filter has the last word, after auto_update_plugin.
+		$deny = static function () {
+			return false;
+		};
+		add_filter( 'jp4wc_security_check_updates_automatically', $deny );
+		try {
+			$this->assertSame(
+				'fail',
+				$this->v04(
+					array(
+						'plugin_updates'      => self::plugin_updates(),
+						'auto_update_plugins' => array( 'shop-plugin/shop-plugin.php', 'forms/forms.php' ),
+					)
+				)
+			);
+		} finally {
+			remove_filter( 'jp4wc_security_check_updates_automatically', $deny );
+		}
+	}
+
+	/**
 	 * V-04 fails when automatic updates are off for plugins as a whole or for
 	 * WordPress security releases, whatever the plugins' own settings.
 	 */

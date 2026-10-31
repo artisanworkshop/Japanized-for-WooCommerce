@@ -1289,6 +1289,87 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Records the findings each jp4wc_security_findings_updated passes, while
+	 * running a callback.
+	 *
+	 * @param callable $run Callback.
+	 * @return array<int, array|null>
+	 */
+	private function findings_actions( callable $run ) {
+		$fired  = array();
+		$record = static function ( $findings ) use ( &$fired ) {
+			$fired[] = $findings;
+		};
+		add_action( 'jp4wc_security_findings_updated', $record );
+		try {
+			$run();
+		} finally {
+			remove_action( 'jp4wc_security_findings_updated', $record );
+		}
+		return $fired;
+	}
+
+	/**
+	 * Saving the findings fires an action with them, once (#300, JP4WC Pro).
+	 */
+	public function test_saved_findings_fire_an_action() {
+		$fired = $this->findings_actions(
+			static function () {
+				JP4WC_Security_Feed::rescan();
+			}
+		);
+		$this->assertSame( array( null ), $fired, 'No vulnerability data yet: the local checks were saved.' );
+
+		$fired = $this->findings_actions(
+			function () {
+				$this->sync_successfully();
+			}
+		);
+		$this->assertCount( 1, $fired, 'A sync matches once.' );
+		$this->assertSame( JP4WC_Security_Feed::get_findings(), $fired[0] );
+		$this->assertContains( 'sample-plugin', wp_list_pluck( $fired[0]['items'], 'slug' ) );
+
+		$fired = $this->findings_actions(
+			static function () {
+				do_action( JP4WC_Security_Feed::RESCAN_HOOK );
+			}
+		);
+		$this->assertCount( 1, $fired );
+		$this->assertSame( JP4WC_Security_Feed::get_findings(), $fired[0] );
+	}
+
+	/**
+	 * Findings removed because the check was turned off fire no action (#300).
+	 */
+	public function test_removed_findings_fire_no_action() {
+		$this->sync_successfully();
+		$turn_off = function ( $installed ) {
+			$this->turn_off_from_another_request();
+			return $installed;
+		};
+		add_filter( 'jp4wc_security_installed_software', $turn_off, 5 );
+		try {
+			$fired = $this->findings_actions(
+				static function () {
+					JP4WC_Security_Feed::rescan();
+				}
+			);
+		} finally {
+			remove_filter( 'jp4wc_security_installed_software', $turn_off, 5 );
+		}
+		$this->assertSame( array(), $fired, 'Turned off during the match.' );
+		$this->assertFalse( get_option( JP4WC_Security_Feed::FINDINGS_OPTION ) );
+
+		update_option( JP4WC_Security_Feed::SETTING, '' );
+		$fired = $this->findings_actions(
+			static function () {
+				JP4WC_Security_Feed::rescan();
+			}
+		);
+		$this->assertSame( array(), $fired, 'Turned off.' );
+	}
+
+	/**
 	 * A re-check is one WP-Cron event of its own, however often it is asked for (#259).
 	 */
 	public function test_recheck_is_scheduled_once() {

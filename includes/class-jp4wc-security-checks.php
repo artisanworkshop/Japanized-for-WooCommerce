@@ -493,7 +493,8 @@ class JP4WC_Security_Checks {
 	 *
 	 * A plugin WordPress can update is one the update_plugins transient lists,
 	 * with or without an update; whether it is updated automatically is decided
-	 * as WP_Automatic_Updater::should_update() decides it. Unknown when
+	 * as WP_Automatic_Updater::should_update() decides it, unless a plugin that
+	 * updates it on a schedule says so (updates_automatically()). Unknown when
 	 * WordPress has not looked for updates.
 	 *
 	 * @param array $context Context.
@@ -559,7 +560,9 @@ class JP4WC_Security_Checks {
 	 *
 	 * As WP_Automatic_Updater::should_update(): on when WordPress.org asks for it
 	 * (autoupdate) or the site admin turned it on, off when the update says so
-	 * (disable_autoupdate), and the auto_update_plugin filter has the last word.
+	 * (disable_autoupdate), and the auto_update_plugin filter has the last word
+	 * for WordPress. A plugin that updates it on a schedule of its own answers
+	 * through jp4wc_security_check_updates_automatically after that.
 	 *
 	 * @param string $file    Plugin file, relative to the plugins directory.
 	 * @param mixed  $item    The plugin's entry in the update_plugins transient.
@@ -578,7 +581,22 @@ class JP4WC_Security_Checks {
 			$update = false;
 		}
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter.
-		return (bool) apply_filters( 'auto_update_plugin', $update, $item );
+		$update = (bool) apply_filters( 'auto_update_plugin', $update, $item );
+
+		/**
+		 * Filters whether the security check counts a plugin as updated automatically (V-04).
+		 *
+		 * For a plugin that takes plugins out of WordPress's automatic updates
+		 * (auto_update_plugin false) and updates them on a schedule of its own,
+		 * as JP4WC Pro's scheduled updates do. JP4WC Pro uses this hook: keep
+		 * its name and arguments.
+		 *
+		 * @since 3.0.2
+		 * @param bool   $update Whether WordPress updates the plugin automatically.
+		 * @param string $file   Plugin file, relative to the plugins directory.
+		 * @param object $item   A copy of the plugin's entry in the update_plugins transient.
+		 */
+		return (bool) apply_filters( 'jp4wc_security_check_updates_automatically', $update, $file, $item );
 	}
 
 	/**
