@@ -1098,7 +1098,9 @@ const SecuritySettings = ( {
 				</>
 			) }
 
-			{ view && <SecurityScan checkedAt={ view.checked_at } /> }
+			{ view && (
+				<SecurityScan checkedAt={ view.checked_at } view={ view } />
+			) }
 
 			{ view?.xmlrpc && (
 				<XmlrpcUsage
