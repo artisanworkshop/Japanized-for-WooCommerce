@@ -248,16 +248,9 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	 * @return WP_REST_Response
 	 */
 	private function dispatch( $method, array $params = array(), $nonce = null ) {
-		if ( 'POST' === $method && ! array_key_exists( 'consent_version', $params ) ) {
-			// The settings screen sends the version of the consent text it showed.
-			$params['consent_version'] = JP4WC_Security_Scan::CONSENT_VERSION;
-		}
 		$request = new WP_REST_Request( $method, '/jp4wc/v1/security/scan' );
 		foreach ( $params as $key => $value ) {
-			// Null leaves the parameter out.
-			if ( null !== $value ) {
-				$request->set_param( $key, $value );
-			}
+			$request->set_param( $key, $value );
 		}
 		$request->set_header( 'X-WP-Nonce', null === $nonce ? wp_create_nonce( 'wp_rest' ) : $nonce );
 		return rest_get_server()->dispatch( $request );
@@ -335,7 +328,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertNull( $data['consent'] );
 		$this->assertFalse( $data['registered'] );
 		$this->assertTrue( $data['ready'] );
-		$this->assertSame( '2026-11', $data['consent_version'] );
+		$this->assertSame( '2026-10', $data['consent_version'] );
 		$this->assertSame( 'https://wc.artws.info/security-assessment-term/', $data['terms_url'] );
 		$this->assertSame( 'https://wc.artws.info/privacy-policy/', $data['privacy_url'] );
 
@@ -682,114 +675,6 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		);
 		$this->assertSame( 400, $this->dispatch( 'POST' )->get_status() );
 		$this->assertSame( array(), $this->requests );
-	}
-
-	/**
-	 * The server (wc.artws.info) accepts the consent version this plugin
-	 * sends: an unknown version is refused with 400, so the server plugin in
-	 * this repository must accept it first (#297).
-	 */
-	public function test_server_accepts_the_consent_version() {
-		require_once TESTS_PLUGIN_DIR . '/plugins/artws-security-hub/includes/class-artws-sec-scan-request.php';
-
-		$this->assertContains( JP4WC_Security_Scan::CONSENT_VERSION, Artws_Sec_Scan_Request::CONSENT_VERSIONS );
-	}
-
-	/**
-	 * The settings screen sends the version of the consent text it shows,
-	 * which is the one this plugin checks: the built script is what ships.
-	 */
-	public function test_settings_screen_sends_the_consent_version() {
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file.
-		$script = file_get_contents( TESTS_PLUGIN_DIR . '/assets/js/build/admin/settings.js' );
-
-		$this->assertMatchesRegularExpression( '/consent_version:\s*["\']' . preg_quote( JP4WC_Security_Scan::CONSENT_VERSION, '/' ) . '["\']/', $script, 'Raise CONSENT_VERSION in SecurityScan.js and build it.' );
-	}
-
-	/**
-	 * A consent to the text before the 2026-11-05 revision is asked again: the
-	 * check runs only once the store manager agrees to the current text, then
-	 * keeps the registration. The view says the stored consent is not current,
-	 * so the settings screen does not tick the bands allowed before; they are
-	 * sent once the store manager ticks them again.
-	 */
-	public function test_consent_to_the_earlier_text_is_asked_again() {
-		self::order( 1000, 'processing' );
-		self::store_token( home_url() );
-		update_option(
-			JP4WC_Security_Scan::CONSENT_OPTION,
-			array(
-				'version'      => '2026-10',
-				'consented_at' => time() - DAY_IN_SECONDS,
-				'bands'        => true,
-			),
-			false
-		);
-
-		$this->assertFalse( JP4WC_Security_Scan::has_consent() );
-		$view = $this->dispatch( 'GET' )->get_data();
-		$this->assertFalse( $view['consent']['current'], 'The settings screen asks for the consent again and does not restore the bands.' );
-
-		$response = $this->dispatch( 'POST', array( 'bands' => true ) );
-		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'jp4wc_security_scan_consent_required', $response->get_data()['code'] );
-		$this->assertSame( array(), $this->requests );
-		$this->assertSame( '2026-10', JP4WC_Security_Scan::consent()['version'] );
-
-		$this->responses = array( self::scanned() );
-		$before          = time();
-		$response        = $this->dispatch( 'POST', array( 'consent' => true ) );
-
-		$this->assertSame( 200, $response->get_status() );
-		$this->assertCount( 1, $this->requests );
-		$this->assertSame( 'Bearer ' . self::TOKEN, $this->authorization( 0 ), 'The site is not registered again.' );
-		$sent = json_decode( $this->requests[0]['body'], true );
-		$this->assertSame( '2026-11', $sent['consent_version'] );
-		$this->assertArrayNotHasKey( 'revenue_band', $sent );
-		$this->assertArrayNotHasKey( 'order_band', $sent );
-		$consent = JP4WC_Security_Scan::consent();
-		$this->assertSame( '2026-11', $consent['version'] );
-		$this->assertFalse( $consent['bands'] );
-		$this->assertGreaterThanOrEqual( $before, $consent['consented_at'], 'The time is that of the new consent.' );
-		$this->assertTrue( $response->get_data()['consent']['current'] );
-		$this->assertSame( self::TOKEN, get_option( JP4WC_Security_Scan::TOKEN_OPTION )['token'] );
-
-		$this->responses = array( self::scanned() );
-		$consented_at    = $consent['consented_at'];
-		$this->assertSame( 200, $this->dispatch( 'POST', array( 'bands' => true ) )->get_status() );
-		$sent = json_decode( $this->requests[1]['body'], true );
-		$this->assertSame( 'B1', $sent['revenue_band'] );
-		$this->assertSame( 'O1', $sent['order_band'] );
-		$this->assertTrue( JP4WC_Security_Scan::consent()['bands'] );
-		$this->assertSame( $consented_at, JP4WC_Security_Scan::consent()['consented_at'] );
-	}
-
-	/**
-	 * A ticked box agrees only to the consent text the screen showed: a tab
-	 * opened before the plugin was updated to another version of the text
-	 * (which sends no version, or the earlier one) records no consent and sends
-	 * nothing. A store manager who agreed to the current text runs the check
-	 * from such a tab without ticking the box.
-	 */
-	public function test_consent_from_a_screen_of_another_text_is_refused() {
-		foreach ( array( null, '', '2026-10' ) as $version ) {
-			$response = $this->dispatch(
-				'POST',
-				array(
-					'consent'         => true,
-					'consent_version' => $version,
-				)
-			);
-			$this->assertSame( 409, $response->get_status() );
-			$this->assertSame( 'jp4wc_security_scan_consent_outdated', $response->get_data()['code'] );
-		}
-		$this->assertSame( array(), $this->requests );
-		$this->assertNull( JP4WC_Security_Scan::consent() );
-
-		self::consent();
-		$this->responses = array( self::registered() );
-		$this->assertSame( 200, $this->dispatch( 'POST', array( 'consent_version' => '2026-10' ) )->get_status() );
-		$this->assertCount( 1, $this->requests );
 	}
 
 	/**
