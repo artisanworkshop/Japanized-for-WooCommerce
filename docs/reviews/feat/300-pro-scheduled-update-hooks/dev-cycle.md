@@ -1,0 +1,14 @@
+# dev-cycle 状態: feat/300-pro-scheduled-update-hooks
+- タスク: #300 [Pro 定期アップデート] F1 V-04 のフィルターと脆弱性の照合結果を保存したときのアクション（3.0.2、2026-11-05）
+- 開始: 2026-10-31
+- モード: auto-commit
+- PR: 未作成
+- 現在のステップ: 3（review-loop）
+- Copilot: 依頼 0 回
+- Codex: 依頼 0 回
+
+## ログ
+| 日時(JST) | ステップ | 内容 |
+|---|---|---|
+| 2026-10-31 | 1 | 計画承認 |
+| 2026-10-31 | 2 | 実装。フィルター `jp4wc_security_check_updates_automatically`・アクション `jp4wc_security_findings_updated`（`@since 3.0.2`）、テスト 3 本（フックを外すと 3 本とも失敗することを確認）、CLAUDE.md / AGENTS.md に 1 行ずつ。PHPUnit 1051 件 green、phpcs は main と同じ 93/12/21（変更ファイルは 0 件）、テストファイルの WPCS も 0 件 |
