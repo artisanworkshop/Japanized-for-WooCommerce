@@ -4076,32 +4076,17 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid ""
-"Staff of 職人工房 合同会社 may look at the information sent and the reports "
-"of each registration to answer inquiries, investigate problems, confirm "
-"deletion requests and review the priority of measures for the size of the "
-"store. They are never used for sales or advertising."
-msgstr ""
-"お問い合わせへの対応、不具合の調査、削除の申込みの確認、規模に応じた対策の優"
-"先度の見直しのため、職人工房の担当者が登録ごとに送信情報と診断結果を確認する"
-"ことがあります。送信情報と診断結果を営業や広告に使うことはありません。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid "Also send the revenue and order bands of the last 12 months (optional)"
 msgstr "売上・注文規模の帯（直近 12 か月）も送信する（任意）"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid ""
-"Used only to show which measures to take first for the size of the store and "
-"for the purposes the Terms of Use list for them, which include a review of "
-"that priority by staff of 職人工房 合同会社 for each registration. Only the "
-"band codes are sent, never the amounts."
+"Used to show which measures to take first for the size of the store. Only "
+"the band codes are sent, never the amounts."
 msgstr ""
-"規模に応じた対策の優先度の提示と、利用規約に定める目的（職人工房の担当者が登"
-"録ごとに行う優先度の見直しを含みます）にだけ使います。送信するのは帯の記号だ"
-"けで、金額や件数は送りません。"
+"規模に応じた対策の優先度の提示に使います。送信するのは帯の記号だけで、金額や"
+"件数は送りません。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
@@ -4120,15 +4105,6 @@ msgid ""
 msgstr ""
 "無料診断はセキュリティチェックの結果を送信しますが、セキュリティチェックがま"
 "だ実行されていません。上に結果が表示されると使えるようになります。"
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid ""
-"The Terms of Use and the Privacy Policy of the free check were revised. To "
-"run the check again, read them and agree again."
-msgstr ""
-"無料診断の利用規約とプライバシーポリシーが改定されました。もう一度診断するに"
-"は、内容を確認して改めて同意してください。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
@@ -4162,6 +4138,82 @@ msgstr "利用規約とプライバシーポリシーに同意して、上の情
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid "Agree and run the check"
 msgstr "同意して診断する"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Get the free check"
+msgstr "無料診断を受ける"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Show the information sent"
+msgstr "送信する情報を見る"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Hide the information sent"
+msgstr "送信する情報を閉じる"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Compared with the checks above"
+msgstr "上のチェックとの比較"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Checked again against the latest vulnerability data on wc.artws.info, the "
+"result is the same as the checks above. The report below adds what each item "
+"means, what can happen and how to fix it, and can be saved as a PDF."
+msgstr ""
+"wc.artws.info の最新の脆弱性データで照合し直した結果も、上のチェックと同じで"
+"した。下のレポートでは、各項目の説明・影響・修正手順を確かめられ、PDF で保存"
+"できます。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid ""
+"Apart from the items the checks above could not confirm, the result checked "
+"again against the latest vulnerability data on wc.artws.info is the same as "
+"the checks above. The report below adds what each item means, what can "
+"happen and how to fix it, and can be saved as a PDF."
+msgstr ""
+"上のチェックで確認できなかった項目を除き、wc.artws.info の最新の脆弱性データ"
+"で照合し直した結果も、上のチェックと同じでした。下のレポートでは、各項目の説"
+"明・影響・修正手順を確かめられ、PDF で保存できます。"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Found only by wc.artws.info"
+msgstr "wc.artws.info だけが見つけた項目"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Found only by the checks above"
+msgstr "上のチェックだけが見つけた項目"
+
+#. translators: 1: plugin, theme or WordPress name, 2: its version
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid "Known vulnerabilities in %1$s %2$s"
+msgstr "%1$s %2$s の既知の脆弱性"
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Could not be confirmed by the checks above"
+msgstr "上のチェックで確認できなかった項目"
+
+#. translators: 1: date and time of the checks above, 2: date and time of the free check
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+#, php-format
+msgid ""
+"The checks above are from %1$s and this check from %2$s. Updates and setting "
+"changes made in between also show as differences."
+msgstr ""
+"上のチェックは %1$s、この診断は %2$s の結果です。その間の更新や設定の変更も違"
+"いとして表れます。"
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
@@ -5162,14 +5214,6 @@ msgstr "このサイトでは XML-RPC サービスが無効になっています
 #: includes/class-jp4wc-security-scan.php:630
 msgid "Agree to the terms of use and the privacy policy to run the check."
 msgstr "診断するには、利用規約とプライバシーポリシーに同意してください。"
-
-#: includes/class-jp4wc-security-scan.php:654
-msgid ""
-"The Terms of Use and the Privacy Policy of the free check changed after this "
-"page was opened. Reload the page, read them and agree again."
-msgstr ""
-"このページを開いた後に、無料診断の利用規約とプライバシーポリシーが変わりまし"
-"た。ページを再読み込みし、内容を確認して改めて同意してください。"
 
 #: includes/class-jp4wc-security-scan.php:737
 msgid ""

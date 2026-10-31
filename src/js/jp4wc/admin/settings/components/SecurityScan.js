@@ -26,19 +26,12 @@ import { dateI18n, getSettings } from '@wordpress/date';
 
 import {
 	REQUIREMENT_ORDER,
+	checkLabels,
 	requirementLabels,
 	severityLabels,
 } from './security-labels';
 
 const PATH = '/jp4wc/v1/security/scan';
-
-/**
- * Version of the consent text this screen shows: the same as
- * JP4WC_Security_Scan::CONSENT_VERSION, raised together with it. The state
- * loaded from the server cannot stand in for it, as it may come from a
- * newer version of the plugin than this screen.
- */
-const CONSENT_VERSION = '2026-11';
 
 /**
  * Class of the body while the report is printed (see Settings.scss).
@@ -493,14 +486,220 @@ const ScanReport = ( { report, scannedAt } ) => {
 };
 
 /**
+ * Returns the key of a known vulnerability: the affected software.
+ *
+ * @param {string} type plugin, theme or core.
+ * @param {string} slug Slug.
+ * @return {string} Key.
+ */
+const vulnerabilityKey = ( type, slug ) =>
+	type === 'core' ? 'V-01:core' : `V-01:${ type }:${ slug }`;
+
+/**
+ * Compares the report with the checks above.
+ *
+ * Both sides are keyed alike: V-01 by the affected software (the report
+ * holds one item per vulnerability record), the other checks by their ID.
+ *
+ * The report holds findings only, so a check the checks above could not
+ * confirm cannot be compared: it is returned on its own.
+ *
+ * @param {Object} report Report.
+ * @param {Object} view   Result of GET /jp4wc/v1/security/findings.
+ * @return {{onlyReport: string[], onlyLocal: string[], unconfirmed: string[]}}
+ *         Names of the items that need action on one side only, and of the
+ *         checks above that could not be confirmed.
+ */
+const compareWithLocal = ( report, view ) => {
+	const checks = checkLabels();
+	const local = new Map();
+	const unconfirmed = [];
+	view.checks.forEach( ( check ) => {
+		if ( check.status === 'unknown' ) {
+			unconfirmed.push(
+				checks[ check.check_id ]?.title || check.check_id
+			);
+			return;
+		}
+		if ( check.status !== 'fail' ) {
+			return;
+		}
+		const items =
+			check.check_id === 'V-01' ? view.vulnerabilities?.items || [] : [];
+		if ( items.length === 0 ) {
+			local.set(
+				check.check_id,
+				checks[ check.check_id ]?.title || check.check_id
+			);
+			return;
+		}
+		items.forEach( ( item ) =>
+			local.set(
+				vulnerabilityKey( item.type, item.slug ),
+				sprintf(
+					/* translators: 1: plugin, theme or WordPress name, 2: its version */
+					__(
+						'Known vulnerabilities in %1$s %2$s',
+						'woocommerce-for-japan'
+					),
+					item.name,
+					item.version
+				)
+			)
+		);
+	} );
+
+	const remote = new Map();
+	report.findings.forEach( ( finding ) => {
+		const key =
+			finding.check_id === 'V-01' && finding.software
+				? vulnerabilityKey(
+						finding.software.type,
+						finding.software.slug
+				  )
+				: finding.check_id;
+		if ( ! remote.has( key ) ) {
+			remote.set( key, finding.title );
+		}
+	} );
+
+	const only = ( side, other ) =>
+		[ ...side ]
+			.filter( ( [ key ] ) => ! other.has( key ) )
+			.map( ( [ , name ] ) => name );
+	return {
+		onlyReport: only( remote, local ),
+		onlyLocal: only( local, remote ),
+		unconfirmed,
+	};
+};
+
+/**
+ * What the report adds to the checks above.
+ *
+ * Kept out of the report, so that "Save as PDF" leaves it out.
+ *
+ * @param {Object} props           Props.
+ * @param {Object} props.report    Report.
+ * @param {number} props.scannedAt Unix time of the check.
+ * @param {Object} props.view      Result of the checks above.
+ * @return {Element|null} Element.
+ */
+const LocalComparison = ( { report, scannedAt, view } ) => {
+	if ( view.checks.length === 0 ) {
+		return null;
+	}
+	const { onlyReport, onlyLocal, unconfirmed } = compareWithLocal(
+		report,
+		view
+	);
+
+	return (
+		<div className="jp4wc-scan-comparison">
+			<h4>
+				{ __(
+					'Compared with the checks above',
+					'woocommerce-for-japan'
+				) }
+			</h4>
+			{ onlyReport.length === 0 && onlyLocal.length === 0 ? (
+				<p>
+					{ unconfirmed.length === 0
+						? __(
+								'Checked again against the latest vulnerability data on wc.artws.info, the result is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF.',
+								'woocommerce-for-japan'
+						  )
+						: __(
+								'Apart from the items the checks above could not confirm, the result checked again against the latest vulnerability data on wc.artws.info is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF.',
+								'woocommerce-for-japan'
+						  ) }
+				</p>
+			) : (
+				<>
+					{ onlyReport.length > 0 && (
+						<>
+							<p>
+								<strong>
+									{ __(
+										'Found only by wc.artws.info',
+										'woocommerce-for-japan'
+									) }
+								</strong>
+							</p>
+							<ul>
+								{ onlyReport.map( ( name, index ) => (
+									<li key={ index }>{ name }</li>
+								) ) }
+							</ul>
+						</>
+					) }
+					{ onlyLocal.length > 0 && (
+						<>
+							<p>
+								<strong>
+									{ __(
+										'Found only by the checks above',
+										'woocommerce-for-japan'
+									) }
+								</strong>
+							</p>
+							<ul>
+								{ onlyLocal.map( ( name, index ) => (
+									<li key={ index }>{ name }</li>
+								) ) }
+							</ul>
+						</>
+					) }
+					{ view.checked_at > scannedAt && (
+						<p className="description">
+							{ sprintf(
+								/* translators: 1: date and time of the checks above, 2: date and time of the free check */
+								__(
+									'The checks above are from %1$s and this check from %2$s. Updates and setting changes made in between also show as differences.',
+									'woocommerce-for-japan'
+								),
+								formatTime( view.checked_at ),
+								formatTime( scannedAt )
+							) }
+						</p>
+					) }
+				</>
+			) }
+			{ unconfirmed.length > 0 && (
+				<>
+					<p>
+						<strong>
+							{ __(
+								'Could not be confirmed by the checks above',
+								'woocommerce-for-japan'
+							) }
+						</strong>
+					</p>
+					<ul>
+						{ unconfirmed.map( ( name, index ) => (
+							<li key={ index }>{ name }</li>
+						) ) }
+					</ul>
+				</>
+			) }
+		</div>
+	);
+};
+
+/**
  * The free security check.
+ *
+ * The values sent and the consent open from a button, and once the site has
+ * agreed, the values open from a toggle under the report.
  *
  * @param {Object} props           Props.
  * @param {number} props.checkedAt When the local checks last ran: the preview
  *                                 is loaded again when they run again.
+ * @param {Object} props.view      Result of the checks above, which the
+ *                                 report is compared with.
  * @return {Element} Element.
  */
-const SecurityScan = ( { checkedAt } ) => {
+const SecurityScan = ( { checkedAt, view } ) => {
 	const [ scan, setScan ] = useState( null );
 	const [ loadError, setLoadError ] = useState( null );
 	const [ loadingBands, setLoadingBands ] = useState( false );
@@ -508,6 +707,8 @@ const SecurityScan = ( { checkedAt } ) => {
 	const [ bands, setBands ] = useState( false );
 	// idle, running, done, reregistered, confirm-delete, deleting, deleted or error.
 	const [ action, setAction ] = useState( { state: 'idle' } );
+	// Whether the values sent (and before the consent, the consent) are shown.
+	const [ open, setOpen ] = useState( false );
 	const mounted = useRef( true );
 	const bandsChosen = useRef( false );
 	// Number of the last state asked for: the answer to an older request is dropped.
@@ -613,19 +814,15 @@ const SecurityScan = ( { checkedAt } ) => {
 				path: PATH,
 				method: 'POST',
 				// Only the consent box agrees: a screen opened before the consent was
-				// withdrawn or the text changed leaves it to the stored consent. The
-				// box agrees to the text this screen showed, which the server checks.
-				data: {
-					consent: ! consented && agreed,
-					consent_version: CONSENT_VERSION,
-					bands,
-				},
+				// withdrawn or the text changed leaves it to the stored consent.
+				data: { consent: ! consented && agreed, bands },
 			} );
 			if ( ! mounted.current ) {
 				return;
 			}
 			show( response );
 			setAgreed( false );
+			setOpen( false );
 			setAction( {
 				state: response.reregistered ? 'reregistered' : 'done',
 			} );
@@ -662,6 +859,7 @@ const SecurityScan = ( { checkedAt } ) => {
 			setAgreed( false );
 			setBands( false );
 			bandsChosen.current = false;
+			setOpen( false );
 			setAction( { state: 'deleted' } );
 		} catch ( err ) {
 			if ( ! mounted.current ) {
@@ -682,6 +880,24 @@ const SecurityScan = ( { checkedAt } ) => {
 
 	const busy = action.state === 'running' || action.state === 'deleting';
 	const consented = scan?.consent?.current === true;
+	// Whether the bands are sent is asked on every check, so once the site has
+	// agreed the box stays in view beside "Run the check again".
+	const bandsControl = scan?.bands_available && (
+		<CheckboxControl
+			__nextHasNoMarginBottom={ true }
+			label={ __(
+				'Also send the revenue and order bands of the last 12 months (optional)',
+				'woocommerce-for-japan'
+			) }
+			help={ __(
+				'Used to show which measures to take first for the size of the store. Only the band codes are sent, never the amounts.',
+				'woocommerce-for-japan'
+			) }
+			checked={ bands }
+			onChange={ toggleBands }
+			disabled={ busy }
+		/>
+	);
 	const hasData =
 		scan &&
 		( scan.consent || scan.registered || scan.other_site || scan.report );
@@ -756,6 +972,13 @@ const SecurityScan = ( { checkedAt } ) => {
 				</Notice>
 			) }
 
+			{ scan?.report && view && (
+				<LocalComparison
+					report={ scan.report }
+					scannedAt={ scan.scanned_at }
+					view={ view }
+				/>
+			) }
 			{ scan?.report && (
 				<ScanReport
 					report={ scan.report }
@@ -763,7 +986,80 @@ const SecurityScan = ( { checkedAt } ) => {
 				/>
 			) }
 
-			{ scan && (
+			{ scan && ! scan.enabled && (
+				<Notice status="info" isDismissible={ false }>
+					{ __(
+						'The free check sends the results of the security check: turn the security check on and save the settings to use it.',
+						'woocommerce-for-japan'
+					) }
+				</Notice>
+			) }
+			{ scan && scan.enabled && ! scan.ready && (
+				<Notice status="info" isDismissible={ false }>
+					{ __(
+						'The free check sends the results of the security check, which has not run yet. It can be used once the results appear above.',
+						'woocommerce-for-japan'
+					) }
+				</Notice>
+			) }
+
+			{ scan && consented && (
+				<>
+					{ bandsControl }
+					<div className="jp4wc-scan-actions">
+						<Button
+							variant="primary"
+							onClick={ run }
+							isBusy={ action.state === 'running' }
+							disabled={ busy || loadingBands || ! scan.ready }
+						>
+							{ __(
+								'Run the check again',
+								'woocommerce-for-japan'
+							) }
+						</Button>
+						<span className="description">
+							{ sprintf(
+								/* translators: %s: date and time of the consent */
+								__(
+									'You agreed to the Terms of Use and the Privacy Policy on %s.',
+									'woocommerce-for-japan'
+								),
+								formatTime( scan.consent.consented_at )
+							) }
+						</span>
+					</div>
+					<Button
+						variant="link"
+						onClick={ () => setOpen( ! open ) }
+						aria-expanded={ open }
+					>
+						{ open
+							? __(
+									'Hide the information sent',
+									'woocommerce-for-japan'
+							  )
+							: __(
+									'Show the information sent',
+									'woocommerce-for-japan'
+							  ) }
+					</Button>
+				</>
+			) }
+			{ scan && ! consented && ! open && (
+				<div className="jp4wc-scan-actions">
+					<Button
+						variant="primary"
+						onClick={ () => setOpen( true ) }
+						aria-expanded={ false }
+						disabled={ busy || ! scan.ready }
+					>
+						{ __( 'Get the free check', 'woocommerce-for-japan' ) }
+					</Button>
+				</div>
+			) }
+
+			{ scan && open && (
 				<div className="jp4wc-scan-consent">
 					<h4>
 						{ __(
@@ -783,54 +1079,8 @@ const SecurityScan = ( { checkedAt } ) => {
 							'woocommerce-for-japan'
 						) }
 					</p>
-					<p>
-						{ __(
-							'Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store. They are never used for sales or advertising.',
-							'woocommerce-for-japan'
-						) }
-					</p>
 
-					{ scan.bands_available && (
-						<CheckboxControl
-							__nextHasNoMarginBottom={ true }
-							label={ __(
-								'Also send the revenue and order bands of the last 12 months (optional)',
-								'woocommerce-for-japan'
-							) }
-							help={ __(
-								'Used only to show which measures to take first for the size of the store and for the purposes the Terms of Use list for them, which include a review of that priority by staff of 職人工房 合同会社 for each registration. Only the band codes are sent, never the amounts.',
-								'woocommerce-for-japan'
-							) }
-							checked={ bands }
-							onChange={ toggleBands }
-							disabled={ busy }
-						/>
-					) }
-
-					{ ! scan.enabled && (
-						<Notice status="info" isDismissible={ false }>
-							{ __(
-								'The free check sends the results of the security check: turn the security check on and save the settings to use it.',
-								'woocommerce-for-japan'
-							) }
-						</Notice>
-					) }
-					{ scan.enabled && ! scan.ready && (
-						<Notice status="info" isDismissible={ false }>
-							{ __(
-								'The free check sends the results of the security check, which has not run yet. It can be used once the results appear above.',
-								'woocommerce-for-japan'
-							) }
-						</Notice>
-					) }
-					{ scan.consent && ! consented && (
-						<Notice status="info" isDismissible={ false }>
-							{ __(
-								'The Terms of Use and the Privacy Policy of the free check were revised. To run the check again, read them and agree again.',
-								'woocommerce-for-japan'
-							) }
-						</Notice>
-					) }
+					{ ! consented && bandsControl }
 
 					<p>
 						{ createInterpolateElement(
@@ -859,33 +1109,7 @@ const SecurityScan = ( { checkedAt } ) => {
 						) }
 					</p>
 
-					{ consented ? (
-						<div className="jp4wc-scan-actions">
-							<Button
-								variant="primary"
-								onClick={ run }
-								isBusy={ action.state === 'running' }
-								disabled={
-									busy || loadingBands || ! scan.ready
-								}
-							>
-								{ __(
-									'Run the check again',
-									'woocommerce-for-japan'
-								) }
-							</Button>
-							<span className="description">
-								{ sprintf(
-									/* translators: %s: date and time of the consent */
-									__(
-										'You agreed to the Terms of Use and the Privacy Policy on %s.',
-										'woocommerce-for-japan'
-									),
-									formatTime( scan.consent.consented_at )
-								) }
-							</span>
-						</div>
-					) : (
+					{ ! consented && (
 						<>
 							<CheckboxControl
 								__nextHasNoMarginBottom={ true }
@@ -913,6 +1137,16 @@ const SecurityScan = ( { checkedAt } ) => {
 										'Agree and run the check',
 										'woocommerce-for-japan'
 									) }
+								</Button>
+								<Button
+									variant="tertiary"
+									onClick={ () => {
+										setOpen( false );
+										setAgreed( false );
+									} }
+									disabled={ busy }
+								>
+									{ __( 'Cancel', 'woocommerce-for-japan' ) }
 								</Button>
 							</div>
 						</>
