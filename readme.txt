@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -169,6 +169,9 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 3.0.2 - 2026-11-05 =
+* **Added** - Two hooks for the scheduled updates of Japanized for WooCommerce Pro and similar plugins: the filter `jp4wc_security_check_updates_automatically` lets a plugin that updates other plugins on its own schedule have them counted as updated automatically by the security check, and the action `jp4wc_security_findings_updated` fires with the results each time the security check saves them (#300)
 
 = 3.0.1 - 2026-10-31 =
 * **Added** - The report of the free security check starts with a comparison with the checks on the Security tab: what only the free check found, what only the checks on the tab found and which checks on the tab could not be confirmed, or that the result is the same. The comparison is not included when the report is saved as a PDF (#305)
