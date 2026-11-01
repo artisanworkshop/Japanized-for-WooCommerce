@@ -23,16 +23,12 @@
 		"test:e2e:debug": "playwright test --debug",
 		"test:e2e:report": "playwright show-report tests/e2e/reports",
 		"start": "wp-scripts start",
-		"build": "wp-scripts build && npm run i18n:build",
-		"i18n": "npm run i18n:build",
+		"build": "wp-scripts build",
 		"composer": "wp-env run cli composer",
-		"i18n:build": "npm run i18n:pot && npm run i18n:json",
-		"i18n:pot": "php -d xdebug.max_nesting_level=512 $(which wp) i18n make-pot --exclude=\"node_modules/,i18n/,assets/,plugins/\" --headers='{\"Report-Msgid-Bugs-To\":\"https://woocommerce.com/my-account/create-a-ticket/\", \"language-team\":\"LANGUAGE <EMAIL@ADDRESS>\"}' . i18n/metaps-for-wc.pot",
-		"i18n:json": "$(which wp) i18n make-json i18n --no-purge",
 		"packages-update": "wp-scripts packages-update",
 		"check-engines": "wp-scripts check-engines",
 		"format": "wp-scripts format",
-		"make-pot": "wp-env run cli --env-cwd=wp-content/plugins/Japanized-for-WooCommerce/ wp i18n make-pot ./ i18n/woocommerce-for-japan.pot --ignore-domain --exclude=plugins",
+		"make-pot": "wp-env run cli --env-cwd=wp-content/plugins/Japanized-for-WooCommerce/ wp i18n make-pot ./ i18n/woocommerce-for-japan.pot --slug=woocommerce-for-japan --exclude=.claude,.github,.vscode,.wordpress-org,bin,dist,docs,plugins,promotion-json,src,test-results,tests,playwright.config.ts,webpack.config.js",
 		"make-json": "wp-env run cli --env-cwd=wp-content/plugins/Japanized-for-WooCommerce/ wp i18n make-json i18n --no-purge"
 	},
 	"dependencies": {
