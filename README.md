@@ -147,22 +147,27 @@ npm run build
 
 ### 翻訳ファイルの更新
 
+`npm run make-pot` と `npm run make-json` は wp-env の WP-CLI で動きます（先に `npx wp-env start`）。
+
 ```bash
-# 1. PHPとJavaScriptから翻訳可能な文字列を抽出
+# 1. 出荷するファイルから、このプラグインのテキストドメインの文字列だけを POT に抽出
 npm run make-pot
 
-# 2. POファイルを更新（手動で翻訳を追加）
+# 2. PO を POT に合わせる（あいまい一致の訳を付けず、使われなくなった訳は消す）
+msgmerge -N -o /tmp/woocommerce-for-japan-ja.po i18n/woocommerce-for-japan-ja.po i18n/woocommerce-for-japan.pot
+msgattrib --no-obsolete -o i18n/woocommerce-for-japan-ja.po /tmp/woocommerce-for-japan-ja.po
+
+# 3. 増えた文字列に訳を付ける
 # i18n/woocommerce-for-japan-ja.po を編集
 
-# 3. POファイルをマージ
-msgmerge --update i18n/woocommerce-for-japan-ja.po i18n/woocommerce-for-japan.pot
+# 4. MO ファイルを生成（PHP 用）
+msgfmt -o i18n/woocommerce-for-japan-ja.mo i18n/woocommerce-for-japan-ja.po
 
-# 4. JavaScript用のJSON翻訳ファイルを生成
+# 5. JavaScript 用の JSON を生成し、今回作られなかった古い JSON は git rm する
 npm run make-json
-
-# 5. MOファイルを生成（PHP用）
-msgfmt i18n/woocommerce-for-japan-ja.po -o i18n/woocommerce-for-japan-ja.mo
 ```
+
+POT・PO・MO・JSON の整合は `tests/Unit/test-jp4wc-translation-files.php` が確かめます（PO に訳の無い文字列や、読み込まれない JSON があると落ちます）。
 
 ### コーディング規約
 
