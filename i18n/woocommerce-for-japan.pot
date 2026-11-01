@@ -3168,12 +3168,17 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store. They are never used for sales or advertising."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid "Also send the revenue and order bands of the last 12 months (optional)"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Used to show which measures to take first for the size of the store. Only the band codes are sent, never the amounts."
+msgid "Used only to show which measures to take first for the size of the store and for the purposes the Terms of Use list for them, which include a review of that priority by staff of 職人工房 合同会社 for each registration. Only the band codes are sent, never the amounts."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
@@ -3184,6 +3189,11 @@ msgstr ""
 #: assets/js/build/admin/settings.js:1
 #: src/js/jp4wc/admin/settings/components/SecurityScan.js
 msgid "The free check sends the results of the security check, which has not run yet. It can be used once the results appear above."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: src/js/jp4wc/admin/settings/components/SecurityScan.js
+msgid "The Terms of Use and the Privacy Policy of the free check were revised. To run the check again, read them and agree again."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
@@ -4149,6 +4159,10 @@ msgstr ""
 
 #: includes/class-jp4wc-security-scan.php:630
 msgid "Agree to the terms of use and the privacy policy to run the check."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:654
+msgid "The Terms of Use and the Privacy Policy of the free check changed after this page was opened. Reload the page, read them and agree again."
 msgstr ""
 
 #: includes/class-jp4wc-security-scan.php:737
