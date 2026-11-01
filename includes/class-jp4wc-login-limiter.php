@@ -16,8 +16,9 @@ require_once __DIR__ . '/class-jp4wc-security-checks.php';
 /**
  * JP4WC_Login_Limiter
  *
- * Counts failed logins per client address and per user name, and refuses
- * logins for a while once either count reaches its limit. Every login goes
+ * Counts failed logins per client address (an IPv6 address per /64 network)
+ * and per user name, and refuses logins for a while once either count
+ * reaches its limit. Every login goes
  * through wp_authenticate(): wp-login.php, the WooCommerce My Account and
  * checkout login forms (wp_signon()) and XML-RPC.
  *
@@ -60,7 +61,7 @@ class JP4WC_Login_Limiter {
 
 	/**
 	 * Prefix of the option rows that hold the failures:
-	 * jp4wc_login_fail_<ip|user>_<hash of the address or name>_<unique id>.
+	 * jp4wc_login_fail_<ip|user>_<hash of the address key or name>_<unique id>.
 	 */
 	const OPTION_PREFIX = 'jp4wc_login_fail_';
 
@@ -185,7 +186,7 @@ class JP4WC_Login_Limiter {
 			return $user;
 		}
 		$locked_until = max(
-			self::locked_until( 'ip', self::client_ip(), self::limit( 'wc4jp-login-limit-ip-attempts' ) ),
+			self::locked_until( 'ip', self::ip_key(), self::limit( 'wc4jp-login-limit-ip-attempts' ) ),
 			self::locked_until( 'user', self::user_key( $username ), self::limit( 'wc4jp-login-limit-user-attempts' ) )
 		);
 		if ( $locked_until <= time() ) {
@@ -223,7 +224,7 @@ class JP4WC_Login_Limiter {
 			return;
 		}
 		$seconds = self::limit( 'wc4jp-login-limit-lockout-minutes' ) * MINUTE_IN_SECONDS;
-		self::add_failure( 'ip', self::client_ip(), self::limit( 'wc4jp-login-limit-ip-attempts' ), $seconds );
+		self::add_failure( 'ip', self::ip_key(), self::limit( 'wc4jp-login-limit-ip-attempts' ), $seconds );
 		if ( '' !== (string) $username ) {
 			self::add_failure( 'user', self::user_key( $username ), self::limit( 'wc4jp-login-limit-user-attempts' ), $seconds );
 		}
@@ -248,6 +249,8 @@ class JP4WC_Login_Limiter {
 	 * REMOTE_ADDR only: a forwarded-for header can be forged by the client.
 	 * Behind a proxy that does not pass the client address, every visitor
 	 * shares one address; the address limit is the looser one for that.
+	 * This method and its filter decide which address it is; ip_key() decides
+	 * which addresses count as one.
 	 *
 	 * @return string
 	 */
@@ -260,10 +263,65 @@ class JP4WC_Login_Limiter {
 		 * A site behind a proxy it trusts can take the address from the header
 		 * that proxy sets. Return an empty string to count by address no more.
 		 *
+		 * The limiter then groups the value returned: an IPv6 address counts
+		 * with the rest of its /64 network (the `jp4wc_login_limit_ipv6_prefix`
+		 * filter changes the length), an IPv4-mapped IPv6 address
+		 * (::ffff:192.0.2.1) as its IPv4 address, and a value that is no IP
+		 * address as it is.
+		 *
 		 * @since 3.0.0
+		 * @since 3.0.2 An IPv6 address counts per /64 network.
 		 * @param string $ip The address (REMOTE_ADDR).
 		 */
 		return (string) apply_filters( 'jp4wc_login_limit_client_ip', $ip );
+	}
+
+	/**
+	 * Returns the key the client address is counted by.
+	 *
+	 * An IPv6 address counts with the rest of its network, a /64 by default:
+	 * a home line or a server usually gets a /64 or more, so it could take a
+	 * new address for every attempt. A network many people share (an office
+	 * LAN on IPv6) counts as one, as a NAT does on IPv4. An IPv4-mapped
+	 * address (::ffff:192.0.2.1, from a server that listens on IPv6 for both)
+	 * counts as its IPv4 address, not together with every IPv4 client in
+	 * ::/64. An IPv4 address, and a value that is no IP address (from the
+	 * jp4wc_login_limit_client_ip filter), counts as it is; an empty one is
+	 * not counted.
+	 *
+	 * @since 3.0.2
+	 * @return string
+	 */
+	private static function ip_key() {
+		$ip = self::client_ip();
+		// Only a valid address reaches inet_pton().
+		if ( false === filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+			return $ip;
+		}
+		$packed = inet_pton( $ip );
+		if ( false === $packed || 16 !== strlen( $packed ) ) {
+			return $ip;
+		}
+		if ( str_repeat( "\0", 10 ) . "\xff\xff" === substr( $packed, 0, 12 ) ) {
+			return (string) inet_ntop( substr( $packed, 12 ) );
+		}
+
+		/**
+		 * Filters the length of the IPv6 network the login attempt limiter counts as one client.
+		 *
+		 * 64 by default, kept within 32 to 128: 128 counts each IPv6 address on
+		 * its own, 56 or 48 a larger network as one.
+		 *
+		 * @since 3.0.2
+		 * @param int $prefix_length Leading bits of the address that count.
+		 */
+		$bits   = self::clamp( apply_filters( 'jp4wc_login_limit_ipv6_prefix', 64 ), 64, 32, 128 );
+		$whole  = intdiv( $bits, 8 );
+		$masked = substr( $packed, 0, $whole );
+		if ( 0 !== $bits % 8 ) {
+			$masked .= chr( ord( $packed[ $whole ] ) & ( 0xff << ( 8 - $bits % 8 ) ) & 0xff );
+		}
+		return (string) inet_ntop( str_pad( $masked, 16, "\0" ) ) . '/' . $bits;
 	}
 
 	/**
