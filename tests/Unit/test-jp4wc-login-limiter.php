@@ -94,6 +94,32 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Logs in from a client address.
+	 *
+	 * @param string $address  REMOTE_ADDR.
+	 * @param string $username User name or e-mail address.
+	 * @param string $password Password.
+	 * @return WP_User|WP_Error
+	 */
+	private function attempt_from( $address, $username, $password = 'wrong-password' ) {
+		$_SERVER['REMOTE_ADDR'] = $address;
+		return $this->attempt( $username, $password );
+	}
+
+	/**
+	 * Fails a login once from each address, each time with another name (nobody1, nobody2, ...).
+	 *
+	 * Another name each time: a name reaches its own limit of 3 first otherwise.
+	 *
+	 * @param string[] $addresses REMOTE_ADDR values.
+	 */
+	private function fail_from_each( array $addresses ) {
+		foreach ( array_values( $addresses ) as $i => $address ) {
+			$this->attempt_from( $address, 'nobody' . ( $i + 1 ) );
+		}
+	}
+
+	/**
 	 * Logs in as wp-login.php and the WooCommerce forms do (fires wp_login on success).
 	 *
 	 * @param string $username User name or e-mail address.
@@ -358,6 +384,121 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 			$this->assertSame( 'incorrect_password', $this->code( $this->attempt( 'limited' ) ), 'Only the names were counted.' );
 		} finally {
 			remove_filter( 'jp4wc_login_limit_client_ip', '__return_empty_string' );
+		}
+	}
+
+	/**
+	 * The addresses of one IPv6 /64 network count together; the next /64 counts on its own (#314).
+	 */
+	public function test_ipv6_is_counted_per_64() {
+		$this->fail_from_each( array( '2001:db8:1:2::1', '2001:db8:1:2::2', '2001:DB8:1:2:0:0:0:3', '2001:db8:1:2:ffff:ffff:ffff:ffff' ) );
+		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '2001:db8:1:2:abcd::9', 'limited', 'right-password' ) ), 'Four addresses of one /64, written in any form, reach the address limit of 4.' );
+		$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db8:1:3::1', 'limited', 'right-password' ), 'The next /64 is another client.' );
+	}
+
+	/**
+	 * An IPv4-mapped address counts as its IPv4 address, not together with every IPv4 client in ::/64 (#314).
+	 */
+	public function test_ipv4_mapped_is_counted_as_ipv4() {
+		$this->fail_from_each( array( '::ffff:203.0.113.7', '::ffff:203.0.113.7', '203.0.113.7', '203.0.113.7' ) );
+		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '203.0.113.7', 'limited', 'right-password' ) ) );
+		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '::ffff:203.0.113.7', 'limited', 'right-password' ) ) );
+		$this->assertInstanceOf( 'WP_User', $this->attempt_from( '::ffff:198.51.100.9', 'limited', 'right-password' ), 'Another IPv4 client is not in the same count.' );
+	}
+
+	/**
+	 * IPv4 addresses are not grouped, and keep the key they had before 3.0.2 (#314).
+	 */
+	public function test_ipv4_is_counted_per_address() {
+		global $wpdb;
+		$this->fail_from_each( array_fill( 0, 4, '203.0.113.7' ) );
+		$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '203.0.113.7', 'limited', 'right-password' ) ) );
+		$this->assertInstanceOf( 'WP_User', $this->attempt_from( '203.0.113.8', 'limited', 'right-password' ), 'The next address is another client.' );
+		$rows = (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s",
+				$wpdb->esc_like( 'jp4wc_login_fail_ip_' . md5( '203.0.113.7' ) . '_' ) . '%'
+			)
+		);
+		$this->assertSame( 4, $rows, 'Counted by the address itself, as before: the counts carry over the update.' );
+	}
+
+	/**
+	 * A value from the filter that is no IP address counts as it is (#314).
+	 */
+	public function test_non_ip_value_is_counted_as_is() {
+		$value  = 'proxy-a';
+		$filter = static function () use ( &$value ) {
+			return $value;
+		};
+		add_filter( 'jp4wc_login_limit_client_ip', $filter );
+		try {
+			$this->fail_from_each( array_fill( 0, 4, 'ignored' ) );
+			$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt( 'limited', 'right-password' ) ) );
+			$value = 'proxy-b';
+			$this->assertInstanceOf( 'WP_User', $this->attempt( 'limited', 'right-password' ), 'Another value is another client.' );
+			$value = 'fe80::1%eth0';
+			$this->fail_from_each( array_fill( 0, 4, 'ignored' ) );
+			$value = 'fe80::2%eth0';
+			$this->assertInstanceOf( 'WP_User', $this->attempt( 'limited', 'right-password' ), 'An address with a zone is no IP address to filter_var(): not grouped.' );
+		} finally {
+			remove_filter( 'jp4wc_login_limit_client_ip', $filter );
+		}
+	}
+
+	/**
+	 * The filter sets the length of the IPv6 network that counts as one (#314).
+	 */
+	public function test_ipv6_prefix_filter() {
+		$bits   = 128;
+		$length = static function () use ( &$bits ) {
+			return $bits;
+		};
+		add_filter( 'jp4wc_login_limit_ipv6_prefix', $length );
+		try {
+			$this->fail_from_each( array_fill( 0, 4, '2001:db8:1:2::1' ) );
+			$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '2001:db8:1:2::1', 'limited', 'right-password' ) ) );
+			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db8:1:2::2', 'limited', 'right-password' ), '128: each address on its own.' );
+
+			JP4WC_Login_Limiter::delete_counts();
+			$bits = 60;
+			$this->fail_from_each( array( '2001:db8:1:20::1', '2001:db8:1:2a::1', '2001:db8:1:2f:ffff::1', '2001:db8:1:21::1' ) );
+			$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '2001:db8:1:25::9', 'limited', 'right-password' ) ), '60: 2001:db8:1:20:: to 2001:db8:1:2f:ffff:... count as one.' );
+			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db8:1:30::1', 'limited', 'right-password' ) );
+			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db8:1:1f::1', 'limited', 'right-password' ) );
+		} finally {
+			remove_filter( 'jp4wc_login_limit_ipv6_prefix', $length );
+		}
+	}
+
+	/**
+	 * The IPv6 network length is kept within 32 to 128, and is 64 for a value that is not a number (#314).
+	 */
+	public function test_ipv6_prefix_is_kept_within_its_range() {
+		$bits   = 16;
+		$length = static function () use ( &$bits ) {
+			return $bits;
+		};
+		add_filter( 'jp4wc_login_limit_ipv6_prefix', $length );
+		try {
+			$this->fail_from_each( array( '2001:db8:1::1', '2001:db8:2::1', '2001:db8:ffff::1', '2001:db8:abcd::1' ) );
+			$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '2001:db8:9::9', 'limited', 'right-password' ) ), '16 is taken as 32.' );
+			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db9::1', 'limited', 'right-password' ), 'Not as 16.' );
+
+			JP4WC_Login_Limiter::delete_counts();
+			// Not a multiple of 8: without the upper bound the mask reads past the 16 bytes (R1-1).
+			$bits = 129;
+			$this->fail_from_each( array_fill( 0, 4, '2001:db8:1:2::1' ) );
+			$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '2001:db8:1:2::1', 'limited', 'right-password' ) ) );
+			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db8:1:2::2', 'limited', 'right-password' ), '129 is taken as 128.' );
+
+			JP4WC_Login_Limiter::delete_counts();
+			$bits = 'wide';
+			$this->fail_from_each( array( '2001:db8:1:2::1', '2001:db8:1:2::2', '2001:db8:1:2::3', '2001:db8:1:2::4' ) );
+			$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '2001:db8:1:2::5', 'limited', 'right-password' ) ), 'Not a number: 64.' );
+			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db8:1:3::1', 'limited', 'right-password' ) );
+		} finally {
+			remove_filter( 'jp4wc_login_limit_ipv6_prefix', $length );
 		}
 	}
 
