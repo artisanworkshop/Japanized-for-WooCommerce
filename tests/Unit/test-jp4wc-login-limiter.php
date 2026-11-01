@@ -486,10 +486,11 @@ class JP4WC_Login_Limiter_Test extends WP_UnitTestCase {
 			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db9::1', 'limited', 'right-password' ), 'Not as 16.' );
 
 			JP4WC_Login_Limiter::delete_counts();
-			$bits = 200;
+			// Not a multiple of 8: without the upper bound the mask reads past the 16 bytes (R1-1).
+			$bits = 129;
 			$this->fail_from_each( array_fill( 0, 4, '2001:db8:1:2::1' ) );
 			$this->assertSame( 'jp4wc_login_locked', $this->code( $this->attempt_from( '2001:db8:1:2::1', 'limited', 'right-password' ) ) );
-			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db8:1:2::2', 'limited', 'right-password' ), '200 is taken as 128.' );
+			$this->assertInstanceOf( 'WP_User', $this->attempt_from( '2001:db8:1:2::2', 'limited', 'right-password' ), '129 is taken as 128.' );
 
 			JP4WC_Login_Limiter::delete_counts();
 			$bits = 'wide';
