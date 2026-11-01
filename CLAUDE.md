@@ -52,10 +52,10 @@ composer test-local    # phpunit (see Testing)
 
 JS/CSS build:
 ```bash
-npx wp-scripts build   # bundle only — use this in feature PRs
+npx wp-scripts build   # bundle only (`npm run build` is the same)
 npm run start          # watch mode
 ```
-`npm run build` also runs `i18n:build`, which writes a stray `i18n/metaps-for-wc.pot` and rewrites the JSON translations — don't use it in feature PRs.
+`npm run build` leaves `i18n/` alone since #308. It used to run `i18n:build`, and the release workflow runs `npm run build`, so 3.0.1 shipped a stray `i18n/metaps-for-wc.pot` and JSON files for `src/` paths; the package now carries the committed `i18n/` files as they are.
 
 ### Key Rules
 - All globals must use `jp4wc_` / `JP4WC_` / `JP4WC` prefix — except `includes/artws-php-security-notice/`, which uses `artws_` / `ArtisanWorkshop\PhpSecurityNotice` (both listed in `.phpcs.xml.dist`)
@@ -127,13 +127,14 @@ __( 'String', 'woocommerce-for-japan' )
 esc_html__( 'String', 'woocommerce-for-japan' )
 ```
 
-Regenerate translation files after adding strings:
+Regenerate translation files:
 ```bash
-npm run make-pot    # requires wp-env
-npm run make-json
+npm run make-pot    # requires wp-env; shipped files only, this plugin's text domain
+npm run make-json   # one JSON per script the .po references
 ```
+`make-pot`'s `--exclude` lists the directories and files of `.distignore` that can hold code, so the bundled `.pot` has the strings translate.wordpress.org takes from the SVN tag: add a new top-level development directory to both. WP-CLI matches an `--exclude` name at any depth (`.distignore`'s `/src` only at the root), so a shipped directory named after one of them (`includes/x/src/`) silently drops out of the `.pot`. A full resync (#308): `npm run make-pot -- '--headers={"Project-Id-Version":"Japanized for WooCommerce <next version>"}'`, `msgmerge -N --compendium=<po of the new translations> -o <tmp.po> i18n/woocommerce-for-japan-ja.po i18n/woocommerce-for-japan.pot`, `msgattrib --no-obsolete -o i18n/woocommerce-for-japan-ja.po <tmp.po>`, `msgfmt -o i18n/woocommerce-for-japan-ja.mo i18n/woocommerce-for-japan-ja.po`, `npm run make-json`, then `git rm` the JSON files that run did not write. `tests/Unit/test-jp4wc-translation-files.php` checks that the `.pot`, `.po`, `.mo` and JSON agree and that the `.pot` references shipped files only.
 
-Admin React strings load from `i18n/woocommerce-for-japan-ja-<md5>.json` (`<md5>` = md5 of the built script's path relative to the plugin, e.g. `assets/js/build/admin/settings.js` → `6d3c6b06…`). When adding strings by hand, add them to this JSON as well as the `.po`/`.mo`.
+Admin React strings load from `i18n/woocommerce-for-japan-ja-<md5>.json` (`<md5>` = md5 of the built script's path relative to the plugin, e.g. `assets/js/build/admin/settings.js` → `6d3c6b06…`). When adding strings by hand, add them to this JSON as well as the `.pot`/`.po`/`.mo`.
 
 ## WooCommerce HPOS Compatibility
 

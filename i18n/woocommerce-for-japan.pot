@@ -2,16 +2,17 @@
 # This file is distributed under the same license as the Japanized for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Japanized for WooCommerce 2.9.16\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Japanized-for-WooCommerce\n"
+"Project-Id-Version: Japanized for WooCommerce 3.0.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-for-japan\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-07T15:41:51+00:00\n"
+"POT-Creation-Date: 2026-11-01T08:28:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: woocommerce-for-japan\n"
 
 #. Plugin Name of the plugin
 #: woocommerce-for-japan.php
@@ -38,60 +39,18 @@ msgstr ""
 msgid "https://wc.artws.info/"
 msgstr ""
 
-#: woocommerce-for-japan.php:56
-msgid "Update PHP now: critical security vulnerabilities"
-msgstr ""
-
-#. translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs
-#: woocommerce-for-japan.php:58
-#, php-format
-msgid "The PHP version of this site (%1$s) has critical vulnerabilities (%3$s) that let an attacker run code on the server with a single request. Update PHP to %2$s or later right away."
-msgstr ""
-
-#: woocommerce-for-japan.php:59
-msgid "Security support for PHP 8.2 ends at the end of 2026, so we recommend updating to PHP 8.3 or later."
-msgstr ""
-
-#: woocommerce-for-japan.php:60
-msgid "Your hosting company may have applied the fix without changing the PHP version number. Please check with your hosting company."
-msgstr ""
-
-#. translators: 1: PHP version of this site, 2: vulnerability IDs
-#: woocommerce-for-japan.php:62
-#, php-format
-msgid "The PHP version of this site (%1$s) has critical vulnerabilities (%2$s). Official support for this PHP version has ended, and no fixed version has been released for it. Some hosting companies apply their own security patches, but update to PHP 8.3 or later, which is supported longer, as soon as possible."
-msgstr ""
-
-#. translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs
-#: woocommerce-for-japan.php:64
-#, php-format
-msgid "This site runs a pre-release of PHP (%1$s) that has critical vulnerabilities (%3$s). Update it to %2$s or later."
-msgstr ""
-
-#: woocommerce-for-japan.php:65
-msgid "Learn more"
-msgstr ""
-
-#: woocommerce-for-japan.php:66
-msgid "Don't show again"
-msgstr ""
-
-#: woocommerce-for-japan.php:67
-msgid "Close"
-msgstr ""
-
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:231
+#: class-jp4wc.php:245
 #, php-format
 msgid "If you like <strong>Japanized for WooCommerce</strong> please leave us a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. A huge thanks in advance!"
 msgstr ""
 
 #. translators: %1$s and %2$s are HTML tags for a link that wraps around the five-star rating. %1$s opens the link and %2$s closes it. The &#9733; characters represent star symbols that will be displayed in the rating.
-#: class-jp4wc.php:231
+#: class-jp4wc.php:245
 msgid "Thanks :)"
 msgstr ""
 
-#: class-jp4wc.php:241
+#: class-jp4wc.php:255
 msgid "Thank you for installing with Japanized for WooCommerce."
 msgstr ""
 
@@ -130,19 +89,138 @@ msgctxt "example price string"
 msgid "e.g. 5.90 per month"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-settings.php:39
+#: includes/admin/class-jp4wc-admin-settings.php:47
 msgid "JP4WC Settings (Block)"
 msgstr ""
 
-#: includes/admin/class-jp4wc-admin-settings.php:40
+#: includes/admin/class-jp4wc-admin-settings.php:48
 msgid "JP4WC Settings"
 msgstr ""
 
-#: includes/admin/class-jp4wc-settings-api.php:72
+#: includes/admin/class-jp4wc-security-api.php:151
+msgid "Sorry, you are not allowed to view the security check."
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-api.php:172
+msgid "Sorry, you are not allowed to run the security check."
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-api.php:180
+msgid "The page has expired. Reload it and try again."
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-api.php:207
+#: includes/admin/class-jp4wc-security-api.php:240
+msgid "The security check is off."
+msgstr ""
+
+#. translators: %d: seconds to wait
+#: includes/admin/class-jp4wc-security-api.php:218
+#, php-format
+msgid "A re-check was asked for a moment ago. Try again in %d second."
+msgid_plural "A re-check was asked for a moment ago. Try again in %d seconds."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-jp4wc-security-api.php:232
+msgid "The re-check could not be scheduled in WP-Cron. Try again later."
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:194
+msgid "Japanized for WooCommerce security check"
+msgstr ""
+
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: includes/admin/class-jp4wc-security-notice.php:200
+#, php-format
+msgid "The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn the vulnerability check off in the JP4WC settings."
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:212
+#: assets/js/build/admin/settings.js:13
+msgid "The vulnerability data has not been updated for a while, so vulnerabilities disclosed since then are not checked."
+msgstr ""
+
+#. translators: %d: number of vulnerabilities
+#: includes/admin/class-jp4wc-security-notice.php:231
+#, php-format
+msgid "%d known vulnerability was found in the software installed on this site."
+msgid_plural "%d known vulnerabilities were found in the software installed on this site."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-jp4wc-security-notice.php:240
+#: assets/js/build/admin/settings.js:1
+msgid "Update the affected plugins, themes or WordPress to a fixed version, or remove the ones that have no fix."
+msgstr ""
+
+#. translators: %d: number of vulnerabilities not listed
+#: includes/admin/class-jp4wc-security-notice.php:277
+#, php-format
+msgid "and %d more"
+msgid_plural "and %d more"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-jp4wc-security-notice.php:294
+#: assets/js/build/admin/settings.js:1
+msgctxt "vulnerability severity"
+msgid "Critical"
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:295
+#: assets/js/build/admin/settings.js:1
+msgctxt "vulnerability severity"
+msgid "High"
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:296
+#: assets/js/build/admin/settings.js:1
+msgctxt "vulnerability severity"
+msgid "Medium"
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:297
+#: assets/js/build/admin/settings.js:1
+msgctxt "vulnerability severity"
+msgid "Low"
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:298
+msgctxt "vulnerability severity"
+msgid "None"
+msgstr ""
+
+#. translators: %s: severity of a vulnerability, e.g. High
+#: includes/admin/class-jp4wc-security-notice.php:302
+#, php-format
+msgid "Severity: %s"
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:306
+msgid "No fixed version yet"
+msgstr ""
+
+#. translators: %s: comma-separated versions that fix the vulnerability
+#: includes/admin/class-jp4wc-security-notice.php:309
+#, php-format
+msgid "Fixed in %s"
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:338
+msgid "Open the Security tab"
+msgstr ""
+
+#: includes/admin/class-jp4wc-security-notice.php:359
+#: assets/js/build/admin/settings.js:13
+msgid "License"
+msgstr ""
+
+#: includes/admin/class-jp4wc-settings-api.php:77
 msgid "Sorry, you are not allowed to view settings."
 msgstr ""
 
-#: includes/admin/class-jp4wc-settings-api.php:89
+#: includes/admin/class-jp4wc-settings-api.php:94
 msgid "Sorry, you are not allowed to update settings."
 msgstr ""
 
@@ -199,18 +277,13 @@ msgstr ""
 #: assets/js/build/admin/settings.js:1
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: assets/js/build/blocks/delivery-block-frontend.js:1
-#: src/js/blocks/delivery-block-editor.js:35
-#: src/js/blocks/delivery-block-frontend.js:117
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:87
 msgid "Preferred delivery date"
 msgstr ""
 
 #: includes/blocks/class-jp4wc-delivery-blocks-integration.php:172
-#: includes/class-jp4wc-delivery.php:292
+#: includes/class-jp4wc-delivery.php:295
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: assets/js/build/blocks/delivery-block-frontend.js:1
-#: src/js/blocks/delivery-block-editor.js:56
-#: src/js/blocks/delivery-block-frontend.js:133
 msgid "Delivery Time Zone"
 msgstr ""
 
@@ -225,49 +298,42 @@ msgstr ""
 #: includes/blocks/class-jp4wc-delivery-blocks-integration.php:295
 #: includes/class-jp4wc-delivery.php:144
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:292
 msgid "Sun"
 msgstr ""
 
 #: includes/blocks/class-jp4wc-delivery-blocks-integration.php:296
 #: includes/class-jp4wc-delivery.php:145
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:244
 msgid "Mon"
 msgstr ""
 
 #: includes/blocks/class-jp4wc-delivery-blocks-integration.php:297
 #: includes/class-jp4wc-delivery.php:146
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:252
 msgid "Tue"
 msgstr ""
 
 #: includes/blocks/class-jp4wc-delivery-blocks-integration.php:298
 #: includes/class-jp4wc-delivery.php:147
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:260
 msgid "Wed"
 msgstr ""
 
 #: includes/blocks/class-jp4wc-delivery-blocks-integration.php:299
 #: includes/class-jp4wc-delivery.php:148
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:268
 msgid "Thr"
 msgstr ""
 
 #: includes/blocks/class-jp4wc-delivery-blocks-integration.php:300
 #: includes/class-jp4wc-delivery.php:149
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:276
 msgid "Fri"
 msgstr ""
 
 #: includes/blocks/class-jp4wc-delivery-blocks-integration.php:301
 #: includes/class-jp4wc-delivery.php:150
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:284
 msgid "Sat"
 msgstr ""
 
@@ -283,13 +349,13 @@ msgstr ""
 msgid "(%s)"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:350
-#: includes/class-jp4wc-delivery.php:299
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:359
+#: includes/class-jp4wc-delivery.php:306
 msgid "-"
 msgstr ""
 
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:368
-#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:378
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:377
+#: includes/blocks/class-jp4wc-delivery-blocks-integration.php:387
 msgid "Not specified"
 msgstr ""
 
@@ -314,7 +380,6 @@ msgstr ""
 #: includes/class-jp4wc-address-fields.php:127
 #: includes/class-jp4wc-address-fields.php:162
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:193
 msgid "Company Name"
 msgstr ""
 
@@ -340,7 +405,6 @@ msgstr ""
 #: includes/class-jp4wc-address-fields.php:686
 #: includes/class-jp4wc-address-fields.php:878
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:368
 msgid "Phone"
 msgstr ""
 
@@ -364,24 +428,22 @@ msgstr ""
 msgid "Shibuya Ku"
 msgstr ""
 
-#: includes/class-jp4wc-cod-fee-handler.php:162
-msgid "Your selected payment method changed. Please refresh and try again."
+#: includes/class-jp4wc-cod-fee-handler.php:135
+msgid "To pay by cash on delivery, please place this order from the checkout page."
 msgstr ""
 
-#: includes/class-jp4wc-cod-fee-handler.php
-msgid "To pay by cash on delivery, please place this order from the checkout page."
+#: includes/class-jp4wc-cod-fee-handler.php:433
+msgid "Your selected payment method changed. Please refresh and try again."
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:105
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:130
 msgid "Extra charge for COD method"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:109
 #: includes/gateways/cod/class-wc-gateway-cod2.php:152
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:169
 msgid "Fee name"
 msgstr ""
 
@@ -393,14 +455,12 @@ msgstr ""
 #: includes/class-jp4wc-cod-fee.php:115
 #: includes/gateways/cod/class-wc-gateway-cod2.php:157
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:185
 msgid "Extra charge amount"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:120
 #: includes/gateways/cod/class-wc-gateway-cod2.php:162
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:205
 msgid "Maximum cart value to which adding fee"
 msgstr ""
 
@@ -411,28 +471,24 @@ msgstr ""
 #: includes/class-jp4wc-cod-fee.php:126
 #: includes/gateways/cod/class-wc-gateway-cod2.php:168
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:228
 msgid "Includes taxes"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:129
 #: includes/gateways/cod/class-wc-gateway-cod2.php:171
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:240
 msgid "Do not calculate taxes"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:130
 #: includes/gateways/cod/class-wc-gateway-cod2.php:172
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:244
 msgid "The fee is taxes included"
 msgstr ""
 
 #: includes/class-jp4wc-cod-fee.php:131
 #: includes/gateways/cod/class-wc-gateway-cod2.php:173
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:248
 msgid "The fee is taxes excluded"
 msgstr ""
 
@@ -474,94 +530,92 @@ msgstr ""
 #: includes/class-jp4wc-delivery.php:117
 #: assets/js/build/blocks/delivery-block-editor.js:1
 #: assets/js/build/blocks/delivery-block-frontend.js:1
-#: src/js/blocks/delivery-block-editor.js:26
-#: src/js/blocks/delivery-block-frontend.js:108
 msgid "Delivery request date and time"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:499
+#: includes/class-jp4wc-delivery.php:509
 msgid "\"Desired delivery date\" is a required field. Please enter it."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:526
+#: includes/class-jp4wc-delivery.php:536
 msgid "\"Desired delivery time zone\" is a required field. Please enter it."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:621
-#: includes/class-jp4wc-delivery.php:635
+#: includes/class-jp4wc-delivery.php:631
+#: includes/class-jp4wc-delivery.php:645
 msgid "Scheduled Delivery date and time"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:625
-#: includes/class-jp4wc-delivery.php:639
+#: includes/class-jp4wc-delivery.php:635
+#: includes/class-jp4wc-delivery.php:649
 msgid "Scheduled Delivery Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:629
-#: includes/class-jp4wc-delivery.php:643
+#: includes/class-jp4wc-delivery.php:639
+#: includes/class-jp4wc-delivery.php:653
 msgid "Scheduled Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:733
+#: includes/class-jp4wc-delivery.php:752
 msgid "Delivery"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:793
+#: includes/class-jp4wc-delivery.php:812
 msgid "Shipping Detail"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:901
+#: includes/class-jp4wc-delivery.php:920
 msgid "Delivery Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:902
+#: includes/class-jp4wc-delivery.php:921
 msgid "Date on which the customer wished delivery."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:909
+#: includes/class-jp4wc-delivery.php:928
 msgid "Time Zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:910
+#: includes/class-jp4wc-delivery.php:929
 msgid "Time Zone on which the customer wished delivery."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:917
+#: includes/class-jp4wc-delivery.php:936
 msgid "Tracking Ship Date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:918
+#: includes/class-jp4wc-delivery.php:937
 msgid "Actually shipped to date"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:958
+#: includes/class-jp4wc-delivery.php:977
 msgid "Order failed: Required delivery date was not provided."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:969
+#: includes/class-jp4wc-delivery.php:988
 msgid "Order failed: Required delivery time zone was not provided."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:978
+#: includes/class-jp4wc-delivery.php:997
 msgid "Required delivery information is missing. Please contact the store for assistance."
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1008
+#: includes/class-jp4wc-delivery.php:1027
 msgid "delivery time zone"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1010
+#: includes/class-jp4wc-delivery.php:1029
 msgid "delivery date"
 msgstr ""
 
 #. translators: %1$s: Blog name, %2$s: require type , %3$s: Order number
-#: includes/class-jp4wc-delivery.php:1019
+#: includes/class-jp4wc-delivery.php:1038
 #, php-format
 msgid "[%1$s] There are orders with no requested %2$s specified (Order number: #%3$s)"
 msgstr ""
 
 #. translators: %1$s: Order number, %2$s: Order date, %3$s: Customer name, %4$s: Customer email, %5$s: Order detail URL
-#: includes/class-jp4wc-delivery.php:1039
+#: includes/class-jp4wc-delivery.php:1058
 #, php-format
 msgid ""
 "Order Number: #%1$s\n"
@@ -575,133 +629,183 @@ msgid ""
 "Order Details Page: %5$s"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1048
+#: includes/class-jp4wc-delivery.php:1067
 msgid "Diagnostic Information"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1052
+#: includes/class-jp4wc-delivery.php:1071
 msgid "Checkout Type"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1070
+#: includes/class-jp4wc-delivery.php:1089
 msgid "Delivery Data"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1078
+#: includes/class-jp4wc-delivery.php:1097
 msgid "Plugin Settings"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1087
+#: includes/class-jp4wc-delivery.php:1106
 msgid "POST Data"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1106
+#: includes/class-jp4wc-delivery.php:1125
 msgid "Cart Information"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1124
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:226
+#: includes/class-jp4wc-delivery.php:1143
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:496
 msgid "Environment"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1143
+#: includes/class-jp4wc-delivery.php:1162
 msgid "Note"
 msgstr ""
 
-#: includes/class-jp4wc-delivery.php:1144
+#: includes/class-jp4wc-delivery.php:1163
 msgid "Please check WooCommerce logs (jp4wc_delivery_validation) for detailed validation information."
 msgstr ""
 
 #. translators: %1$s: require type , %2$s: Order ID
-#: includes/class-jp4wc-delivery.php:1166
+#: includes/class-jp4wc-delivery.php:1182
 #, php-format
 msgid "%1$sAn empty notification email has been sent. Order ID: %2$d"
 msgstr ""
 
+#. translators: %d: minutes until logins are accepted again
+#: includes/class-jp4wc-login-limiter.php:198
+#, php-format
+msgid "<strong>Error:</strong> Too many login attempts. Please try again in %d minute."
+msgid_plural "<strong>Error:</strong> Too many login attempts. Please try again in %d minutes."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-jp4wc-security-scan.php:654
+msgid "The Terms of Use and the Privacy Policy of the free check changed after this page was opened. Reload the page, read them and agree again."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:666
+msgid "Agree to the terms of use and the privacy policy to run the check."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:769
+msgid "The check data was deleted while the check ran, so its result was not kept."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:926
+msgid "This site cannot be checked: its address or a version of WordPress, WooCommerce, PHP or this plugin cannot be sent as the check requires."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:953
+msgid "wc.artws.info sent a response that could not be read. Try again later."
+msgstr ""
+
+#. translators: %s: date and time
+#: includes/class-jp4wc-security-scan.php:1075
+#, php-format
+msgid "The check can run once an hour. Try again after %s."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:1078
+msgid "The check can run once an hour. Try again later."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:1088
+msgid "wc.artws.info did not accept the information sent. Update this plugin to the latest version and try again."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:1094
+msgid "The check of wc.artws.info is not ready yet. Try again later."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/class-jp4wc-security-scan.php:1102
+#, php-format
+msgid "wc.artws.info answered with an error (HTTP %d). Try again later."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:1136
+msgid "Could not connect to wc.artws.info. Make sure this server can connect to it, and try again later."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:1149
+msgid "The free check sends the results of the security check: turn the security check on and wait for its first results."
+msgstr ""
+
+#: includes/class-jp4wc-security-scan.php:1162
+msgid "Another request to wc.artws.info is running. Try again in a few minutes."
+msgstr ""
+
 #: includes/class-jp4wc-shortcodes.php:66
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:57
 msgid "Shop Name"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:67
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:69
 msgid "Sales company name (company name)"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:68
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:84
 msgid "Owner Name"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:69
 #: includes/class-jp4wc-shortcodes.php:95
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:96
 msgid "Manager Name"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:70
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:107
 msgid "Location"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:71
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:120
 msgid "Contact"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:72
 #: includes/class-jp4wc-shortcodes.php:95
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:132
 msgid "Telephone"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:73
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:143
 msgid "Selling price"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:74
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:155
 msgid "Payment method"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:75
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:170
 msgid "Product purchase method"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:76
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:185
 msgid "Product delivery time"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:77
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:200
 msgid "Costs other than product charges"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:78
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:215
 msgid "Returns / Cancellations"
 msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:79
 #: includes/class-jp4wc-shortcodes.php:95
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:230
 msgid "Special conditions"
 msgstr ""
 
@@ -711,6 +815,10 @@ msgstr ""
 
 #: includes/class-jp4wc-shortcodes.php:113
 msgid "The following items of \"Notation based on the Specified Commercial Transactions Law\" have not been entered. Please enter the item of \"Notation based on Specified Commercial Transactions Law\" from the management screen."
+msgstr ""
+
+#: includes/class-jp4wc-xmlrpc-guard.php:272
+msgid "XML-RPC services are disabled on this site."
 msgstr ""
 
 #: includes/class-jp4wc-yahoo-api-endpoint.php:46
@@ -727,7 +835,7 @@ msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:78
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:150
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:191
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:461
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:135
 msgid "Enable/Disable"
 msgstr ""
@@ -739,28 +847,27 @@ msgstr ""
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:84
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:156
 #: includes/gateways/cod/class-wc-gateway-cod2.php:108
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:197
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:467
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:141
 msgid "Title"
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:86
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:158
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:199
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:469
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:143
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:87
 #: assets/js/build/frontend/blocks/atstore.js:1
-#: src/js/jp4wc/frontend/blocks/atstore/index.js:8
 msgid "At Store Payment"
 msgstr ""
 
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:91
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:163
 #: includes/gateways/cod/class-wc-gateway-cod2.php:115
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:204
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:474
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:148
 msgid "Description"
 msgstr ""
@@ -768,7 +875,7 @@ msgstr ""
 #: includes/gateways/atstore/class-wc-gateway-atstore-jp.php:93
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:165
 #: includes/gateways/cod/class-wc-gateway-cod2.php:110
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:206
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:476
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:150
 msgid "Payment method description that the customer will see on your checkout."
 msgstr ""
@@ -798,8 +905,6 @@ msgstr ""
 #: includes/gateways/bank-jp/class-wc-gateway-bank-jp.php:95
 #: assets/js/build/admin/settings.js:1
 #: assets/js/build/frontend/blocks/bank-jp.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:61
-#: src/js/jp4wc/frontend/blocks/bank-jp/index.js:8
 msgid "BANK PAYMENT IN JAPAN"
 msgstr ""
 
@@ -926,7 +1031,6 @@ msgstr ""
 
 #: includes/gateways/cod/class-wc-gateway-cod2.php:111
 #: assets/js/build/frontend/blocks/cod2.js:1
-#: src/js/jp4wc/frontend/blocks/cod2/index.js:8
 msgid "Cash on Delivery"
 msgstr ""
 
@@ -985,348 +1089,324 @@ msgstr ""
 msgid "Logs fee calculation details to <a href=\"%s\">WooCommerce > Status > Logs</a> (source: <code>jp4wc-cod2-fee</code>). Disable after investigation."
 msgstr ""
 
-#. Translators: %1$s shipping method name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:302
-#, php-format
-msgid "Any &quot;%1$s&quot; method"
-msgstr ""
-
-#. Translators: %1$s shipping method title, %2$s shipping method id.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:315
-#, php-format
-msgid "%1$s (#%2$s)"
-msgstr ""
-
-#. Translators: %1$s zone name, %2$s shipping method instance name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:318
-#, php-format
-msgid "%1$s &ndash; %2$s"
-msgstr ""
-
-#. Translators: %1$s zone name, %2$s shipping method instance name.
-#: includes/gateways/cod/class-wc-gateway-cod2.php:318
-msgid "Other locations"
-msgstr ""
-
 #. translators: %s: Payment method name.
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:141
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:223
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:150
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:493
 #, php-format
 msgid "Proceed to %s"
 msgstr ""
 
 #. translators: %s: Payment method name.
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:141
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:223
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:150
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:493
 #: includes/gateways/paidy/class-wc-payments-paidy-blocks-support.php:105
 #: assets/js/build/paidy/frontend/paidy.js:1
 #: includes/gateways/paidy/assets/js/frontend/paidy.js:10
-#: src/js/paidy/paidy/index.js:16
 msgid "Paidy"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:147
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:200
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:156
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:470
 msgid "Paidy Payment"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:148
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:157
 msgid "\"Paidy next month payment\" reduces the opportunity loss due to the payment method and contributes to sales increase."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:193
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:375
+msgid "Once the customer interrupted the payment.. Order ID:"
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:452
+msgid "This Paidy payment has been declined. Please select another payment method."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:463
 msgid "Enable Paidy"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:207
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:477
 msgid "No matter how many times you shop a month, you pay once in the following month. <br /> The following payment methods are available."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:211
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:481
 msgid "Paidy description"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:214
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:484
 msgid "Payment method description for paidy explanation that the customer will see on your checkout."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:219
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:489
 msgid "Order Button Text"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:221
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:491
 msgid "This controls the description which the user sees during checkout."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:228
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:498
 msgid "This setting specifies whether you will process live transactions, or whether you will process simulated transactions using the Paidy Sandbox."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:232
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:502
 msgid "Live"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:233
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:503
 msgid "Sandbox"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:237
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:243
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:831
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:507
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:513
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1091
 msgid "API Public Key"
 msgstr ""
 
 #. translators: %s: Enter Key.
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:242
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:254
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:266
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:278
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:512
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:524
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:536
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:548
 #, php-format
 msgid "Please enter %s from Paidy Admin site."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:249
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:255
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:842
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:519
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:525
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1102
 msgid "API Secret Key"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:261
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:267
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:531
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:537
 msgid "Test API Public Key"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:273
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:279
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:543
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:549
 msgid "Test API Secret Key"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:285
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:555
 msgid "Store Name"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:287
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:557
 msgid "This controls the store name which the user sees during paidy checkout."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:291
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:561
 msgid "Logo Image (168×168 recommend)"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:293
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:563
 msgid "URL of a custom logo that can be displayed in the checkout application header. If no value is specified, the Paidy logo will be displayed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:295
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:565
 msgid "Optional"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:298
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:568
 msgid "Debug Mode"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:300
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:570
 msgid "Enable Debug Mode"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:302
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:572
 msgid "Save debug data using WooCommerce logging."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:305
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:575
 msgid "Notice e-mail"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:307
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:577
 msgid "Set an e-mail address to send an e-mail when an error occurs during connection with paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:311
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:581
 msgid "About Webhook"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:313
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:583
 msgid "The webhooks set in the Paidy management screen are as follows. <br />"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:689
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:966
 msgid "This order has already been settled."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:691
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:968
 msgid "API Public key is not set. Please set an API public key in the admin page."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:777
-msgid "Once the customer interrupted the payment.. Order ID:"
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:780
-msgid "This Paidy payment has been declined. Please select another payment method."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:817
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1077
 msgid "Paidy Payment succeeds to authorize and move to thank you page. Get data is following."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:831
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:842
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1091
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1102
 msgid "Production environment"
 msgstr ""
 
 #. translators: 1) Field title 2) Environment 3) Paidy PR link
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:857
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1117
 #, php-format
 msgid "If you do not set %1$s, it will not work in the %2$s. Application is necessary for acquisition."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:893
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1160
 msgid "This order is success cancellation data at Paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:896
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1163
 msgid "This order is already close data at Paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:899
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1166
 msgid "Cancelled processing has not been completed due to a Paidy error. Please check Paidy admin."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1056
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1226
 msgid "The remaining amount was not refunded at Paidy when the order was cancelled. Please check Paidy admin."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:989
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1006
-msgid "This is capture data."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:997
-msgid "In the payment completion process, the amount and ID match were confirmed."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1000
-msgid "In the payment completion process, the amount and ID did not match. Check on the Paidy admin."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1015
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1123
-msgid "There was no status in the notification from Paidy."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php
-msgid "The Paidy payment ID of this order is not in the expected format, so no request was sent to Paidy. Please check the transaction ID and your Paidy dashboard."
-msgstr ""
-
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1018
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1284
 msgid "Status Change from Processing to completed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1034
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1315
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1332
+msgid "This is capture data."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1323
+msgid "In the payment completion process, the amount and ID match were confirmed."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1326
+msgid "In the payment completion process, the amount and ID did not match. Check on the Paidy admin."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1341
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1445
+msgid "There was no status in the notification from Paidy."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1359
 msgid "You have made a forbidden request."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1034
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1037
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1040
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1043
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1046
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1359
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1362
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1365
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1368
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1371
 msgid "Please go to your Paidy dashboard and check."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1037
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1362
 msgid "You have made an unauthorized request."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1040
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1365
 msgid "You have made a conflict request."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1043
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1368
 msgid "The requested resource could not be found."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1046
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1371
 msgid "The request failed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1049
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1374
 msgid "I received a notification from Paidy and the status was successful."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1051
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1376
 msgid "I received a notification from Paidy stating that the status was unexpected."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1093
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1411
 msgid "Refund is not possible because Paidy has not completed processing."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1109
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1428
 msgid "Completion refunding has been completed at Paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1112
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1431
 msgid "This is refund data."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1280
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1533
+msgid "The Paidy payment ID of this order is not in the expected format, so no request was sent to Paidy. Please check the transaction ID and your Paidy dashboard."
+msgstr ""
+
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1682
 msgid "[WooCommerce] Notice of error occurrence in Paidy payment linkage"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1297
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1699
 msgid "An error has occurred in the Paidy payment linkage when changing the status of WooCommerce."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1298
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1700
 msgid "Please check the status of Paidy payment and respond accordingly."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1299
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1701
 msgid "Order number:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1300
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1702
 msgid "Order details URL:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1301
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1703
 msgid "Paidy payment ID:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1302
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1704
 msgid "Error occurrence time:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1303
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1305
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1705
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1707
 msgid "Error situation:"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1307
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1709
 msgid "* This e-mail is for sending only, so you cannot reply directly to this e-mail."
 msgstr ""
 
 #. translators: %s: URL of the image.
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1363
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1765
 #, php-format
 msgid "Already using URL as image: %s"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1371
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1773
 msgid "Select a image to upload"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1372
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1774
 msgid "Use this image"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1373
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1376
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1775
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1778
 msgid "Add image"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-gateway-paidy.php:1384
+#: includes/gateways/paidy/class-wc-gateway-paidy.php:1786
 msgid "Remove image"
 msgstr ""
 
@@ -1408,95 +1488,95 @@ msgstr ""
 msgid "Approved response is missing a required API key field: %s"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:72
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:95
 msgid "The Paidy payment gateway is not available."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:103
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:142
 msgid "Paidy secret key is not configured."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:114
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:153
 msgid "Invalid signature for Paidy webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:134
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:173
 msgid "Unauthorized access to Paidy webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:194
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:237
 msgid "Paidy Webhook received. "
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:204
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:247
 msgid "This notification is a test request from Paidy."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:208
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:251
 msgid "Exist [payment_id] and [order_ref]"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:214
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:257
 msgid "The order with this order number does not exist in the store."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:221
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:264
 msgid "Order payment method is not Paidy. Possible unauthorized access attempt."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:225
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:268
 msgid "Invalid payment method for this order."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:244
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:287
 msgid "Paidy webhook payment verification failed. Order not completed."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:248
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:291
 msgid "Paidy payment could not be verified for this order."
 msgstr ""
 
 #. translators: %s: status of the order.
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:263
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:274
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:283
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:292
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:301
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:306
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:317
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:326
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:335
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:344
 #, php-format
 msgid "It succeeded to check the %s of the order in Paidy Webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:264
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:307
 msgid "authorization"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:268
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:311
 msgid "This order status is processing, this site received authorize_success from the Paidy webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:275
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:318
 msgid "completed"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:284
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:327
 msgid "cancelled"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:293
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:336
 msgid "close"
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:302
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:345
 msgid "refunded"
 msgstr ""
 
 #. translators: %s: status of the order.
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:307
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:350
 #, php-format
 msgid "The system received a notification for order %s via Paidy Webhook."
 msgstr ""
 
-#: includes/gateways/paidy/class-wc-paidy-endpoint.php:312
+#: includes/gateways/paidy/class-wc-paidy-endpoint.php:355
 msgid "Payment_id exist but order_id. Payment_id : "
 msgstr ""
 
@@ -1504,8 +1584,6 @@ msgstr ""
 #: includes/gateways/postofficebank/class-wc-gateway-postofficebank-jp.php:144
 #: assets/js/build/admin/settings.js:1
 #: assets/js/build/frontend/blocks/postofficebank.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:79
-#: src/js/jp4wc/frontend/blocks/postofficebank/index.js:8
 msgid "Postal transfer"
 msgstr ""
 
@@ -1544,1917 +1622,1609 @@ msgstr ""
 
 #: includes/jp4wc-common-functions.php:27
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:266
 msgid "Standard"
 msgstr ""
 
+#: includes/jp4wc-common-functions.php:156
+#: assets/js/build/admin/settings.js:1
+#: assets/js/build/admin/settings.js:18
+msgid "Morning"
+msgstr ""
+
 #. Translators: %s is the name of the feature to be checked.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:23
+#: includes/jp4wc-framework/class-jp4wc-framework.php:94
+#: includes/jp4wc-framework/config-jp4wc-framework.php:32
 #, php-format
 msgid "Please check it if you want to use %s."
 msgstr ""
 
 #. Translators: %s is the name of the payment method.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:25
+#: includes/jp4wc-framework/class-jp4wc-framework.php:96
+#: includes/jp4wc-framework/config-jp4wc-framework.php:34
 #, php-format
 msgid "Please check it if you want to use the payment method of %s."
 msgstr ""
 
 #. Translators: %s is the name of the input field.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:27
+#: includes/jp4wc-framework/class-jp4wc-framework.php:98
+#: includes/jp4wc-framework/config-jp4wc-framework.php:36
 #, php-format
 msgid "Please input %s."
 msgstr ""
 
 #. Translators: %s is the name of the selection.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:29
+#: includes/jp4wc-framework/class-jp4wc-framework.php:100
+#: includes/jp4wc-framework/config-jp4wc-framework.php:38
 #, php-format
 msgid "Please select one from these as %s."
 msgstr ""
 
-#: includes/jp4wc-framework/config-jp4wc-framework.php:30
+#: includes/jp4wc-framework/class-jp4wc-framework.php:101
+#: includes/jp4wc-framework/config-jp4wc-framework.php:39
 msgid "Need support?"
 msgstr ""
 
 #. Translators: %s is the URL to the support forum.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:32
+#: includes/jp4wc-framework/class-jp4wc-framework.php:103
+#: includes/jp4wc-framework/config-jp4wc-framework.php:41
 #, php-format
 msgid "If you are having problems with this plugin, talk about them in the <a href=\"%s\" target=\"_blank\" title=\"Pro Version\">Support forum</a>."
 msgstr ""
 
 #. Translators: %s is the URL to the support forum.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:34
+#: includes/jp4wc-framework/class-jp4wc-framework.php:105
+#: includes/jp4wc-framework/config-jp4wc-framework.php:43
 #, php-format
 msgid "If you need professional support, please consider about <a href=\"%1$s\" target=\"_blank\" title=\"Site Construction Support service\">Site Construction Support service</a> or <a href=\"%2$s\" target=\"_blank\" title=\"Maintenance Support service\">Maintenance Support service</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/config-jp4wc-framework.php:35
+#: includes/jp4wc-framework/class-jp4wc-framework.php:106
+#: includes/jp4wc-framework/config-jp4wc-framework.php:44
 msgid "Pro version"
 msgstr ""
 
 #. Translators: %s is the URL to the support forum.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:37
+#: includes/jp4wc-framework/class-jp4wc-framework.php:108
+#: includes/jp4wc-framework/config-jp4wc-framework.php:46
 #, php-format
 msgid "The pro version is available <a href=\"%s\" target=\"_blank\" title=\"Support forum\">here</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/config-jp4wc-framework.php:38
+#: includes/jp4wc-framework/class-jp4wc-framework.php:109
+#: includes/jp4wc-framework/config-jp4wc-framework.php:47
 msgid "The pro version includes support for bulletin boards. Please consider purchasing the pro version."
 msgstr ""
 
-#: includes/jp4wc-framework/config-jp4wc-framework.php:39
+#: includes/jp4wc-framework/class-jp4wc-framework.php:110
+#: includes/jp4wc-framework/config-jp4wc-framework.php:48
 msgid "Finished Latest Update, WordPress and WooCommerce?"
 msgstr ""
 
 #. Translators: %s is the URL to the support forum.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:41
+#: includes/jp4wc-framework/class-jp4wc-framework.php:112
+#: includes/jp4wc-framework/config-jp4wc-framework.php:50
 #, php-format
 msgid "One the security, latest update is the most important thing. If you need site maintenance support, please consider about <a href=\"%s\" target=\"_blank\" title=\"Support forum\">Site Maintenance Support service</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/config-jp4wc-framework.php:42
+#: includes/jp4wc-framework/class-jp4wc-framework.php:113
+#: includes/jp4wc-framework/config-jp4wc-framework.php:51
 msgid "Where is the study group of Woocommerce in Japan?"
 msgstr ""
 
 #. Translators: %s is the URL to the support forum.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:44
+#: includes/jp4wc-framework/class-jp4wc-framework.php:115
+#: includes/jp4wc-framework/config-jp4wc-framework.php:53
 #, php-format
 msgid "<a href=\"%s\" target=\"_blank\" title=\"Tokyo WooCommerce Meetup\">Tokyo WooCommerce Meetup</a>."
 msgstr ""
 
 #. Translators: %s is the URL to the support forum.
-#: includes/jp4wc-framework/config-jp4wc-framework.php:46
+#: includes/jp4wc-framework/class-jp4wc-framework.php:117
+#: includes/jp4wc-framework/config-jp4wc-framework.php:55
 #, php-format
 msgid "<a href=\"%s\" target=\"_blank\" title=\"Kansai WooCommerce Meetup\">Kansai WooCommerce Meetup</a>."
 msgstr ""
 
-#: includes/jp4wc-framework/config-jp4wc-framework.php:47
+#: includes/jp4wc-framework/class-jp4wc-framework.php:118
+#: includes/jp4wc-framework/config-jp4wc-framework.php:56
 msgid "Join Us!"
 msgstr ""
 
-#: includes/jp4wc-framework/config-jp4wc-framework.php:48
+#: includes/jp4wc-framework/class-jp4wc-framework.php:119
+#: includes/jp4wc-framework/config-jp4wc-framework.php:57
 msgid "Created by"
 msgstr ""
 
-#: includes/jp4wc-framework/config-jp4wc-framework.php:49
+#: includes/jp4wc-framework/class-jp4wc-framework.php:120
+#: includes/jp4wc-framework/config-jp4wc-framework.php:58
 msgid "WooCommerce Doc in Japanese"
 msgstr ""
 
-#: woocommerce-for-japan.php:96
+#: woocommerce-for-japan.php:54
+msgid "Update PHP now: critical security vulnerabilities"
+msgstr ""
+
+#. translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs
+#: woocommerce-for-japan.php:56
+#, php-format
+msgid "The PHP version of this site (%1$s) has critical vulnerabilities (%3$s) that let an attacker run code on the server with a single request. Update PHP to %2$s or later right away."
+msgstr ""
+
+#: woocommerce-for-japan.php:57
+msgid "Security support for PHP 8.2 ends at the end of 2026, so we recommend updating to PHP 8.3 or later."
+msgstr ""
+
+#: woocommerce-for-japan.php:58
+msgid "Your hosting company may have applied the fix without changing the PHP version number. Please check with your hosting company."
+msgstr ""
+
+#. translators: 1: PHP version of this site, 2: vulnerability IDs
+#: woocommerce-for-japan.php:60
+#, php-format
+msgid "The PHP version of this site (%1$s) has critical vulnerabilities (%2$s). Official support for this PHP version has ended, and no fixed version has been released for it. Some hosting companies apply their own security patches, but update to PHP 8.3 or later, which is supported longer, as soon as possible."
+msgstr ""
+
+#. translators: 1: PHP version of this site, 2: first fixed PHP version, 3: vulnerability IDs
+#: woocommerce-for-japan.php:62
+#, php-format
+msgid "This site runs a pre-release of PHP (%1$s) that has critical vulnerabilities (%3$s). Update it to %2$s or later."
+msgstr ""
+
+#: woocommerce-for-japan.php:63
+msgid "Learn more"
+msgstr ""
+
+#: woocommerce-for-japan.php:64
+msgid "Don't show again"
+msgstr ""
+
+#: woocommerce-for-japan.php:65
+msgid "Close"
+msgstr ""
+
+#: woocommerce-for-japan.php:245
 msgid "Japanized for WooCommerce is enabled but not effective. It requires WooCommerce in order to work."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:54
 msgid "Address Display Setting"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:64
 msgid "Name Yomigana"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:65
 msgid "Check it if you want to add Yomigana(furigana) input at cart, checkout and my account page."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:79
 msgid "Required Name Yomigana"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:83
 msgid "Check if you want to require yomigana."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:100
 msgid "Honorific suffix(Sama)"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:104
 msgid "Check it if you want to add honorific suffix(Sama) at cart, checkout and my account page."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:121
 msgid "No Japanese Address"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:125
 msgid "Check it if you eliminate the order of addresses."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:139
 msgid "Custamize Email template at customer name"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:143
 msgid "Please check it if you want to change customer name display.( from first name to full name )"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:161
 msgid "Classic Checkout only"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:172
 msgid "Free Shipping Display"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:176
 msgid "Check it if you want to display free shipping message."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:197
 msgid "Check it if you want to add Company name input at cart, checkout and my account page."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:214
 msgid "Automatic zip code entry"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:218
 msgid "Check it if you want to use automatic zip code entry."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:237
 msgid "Yahoo APP ID"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:241
 msgid "If you use it a bit for testing, you do not need to enter it here. But if you want to use Automatic zip code entry, you must get and input Yahoo APP ID here."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:256
 msgid "Automatic zip code entry for Checkout Block is implemented in Japanized for WooCommerce PRO. If you want to use Automatic zip code entry with Checkout Block, please purchase Japanized for WooCommerce PRO."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:266
 msgid "Learn more about PRO"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:277
 msgid "Virtual order Setting"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:282
 msgid "Check to hide address input field in virtual orders"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:298
 msgid "Postcode / ZIP"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:312
 msgid "Prefecture"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:326
 msgid "Town / City"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:340
 msgid "Street address"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:354
 msgid "Apartment, suite, unit, etc. (optional)"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:383
-msgid "Usage tracking"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:390
-msgid "Tracking"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:391
-msgid "Enable usage tracking"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:154
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:411
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:251
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:302
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:547
+#: assets/js/build/admin/settings.js:18
 msgid "Saving..."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:155
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js:412
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:252
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:303
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:548
+#: assets/js/build/admin/settings.js:18
 msgid "Save Settings"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:77
 msgid "Delivery date designation"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:91
 msgid "Check it if you want to use delivery date designation."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:105
 msgid "Preferred delivery date required"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:109
 msgid "Please check if a delivery date is required."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:128
 msgid "Start Date"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:129
 msgid "Number of days from today to start accepting orders"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:144
 msgid "Delivery Term"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:145
 msgid "Number of days to accept delivery date"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:161
 msgid "Unspecified date description"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:165
 msgid "Text to display when date is not specified"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:180
 msgid "Date format"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:197
 msgid "Display day of week"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:212
 msgid "Delivery deadline"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:216
 msgid "Time format: HH:MM:SS (e.g., 14:00:00)"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:230
 msgid "No delivery weekday"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:305
 msgid "Holiday term"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:312
 msgid "Holiday start date"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:332
 msgid "Holiday end date"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:354
 msgid "Delivery Time designation"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:364
 msgid "Delivery time zone"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:368
 msgid "Check it if you want to use delivery time zone."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:385
 msgid "Delivery time zone required"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:389
 msgid "Please check if a delivery time is required."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:409
 msgid "Unspecified Time description"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:413
 msgid "Text to display when time is not specified"
 msgstr ""
 
-#: includes/jp4wc-common-functions.php assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
-msgid "Morning"
-msgstr ""
-
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
 msgid "Show \"Morning\" as the first time zone"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
 msgid "Adds a \"Morning\" option ahead of the time zones below."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
 msgid "\"Morning\" option label"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js
 msgid "Text shown for the \"Morning\" option and saved to the order. Saved as \"Morning\" when left empty."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:427
 msgid "Delivery time zone management"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:448
 msgid "Start Time"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:467
 msgid "End Time"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:490
 msgid "Remove"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:499
 msgid "Add Time Zone"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:506
 msgid "Notification of missing required fields"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:517
 msgid "Notification email address"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/ShipmentSettings.js:521
 msgid "Email address to notify when required delivery fields are missing"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:54
 msgid "Payment Method"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:65
 msgid "Enable bank payment method"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:83
 msgid "Enable postal transfer payment method"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:97
 msgid "Pay at store"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:98
 msgid "Enable pay at store payment method"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:112
 msgid "COD for Subscriptions"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:116
 msgid "Enable COD for subscription orders"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:142
 msgid "These settings apply to the standard WooCommerce \"Cash on Delivery\" payment method."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:148
 msgid "To configure the COD fee for \"Cash on Delivery for Subscriptions\", please go to:"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:158
 msgid "WooCommerce → Settings → Payments → Cash on Delivery for Subscriptions"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:170
 msgid "Name of the COD fee"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:189
 msgid "Amount to charge for COD"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:209
 msgid "Maximum cart value for COD fee application"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:262
 msgid "Tax Class"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:273
 msgid "Reduced rate"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/PaymentSettings.js:280
 msgid "Zero rate"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/LawSettings.js:46
 msgid "Specified Commercial Transaction Law"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:52
 msgid "A8.net Setting"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:59
 msgid "Enable A8.net"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:60
 msgid "Enable A8.net affiliate tracking"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:74
 msgid "Test Mode"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:75
 msgid "Enable test mode for A8.net"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:93
 msgid "A8.net PID"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:94
 msgid "Enter your A8.net PID"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:107
 msgid "felmat Setting"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:114
 msgid "Enable felmat"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:115
 msgid "Enable felmat affiliate tracking"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:133
 msgid "felmat PID"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/AffiliateSettings.js:134
 msgid "Enter your felmat PID"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:42
-msgid "Failed to load settings"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:63
-msgid "Settings saved successfully."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:71
-msgid "Failed to save settings"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:89
-msgid "Loading settings..."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:97
-msgid "General Settings"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:102
-msgid "Shipment Settings"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:107
-msgid "Payment Settings"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:112
-msgid "Commercial Law"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:117
-msgid "Affiliate"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:126
-msgid "Japanized for WooCommerce Settings"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:218
-msgid "For those who are having trouble with WooCommerce"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:224
-msgid "We are currently offering 30-minute paid Zoom consultations. A professional from Woo Agency will assess your current situation and suggest the best course of action."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/Settings.js:236
-msgid "有料相談に申し込む"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
-msgid "Security"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
-msgid "Vulnerability check"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/GeneralSettings.js
-msgid "Once a day, download the list of known vulnerabilities from wc.artws.info (Artisan Workshop) and check the installed plugins, themes and WordPress against it. Only the versions of this plugin, WordPress, WooCommerce and PHP are sent, in the User-Agent header."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "No fixed version yet. Deactivate and delete it, or replace it with another plugin or theme."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Update it to the latest version."
-msgstr ""
-
-#. translators: 1: plugin, theme or WordPress name, 2: comma-separated versions that fix the vulnerability
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-#, js-format
-msgid "Update %1$s to a fixed version (%2$s) or later."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Satisfied"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Action needed"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Unconfirmed"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Total score"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The lowest score of the four requirements."
-msgstr ""
-
-#. translators: 1: checks passed, 2: checks that need action, 3: checks that could not be run
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-#, js-format
-msgid "Passed %1$d / Action needed %2$d / Unconfirmed %3$d"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "No items need action."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Some checks could not be run (see \"All checks\" below)."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Severity"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Item"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Fixed version"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "How to fix"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Reference"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "None"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Details"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "All checks"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Passed"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "\"Unconfirmed\" means the check could not be run on this site, for example because the server cannot send requests to itself. It costs no points."
-msgstr ""
-
-#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-#, js-format
-msgid "The vulnerability data could not be downloaded for several days, so the installed software is not checked for known vulnerabilities. Make sure this server can connect to %s."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The vulnerability data has not been downloaded yet, so known vulnerabilities are not checked. It is downloaded once a day."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The result of the security check could not be loaded."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The re-check could not be started."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The security check is off. Turn it on below and save the settings to check this site."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "This check shows what needs attention. It does not guarantee compliance with the Credit Card Security Guidelines."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "This site has not been checked yet. The first check runs shortly in WP-Cron, or start it with \"Re-check now\"."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Re-checking…"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Re-check now"
-msgstr ""
-
-#. translators: %s: date and time of the last check
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-#, js-format
-msgid "Last checked: %s"
-msgstr ""
-
-#. translators: %s: date and time the vulnerability data was generated
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-#, js-format
-msgid "Vulnerability data: %s"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The re-check runs in the background. The results appear here when it finishes."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The re-check has finished."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The re-check has not finished yet. It runs with WP-Cron, so reload this page later to see the results."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Items that need action"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Settings"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Security check"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Turning it off also stops the checks on this tab and deletes their results."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The vulnerability data comes from wc.artws.info and is subject to its <a>Terms of Use</a>."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Vulnerability management"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Admin access control"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Data directory exposure"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Malware protection"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Known vulnerabilities in the installed software"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Plugin updates left uninstalled for 180 days or more"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Update the plugins on the Plugins screen, and delete the plugins you no longer use."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "PHP, WordPress or WooCommerce version that is no longer supported"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Update WordPress and WooCommerce, and ask your hosting provider how to switch to a supported PHP version."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Automatic updates of WordPress security releases and plugins"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Turn on automatic updates for every plugin on the Plugins screen, and do not turn off the automatic security updates of WordPress (WP_AUTO_UPDATE_CORE or a filter)."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "User named \"admin\""
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Create an administrator with another user name, then delete the admin user and attribute its content to the new one."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Login page protection"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Two-factor authentication"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Install a two-factor authentication plugin and turn it on for administrators."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "XML-RPC open to anyone"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Turn on \"Disable XML-RPC\" under Settings on this tab: Jetpack keeps working, and the XML-RPC usage list shows what else still uses it so that you can allow those methods. Or block xmlrpc.php with a security plugin or the server configuration if nothing uses XML-RPC."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "User list in the REST API"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "File listing of the uploads directory"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Turn off directory listing in the server configuration (on Apache, add Options -Indexes to .htaccess)."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Backups, database dumps and logs in public directories"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Move or delete the backups, archives, database dumps and log files in the WordPress, wp-content and uploads directories, or block them in the server configuration."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Error messages shown on the site"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Set WP_DEBUG_DISPLAY (or WP_DEBUG) to false in wp-config.php."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "WooCommerce log files that can be downloaded"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Block wp-content/uploads/wc-logs/ in the server configuration (nginx does not read the .htaccess file WooCommerce puts there)."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "HTTPS on the checkout and My account pages"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Install an SSL certificate and change the WordPress Address and Site Address in Settings > General to https://."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "File editing in the admin screens"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Malware scanning or a web application firewall"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Install a security plugin that scans for malware or filters attacks."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "PHP files in the uploads directory"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
-msgid "Check the PHP files in the uploads directory and delete the ones you do not know, which may be malware. Also stop PHP from running there in the server configuration."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "No fixed version yet. Update WordPress as soon as its security release is out."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Turn on the login attempt limiter under Settings on this tab, limit login attempts with a security plugin, or restrict wp-login.php to your IP addresses or a password in the server configuration."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Failures allowed per IP address"
+msgid "Two-factor authentication"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Behind a proxy or CDN that hides the visitor address, every visitor shares one address: keep this one the looser limit."
+msgid "Install a two-factor authentication plugin and turn it on for administrators."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Failures allowed per user name"
+msgid "XML-RPC open to anyone"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Lockout time (minutes)"
-msgstr ""
-
-#. translators: %s: plugin slug
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-#, php-format
-msgid "The plugin \"%s\" already protects the login page, so this limiter does nothing while it is active."
+msgid "Turn on \"Disable XML-RPC\" under Settings on this tab: Jetpack keeps working, and the XML-RPC usage list shows what else still uses it so that you can allow those methods. Or block xmlrpc.php with a security plugin or the server configuration if nothing uses XML-RPC."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Jetpack's brute force protection already protects the login page, so this limiter does nothing while it is on."
+msgid "User list in the REST API"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The server configuration (.htaccess) already restricts the login page, so this limiter does nothing while it does."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Login attempt limiter"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Count failed logins per IP address and per user name, and refuse logins for a while once a limit is reached. Covers the WordPress login page, the WooCommerce My Account and checkout login forms and XML-RPC."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "It does nothing while a security plugin, Jetpack or the server configuration already protects the login page. If you lock yourself out, define JP4WC_LOGIN_LIMIT_DISABLE as true in wp-config.php."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "An e-mail address used to log in counts against the same name as the user name."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The limiter is turned off by JP4WC_LOGIN_LIMIT_DISABLE in wp-config.php or by a filter."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "A failure counts for this long. Logins are refused while the failures that still count reach a limit."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
 msgid "Turn on \"Hide the user list from the REST API\" under Settings on this tab, or stop the users REST route (/wp-json/wp/v2/users) from listing users to visitors who are not logged in with a security plugin."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/security-labels.js
+msgid "File listing of the uploads directory"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Turn off directory listing in the server configuration (on Apache, add Options -Indexes to .htaccess)."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Backups, database dumps and logs in public directories"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Move or delete the backups, archives, database dumps and log files in the WordPress, wp-content and uploads directories, or block them in the server configuration."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Error messages shown on the site"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Set WP_DEBUG_DISPLAY (or WP_DEBUG) to false in wp-config.php."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "WooCommerce log files that can be downloaded"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Block wp-content/uploads/wc-logs/ in the server configuration (nginx does not read the .htaccess file WooCommerce puts there)."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "HTTPS on the checkout and My account pages"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Install an SSL certificate and change the WordPress Address and Site Address in Settings > General to https://."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "File editing in the admin screens"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
 msgid "Turn on \"Forbid file editing in the admin screens\" under Settings on this tab, or add define( 'DISALLOW_FILE_EDIT', true ); to wp-config.php."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Hide the user list from the REST API"
+msgid "Malware scanning or a web application firewall"
 msgstr ""
 
 #: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Forbid file editing in the admin screens"
+msgid "Install a security plugin that scans for malware or filters attacks."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "PHP files in the uploads directory"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Check the PHP files in the uploads directory and delete the ones you do not know, which may be malware. Also stop PHP from running there in the server configuration."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: assets/js/build/admin/settings.js:12
+msgid "Passed"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: assets/js/build/admin/settings.js:10
+msgid "Action needed"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+#: assets/js/build/admin/settings.js:10
+msgid "Unconfirmed"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Not sent"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:1
+msgid "Counting…"
+msgstr ""
+
+#. translators: 1: revenue band code, 2: its label, 3: order band code, 4: its label
+#: assets/js/build/admin/settings.js:2
+#, js-format
+msgid "%1$s (%2$s), %3$s (%4$s)"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "No revenue"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Up to 1 million yen"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Up to 10 million yen"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Up to 50 million yen"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Up to 100 million yen"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Over 100 million yen"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "No orders"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Up to 100 orders"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Up to 1,000 orders"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Up to 10,000 orders"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Over 10,000 orders"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Could not be counted, so they are not sent"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Site address"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "WordPress version"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "WooCommerce version"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "PHP version"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Version of this plugin"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Language"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:2
+msgid "Plugins and themes"
+msgstr ""
+
+#. translators: %d: number of plugins and themes
+#: assets/js/build/admin/settings.js:3
+#, js-format
+msgid "%d installed, active or not: type, slug, version and whether it is active"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+msgid "Type"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+msgid "Slug"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+msgid "Version"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+msgid "Active"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+msgid "Theme"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+msgid "Plugin"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+#: assets/js/build/paidy/wizard/paidy.js:1
+msgid "Yes"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+#: assets/js/build/paidy/wizard/paidy.js:1
+msgid "No"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:3
+msgid "Results of the checks"
+msgstr ""
+
+#. translators: %d: number of checks
+#: assets/js/build/admin/settings.js:4
+#, js-format
+msgid "%d checks: ID and result only, never the settings behind them"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:4
+msgid "Revenue and order bands"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:4
+msgid "Version of the consent text"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:4
+msgid "Format of the data"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:4
+msgid "Site identification token"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:4
+msgid "Sent: the token wc.artws.info issued to this site on its first check. Its value is not shown."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:4
+msgid "Not sent with the first check: wc.artws.info issues it then, and it is sent with later checks and with the deletion. Its value is not shown."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:4
+msgid "Report of the free security check"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:4
+msgid "Save as PDF"
+msgstr ""
+
+#. translators: %s: date and time of the check
+#: assets/js/build/admin/settings.js:5
+#, js-format
+msgid "Checked: %s"
+msgstr ""
+
+#. translators: %s: date and time the report was made
+#: assets/js/build/admin/settings.js:6
+#, js-format
+msgid "Report made: %s"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:6
+#: assets/js/build/admin/settings.js:10
+msgid "Total score"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:6
+#: assets/js/build/admin/settings.js:18
+msgid "Items that need action"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:6
+#: assets/js/build/admin/settings.js:11
+msgid "No items need action."
+msgstr ""
+
+#. translators: %s: what can happen
+#: assets/js/build/admin/settings.js:7
+#, js-format
+msgid "Impact: %s"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:7
+#: assets/js/build/admin/settings.js:12
+msgid "Details"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:7
+msgid "Next steps"
+msgstr ""
+
+#. translators: 1: plugin, theme or WordPress name, 2: its version
+#: assets/js/build/admin/settings.js:8
+#, js-format
+msgid "Known vulnerabilities in %1$s %2$s"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:8
+msgid "Compared with the checks above"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:8
+msgid "Checked again against the latest vulnerability data on wc.artws.info, the result is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:8
+msgid "Apart from the items the checks above could not confirm, the result checked again against the latest vulnerability data on wc.artws.info is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:8
+msgid "Found only by wc.artws.info"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:8
+msgid "Found only by the checks above"
+msgstr ""
+
+#. translators: 1: date and time of the checks above, 2: date and time of the free check
+#: assets/js/build/admin/settings.js:9
+#, js-format
+msgid "The checks above are from %1$s and this check from %2$s. Updates and setting changes made in between also show as differences."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "Could not be confirmed by the checks above"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "The free check could not be loaded."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "The check could not be run."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "Also send the revenue and order bands of the last 12 months (optional)"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "Used only to show which measures to take first for the size of the store and for the purposes the Terms of Use list for them, which include a review of that priority by staff of 職人工房 合同会社 for each registration. Only the band codes are sent, never the amounts."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "Free security check by wc.artws.info"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "Send the information below to wc.artws.info, operated by 職人工房 合同会社, and get a report on this site: the installed software checked against the latest vulnerability data on the server, the results of the checks above, and what to do first. Nothing is sent until you agree and click the button."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "Running the check on wc.artws.info…"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "The check has finished. The report is below."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "This site was registered with wc.artws.info again, so earlier results can no longer be shown. wc.artws.info deletes them after 180 days."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "The check data was deleted from wc.artws.info and from this site."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "wc.artws.info no longer accepts the earlier registration of this site, so earlier results can no longer be shown. The next check registers this site again. wc.artws.info deletes the earlier results after 180 days."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "The free check sends the results of the security check: turn the security check on and save the settings to use it."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "The free check sends the results of the security check, which has not run yet. It can be used once the results appear above."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "The Terms of Use and the Privacy Policy of the free check were revised. To run the check again, read them and agree again."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
+msgid "Run the check again"
+msgstr ""
+
+#. translators: %s: date and time of the consent
+#: assets/js/build/admin/settings.js:10
+#, js-format
+msgid "You agreed to the Terms of Use and the Privacy Policy on %s."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Hide the information sent"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Show the information sent"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Get the free check"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Information sent to wc.artws.info"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "The administrator e-mail address, customer information, order amounts, API keys, the contents of wp-config.php and server paths are not sent. wc.artws.info keeps the data for 180 days."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store. They are never used for sales or advertising."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Read the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy> of the free check."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "I agree to the Terms of Use and the Privacy Policy, and send the information above."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Agree and run the check"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Cancel"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "This deletes this site's data on wc.artws.info, and the consent and the report kept on this site."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "The check data could not be deleted."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Delete"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Delete check data"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "Satisfied"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "The lowest score of the four requirements."
+msgstr ""
+
+#. translators: 1: checks passed, 2: checks that need action, 3: checks that could not be run
+#: assets/js/build/admin/settings.js:11
+#, js-format
+msgid "Passed %1$d / Action needed %2$d / Unconfirmed %3$d"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:11
+msgid "Some checks could not be run (see \"All checks\" below)."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:11
+msgid "Severity"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:11
+msgid "Item"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:11
+msgid "Fixed version"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:11
+msgid "How to fix"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:11
+msgid "Reference"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:11
+msgid "None"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:11
+msgid "Update it to the latest version."
+msgstr ""
+
+#. translators: 1: plugin, theme or WordPress name, 2: comma-separated versions that fix the vulnerability
+#: assets/js/build/admin/settings.js:12
+#, js-format
+msgid "Update %1$s to a fixed version (%2$s) or later."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:12
+msgid "No fixed version yet. Update WordPress as soon as its security release is out."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:12
+msgid "No fixed version yet. Deactivate and delete it, or replace it with another plugin or theme."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:12
+msgid "All checks"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:12
+msgid "\"Unconfirmed\" means the check could not be run on this site, for example because the server cannot send requests to itself. It costs no points."
+msgstr ""
+
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: assets/js/build/admin/settings.js:13
+#, js-format
+msgid "The vulnerability data could not be downloaded for several days, so the installed software is not checked for known vulnerabilities. Make sure this server can connect to %s."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:13
+msgid "The vulnerability data has not been downloaded yet, so known vulnerabilities are not checked. It is downloaded once a day."
 msgstr ""
 
 #. translators: %s: file or directory of a must-use plugin
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:14
 #, js-format
 msgid "%s (must-use plugin)"
 msgstr ""
 
 #. translators: %s: theme name
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 #, js-format
 msgid "%s (theme)"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Unknown source"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Answered whatever the setting (no login)"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Jetpack: keeps working when XML-RPC is off"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Allowed"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Refused"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Logs in: stops when XML-RPC is off unless allowed"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Only failed logins: likely password guessing"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "No login"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Method"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Added by"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Calls"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Logins (worked / failed)"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Last call"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Client"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Status"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Added"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "Allow"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "XML-RPC usage (last 30 days)"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "The XML-RPC calls this site answered, by method. Methods that log in are used by an integration (the WordPress mobile apps, an offline editor, a service): allow them before turning XML-RPC off. Methods with only failed logins are usually password guessing."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "The record of the XML-RPC calls could not be read."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
 msgid "No XML-RPC calls were recorded in the last 30 days."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:15
+msgid "Method"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:15
+msgid "Added by"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:15
+msgid "Calls"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:15
+msgid "Logins (worked / failed)"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:15
+msgid "Last call"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:15
+msgid "Client"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:15
+msgid "Status"
+msgstr ""
+
+#: assets/js/build/admin/settings.js:15
 msgid "Allow list"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Disable XML-RPC"
+#: assets/js/build/admin/settings.js:15
+msgid "The result of the security check could not be loaded."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Refuse every XML-RPC method except the allowed ones, so that no password can be tried and no pingback sent through XML-RPC. Jetpack keeps working: it checks its own signature. The WordPress mobile apps, offline editors and services that log in through XML-RPC stop unless their methods are allowed. The REST API, with the application passwords used for it, is not affected."
+#. translators: %s: plugin slug
+#: assets/js/build/admin/settings.js:16
+#, js-format
+msgid "The plugin \"%s\" already protects the login page, so this limiter does nothing while it is active."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Allowed methods"
+#: assets/js/build/admin/settings.js:16
+msgid "Jetpack's brute force protection already protects the login page, so this limiter does nothing while it is on."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "One method per line, such as wp.getUsersBlogs. A name ending in * allows every method that starts with it, such as metaWeblog.*. \"Allow\" in the XML-RPC usage list above adds a method. Leave it empty to refuse every method."
+#: assets/js/build/admin/settings.js:16
+msgid "The server configuration (.htaccess) already restricts the login page, so this limiter does nothing while it does."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "The allowed methods still accept a password, and what protects the login page does not cover XML-RPC (the login attempt limiter stays asleep behind it): use a security plugin that limits login attempts, or leave the allow list empty."
-msgstr ""
-
-msgid "The allowed methods still accept a password, and nothing limits login attempts through XML-RPC: turn on the login attempt limiter or use a security plugin that limits login attempts."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Define DISALLOW_FILE_EDIT when the plugin loads, so the theme and plugin file editors are gone from the admin screens. Updates and installs still work."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:16
 msgid "File editing is already forbidden by wp-config.php or another plugin (DISALLOW_FILE_EDIT or DISALLOW_FILE_MODS), so this setting changes nothing while that stays."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
-msgid "Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who are not logged in. Logged-in users keep their WordPress permissions (a browser tab opened on the route without a nonce counts as a visitor). Turn it off if a public page of this site lists authors through the REST API."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecuritySettings.js
+#: assets/js/build/admin/settings.js:16
 msgid "wp-config.php defines DISALLOW_FILE_EDIT as false, so this setting cannot forbid file editing until that line is removed."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "No revenue"
+#: assets/js/build/admin/settings.js:16
+msgid "The allowed methods still accept a password, and what protects the login page does not cover XML-RPC (the login attempt limiter stays asleep behind it): use a security plugin that limits login attempts, or leave the allow list empty."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Up to 1 million yen"
+#: assets/js/build/admin/settings.js:16
+msgid "The allowed methods still accept a password, and nothing limits login attempts through XML-RPC: turn on the login attempt limiter or use a security plugin that limits login attempts."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Up to 10 million yen"
+#: assets/js/build/admin/settings.js:16
+msgid "The limiter is turned off by JP4WC_LOGIN_LIMIT_DISABLE in wp-config.php or by a filter."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Up to 50 million yen"
+#: assets/js/build/admin/settings.js:16
+msgid "The security check is off. Turn it on below and save the settings to check this site."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Up to 100 million yen"
+#: assets/js/build/admin/settings.js:16
+msgid "This check shows what needs attention. It does not guarantee compliance with the Credit Card Security Guidelines."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Over 100 million yen"
+#: assets/js/build/admin/settings.js:16
+msgid "This site has not been checked yet. The first check runs shortly in WP-Cron, or start it with \"Re-check now\"."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "No orders"
+#: assets/js/build/admin/settings.js:16
+msgid "The re-check could not be started."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Up to 100 orders"
+#: assets/js/build/admin/settings.js:16
+msgid "Re-checking…"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Up to 1,000 orders"
+#: assets/js/build/admin/settings.js:16
+msgid "Re-check now"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Up to 10,000 orders"
+#. translators: %s: date and time of the last check
+#: assets/js/build/admin/settings.js:17
+#, js-format
+msgid "Last checked: %s"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Over 10,000 orders"
+#. translators: %s: date and time the vulnerability data was generated
+#: assets/js/build/admin/settings.js:18
+#, js-format
+msgid "Vulnerability data: %s"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Not sent"
+#: assets/js/build/admin/settings.js:18
+msgid "The re-check runs in the background. The results appear here when it finishes."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Counting…"
+#: assets/js/build/admin/settings.js:18
+msgid "The re-check has finished."
 msgstr ""
 
-#. translators: 1: revenue band code, 2: its label, 3: order band code, 4: its label
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "%1$s (%2$s), %3$s (%4$s)"
+#: assets/js/build/admin/settings.js:18
+msgid "The re-check has not finished yet. It runs with WP-Cron, so reload this page later to see the results."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Could not be counted, so they are not sent"
+#: assets/js/build/admin/settings.js:18
+msgid "Settings"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Site address"
+#: assets/js/build/admin/settings.js:18
+msgid "Security check"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "WordPress version"
+#: assets/js/build/admin/settings.js:18
+msgid "Once a day, download the list of known vulnerabilities from wc.artws.info (Artisan Workshop) and check the installed plugins, themes and WordPress against it. Only the versions of this plugin, WordPress, WooCommerce and PHP are sent, in the User-Agent header."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "WooCommerce version"
+#: assets/js/build/admin/settings.js:18
+msgid "Turning it off also stops the checks on this tab and deletes their results."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "PHP version"
+#: assets/js/build/admin/settings.js:18
+msgid "Login attempt limiter"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Version of this plugin"
+#: assets/js/build/admin/settings.js:18
+msgid "Count failed logins per IP address and per user name, and refuse logins for a while once a limit is reached. Covers the WordPress login page, the WooCommerce My Account and checkout login forms and XML-RPC."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Language"
+#: assets/js/build/admin/settings.js:18
+msgid "It does nothing while a security plugin, Jetpack or the server configuration already protects the login page. If you lock yourself out, define JP4WC_LOGIN_LIMIT_DISABLE as true in wp-config.php."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Plugins and themes"
+#: assets/js/build/admin/settings.js:18
+msgid "Failures allowed per IP address"
 msgstr ""
 
-#. translators: %d: number of plugins and themes
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "%d installed, active or not: type, slug, version and whether it is active"
+#: assets/js/build/admin/settings.js:18
+msgid "Behind a proxy or CDN that hides the visitor address, every visitor shares one address: keep this one the looser limit."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Type"
+#: assets/js/build/admin/settings.js:18
+msgid "Failures allowed per user name"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Slug"
+#: assets/js/build/admin/settings.js:18
+msgid "An e-mail address used to log in counts against the same name as the user name."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Version"
+#: assets/js/build/admin/settings.js:18
+msgid "Lockout time (minutes)"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Active"
+#: assets/js/build/admin/settings.js:18
+msgid "A failure counts for this long. Logins are refused while the failures that still count reach a limit."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Theme"
+#: assets/js/build/admin/settings.js:18
+msgid "Hide the user list from the REST API"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Plugin"
+#: assets/js/build/admin/settings.js:18
+msgid "Do not answer the users REST route (/wp-json/wp/v2/users) for visitors who are not logged in. Logged-in users keep their WordPress permissions (a browser tab opened on the route without a nonce counts as a visitor). Turn it off if a public page of this site lists authors through the REST API."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Results of the checks"
+#: assets/js/build/admin/settings.js:18
+msgid "Forbid file editing in the admin screens"
 msgstr ""
 
-#. translators: %d: number of checks
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "%d checks: ID and result only, never the settings behind them"
+#: assets/js/build/admin/settings.js:18
+msgid "Define DISALLOW_FILE_EDIT when the plugin loads, so the theme and plugin file editors are gone from the admin screens. Updates and installs still work."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Revenue and order bands"
+#: assets/js/build/admin/settings.js:18
+msgid "Disable XML-RPC"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Version of the consent text"
+#: assets/js/build/admin/settings.js:18
+msgid "Refuse every XML-RPC method except the allowed ones, so that no password can be tried and no pingback sent through XML-RPC. Jetpack keeps working: it checks its own signature. The WordPress mobile apps, offline editors and services that log in through XML-RPC stop unless their methods are allowed. The REST API, with the application passwords used for it, is not affected."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Format of the data"
+#: assets/js/build/admin/settings.js:18
+msgid "Allowed methods"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Site identification token"
+#: assets/js/build/admin/settings.js:18
+msgid "One method per line, such as wp.getUsersBlogs. A name ending in * allows every method that starts with it, such as metaWeblog.*. \"Allow\" in the XML-RPC usage list above adds a method. Leave it empty to refuse every method."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Sent: the token wc.artws.info issued to this site on its first check. Its value is not shown."
+#: assets/js/build/admin/settings.js:18
+msgid "The vulnerability data comes from wc.artws.info and is subject to its <a>Terms of Use</a>."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Not sent with the first check: wc.artws.info issues it then, and it is sent with later checks and with the deletion. Its value is not shown."
+#: assets/js/build/admin/settings.js:18
+msgid "Failed to load settings"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Report of the free security check"
+#: assets/js/build/admin/settings.js:18
+msgid "Settings saved successfully."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Save as PDF"
+#: assets/js/build/admin/settings.js:18
+msgid "Failed to save settings"
 msgstr ""
 
-#. translators: %s: date and time of the check
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "Checked: %s"
+#: assets/js/build/admin/settings.js:18
+msgid "Loading settings..."
 msgstr ""
 
-#. translators: %s: date and time the report was made
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "Report made: %s"
+#: assets/js/build/admin/settings.js:18
+msgid "General Settings"
 msgstr ""
 
-#. translators: %s: what can happen
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "Impact: %s"
+#: assets/js/build/admin/settings.js:18
+msgid "Shipment Settings"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Next steps"
+#: assets/js/build/admin/settings.js:18
+msgid "Payment Settings"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The free check could not be loaded."
+#: assets/js/build/admin/settings.js:18
+msgid "Commercial Law"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The check could not be run."
+#: assets/js/build/admin/settings.js:18
+msgid "Affiliate"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The check data could not be deleted."
+#: assets/js/build/admin/settings.js:18
+msgid "Security"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Free security check by wc.artws.info"
+#: assets/js/build/admin/settings.js:18
+msgid "Japanized for WooCommerce Settings"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Send the information below to wc.artws.info, operated by 職人工房 合同会社, and get a report on this site: the installed software checked against the latest vulnerability data on the server, the results of the checks above, and what to do first. Nothing is sent until you agree and click the button."
+#: assets/js/build/admin/settings.js:18
+msgid "For those who are having trouble with WooCommerce"
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Running the check on wc.artws.info…"
+#: assets/js/build/admin/settings.js:18
+msgid "We are currently offering 30-minute paid Zoom consultations. A professional from Woo Agency will assess your current situation and suggest the best course of action."
 msgstr ""
 
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The check has finished. The report is below."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "This site was registered with wc.artws.info again, so earlier results can no longer be shown. wc.artws.info deletes them after 180 days."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The check data was deleted from wc.artws.info and from this site."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Information sent to wc.artws.info"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The administrator e-mail address, customer information, order amounts, API keys, the contents of wp-config.php and server paths are not sent. wc.artws.info keeps the data for 180 days."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store. They are never used for sales or advertising."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Also send the revenue and order bands of the last 12 months (optional)"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Used only to show which measures to take first for the size of the store and for the purposes the Terms of Use list for them, which include a review of that priority by staff of 職人工房 合同会社 for each registration. Only the band codes are sent, never the amounts."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The free check sends the results of the security check: turn the security check on and save the settings to use it."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The free check sends the results of the security check, which has not run yet. It can be used once the results appear above."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "The Terms of Use and the Privacy Policy of the free check were revised. To run the check again, read them and agree again."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Read the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy> of the free check."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Run the check again"
-msgstr ""
-
-#. translators: %s: date and time of the consent
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "You agreed to the Terms of Use and the Privacy Policy on %s."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "I agree to the Terms of Use and the Privacy Policy, and send the information above."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Agree and run the check"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Get the free check"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Show the information sent"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Hide the information sent"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Compared with the checks above"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Checked again against the latest vulnerability data on wc.artws.info, the result is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Apart from the items the checks above could not confirm, the result checked again against the latest vulnerability data on wc.artws.info is the same as the checks above. The report below adds what each item means, what can happen and how to fix it, and can be saved as a PDF."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Found only by wc.artws.info"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Found only by the checks above"
-msgstr ""
-
-#. translators: 1: plugin, theme or WordPress name, 2: its version
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "Known vulnerabilities in %1$s %2$s"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Could not be confirmed by the checks above"
-msgstr ""
-
-#. translators: 1: date and time of the checks above, 2: date and time of the free check
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-#, php-format
-msgid "The checks above are from %1$s and this check from %2$s. Updates and setting changes made in between also show as differences."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "This deletes this site's data on wc.artws.info, and the consent and the report kept on this site."
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Delete"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Cancel"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "Delete check data"
-msgstr ""
-
-#: assets/js/build/admin/settings.js:1
-#: src/js/jp4wc/admin/settings/components/SecurityScan.js
-msgid "wc.artws.info no longer accepts the earlier registration of this site, so earlier results can no longer be shown. The next check registers this site again. wc.artws.info deletes the earlier results after 180 days."
+#: assets/js/build/admin/settings.js:18
+msgid "有料相談に申し込む"
 msgstr ""
 
 #: assets/js/build/blocks/delivery-block-editor.js:1
-#: src/js/blocks/delivery-block-editor.js:44
-#: src/js/blocks/delivery-block-editor.js:65
 msgid "This is a preview. The actual field will be shown on the frontend."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
-#: src/js/paidy/admin/components/index.js:9
 msgid "Easy Paidy payment setup"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
-#: src/js/paidy/admin/components/index.js:27
 msgid "Start easy Paidy payment setup"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:36
-#: src/js/paidy/main-hooks/form-info.jsx:141
 msgid "Status: Under review"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:39
-#: src/js/paidy/main-hooks/form-info.jsx:144
 msgid "Thank you for your application. We will notify you of the results via email and dashboard."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:47
-#: src/js/paidy/main-hooks/form-info.jsx:152
 msgid "Application ID:"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:52
-#: src/js/paidy/main-hooks/form-info.jsx:157
 msgid "The review process may take up to 5 business days."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:58
-#: src/js/paidy/main-hooks/form-info.jsx:163
 msgid "Inquiries regarding screening: sales@paidy.com"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:188
 msgid "Status: The review was rejected"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:120
-#: src/js/paidy/main-hooks/form-info.jsx:195
 msgid "After careful and repeated review, we regret to inform you that we have decided to postpone the transaction at this time."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:126
-#: src/js/paidy/main-hooks/form-info.jsx:201
 msgid "We sincerely apologize for not being able to meet your expectations."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:132
-#: src/js/paidy/main-hooks/form-info.jsx:207
 msgid "Please understand that we cannot provide details about the content of the review."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:251
 msgid "Now test mode"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:257
 msgid "Enable test mode"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:349
-#: src/js/paidy/main-hooks/form-info.jsx:378
 msgid "Error enabling Paidy"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:397
-#: src/js/paidy/main-hooks/form-info.jsx:463
 msgid "Enable production mode"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:411
 msgid "Status: The review approved"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:76
-#: src/js/paidy/main-hooks/form-info.jsx:417
 msgid "The review has been completed and the merchant agreement has been concluded."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:82
-#: src/js/paidy/main-hooks/form-info.jsx:422
 msgid "For terms of use, please check the terms and conditions notification email sent by Paidy Inc."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:89
-#: src/js/paidy/main-hooks/form-info.jsx:429
 msgid "We recommend setting the Webhook URL in the Paidy merchant management screen before publishing in production mode. Set the Webhook URL to the following value."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:95
-#: src/js/paidy/main-hooks/form-info.jsx:435
 msgid "[Common for test and production]"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/admin/components/index.js:102
-#: src/js/paidy/main-hooks/form-info.jsx:442
 msgid "Please refer to the manual for information on the Paidy merchant management screen."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:450
 msgid "Please click one of the buttons below."
 msgstr ""
 
@@ -3462,93 +3232,71 @@ msgstr ""
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/form-info.jsx:340
-#: src/js/paidy/main-hooks/on-boarding-settings.js:314
 msgid "Settings saved."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:478
 msgid "Paidy test payments enabled"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:481
 msgid "You can now test Paidy payments."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:486
 msgid "Please check the test payment flow."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:495
 msgid "Paidy test payment flow"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:498
 msgid "After confirming the test payment, please switch to production mode."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:511
 msgid "Paidy Payments is now live"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:115
-#: src/js/paidy/wizard/components/controls.jsx:12
 msgid "Trade name / Store name"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:119
-#: src/js/paidy/wizard/components/controls.jsx:24
 msgid "Your EC site name"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:123
-#: src/js/paidy/wizard/components/controls.jsx:37
 msgid "Store URL"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:127
-#: src/js/paidy/wizard/components/controls.jsx:47
 msgid "Email address for registering Paidy"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:134
-#: src/js/paidy/wizard/components/controls.jsx:60
 msgid "Contact phone number"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:138
-#: src/js/paidy/wizard/components/controls.jsx:71
 msgid "Representative (last name)"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:145
-#: src/js/paidy/wizard/components/controls.jsx:84
 msgid "Representative (first name)"
 msgstr ""
 
@@ -3556,9 +3304,6 @@ msgstr ""
 #: assets/js/build/paidy/admin/paidy.js:2
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:152
-#: src/js/paidy/main-hooks/on-boarding-settings.js:198
-#: src/js/paidy/wizard/components/controls.jsx:97
 msgid "Representative (last name kana)"
 msgstr ""
 
@@ -3566,23 +3311,17 @@ msgstr ""
 #: assets/js/build/paidy/admin/paidy.js:2
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:159
-#: src/js/paidy/main-hooks/on-boarding-settings.js:205
-#: src/js/paidy/wizard/components/controls.jsx:114
 msgid "Representative (first name kana)"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/on-boarding-settings.js:166
-#: src/js/paidy/wizard/components/controls.jsx:131
 msgid "Representative's date of birth (Gregorian calendar)"
 msgstr ""
 
 #. translators: %s: field label name
 #: assets/js/build/paidy/admin/paidy.js:2
 #: assets/js/build/paidy/wizard/paidy.js:2
-#: src/js/paidy/main-hooks/on-boarding-settings.js:177
 #, js-format
 msgid "%s is a required field. Please enter it."
 msgstr ""
@@ -3590,625 +3329,332 @@ msgstr ""
 #. translators: %s: field label name
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:216
 #, js-format
 msgid "%s must be in full-width katakana. Please confirm."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:238
 msgid "When selecting \"No\" for the security survey question, please provide additional details in the text field."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:255
 msgid "Since none of the security measures are implemented, please provide details about your security approach in the additional information field."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/main-hooks/on-boarding-settings.js:266
 msgid "Please fill in all the fields."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
-#: src/js/paidy/admin/onboarding-step/index.js:54
 msgid "Applying for and setting up Paidy is easy."
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
-#: src/js/paidy/admin/onboarding-step/index.js:64
 msgid "There is no setup cost, payment fees start from 3.5%, and if you apply via this service, you will receive a one-month trial with no payment fees!"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/admin/onboarding-step/index.js:69
-#: src/js/paidy/wizard/components/first-main-page.jsx:463
 msgid "Learn more about Paidy"
 msgstr ""
 
 #: assets/js/build/paidy/admin/paidy.js:3
-#: src/js/paidy/admin/onboarding-step/index.js:77
 msgid "Enter the information manually without using the wizard."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:16
 msgid "Application flow"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:20
 msgid "Please fill in all the fields on this application screen and click the \"Agree to the above and apply\" button at the bottom of the screen."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:26
 msgid "Paidy Co., Ltd. will review your application information and may take up to 5 business days."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:32
 msgid "The results will be notified via email and dashboard."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:38
 msgid "If your application is approved, you will be able to activate Paidy from your dashboard."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:43
 msgid "If your application is rejected, you will not be able to use Paidy."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:58
 msgid "Agreement"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:63
 msgid "Please confirm and agree to the following contents."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:71
 msgid "Paidy Merchant Terms and Conditions"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:78
 msgid "Agreement on handling of affiliated store information"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:84
 msgid "Add the notation specified by our company to the notation based on the Specified Commercial Transactions Act."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:93
 msgid "Display sample based on the Specified Commercial Transactions Act"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:100
 msgid "Add the specified notation to the privacy policy page."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:109
 msgid "Example of a privacy policy"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:116
 msgid "Paidy Inc. will set up the API key on your e-commerce site via WooCommerce on your behalf."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:122
 msgid "Our company (Shokunin Kobo LLC) will provide personal information to third parties when disclosing such information for purposes such as member store screening by payment companies."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/main-hooks/form-info.jsx:170
 msgid "If you have received your API keys separately, you can enter them manually without waiting for the automatic delivery."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/main-hooks/form-info.jsx:177
-#: src/js/paidy/wizard/index.js:10
 msgid "Back to Paidy settings"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:101
-#: src/js/paidy/wizard/components/controls.jsx:118
 msgid "Please enter in full-width katakana."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:135
 msgid "Please select a date from the calendar icon on the far right."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:149
 msgid "Annual gross merchandise value"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:156
 msgid "Less than 10 million yen"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:163
 msgid "10 million yen or more"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:178
 msgid "Average purchase amount per order"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:185
 msgid "Less than 50,000 yen"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:192
 msgid "Over 50,000 yen"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:204
 msgid "Do you use two-step or two-factor authentication to prevent compromised accounts?"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:212
-#: src/js/paidy/wizard/components/controls.jsx:333
-#: src/js/paidy/wizard/components/controls.jsx:356
-msgid "Yes"
-msgstr ""
-
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:216
-#: src/js/paidy/wizard/components/controls.jsx:337
-#: src/js/paidy/wizard/components/controls.jsx:360
-msgid "No"
-msgstr ""
-
-#: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:220
 msgid "Unknown"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:231
 msgid "If the answer is \"no\", please provide an alternative."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:244
 msgid "Restricting access from suspicious IP addresses"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:249
 msgid "This refers to restricting access from suspicious IP addresses, such as those from overseas, using firewalls, WAFs, apps, etc."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:261
 msgid "Identity verification using two-factor authentication, etc."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:266
 msgid "This refers to increasing security strength by combining multiple levels or elements of authentication, such as biometric authentication using fingerprints or faces, or email or SMS authentication, in addition to ID and password."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:278
 msgid "Fraud detection system (Fraud service)"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:283
 msgid "It is a security technology that constantly monitors communications on the network and detects fraudulent transactions in advance, such as the use of credit cards by third parties or impersonation."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:295
 msgid "Device fingerprinting, etc."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:299
 msgid "This technology tracks online behavior by using the characteristics of the operating environment of the user's device as a kind of fingerprint."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:312
 msgid "If there is more than one question with a \"yes\" answer, please provide an alternative solution."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:325
 msgid "We have not received any administrative penalties under the Specified Commercial Transactions Law in the past five years."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/controls.jsx:348
 msgid "I have never been sued in a civil lawsuit or received an unfavorable judgment based on actions that violated the Consumer Contract Act."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:46
-#: src/js/paidy/wizard/index.js:30
 msgid "Easy setup for Paidy payment"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/first-main-page.jsx:54
 msgid "Paidy application"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/first-main-page.jsx:65
 msgid "Get started now"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:1
-#: src/js/paidy/wizard/components/first-main-page.jsx:77
 msgid "I agree to the above and apply"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:153
 msgid "Basic information"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:222
 msgid "Security survey"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:225
 msgid "Based on requests from the Ministry of Economy, Trade and Industry and the Japan Consumer Credit Association, all e-commerce affiliates are required to declare the status of their own security measures when joining. Please answer the following questions."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:232
 msgid "For details, please refer to <link>the Security Measures Status Declaration Form FAQ.</link>"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:248
 msgid "*If the system has not yet been built, please declare the check items for each security measure on the assumption that they will be satisfied once the system is built."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:256
 msgid "[Measures to prevent leakage of cardholder data]"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:262
 msgid "Administrator screen access restrictions and administrator ID/PW management"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:281
 msgid "[Countermeasures against unauthorized logins]"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:287
 msgid "*At least one \"Yes\" is required. If any are missing, we will contact you."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:294
 msgid "Do you take the following measures to prevent unauthorized logins when changing a user's attributes?"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:3
-#: src/js/paidy/wizard/components/first-main-page.jsx:330
 msgid "Questionnaire"
 msgstr ""
 
 #. translators: %s: plugin name
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:412
 #, js-format
 msgid "Easy Paidy setup now available with %s!"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:420
 msgid "Right now, we are offering a one-month trial with no payment fees!"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:441
 msgid "What is Paidy?"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:443
 msgid "Paidy is a deferred payment service that can be used without the need for a credit card."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:448
 msgid "Customers can make purchases with just their mobile phone number and email address."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:453
 msgid "Payment can be made from the following month onwards via convenience store, bank or direct debit."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:458
 msgid "We respond to the desire to \"buy now.\""
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:472
 msgid "Benefits of implementation (for EC businesses)"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:477
 msgid "No credit card registration is required, making it easy for new customers to make purchases with confidence."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:482
 msgid "Installment payments are also supported, which is expected to increase the success rate of high-priced products."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:487
 msgid "*Free installment fees only apply when paying by direct debit or bank transfer. Identity verification and app download required."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:4
-#: src/js/paidy/wizard/components/first-main-page.jsx:492
 msgid "Currently used on over 700,000 websites nationwide, including Amazon. Industry-leading track record."
 msgstr ""
 
 #. translators: %s: plugin name
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:503
 #, js-format
 msgid "%s * Paidy"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:508
 msgid "With this update, Paidy can now be installed in as little as 30 seconds!"
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:513
 msgid "No initial or monthly fees."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:518
 msgid "The review process is completed in as little as 1-2 days, and setup is easy."
 msgstr ""
 
 #: assets/js/build/paidy/wizard/paidy.js:5
-#: src/js/paidy/wizard/components/first-main-page.jsx:531
 msgid "pass this time"
-msgstr ""
-
-#: src/js/paidy/admin/components/index.js:73
-msgid "Status: Approved"
-msgstr ""
-
-#: src/js/paidy/admin/components/index.js:116
-msgid "Status: Rejected"
-msgstr ""
-
-#: src/js/paidy/wizard/button.js:6
-msgid "Next"
-msgstr ""
-
-#: src/js/paidy/wizard/button.js:14
-msgid "Save"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:165
-msgid "Japanized for WooCommerce security check"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:171
-msgid "The vulnerability data has not been updated for a while, so vulnerabilities disclosed since then are not checked."
-msgstr ""
-
-#. translators: %d: number of vulnerabilities
-#: includes/admin/class-jp4wc-security-notice.php:189
-#, php-format
-msgid "%d known vulnerability was found in the software installed on this site."
-msgid_plural "%d known vulnerabilities were found in the software installed on this site."
-msgstr[0] ""
-msgstr[1] ""
-
-#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
-#: includes/admin/class-jp4wc-security-notice.php:192
-#, php-format
-msgid "The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn the vulnerability check off in the JP4WC settings."
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:198
-msgid "Update the affected plugins, themes or WordPress to a fixed version, or remove the ones that have no fix."
-msgstr ""
-
-#. translators: %d: number of vulnerabilities not listed
-#: includes/admin/class-jp4wc-security-notice.php:235
-#, php-format
-msgid "and %d more"
-msgid_plural "and %d more"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/admin/class-jp4wc-security-notice.php:252
-msgctxt "vulnerability severity"
-msgid "Critical"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:253
-msgctxt "vulnerability severity"
-msgid "High"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:254
-msgctxt "vulnerability severity"
-msgid "Medium"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:255
-msgctxt "vulnerability severity"
-msgid "Low"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:256
-msgctxt "vulnerability severity"
-msgid "None"
-msgstr ""
-
-#. translators: %s: severity of a vulnerability, e.g. High
-#: includes/admin/class-jp4wc-security-notice.php:260
-#, php-format
-msgid "Severity: %s"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:264
-msgid "No fixed version yet"
-msgstr ""
-
-#. translators: %s: comma-separated versions that fix the vulnerability
-#: includes/admin/class-jp4wc-security-notice.php:267
-#, php-format
-msgid "Fixed in %s"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:311
-msgid "License"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-notice.php:330
-msgid "Open the Security tab"
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-api.php:85
-msgid "Sorry, you are not allowed to view the security check."
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-api.php:106
-msgid "Sorry, you are not allowed to run the security check."
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-api.php:114
-msgid "The page has expired. Reload it and try again."
-msgstr ""
-
-#: includes/admin/class-jp4wc-security-api.php:141
-msgid "The security check is off."
-msgstr ""
-
-#. translators: %d: seconds to wait
-#: includes/admin/class-jp4wc-security-api.php:152
-#, php-format
-msgid "A re-check was asked for a moment ago. Try again in %d second."
-msgid_plural "A re-check was asked for a moment ago. Try again in %d seconds."
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/admin/class-jp4wc-security-api.php:166
-msgid "The re-check could not be scheduled in WP-Cron. Try again later."
-msgstr ""
-
-#. translators: %d: minutes until logins are accepted again
-#: includes/class-jp4wc-login-limiter.php:181
-#, php-format
-msgid "<strong>Error:</strong> Too many login attempts. Please try again in %d minute."
-msgid_plural "<strong>Error:</strong> Too many login attempts. Please try again in %d minutes."
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/class-jp4wc-xmlrpc-guard.php:272
-msgid "XML-RPC services are disabled on this site."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:630
-msgid "Agree to the terms of use and the privacy policy to run the check."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:654
-msgid "The Terms of Use and the Privacy Policy of the free check changed after this page was opened. Reload the page, read them and agree again."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:737
-msgid "The check data was deleted while the check ran, so its result was not kept."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:860
-msgid "This site cannot be checked: its address or a version of WordPress, WooCommerce, PHP or this plugin cannot be sent as the check requires."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:887
-msgid "wc.artws.info sent a response that could not be read. Try again later."
-msgstr ""
-
-#. translators: %s: date and time
-#: includes/class-jp4wc-security-scan.php:1009
-#, php-format
-msgid "The check can run once an hour. Try again after %s."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:1012
-msgid "The check can run once an hour. Try again later."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:1022
-msgid "wc.artws.info did not accept the information sent. Update this plugin to the latest version and try again."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:1028
-msgid "The check of wc.artws.info is not ready yet. Try again later."
-msgstr ""
-
-#. translators: %d: HTTP status code
-#: includes/class-jp4wc-security-scan.php:1036
-#, php-format
-msgid "wc.artws.info answered with an error (HTTP %d). Try again later."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:1070
-msgid "Could not connect to wc.artws.info. Make sure this server can connect to it, and try again later."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:1083
-msgid "The free check sends the results of the security check: turn the security check on and wait for its first results."
-msgstr ""
-
-#: includes/class-jp4wc-security-scan.php:1096
-msgid "Another request to wc.artws.info is running. Try again in a few minutes."
 msgstr ""

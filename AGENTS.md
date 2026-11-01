@@ -13,7 +13,7 @@ Guidance for AI agents working on Japanized for WooCommerce, and the rules Codex
 composer lint                      # phpcs (WordPress Coding Standards); tests/ is excluded from the ruleset
 composer test-local                # PHPUnit, own MySQL container and WP test library
 cd plugins/artws-security-hub && composer lint && composer test-local   # the server plugin
-npx wp-scripts build               # JS bundle (not `npm run build` in feature PRs)
+npx wp-scripts build               # JS bundle (`npm run build` is the same; neither touches i18n/)
 ```
 
 ## Code Review Rules
