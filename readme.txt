@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -170,6 +170,12 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 
 == Changelog ==
 
+= 3.0.2 - 2026-11-05 =
+* **Added** - Two hooks for the scheduled updates of Japanized for WooCommerce Pro and similar plugins: the filter `jp4wc_security_check_updates_automatically` lets a plugin that updates other plugins on its own schedule have them counted as updated automatically by the security check, and the action `jp4wc_security_findings_updated` fires with the results each time the security check saves them (#300)
+* **Changed** - The free security check by wc.artws.info asks for consent again under its revised terms of use and privacy policy (revised on 2026-10-29, in force from 2026-11-05): staff of 職人工房 合同会社 may look at the information sent and the reports of each registration to answer inquiries, investigate problems, confirm deletion requests and review the priority of measures for the size of the store, and they are never used for sales or advertising. Stores that agreed to the earlier text see a notice on the Security tab and agree again from "Get the free check"; they keep their registration, and the revenue and order bands are sent again only when the box is ticked again. A Security tab opened before the update asks for a reload instead of recording a consent to a text it did not show (#311)
+* **Fixed** - Bundled Japanese translation: 19 strings had no translation (among them the settings of Cash on Delivery for Subscriptions and some Paidy error messages), and six strings of the COD fee settings on the settings screen showed in English on every Japanese site, because WordPress uses the bundled translation of the settings screen instead of the language pack's and it lacked them. Translation files that no page loads are no longer shipped (#308)
+* **Security** - The login attempt limiter counts an IPv6 address together with the rest of its /64 network, so a client cannot get past the per-address limit by taking a new address for every attempt; an IPv4 address, including one that reaches the site as an IPv4-mapped IPv6 address, is still counted on its own. The new filter `jp4wc_login_limit_ipv6_prefix` changes the network length (32 to 128). Failures already counted for IPv6 addresses start over with this update (#314)
+
 = 3.0.1 - 2026-10-31 =
 * **Added** - The report of the free security check starts with a comparison with the checks on the Security tab: what only the free check found, what only the checks on the tab found and which checks on the tab could not be confirmed, or that the result is the same. The comparison is not included when the report is saved as a PDF (#305)
 * **Changed** - The free security check opens from a "Get the free check" button: the information to be sent and the consent appear only when it is clicked, and nothing is sent until a store manager agrees and clicks "Agree and run the check". Once the site has agreed, the box for the revenue and order bands stays next to "Run the check again", and the information sent opens from a link (#305)
@@ -320,6 +326,9 @@ Yes, Japanized for WooCommerce is completely free and open source under the GPLv
 [View complete changelog](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
 == Upgrade Notice ==
+
+= 3.0.2 =
+3.0.2 follows the revised terms of use and privacy policy of the free security check, in force from 2026-11-05. If you used the free check, read them and agree again on the Security tab to run it again. The daily vulnerability check keeps running as before.
 
 = 3.0.0 =
 3.0.0 adds a security check on a new Security tab, on by default: once a day it downloads a list of known vulnerabilities from wc.artws.info, sending only the versions of this plugin, WordPress, WooCommerce and PHP. You can turn it off on that tab. Make a full site backup before updating.
