@@ -1005,7 +1005,21 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			update_option( 'wc4jp-hide-rest-users', '' );
 			unset( $this->answers[ $url ] );
 			$this->assertSame( 'unknown', $this->status( 'A-05' ), 'Off: unreachable is unknown, as before.' );
+
+			// With pretty permalinks the ?rest_route= form is requested too (#315).
+			update_option( 'wc4jp-hide-rest-users', '1' );
+			$this->set_permalink_structure( '/%postname%/' );
+			$pretty = get_rest_url( null, 'wp/v2/users' );
+			$query  = trailingslashit( home_url() ) . 'index.php?rest_route=/wp/v2/users';
+
+			$this->answers[ $pretty ] = array( 404, array() );
+			$this->answers[ $query ]  = array( 500, array() );
+			$this->assertSame( 'pass', $this->status( 'A-05' ), 'The setting is trusted for what the probe cannot tell.' );
+
+			$this->answers[ $query ] = array( 200, array( 'x-wp-total' => '3' ) );
+			$this->assertSame( 'fail', $this->status( 'A-05' ), 'Only the ?rest_route= form lists users.' );
 		} finally {
+			$this->set_permalink_structure( '' );
 			delete_option( 'wc4jp-hide-rest-users' );
 		}
 	}
@@ -1242,7 +1256,94 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		$this->assertSame( 'pass', $this->status( 'A-05' ) );
 
 		$this->answers[ $url ] = array( 500, array() );
+		$this->requested       = array();
 		$this->assertSame( 'unknown', $this->status( 'A-05' ) );
+
+		// Plain permalinks: the route's URL is already the ?rest_route= form, requested once (#315).
+		$this->assertStringContainsString( '?rest_route=/wp/v2/users', $url );
+		$this->assertSame(
+			array( $url ),
+			array_values(
+				array_filter(
+					$this->requested,
+					static function ( $requested ) {
+						return false !== strpos( $requested, 'wp/v2/users' );
+					}
+				)
+			)
+		);
+	}
+
+	/**
+	 * With pretty permalinks A-05 also requests the ?rest_route= form, which a rule on /wp-json/ does not block (#315).
+	 */
+	public function test_a05_rest_route_form_with_pretty_permalinks() {
+		$this->set_permalink_structure( '/%postname%/' );
+		try {
+			$pretty = get_rest_url( null, 'wp/v2/users' );
+			$query  = trailingslashit( home_url() ) . 'index.php?rest_route=/wp/v2/users';
+			$this->assertStringContainsString( '/wp-json/wp/v2/users', $pretty );
+			$users = static function ( array $requested ) {
+				return array_values(
+					array_filter(
+						$requested,
+						static function ( $url ) {
+							return false !== strpos( $url, 'wp/v2/users' );
+						}
+					)
+				);
+			};
+
+			$this->answers[ $pretty ] = array( 403, array() );
+			$this->answers[ $query ]  = array( 200, array( 'x-wp-total' => '3' ) );
+			$this->requested          = array();
+			$this->assertSame( 'fail', $this->status( 'A-05' ), 'Only /wp-json/ is blocked.' );
+			$this->assertSame( array( $pretty, $query ), $users( $this->requested ), 'Each form is requested once.' );
+			$this->assertNotFalse( get_option( JP4WC_Security_Probe::option_name( 'A-05-query' ) ), 'The result is kept under a key of its own.' );
+			JP4WC_Security_Checks::delete_probe_results();
+			$this->assertFalse( get_option( JP4WC_Security_Probe::option_name( 'A-05-query' ) ), 'And removed with the others.' );
+
+			$this->answers[ $pretty ] = array( 200, array( 'x-wp-total' => '3' ) );
+			$this->requested          = array();
+			$this->assertSame( 'fail', $this->status( 'A-05' ) );
+			$this->assertSame( array( $pretty ), $users( $this->requested ), 'A list at the first URL settles it.' );
+
+			$this->answers[ $pretty ] = array( 404, array() );
+			$this->answers[ $query ]  = array( 404, array() );
+			$this->assertSame( 'pass', $this->status( 'A-05' ), 'Both closed.' );
+
+			$this->answers[ $pretty ] = array( 403, array() );
+			$this->answers[ $query ]  = array( 200, array( 'x-wp-total' => '0' ) );
+			$this->assertSame( 'pass', $this->status( 'A-05' ), 'The open form lists nobody.' );
+
+			$this->answers[ $query ] = array( 500, array() );
+			$this->assertSame( 'unknown', $this->status( 'A-05' ), 'One form tells nothing.' );
+
+			unset( $this->answers[ $query ] );
+			$this->assertSame( 'unknown', $this->status( 'A-05' ), 'One form cannot be reached.' );
+
+			$this->answers[ $pretty ] = array( 500, array() );
+			$this->answers[ $query ]  = array( 500, array() );
+			$this->assertSame( 'unknown', $this->status( 'A-05' ), 'Neither tells anything.' );
+		} finally {
+			$this->set_permalink_structure( '' );
+		}
+	}
+
+	/**
+	 * A-05 reads an X-WP-Total header sent twice without a warning (#315).
+	 */
+	public function test_a05_repeated_total_header() {
+		$url = get_rest_url( null, 'wp/v2/users' );
+
+		$this->answers[ $url ] = array( 200, array( 'x-wp-total' => array( '3', '3' ) ) );
+		$this->assertSame( 'fail', $this->status( 'A-05' ) );
+
+		$this->answers[ $url ] = array( 200, array( 'x-wp-total' => array( '0', '0' ) ) );
+		$this->assertSame( 'pass', $this->status( 'A-05' ), 'Every total says nobody.' );
+
+		$this->answers[ $url ] = array( 200, array( 'x-wp-total' => array( '0', '2' ) ) );
+		$this->assertSame( 'fail', $this->status( 'A-05' ), 'The totals disagree.' );
 	}
 
 	/**
@@ -1295,6 +1396,18 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			'debug log'              => array( 'debug.log', 'fail' ),
 			'PHP error log'          => array( 'error_log', 'fail' ),
 			'upper case'             => array( 'DUMP.SQL', 'fail' ),
+			'UpdraftPlus database'   => array( 'backup_2026-11-01-0930_Shop_0123456789ab-db.gz', 'fail' ),
+			'UpdraftPlus other db'   => array( 'backup_2026-11-01-0930_Shop_0123456789ab-db1.gz', 'fail' ),
+			'gzipped db'             => array( 'shop_db.gz', 'fail' ),
+			'bzip2 dump'             => array( 'dump.sql.bz2', 'fail' ),
+			'xz dump'                => array( 'dump.sql.xz', 'fail' ),
+			'zstd dump'              => array( 'dump.sql.zst', 'fail' ),
+			'bzip2 tarball'          => array( 'site.tar.bz2', 'fail' ),
+			'xz tarball'             => array( 'site.tar.xz', 'fail' ),
+			'zstd tarball'           => array( 'site.tar.zst', 'fail' ),
+			'tbz2 tarball'           => array( 'site.tbz2', 'fail' ),
+			'txz tarball'            => array( 'site.txz', 'fail' ),
+			'wpress backup'          => array( 'example-com-20261101-093000-abc123.wpress', 'fail' ),
 			'wp-config itself'       => array( 'wp-config.php', 'pass' ),
 			'index'                  => array( 'index.php', 'pass' ),
 			'readme'                 => array( 'readme.html', 'pass' ),
@@ -1303,6 +1416,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			'sql in the middle'      => array( 'sql-notes.txt', 'pass' ),
 			'compressed sitemap'     => array( 'sitemap.xml.gz', 'pass' ),
 			'compressed page cache'  => array( 'index.html.gz', 'pass' ),
+			'xz text'                => array( 'readme.txt.xz', 'pass' ),
 			'name ending like a log' => array( 'catalog', 'pass' ),
 		);
 	}
@@ -1451,6 +1565,35 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			$this->answers[ $base . '/' . $name ] = array( 403, array() );
 		}
 		$this->assertSame( 'unknown', $this->status( 'D-02', $context ), 'Four kinds: one was not requested.' );
+	}
+
+	/**
+	 * D-02 tells the kind of a file by the extension the pattern found (#315).
+	 */
+	public function test_d02_kinds_of_the_new_formats() {
+		$base    = untrailingslashit( home_url() ) . '/public';
+		$context = array( 'public_directories' => array( $this->dir . '/public' => $base ) );
+		foreach ( array( 'backup_2026-11-01-0930_example.com_aaa-db.gz', 'backup_2026-11-02-0930_example.com_bbb-db.gz', 'dump.sql.xz' ) as $name ) {
+			$this->write( 'public/' . $name, 'data' );
+			$this->answers[ $base . '/' . $name ] = array( 403, array() );
+		}
+
+		$this->requested = array();
+		$this->assertSame( 'pass', $this->status( 'D-02', $context ) );
+		$this->assertCount(
+			2,
+			array_filter(
+				$this->requested,
+				static function ( $url ) use ( $base ) {
+					return 0 === strpos( $url, $base );
+				}
+			),
+			'One -db.gz, whatever the site name, and one .sql.xz.'
+		);
+
+		$this->write( 'public/site.tar.xz', 'data' );
+		$this->answers[ $base . '/site.tar.xz' ] = array( 200, array() );
+		$this->assertSame( 'fail', $this->status( 'D-02', $context ), 'A .tar.xz is not a .sql.xz.' );
 	}
 
 	/**
