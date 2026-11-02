@@ -1018,6 +1018,11 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 
 			$this->answers[ $query ] = array( 200, array( 'x-wp-total' => '3' ) );
 			$this->assertSame( 'fail', $this->status( 'A-05' ), 'Only the ?rest_route= form lists users.' );
+
+			$this->answers[ $pretty ] = array( 200, array( 'x-wp-total' => '3' ) );
+			$this->requested          = array();
+			$this->assertSame( 'fail', $this->status( 'A-05' ) );
+			$this->assertNotContains( $query, $this->requested, 'A list at the first URL settles it.' );
 		} finally {
 			$this->set_permalink_structure( '' );
 			delete_option( 'wc4jp-hide-rest-users' );
@@ -1325,6 +1330,16 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			$this->answers[ $pretty ] = array( 500, array() );
 			$this->answers[ $query ]  = array( 500, array() );
 			$this->assertSame( 'unknown', $this->status( 'A-05' ), 'Neither tells anything.' );
+
+			// Permalinks through index.php (/index.php/wp-json/...) are pretty permalinks too.
+			$this->set_permalink_structure( '/index.php/%postname%/' );
+			$index = get_rest_url( null, 'wp/v2/users' );
+			$this->assertStringContainsString( '/index.php/wp-json/wp/v2/users', $index );
+			$this->answers[ $index ] = array( 403, array() );
+			$this->answers[ $query ] = array( 200, array( 'x-wp-total' => '3' ) );
+			$this->requested         = array();
+			$this->assertSame( 'fail', $this->status( 'A-05' ) );
+			$this->assertSame( array( $index, $query ), $users( $this->requested ) );
 		} finally {
 			$this->set_permalink_structure( '' );
 		}
@@ -1389,16 +1404,23 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 			'compressed dump'        => array( 'db.sql.gz', 'fail' ),
 			'site archive'           => array( 'site.zip', 'fail' ),
 			'tarball'                => array( 'site.tar.gz', 'fail' ),
+			'tgz tarball'            => array( 'site.tgz', 'fail' ),
+			'tar archive'            => array( 'site.tar', 'fail' ),
 			'7z archive'             => array( 'site.7z', 'fail' ),
+			'rar archive'            => array( 'site.rar', 'fail' ),
 			'wp-config backup'       => array( 'wp-config.php.bak', 'fail' ),
 			'wp-config editor copy'  => array( 'wp-config.php~', 'fail' ),
 			'wp-config old'          => array( 'wp-config.old', 'fail' ),
+			'wp-config orig'         => array( 'wp-config.php.orig', 'fail' ),
+			'wp-config nano save'    => array( 'wp-config.php.save', 'fail' ),
+			'wp-config vim swap'     => array( '.wp-config.php.swp', 'fail' ),
 			'debug log'              => array( 'debug.log', 'fail' ),
 			'PHP error log'          => array( 'error_log', 'fail' ),
 			'upper case'             => array( 'DUMP.SQL', 'fail' ),
 			'UpdraftPlus database'   => array( 'backup_2026-11-01-0930_Shop_0123456789ab-db.gz', 'fail' ),
 			'UpdraftPlus other db'   => array( 'backup_2026-11-01-0930_Shop_0123456789ab-db1.gz', 'fail' ),
 			'gzipped db'             => array( 'shop_db.gz', 'fail' ),
+			'gzipped db with a dot'  => array( 'shop.db.gz', 'fail' ),
 			'bzip2 dump'             => array( 'dump.sql.bz2', 'fail' ),
 			'xz dump'                => array( 'dump.sql.xz', 'fail' ),
 			'zstd dump'              => array( 'dump.sql.zst', 'fail' ),
