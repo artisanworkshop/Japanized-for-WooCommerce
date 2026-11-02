@@ -245,11 +245,14 @@ class JP4WC_Security_Checks {
 	const DECLARATIONS = array( T_NAMESPACE, T_USE, T_DECLARE, T_CLASS, T_ABSTRACT, T_FINAL, T_READONLY, T_INTERFACE, T_TRAIT, T_ENUM, T_FUNCTION, T_CONST );
 
 	/**
-	 * File names D-02 reports in a public directory: database dumps, archives,
-	 * backups, logs and copies of wp-config.php. Other .gz files, such as
-	 * sitemap.xml.gz, are meant to be public.
+	 * File names D-02 reports in a public directory: database dumps (also
+	 * compressed with gzip, bzip2, xz or zstd, and UpdraftPlus's -db.gz),
+	 * archives (also All-in-One WP Migration's .wpress), backups, logs and
+	 * copies of wp-config.php. Other compressed files, such as sitemap.xml.gz,
+	 * are meant to be public. The group "kind" is the extension D-02 requests
+	 * one file of.
 	 */
-	const EXPOSED_FILE_PATTERN = '/^(?:.+\.(?:sql|sql\.gz|tar|tar\.gz|tgz|zip|7z|rar|bak|old|orig|save|swp|log)|wp-config\.php.+|error_log)$/iD';
+	const EXPOSED_FILE_PATTERN = '/^(?:.+?(?<kind>[-_.]db[0-9]*\.gz|\.(?:sql|tar)(?:\.(?:gz|bz2|xz|zst))?|\.(?:tgz|tbz2|txz|zip|7z|rar|wpress|bak|old|orig|save|swp|log))|wp-config\.php.+|error_log)$/iD';
 
 	/**
 	 * Runs every check.
@@ -719,29 +722,55 @@ class JP4WC_Security_Checks {
 	/**
 	 * A-05: the users REST route lists users to anyone.
 	 *
-	 * A route that lists nobody (X-WP-Total: 0) passes. With this plugin's own
-	 * setting that hides the route from visitors, the route is still requested
-	 * (another plugin could put it back): a list of users fails, anything
-	 * else passes.
+	 * Requests the route's URL and, when that is not already the ?rest_route=
+	 * form (pretty permalinks), that form too: WordPress answers it whatever
+	 * the permalinks, so a server rule that blocks only /wp-json/ leaves the
+	 * list open there. Either URL listing users fails. The check passes only
+	 * when every URL is closed or lists nobody (X-WP-Total: 0), and is
+	 * otherwise unknown. With this plugin's own setting that hides the route
+	 * from visitors, the route is still requested (another plugin could put
+	 * it back): a list of users fails, anything else passes.
 	 *
 	 * @param array $context Context.
 	 * @return string
 	 */
 	private static function rest_users( array $context ) {
 		// This plugin's own setting (3.0.0). class_exists: an earlier version's includes() may have loaded this file.
-		$hidden = class_exists( 'JP4WC_Security_Hardening', false ) && JP4WC_Security_Hardening::hides_rest_users();
-		$status = $context['probe']->status(
-			'A-05',
-			get_rest_url( null, 'wp/v2/users' ),
-			static function ( $response ) {
-				if ( 200 === (int) wp_remote_retrieve_response_code( $response ) ) {
-					return '0' === trim( (string) wp_remote_retrieve_header( $response, 'x-wp-total' ) ) ? 'pass' : 'fail';
-				}
+		$hidden   = class_exists( 'JP4WC_Security_Hardening', false ) && JP4WC_Security_Hardening::hides_rest_users();
+		$classify = static function ( $response ) {
+			if ( 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
 				return JP4WC_Security_Probe::status_for_code( $response, array() );
 			}
-		);
+			// A header sent twice comes back as an array: the route lists nobody only when every total says 0.
+			$totals = (array) wp_remote_retrieve_header( $response, 'x-wp-total' );
+			foreach ( $totals as $total ) {
+				if ( ! is_scalar( $total ) || '0' !== trim( (string) $total ) ) {
+					return 'fail';
+				}
+			}
+			return array() === $totals ? 'fail' : 'pass';
+		};
+
+		$urls  = array( 'A-05' => get_rest_url( null, 'wp/v2/users' ) );
+		$query = wp_parse_url( $urls['A-05'], PHP_URL_QUERY );
+		wp_parse_str( is_string( $query ) ? $query : '', $args );
+		if ( ! isset( $args['rest_route'] ) ) {
+			// The form get_rest_url() builds without pretty permalinks.
+			$urls['A-05-query'] = add_query_arg( 'rest_route', '/wp/v2/users', trailingslashit( get_home_url( null, '', 'rest' ) ) . 'index.php' );
+		}
+
+		$statuses = array();
+		foreach ( $urls as $key => $url ) {
+			$statuses[] = $context['probe']->status( $key, $url, $classify );
+			if ( 'fail' === end( $statuses ) ) {
+				return 'fail';
+			}
+		}
 		// With the setting on, the route is gone for visitors: only a list of users seen by the probe says otherwise.
-		return $hidden && 'fail' !== $status ? 'pass' : $status;
+		if ( $hidden ) {
+			return 'pass';
+		}
+		return array( 'pass' ) === array_values( array_unique( $statuses ) ) ? 'pass' : 'unknown';
 	}
 
 	/**
@@ -819,11 +848,11 @@ class JP4WC_Security_Checks {
 			$names = self::find_entries(
 				$directory,
 				static function ( $name ) use ( $directory, &$kinds ) {
-					if ( 1 !== preg_match( self::EXPOSED_FILE_PATTERN, $name ) || ! is_file( $directory . '/' . $name ) ) {
+					if ( 1 !== preg_match( self::EXPOSED_FILE_PATTERN, $name, $match ) || ! is_file( $directory . '/' . $name ) ) {
 						return false;
 					}
-					// One file per kind: .sql, .sql.gz, .log, error_log...
-					$kind = strtolower( (string) preg_replace( '/^.*?(\.[^.]+(?:\.gz)?)$/', '$1', $name ) );
+					// One file per kind: the extension the pattern found (.sql, .sql.xz, -db.gz...), else the name (error_log).
+					$kind = strtolower( isset( $match['kind'] ) && '' !== $match['kind'] ? $match['kind'] : $name );
 					if ( isset( $kinds[ $kind ] ) ) {
 						return false;
 					}
@@ -1724,7 +1753,7 @@ class JP4WC_Security_Checks {
 	 * @return string[]
 	 */
 	public static function probe_keys() {
-		$keys = array( 'A-02', 'A-04', 'A-05', 'D-01', 'D-04' );
+		$keys = array( 'A-02', 'A-04', 'A-05', 'A-05-query', 'D-01', 'D-04' );
 		for ( $key = 0; $key < self::EXPOSED_DIRECTORIES * self::EXPOSED_PROBES; $key++ ) {
 			$keys[] = 'D-02-' . $key;
 		}
