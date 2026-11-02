@@ -2,10 +2,10 @@
 - タスク: issue #315 セキュリティチェックの誤った pass を塞ぐ（A-05 の ?rest_route=、D-02 の圧縮した DB ダンプ。milestone 3.0.2）
 - 開始: 2026-11-02
 - モード: auto-commit（確認ゲートなし）、同時依頼
-- PR: 未作成
-- 現在のステップ: 3（review-loop）
-- Copilot: 依頼 0 回
-- Codex: 依頼 0 回
+- PR: #323 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/323
+- 現在のステップ: 6（G2 依頼。Copilot のみ）
+- Copilot: 依頼 1 回 / 未収束（G1 で 1 件、誤検知として保留）
+- Codex: 依頼 1 回 / 収束（G1 で「Didn't find any major issues」）
 
 ## 計画で決めたこと（2026-11-02 ユーザー回答）
 - A-05 の 2 本の結果: どちらかが fail → fail / 両方 pass → pass / それ以外 → unknown（厳密）。#291 の設定オン時は fail 以外 pass のまま
@@ -18,3 +18,7 @@
 |---|---|---|
 | 2026-11-02 | 1 | 計画承認（変更は security-checks とそのテストの 2 ファイル） |
 | 2026-11-02 | 2 | 実装コミット 2123518。PHPUnit 1081 件 green、修正を 7 通り戻すとそれぞれ新テストが落ちることを確認、lint は main と同数（93/12）、テストファイルの phpcs も通過 |
+| 2026-11-02 | 3 | review-loop R1: Medium 1（R1-1 修正 21339e9）、Low 4 + 範囲外 3 は backlog。R2 APPROVE（R1-1 は mutate-check 4 件 CAUGHT） |
+| 2026-11-02 09:36 | 4 | upstream に push（b316cb4、T=2026-11-02T00:36:07Z）、PR #323 作成（milestone Version 3.0.2、label bug） |
+| 2026-11-02 09:46 | 5-6 | CI green（Testing 41368090631）の後、Codex（"@codex review"）と Copilot に同時依頼。両 bot が b316cb4 に応答 |
+| 2026-11-02 09:52 | 7 | G1: Codex 0 件 → 収束。Copilot は 2 本目のレビュー（settle の窓の後）で 1 件 → G1-1 は誤検知として保留（`add_query_arg()` は足す値をエンコードしない）。修正なし |
