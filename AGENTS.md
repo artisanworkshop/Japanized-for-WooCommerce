@@ -53,6 +53,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - Anything local-only at the top level is listed in `.distignore` (the release ZIP and the WordPress.org deploy copy the tree with `rsync --exclude-from=.distignore`). `plugins/` never ships.
 - The readme `== External Services ==` section must match what the code actually sends, when and where.
 - What the free security check sends is built only by `JP4WC_Security_Scan::payload()`, which the consent screen also previews. A key sent from anywhere else, or one missing from the readme External Services list, is a defect.
+- A path in `SecurityScan.js` that sets the free check's state from a server answer also sets `bands` to the bands that answer was built with (`show()` / `loadBands()`); one without the other can send bands the preview does not show (#317).
 - A new `consent_version` sent by JP4WC must already be in `Artws_Sec_Scan_Request::CONSENT_VERSIONS`, and a version a released JP4WC sends stays there.
 - The terms of use and the privacy policy on wc.artws.info describe what the client sends, how long it is kept and how it is deleted, and the terms rely on the Security tab's link to them. A PR that changes any of these says in its description that both pages need the same change.
 
@@ -61,6 +62,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - A fix comes with a test that fails without it. Calling a hook callback directly does not prove the hook is registered; Store API behaviour is tested with `rest_get_server()->dispatch()`.
 - Never `markTestSkipped()` because a plugin class is missing: `require_once` it and assert `class_exists()`.
 - A test passes for the wrong reason when WooCommerce catches the warning-turned-exception it expects, or when it sets up state the code no longer reads.
+- In `tests/e2e/`, a POST or DELETE of `/jp4wc/v1/security/scan` is answered by the test; `route.fetch()` / `route.continue()` on it sends real data to wc.artws.info.
 
 ### plugins/artws-security-hub (wc.artws.info)
 
