@@ -213,6 +213,22 @@ test.describe( 'vulnerability data status (#316)', () => {
 		expect( errors ).toEqual( [] );
 	} );
 
+	test( 'failed with stored files that matched nothing: does not claim the data is used', async ( {
+		page,
+	} ) => {
+		const errors = await openWith(
+			page,
+			feed( { failing: true, failure_reason: 'connect' } ),
+			null
+		);
+
+		await expect( notice( page, FAILED ) ).toContainText( REASONS.connect );
+		await expect( notice( page, NOT_CHECKED ) ).toBeVisible();
+		await expect( notice( page, UPDATED_ON ) ).toHaveCount( 0 );
+		await expect( notice( page, NOT_YET ) ).toHaveCount( 0 );
+		expect( errors ).toEqual( [] );
+	} );
+
 	test( 'unavailable: the notice is as before, and the reason follows it', async ( {
 		page,
 	} ) => {
