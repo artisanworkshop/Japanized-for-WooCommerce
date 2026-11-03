@@ -133,7 +133,7 @@ msgstr ""
 #. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
 #: includes/admin/class-jp4wc-security-notice.php:200
 #, php-format
-msgid "The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn the vulnerability check off in the JP4WC settings."
+msgid "The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn off \"Security check\" on the Security tab."
 msgstr ""
 
 #: includes/admin/class-jp4wc-security-notice.php:212
@@ -2786,10 +2786,34 @@ msgstr ""
 msgid "The vulnerability data has not been downloaded yet, so known vulnerabilities are not checked. It is downloaded once a day."
 msgstr ""
 
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: assets/js/build/admin/settings.js:13
+#, js-format
+msgid "This server could not connect to %s."
+msgstr ""
+
 #. translators: %s: file or directory of a must-use plugin
 #: assets/js/build/admin/settings.js:14
 #, js-format
 msgid "%s (must-use plugin)"
+msgstr ""
+
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: assets/js/build/admin/settings.js:14
+#, js-format
+msgid "%s returned an error."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:14
+msgid "The downloaded data was damaged or not in the expected format."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:14
+msgid "The PHP zlib extension, which is needed to decompress the data, is not available on this server. Ask your hosting provider to enable it."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:14
+msgid "The data could not be saved in the uploads directory. Make sure the server can write to it."
 msgstr ""
 
 #. translators: %s: theme name
@@ -2890,6 +2914,16 @@ msgstr ""
 msgid "The result of the security check could not be loaded."
 msgstr ""
 
+#. translators: %s: date and time the vulnerability data was last updated
+#: assets/js/build/admin/settings.js:15
+#, js-format
+msgid "Until a download succeeds, the vulnerability data updated on %s is used."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:15
+msgid "Known vulnerabilities are not checked until a download succeeds. It is tried again once a day."
+msgstr ""
+
 #. translators: %s: plugin slug
 #: assets/js/build/admin/settings.js:16
 #, js-format
@@ -2948,10 +2982,22 @@ msgstr ""
 msgid "Re-check now"
 msgstr ""
 
+#. translators: 1: date and time of the last download attempt, 2: why it failed, one sentence
+#: assets/js/build/admin/settings.js:16
+#, js-format
+msgid "The last download of the vulnerability data (%1$s) failed. Reason: %2$s"
+msgstr ""
+
 #. translators: %s: date and time of the last check
 #: assets/js/build/admin/settings.js:17
 #, js-format
 msgid "Last checked: %s"
+msgstr ""
+
+#. translators: %s: date and time of the last download attempt
+#: assets/js/build/admin/settings.js:17
+#, js-format
+msgid "The last download of the vulnerability data (%s) failed."
 msgstr ""
 
 #. translators: %s: date and time the vulnerability data was generated

@@ -154,11 +154,11 @@ msgstr "Japanized for WooCommerce セキュリティチェック"
 msgid ""
 "The vulnerability data could not be downloaded, so the installed plugins, "
 "themes and WordPress are not being checked. Make sure this server can "
-"connect to %s, or turn the vulnerability check off in the JP4WC settings."
+"connect to %s, or turn off \"Security check\" on the Security tab."
 msgstr ""
 "脆弱性データを取得できないため、インストール済みのプラグイン・テーマ・"
 "WordPress を照合できていません。このサーバーから %s に接続できるか確かめる"
-"か、JP4WC の設定で脆弱性チェックを無効にしてください。"
+"か、セキュリティタブで「セキュリティチェック」をオフにしてください。"
 
 #: includes/admin/class-jp4wc-security-notice.php:212
 #: assets/js/build/admin/settings.js:13
@@ -3232,10 +3232,40 @@ msgstr ""
 "脆弱性データはまだ取得されていないため、既知の脆弱性は照合されていません。"
 "データは1日1回取得します。"
 
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: assets/js/build/admin/settings.js:13
+msgid "This server could not connect to %s."
+msgstr "このサーバーから %s に接続できませんでした。"
+
 #. translators: %s: file or directory of a must-use plugin
 #: assets/js/build/admin/settings.js:14
 msgid "%s (must-use plugin)"
 msgstr "%s（使用必須プラグイン）"
+
+#. translators: %s: host name of the vulnerability feed, e.g. wc.artws.info
+#: assets/js/build/admin/settings.js:14
+msgid "%s returned an error."
+msgstr "%s がエラーを返しました。"
+
+#: assets/js/build/admin/settings.js:14
+msgid "The downloaded data was damaged or not in the expected format."
+msgstr "取得したデータが壊れているか、想定した形式ではありませんでした。"
+
+#: assets/js/build/admin/settings.js:14
+msgid ""
+"The PHP zlib extension, which is needed to decompress the data, is not "
+"available on this server. Ask your hosting provider to enable it."
+msgstr ""
+"データの展開に必要な PHP の zlib 拡張が、このサーバーで使えません。ホスティン"
+"グ会社に有効化を依頼してください。"
+
+#: assets/js/build/admin/settings.js:14
+msgid ""
+"The data could not be saved in the uploads directory. Make sure the server "
+"can write to it."
+msgstr ""
+"データをアップロードディレクトリに保存できませんでした。サーバーから書き込め"
+"るか確かめてください。"
 
 #. translators: %s: theme name
 #: assets/js/build/admin/settings.js:15
@@ -3341,6 +3371,19 @@ msgstr "許可リスト"
 #: assets/js/build/admin/settings.js:15
 msgid "The result of the security check could not be loaded."
 msgstr "セキュリティチェックの結果を読み込めませんでした。"
+
+#. translators: %s: date and time the vulnerability data was last updated
+#: assets/js/build/admin/settings.js:15
+msgid ""
+"Until a download succeeds, the vulnerability data updated on %s is used."
+msgstr "取得に成功するまでは、%s に更新した脆弱性データで照合します。"
+
+#: assets/js/build/admin/settings.js:15
+msgid ""
+"Known vulnerabilities are not checked until a download succeeds. It is tried "
+"again once a day."
+msgstr ""
+"取得に成功するまで、既知の脆弱性は照合されません。取得は1日1回やり直します。"
 
 #. translators: %s: plugin slug
 #: assets/js/build/admin/settings.js:16
@@ -3451,10 +3494,20 @@ msgstr "再チェック中…"
 msgid "Re-check now"
 msgstr "今すぐ再チェック"
 
+#. translators: 1: date and time of the last download attempt, 2: why it failed, one sentence
+#: assets/js/build/admin/settings.js:16
+msgid "The last download of the vulnerability data (%1$s) failed. Reason: %2$s"
+msgstr "前回の脆弱性データの取得（%1$s）に失敗しました。理由: %2$s"
+
 #. translators: %s: date and time of the last check
 #: assets/js/build/admin/settings.js:17
 msgid "Last checked: %s"
 msgstr "最終チェック: %s"
+
+#. translators: %s: date and time of the last download attempt
+#: assets/js/build/admin/settings.js:17
+msgid "The last download of the vulnerability data (%s) failed."
+msgstr "前回の脆弱性データの取得（%s）に失敗しました。"
 
 #. translators: %s: date and time the vulnerability data was generated
 #: assets/js/build/admin/settings.js:18
