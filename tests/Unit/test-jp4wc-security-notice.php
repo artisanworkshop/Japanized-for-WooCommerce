@@ -210,6 +210,7 @@ class JP4WC_Security_Notice_Test extends WP_UnitTestCase {
 			$this->assertStringContainsString( 'notice-warning', $html );
 			$this->assertStringContainsString( 'The vulnerability data could not be downloaded', $html );
 			$this->assertStringContainsString( 'can connect to wc.artws.info', $html );
+			$this->assertStringContainsString( 'turn off &quot;Security check&quot; on the Security tab.', $html, 'The toggle as the Security tab names it (#316).' );
 			$this->assertStringContainsString( '<a href="' . esc_url( JP4WC_Security_Notice::tab_url() ) . '">Open the Security tab</a>', $html );
 
 			update_user_meta( get_current_user_id(), JP4WC_Security_Notice::DISMISSED_META, JP4WC_Security_Notice::get_view()['fingerprint'] );

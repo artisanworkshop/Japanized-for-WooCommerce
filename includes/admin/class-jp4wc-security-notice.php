@@ -197,7 +197,7 @@ JS;
 			echo '<p>' . esc_html(
 				sprintf(
 					/* translators: %s: host name of the vulnerability feed, e.g. wc.artws.info */
-					__( 'The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn the vulnerability check off in the JP4WC settings.', 'woocommerce-for-japan' ),
+					__( 'The vulnerability data could not be downloaded, so the installed plugins, themes and WordPress are not being checked. Make sure this server can connect to %s, or turn off "Security check" on the Security tab.', 'woocommerce-for-japan' ),
 					(string) wp_parse_url( JP4WC_Security_Feed::base_url(), PHP_URL_HOST )
 				)
 			) . '</p>';
