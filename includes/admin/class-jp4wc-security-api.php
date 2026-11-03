@@ -295,7 +295,7 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 *     requirements: array<string, array{score: int, status: string, pass: int, fail: int, unknown: int}>|null,
 	 *     checks: array<int, array{check_id: string, requirement: string, severity: string, status: string}>,
 	 *     vulnerabilities: array|null,
-	 *     feed: array{host: string, has_data: bool, synced_at: int, last_attempt: int, failing: bool, unavailable: bool},
+	 *     feed: array{host: string, has_data: bool, synced_at: int, last_attempt: int, failing: bool, unavailable: bool, failure_reason: string},
 	 *     recheck: array{requested_at: int, done_at: int, pending: bool, retry_after: int},
 	 *     login_limit: array{enabled: bool, active: bool, protected_by: array{type: string, name: string}|null},
 	 *     hardening: array{rest_users: array{enabled: bool}, file_edit: array{enabled: bool, defined_elsewhere: bool, forbidden: bool, allowed_by_constant: bool}},
@@ -303,6 +303,9 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 * }
 	 *         Requirement status: pass when every check passed, action when one
 	 *         failed, otherwise unknown. vulnerabilities is null without data.
+	 *         feed.failure_reason (3.0.2): why the last sync failed, a value of
+	 *         JP4WC_Security_Feed::FAILURE_REASONS; '' when it did not, or for
+	 *         a failure without a reason.
 	 *         login_limit (3.0.0): the login attempt limiter's setting, whether
 	 *         it runs, and what else protects the login page (then it sleeps).
 	 *         xmlrpc (3.0.0): the XML-RPC setting, its allow list and the
@@ -340,12 +343,13 @@ class JP4WC_Security_API extends WP_REST_Controller {
 			'checks'          => array(),
 			'vulnerabilities' => null,
 			'feed'            => array(
-				'host'         => (string) wp_parse_url( JP4WC_Security_Feed::base_url(), PHP_URL_HOST ),
-				'has_data'     => false,
-				'synced_at'    => 0,
-				'last_attempt' => 0,
-				'failing'      => false,
-				'unavailable'  => false,
+				'host'           => (string) wp_parse_url( JP4WC_Security_Feed::base_url(), PHP_URL_HOST ),
+				'has_data'       => false,
+				'synced_at'      => 0,
+				'last_attempt'   => 0,
+				'failing'        => false,
+				'unavailable'    => false,
+				'failure_reason' => '',
 			),
 			'recheck'         => array(
 				'requested_at' => 0,
@@ -376,12 +380,14 @@ class JP4WC_Security_API extends WP_REST_Controller {
 
 		$state        = JP4WC_Security_Feed::get_state();
 		$view['feed'] = array(
-			'host'         => $view['feed']['host'],
-			'has_data'     => is_array( $state['files'] ) && array() !== $state['files'],
-			'synced_at'    => (int) $state['synced_at'],
-			'last_attempt' => (int) $state['last_attempt'],
-			'failing'      => ! empty( $state['failing_since'] ),
-			'unavailable'  => JP4WC_Security_Feed::is_unavailable(),
+			'host'           => $view['feed']['host'],
+			'has_data'       => is_array( $state['files'] ) && array() !== $state['files'],
+			'synced_at'      => (int) $state['synced_at'],
+			'last_attempt'   => (int) $state['last_attempt'],
+			'failing'        => ! empty( $state['failing_since'] ),
+			'unavailable'    => JP4WC_Security_Feed::is_unavailable(),
+			// An earlier version's feed class, loaded while this plugin is updated, has no reason.
+			'failure_reason' => method_exists( 'JP4WC_Security_Feed', 'failure_reason' ) ? JP4WC_Security_Feed::failure_reason() : '',
 		);
 
 		$requested_at    = JP4WC_Security_Feed::recheck_requested_at();

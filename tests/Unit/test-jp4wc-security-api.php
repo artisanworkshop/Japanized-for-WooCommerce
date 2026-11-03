@@ -558,6 +558,8 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 		$this->assertNull( $data['vulnerabilities'] );
 		$this->assertFalse( $data['feed']['has_data'] );
 		$this->assertFalse( $data['feed']['unavailable'] );
+		$this->assertFalse( $data['feed']['failing'] );
+		$this->assertSame( '', $data['feed']['failure_reason'] );
 		$this->assertSame( 'wc.artws.info', $data['feed']['host'] );
 		$this->assertFalse( $data['recheck']['pending'] );
 		$this->assertSame( 0, $data['recheck']['done_at'] );
@@ -692,8 +694,40 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 		$this->assertTrue( $data['feed']['unavailable'] );
 		$this->assertTrue( $data['feed']['failing'] );
 		$this->assertFalse( $data['feed']['has_data'] );
+		$this->assertSame( '', $data['feed']['failure_reason'], 'A failure an earlier version recorded has no reason.' );
 		$this->assertNull( $data['vulnerabilities'] );
 		$this->assertNotNull( $data['requirements'], 'The local checks still show.' );
+
+		update_option(
+			JP4WC_Security_Feed::STATE_OPTION,
+			array(
+				'failing_since'     => time() - 4 * DAY_IN_SECONDS,
+				'last_error_reason' => 'zlib',
+			),
+			false
+		);
+		$feed = $this->get_findings()->get_data()['feed'];
+		$this->assertTrue( $feed['unavailable'] );
+		$this->assertSame( 'zlib', $feed['failure_reason'] );
+	}
+
+	/**
+	 * A sync that cannot connect, without data, is reported as failing with its reason before it is unavailable (#316).
+	 */
+	public function test_failed_sync_reports_its_reason() {
+		// This test answers every request with a WP_Error.
+		JP4WC_Security_Feed::sync();
+
+		$data = $this->get_findings()->get_data();
+
+		$this->assertTrue( $data['feed']['failing'] );
+		$this->assertFalse( $data['feed']['unavailable'] );
+		$this->assertFalse( $data['feed']['has_data'] );
+		$this->assertSame( 'connect', $data['feed']['failure_reason'] );
+		$this->assertGreaterThan( 0, $data['feed']['last_attempt'] );
+		$this->assertSame( 0, $data['feed']['synced_at'] );
+		$this->assertNull( $data['vulnerabilities'] );
+		$this->assertContains( JP4WC_Security_Feed::base_url() . 'manifest.json', $this->requests );
 	}
 
 	/**
