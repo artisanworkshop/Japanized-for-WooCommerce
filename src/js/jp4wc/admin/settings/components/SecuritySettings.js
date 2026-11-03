@@ -529,14 +529,17 @@ const feedFailureReason = ( reason, host ) => {
 /**
  * Says that the last download of the vulnerability data failed, and why.
  *
- * @param {Object} props      Props.
- * @param {Object} props.feed feed of GET /jp4wc/v1/security/findings.
+ * @param {Object}  props          Props.
+ * @param {Object}  props.feed     feed of GET /jp4wc/v1/security/findings.
+ * @param {boolean} props.checking Whether the last match used stored data
+ *                                 (vulnerabilities is not null): stored files
+ *                                 that cannot be read check nothing.
  * @return {Element} Element.
  */
-const FeedFailure = ( { feed } ) => {
+const FeedFailure = ( { feed, checking } ) => {
 	const reason = feedFailureReason( feed.failure_reason, feed.host );
 	let consequence = null;
-	if ( feed.has_data && feed.synced_at > 0 ) {
+	if ( checking && feed.has_data && feed.synced_at > 0 ) {
 		consequence = sprintf(
 			/* translators: %s: date and time the vulnerability data was last updated */
 			__(
@@ -588,7 +591,7 @@ const FeedFailure = ( { feed } ) => {
  */
 const FeedStatus = ( { view } ) => {
 	const failure = view.feed.failing ? (
-		<FeedFailure feed={ view.feed } />
+		<FeedFailure feed={ view.feed } checking={ !! view.vulnerabilities } />
 	) : null;
 	if ( view.feed.unavailable ) {
 		return (
