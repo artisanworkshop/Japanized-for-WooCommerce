@@ -725,11 +725,18 @@ const SecurityScan = ( { checkedAt, view } ) => {
 	/**
 	 * Shows a state the server sent, in place of any request still running.
 	 *
-	 * @param {Object} response State of the free check.
+	 * The bands box is set to the bands the state's preview was built with: a
+	 * load that ran meanwhile (the bands of the stored consent, offered again
+	 * when the checks above ran again) may have changed it, and the next check
+	 * would send bands the preview does not show.
+	 *
+	 * @param {Object}  response  State of the free check.
+	 * @param {boolean} withBands Whether the preview in the state has the bands.
 	 */
-	const show = ( response ) => {
+	const show = ( response, withBands ) => {
 		loadCount.current++;
 		setScan( response );
+		setBands( withBands );
 		setLoadError( null );
 		setLoadingBands( false );
 	};
@@ -833,7 +840,8 @@ const SecurityScan = ( { checkedAt, view } ) => {
 			if ( ! mounted.current ) {
 				return;
 			}
-			show( response );
+			// bands is what this request sent, which the answer's preview shows.
+			show( response, bands );
 			setAgreed( false );
 			setOpen( false );
 			setAction( {
@@ -868,9 +876,8 @@ const SecurityScan = ( { checkedAt, view } ) => {
 			if ( ! mounted.current ) {
 				return;
 			}
-			show( response );
+			show( response, false );
 			setAgreed( false );
-			setBands( false );
 			bandsChosen.current = false;
 			setOpen( false );
 			setAction( { state: 'deleted' } );
