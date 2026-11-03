@@ -283,13 +283,16 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	/**
 	 * Asserts the files and state of the sample feed are still in use.
 	 *
-	 * @param string $error Part of the error the failed sync recorded.
+	 * @param string $error  Part of the error the failed sync recorded.
+	 * @param string $reason Reason the failed sync recorded (JP4WC_Security_Feed::FAILURE_REASONS).
 	 */
-	private function assert_previous_data_kept( $error ) {
+	private function assert_previous_data_kept( $error, $reason ) {
 		$state = JP4WC_Security_Feed::get_state();
 		$this->assertSame( '2026-10-20.1', $state['version'] );
 		$this->assertSame( self::manifest()['files']['plugin']['sha256'], $state['files']['plugin']['sha256'] );
 		$this->assertStringContainsString( $error, $state['last_error'] );
+		$this->assertSame( $reason, $state['last_error_reason'] );
+		$this->assertSame( $reason, JP4WC_Security_Feed::failure_reason() );
 		foreach ( array(
 			'plugin' => 'plugins',
 			'theme'  => 'themes',
@@ -452,20 +455,20 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		JP4WC_Security_Feed::sync();
 
-		$this->assert_previous_data_kept( 'sha256' );
+		$this->assert_previous_data_kept( 'sha256', 'invalid' );
 	}
 
 	/**
 	 * Failed requests.
 	 *
-	 * @return array<string, array{string, int|string, string}>
+	 * @return array<string, array{string, int|string, string, string}>
 	 */
 	public function http_error_provider() {
 		return array(
-			'manifest 500'           => array( 'manifest.json', 500, 'HTTP 500' ),
-			'manifest network error' => array( 'manifest.json', 'error', 'timed out' ),
-			'file 404'               => array( 'vuln-themes.json.gz', 404, 'HTTP 404' ),
-			'file network error'     => array( 'vuln-core.json.gz', 'error', 'timed out' ),
+			'manifest 500'           => array( 'manifest.json', 500, 'HTTP 500', 'http' ),
+			'manifest network error' => array( 'manifest.json', 'error', 'timed out', 'connect' ),
+			'file 404'               => array( 'vuln-themes.json.gz', 404, 'HTTP 404', 'http' ),
+			'file network error'     => array( 'vuln-core.json.gz', 'error', 'timed out', 'connect' ),
 		);
 	}
 
@@ -474,11 +477,12 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 	 *
 	 * @dataProvider http_error_provider
 	 *
-	 * @param string     $name  File that fails.
-	 * @param int|string $code  HTTP status, or 'error' for a WP_Error.
-	 * @param string     $error Part of the recorded error.
+	 * @param string     $name   File that fails.
+	 * @param int|string $code   HTTP status, or 'error' for a WP_Error.
+	 * @param string     $error  Part of the recorded error.
+	 * @param string     $reason Recorded reason.
 	 */
-	public function test_http_errors_keep_the_previous_data( $name, $code, $error ) {
+	public function test_http_errors_keep_the_previous_data( $name, $code, $error, $reason ) {
 		$this->sync_successfully();
 		// A new version of every file, so that each one is downloaded.
 		$manifest = self::manifest();
@@ -501,7 +505,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		JP4WC_Security_Feed::sync();
 
-		$this->assert_previous_data_kept( $error );
+		$this->assert_previous_data_kept( $error, $reason );
 	}
 
 	/**
@@ -573,7 +577,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		JP4WC_Security_Feed::sync();
 
-		$this->assert_previous_data_kept( 'plugin vulnerability file' );
+		$this->assert_previous_data_kept( 'plugin vulnerability file', 'invalid' );
 	}
 
 	/**
@@ -623,7 +627,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		JP4WC_Security_Feed::sync();
 
-		$this->assert_previous_data_kept( 'plugin vulnerability file is not valid' );
+		$this->assert_previous_data_kept( 'plugin vulnerability file is not valid', 'invalid' );
 	}
 
 	/**
@@ -646,7 +650,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 
 		JP4WC_Security_Feed::sync();
 
-		$this->assert_previous_data_kept( 'core vulnerability file' );
+		$this->assert_previous_data_kept( 'core vulnerability file', 'invalid' );
 	}
 
 	/**
@@ -744,7 +748,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		JP4WC_Security_Feed::sync();
 
 		$this->assertSame( array( 'manifest.json' ), $this->requested_files() );
-		$this->assert_previous_data_kept( $error );
+		$this->assert_previous_data_kept( $error, 'invalid' );
 	}
 
 	/**
@@ -777,6 +781,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		$state = JP4WC_Security_Feed::get_state();
 		$this->assertSame( array(), $state['files'] );
 		$this->assertStringContainsString( 'HTTP 404', $state['last_error'] );
+		$this->assertSame( 'http', $state['last_error_reason'] );
 		$this->assertNull( JP4WC_Security_Feed::get_findings() );
 	}
 
@@ -789,6 +794,7 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		JP4WC_Security_Feed::sync();
 		$first = JP4WC_Security_Feed::get_state()['failing_since'];
 		$this->assertGreaterThan( 0, $first );
+		$this->assertSame( 'http', JP4WC_Security_Feed::failure_reason() );
 
 		$state                  = JP4WC_Security_Feed::get_state();
 		$state['failing_since'] = $first - DAY_IN_SECONDS;
@@ -799,6 +805,117 @@ class JP4WC_Security_Feed_Sync_Test extends WP_UnitTestCase {
 		$this->responses['manifest.json']['response']['code'] = 200;
 		JP4WC_Security_Feed::sync();
 		$this->assertSame( 0, JP4WC_Security_Feed::get_state()['failing_since'] );
+		$this->assertSame( '', JP4WC_Security_Feed::get_state()['last_error_reason'], 'A sync that succeeds clears the reason.' );
+		$this->assertSame( '', JP4WC_Security_Feed::failure_reason() );
+	}
+
+	/**
+	 * Runs a callback as if the PHP zlib extension were missing (#316).
+	 *
+	 * @param callable $callback Runs without zlib.
+	 */
+	private static function without_zlib( callable $callback ) {
+		$available = new ReflectionProperty( 'JP4WC_Security_Feed', 'zlib_available' );
+		$available->setValue( null, false );
+		try {
+			$callback();
+		} finally {
+			$available->setValue( null, null );
+		}
+	}
+
+	/**
+	 * Without zlib, a first sync stops before the manifest: nothing is downloaded (#316).
+	 */
+	public function test_missing_zlib_downloads_nothing() {
+		self::without_zlib(
+			static function () {
+				JP4WC_Security_Feed::sync();
+			}
+		);
+
+		$this->assertSame( array(), $this->requested_files(), 'Neither the manifest nor a vulnerability file is requested.' );
+		$state = JP4WC_Security_Feed::get_state();
+		$this->assertSame( array(), $state['files'] );
+		$this->assertStringContainsString( 'zlib', $state['last_error'] );
+		$this->assertSame( 'zlib', $state['last_error_reason'] );
+		$this->assertGreaterThan( 0, $state['failing_since'] );
+		$this->assertSame( 'zlib', JP4WC_Security_Feed::failure_reason() );
+	}
+
+	/**
+	 * Without zlib, the files stored earlier stay in use and nothing is downloaded (#316).
+	 */
+	public function test_missing_zlib_keeps_the_previous_data() {
+		$this->sync_successfully();
+		$this->serve_manifest( $this->serve_file( self::manifest(), 'plugin', self::fixture( 'vuln-plugins.json.gz' ) ) );
+
+		self::without_zlib(
+			static function () {
+				JP4WC_Security_Feed::sync();
+			}
+		);
+
+		$this->assertSame( array(), $this->requested_files() );
+		$this->assert_previous_data_kept( 'zlib', 'zlib' );
+	}
+
+	/**
+	 * Returns an uploads directory that is not available (upload_dir).
+	 *
+	 * @param array $uploads Uploads directory.
+	 * @return array
+	 */
+	public function uploads_unavailable( $uploads ) {
+		$uploads['error'] = 'Unable to create directory.';
+		return $uploads;
+	}
+
+	/**
+	 * A feed directory that cannot be created is recorded as a write failure (#316).
+	 */
+	public function test_unwritable_directory_is_recorded() {
+		add_filter( 'upload_dir', array( $this, 'uploads_unavailable' ) );
+		try {
+			JP4WC_Security_Feed::sync();
+		} finally {
+			remove_filter( 'upload_dir', array( $this, 'uploads_unavailable' ) );
+		}
+
+		$state = JP4WC_Security_Feed::get_state();
+		$this->assertSame( array(), $state['files'] );
+		$this->assertStringContainsString( 'could not be created', $state['last_error'] );
+		$this->assertSame( 'write', $state['last_error_reason'] );
+		$this->assertSame( 'write', JP4WC_Security_Feed::failure_reason() );
+	}
+
+	/**
+	 * A failure an earlier version recorded, or a stored value of no listed reason, has no reason (#316).
+	 */
+	public function test_failure_without_a_known_reason() {
+		update_option(
+			JP4WC_Security_Feed::STATE_OPTION,
+			array(
+				'last_attempt'  => time(),
+				'last_error'    => 'The manifest could not be downloaded: HTTP 404.',
+				'failing_since' => time(),
+			),
+			false
+		);
+		$this->assertSame( '', JP4WC_Security_Feed::failure_reason(), 'Recorded by 3.0.0 or 3.0.1.' );
+
+		foreach ( array( '<b>http</b>', array( 'http' ), 1 ) as $stored ) {
+			$state                      = JP4WC_Security_Feed::get_state();
+			$state['last_error_reason'] = $stored;
+			update_option( JP4WC_Security_Feed::STATE_OPTION, $state, false );
+			$this->assertSame( '', JP4WC_Security_Feed::failure_reason(), wp_json_encode( $stored ) );
+		}
+
+		$state                      = JP4WC_Security_Feed::get_state();
+		$state['last_error_reason'] = 'http';
+		$state['failing_since']     = 0;
+		update_option( JP4WC_Security_Feed::STATE_OPTION, $state, false );
+		$this->assertSame( '', JP4WC_Security_Feed::failure_reason(), 'Not while the syncs succeed.' );
 	}
 
 	/**

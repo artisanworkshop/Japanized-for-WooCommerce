@@ -123,6 +123,36 @@ class JP4WC_Security_Feed {
 	const STALE_AFTER = 259200;
 
 	/**
+	 * Why a sync failed, by the code of its error: the Security tab translates
+	 * the reason. connect: no connection to the feed; http: a status other
+	 * than 200; invalid: data that did not check out; zlib: no zlib extension;
+	 * write: the files could not be stored. Other codes have no reason.
+	 *
+	 * @since 3.0.2
+	 */
+	const FAILURE_REASONS = array(
+		'jp4wc_security_feed_connect'  => 'connect',
+		'jp4wc_security_feed_http'     => 'http',
+		'jp4wc_security_feed_manifest' => 'invalid',
+		'jp4wc_security_feed_checksum' => 'invalid',
+		'jp4wc_security_feed_gzip'     => 'invalid',
+		'jp4wc_security_feed_size'     => 'invalid',
+		'jp4wc_security_feed_json'     => 'invalid',
+		'jp4wc_security_feed_zlib'     => 'zlib',
+		'jp4wc_security_feed_write'    => 'write',
+	);
+
+	/**
+	 * Whether the zlib functions are available, when set (tests); null checks for them.
+	 *
+	 * A test cannot remove an extension.
+	 *
+	 * @since 3.0.2
+	 * @var bool|null
+	 */
+	private static $zlib_available = null;
+
+	/**
 	 * Registers the hooks.
 	 */
 	public static function init() {
@@ -424,27 +454,46 @@ class JP4WC_Security_Feed {
 	 * @return array version, generated_at, stale, files (type => sha256, count,
 	 *               json_sha256), copyrights, attribution, eol (php, WordPress,
 	 *               woocommerce => oldest supported version), synced_at,
-	 *               last_attempt, last_error and failing_since (when the syncs
-	 *               began to fail, or 0).
+	 *               last_attempt, last_error, last_error_reason (a value of
+	 *               FAILURE_REASONS, or '': since 3.0.2) and failing_since (when
+	 *               the syncs began to fail, or 0).
 	 */
 	public static function get_state() {
 		$state = get_option( self::STATE_OPTION, array() );
 		return array_merge(
 			array(
-				'version'       => '',
-				'generated_at'  => '',
-				'stale'         => false,
-				'files'         => array(),
-				'copyrights'    => array(),
-				'attribution'   => '',
-				'eol'           => array(),
-				'synced_at'     => 0,
-				'last_attempt'  => 0,
-				'last_error'    => '',
-				'failing_since' => 0,
+				'version'           => '',
+				'generated_at'      => '',
+				'stale'             => false,
+				'files'             => array(),
+				'copyrights'        => array(),
+				'attribution'       => '',
+				'eol'               => array(),
+				'synced_at'         => 0,
+				'last_attempt'      => 0,
+				'last_error'        => '',
+				'last_error_reason' => '',
+				'failing_since'     => 0,
 			),
 			is_array( $state ) ? $state : array()
 		);
+	}
+
+	/**
+	 * Returns why the last sync failed, for the Security tab.
+	 *
+	 * @since 3.0.2
+	 * @return string A value of FAILURE_REASONS; '' while the syncs succeed, and
+	 *                for a failure without a reason (one an earlier version
+	 *                recorded, or an error of no listed kind).
+	 */
+	public static function failure_reason() {
+		$state = self::get_state();
+		if ( empty( $state['failing_since'] ) ) {
+			return '';
+		}
+		$reason = $state['last_error_reason'];
+		return is_string( $reason ) && in_array( $reason, self::FAILURE_REASONS, true ) ? $reason : '';
 	}
 
 	/**
@@ -520,7 +569,9 @@ class JP4WC_Security_Feed {
 
 		$result = self::update_files( $state );
 		if ( is_wp_error( $result ) ) {
-			$state['last_error'] = $result->get_error_message();
+			$code                       = $result->get_error_code();
+			$state['last_error']        = $result->get_error_message();
+			$state['last_error_reason'] = isset( self::FAILURE_REASONS[ $code ] ) ? self::FAILURE_REASONS[ $code ] : '';
 			if ( empty( $state['failing_since'] ) ) {
 				$state['failing_since'] = $state['last_attempt'];
 			}
@@ -701,6 +752,11 @@ class JP4WC_Security_Feed {
 	 * @return array|WP_Error The new state, or the error that kept the previous files.
 	 */
 	private static function update_files( array $state ) {
+		// Without zlib no file can be decompressed: do not download megabytes every day to find out.
+		if ( ! self::zlib_available() ) {
+			return new WP_Error( 'jp4wc_security_feed_zlib', 'The vulnerability files cannot be decompressed: the PHP zlib extension is not available.' );
+		}
+
 		$manifest = self::fetch_manifest();
 		if ( is_wp_error( $manifest ) ) {
 			return $manifest;
@@ -756,18 +812,32 @@ class JP4WC_Security_Feed {
 		return array_merge(
 			$state,
 			array(
-				'version'       => $manifest['version'],
-				'generated_at'  => $manifest['generated_at'],
-				'stale'         => $manifest['stale'],
-				'files'         => $files,
-				'copyrights'    => $manifest['copyrights'],
-				'attribution'   => $manifest['attribution'],
-				'eol'           => $manifest['eol'],
-				'synced_at'     => time(),
-				'last_error'    => '',
-				'failing_since' => 0,
+				'version'           => $manifest['version'],
+				'generated_at'      => $manifest['generated_at'],
+				'stale'             => $manifest['stale'],
+				'files'             => $files,
+				'copyrights'        => $manifest['copyrights'],
+				'attribution'       => $manifest['attribution'],
+				'eol'               => $manifest['eol'],
+				'synced_at'         => time(),
+				'last_error'        => '',
+				'last_error_reason' => '',
+				'failing_since'     => 0,
 			)
 		);
+	}
+
+	/**
+	 * Whether the zlib functions that decompress the vulnerability files are available.
+	 *
+	 * @since 3.0.2
+	 * @return bool
+	 */
+	private static function zlib_available() {
+		if ( null !== self::$zlib_available ) {
+			return self::$zlib_available;
+		}
+		return function_exists( 'inflate_init' ) && function_exists( 'inflate_add' ) && function_exists( 'inflate_get_status' );
 	}
 
 	/**
@@ -812,7 +882,7 @@ class JP4WC_Security_Feed {
 			)
 		);
 		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'jp4wc_security_feed_http', 'The manifest could not be downloaded: ' . $response->get_error_message() );
+			return new WP_Error( 'jp4wc_security_feed_connect', 'The manifest could not be downloaded: ' . $response->get_error_message() );
 		}
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		if ( 200 !== $code ) {
@@ -955,7 +1025,7 @@ class JP4WC_Security_Feed {
 			)
 		);
 		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'jp4wc_security_feed_http', sprintf( 'The %s vulnerability file could not be downloaded: %s', $type, $response->get_error_message() ) );
+			return new WP_Error( 'jp4wc_security_feed_connect', sprintf( 'The %s vulnerability file could not be downloaded: %s', $type, $response->get_error_message() ) );
 		}
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		if ( 200 !== $code ) {
@@ -992,7 +1062,8 @@ class JP4WC_Security_Feed {
 		}
 		$context = inflate_init( ZLIB_ENCODING_GZIP );
 		if ( false === $context ) {
-			return new WP_Error( 'jp4wc_security_feed_zlib', 'cannot be decompressed.' );
+			// Not jp4wc_security_feed_zlib: the extension is there, so the Security tab must not say it is missing.
+			return new WP_Error( 'jp4wc_security_feed_inflate', 'cannot be decompressed.' );
 		}
 		$handle = fopen( $path, 'wb' );
 		if ( false === $handle ) {
