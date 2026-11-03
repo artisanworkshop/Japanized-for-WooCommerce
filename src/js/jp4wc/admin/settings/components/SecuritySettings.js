@@ -483,6 +483,103 @@ const AllChecks = ( { view } ) => {
 };
 
 /**
+ * Says why the last download of the vulnerability data failed.
+ *
+ * @param {string} reason Reason of GET /jp4wc/v1/security/findings (feed.failure_reason).
+ * @param {string} host   Host name of the vulnerability feed.
+ * @return {string} One sentence, or '' for a failure without a reason.
+ */
+const feedFailureReason = ( reason, host ) => {
+	switch ( reason ) {
+		case 'connect':
+			return sprintf(
+				/* translators: %s: host name of the vulnerability feed, e.g. wc.artws.info */
+				__(
+					'This server could not connect to %s.',
+					'woocommerce-for-japan'
+				),
+				host
+			);
+		case 'http':
+			return sprintf(
+				/* translators: %s: host name of the vulnerability feed, e.g. wc.artws.info */
+				__( '%s returned an error.', 'woocommerce-for-japan' ),
+				host
+			);
+		case 'invalid':
+			return __(
+				'The downloaded data was damaged or not in the expected format.',
+				'woocommerce-for-japan'
+			);
+		case 'zlib':
+			return __(
+				'The PHP zlib extension, which is needed to decompress the data, is not available on this server. Ask your hosting provider to enable it.',
+				'woocommerce-for-japan'
+			);
+		case 'write':
+			return __(
+				'The data could not be saved in the uploads directory. Make sure the server can write to it.',
+				'woocommerce-for-japan'
+			);
+		default:
+			return '';
+	}
+};
+
+/**
+ * Says that the last download of the vulnerability data failed, and why.
+ *
+ * @param {Object} props      Props.
+ * @param {Object} props.feed feed of GET /jp4wc/v1/security/findings.
+ * @return {Element} Element.
+ */
+const FeedFailure = ( { feed } ) => {
+	const reason = feedFailureReason( feed.failure_reason, feed.host );
+	let consequence = null;
+	if ( feed.has_data && feed.synced_at > 0 ) {
+		consequence = sprintf(
+			/* translators: %s: date and time the vulnerability data was last updated */
+			__(
+				'Until a download succeeds, the vulnerability data updated on %s is used.',
+				'woocommerce-for-japan'
+			),
+			formatTime( feed.synced_at )
+		);
+	} else if ( ! feed.unavailable ) {
+		// Once unavailable, the notice above says so.
+		consequence = __(
+			'Known vulnerabilities are not checked until a download succeeds. It is tried again once a day.',
+			'woocommerce-for-japan'
+		);
+	}
+	return (
+		<Notice status="warning" isDismissible={ false }>
+			<p>
+				{ reason
+					? sprintf(
+							/* translators: 1: date and time of the last download attempt, 2: why it failed, one sentence */
+							__(
+								'The last download of the vulnerability data (%1$s) failed. Reason: %2$s',
+								'woocommerce-for-japan'
+							),
+							formatTime( feed.last_attempt ),
+							reason
+					  )
+					: sprintf(
+							/* translators: %s: date and time of the last download attempt */
+							__(
+								'The last download of the vulnerability data (%s) failed.',
+								'woocommerce-for-japan'
+							),
+							formatTime( feed.last_attempt )
+					  ) }
+			</p>
+			{ consequence && <p>{ consequence }</p> }
+		</Notice>
+	);
+};
+
+/**
  * What the tab says about the vulnerability data.
  *
  * @param {Object} props      Props.
@@ -490,41 +587,52 @@ const AllChecks = ( { view } ) => {
  * @return {Element|null} Element.
  */
 const FeedStatus = ( { view } ) => {
+	const failure = view.feed.failing ? (
+		<FeedFailure feed={ view.feed } />
+	) : null;
 	if ( view.feed.unavailable ) {
 		return (
-			<Notice status="warning" isDismissible={ false }>
-				{ sprintf(
-					/* translators: %s: host name of the vulnerability feed, e.g. wc.artws.info */
-					__(
-						'The vulnerability data could not be downloaded for several days, so the installed software is not checked for known vulnerabilities. Make sure this server can connect to %s.',
-						'woocommerce-for-japan'
-					),
-					view.feed.host
-				) }
-			</Notice>
+			<>
+				<Notice status="warning" isDismissible={ false }>
+					{ sprintf(
+						/* translators: %s: host name of the vulnerability feed, e.g. wc.artws.info */
+						__(
+							'The vulnerability data could not be downloaded for several days, so the installed software is not checked for known vulnerabilities. Make sure this server can connect to %s.',
+							'woocommerce-for-japan'
+						),
+						view.feed.host
+					) }
+				</Notice>
+				{ failure }
+			</>
 		);
 	}
 	if ( ! view.vulnerabilities ) {
 		return (
-			<Notice status="info" isDismissible={ false }>
-				{ __(
-					'The vulnerability data has not been downloaded yet, so known vulnerabilities are not checked. It is downloaded once a day.',
-					'woocommerce-for-japan'
-				) }
-			</Notice>
+			failure || (
+				<Notice status="info" isDismissible={ false }>
+					{ __(
+						'The vulnerability data has not been downloaded yet, so known vulnerabilities are not checked. It is downloaded once a day.',
+						'woocommerce-for-japan'
+					) }
+				</Notice>
+			)
 		);
 	}
 	if ( view.vulnerabilities.stale ) {
 		return (
-			<Notice status="warning" isDismissible={ false }>
-				{ __(
-					'The vulnerability data has not been updated for a while, so vulnerabilities disclosed since then are not checked.',
-					'woocommerce-for-japan'
-				) }
-			</Notice>
+			<>
+				<Notice status="warning" isDismissible={ false }>
+					{ __(
+						'The vulnerability data has not been updated for a while, so vulnerabilities disclosed since then are not checked.',
+						'woocommerce-for-japan'
+					) }
+				</Notice>
+				{ failure }
+			</>
 		);
 	}
-	return null;
+	return failure;
 };
 
 /**
