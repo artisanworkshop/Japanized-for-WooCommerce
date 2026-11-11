@@ -26,6 +26,9 @@ require_once __DIR__ . '/class-jp4wc-security-scanner.php';
  * for, sent as Authorization: Bearer, and never shown, logged or returned by
  * this site's REST API. A copy of the database on another URL (a staging
  * site) does not use it: it would read or delete the production site's data.
+ * The consent is kept with the site URL it was given on too, and such a copy
+ * asks for it again: the copy would otherwise send its own information on the
+ * production site's consent.
  */
 class JP4WC_Security_Scan {
 
@@ -55,7 +58,8 @@ class JP4WC_Security_Scan {
 	const TOKEN_OPTION = 'jp4wc_security_site_token';
 
 	/**
-	 * Option: the consent (version, time, whether the bands may be sent).
+	 * Option: the consent (version, time, whether the bands may be sent, and
+	 * since 3.1.0 the site URL it was given on).
 	 */
 	const CONSENT_OPTION = 'jp4wc_security_scan_consent';
 
@@ -510,20 +514,51 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
-	 * Returns the stored consent.
+	 * Returns the stored consent and the site URL it was given on.
 	 *
-	 * @return array{version: string, consented_at: int, bands: bool}|null
+	 * 3.0.x stored no URL. The first check stores the token with the site URL
+	 * in the same request as the consent, so such a consent is taken as given
+	 * on the token's URL. Without a token, the URL is unknown (null): a copy
+	 * of such a database on another URL must not count it as its own.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @return array{version: string, consented_at: int, bands: bool, site_url: string|null}|null
 	 */
-	public static function consent() {
+	private static function stored_consent() {
 		$consent = get_option( self::CONSENT_OPTION, null );
 		if ( ! is_array( $consent ) || ! isset( $consent['version'] ) || ! is_string( $consent['version'] ) ) {
 			return null;
+		}
+		if ( isset( $consent['site_url'] ) && is_string( $consent['site_url'] ) ) {
+			$site_url = $consent['site_url'];
+		} else {
+			$token    = self::stored_token();
+			$site_url = null === $token ? null : $token['site_url'];
 		}
 		return array(
 			'version'      => $consent['version'],
 			'consented_at' => isset( $consent['consented_at'] ) ? (int) $consent['consented_at'] : 0,
 			'bands'        => ! empty( $consent['bands'] ),
+			'site_url'     => $site_url,
 		);
+	}
+
+	/**
+	 * Returns the stored consent, when it was given on this site's URL.
+	 *
+	 * A consent given on another URL (the site this database was copied from)
+	 * or on an unknown one is not this site's consent: null.
+	 *
+	 * @return array{version: string, consented_at: int, bands: bool}|null
+	 */
+	public static function consent() {
+		$consent = self::stored_consent();
+		if ( null === $consent || null === $consent['site_url'] || ! self::same_site( $consent['site_url'], home_url() ) ) {
+			return null;
+		}
+		unset( $consent['site_url'] );
+		return $consent;
 	}
 
 	/**
@@ -542,7 +577,8 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
-	 * Whether the store manager agreed to the current consent text.
+	 * Whether the store manager agreed to the current consent text on this
+	 * site's URL.
 	 *
 	 * @return bool
 	 */
@@ -552,9 +588,10 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
-	 * Stores the consent to the current text, and whether the bands may be sent.
+	 * Stores the consent to the current text on this site's URL, and whether
+	 * the bands may be sent.
 	 *
-	 * The time is that of the first consent to this version.
+	 * The time is that of the first consent to this version on this URL.
 	 *
 	 * @param bool $bands Whether the bands may be sent.
 	 */
@@ -566,6 +603,7 @@ class JP4WC_Security_Scan {
 				'version'      => self::CONSENT_VERSION,
 				'consented_at' => null !== $consent && self::CONSENT_VERSION === $consent['version'] && $consent['consented_at'] > 0 ? $consent['consented_at'] : time(),
 				'bands'        => (bool) $bands,
+				'site_url'     => home_url(),
 			),
 			false
 		);

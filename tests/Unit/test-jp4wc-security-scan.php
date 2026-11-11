@@ -678,6 +678,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 				'version'      => '2026-09',
 				'consented_at' => time(),
 				'bands'        => false,
+				'site_url'     => home_url(),
 			)
 		);
 		$this->assertSame( 400, $this->dispatch( 'POST' )->get_status() );
@@ -762,6 +763,105 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertSame( 'O1', $sent['order_band'] );
 		$this->assertTrue( JP4WC_Security_Scan::consent()['bands'] );
 		$this->assertSame( $consented_at, JP4WC_Security_Scan::consent()['consented_at'] );
+	}
+
+	/**
+	 * A consent given on another URL (a staging copy of the production
+	 * database) is not this site's: the check is not sent until the store
+	 * manager agrees on this site, which records the consent with this site's
+	 * URL. The production site's bands are not offered (#319).
+	 */
+	public function test_consent_of_another_site_is_asked_again() {
+		self::order( 1000, 'processing' );
+		self::store_token( 'https://production.example.jp' );
+		update_option(
+			JP4WC_Security_Scan::CONSENT_OPTION,
+			array(
+				'version'      => JP4WC_Security_Scan::CONSENT_VERSION,
+				'consented_at' => time() - DAY_IN_SECONDS,
+				'bands'        => true,
+				'site_url'     => 'https://production.example.jp',
+			),
+			false
+		);
+
+		$this->assertFalse( JP4WC_Security_Scan::has_consent() );
+		$this->assertNull( JP4WC_Security_Scan::consent() );
+		$view = $this->dispatch( 'GET' )->get_data();
+		$this->assertNull( $view['consent'], 'The settings screen asks for the consent and does not restore the bands.' );
+		$this->assertFalse( $view['registered'] );
+		$this->assertTrue( $view['other_site'] );
+
+		$response = $this->dispatch( 'POST', array( 'bands' => true ) );
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'jp4wc_security_scan_consent_required', $response->get_data()['code'] );
+		$this->assertSame( array(), $this->requests );
+
+		$this->responses = array( self::registered() );
+		$before          = time();
+		$response        = $this->dispatch( 'POST', array( 'consent' => true ) );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 1, $this->requests );
+		$this->assertNull( $this->authorization( 0 ), "The production site's token is not sent." );
+		$stored = get_option( JP4WC_Security_Scan::CONSENT_OPTION );
+		$this->assertSame( home_url(), $stored['site_url'] );
+		$this->assertFalse( $stored['bands'] );
+		$this->assertGreaterThanOrEqual( $before, $stored['consented_at'], 'The time is that of the consent on this site.' );
+		$this->assertTrue( $response->get_data()['consent']['current'] );
+		$this->assertTrue( JP4WC_Security_Scan::has_consent() );
+	}
+
+	/**
+	 * A consent given on this site's URL counts whatever the scheme, the case
+	 * of the host and a trailing slash, as for the token.
+	 */
+	public function test_consent_of_the_same_site_counts() {
+		update_option(
+			JP4WC_Security_Scan::CONSENT_OPTION,
+			array(
+				'version'      => JP4WC_Security_Scan::CONSENT_VERSION,
+				'consented_at' => time(),
+				'bands'        => false,
+				'site_url'     => 'https://' . strtoupper( wp_parse_url( home_url(), PHP_URL_HOST ) ) . '/',
+			),
+			false
+		);
+
+		$this->assertTrue( JP4WC_Security_Scan::has_consent() );
+		$this->assertTrue( $this->dispatch( 'GET' )->get_data()['consent']['current'] );
+	}
+
+	/**
+	 * A consent stored by 3.0.x has no URL: it is taken as given on the URL
+	 * of the token the first check stored with it, and without a token it is
+	 * not taken as this site's.
+	 */
+	public function test_consent_without_a_site_url() {
+		$legacy = array(
+			'version'      => JP4WC_Security_Scan::CONSENT_VERSION,
+			'consented_at' => time(),
+			'bands'        => false,
+		);
+		update_option( JP4WC_Security_Scan::CONSENT_OPTION, $legacy, false );
+
+		$this->assertFalse( JP4WC_Security_Scan::has_consent(), 'Without a token, the URL of the consent is unknown.' );
+		$this->assertNull( $this->dispatch( 'GET' )->get_data()['consent'] );
+
+		self::store_token( 'https://production.example.jp' );
+		$this->assertFalse( JP4WC_Security_Scan::has_consent(), 'The consent came with the production site\'s token.' );
+		$this->assertSame( 400, $this->dispatch( 'POST' )->get_status() );
+		$this->assertSame( array(), $this->requests );
+
+		self::store_token( home_url() );
+		$this->assertTrue( JP4WC_Security_Scan::has_consent() );
+		$this->responses = array( self::scanned() );
+		$this->assertSame( 200, $this->dispatch( 'POST' )->get_status() );
+		$this->assertCount( 1, $this->requests );
+		$this->assertSame( 'Bearer ' . self::TOKEN, $this->authorization( 0 ) );
+		$stored = get_option( JP4WC_Security_Scan::CONSENT_OPTION );
+		$this->assertSame( home_url(), $stored['site_url'], 'The check records the URL.' );
+		$this->assertSame( $legacy['consented_at'], $stored['consented_at'], 'The consent is the same one.' );
 	}
 
 	/**
@@ -875,6 +975,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 			get_option( JP4WC_Security_Scan::TOKEN_OPTION )
 		);
 		$this->assertArrayNotHasKey( JP4WC_Security_Scan::TOKEN_OPTION, wp_load_alloptions(), 'The token is not autoloaded.' );
+		$this->assertSame( home_url(), get_option( JP4WC_Security_Scan::CONSENT_OPTION )['site_url'], 'The consent is kept with the site URL.' );
 
 		$data = $response->get_data();
 		$this->assertTrue( $data['registered'] );
