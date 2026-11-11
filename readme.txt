@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 3.0.2
+Stable tag: 3.1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -169,6 +169,10 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 3.1.0 - 2026-11-12 =
+* **Fixed** - On a multisite where WooCommerce is network-activated and Japanized for WooCommerce is activated per site, the Checkout block now shows this plugin's payment methods (Postal transfer, bank payment in Japan, Pay At Store and Cash on Delivery for Subscriptions) and the delivery date and time and yomigana fields. WooCommerce was loaded first there, and the plugin missed the moment to register them, so they were missing without any error; the classic checkout was not affected (#320)
+* **Fixed** - Deleting Japanized for WooCommerce together with the standalone Paidy for WooCommerce plugin in one go (a bulk delete without JavaScript, or `wp plugin uninstall` with both) stopped with a fatal error ("Cannot redeclare wc_paidy_delete_plugin()"), and the clean-up of the plugin deleted second did not run, including this plugin's request to delete the free security check data on wc.artws.info (#321)
 
 = 3.0.2 - 2026-11-05 =
 * **Added** - Two hooks for the scheduled updates of Japanized for WooCommerce Pro and similar plugins: the filter `jp4wc_security_check_updates_automatically` lets a plugin that updates other plugins on its own schedule have them counted as updated automatically by the security check, and the action `jp4wc_security_findings_updated` fires with the results each time the security check saves them (#300)
