@@ -1294,6 +1294,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertFalse( get_option( JP4WC_Security_Scan::CONSENT_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::REPORT_OPTION ) );
 		$this->assertNull( $response->get_data()['consent'] );
+		$this->assertTrue( $response->get_data()['remote_deleted'] );
 	}
 
 	/**
@@ -1324,17 +1325,36 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A token of another URL is never used to delete: only what this site keeps goes.
+	 * A token of another URL is never used to delete: only what this site
+	 * keeps goes, and the answer says nothing was sent, so that the settings
+	 * screen does not say the data on wc.artws.info was deleted.
 	 */
 	public function test_delete_with_a_token_of_another_site_sends_nothing() {
 		self::store_token( 'https://production.example.jp' );
 		self::consent();
 
-		$this->assertSame( 200, $this->dispatch( 'DELETE' )->get_status() );
+		$response = $this->dispatch( 'DELETE' );
 
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertFalse( $response->get_data()['remote_deleted'] );
 		$this->assertSame( array(), $this->requests );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::TOKEN_OPTION ) );
-		$this->assertNull( JP4WC_Security_Scan::consent() );
+		$this->assertFalse( get_option( JP4WC_Security_Scan::CONSENT_OPTION ) );
+	}
+
+	/**
+	 * Without a token (a check that never got through), deleting sends
+	 * nothing and removes the consent.
+	 */
+	public function test_delete_without_a_token_sends_nothing() {
+		self::consent();
+
+		$response = $this->dispatch( 'DELETE' );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertFalse( $response->get_data()['remote_deleted'] );
+		$this->assertSame( array(), $this->requests );
+		$this->assertFalse( get_option( JP4WC_Security_Scan::CONSENT_OPTION ) );
 	}
 
 	/**

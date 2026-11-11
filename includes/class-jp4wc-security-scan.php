@@ -819,7 +819,9 @@ class JP4WC_Security_Scan {
 	 * URL is not sent (it belongs to the site this database was copied from):
 	 * only what is kept here is deleted.
 	 *
-	 * @return true|WP_Error
+	 * @return array{remote_deleted: bool}|WP_Error remote_deleted (since 3.1.0)
+	 *         is false when nothing was sent to wc.artws.info, because no
+	 *         token for this site's URL is kept here.
 	 */
 	public static function delete_site() {
 		if ( ! self::lock() ) {
@@ -838,7 +840,7 @@ class JP4WC_Security_Scan {
 				}
 			}
 			self::forget_all();
-			return true;
+			return array( 'remote_deleted' => null !== $token );
 		} finally {
 			self::unlock();
 		}
