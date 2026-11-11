@@ -58,12 +58,12 @@ composer format
 `.phpcs.xml.dist` に定義されています。主な設定：
 
 - 対象: プロジェクトルート以下の `.php` ファイル
-- 除外: `vendor/`, `node_modules/`, `tests/`
+- 除外: `vendor/`, `node_modules/`, `tests/`, `dist/`, `plugins/`（サーバー側のプラグインは別のルールセット）、自動生成の `*.asset.php`
 - ルール: WordPress Coding Standards + PHPCompatibilityWP（PHP 8.1+）
 
 ### CI での挙動
 
-Pull Request 時に GitHub Actions が `composer lint` を自動実行します。エラーが残った状態でマージしないでください。
+Pull Request 時（と週 1 回・手動実行）に GitHub Actions の `PHPCS` ジョブ（`testing.yml`）が `composer lint` を実行し、エラーか警告が 1 件でもあれば失敗します。タグのデプロイでは実行しません（`composer.lock` をコミットしていないため、phpcs / WPCS の新しい版でリリースが止まらないように）。
 
 ---
 
