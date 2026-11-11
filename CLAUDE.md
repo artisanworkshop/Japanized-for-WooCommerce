@@ -69,8 +69,8 @@ npm run start          # watch mode
 
 ### Boot Sequence
 1. `plugins_loaded` (priority 10) → `JP4WC::instance()` → `JP4WC::init()`
-2. `init()` hooks `jp4wc_blocks_support()` to `woocommerce_blocks_loaded` only, which WooCommerce fires from its own `plugins_loaded` 10 callback. There is no fallback: when WooCommerce's callback runs first (network activation, PHPUnit), it never runs (backlog R1-X1)
-3. `jp4wc_blocks_support()` → registers the payment block callbacks and adds `woocommerce_init` at priority 5 (the globals `$jp4wc_{delivery,yomigana}_init_done` stop a second run)
+2. WooCommerce fires `woocommerce_blocks_loaded` from its own `plugins_loaded` 10 callback, which runs first when WooCommerce is loaded first (network-activated WooCommerce with this plugin activated per site, PHPUnit). So `init()` → `hook_blocks_support()` calls `jp4wc_blocks_support()` at once when `did_action( 'woocommerce_blocks_loaded' )`, and hooks it to that action otherwise (#320)
+3. `jp4wc_blocks_support()` → adds three named static callbacks: `jp4wc_register_payment_method_types()` (reads the `wc4jp-*` gateway options when WooCommerce initializes the registry, init 5), `jp4wc_register_checkout_fields()` (`woocommerce_init` priority 5) and `jp4wc_register_checkout_block_integrations()`. WordPress keeps one entry per callback and priority, so a second call adds nothing (closures were added again, and a payment method registered twice is `_doing_it_wrong`); the globals `$jp4wc_{delivery,yomigana}_init_done` stop a second `woocommerce_init`
 4. `woocommerce_init` (priority 5) → instantiate integration → `register_checkout_fields()`; the same instance is registered on `woocommerce_blocks_checkout_block_registration`, where WooCommerce calls its `initialize()`
 
 ### IntegrationInterface
