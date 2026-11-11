@@ -569,7 +569,6 @@ class JP4WC_Delivery {
 	public function validate_delivery_fields_block_checkout( $order, $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- The arguments of the woocommerce_store_api_checkout_update_order_from_request action.
 		// Validation is now handled by JP4WC_Delivery_Blocks_Integration::validate_additional_field()
 		// This method is intentionally left empty to avoid duplicate validation.
-		return;
 	}
 
 	/**

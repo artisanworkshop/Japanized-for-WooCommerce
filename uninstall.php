@@ -61,7 +61,7 @@ JP4WC_XMLRPC_Guard::uninstall();
 /**
  * Deletes the Paidy plugin options from the database.
  */
-function wc_paidy_delete_plugin() {
+function jp4wc_delete_paidy_options() {
 	global $wpdb;
 
 	// delete option settings.
@@ -103,4 +103,4 @@ function wc_paidy_delete_plugin() {
 	}
 }
 
-wc_paidy_delete_plugin();
+jp4wc_delete_paidy_options();
