@@ -485,7 +485,8 @@ if ( ! class_exists( 'JP4WC_COD_Fee_Handler' ) ) {
 				'jquery-modal',
 				JP4WC_URL_PATH . 'assets/js/jquery.modal.min.js',
 				array( 'jquery' ),
-				JP4WC_VERSION
+				JP4WC_VERSION,
+				false
 			);
 			wp_enqueue_script(
 				'jp4wc-cod-wc-blocks',
