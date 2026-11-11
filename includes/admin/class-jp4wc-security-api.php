@@ -282,7 +282,8 @@ class JP4WC_Security_API extends WP_REST_Controller {
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
-		return rest_ensure_response( array_merge( JP4WC_Security_Scan::view(), $result ) );
+		// The class of an earlier version, loaded by a request during an update, returns true.
+		return rest_ensure_response( array_merge( JP4WC_Security_Scan::view(), is_array( $result ) ? $result : array() ) );
 	}
 
 	/**

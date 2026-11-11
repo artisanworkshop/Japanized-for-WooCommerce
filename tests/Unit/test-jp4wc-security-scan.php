@@ -240,6 +240,72 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Returns the hash of a site URL that the consent is kept with.
+	 *
+	 * @param string $site_url Site URL.
+	 * @return string
+	 */
+	private static function site_hash( $site_url ) {
+		return ( new ReflectionMethod( 'JP4WC_Security_Scan', 'site_hash' ) )->invoke( null, $site_url );
+	}
+
+	/**
+	 * Stores a consent without the hash of the site URL, as 3.0.x did.
+	 *
+	 * @return array The stored value.
+	 */
+	private static function legacy_consent() {
+		$legacy = array(
+			'version'      => JP4WC_Security_Scan::CONSENT_VERSION,
+			'consented_at' => time() - DAY_IN_SECONDS,
+			'bands'        => true,
+		);
+		update_option( JP4WC_Security_Scan::CONSENT_OPTION, $legacy, false );
+		return $legacy;
+	}
+
+	/**
+	 * Moves the free check's options from another site URL to this one, as the
+	 * search-replace that copies a database to a staging URL does (WP-CLI,
+	 * migration and staging tools rewrite URLs inside serialized options).
+	 *
+	 * @param string $production The site URL the options were stored on.
+	 */
+	private static function search_replace( $production ) {
+		foreach ( array( JP4WC_Security_Scan::TOKEN_OPTION, JP4WC_Security_Scan::CONSENT_OPTION ) as $option ) {
+			$value = get_option( $option, null );
+			if ( ! is_array( $value ) ) {
+				continue;
+			}
+			array_walk_recursive(
+				$value,
+				static function ( &$item ) use ( $production ) {
+					if ( is_string( $item ) ) {
+						$item = str_replace( $production, home_url(), $item );
+					}
+				}
+			);
+			update_option( $option, $value, false );
+		}
+	}
+
+	/**
+	 * Runs a callback while the site URL is another one.
+	 *
+	 * @param string   $site_url Site URL.
+	 * @param callable $callback Callback.
+	 */
+	private static function on_site( $site_url, $callback ) {
+		$home = get_option( 'home' );
+		update_option( 'home', $site_url );
+		try {
+			$callback();
+		} finally {
+			update_option( 'home', $home );
+		}
+	}
+
+	/**
 	 * Dispatches a request to the free check's route.
 	 *
 	 * @param string      $method HTTP method.
@@ -678,7 +744,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 				'version'      => '2026-09',
 				'consented_at' => time(),
 				'bands'        => false,
-				'site_url'     => home_url(),
+				'site_hash'    => self::site_hash( home_url() ),
 			)
 		);
 		$this->assertSame( 400, $this->dispatch( 'POST' )->get_status() );
@@ -780,7 +846,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 				'version'      => JP4WC_Security_Scan::CONSENT_VERSION,
 				'consented_at' => time() - DAY_IN_SECONDS,
 				'bands'        => true,
-				'site_url'     => 'https://production.example.jp',
+				'site_hash'    => self::site_hash( 'https://production.example.jp' ),
 			),
 			false
 		);
@@ -805,11 +871,35 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertCount( 1, $this->requests );
 		$this->assertNull( $this->authorization( 0 ), "The production site's token is not sent." );
 		$stored = get_option( JP4WC_Security_Scan::CONSENT_OPTION );
-		$this->assertSame( home_url(), $stored['site_url'] );
+		$this->assertSame( self::site_hash( home_url() ), $stored['site_hash'] );
 		$this->assertFalse( $stored['bands'] );
 		$this->assertGreaterThanOrEqual( $before, $stored['consented_at'], 'The time is that of the consent on this site.' );
 		$this->assertTrue( $response->get_data()['consent']['current'] );
 		$this->assertTrue( JP4WC_Security_Scan::has_consent() );
+	}
+
+	/**
+	 * A copy made with a search-replace of the site URL, which rewrites the
+	 * URL kept with the token, still asks for the consent: the consent keeps
+	 * a hash, which no search-replace changes.
+	 */
+	public function test_consent_copied_with_a_search_replace_is_asked_again() {
+		self::on_site(
+			'https://production.example.jp',
+			static function () {
+				self::store_token( home_url() );
+				self::consent();
+				self::assertTrue( JP4WC_Security_Scan::has_consent(), 'The consent counts on the production site.' );
+			}
+		);
+
+		self::search_replace( 'https://production.example.jp' );
+
+		$this->assertSame( home_url(), get_option( JP4WC_Security_Scan::TOKEN_OPTION )['site_url'], 'The search-replace rewrote the URL of the token.' );
+		$this->assertFalse( JP4WC_Security_Scan::has_consent() );
+		$this->assertNull( $this->dispatch( 'GET' )->get_data()['consent'] );
+		$this->assertSame( 400, $this->dispatch( 'POST' )->get_status() );
+		$this->assertSame( array(), $this->requests );
 	}
 
 	/**
@@ -823,7 +913,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 				'version'      => JP4WC_Security_Scan::CONSENT_VERSION,
 				'consented_at' => time(),
 				'bands'        => false,
-				'site_url'     => 'https://' . strtoupper( wp_parse_url( home_url(), PHP_URL_HOST ) ) . '/',
+				'site_hash'    => self::site_hash( 'https://' . strtoupper( wp_parse_url( home_url(), PHP_URL_HOST ) ) . '/' ),
 			),
 			false
 		);
@@ -833,23 +923,18 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A consent stored by 3.0.x has no URL: it is taken as given on the URL
+	 * A consent stored by 3.0.x has no hash: it is taken as given on the URL
 	 * of the token the first check stored with it, and without a token it is
-	 * not taken as this site's.
+	 * not taken as this site's. A check records the hash.
 	 */
-	public function test_consent_without_a_site_url() {
-		$legacy = array(
-			'version'      => JP4WC_Security_Scan::CONSENT_VERSION,
-			'consented_at' => time(),
-			'bands'        => false,
-		);
-		update_option( JP4WC_Security_Scan::CONSENT_OPTION, $legacy, false );
+	public function test_consent_without_a_site_hash() {
+		$legacy = self::legacy_consent();
 
 		$this->assertFalse( JP4WC_Security_Scan::has_consent(), 'Without a token, the URL of the consent is unknown.' );
 		$this->assertNull( $this->dispatch( 'GET' )->get_data()['consent'] );
 
 		self::store_token( 'https://production.example.jp' );
-		$this->assertFalse( JP4WC_Security_Scan::has_consent(), 'The consent came with the production site\'s token.' );
+		$this->assertFalse( JP4WC_Security_Scan::has_consent(), "The consent came with the production site's token." );
 		$this->assertSame( 400, $this->dispatch( 'POST' )->get_status() );
 		$this->assertSame( array(), $this->requests );
 
@@ -860,8 +945,95 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertCount( 1, $this->requests );
 		$this->assertSame( 'Bearer ' . self::TOKEN, $this->authorization( 0 ) );
 		$stored = get_option( JP4WC_Security_Scan::CONSENT_OPTION );
-		$this->assertSame( home_url(), $stored['site_url'], 'The check records the URL.' );
+		$this->assertSame( self::site_hash( home_url() ), $stored['site_hash'], 'The check records the hash.' );
 		$this->assertSame( $legacy['consented_at'], $stored['consented_at'], 'The consent is the same one.' );
+	}
+
+	/**
+	 * The update to 3.1.0 (JP4WC_Install::install()) adds the hash to a
+	 * consent of this site stored by 3.0.x and keeps the rest, so that copies
+	 * made after the update ask for the consent again even when a
+	 * search-replace rewrites the URL of the token.
+	 */
+	public function test_update_adds_the_site_hash_to_a_consent_of_this_site() {
+		self::on_site(
+			'https://production.example.jp',
+			static function () {
+				self::store_token( home_url() );
+				$legacy = self::legacy_consent();
+
+				JP4WC_Install::install();
+
+				$stored = get_option( JP4WC_Security_Scan::CONSENT_OPTION );
+				self::assertSame( array_merge( $legacy, array( 'site_hash' => self::site_hash( home_url() ) ) ), $stored );
+				self::assertTrue( JP4WC_Security_Scan::has_consent() );
+			}
+		);
+
+		self::search_replace( 'https://production.example.jp' );
+
+		$this->assertFalse( JP4WC_Security_Scan::has_consent() );
+	}
+
+	/**
+	 * The update leaves a consent that is not this site's without a hash (it
+	 * does not count), and a consent that has one as it is.
+	 */
+	public function test_update_leaves_other_consents_alone() {
+		$legacy = self::legacy_consent();
+		JP4WC_Security_Scan::upgrade_consent();
+		$this->assertSame( $legacy, get_option( JP4WC_Security_Scan::CONSENT_OPTION ), 'Without a token, the URL is unknown.' );
+
+		self::store_token( 'https://production.example.jp' );
+		JP4WC_Security_Scan::upgrade_consent();
+		$this->assertSame( $legacy, get_option( JP4WC_Security_Scan::CONSENT_OPTION ), "The production site's consent." );
+
+		$hashed = array_merge( $legacy, array( 'site_hash' => self::site_hash( 'https://production.example.jp' ) ) );
+		update_option( JP4WC_Security_Scan::CONSENT_OPTION, $hashed, false );
+		self::store_token( home_url() );
+		JP4WC_Security_Scan::upgrade_consent();
+		$this->assertSame( $hashed, get_option( JP4WC_Security_Scan::CONSENT_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Scan::LOCK_OPTION ), 'The lock is released.' );
+	}
+
+	/**
+	 * The update reads the consent from the database under the lock: a
+	 * consent this process cached before another request stored a new one is
+	 * not written back over it, and nothing is written while another request
+	 * holds the lock.
+	 */
+	public function test_update_reads_the_consent_under_the_lock() {
+		global $wpdb;
+		self::store_token( home_url() );
+		self::legacy_consent();
+		$this->assertTrue( JP4WC_Security_Scan::has_consent(), 'The consent and the token are cached.' );
+		$newer = array(
+			'version'      => JP4WC_Security_Scan::CONSENT_VERSION,
+			'consented_at' => time(),
+			'bands'        => false,
+			'site_hash'    => self::site_hash( home_url() ),
+		);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- A check in another request, which this process's cache does not see.
+		$wpdb->update( $wpdb->options, array( 'option_value' => maybe_serialize( $newer ) ), array( 'option_name' => JP4WC_Security_Scan::CONSENT_OPTION ) );
+
+		JP4WC_Security_Scan::upgrade_consent();
+
+		wp_cache_delete( JP4WC_Security_Scan::CONSENT_OPTION, 'options' );
+		$this->assertSame( $newer, get_option( JP4WC_Security_Scan::CONSENT_OPTION ), "The other request's consent is not rolled back." );
+
+		delete_option( JP4WC_Security_Scan::CONSENT_OPTION );
+		$legacy = self::legacy_consent();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Sets the lock as another request would.
+		$wpdb->insert(
+			$wpdb->options,
+			array(
+				'option_name'  => JP4WC_Security_Scan::LOCK_OPTION,
+				'option_value' => (string) time(),
+				'autoload'     => 'off',
+			)
+		);
+		JP4WC_Security_Scan::upgrade_consent();
+		$this->assertSame( $legacy, get_option( JP4WC_Security_Scan::CONSENT_OPTION ), 'Nothing is written while another request holds the lock.' );
 	}
 
 	/**
@@ -975,7 +1147,9 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 			get_option( JP4WC_Security_Scan::TOKEN_OPTION )
 		);
 		$this->assertArrayNotHasKey( JP4WC_Security_Scan::TOKEN_OPTION, wp_load_alloptions(), 'The token is not autoloaded.' );
-		$this->assertSame( home_url(), get_option( JP4WC_Security_Scan::CONSENT_OPTION )['site_url'], 'The consent is kept with the site URL.' );
+		$consent = get_option( JP4WC_Security_Scan::CONSENT_OPTION );
+		$this->assertSame( self::site_hash( home_url() ), $consent['site_hash'], 'The consent is kept with the hash of the site URL.' );
+		$this->assertArrayNotHasKey( 'site_url', $consent, 'A search-replace would rewrite a URL.' );
 
 		$data = $response->get_data();
 		$this->assertTrue( $data['registered'] );
