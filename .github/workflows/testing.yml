@@ -57,6 +57,32 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # composer lint (phpcs, WordPress Coding Standards) on pull requests, the
+  # weekly run and manual runs. Not in the tag deploy (workflow_call, where the
+  # event is the tag push): composer.lock is not committed, so a new phpcs or
+  # WPCS release could otherwise hold up a release over a style rule. The
+  # weekly run shows such a release first.
+  lint:
+    name: PHPCS
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Lint
+        run: composer lint
+
   matrix:
     name: Select matrix
     runs-on: ubuntu-latest
