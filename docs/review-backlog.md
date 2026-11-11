@@ -313,3 +313,4 @@
 | 2026-11-11 | R1-X2 | Low | includes/class-jp4wc-free-shipping.php `hide_shipping_when_free_is_available()`（既存。chore/321-composer-lint-ci R1） | よく出回るスニペットと同じ名前で、`function_exists` のガードなしに宣言している。同名を定義するテーマ・スニペットがあると「Cannot redeclare」で落ちる。#321 は公開のコールバック名として ignore で残した | 未起票 |
 | 2026-11-11 | R1-L1 | Low | .phpcs.xml.dist `\.asset\.php$`（chore/321-composer-lint-ci R1） | `type="relative"` は、ファイルを明示して phpcs を走らせると効かない（PHPCS の `Filter` がそのファイル自身を basedir にし、相対パスが空になる）。末尾に固定したパターンなので `type="relative"` を外しても親ディレクトリには当たらない | 未起票 |
 | 2026-11-11 | R1-L2 | Low | AGENTS.md:21（chore/321-composer-lint-ci R1） | 「CI runs it on every pull request」は言い過ぎ。`testing.yml` は main/master 向けの PR だけで動くので、積み上げた PR では lint が走らない。「on pull requests to main」が正確 | 未起票 |
+| 2026-11-11 | R2-L1 | Low | .phpcs.xml.dist（フレームワークの 4 つの除外。chore/321-composer-lint-ci R2） | メッセージ単位の除外もそのファイル全体に効くので、今後フレームワークに接頭辞の無いフック名や base64 の呼び出しを足しても lint は通る。行ごとの ignore にすると 3 つのコピーの中身がずれるため、この方式の限界として受け入れた | 未起票 |
