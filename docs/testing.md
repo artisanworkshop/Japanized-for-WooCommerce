@@ -63,7 +63,7 @@ composer format
 
 ### CI での挙動
 
-Pull Request 時（と週 1 回・手動実行）に GitHub Actions の `PHPCS` ジョブ（`testing.yml`）が `composer lint` を実行し、エラーか警告が 1 件でもあれば失敗します。タグのデプロイでは実行しません（`composer.lock` をコミットしていないため、phpcs / WPCS の新しい版でリリースが止まらないように）。
+main 向けの Pull Request（`**.md`・`docs/**`・`.claude/**`・`plugins/**` だけの変更を除く）と、週 1 回・手動実行で GitHub Actions の `PHPCS` ジョブ（`testing.yml`）が `composer lint` を実行し、エラーか警告が 1 件でもあれば失敗します。タグのデプロイでは実行しません（`composer.lock` をコミットしていないため、phpcs / WPCS の新しい版でリリースが止まらないように）。
 
 ---
 

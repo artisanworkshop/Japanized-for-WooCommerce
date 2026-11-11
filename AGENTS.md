@@ -18,7 +18,7 @@ npx wp-scripts build               # JS bundle (`npm run build` is the same; nei
 
 ## Code Review Rules
 
-Report defects that change behaviour: security holes, data loss, wrong results, broken compatibility, contract violations, and tests that cannot fail. Leave formatting and lint out (`composer lint` covers them, and CI runs it on every pull request).
+Report defects that change behaviour: security holes, data loss, wrong results, broken compatibility, contract violations, and tests that cannot fail. Leave formatting and lint out (`composer lint` covers them, and CI runs it on pull requests to main unless only docs change).
 
 ### Security
 
