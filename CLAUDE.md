@@ -48,7 +48,7 @@ composer lint          # phpcs check
 composer format        # phpcbf auto-fix
 composer test-local    # phpunit (see Testing)
 ```
-`composer lint` fails on main as well (93 errors / 12 warnings in 21 files on 2026-10-27, mostly the generated `assets/js/build/**/*.asset.php`, which `.phpcs.xml.dist` does not exclude; backlog R1-X1), and CI does not run it: compare the counts with main instead of expecting zero (#280, #286).
+`composer lint` passes on main with no errors or warnings, and the `PHPCS` job of `testing.yml` runs it on pull requests, weekly and on demand, but not in the tag deploy: `composer.lock` is not committed, so a new phpcs/WPCS release must not block a release (#321). `.phpcs.xml.dist` skips the generated `*.asset.php`, and for the shared framework file (`includes/jp4wc-framework/class-jp4wc-framework.php`, bundled unchanged in Pro and paidy-wc) only the prefix and base64 sniffs — don't edit that file to satisfy phpcs. A sniff's own `<exclude-pattern>` inside a `<rule>` is always matched against the absolute path (`type="relative"` works only at the top level). Names other code depends on (the Paidy bootstrap names shared with paidy-wc, `is_woocommerce_active()` shared with Pro, old hooks and callbacks) keep their names with a reasoned one-line `phpcs:ignore`; a `phpcs:ignore` between a docblock and its declaration breaks the doc-comment sniff, so `class WC_Paidy` uses a disable/enable pair around the declaration.
 
 JS/CSS build:
 ```bash
