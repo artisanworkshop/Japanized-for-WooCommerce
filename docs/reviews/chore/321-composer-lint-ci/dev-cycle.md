@@ -5,8 +5,8 @@
 - 開始: 2026-11-11
 - モード: auto-commit（確認ゲートなし）、同時依頼
 - PR: #326 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/326
-- 現在のステップ: 6（G3 依頼。Copilot のみ）
-- Copilot: 依頼 2 回 / 未収束（G1 本文 1 件修正、G2 本文 1 件は検証で解消・保留）
+- 現在のステップ: 完了（最終報告済み。マージはユーザーが行う）
+- Copilot: 依頼 3 回 / 上限（G1 本文 1 件修正、G2 本文 1 件は検証で解消・保留、G3 本文 1 件は R1-L2 と同じで保留。どの回も No open issues）
 - Codex: 依頼 1 回 / 収束（G1 で「Didn't find any major issues」）
 
 ## 計画で決めたこと（2026-11-11 承認）
@@ -28,6 +28,8 @@
 | 2026-11-11 | 4 | 違反の確認: 使い捨てブランチ chore/321-lint-probe（25f54b3）を upstream に push、workflow_dispatch の run 42992502432 で PHPCS の Lint が failure（exit 2）。残りのジョブを取り消し、ブランチを upstream・ローカルとも削除。PR にコメント・本文を更新 |
 | 2026-11-11 | 7 | G1（1a9ee9b、T=09:06:26Z）: CI green（PHPCS 16s）。Codex 指摘なし＝収束。Copilot 本文 1 件 G1-1（タグのデプロイでジョブ単位の skip に頼る）→ 0198875 でステップ単位の skip に修正、push（T=09:16:53Z）、サマリ投稿、PR 本文更新 |
 | 2026-11-11 | 7 | G2（dcc51cc、T=09:17:42Z）: CI green。Copilot 本文 1 件 G2-1（最初のタグで呼び出しの経路を確かめるべき）→ 使い捨てブランチ chore/321-deploy-path-probe（e51f2e7、push 起動の呼び出し + needs）の run 42995770587 で検証し success。保留（コード変更なし）。ブランチの削除はユーザーに確認する（計画の承認は chore/321-lint-probe だけ） |
+| 2026-11-11 | 7 | G3（4e88456、T=09:33:45Z）: CI green。Copilot 本文 1 件 G3-1（ドキュメントが CI のブランチ・パスの制限に触れない）＝ R1-L2 と同じで保留、backlog R1-L2 を広げた。上限のため再依頼なし |
+| 2026-11-11 | 8 | 最終報告（final-report.md） |
 
 ## 計画からの逸脱（PR 本文に書く）
 - `class WC_Paidy` だけは 1 行の `phpcs:ignore` を置けない（宣言の行の `{` の後は OpeningBraceSameLine、docblock との間は ClassComment.Missing になる）ため、そのスニッフのコードだけの `phpcs:disable` / `phpcs:enable` で宣言を挟んだ。同じファイルに同じコードの `phpcs:ignore` は無い
