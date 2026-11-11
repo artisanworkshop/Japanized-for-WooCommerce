@@ -310,6 +310,33 @@ REST API の認証に **WordPress Application Passwords** を使用していま�
 
 ---
 
+## 4. マルチサイトでの手動確認
+
+プラグインの読み込み順に依存する不具合（#320: WooCommerce をネットワーク有効化すると、ブロックチェックアウトの決済方法と入力欄が消えた）は、単一サイトの開発環境では再現しません。使い捨てのマルチサイトを、リポジトリの外に置いた設定ファイルで立てて確かめます（`.wp-env.json` は変えません）。
+
+```bash
+# 例: リポジトリの外のディレクトリに .wp-env.json を置く
+# {
+#   "multisite": true,
+#   "port": 10100,
+#   "plugins": [
+#     "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip",
+#     "/path/to/Japanized-for-WooCommerce"
+#   ]
+# }
+wp-env start --config=./.wp-env.json
+
+# wp-env はプラグインをサイト 1 で有効化する。zip の WooCommerce は woocommerce.latest-stable という名前で入る
+wp-env run cli --config=./.wp-env.json -- wp plugin activate woocommerce.latest-stable --network
+```
+
+- ネットワーク有効化したプラグインは、サイト単位のプラグインより先に、名前順で読まれます（`wp_get_active_network_plugins()`）。WooCommerce だけをネットワーク有効化すると WooCommerce が先、両方をネットワーク有効化するとこのプラグインが先です。
+- ブロックチェックアウトの登録は `wp eval` で確かめられます。決済ブロックは `Automattic\WooCommerce\Blocks\Package::container()->get( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry::class )->is_registered( 'bankjp' )`、入力欄は同じコンテナの `Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class` の `get_additional_fields()` です。
+- Checkout ブロックのページには、`wcSettings` が `JSON.parse( decodeURIComponent( '…' ) )` の形で埋め込まれます（`paymentMethodData` に決済ブロック、`jp4wc/` で始まる入力欄）。開発サイト（8890）のチェックアウトページはクラシック（ショートコード）なので、ブロックで確かめるときは一時ページを作ります。
+- 終わったら `wp-env destroy --config=./.wp-env.json --force` で消します。
+
+---
+
 ## 全テストの一括実行
 
 ```bash
