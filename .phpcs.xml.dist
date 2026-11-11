@@ -55,21 +55,29 @@
 		<exclude-pattern>/includes/gateways/</exclude-pattern>
 		<!-- WooCommerce Blocks integration classes follow WC naming conventions (WC_Payments_*_Blocks_Support). -->
 		<exclude-pattern>/includes/blocks/</exclude-pattern>
-		<!-- Shared framework copy, see the DiscouragedPHPFunctions rule below. -->
-		<exclude-pattern>/includes/jp4wc-framework/class-jp4wc-framework\.php$</exclude-pattern>
 	</rule>
 
 	<!--
 		The plugin framework (namespace ArtisanWorkshop\PluginFramework\v2_0_14) is
-		bundled unchanged in JP4WC Pro and Paidy for WooCommerce as well, and the copy
-		loaded first is the one used. Keep the copies identical: leave the file as it
-		is and skip only the sniffs it trips here (its namespace and the
-		wc_jp4wc_logging filter for the prefix rule, base64 for the encrypted value).
-		Every other check still applies to it. (PHPCS matches a sniff's
-		exclude-pattern against the absolute path whatever its type, so these
-		are written as absolute patterns.)
+		bundled in JP4WC Pro and Paidy for WooCommerce as well (the same code; Paidy's
+		copy only has its own text domain), and the copy loaded first is the one used.
+		Keep the copies in step: leave the file as it is and skip only the four
+		messages it raises here (its namespace and the wc_jp4wc_logging filter, and
+		base64 for the encrypted value). Every other check, these sniffs' other
+		messages included, still applies to it. PHPCS matches a rule's
+		exclude-pattern against the absolute path whatever its type, so these are
+		absolute patterns.
 	-->
-	<rule ref="WordPress.PHP.DiscouragedPHPFunctions">
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedNamespaceFound">
+		<exclude-pattern>/includes/jp4wc-framework/class-jp4wc-framework\.php$</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound">
+		<exclude-pattern>/includes/jp4wc-framework/class-jp4wc-framework\.php$</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode">
+		<exclude-pattern>/includes/jp4wc-framework/class-jp4wc-framework\.php$</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode">
 		<exclude-pattern>/includes/jp4wc-framework/class-jp4wc-framework\.php$</exclude-pattern>
 	</rule>
 
