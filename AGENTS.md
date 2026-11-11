@@ -34,6 +34,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 
 - Orders go through the WC order CRUD (`$order->get_meta()`, `update_meta_data()`), never post meta (HPOS).
 - `class_exists()` takes the fully-qualified class name; `use` aliases are not resolved.
+- Code that runs at `plugins_loaded` checks `did_action( 'woocommerce_blocks_loaded' )` before hooking that action: WooCommerce fires it from its own `plugins_loaded` 10 callback, which has already run when WooCommerce is loaded first (network-activated WooCommerce, PHPUnit). Safe path: `JP4WC::hook_blocks_support()`.
 - Block checkout DOM belongs to React: no `appendChild`, `insertAdjacentElement`, `removeChild` or `MutationObserver` moves there. Safe path: CSS `order`.
 - Store API routes are matched under both `wc/store` and `wc/store/v1`, case-insensitively. The payment method of a checkout comes from the request or `chosen_payment_method`, never from a session key of our own.
 - Every class file is loaded at `plugins_loaded` (a plugin update swaps the directory while requests run). A new class file is added to `tests/Unit/test-jp4wc-load-at-plugins-loaded.php`. A file under `includes/` may be loaded by the previous version's `includes()` during an update, so it checks `function_exists()` before calling a main-file function added in this version.

@@ -76,6 +76,9 @@ class JP4WC_Load_At_Plugins_Loaded_Test extends WP_UnitTestCase {
 		$callbacks = array(
 			'JP4WC::on_plugins_loaded'                   => new ReflectionMethod( 'JP4WC', 'on_plugins_loaded' ),
 			'JP4WC::jp4wc_blocks_support'                => new ReflectionMethod( 'JP4WC', 'jp4wc_blocks_support' ),
+			'JP4WC::jp4wc_register_payment_method_types' => new ReflectionMethod( 'JP4WC', 'jp4wc_register_payment_method_types' ),
+			'JP4WC::jp4wc_register_checkout_fields'      => new ReflectionMethod( 'JP4WC', 'jp4wc_register_checkout_fields' ),
+			'JP4WC::jp4wc_register_checkout_block_integrations' => new ReflectionMethod( 'JP4WC', 'jp4wc_register_checkout_block_integrations' ),
 			'JP4WC_Admin_Settings::register_rest_routes' => new ReflectionMethod( 'JP4WC_Admin_Settings', 'register_rest_routes' ),
 			'JP4WC_Admin_Settings::conditional_includes' => new ReflectionMethod( 'JP4WC_Admin_Settings', 'conditional_includes' ),
 			'wc_paidy_plugin'                            => new ReflectionFunction( 'wc_paidy_plugin' ),

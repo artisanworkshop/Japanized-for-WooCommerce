@@ -72,7 +72,7 @@ if ( ! class_exists( 'JP4WC' ) ) :
 			$this->define_constants();
 			$this->includes();
 			add_action( 'init', array( $this, 'on_plugins_loaded' ), 20 );
-			add_action( 'woocommerce_blocks_loaded', array( $this, 'jp4wc_blocks_support' ) );
+			self::hook_blocks_support();
 			if ( ! get_transient( 'jp4wc_first_installing' ) ) {
 				// First time installing.
 				set_transient( 'jp4wc_first_installing', 'yes', 180 * DAY_IN_SECONDS );
@@ -274,125 +274,123 @@ if ( ! class_exists( 'JP4WC' ) ) :
 		}
 
 		/**
+		 * Run jp4wc_blocks_support() once WooCommerce Blocks is loaded.
+		 *
+		 * WooCommerce fires woocommerce_blocks_loaded from its own plugins_loaded 10
+		 * callback. When that callback runs before this plugin's (WooCommerce
+		 * network-activated on a multisite while this plugin is activated per site),
+		 * the action has already fired here, and a callback added to it would never
+		 * run (#320).
+		 *
+		 * @since 3.1.0
+		 */
+		private static function hook_blocks_support() {
+			if ( did_action( 'woocommerce_blocks_loaded' ) ) {
+				self::jp4wc_blocks_support();
+				return;
+			}
+			add_action( 'woocommerce_blocks_loaded', array( __CLASS__, 'jp4wc_blocks_support' ) );
+		}
+
+		/**
 		 * Registers WooCommerce Blocks integration.
+		 *
+		 * The callbacks are named methods: WordPress keeps one entry per callback
+		 * and priority, so a second call adds nothing, while a payment method
+		 * registered twice is a _doing_it_wrong() notice.
 		 */
 		public static function jp4wc_blocks_support() {
 			if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
-				if ( get_option( 'wc4jp-postofficebank' ) ) {
-					add_action(
-						'woocommerce_blocks_payment_method_type_registration',
-						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							if ( class_exists( 'WC_Payments_PostOfficeBank_Blocks_Support', false ) ) {
-								$payment_method_registry->register( new WC_Payments_PostOfficeBank_Blocks_Support() );
-							}
-						}
-					);
-				}
-				if ( get_option( 'wc4jp-bankjp' ) ) {
-					add_action(
-						'woocommerce_blocks_payment_method_type_registration',
-						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							if ( class_exists( 'WC_Payments_BANK_JP_Blocks_Support', false ) ) {
-								$payment_method_registry->register( new WC_Payments_BANK_JP_Blocks_Support() );
-							}
-						}
-					);
-				}
-				if ( get_option( 'wc4jp-atstore' ) ) {
-					add_action(
-						'woocommerce_blocks_payment_method_type_registration',
-						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							if ( class_exists( 'WC_Payments_AtStore_Blocks_Support', false ) ) {
-								$payment_method_registry->register( new WC_Payments_AtStore_Blocks_Support() );
-							}
-						}
-					);
-				}
-				if ( get_option( 'wc4jp-cod2' ) ) {
-					add_action(
-						'woocommerce_blocks_payment_method_type_registration',
-						function ( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-							if ( class_exists( 'WC_Payments_Cod2_Blocks_Support', false ) ) {
-								$payment_method_registry->register( new WC_Payments_Cod2_Blocks_Support() );
-							}
-						}
-					);
-				}
+				add_action( 'woocommerce_blocks_payment_method_type_registration', array( __CLASS__, 'jp4wc_register_payment_method_types' ) );
 			}
 
-			// CRITICAL: Register delivery fields EARLY on woocommerce_init.
+			// CRITICAL: Register checkout fields EARLY on woocommerce_init.
 			// Additional Checkout Fields API requires registration before blocks are initialized.
+			add_action( 'woocommerce_init', array( __CLASS__, 'jp4wc_register_checkout_fields' ), 5 );
 
-			add_action(
-				'woocommerce_init',
-				function () {
-					global $jp4wc_delivery_init_done, $jp4wc_delivery_integration;
-					if ( $jp4wc_delivery_init_done ) {
-						return;
-					}
-					$jp4wc_delivery_init_done = true;
+			// Register block integrations for UI rendering.
+			add_action( 'woocommerce_blocks_checkout_block_registration', array( __CLASS__, 'jp4wc_register_checkout_block_integrations' ) );
+		}
 
-					if ( ! class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
-						return;
-					}
+		/**
+		 * Register the payment method blocks of the enabled gateways.
+		 *
+		 * @since 3.1.0
+		 * @param Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry Payment method registry.
+		 */
+		public static function jp4wc_register_payment_method_types( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+			if ( get_option( 'wc4jp-postofficebank' ) ) {
+				if ( class_exists( 'WC_Payments_PostOfficeBank_Blocks_Support', false ) ) {
+					$payment_method_registry->register( new WC_Payments_PostOfficeBank_Blocks_Support() );
+				}
+			}
+			if ( get_option( 'wc4jp-bankjp' ) ) {
+				if ( class_exists( 'WC_Payments_BANK_JP_Blocks_Support', false ) ) {
+					$payment_method_registry->register( new WC_Payments_BANK_JP_Blocks_Support() );
+				}
+			}
+			if ( get_option( 'wc4jp-atstore' ) ) {
+				if ( class_exists( 'WC_Payments_AtStore_Blocks_Support', false ) ) {
+					$payment_method_registry->register( new WC_Payments_AtStore_Blocks_Support() );
+				}
+			}
+			if ( get_option( 'wc4jp-cod2' ) ) {
+				if ( class_exists( 'WC_Payments_Cod2_Blocks_Support', false ) ) {
+					$payment_method_registry->register( new WC_Payments_Cod2_Blocks_Support() );
+				}
+			}
+		}
+
+		/**
+		 * Register the delivery and yomigana checkout fields, on woocommerce_init.
+		 *
+		 * @since 3.1.0
+		 */
+		public static function jp4wc_register_checkout_fields() {
+			global $jp4wc_delivery_init_done, $jp4wc_delivery_integration, $jp4wc_yomigana_init_done, $jp4wc_yomigana_integration;
+
+			if ( ! $jp4wc_delivery_init_done ) {
+				$jp4wc_delivery_init_done = true;
+				if ( class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
 					$jp4wc_delivery_integration = new JP4WC_Delivery_Blocks_Integration();
 					// Register fields immediately on woocommerce_init.
 					$jp4wc_delivery_integration->register_checkout_fields();
-				},
-				5 // Early priority.
-			);
-
-			// Register block integration for UI rendering.
-			add_action(
-				'woocommerce_blocks_checkout_block_registration',
-				function ( $integration_registry ) {
-					global $jp4wc_delivery_integration;
-					// Reuse the same instance created in woocommerce_init hook.
-					if ( isset( $jp4wc_delivery_integration ) && $jp4wc_delivery_integration instanceof JP4WC_Delivery_Blocks_Integration ) {
-						$integration_registry->register( $jp4wc_delivery_integration );
-					} elseif ( class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
-						// Fallback: create new instance if somehow the global wasn't set.
-						$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
-					}
 				}
-			);
+			}
 
-			// CRITICAL: Register yomigana fields EARLY on woocommerce_init.
-			// Additional Checkout Fields API requires registration before blocks are initialized.
-
-			add_action(
-				'woocommerce_init',
-				function () {
-					global $jp4wc_yomigana_init_done, $jp4wc_yomigana_integration;
-					if ( $jp4wc_yomigana_init_done ) {
-						return;
-					}
-					$jp4wc_yomigana_init_done = true;
-
-					if ( ! class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
-						return;
-					}
+			if ( ! $jp4wc_yomigana_init_done ) {
+				$jp4wc_yomigana_init_done = true;
+				if ( class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
 					$jp4wc_yomigana_integration = new JP4WC_Yomigana_Blocks_Integration();
 					// Register fields immediately on woocommerce_init.
 					$jp4wc_yomigana_integration->register_checkout_fields();
-				},
-				5 // Early priority.
-			);
-
-			// Register yomigana block integration for UI rendering.
-			add_action(
-				'woocommerce_blocks_checkout_block_registration',
-				function ( $integration_registry ) {
-					global $jp4wc_yomigana_integration;
-					// Reuse the same instance created in woocommerce_init hook.
-					if ( isset( $jp4wc_yomigana_integration ) && $jp4wc_yomigana_integration instanceof JP4WC_Yomigana_Blocks_Integration ) {
-						$integration_registry->register( $jp4wc_yomigana_integration );
-					} elseif ( class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
-						// Fallback: create new instance if somehow the global wasn't set.
-						$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
-					}
 				}
-			);
+			}
+		}
+
+		/**
+		 * Register the delivery and yomigana integrations of the Checkout block.
+		 *
+		 * @since 3.1.0
+		 * @param Automattic\WooCommerce\Blocks\Integrations\IntegrationRegistry $integration_registry Integration registry.
+		 */
+		public static function jp4wc_register_checkout_block_integrations( $integration_registry ) {
+			global $jp4wc_delivery_integration, $jp4wc_yomigana_integration;
+
+			// Reuse the instances created on woocommerce_init.
+			if ( isset( $jp4wc_delivery_integration ) && $jp4wc_delivery_integration instanceof JP4WC_Delivery_Blocks_Integration ) {
+				$integration_registry->register( $jp4wc_delivery_integration );
+			} elseif ( class_exists( 'JP4WC_Delivery_Blocks_Integration' ) ) {
+				// Fallback: create new instance if somehow the global wasn't set.
+				$integration_registry->register( new JP4WC_Delivery_Blocks_Integration() );
+			}
+
+			if ( isset( $jp4wc_yomigana_integration ) && $jp4wc_yomigana_integration instanceof JP4WC_Yomigana_Blocks_Integration ) {
+				$integration_registry->register( $jp4wc_yomigana_integration );
+			} elseif ( class_exists( 'JP4WC_Yomigana_Blocks_Integration' ) ) {
+				// Fallback: create new instance if somehow the global wasn't set.
+				$integration_registry->register( new JP4WC_Yomigana_Blocks_Integration() );
+			}
 		}
 
 		/**
