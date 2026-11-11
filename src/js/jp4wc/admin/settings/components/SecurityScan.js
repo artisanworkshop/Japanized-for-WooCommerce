@@ -880,7 +880,11 @@ const SecurityScan = ( { checkedAt, view } ) => {
 			setAgreed( false );
 			bandsChosen.current = false;
 			setOpen( false );
-			setAction( { state: 'deleted' } );
+			// Without a token for this site's URL, nothing was sent to wc.artws.info.
+			setAction( {
+				state: 'deleted',
+				remote: response.remote_deleted !== false,
+			} );
 		} catch ( err ) {
 			if ( ! mounted.current ) {
 				return;
@@ -972,10 +976,15 @@ const SecurityScan = ( { checkedAt, view } ) => {
 			) }
 			{ action.state === 'deleted' && (
 				<Notice status="success" onRemove={ dismiss }>
-					{ __(
-						'The check data was deleted from wc.artws.info and from this site.',
-						'woocommerce-for-japan'
-					) }
+					{ action.remote
+						? __(
+								'The check data was deleted from wc.artws.info and from this site.',
+								'woocommerce-for-japan'
+						  )
+						: __(
+								'The check data kept on this site was deleted.',
+								'woocommerce-for-japan'
+						  ) }
 				</Notice>
 			) }
 			{ action.state === 'error' && (
@@ -1193,10 +1202,15 @@ const SecurityScan = ( { checkedAt, view } ) => {
 					{ action.state === 'confirm-delete' ? (
 						<>
 							<p>
-								{ __(
-									"This deletes this site's data on wc.artws.info, and the consent and the report kept on this site.",
-									'woocommerce-for-japan'
-								) }
+								{ scan.registered
+									? __(
+											"This deletes this site's data on wc.artws.info, and the consent and the report kept on this site.",
+											'woocommerce-for-japan'
+									  )
+									: __(
+											"This deletes the consent and the report kept on this site. No registration for this site's URL is kept here, so nothing is sent to wc.artws.info.",
+											'woocommerce-for-japan'
+									  ) }
 							</p>
 							<Button
 								variant="primary"

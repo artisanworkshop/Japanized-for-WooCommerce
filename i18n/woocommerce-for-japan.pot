@@ -2627,6 +2627,10 @@ msgid "The check data was deleted from wc.artws.info and from this site."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:9
+msgid "The check data kept on this site was deleted."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:9
 msgid "wc.artws.info no longer accepts the earlier registration of this site, so earlier results can no longer be shown. The next check registers this site again. wc.artws.info deletes the earlier results after 180 days."
 msgstr ""
 
@@ -2694,6 +2698,10 @@ msgstr ""
 
 #: assets/js/build/admin/settings.js:10
 msgid "This deletes this site's data on wc.artws.info, and the consent and the report kept on this site."
+msgstr ""
+
+#: assets/js/build/admin/settings.js:10
+msgid "This deletes the consent and the report kept on this site. No registration for this site's URL is kept here, so nothing is sent to wc.artws.info."
 msgstr ""
 
 #: assets/js/build/admin/settings.js:10

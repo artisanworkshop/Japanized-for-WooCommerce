@@ -275,14 +275,15 @@ class JP4WC_Security_API extends WP_REST_Controller {
 	 * Deletes the data of the free check on wc.artws.info and on this site.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_REST_Response|WP_Error The view, with remote_deleted.
 	 */
 	public function delete_scan( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- REST callback signature.
 		$result = JP4WC_Security_Scan::delete_site();
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
-		return rest_ensure_response( JP4WC_Security_Scan::view() );
+		// The class of an earlier version, loaded by a request during an update, returns true.
+		return rest_ensure_response( array_merge( JP4WC_Security_Scan::view(), is_array( $result ) ? $result : array() ) );
 	}
 
 	/**

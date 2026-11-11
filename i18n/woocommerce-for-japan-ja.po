@@ -3013,6 +3013,10 @@ msgid "The check data was deleted from wc.artws.info and from this site."
 msgstr "wc.artws.info とこのサイトから診断データを削除しました。"
 
 #: assets/js/build/admin/settings.js:9
+msgid "The check data kept on this site was deleted."
+msgstr "このサイトに保存していた診断データを削除しました。"
+
+#: assets/js/build/admin/settings.js:9
 msgid ""
 "wc.artws.info no longer accepts the earlier registration of this site, so "
 "earlier results can no longer be shown. The next check registers this site "
@@ -3121,6 +3125,14 @@ msgid ""
 msgstr ""
 "wc.artws.info 上のこのサイトのデータと、このサイトに保存している同意の記録と"
 "レポートを削除します。"
+
+#: assets/js/build/admin/settings.js:10
+msgid ""
+"This deletes the consent and the report kept on this site. No registration "
+"for this site's URL is kept here, so nothing is sent to wc.artws.info."
+msgstr ""
+"このサイトに保存している同意の記録とレポートを削除します。このサイトの URL の"
+"登録はここに保存されていないため、wc.artws.info には何も送りません。"
 
 #: assets/js/build/admin/settings.js:10
 msgid "The check data could not be deleted."
