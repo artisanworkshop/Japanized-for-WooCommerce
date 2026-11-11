@@ -61,11 +61,14 @@ jobs:
   # weekly run and manual runs. Not in the tag deploy (workflow_call, where the
   # event is the tag push): composer.lock is not committed, so a new phpcs or
   # WPCS release could otherwise hold up a release over a style rule. The
-  # weekly run shows such a release first.
+  # weekly run shows such a release first. The job runs code freshly resolved
+  # from Packagist (a Composer plugin and the sniffs), so its token is read-only.
   lint:
     name: PHPCS
     if: github.event_name == 'pull_request' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Check out source code
         uses: actions/checkout@v4
