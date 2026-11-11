@@ -10,13 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'WC_Paidy' ) ) :
-
+	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- Shared with the standalone Paidy for WooCommerce plugin; whichever loads first defines it (class_exists( 'WC_Paidy' )).
 	/**
 	 * Main class for Paidy for WooCommerce.
 	 *
 	 * @package paidy-wc
 	 */
 	class WC_Paidy {
+		// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 		/**
 		 * Paidy for WooCommerce Framework version.
 		 *
@@ -63,13 +64,15 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 			// WC4JP Framework version.
 			define( 'JP4WC_PAIDY_FRAMEWORK_VERSION', $this->framework_version );
 			// Paidy for WooCommerce plugin url.
-			define( 'WC_PAIDY_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-			define( 'WC_PAIDY_ASSETS_URL', WC_PAIDY_PLUGIN_URL . 'assets/' );
-			define( 'WC_PAIDY_BLOCKS_URL', WC_PAIDY_PLUGIN_URL . 'assets/js/build/paidy/' ); // Paidy for WooCommerce blocks assets.
-			define( 'WC_PAIDY_ABSPATH', __DIR__ . '/' );
-			define( 'WC_PAIDY_ASSETS_ABSPATH', WC_PAIDY_ABSPATH . 'assets/js/build/paidy/' ); // Paidy for WooCommerce assets.
+			define( 'WC_PAIDY_PLUGIN_URL', plugin_dir_url( __FILE__ ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- See WC_Paidy.
+			define( 'WC_PAIDY_ASSETS_URL', WC_PAIDY_PLUGIN_URL . 'assets/' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- See WC_Paidy.
+			// Paidy for WooCommerce blocks assets.
+			define( 'WC_PAIDY_BLOCKS_URL', WC_PAIDY_PLUGIN_URL . 'assets/js/build/paidy/' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- See WC_Paidy.
+			define( 'WC_PAIDY_ABSPATH', __DIR__ . '/' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- See WC_Paidy.
+			// Paidy for WooCommerce assets.
+			define( 'WC_PAIDY_ASSETS_ABSPATH', WC_PAIDY_ABSPATH . 'assets/js/build/paidy/' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- See WC_Paidy.
 			// Paidy for WooCommerce plugin file.
-			define( 'WC_PAIDY_PLUGIN_FILE', __FILE__ );
+			define( 'WC_PAIDY_PLUGIN_FILE', __FILE__ ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- See WC_Paidy.
 			// Include required files.
 			$this->includes();
 		}

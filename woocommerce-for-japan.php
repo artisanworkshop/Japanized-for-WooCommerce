@@ -257,7 +257,7 @@ if ( ! function_exists( 'is_woocommerce_active' ) ) {
 	 *
 	 * @return bool True if WooCommerce is active, false otherwise.
 	 */
-	function is_woocommerce_active() {
+	function is_woocommerce_active() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Shared with JP4WC Pro, which calls it; both define it only when it does not exist yet.
 		if ( ! isset( $active_plugins ) ) {
 			$active_plugins = (array) get_option( 'active_plugins', array() );
 
@@ -286,7 +286,7 @@ function wc4jp_display_shipping( $shipping ) {
 if ( ! class_exists( 'WC_Paidy' ) ) :
 
 	// Paidy Payment Gateways version.
-	define( 'WC_PAIDY_VERSION', '1.5.1' );
+	define( 'WC_PAIDY_VERSION', '1.5.1' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Shared with the standalone Paidy for WooCommerce plugin; whichever loads first defines it (class_exists( 'WC_Paidy' )).
 	require_once __DIR__ . '/class-wc-paidy.php';
 
 	/**
@@ -297,7 +297,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	/**
 	 * Initialize the Paidy plugin.
 	 */
-	function wc_paidy_plugin() {
+	function wc_paidy_plugin() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Shared with the standalone Paidy for WooCommerce plugin; whichever loads first defines it (class_exists( 'WC_Paidy' )).
 		if ( class_exists( 'WooCommerce' ) ) {
 			WC_Paidy::get_instance();
 		}
@@ -319,7 +319,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	 * @param array $methods Methods.
 	 * @return array $methods Methods.
 	 */
-	function add_wc4jp_paidy_gateway( $methods ) {
+	function add_wc4jp_paidy_gateway( $methods ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Shared with the standalone Paidy for WooCommerce plugin; whichever loads first defines it (class_exists( 'WC_Paidy' )).
 		$methods[] = 'WC_Gateway_Paidy';
 		return $methods;
 	}
@@ -345,7 +345,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	/**
 	 * Redirects to the Paidy wizard after plugin activation.
 	 */
-	function paidy_redirect_to_wizard() {
+	function paidy_redirect_to_wizard() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Shared with the standalone Paidy for WooCommerce plugin; whichever loads first defines it (class_exists( 'WC_Paidy' )).
 		if ( ! class_exists( 'WC_Gateway_Paidy' ) ) {
 			return;
 		}
@@ -369,7 +369,7 @@ if ( ! class_exists( 'WC_Paidy' ) ) :
 	 *
 	 * @return void
 	 */
-	function init_paidy_receiver() {
+	function init_paidy_receiver() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Shared with the standalone Paidy for WooCommerce plugin; whichever loads first defines it (class_exists( 'WC_Paidy' )).
 		new WC_Paidy_Apply_Receiver();
 	}
 

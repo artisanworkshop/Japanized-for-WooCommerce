@@ -24,7 +24,7 @@ if ( get_option( 'wc4jp-free-shipping' ) ) {
  * @param array $rates Array of rates found for the package.
  * @return array
  */
-function hide_shipping_when_free_is_available( $rates ) {
+function hide_shipping_when_free_is_available( $rates ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Public callback name; sites may remove_filter() it.
 	$free = array();
 	foreach ( $rates as $rate_id => $rate ) {
 		if ( 'free_shipping' === $rate->method_id ) {
