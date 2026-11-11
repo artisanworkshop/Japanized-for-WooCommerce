@@ -224,7 +224,7 @@ class JP4WC_Delivery_Blocks_Integration implements IntegrationInterface {
 	 */
 	public function validate_additional_field( $is_valid, $key, $value ) {
 		// Check if this is a calc_totals request.
-		if ( isset( $_GET['__experimental_calc_totals'] ) || ( defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['_locale'] ) ) ) {
+		if ( isset( $_GET['__experimental_calc_totals'] ) || ( defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['_locale'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only tells the Store API request type apart; nothing is read or saved from it.
 			$this->log_info( 'Skipping validation - this is a calc_totals request' );
 			return $is_valid;
 		}

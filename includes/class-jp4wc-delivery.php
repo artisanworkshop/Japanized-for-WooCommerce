@@ -173,7 +173,7 @@ class JP4WC_Delivery {
 			echo '</p>';
 
 			// after display delivery date select action hook.
-			do_action( 'after_wc4jp_delivery_date', $setting, $start_day );
+			do_action( 'after_wc4jp_delivery_date', $setting, $start_day ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Public action; renaming it would drop existing listeners.
 		}
 	}
 
@@ -566,7 +566,7 @@ class JP4WC_Delivery {
 	 * @param WP_REST_Request $request Request object.
 	 * @return void
 	 */
-	public function validate_delivery_fields_block_checkout( $order, $request ) {
+	public function validate_delivery_fields_block_checkout( $order, $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- The arguments of the woocommerce_store_api_checkout_update_order_from_request action.
 		// Validation is now handled by JP4WC_Delivery_Blocks_Integration::validate_additional_field()
 		// This method is intentionally left empty to avoid duplicate validation.
 		return;
@@ -766,7 +766,7 @@ class JP4WC_Delivery {
 
 		global $post, $the_order;
 		if ( empty( $the_order ) || $the_order->get_id() !== $post->ID ) {
-			$the_order = wc_get_order( $post->ID );
+			$the_order = wc_get_order( $post->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce's own global for the order list row, as its list table sets it.
 		}
 
 		$order_id = $the_order->get_id();
@@ -820,10 +820,11 @@ class JP4WC_Delivery {
 	 * @access public
 	 */
 	public function meta_box() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reads the ID of the order on screen to show it; nothing is changed.
 		if ( isset( $_GET['post'] ) ) {
-			$order_id = absint( sanitize_text_field( wp_unslash( $_GET['post'] ) ) );
-		} elseif ( isset( $_GET['id'] ) ) {
-			$order_id = absint( sanitize_text_field( wp_unslash( $_GET['id'] ) ) );
+			$order_id = absint( sanitize_text_field( wp_unslash( $_GET['post'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- As above.
+		} elseif ( isset( $_GET['id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- As above.
+			$order_id = absint( sanitize_text_field( wp_unslash( $_GET['id'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- As above.
 		} else {
 			$order_id = false;
 		}

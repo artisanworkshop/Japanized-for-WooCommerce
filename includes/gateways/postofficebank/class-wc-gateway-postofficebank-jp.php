@@ -443,7 +443,7 @@ class WC_Gateway_PostOfficeBank_JP extends WC_Payment_Gateway {
  * @param array $methods WooCommerce payment methods.
  * @return array
  */
-function add_wc4jp_commerce_postofficebank_gateway( $methods ) {
+function add_wc4jp_commerce_postofficebank_gateway( $methods ) { // phpcs:ignore Universal.Files.SeparateFunctionsFromOO.Mixed -- Public callback name; sites may remove_filter() it, so it stays a function in this file.
 	$methods[] = 'WC_Gateway_PostOfficeBANK_JP';
 	return $methods;
 }

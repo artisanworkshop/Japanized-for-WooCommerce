@@ -6,6 +6,7 @@
  * @package     Japanized_For_WooCommerce
  * @author      ArtisanWorkshop
  */
+
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Hooks use before_jp4wc_/after_jp4wc_/wcs_ prefixes from WC Subscriptions integration; renaming would be a breaking change for third-party hooks.
 
 use ArtisanWorkshop\PluginFramework\v2_0_14 as Framework;
