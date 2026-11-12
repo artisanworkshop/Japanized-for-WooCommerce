@@ -101,8 +101,10 @@ class JP4WC_Security_Hardening {
 		add_filter( 'comment_class', array( __CLASS__, 'comment_class' ) );
 		add_filter( 'oembed_response_data', array( __CLASS__, 'oembed_author' ) );
 		add_filter( 'authenticate', array( __CLASS__, 'same_login_error' ), self::AUTHENTICATE_PRIORITY );
-		// Last, so that the errors of other plugins (a CAPTCHA) are in by then.
+		// Last, so that the errors of other plugins (a CAPTCHA) are in by then. WooCommerce's form fires only lostpassword_post.
 		add_action( 'lostpassword_post', array( __CLASS__, 'unknown_user_reset' ), PHP_INT_MAX, 2 );
+		// wp-login.php: retrieve_password() applies lostpassword_errors after lostpassword_post.
+		add_filter( 'lostpassword_errors', array( __CLASS__, 'unknown_user_reset_errors' ), PHP_INT_MAX, 2 );
 		add_filter( 'rest_authentication_errors', array( __CLASS__, 'same_rest_auth_error' ), self::REST_ERRORS_PRIORITY );
 		self::define_file_edit();
 	}
@@ -219,14 +221,15 @@ class JP4WC_Security_Hardening {
 	 * archive by name tells which names exist. Both query variables lead to
 	 * the 404 page before the query runs: redirect_canonical() redirects only
 	 * an author archive, and WP::send_headers() sends the 404 status. REST
-	 * requests (rest_route) keep their parameters.
+	 * requests keep their parameters; an empty rest_route is not one, as for
+	 * rest_api_loaded(), and is shown as a page.
 	 *
 	 * @since 3.1.0
 	 * @param array $query_vars Query variables of the request.
 	 * @return array
 	 */
 	public static function close_author_archives( $query_vars ) {
-		if ( ! is_array( $query_vars ) || isset( $query_vars['rest_route'] ) ) {
+		if ( ! is_array( $query_vars ) || ! empty( $query_vars['rest_route'] ) ) {
 			return $query_vars;
 		}
 		if ( empty( $query_vars['author'] ) && empty( $query_vars['author_name'] ) ) {
@@ -345,13 +348,18 @@ class JP4WC_Security_Hardening {
 	}
 
 	/**
-	 * Sends a password reset request for an unknown user to the page of a sent one (lostpassword_post, last).
+	 * Sends a request of WooCommerce's lost password form for an unknown user to the page of a sent one (lostpassword_post, last).
+	 *
+	 * WooCommerce does not apply lostpassword_errors, so its form is decided here.
 	 *
 	 * @since 3.1.0
 	 * @param WP_Error            $errors    Errors so far.
 	 * @param WP_User|false|mixed $user_data The user, false when no user matched.
 	 */
 	public static function unknown_user_reset( $errors, $user_data = false ) {
+		if ( ! self::is_woocommerce_reset() ) {
+			return;
+		}
 		$url = self::reset_sent_url( $errors, $user_data );
 		if ( null === $url ) {
 			return;
@@ -361,13 +369,75 @@ class JP4WC_Security_Hardening {
 	}
 
 	/**
+	 * Answers a wp-login.php request for an unknown user as a known one (lostpassword_errors, last).
+	 *
+	 * Runs after every lostpassword_post callback and every other filter, so
+	 * that a request another plugin refused (a CAPTCHA) is refused the same
+	 * way for both: its error stays, and WordPress's invalid_email, which it
+	 * adds for an unknown address before the action, is removed. A request no
+	 * one refused goes to the page of a sent one.
+	 *
+	 * @since 3.1.0
+	 * @param WP_Error            $errors    Errors so far.
+	 * @param WP_User|false|mixed $user_data The user, false when no user matched.
+	 * @return WP_Error
+	 */
+	public static function unknown_user_reset_errors( $errors, $user_data = false ) {
+		if ( $user_data || ! $errors instanceof WP_Error || ! self::hides_user_names() ) {
+			return $errors;
+		}
+		if ( array() !== array_diff( $errors->get_error_codes(), array( 'invalid_email' ) ) ) {
+			$errors->remove( 'invalid_email' );
+			return $errors;
+		}
+		if ( ! self::is_login_page_reset() ) {
+			return $errors;
+		}
+		$url = self::reset_sent_url( $errors, $user_data );
+		if ( null === $url ) {
+			return $errors;
+		}
+		wp_safe_redirect( $url );
+		exit;
+	}
+
+	/**
+	 * Whether WooCommerce's lost password form is being handled.
+	 *
+	 * WC_Form_Handler::process_lost_password() (wp_loaded) checked the nonce
+	 * before it called WC_Shortcode_My_Account::retrieve_password().
+	 *
+	 * @since 3.1.0
+	 * @return bool
+	 */
+	private static function is_woocommerce_reset() {
+		return doing_action( 'wp_loaded' ) && isset( $_POST['wc_reset_password'] ) && function_exists( 'wc_get_account_endpoint_url' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only tells WooCommerce's form apart; its nonce is checked by WooCommerce.
+	}
+
+	/**
+	 * Whether wp-login.php's lost password form is being handled.
+	 *
+	 * The login page (wp-login.php) fires login_form_lostpassword, or
+	 * login_form_retrievepassword, before it calls retrieve_password(), also
+	 * when a plugin that moves the login page loads it from a hook (WPS Hide
+	 * Login does from wp_loaded).
+	 *
+	 * @since 3.1.0
+	 * @return bool
+	 */
+	private static function is_login_page_reset() {
+		global $pagenow;
+		return 'wp-login.php' === $pagenow && ( did_action( 'login_form_lostpassword' ) || did_action( 'login_form_retrievepassword' ) );
+	}
+
+	/**
 	 * Returns where a password reset request for an unknown user goes, as if it had been sent.
 	 *
 	 * The address is the one the form goes to after sending: wp-login.php's
 	 * redirect_to or ?checkemail=confirm, and WooCommerce's lost-password
 	 * endpoint with reset-link-sent. Other callers of retrieve_password(),
 	 * and a request another plugin refused (an error other than WordPress's
-	 * own invalid_email for an unknown address), are left alone.
+	 * own invalid_email for an unknown address), get null.
 	 *
 	 * @since 3.1.0
 	 * @param WP_Error            $errors    Errors so far.
@@ -381,13 +451,10 @@ class JP4WC_Security_Hardening {
 		if ( $errors instanceof WP_Error && array() !== array_diff( $errors->get_error_codes(), array( 'invalid_email' ) ) ) {
 			return null;
 		}
-		// WC_Form_Handler::process_lost_password() (wp_loaded) checked the nonce before it called retrieve_password().
-		if ( doing_action( 'wp_loaded' ) && isset( $_POST['wc_reset_password'] ) && function_exists( 'wc_get_account_endpoint_url' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only tells WooCommerce's form apart; its nonce is checked by WooCommerce.
+		if ( self::is_woocommerce_reset() ) {
 			return add_query_arg( 'reset-link-sent', 'true', wc_get_account_endpoint_url( 'lost-password' ) );
 		}
-		global $pagenow, $wp_current_filter;
-		// wp-login.php calls retrieve_password() outside any hook, so this action is the only one running.
-		if ( 'wp-login.php' === $pagenow && array( 'lostpassword_post' ) === $wp_current_filter ) {
+		if ( self::is_login_page_reset() ) {
 			// The address wp-login.php sends a request it sent to.
 			return ! empty( $_REQUEST['redirect_to'] ) ? wp_sanitize_redirect( wp_unslash( $_REQUEST['redirect_to'] ) ) : 'wp-login.php?checkemail=confirm'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- wp-login.php reads it the same way; wp_safe_redirect() validates it.
 		}

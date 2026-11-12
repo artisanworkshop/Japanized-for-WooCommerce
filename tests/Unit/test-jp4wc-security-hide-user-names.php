@@ -128,6 +128,7 @@ class JP4WC_Security_Hide_User_Names_Test extends WP_UnitTestCase {
 		$this->assertSame( 10, has_filter( 'oembed_response_data', array( 'JP4WC_Security_Hardening', 'oembed_author' ) ) );
 		$this->assertSame( 100, has_filter( 'authenticate', array( 'JP4WC_Security_Hardening', 'same_login_error' ) ) );
 		$this->assertSame( PHP_INT_MAX, has_action( 'lostpassword_post', array( 'JP4WC_Security_Hardening', 'unknown_user_reset' ) ) );
+		$this->assertSame( PHP_INT_MAX, has_filter( 'lostpassword_errors', array( 'JP4WC_Security_Hardening', 'unknown_user_reset_errors' ) ) );
 		$this->assertSame( 100, has_filter( 'rest_authentication_errors', array( 'JP4WC_Security_Hardening', 'same_rest_auth_error' ) ) );
 	}
 
@@ -199,6 +200,20 @@ class JP4WC_Security_Hide_User_Names_Test extends WP_UnitTestCase {
 		$this->assertSame( array( 'author' => '0' ), JP4WC_Security_Hardening::close_author_archives( array( 'author' => '0' ) ), 'Not an author.' );
 		$this->assertSame( 'x', JP4WC_Security_Hardening::close_author_archives( 'x' ) );
 		$this->assertSame( array( 'error' => '404' ), JP4WC_Security_Hardening::close_author_archives( array( 'author' => array( '1' ) ) ) );
+
+		// rest_api_loaded() serves only a non-empty rest_route; an empty one is shown as a page (R1-1).
+		foreach ( array( '', '0' ) as $route ) {
+			$query = array(
+				'rest_route' => $route,
+				'author'     => '1',
+			);
+			$this->assertSame( array( 'error' => '404' ), JP4WC_Security_Hardening::close_author_archives( $query ), "rest_route '$route'" );
+		}
+		foreach ( array( '/?author=' . $this->admin->ID . 'x&rest_route=', '/author/shop-owner/?rest_route=', '/?author_name=shop-owner&rest_route=0' ) as $path ) {
+			$this->go_to( home_url( $path ) );
+			$this->assertTrue( is_404(), $path );
+			$this->assertFalse( is_author(), $path );
+		}
 	}
 
 	/**
@@ -343,112 +358,108 @@ class JP4WC_Security_Hide_User_Names_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Puts the request where wp-login.php calls retrieve_password() for its lost password form.
+	 */
+	private function on_login_page_reset() {
+		$GLOBALS['pagenow'] = 'wp-login.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- wp-login.php.
+		do_action( 'login_form_lostpassword' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wp-login.php's own action.
+	}
+
+	/**
+	 * Calls retrieve_password() and returns where it redirected, or its result.
+	 *
+	 * @param string $login User name or e-mail address.
+	 * @return string|true|WP_Error
+	 */
+	private function reset( $login ) {
+		$result   = null;
+		$location = $this->redirect_of(
+			function () use ( $login, &$result ) {
+				$result = retrieve_password( $login );
+			}
+		);
+		return null === $location ? $result : $location;
+	}
+
+	/**
 	 * On, wp-login.php sends a reset request for an unknown user where it sends a sent one.
 	 */
 	public function test_on_core_reset_of_unknown_user_looks_sent() {
-		$GLOBALS['pagenow'] = 'wp-login.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- wp-login.php.
+		$this->on_login_page_reset();
 		$this->assertWPError( retrieve_password( 'nobody' ), 'Off: WordPress says there is no such account.' );
 
 		$this->turn_on();
 		foreach ( array( 'nobody', 'nobody@example.org' ) as $login ) {
-			$location = $this->redirect_of(
-				static function () use ( $login ) {
-					retrieve_password( $login );
-				}
-			);
-			$this->assertNotNull( $location, $login );
+			$location = $this->reset( $login );
+			$this->assertIsString( $location, $login );
 			$this->assertStringEndsWith( 'wp-login.php?checkemail=confirm', $location, $login );
 		}
 
 		$_REQUEST['redirect_to'] = home_url( '/sent/' );
-		$this->assertSame(
-			home_url( '/sent/' ),
-			$this->redirect_of(
-				static function () {
-					retrieve_password( 'nobody' );
-				}
-			)
-		);
+		$this->assertSame( home_url( '/sent/' ), $this->reset( 'nobody' ) );
 		unset( $_REQUEST['redirect_to'] );
+
+		// WPS Hide Login loads wp-login.php from wp_loaded (R1-2).
+		$inside = function () {
+			$this->assertStringEndsWith( 'wp-login.php?checkemail=confirm', (string) $this->reset( 'nobody' ) );
+		};
+		add_action( 'jp4wc_test_login_page_from_a_hook', $inside );
+		try {
+			do_action( 'jp4wc_test_login_page_from_a_hook' );
+		} finally {
+			remove_action( 'jp4wc_test_login_page_from_a_hook', $inside );
+		}
 
 		$sent = static function () {
 			return true;
 		};
 		add_filter( 'pre_wp_mail', $sent );
 		try {
-			$result = null;
-			$this->assertNull(
-				$this->redirect_of(
-					function () use ( &$result ) {
-						$result = retrieve_password( 'shopowner' );
-					}
-				),
-				'A known user is left to WordPress, which sends the e-mail.'
-			);
-			$this->assertTrue( $result );
+			$this->assertTrue( $this->reset( 'shopowner' ), 'A known user is left to WordPress, which sends the e-mail.' );
 		} finally {
 			remove_filter( 'pre_wp_mail', $sent );
 		}
 	}
 
 	/**
-	 * A reset refused for another reason, or requested from elsewhere, is left alone.
+	 * On, a reset another plugin refuses is refused the same way for an unknown and a known user (R1-3, R1-4).
 	 */
-	public function test_on_other_resets_are_left_alone() {
+	public function test_on_refused_resets_look_the_same() {
 		$this->turn_on();
-		$GLOBALS['pagenow'] = 'wp-login.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- wp-login.php.
+		$this->on_login_page_reset();
 
-		$this->assertNull(
-			$this->redirect_of(
-				static function () {
-					retrieve_password( ' ' );
-				}
-			),
-			'An empty name is an error of its own.'
-		);
+		$this->assertWPError( $this->reset( ' ' ), 'An empty name is an error of its own.' );
 
 		$captcha = static function ( $errors ) {
 			$errors->add( 'captcha_failed', 'Wrong answer.' );
+			return $errors;
 		};
-		add_action( 'lostpassword_post', $captcha );
-		try {
-			$this->assertNull(
-				$this->redirect_of(
-					static function () {
-						retrieve_password( 'nobody' );
-					}
-				),
-				'Another plugin refused the request.'
-			);
-		} finally {
-			remove_action( 'lostpassword_post', $captcha );
+		// A CAPTCHA on lostpassword_post, and one on lostpassword_errors, which WordPress applies after it.
+		foreach ( array( 'lostpassword_post', 'lostpassword_errors' ) as $hook ) {
+			add_filter( $hook, $captcha );
+			try {
+				foreach ( array( 'nobody', 'nobody@example.org', 'shopowner', 'owner@example.org' ) as $login ) {
+					$result = $this->reset( $login );
+					$this->assertWPError( $result, "$hook $login: no redirect" );
+					$this->assertSame( array( 'captcha_failed' ), $result->get_error_codes(), "$hook $login: only the other plugin's error" );
+				}
+			} finally {
+				remove_filter( $hook, $captcha );
+			}
 		}
+	}
 
-		$inside = static function () {
-			retrieve_password( 'nobody' );
-		};
-		add_action( 'jp4wc_test_reset_inside_a_hook', $inside );
-		try {
-			$this->assertNull(
-				$this->redirect_of(
-					static function () {
-						do_action( 'jp4wc_test_reset_inside_a_hook' );
-					}
-				),
-				'Another plugin called retrieve_password() from a hook.'
-			);
-		} finally {
-			remove_action( 'jp4wc_test_reset_inside_a_hook', $inside );
-		}
+	/**
+	 * A reset requested outside wp-login.php's lost password form is left to WordPress.
+	 */
+	public function test_on_resets_outside_the_login_page_are_left_alone() {
+		$this->turn_on();
+		$GLOBALS['pagenow'] = 'wp-login.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Before the form's action.
+		$this->assertSame( 'invalidcombo', $this->reset( 'nobody' )->get_error_code(), 'Another plugin calls retrieve_password() itself.' );
 
 		$GLOBALS['pagenow'] = 'index.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Another page.
-		$this->assertNull(
-			$this->redirect_of(
-				static function () {
-					retrieve_password( 'nobody' );
-				}
-			)
-		);
+		do_action( 'login_form_lostpassword' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wp-login.php's own action.
+		$this->assertSame( 'invalidcombo', $this->reset( 'nobody' )->get_error_code() );
 	}
 
 	/**
