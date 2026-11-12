@@ -313,14 +313,15 @@ class JP4WC_Security_Hardening {
 	 * for incorrect_password and empties it for invalid_username. Logins of
 	 * the WooCommerce forms go through wp_signon() and get the same error.
 	 * Other errors, the lockout of the login attempt limiter among them, are
-	 * left as they are; other codes added to the same error are kept.
+	 * left as they are; other codes added to the same error are kept, after
+	 * this one, also when another plugin put its code before WordPress's.
 	 *
 	 * @since 3.1.0
 	 * @param WP_User|WP_Error|null $user Result so far.
 	 * @return WP_User|WP_Error|null
 	 */
 	public static function same_login_error( $user ) {
-		if ( ! is_wp_error( $user ) || ! in_array( $user->get_error_code(), self::LOGIN_ERROR_CODES, true ) || ! self::hides_user_names() ) {
+		if ( ! self::has_error_code( $user, self::LOGIN_ERROR_CODES ) || ! self::hides_user_names() ) {
 			return $user;
 		}
 		$build = static function () {
@@ -331,20 +332,44 @@ class JP4WC_Security_Hardening {
 			);
 		};
 		// Shown to shoppers: the bundled translation stands in until the language pack has the string.
-		$error = new WP_Error( 'incorrect_password', function_exists( 'jp4wc_with_bundled_translation' ) ? jp4wc_with_bundled_translation( $build ) : $build() );
-		foreach ( $user->get_error_codes() as $code ) {
-			if ( in_array( $code, self::LOGIN_ERROR_CODES, true ) ) {
+		return self::replace_error_codes( $user, self::LOGIN_ERROR_CODES, new WP_Error( 'incorrect_password', function_exists( 'jp4wc_with_bundled_translation' ) ? jp4wc_with_bundled_translation( $build ) : $build() ) );
+	}
+
+	/**
+	 * Whether a value is an error with any of the given codes, wherever it is among the error's codes.
+	 *
+	 * @since 3.1.0
+	 * @param mixed    $error Value.
+	 * @param string[] $codes Codes.
+	 * @return bool
+	 */
+	private static function has_error_code( $error, array $codes ) {
+		return is_wp_error( $error ) && array() !== array_intersect( $error->get_error_codes(), $codes );
+	}
+
+	/**
+	 * Returns the replacement error followed by the codes of an error that are not among the given ones.
+	 *
+	 * @since 3.1.0
+	 * @param WP_Error $error       Error.
+	 * @param string[] $codes       Codes that tell whether the user exists, left out.
+	 * @param WP_Error $replacement The error that answers for them.
+	 * @return WP_Error
+	 */
+	private static function replace_error_codes( WP_Error $error, array $codes, WP_Error $replacement ) {
+		foreach ( $error->get_error_codes() as $code ) {
+			if ( in_array( $code, $codes, true ) ) {
 				continue;
 			}
-			foreach ( $user->get_error_messages( $code ) as $message ) {
-				$error->add( $code, $message );
+			foreach ( $error->get_error_messages( $code ) as $message ) {
+				$replacement->add( $code, $message );
 			}
-			$data = $user->get_error_data( $code );
+			$data = $error->get_error_data( $code );
 			if ( null !== $data ) {
-				$error->add_data( $data, $code );
+				$replacement->add_data( $data, $code );
 			}
 		}
-		return $error;
+		return $replacement;
 	}
 
 	/**
@@ -468,23 +493,29 @@ class JP4WC_Security_Hardening {
 	 *
 	 * WordPress returns the error of the Basic authentication with an
 	 * application password as is (rest_application_password_check_errors(),
-	 * 90), whose code tells whether the user exists.
+	 * 90), whose code tells whether the user exists. Other codes of the
+	 * error, which the response lists as additional errors, are kept after
+	 * this one.
 	 *
 	 * @since 3.1.0
 	 * @param WP_Error|null|true $result Result so far.
 	 * @return WP_Error|null|true
 	 */
 	public static function same_rest_auth_error( $result ) {
-		if ( ! is_wp_error( $result ) || ! in_array( $result->get_error_code(), self::REST_ERROR_CODES, true ) || ! self::hides_user_names() ) {
+		if ( ! self::has_error_code( $result, self::REST_ERROR_CODES ) || ! self::hides_user_names() ) {
 			return $result;
 		}
 		$build = static function () {
 			return __( 'The username, email address or password is incorrect.', 'woocommerce-for-japan' );
 		};
-		return new WP_Error(
-			'incorrect_password',
-			function_exists( 'jp4wc_with_bundled_translation' ) ? jp4wc_with_bundled_translation( $build ) : $build(),
-			array( 'status' => 401 )
+		return self::replace_error_codes(
+			$result,
+			self::REST_ERROR_CODES,
+			new WP_Error(
+				'incorrect_password',
+				function_exists( 'jp4wc_with_bundled_translation' ) ? jp4wc_with_bundled_translation( $build ) : $build(),
+				array( 'status' => 401 )
+			)
 		);
 	}
 

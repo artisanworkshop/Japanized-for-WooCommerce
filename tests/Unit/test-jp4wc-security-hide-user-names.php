@@ -356,6 +356,15 @@ class JP4WC_Security_Hide_User_Names_Test extends WP_UnitTestCase {
 		$this->assertSame( 'Wrong answer.', $result->get_error_message( 'captcha_failed' ) );
 		$this->assertSame( array( 'status' => 403 ), $result->get_error_data( 'captcha_failed' ) );
 
+		// Another plugin's code first, WordPress's after it (PR #331 G1-1).
+		foreach ( array( 'invalid_username', 'invalid_email', 'incorrect_password' ) as $code ) {
+			$error = new WP_Error( 'captcha_failed', 'Wrong answer.' );
+			$error->add( $code, 'Detailed.' );
+			$result = JP4WC_Security_Hardening::same_login_error( $error );
+			$this->assertSame( array( 'incorrect_password', 'captcha_failed' ), $result->get_error_codes(), $code );
+			$this->assertSame( JP4WC_Security_Hardening::same_login_error( new WP_Error( 'invalid_username', 'x' ) )->get_error_message(), $result->get_error_message(), $code );
+		}
+
 		$this->assertNull( JP4WC_Security_Hardening::same_login_error( null ) );
 		$this->assertSame( $this->admin, JP4WC_Security_Hardening::same_login_error( $this->admin ) );
 	}
@@ -537,6 +546,13 @@ class JP4WC_Security_Hide_User_Names_Test extends WP_UnitTestCase {
 				$this->assertSame( 'The username, email address or password is incorrect.', $result->get_error_message(), $code );
 				$this->assertSame( array( 'status' => 401 ), $result->get_error_data(), $code );
 			}
+
+			// Another plugin's code first: the response would list WordPress's as an additional error (PR #331 G1-1).
+			$wp_rest_application_password_status = new WP_Error( 'jwt_auth_failed', 'Plugin.' );
+			$wp_rest_application_password_status->add( 'invalid_username', 'Unknown username.' );
+			$result = apply_filters( 'rest_authentication_errors', null );
+			$this->assertSame( array( 'incorrect_password', 'jwt_auth_failed' ), $result->get_error_codes() );
+			$this->assertSame( array( 'status' => 401 ), $result->get_error_data() );
 
 			$wp_rest_application_password_status = new WP_Error( 'application_passwords_disabled', 'Off for the site.' );
 			$this->assertSame( 'application_passwords_disabled', apply_filters( 'rest_authentication_errors', null )->get_error_code(), 'An error that does not depend on the user stays.' );
