@@ -59,6 +59,7 @@ class Artws_Sec_Report_Builder {
 		'A-03' => array( 'admin', 'high' ),
 		'A-04' => array( 'admin', 'medium' ),
 		'A-05' => array( 'admin', 'low' ),
+		'A-06' => array( 'admin', 'low' ),
 		'D-01' => array( 'data', 'high' ),
 		'D-02' => array( 'data', 'critical' ),
 		'D-03' => array( 'data', 'medium' ),
