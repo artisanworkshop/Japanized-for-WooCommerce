@@ -151,7 +151,7 @@ class JP4WC_Security_Score_Test extends WP_UnitTestCase {
 			array(
 				'total'   => 12,
 				'vuln'    => 59,
-				'admin'   => 58,
+				'admin'   => 55,
 				'data'    => 12,
 				'malware' => 74,
 			),

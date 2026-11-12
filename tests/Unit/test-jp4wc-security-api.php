@@ -635,7 +635,7 @@ class JP4WC_Security_API_Test extends WP_UnitTestCase {
 		$this->assertSame( 100 - JP4WC_Security_Checks::POINTS['medium'], $data['requirements']['admin']['score'] );
 		$this->assertSame( 1, $data['requirements']['admin']['fail'] );
 		$this->assertSame( 1, $data['requirements']['admin']['unknown'] );
-		$this->assertSame( 3, $data['requirements']['admin']['pass'] );
+		$this->assertSame( 4, $data['requirements']['admin']['pass'] );
 		$this->assertSame( 'pass', $data['requirements']['data']['status'] );
 		$this->assertSame( $data['requirements']['admin']['score'], $data['score']['total'] );
 	}

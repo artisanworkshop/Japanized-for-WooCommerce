@@ -1317,6 +1317,23 @@ const SecuritySettings = ( {
 					<ToggleControl
 						__nextHasNoMarginBottom={ true }
 						label={ __(
+							'Hide user names from visitors',
+							'woocommerce-for-japan'
+						) }
+						help={ __(
+							'For visitors who are not logged in, author pages (?author= links included) answer "not found", author links lead to the home page, and the users sitemap, comment classes and oEmbed leave user names out. For everyone, a failed login on the WordPress and WooCommerce forms, a lost password request and a wrong application password in the REST API get the same answer whether the user exists or not. Logged-in users see the site as before. Turn it off if your theme shows author pages. A display name that is the same as the user name still shows it: change the display name on the user\'s profile.',
+							'woocommerce-for-japan'
+						) }
+						checked={ settings?.[ 'hide-user-names' ] === '1' }
+						onChange={ ( value ) =>
+							updateSetting( 'hide-user-names', value ? '1' : '' )
+						}
+					/>
+				</PanelRow>
+				<PanelRow>
+					<ToggleControl
+						__nextHasNoMarginBottom={ true }
+						label={ __(
 							'Forbid file editing in the admin screens',
 							'woocommerce-for-japan'
 						) }

@@ -183,7 +183,7 @@ class JP4WC_Settings_API_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The hardening options are off until turned on, and saved as on or off only (3.0.0).
+	 * The hardening options are off until turned on, and saved as on or off only (3.0.0; hide-user-names 3.1.0).
 	 *
 	 * @dataProvider posted_value_provider
 	 *
@@ -193,20 +193,25 @@ class JP4WC_Settings_API_Security_Scan_Test extends WP_UnitTestCase {
 	public function test_hardening_options_are_saved_as_on_or_off( $posted, $saved ) {
 		try {
 			$this->assertSame( '', $this->reported_settings()['hide-rest-users'] );
+			$this->assertSame( '', $this->reported_settings()['hide-user-names'] );
 			$this->assertSame( '', $this->reported_settings()['disallow-file-edit'] );
 			$this->assertSame( '', $this->reported_settings()['disable-xmlrpc'] );
 			$this->save(
 				array(
 					'hide-rest-users'    => $posted,
+					'hide-user-names'    => $posted,
 					'disallow-file-edit' => $posted,
 					'disable-xmlrpc'     => $posted,
 				)
 			);
 			$this->assertSame( $saved, get_option( 'wc4jp-hide-rest-users' ) );
+			$this->assertSame( $saved, get_option( 'wc4jp-hide-user-names' ) );
 			$this->assertSame( $saved, get_option( 'wc4jp-disallow-file-edit' ) );
 			$this->assertSame( $saved, get_option( 'wc4jp-disable-xmlrpc' ) );
+			$this->assertSame( $saved, $this->reported_settings()['hide-user-names'] );
 		} finally {
 			delete_option( 'wc4jp-hide-rest-users' );
+			delete_option( 'wc4jp-hide-user-names' );
 			delete_option( 'wc4jp-disallow-file-edit' );
 			delete_option( 'wc4jp-disable-xmlrpc' );
 		}

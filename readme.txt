@@ -67,11 +67,11 @@ Works smoothly with WooCommerce core features and popular extensions. Fully comp
 
 **Security Check**
 * Checks the installed plugins, themes and WordPress against known vulnerabilities once a day (data from Wordfence Intelligence, delivered by wc.artws.info)
-* 17 checks in all, including HTTPS on the checkout and My Account pages, two-factor authentication, file editing in the admin, and backups or logs left in public directories
+* 18 checks in all, including HTTPS on the checkout and My Account pages, two-factor authentication, file editing in the admin, and backups or logs left in public directories
 * A score for each of the four requirements of Japan's Credit Card Security Guidelines (クレジットカード・セキュリティガイドライン), with the items that need action and how to fix them; it shows what needs attention and does not guarantee compliance
 * "Re-check now" on the Security tab; on by default and can be turned off there
 * Login attempt limiter (off by default): counts failed logins per IP address and per user name on the WordPress and WooCommerce login forms, and stays out of the way when a security plugin, Jetpack or the server already protects the login page
-* More hardening options (off by default): hide the user list of the REST API from visitors who are not logged in, forbid file editing in the admin screens (DISALLOW_FILE_EDIT), and turn XML-RPC off except for the methods you allow (Jetpack keeps working)
+* More hardening options (off by default): hide the user list of the REST API from visitors who are not logged in; keep user names from those visitors (author pages, ?author= links included, answer "not found", author links lead to the home page, and the users sitemap, comment classes and oEmbed leave the names out) and answer failed logins on the WordPress and WooCommerce forms, lost password requests and wrong REST API application passwords the same whether the user exists or not (a display name that is the same as the user name still shows it); forbid file editing in the admin screens (DISALLOW_FILE_EDIT); and turn XML-RPC off except for the methods you allow (Jetpack keeps working)
 * Free security check by wc.artws.info (optional, only after you agree on the Security tab): sends the list of plugins and themes and the results of the checks, shows a report with the items that need action and how to fix them, and its data can be deleted from the same tab
 * A record of the XML-RPC calls of the last 30 days, kept on the site, that shows which methods are used, by which client and whether they log in, so that you can tell integrations from password guessing before turning XML-RPC off
 

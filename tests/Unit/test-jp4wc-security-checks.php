@@ -175,7 +175,7 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 	public function test_run_returns_every_check_in_order() {
 		$checks = JP4WC_Security_Checks::run( array( 'uploads' => $this->uploads() ) );
 
-		$this->assertSame( array( 'V-01', 'V-02', 'V-03', 'V-04', 'A-01', 'A-02', 'A-03', 'A-04', 'A-05', 'D-01', 'D-02', 'D-03', 'D-04', 'D-05', 'M-01', 'M-02', 'M-03' ), wp_list_pluck( $checks, 'check_id' ) );
+		$this->assertSame( array( 'V-01', 'V-02', 'V-03', 'V-04', 'A-01', 'A-02', 'A-03', 'A-04', 'A-05', 'A-06', 'D-01', 'D-02', 'D-03', 'D-04', 'D-05', 'M-01', 'M-02', 'M-03' ), wp_list_pluck( $checks, 'check_id' ) );
 		$prefixes = array(
 			'V' => 'vuln',
 			'A' => 'admin',
@@ -1026,6 +1026,137 @@ class JP4WC_Security_Checks_Test extends WP_UnitTestCase {
 		} finally {
 			$this->set_permalink_structure( '' );
 			delete_option( 'wc4jp-hide-rest-users' );
+		}
+	}
+
+	/**
+	 * Makes every published post a draft, so that no user has published content.
+	 */
+	private function unpublish_everything() {
+		global $wpdb;
+		$wpdb->query( "UPDATE {$wpdb->posts} SET post_status = 'draft' WHERE post_status = 'publish'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		wp_cache_set_posts_last_changed();
+	}
+
+	/**
+	 * Returns the ?author= URL A-06 requests for a user.
+	 *
+	 * @param int $user_id User ID.
+	 * @return string
+	 */
+	private function author_url( $user_id ) {
+		return add_query_arg( 'author', $user_id, trailingslashit( home_url() ) );
+	}
+
+	/**
+	 * A-06 requests ?author= of the first administrator with published content and fails on a redirect with the name (3.1.0).
+	 */
+	public function test_a06_author_redirect() {
+		$this->unpublish_everything();
+		$owner = self::factory()->user->create(
+			array(
+				'role'          => 'administrator',
+				'user_login'    => 'shopowner',
+				'user_nicename' => 'shop-owner',
+			)
+		);
+		self::factory()->post->create(
+			array(
+				'post_author' => $owner,
+				'post_status' => 'publish',
+				'post_type'   => 'page',
+			)
+		);
+		$url = $this->author_url( $owner );
+
+		$this->answers[ $url ] = array( 301, array( 'location' => home_url( '/author/shop-owner/' ) ) );
+		$this->assertSame( 'fail', $this->status( 'A-06' ), 'redirect_canonical() sends the ID to the archive with the name.' );
+		$this->assertContains( $url, $this->requested, 'The administrator with published content (a page counts too) is requested.' );
+
+		$this->answers[ $url ] = array( 302, array( 'location' => 'HTTP://EXAMPLE.ORG/AUTHOR/SHOP-OWNER?x=1' ) );
+		$this->assertSame( 'fail', $this->status( 'A-06' ), 'The name is matched whatever the case, before a query string.' );
+
+		$this->answers[ $url ] = array( 301, array( 'location' => array( home_url( '/' ), home_url( '/members/shop-owner/' ) ) ) );
+		$this->assertSame( 'fail', $this->status( 'A-06' ), 'A header sent twice is looked at in full (another author base).' );
+
+		$this->answers[ $url ] = array( 301, array( 'location' => home_url( '/author/shop-owner-2/' ) ) );
+		$this->assertSame( 'unknown', $this->status( 'A-06' ), 'Only the name as a whole path segment counts.' );
+
+		$this->answers[ $url ] = array( 301, array( 'location' => home_url( '/' ) ) );
+		$this->assertSame( 'unknown', $this->status( 'A-06' ), 'A redirect elsewhere does not show the name.' );
+
+		$this->answers[ $url ] = array( 404, array() );
+		$this->assertSame( 'pass', $this->status( 'A-06' ) );
+
+		$this->answers[ $url ] = array( 200, array() );
+		$this->assertSame( 'unknown', $this->status( 'A-06' ), 'A HEAD request does not see the page; a page cache may ignore the query.' );
+
+		unset( $this->answers[ $url ] );
+		$this->assertSame( 'unknown', $this->status( 'A-06' ), 'Unreachable.' );
+
+		$this->assertContains( 'A-06', JP4WC_Security_Checks::probe_keys(), 'The result is removed with the others.' );
+	}
+
+	/**
+	 * Without published content, A-06 requests the first administrator; without administrators it is unknown (3.1.0).
+	 */
+	public function test_a06_target_without_content_or_administrators() {
+		$this->unpublish_everything();
+		self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$first = get_users(
+			array(
+				'role'    => 'administrator',
+				'orderby' => 'ID',
+				'order'   => 'ASC',
+				'number'  => 1,
+			)
+		)[0];
+
+		$this->answers[ $this->author_url( $first->ID ) ] = array( 301, array( 'location' => home_url( '/author/' . $first->user_nicename . '/' ) ) );
+		$this->assertSame( 'fail', $this->status( 'A-06' ), 'Without published content, the first administrator is requested.' );
+
+		foreach ( get_users( array( 'role' => 'administrator' ) ) as $admin ) {
+			$admin->set_role( 'editor' );
+		}
+		$this->requested = array();
+		$this->assertSame( 'unknown', $this->status( 'A-06' ) );
+		$this->assertSame( array(), $this->requested, 'Nothing is requested.' );
+	}
+
+	/**
+	 * With this plugin's own setting, only a redirect with the name fails A-06 (3.1.0).
+	 */
+	public function test_a06_own_setting() {
+		$this->unpublish_everything();
+		$owner = self::factory()->user->create(
+			array(
+				'role'          => 'administrator',
+				'user_nicename' => 'shop-owner',
+			)
+		);
+		self::factory()->post->create(
+			array(
+				'post_author' => $owner,
+				'post_status' => 'publish',
+			)
+		);
+		$url = $this->author_url( $owner );
+		update_option( 'wc4jp-hide-user-names', '1' );
+		try {
+			$this->answers[ $url ] = array( 404, array() );
+			$this->assertSame( 'pass', $this->status( 'A-06' ) );
+			$this->assertContains( $url, $this->requested, 'The URL is still requested.' );
+
+			unset( $this->answers[ $url ] );
+			$this->assertSame( 'pass', $this->status( 'A-06' ), 'Unreachable: the setting is trusted.' );
+
+			$this->answers[ $url ] = array( 200, array() );
+			$this->assertSame( 'pass', $this->status( 'A-06' ), 'The setting is trusted for what the probe cannot tell.' );
+
+			$this->answers[ $url ] = array( 301, array( 'location' => home_url( '/author/shop-owner/' ) ) );
+			$this->assertSame( 'fail', $this->status( 'A-06' ), 'Another plugin put the redirect back.' );
+		} finally {
+			delete_option( 'wc4jp-hide-user-names' );
 		}
 	}
 
