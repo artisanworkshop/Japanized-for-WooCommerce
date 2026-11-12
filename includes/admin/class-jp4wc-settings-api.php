@@ -204,7 +204,7 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 					// Offered as a checkout option value and saved to orders as is.
 					$value = sanitize_text_field( $value );
 				}
-				if ( in_array( $key, array( 'security-scan', 'login-limit', 'hide-rest-users', 'disallow-file-edit', 'disable-xmlrpc' ), true ) ) {
+				if ( in_array( $key, array( 'security-scan', 'login-limit', 'hide-rest-users', 'hide-user-names', 'disallow-file-edit', 'disable-xmlrpc' ), true ) ) {
 					// Anything but on is off, the way the other checkboxes are saved.
 					$value = ( '1' === $value || true === $value ) ? '1' : '';
 				}
@@ -274,6 +274,7 @@ class JP4WC_Settings_API extends WP_REST_Controller {
 			'login-limit-user-attempts',
 			'login-limit-lockout-minutes',
 			'hide-rest-users',
+			'hide-user-names',
 			'disallow-file-edit',
 			'disable-xmlrpc',
 			'xmlrpc-allow',
