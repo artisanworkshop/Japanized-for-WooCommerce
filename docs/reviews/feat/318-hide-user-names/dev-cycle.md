@@ -4,8 +4,8 @@
 - タスク: issue #318 ユーザー名の列挙対策を REST API のユーザー一覧以外にも広げる（auto-commit）
 - 開始: 2026-11-12
 - PR: #331 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/331
-- 現在のステップ: 7（G2 依頼）
-- Copilot: 依頼 1 回 / 未収束
+- 現在のステップ: 完了（最終報告済み）
+- Copilot: 依頼 2 回 / 収束（G2 で新規指摘なし）
 - Codex: 依頼 1 回 / 収束（G1 で新規指摘なし）
 
 ## ログ
@@ -17,3 +17,5 @@
 | 2026-11-12 17:30 | 4 | upstream へ push（21a0610、T=2026-11-12T08:28:38Z）、PR #331 作成（milestone Version 3.1.0） |
 | 2026-11-12 17:41 | 6 | G1 依頼（CI green 後、Codex は `@codex review`）。両 bot が応答 |
 | 2026-11-12 17:44 | 7 | G1: Codex 0 件で収束。Copilot 2 件 → G1-1 修正（26270a8）、G1-2 は誤検知で保留 |
+| 2026-11-12 17:57 | 7 | G2（Copilot のみ）: 新規 0 件。本文「Needs a closer look」は既知の事柄（サーバーの反映順、実サイトの probe、保留中の G1-2）だけ → 収束 |
+| 2026-11-12 18:00 | 8 | 最終報告（final-report.md）。マージ待ち |
