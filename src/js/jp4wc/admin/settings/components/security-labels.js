@@ -147,6 +147,16 @@ export const checkLabels = () => ( {
 			'woocommerce-for-japan'
 		),
 	},
+	'A-06': {
+		title: __(
+			'User names found from author IDs',
+			'woocommerce-for-japan'
+		),
+		fix: __(
+			'Turn on "Hide user names from visitors" under Settings on this tab, or stop ?author= links from redirecting visitors who are not logged in to the author page with a security plugin.',
+			'woocommerce-for-japan'
+		),
+	},
 	'D-01': {
 		title: __(
 			'File listing of the uploads directory',
