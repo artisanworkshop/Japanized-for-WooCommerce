@@ -308,6 +308,7 @@ test( 'runs with and without the bands, and deletes the check data', async ( {
 					ready: true,
 					enabled: true,
 					bands_available: true,
+					remote_deleted: true,
 				},
 			} );
 			return;
@@ -378,6 +379,80 @@ test( 'runs with and without the bands, and deletes the check data', async ( {
 	await expect(
 		page.getByRole( 'button', { name: 'Get the free check' } )
 	).toBeVisible();
+	expect( deleted ).toBe( 1 );
+	expect( unexpected ).toEqual( [] );
+	expect( errors ).toEqual( [] );
+} );
+
+test( 'deleting without a registration for this URL says nothing was sent (#319)', async ( {
+	page,
+} ) => {
+	const unexpected: string[] = [];
+	let deleted = 0;
+	let base: ScanState | null = null;
+
+	await page.route( isRoute( SCAN ), async ( route ) => {
+		const method = methodOf( route );
+		if ( 'GET' === method ) {
+			base = await realState( route );
+			// A staging copy: the token and the consent kept here are the
+			// production site's, so this site has neither.
+			await route.fulfill( {
+				json: {
+					...base,
+					consent: null,
+					registered: false,
+					other_site: true,
+					report: null,
+					scanned_at: 0,
+					ready: true,
+					enabled: true,
+				},
+			} );
+			return;
+		}
+		if ( null === base || 'DELETE' !== method ) {
+			unexpected.push( method );
+			await route.fulfill( { status: 500, json: {} } );
+			return;
+		}
+		deleted++;
+		await route.fulfill( {
+			json: {
+				...base,
+				consent: null,
+				registered: false,
+				other_site: false,
+				report: null,
+				scanned_at: 0,
+				ready: true,
+				enabled: true,
+				remote_deleted: false,
+			},
+		} );
+	} );
+
+	const errors = await openSecurityTab( page );
+
+	await expect(
+		page.getByRole( 'button', { name: 'Get the free check' } )
+	).toBeVisible();
+	await page.getByRole( 'button', { name: 'Delete check data' } ).click();
+	await expect(
+		page.getByText(
+			"This deletes the consent and the report kept on this site. No registration for this site's URL is kept here, so nothing is sent to wc.artws.info."
+		)
+	).toBeVisible();
+	await page.getByRole( 'button', { name: 'Delete', exact: true } ).click();
+	await expect(
+		notice( page, 'The check data kept on this site was deleted.' )
+	).toBeVisible();
+	await expect(
+		notice(
+			page,
+			'The check data was deleted from wc.artws.info and from this site.'
+		)
+	).toHaveCount( 0 );
 	expect( deleted ).toBe( 1 );
 	expect( unexpected ).toEqual( [] );
 	expect( errors ).toEqual( [] );

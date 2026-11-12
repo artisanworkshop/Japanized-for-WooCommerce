@@ -26,6 +26,12 @@ require_once __DIR__ . '/class-jp4wc-security-scanner.php';
  * for, sent as Authorization: Bearer, and never shown, logged or returned by
  * this site's REST API. A copy of the database on another URL (a staging
  * site) does not use it: it would read or delete the production site's data.
+ * The consent is kept with a hash of the site URL it was given on, and such
+ * a copy asks for it again: the copy would otherwise send its own information
+ * on the production site's consent. A hash, not the URL: the search-replace
+ * that moves a database to another URL (WP-CLI, migration and staging tools)
+ * rewrites URLs inside serialized options too, which would make the copy's
+ * consent name the copy.
  */
 class JP4WC_Security_Scan {
 
@@ -55,7 +61,8 @@ class JP4WC_Security_Scan {
 	const TOKEN_OPTION = 'jp4wc_security_site_token';
 
 	/**
-	 * Option: the consent (version, time, whether the bands may be sent).
+	 * Option: the consent (version, time, whether the bands may be sent, and
+	 * since 3.1.0 the hash of the site URL it was given on).
 	 */
 	const CONSENT_OPTION = 'jp4wc_security_scan_consent';
 
@@ -510,20 +517,101 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
-	 * Returns the stored consent.
+	 * Returns the hash of a site URL that the consent is kept with: two URLs
+	 * that same_site() takes as one site have the same hash.
 	 *
-	 * @return array{version: string, consented_at: int, bands: bool}|null
+	 * @since 3.1.0
+	 *
+	 * @param string $site_url Site URL.
+	 * @return string
 	 */
-	public static function consent() {
+	private static function site_hash( $site_url ) {
+		return hash( 'sha256', self::site_key( (string) $site_url ) );
+	}
+
+	/**
+	 * Returns the stored consent and the hash of the site URL it was given on.
+	 *
+	 * 3.0.x stored no hash. The first check stores the token with the site URL
+	 * in the same request as the consent, so such a consent is taken as given
+	 * on the token's URL. Without a token, the URL is unknown (null): a copy
+	 * of such a database on another URL must not count it as its own. The
+	 * token's URL can be search-replaced like any URL, and a 3.0.x staging copy
+	 * that ran a check stored a token of its own URL, so upgrade_consent()
+	 * adds the hash on the update to 3.1.0, and every check records it.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @return array{version: string, consented_at: int, bands: bool, site_hash: string|null}|null
+	 */
+	private static function stored_consent() {
 		$consent = get_option( self::CONSENT_OPTION, null );
 		if ( ! is_array( $consent ) || ! isset( $consent['version'] ) || ! is_string( $consent['version'] ) ) {
 			return null;
+		}
+		if ( isset( $consent['site_hash'] ) && is_string( $consent['site_hash'] ) ) {
+			$site_hash = $consent['site_hash'];
+		} else {
+			$token     = self::stored_token();
+			$site_hash = null === $token ? null : self::site_hash( $token['site_url'] );
 		}
 		return array(
 			'version'      => $consent['version'],
 			'consented_at' => isset( $consent['consented_at'] ) ? (int) $consent['consented_at'] : 0,
 			'bands'        => ! empty( $consent['bands'] ),
+			'site_hash'    => $site_hash,
 		);
+	}
+
+	/**
+	 * Returns the stored consent, when it was given on this site's URL.
+	 *
+	 * A consent given on another URL (the site this database was copied from)
+	 * or on an unknown one is not this site's consent: null.
+	 *
+	 * @return array{version: string, consented_at: int, bands: bool}|null
+	 */
+	public static function consent() {
+		$consent = self::stored_consent();
+		if ( null === $consent || self::site_hash( home_url() ) !== $consent['site_hash'] ) {
+			return null;
+		}
+		unset( $consent['site_hash'] );
+		return $consent;
+	}
+
+	/**
+	 * Adds the hash of this site's URL to a consent stored without one, when
+	 * the consent is this site's (JP4WC_Install::install(), on install and on
+	 * every update).
+	 *
+	 * Until then a 3.0.x consent counts on the URL of the token, which the
+	 * search-replace that copies a database to a staging URL rewrites as well;
+	 * with the hash, copies made after the update ask for the consent again.
+	 * A consent that is not this site's is left as it is: it does not count.
+	 *
+	 * The consent is read from the database under the lock, as run() does: a
+	 * consent this process read before a deletion in another request would
+	 * be written back. When the lock is held, nothing is done; the next check
+	 * records the hash.
+	 *
+	 * @since 3.1.0
+	 */
+	public static function upgrade_consent() {
+		if ( ! self::lock() ) {
+			return;
+		}
+		try {
+			self::forget_cached_options();
+			$stored = get_option( self::CONSENT_OPTION, null );
+			if ( ! is_array( $stored ) || isset( $stored['site_hash'] ) || null === self::consent() ) {
+				return;
+			}
+			$stored['site_hash'] = self::site_hash( home_url() );
+			update_option( self::CONSENT_OPTION, $stored, false );
+		} finally {
+			self::unlock();
+		}
 	}
 
 	/**
@@ -542,7 +630,8 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
-	 * Whether the store manager agreed to the current consent text.
+	 * Whether the store manager agreed to the current consent text on this
+	 * site's URL.
 	 *
 	 * @return bool
 	 */
@@ -552,9 +641,10 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
-	 * Stores the consent to the current text, and whether the bands may be sent.
+	 * Stores the consent to the current text on this site's URL, and whether
+	 * the bands may be sent.
 	 *
-	 * The time is that of the first consent to this version.
+	 * The time is that of the first consent to this version on this URL.
 	 *
 	 * @param bool $bands Whether the bands may be sent.
 	 */
@@ -566,6 +656,7 @@ class JP4WC_Security_Scan {
 				'version'      => self::CONSENT_VERSION,
 				'consented_at' => null !== $consent && self::CONSENT_VERSION === $consent['version'] && $consent['consented_at'] > 0 ? $consent['consented_at'] : time(),
 				'bands'        => (bool) $bands,
+				'site_hash'    => self::site_hash( home_url() ),
 			),
 			false
 		);
@@ -659,7 +750,7 @@ class JP4WC_Security_Scan {
 			return self::busy_error();
 		}
 		try {
-			self::forget_cached_consent();
+			self::forget_cached_options();
 			if ( ! $consent && ! self::has_consent() ) {
 				return new WP_Error(
 					'jp4wc_security_scan_consent_required',
@@ -679,14 +770,21 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
-	 * Drops the consent from this process's option cache, so that the next
-	 * read comes from the database.
+	 * Drops the consent and the token from this process's option cache, so
+	 * that the next read comes from the database: whether a consent stored
+	 * without a hash is this site's depends on the token.
 	 */
-	private static function forget_cached_consent() {
-		wp_cache_delete( self::CONSENT_OPTION, 'options' );
+	private static function forget_cached_options() {
 		$notoptions = wp_cache_get( 'notoptions', 'options' );
-		if ( is_array( $notoptions ) && isset( $notoptions[ self::CONSENT_OPTION ] ) ) {
-			unset( $notoptions[ self::CONSENT_OPTION ] );
+		$changed    = false;
+		foreach ( array( self::CONSENT_OPTION, self::TOKEN_OPTION ) as $option ) {
+			wp_cache_delete( $option, 'options' );
+			if ( is_array( $notoptions ) && isset( $notoptions[ $option ] ) ) {
+				unset( $notoptions[ $option ] );
+				$changed = true;
+			}
+		}
+		if ( $changed ) {
 			wp_cache_set( 'notoptions', $notoptions, 'options' );
 		}
 	}
@@ -781,7 +879,9 @@ class JP4WC_Security_Scan {
 	 * URL is not sent (it belongs to the site this database was copied from):
 	 * only what is kept here is deleted.
 	 *
-	 * @return true|WP_Error
+	 * @return array{remote_deleted: bool}|WP_Error remote_deleted (since 3.1.0)
+	 *         is false when nothing was sent to wc.artws.info, because no
+	 *         token for this site's URL is kept here.
 	 */
 	public static function delete_site() {
 		if ( ! self::lock() ) {
@@ -800,7 +900,7 @@ class JP4WC_Security_Scan {
 				}
 			}
 			self::forget_all();
-			return true;
+			return array( 'remote_deleted' => null !== $token );
 		} finally {
 			self::unlock();
 		}

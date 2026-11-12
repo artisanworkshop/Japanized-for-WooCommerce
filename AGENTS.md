@@ -57,6 +57,7 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - What the free security check sends is built only by `JP4WC_Security_Scan::payload()`, which the consent screen also previews. A key sent from anywhere else, or one missing from the readme External Services list, is a defect.
 - A path in `SecurityScan.js` that sets the free check's state from a server answer also sets `bands` to the bands that answer was built with (`show()` / `loadBands()`); one without the other can send bands the preview does not show (#317).
 - A new `consent_version` sent by JP4WC must already be in `Artws_Sec_Scan_Request::CONSENT_VERSIONS`, and a version a released JP4WC sends stays there.
+- A stored value that tells a staging copy from the production site is a hash of `site_key()`, never the URL: search-replace tools rewrite URLs inside serialized options (#319).
 - The terms of use and the privacy policy on wc.artws.info describe what the client sends, how long it is kept and how it is deleted, and the terms rely on the Security tab's link to them. A PR that changes any of these says in its description that both pages need the same change.
 
 ### Tests

@@ -74,6 +74,11 @@ class JP4WC_Install {
 		if ( class_exists( 'JP4WC_Security_Feed', false ) ) {
 			JP4WC_Security_Feed::install();
 		}
+		// Bind a free check consent stored by 3.0.x to this site's URL. A request
+		// during an update may have loaded the class of an earlier version.
+		if ( method_exists( 'JP4WC_Security_Scan', 'upgrade_consent' ) ) {
+			JP4WC_Security_Scan::upgrade_consent();
+		}
 
 		delete_transient( 'jp4wc_installing' );
 	}
