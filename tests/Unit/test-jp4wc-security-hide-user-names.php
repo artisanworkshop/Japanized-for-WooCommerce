@@ -202,17 +202,36 @@ class JP4WC_Security_Hide_User_Names_Test extends WP_UnitTestCase {
 		$this->assertSame( array( 'error' => '404' ), JP4WC_Security_Hardening::close_author_archives( array( 'author' => array( '1' ) ) ) );
 
 		// rest_api_loaded() serves only a non-empty rest_route; an empty one is shown as a page (R1-1).
+		// go_to() starts a new WP, which lacks the query variable rest_api_init() adds on init (R2-1).
+		$rest_route = static function ( $vars ) {
+			$vars[] = 'rest_route';
+			return $vars;
+		};
+		$reached    = null;
+		$spy        = static function ( $vars ) use ( &$reached ) {
+			$reached = is_array( $vars ) && array_key_exists( 'rest_route', $vars );
+			return $vars;
+		};
+		add_filter( 'query_vars', $rest_route );
+		add_filter( 'request', $spy, 9 );
+		try {
+			foreach ( array( '/?author=' . $this->admin->ID . 'x&rest_route=', '/author/shop-owner/?rest_route=', '/?author_name=shop-owner&rest_route=0' ) as $path ) {
+				$reached = null;
+				$this->go_to( home_url( $path ) );
+				$this->assertTrue( $reached, "$path: rest_route reaches the request filter" );
+				$this->assertTrue( is_404(), $path );
+				$this->assertFalse( is_author(), $path );
+			}
+		} finally {
+			remove_filter( 'query_vars', $rest_route );
+			remove_filter( 'request', $spy, 9 );
+		}
 		foreach ( array( '', '0' ) as $route ) {
 			$query = array(
 				'rest_route' => $route,
 				'author'     => '1',
 			);
 			$this->assertSame( array( 'error' => '404' ), JP4WC_Security_Hardening::close_author_archives( $query ), "rest_route '$route'" );
-		}
-		foreach ( array( '/?author=' . $this->admin->ID . 'x&rest_route=', '/author/shop-owner/?rest_route=', '/?author_name=shop-owner&rest_route=0' ) as $path ) {
-			$this->go_to( home_url( $path ) );
-			$this->assertTrue( is_404(), $path );
-			$this->assertFalse( is_author(), $path );
 		}
 	}
 
@@ -399,15 +418,18 @@ class JP4WC_Security_Hide_User_Names_Test extends WP_UnitTestCase {
 		$this->assertSame( home_url( '/sent/' ), $this->reset( 'nobody' ) );
 		unset( $_REQUEST['redirect_to'] );
 
-		// WPS Hide Login loads wp-login.php from wp_loaded (R1-2).
-		$inside = function () {
+		// WPS Hide Login loads wp-login.php from wp_loaded (R1-2), where WooCommerce's field must not make it WooCommerce's form.
+		$inside                         = function () {
 			$this->assertStringEndsWith( 'wp-login.php?checkemail=confirm', (string) $this->reset( 'nobody' ) );
+			$_POST['wc_reset_password'] = '1';
+			$this->assertStringEndsWith( 'wp-login.php?checkemail=confirm', (string) $this->reset( 'nobody' ), 'WooCommerce\'s field added to the login page.' );
 		};
-		add_action( 'jp4wc_test_login_page_from_a_hook', $inside );
+		$GLOBALS['wp_current_filter'][] = 'wp_loaded';
 		try {
-			do_action( 'jp4wc_test_login_page_from_a_hook' );
+			$inside();
 		} finally {
-			remove_action( 'jp4wc_test_login_page_from_a_hook', $inside );
+			array_pop( $GLOBALS['wp_current_filter'] );
+			unset( $_POST['wc_reset_password'] );
 		}
 
 		$sent = static function () {

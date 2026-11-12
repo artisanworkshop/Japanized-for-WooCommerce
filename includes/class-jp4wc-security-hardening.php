@@ -405,13 +405,15 @@ class JP4WC_Security_Hardening {
 	 * Whether WooCommerce's lost password form is being handled.
 	 *
 	 * WC_Form_Handler::process_lost_password() (wp_loaded) checked the nonce
-	 * before it called WC_Shortcode_My_Account::retrieve_password().
+	 * before it called WC_Shortcode_My_Account::retrieve_password(). A request
+	 * of the login page is not one, even with WooCommerce's field added to it
+	 * when a plugin loads the login page from wp_loaded.
 	 *
 	 * @since 3.1.0
 	 * @return bool
 	 */
 	private static function is_woocommerce_reset() {
-		return doing_action( 'wp_loaded' ) && isset( $_POST['wc_reset_password'] ) && function_exists( 'wc_get_account_endpoint_url' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only tells WooCommerce's form apart; its nonce is checked by WooCommerce.
+		return ! self::is_login_page_reset() && doing_action( 'wp_loaded' ) && isset( $_POST['wc_reset_password'] ) && function_exists( 'wc_get_account_endpoint_url' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only tells WooCommerce's form apart; its nonce is checked by WooCommerce.
 	}
 
 	/**
