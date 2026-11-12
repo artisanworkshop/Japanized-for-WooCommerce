@@ -95,6 +95,11 @@ class JP4WC_Security_Checks {
 			'severity'    => 'low',
 			'method'      => 'rest_users',
 		),
+		'A-06' => array(
+			'requirement' => 'admin',
+			'severity'    => 'low',
+			'method'      => 'author_ids',
+		),
 		'D-01' => array(
 			'requirement' => 'data',
 			'severity'    => 'high',
@@ -771,6 +776,93 @@ class JP4WC_Security_Checks {
 			return 'pass';
 		}
 		return array( 'pass' ) === array_values( array_unique( $statuses ) ) ? 'pass' : 'unknown';
+	}
+
+	/**
+	 * A-06: an author ID leads to the user name.
+	 *
+	 * Requests ?author=<ID> of an administrator as a visitor would:
+	 * redirect_canonical() sends it to /author/<user_nicename>/ when the user
+	 * has published content, which is how user names are collected one ID
+	 * after another. A redirect to an address with the administrator's
+	 * user_nicename fails, 401, 403, 404 and 410 pass, and anything else is
+	 * unknown: a HEAD request does not see the name in a page answered with
+	 * 200, and a page cache that ignores the query string answers with the
+	 * home page. With this plugin's own setting that keeps user names from
+	 * visitors, the request is still sent (another plugin could put the
+	 * redirect back): only a redirect with the name fails.
+	 *
+	 * @since 3.1.0
+	 * @param array $context Context.
+	 * @return string
+	 */
+	private static function author_ids( array $context ) {
+		// This plugin's own setting (3.1.0). An earlier version's includes() may have loaded the class without it.
+		$hidden = class_exists( 'JP4WC_Security_Hardening', false ) && method_exists( 'JP4WC_Security_Hardening', 'hides_user_names' ) && JP4WC_Security_Hardening::hides_user_names();
+		$admin  = self::author_probe_target();
+		if ( null === $admin ) {
+			return 'unknown';
+		}
+		// The name as it appears in the archive URL (get_author_posts_url()), as a whole path segment.
+		$pattern  = '#/' . preg_quote( strtolower( (string) $admin->user_nicename ), '#' ) . '(?:[/?\#]|$)#';
+		$classify = static function ( $response ) use ( $pattern ) {
+			$code = (int) wp_remote_retrieve_response_code( $response );
+			if ( $code < 300 || $code >= 400 ) {
+				return JP4WC_Security_Probe::status_for_code( $response, array() );
+			}
+			// A header sent twice comes back as an array.
+			foreach ( (array) wp_remote_retrieve_header( $response, 'location' ) as $location ) {
+				if ( is_scalar( $location ) && 1 === preg_match( $pattern, strtolower( (string) $location ) ) ) {
+					return 'fail';
+				}
+			}
+			return 'unknown';
+		};
+
+		$status = $context['probe']->status( 'A-06', add_query_arg( 'author', (int) $admin->ID, trailingslashit( (string) get_option( 'home' ) ) ), $classify );
+		if ( $hidden ) {
+			return 'fail' === $status ? 'fail' : 'pass';
+		}
+		return $status;
+	}
+
+	/**
+	 * Returns the administrator whose author ID A-06 requests.
+	 *
+	 * The first administrator with published content, whom redirect_canonical()
+	 * redirects, or else the first administrator.
+	 *
+	 * @since 3.1.0
+	 * @return WP_User|null Null when the site has no administrator.
+	 */
+	private static function author_probe_target() {
+		$admins = get_users(
+			array(
+				'role'    => 'administrator',
+				'orderby' => 'ID',
+				'order'   => 'ASC',
+				'number'  => 20,
+			)
+		);
+		if ( array() === $admins ) {
+			return null;
+		}
+		foreach ( $admins as $admin ) {
+			$published = get_posts(
+				array(
+					'author'        => $admin->ID,
+					'post_type'     => 'any',
+					'post_status'   => 'publish',
+					'numberposts'   => 1,
+					'fields'        => 'ids',
+					'no_found_rows' => true,
+				)
+			);
+			if ( array() !== $published ) {
+				return $admin;
+			}
+		}
+		return $admins[0];
 	}
 
 	/**
@@ -1753,7 +1845,7 @@ class JP4WC_Security_Checks {
 	 * @return string[]
 	 */
 	public static function probe_keys() {
-		$keys = array( 'A-02', 'A-04', 'A-05', 'A-05-query', 'D-01', 'D-04' );
+		$keys = array( 'A-02', 'A-04', 'A-05', 'A-05-query', 'A-06', 'D-01', 'D-04' );
 		for ( $key = 0; $key < self::EXPOSED_DIRECTORIES * self::EXPOSED_PROBES; $key++ ) {
 			$keys[] = 'D-02-' . $key;
 		}

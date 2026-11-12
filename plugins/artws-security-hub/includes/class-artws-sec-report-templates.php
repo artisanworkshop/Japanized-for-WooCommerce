@@ -155,6 +155,24 @@ class Artws_Sec_Report_Templates {
 				),
 			),
 		),
+		'A-06' => array(
+			'ja' => array(
+				'title'  => '著者 ID からユーザー名を割り出せます',
+				'detail' => 'ログインしていない訪問者が管理者の著者 ID（?author= と番号）を開くと、ユーザー名（変えていなければログイン名と同じ）を URL に含む著者ページにリダイレクトされました。',
+				'impact' => '番号を順に試すだけで管理者のユーザー名を集められ、ログインへの攻撃に使われるおそれがあります。',
+				'fix'    => array(
+					'セキュリティプラグインなどで、ログインしていない訪問者の ?author=（番号）を著者ページにリダイレクトしないようにしてください。',
+				),
+			),
+			'en' => array(
+				'title'  => 'Author IDs reveal user names',
+				'detail' => 'Opening an administrator\'s author ID (?author= and a number) as a visitor who was not logged in redirected to the author page, whose address contains the user name (the login name unless it was changed).',
+				'impact' => 'Trying one number after another collects the administrators\' user names, which attackers use to attack the login.',
+				'fix'    => array(
+					'Stop ?author= with a number from redirecting visitors who are not logged in to the author page, for example with a security plugin.',
+				),
+			),
+		),
 		'D-01' => array(
 			'ja' => array(
 				'title'  => 'アップロードディレクトリのファイル一覧が表示されます',

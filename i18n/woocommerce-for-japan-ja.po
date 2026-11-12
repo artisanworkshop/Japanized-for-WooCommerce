@@ -2583,6 +2583,20 @@ msgstr ""
 "覧を返さないようにしてください。"
 
 #: assets/js/build/admin/settings.js:1
+msgid "User names found from author IDs"
+msgstr "著者 ID から分かるユーザー名"
+
+#: assets/js/build/admin/settings.js:1
+msgid ""
+"Turn on \"Hide user names from visitors\" under Settings on this tab, or "
+"stop ?author= links from redirecting visitors who are not logged in to the "
+"author page with a security plugin."
+msgstr ""
+"このタブの「設定」で「訪問者にユーザー名を見せない」を有効にするか、セキュリ"
+"ティプラグインで ?author= のリンクがログインしていない訪問者を著者ページにリ"
+"ダイレクトしないようにしてください。"
+
+#: assets/js/build/admin/settings.js:1
 msgid "File listing of the uploads directory"
 msgstr "アップロードディレクトリのファイル一覧表示"
 
@@ -3647,6 +3661,31 @@ msgstr ""
 "サイトの公開ページが REST API で著者一覧を取得している場合はオフにしてくださ"
 "い。"
 
+#: assets/js/build/admin/settings.js:23
+msgid "Hide user names from visitors"
+msgstr "訪問者にユーザー名を見せない"
+
+#: assets/js/build/admin/settings.js:23
+msgid ""
+"For visitors who are not logged in, author pages (?author= links included) "
+"answer \"not found\", author links lead to the home page, and the users "
+"sitemap, comment classes and oEmbed leave user names out. For everyone, a "
+"failed login on the WordPress and WooCommerce forms, a lost password request "
+"and a wrong application password in the REST API get the same answer whether "
+"the user exists or not. Logged-in users see the site as before. Turn it off "
+"if your theme shows author pages. A display name that is the same as the "
+"user name still shows it: change the display name on the user's profile."
+msgstr ""
+"ログインしていない訪問者には、著者ページ（?author= のリンクを含む）を「見つか"
+"りません」で返し、投稿者名のリンクをトップページに向け、ユーザーのサイトマッ"
+"プ・コメントの class・oEmbed からユーザー名を外します。また誰に対しても、"
+"WordPress と WooCommerce のフォームでのログインの失敗、パスワードを忘れたとき"
+"の申請、REST API での誤ったアプリケーションパスワードに、ユーザーが存在するか"
+"どうかに関係なく同じ応答を返します。ログイン中のユーザーには今までどおり表示"
+"されます。テーマが著者ページを使っている場合はオフにしてください。表示名が"
+"ユーザー名と同じだと、そこからユーザー名が分かります。ユーザーのプロフィール"
+"で表示名を変えてください。"
+
 #: assets/js/build/admin/settings.js:18
 msgid "Forbid file editing in the admin screens"
 msgstr "管理画面からのファイル編集を禁止"
@@ -4428,3 +4467,17 @@ msgstr "審査も最短1〜2日で完了、設定もカンタンです。"
 #: assets/js/build/paidy/wizard/paidy.js:5
 msgid "pass this time"
 msgstr "今回は見送る"
+
+#. translators: %s: URL of the lost password page
+#: includes/class-jp4wc-security-hardening.php:326
+#, php-format
+msgid ""
+"<strong>Error:</strong> The username, email address or password is "
+"incorrect. <a href=\"%s\">Lost your password?</a>"
+msgstr ""
+"<strong>エラー:</strong> ユーザー名、メールアドレス、またはパスワードが正しく"
+"ありません。<a href=\"%s\">パスワードをお忘れですか ?</a>"
+
+#: includes/class-jp4wc-security-hardening.php:413
+msgid "The username, email address or password is incorrect."
+msgstr "ユーザー名、メールアドレス、またはパスワードが正しくありません。"
