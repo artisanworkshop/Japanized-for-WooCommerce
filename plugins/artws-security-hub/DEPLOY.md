@@ -246,7 +246,7 @@ curl -s https://wc.artws.info/feed/ | head -3
 
 ### 無料診断の API
 
-契約のサンプルで実際に 1 回登録し、読めることを確かめてから消す。リポジトリの直下で実行する。
+契約のサンプルで実際に 1 回登録し、読めることを確かめてから消す。リポジトリの直下で、1 から 4 までを同じターミナルで続けて実行する（3 は 1 で取った `TOKEN` を使う。別のターミナルや、`/tmp/artws-scan.json` が無い状態で 3 を実行すると、空のトークンで送って 401 になり、登録が残る）。
 
 ```bash
 BASE=https://wc.artws.info/wp-json/artws-sec/v1
@@ -256,15 +256,21 @@ curl -4 -s -X POST "$BASE/scan" -H 'Content-Type: application/json' \
   --data @tests/fixtures/security-feed/scan-request.json > /tmp/artws-scan.json
 jq '{site_token, scan: .report.token, score: .report.score.total, error: .code}' /tmp/artws-scan.json
 
-TOKEN=$(jq -r .site_token /tmp/artws-scan.json)
-SCAN=$(jq -r .report.token /tmp/artws-scan.json)
+TOKEN=$(jq -r '.site_token // empty' /tmp/artws-scan.json)
+SCAN=$(jq -r '.report.token // empty' /tmp/artws-scan.json)
+[ -n "$TOKEN" ] && [ -n "$SCAN" ] || echo '!! site_token が無い。1 の error を見る（登録されていないので 2・3 は不要）'
 
 # 2. Authorization ヘッダーがサーバーで落ちないか（200 なら OK、401 なら落ちている → 11 へ）
 curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" "$BASE/scan/$SCAN"
 
-# 3. 後片付け: テストの登録を消す（204）
-curl -s -o /dev/null -w '%{http_code}\n' -X DELETE -H "Authorization: Bearer $TOKEN" "$BASE/site"
-rm /tmp/artws-scan.json
+# 3. 後片付け: テストの登録を消す（204）。204 のときだけ応答のファイル（トークン入り）を消す
+if [ -n "$TOKEN" ]; then
+  CODE=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE -H "Authorization: Bearer $TOKEN" "$BASE/site")
+  echo "$CODE"
+  [ "$CODE" = 204 ] && rm /tmp/artws-scan.json
+else
+  echo '!! TOKEN が空。API では消せないので、下の「テストの登録が消せなかったとき」へ'
+fi
 
 # 4. http の要求を受け付けないか（403、または https へのリダイレクト）
 curl -s -o /dev/null -w '%{http_code}\n' -X POST http://wc.artws.info/wp-json/artws-sec/v1/scan
@@ -286,6 +292,28 @@ wp db query "SELECT hits FROM $(wp db prefix)artws_sec_limits WHERE limit_key = 
 - `rest_…` で始まる 401 / 403: ログインしていない REST の要求を、別のプラグインが止めている。
 
 この手順でサンプルを 1 回送ると、送信元 IP の枠（1 時間 20 回）を 1 回使う。
+
+#### テストの登録が消せなかったとき
+
+API で登録を消せるのは、その登録のトークンを持つ要求だけ（契約どおり）。トークンを失ったら（3 が 401、`TOKEN` が空、`/tmp/artws-scan.json` が無い）、本番のサーバーの WP-CLI で消す。放っておいても、180 日後の日次の削除で消える。ただしそれまでは、管理画面の集計・一覧・CSV にテストの分が入り続ける。
+
+wc.artws.info に SSH で入って実行する（入り方は「1. 事前に用意するもの」の「あると楽なもの」）。手元の wp-env の `wp` は、本番に届かない。
+
+```bash
+wp option get home
+# → https://wc.artws.info（本番に入っていることを確かめる）
+
+wp db query "SELECT id, site_url, FROM_UNIXTIME(created_at) AS created FROM $(wp db prefix)artws_sec_sites WHERE site_url = 'https://example.jp'"
+# → サンプルの site_url（https://example.jp）の登録。created が 1 を実行した時刻（DB のタイムゾーン）の行を選ぶ
+#   何も出なければ、もう消えている（ここで終わり）
+
+wp eval 'var_export( Artws_Sec_Site_Store::delete_site( <id> ) );'
+# <id> は上の id。診断 → 登録 → 診断の順に消し、true を返す
+# 該当の行が無くても true を返すので、消えたかは次の行で確かめる
+
+wp db query "SELECT COUNT(*) FROM $(wp db prefix)artws_sec_sites WHERE id = <id>"
+# → 0
+```
 
 ### データベース
 
