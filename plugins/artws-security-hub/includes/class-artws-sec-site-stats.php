@@ -262,12 +262,16 @@ class Artws_Sec_Site_Stats {
 	/**
 	 * Decides which band cells may be shown.
 	 *
-	 * A cell below MIN_BAND_CELL (zero included) is UNDER_MIN. The total of a
-	 * table is the number of sites, shown above it, so a table with a single
-	 * cell that is not shown would give it away: the smallest cell still
-	 * shown (the first of equal ones) is then HIDDEN as well, until no table
-	 * has exactly one. The NO_BAND cell is in both tables with the same
-	 * number, so it is hidden in both or in neither.
+	 * A cell below MIN_BAND_CELL (zero included) is UNDER_MIN. The page shows
+	 * the number of sites, which is the total of each table, so the cells not
+	 * shown add up to a known number. Each of them has a known range as well:
+	 * 0 to MIN_BAND_CELL - 1 for UNDER_MIN, and for HIDDEN from MIN_BAND_CELL
+	 * up to the smallest cell still shown (this method always hides the
+	 * smallest one, and the code is public). While a cell's value follows
+	 * from the total and the ranges of the others, the smallest cell still
+	 * shown in its table (the first of equal ones) is HIDDEN as well. The
+	 * NO_BAND cell is in both tables with the same number, so it is hidden in
+	 * both or in neither, and what one table tells about it narrows the other.
 	 *
 	 * @param array<string, int> $revenue Revenue band => sites.
 	 * @param array<string, int> $order   Order band => sites.
@@ -287,31 +291,21 @@ class Artws_Sec_Site_Stats {
 			}
 		}
 
+		// The table whose smallest shown cell the NO_BAND cell was, when it was hidden as one.
+		$none_hidden_in = null;
 		do {
-			$changed = false;
-			foreach ( $tables as $table => $cells ) {
-				$shown = array_keys( $states[ $table ], self::SHOWN, true );
-				if ( count( $cells ) - count( $shown ) !== 1 ) {
-					continue;
-				}
-				$smallest = null;
-				foreach ( $cells as $cell => $count ) {
-					if ( self::SHOWN === $states[ $table ][ $cell ] && ( null === $smallest || $count < $cells[ $smallest ] ) ) {
-						$smallest = $cell;
-					}
-				}
-				if ( null === $smallest ) {
-					continue;
-				}
-				$states[ $table ][ $smallest ] = self::HIDDEN;
-				if ( self::NO_BAND === $smallest ) {
+			$table = self::table_to_widen( $tables, $states, $none_hidden_in );
+			$cell  = null === $table ? null : self::smallest_shown( $tables[ $table ], $states[ $table ] );
+			if ( null !== $cell ) {
+				$states[ $table ][ $cell ] = self::HIDDEN;
+				if ( self::NO_BAND === $cell ) {
 					foreach ( array_keys( $tables ) as $other ) {
 						$states[ $other ][ self::NO_BAND ] = self::HIDDEN;
 					}
+					$none_hidden_in = $table;
 				}
-				$changed = true;
 			}
-		} while ( $changed );
+		} while ( null !== $cell );
 
 		$result = array();
 		foreach ( $tables as $table => $cells ) {
@@ -323,6 +317,141 @@ class Artws_Sec_Site_Stats {
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Returns a table in which the value of a cell not shown can still be worked out, if one more cell there can be hidden.
+	 *
+	 * Each table is checked on its own first. Then, as the NO_BAND cell is the
+	 * same in both, its range is narrowed by both tables and the cells are
+	 * checked again; the table that narrows it most is the one to widen.
+	 *
+	 * @param array<string, array<string, int>>    $tables         Table => cell => sites.
+	 * @param array<string, array<string, string>> $states         Table => cell => state.
+	 * @param string|null                          $none_hidden_in See suppress_bands().
+	 * @return string|null
+	 */
+	private static function table_to_widen( array $tables, array $states, $none_hidden_in ) {
+		$ranges = array();
+		$totals = array();
+		foreach ( $tables as $table => $cells ) {
+			$totals[ $table ] = 0;
+			foreach ( $cells as $cell => $count ) {
+				if ( self::SHOWN === $states[ $table ][ $cell ] ) {
+					continue;
+				}
+				$totals[ $table ] += $count;
+				if ( self::UNDER_MIN === $states[ $table ][ $cell ] ) {
+					$ranges[ $table ][ $cell ] = array( 0, self::MIN_BAND_CELL - 1 );
+				} else {
+					// A hidden cell is at most every cell still shown in the table it was hidden in.
+					$from                      = ( self::NO_BAND === $cell && null !== $none_hidden_in ) ? $none_hidden_in : $table;
+					$ranges[ $table ][ $cell ] = array( self::MIN_BAND_CELL, self::smallest_shown_count( $tables[ $from ], $states[ $from ] ) );
+				}
+			}
+		}
+
+		$can_widen = static function ( $table ) use ( $tables, $states ) {
+			return null !== self::smallest_shown( $tables[ $table ], $states[ $table ] );
+		};
+
+		foreach ( $ranges as $table => $cells ) {
+			if ( self::has_known_cell( $cells, $totals[ $table ] ) && $can_widen( $table ) ) {
+				return $table;
+			}
+		}
+
+		if ( ! isset( $ranges['revenue'][ self::NO_BAND ], $ranges['order'][ self::NO_BAND ] ) ) {
+			return null;
+		}
+		$shared = $ranges['revenue'][ self::NO_BAND ];
+		$widths = array();
+		foreach ( $ranges as $table => $cells ) {
+			$range            = self::cell_range( $cells, $totals[ $table ], self::NO_BAND );
+			$shared           = array( max( $shared[0], $range[0] ), min( $shared[1], $range[1] ) );
+			$widths[ $table ] = $range[1] - $range[0];
+		}
+		$known = false;
+		foreach ( $ranges as $table => $cells ) {
+			$cells[ self::NO_BAND ] = $shared;
+			$known                  = $known || self::has_known_cell( $cells, $totals[ $table ] );
+		}
+		if ( ! $known ) {
+			return null;
+		}
+		asort( $widths );
+		foreach ( array_keys( $widths ) as $table ) {
+			if ( $can_widen( $table ) ) {
+				return $table;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Whether the value of one of the cells follows from their total and ranges.
+	 *
+	 * @param array<string, int[]> $ranges Cell => array( lowest, highest ).
+	 * @param int                  $total  Total of the cells.
+	 * @return bool
+	 */
+	private static function has_known_cell( array $ranges, $total ) {
+		foreach ( array_keys( $ranges ) as $cell ) {
+			$range = self::cell_range( $ranges, $total, $cell );
+			if ( $range[0] >= $range[1] ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the values a cell can take, given the total of the cells and the ranges of the others.
+	 *
+	 * @param array<string, int[]> $ranges Cell => array( lowest, highest ).
+	 * @param int                  $total  Total of the cells.
+	 * @param string               $cell   Cell.
+	 * @return int[] array( lowest, highest ).
+	 */
+	private static function cell_range( array $ranges, $total, $cell ) {
+		$others_low  = 0;
+		$others_high = 0;
+		foreach ( $ranges as $other => $range ) {
+			if ( $other !== $cell ) {
+				$others_low  += $range[0];
+				$others_high += $range[1];
+			}
+		}
+		return array( max( $ranges[ $cell ][0], $total - $others_high ), min( $ranges[ $cell ][1], $total - $others_low ) );
+	}
+
+	/**
+	 * Returns the smallest cell still shown (the first of equal ones).
+	 *
+	 * @param array<string, int>    $cells  Cell => sites.
+	 * @param array<string, string> $states Cell => state.
+	 * @return string|null Null when every cell is withheld.
+	 */
+	private static function smallest_shown( array $cells, array $states ) {
+		$smallest = null;
+		foreach ( $cells as $cell => $count ) {
+			if ( self::SHOWN === $states[ $cell ] && ( null === $smallest || $count < $cells[ $smallest ] ) ) {
+				$smallest = $cell;
+			}
+		}
+		return $smallest;
+	}
+
+	/**
+	 * Returns the number of the smallest cell still shown, or the total of the table when none is.
+	 *
+	 * @param array<string, int>    $cells  Cell => sites.
+	 * @param array<string, string> $states Cell => state.
+	 * @return int
+	 */
+	private static function smallest_shown_count( array $cells, array $states ) {
+		$smallest = self::smallest_shown( $cells, $states );
+		return null === $smallest ? (int) array_sum( $cells ) : (int) $cells[ $smallest ];
 	}
 
 	/**

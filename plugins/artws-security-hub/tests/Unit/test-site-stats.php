@@ -231,6 +231,187 @@ class Artws_Sec_Site_Stats_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * A withheld cell whose value could still be worked out is covered by the next smallest cells (examples A, B and C of review R1-2).
+	 */
+	public function test_a_withheld_band_that_can_be_worked_out_hides_more() {
+		// A: "—" at B2 would be at least 5 and at most the smallest cell shown (5), so B5 = 50 - 43 - 5 = 2.
+		$states = self::states(
+			Artws_Sec_Site_Stats::suppress_bands(
+				array_combine( Artws_Sec_Scan_Request::REVENUE_BANDS, array( 15, 8, 5, 5, 5, 2 ) ),
+				array_combine( Artws_Sec_Scan_Request::ORDER_BANDS, array( 10, 10, 10, 5, 5 ) ),
+				10
+			)
+		);
+		$this->assertSame(
+			array( Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::UNDER_MIN, Artws_Sec_Site_Stats::SHOWN ),
+			array_values( $states['revenue'] )
+		);
+		$this->assertNotContains( Artws_Sec_Site_Stats::HIDDEN, $states['order'] );
+
+		// B: two cells under 5 that add up to 8 are both 4; hiding "not sent" needs a cell of the order table too.
+		$states = self::states(
+			Artws_Sec_Site_Stats::suppress_bands(
+				array_combine( Artws_Sec_Scan_Request::REVENUE_BANDS, array( 20, 20, 20, 20, 4, 4 ) ),
+				array_combine( Artws_Sec_Scan_Request::ORDER_BANDS, array( 20, 20, 20, 20, 8 ) ),
+				10
+			)
+		);
+		$this->assertSame( Artws_Sec_Site_Stats::HIDDEN, $states['revenue'][ Artws_Sec_Site_Stats::NO_BAND ] );
+		$this->assertSame( Artws_Sec_Site_Stats::HIDDEN, $states['order'][ Artws_Sec_Site_Stats::NO_BAND ] );
+		$this->assertSame( Artws_Sec_Site_Stats::HIDDEN, $states['order']['O4'] );
+		$this->assertSame( array( 'B0', 'B1', 'B2', 'B3' ), array_keys( $states['revenue'], Artws_Sec_Site_Stats::SHOWN, true ) );
+		// C: on its own, the revenue table puts "not sent" at 5 to 7 and the order table at 7 to 9, so together it is 7.
+		$states = self::states(
+			Artws_Sec_Site_Stats::suppress_bands(
+				array_combine( Artws_Sec_Scan_Request::REVENUE_BANDS, array( 9, 9, 9, 9, 9, 0 ) ),
+				array_combine( Artws_Sec_Scan_Request::ORDER_BANDS, array( 10, 10, 11, 7, 7 ) ),
+				7
+			)
+		);
+		$this->assertSame(
+			array( Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::UNDER_MIN, Artws_Sec_Site_Stats::HIDDEN ),
+			array_values( $states['revenue'] )
+		);
+		$this->assertSame(
+			array( Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::HIDDEN ),
+			array_values( $states['order'] )
+		);
+	}
+
+	/**
+	 * No withheld band can be worked out from what the page shows, whatever the counts.
+	 *
+	 * Checked by listing every value a withheld cell can take: the cells of a
+	 * table add up to the number of sites, "Under 5" is 0 to 4, "—" is at least
+	 * 5 and at most the smallest cell shown in its table (for "not sent", in
+	 * either table), and "not sent" is the same in both tables.
+	 */
+	public function test_no_withheld_band_can_be_worked_out() {
+		$seed  = 296;
+		$next  = static function ( $max ) use ( &$seed ) {
+			$seed = ( $seed * 1103515245 + 12345 ) % 2147483648;
+			return intdiv( $seed, 65536 ) % ( $max + 1 );
+		};
+		$split = static function ( $total, array $keys ) use ( $next ) {
+			$weights = array();
+			foreach ( $keys as $key ) {
+				$weights[ $key ] = $next( 9 ) ** 2;
+			}
+			$sum    = array_sum( $weights );
+			$counts = array();
+			foreach ( $weights as $key => $weight ) {
+				$counts[ $key ] = 0 === $sum ? 0 : intdiv( $total * $weight, $sum );
+			}
+			for ( $left = $total - array_sum( $counts ); $left > 0; $left-- ) {
+				++$counts[ $keys[ $next( count( $keys ) - 1 ) ] ];
+			}
+			return $counts;
+		};
+
+		for ( $case = 0; $case < 400; $case++ ) {
+			$sites   = 1 + $next( 59 );
+			$none    = $next( $sites );
+			$revenue = $split( $sites - $none, Artws_Sec_Scan_Request::REVENUE_BANDS );
+			$order   = $split( $sites - $none, Artws_Sec_Scan_Request::ORDER_BANDS );
+			$result  = Artws_Sec_Site_Stats::suppress_bands( $revenue, $order, $none );
+
+			foreach ( self::possible_values( $result, $sites ) as $table => $cells ) {
+				if ( ! in_array( Artws_Sec_Site_Stats::SHOWN, array_column( $result[ $table ], 'state' ), true ) ) {
+					continue; // Nothing left to hide in this table.
+				}
+				foreach ( $cells as $cell => $values ) {
+					$this->assertGreaterThan( 1, count( $values ), sprintf( '%s %s is known in %s', $table, $cell, wp_json_encode( $result ) ) );
+					$this->assertContains( $result[ $table ][ $cell ]['count'], $values );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Lists the values each withheld band cell can take, given what the page shows.
+	 *
+	 * @param array $result From suppress_bands().
+	 * @param int   $sites  Number of sites (shown on the page).
+	 * @return array<string, array<string, int[]>> Table => withheld cell => possible values.
+	 */
+	private static function possible_values( array $result, $sites ) {
+		$caps = array();
+		foreach ( $result as $table => $cells ) {
+			$shown          = array_column( array_filter( $cells, static fn( $cell ) => Artws_Sec_Site_Stats::SHOWN === $cell['state'] ), 'count' );
+			$caps[ $table ] = array() === $shown ? $sites : min( $shown );
+		}
+
+		$ranges = array();
+		$hidden = array();
+		foreach ( $result as $table => $cells ) {
+			$hidden[ $table ] = $sites;
+			foreach ( $cells as $cell => $info ) {
+				if ( Artws_Sec_Site_Stats::SHOWN === $info['state'] ) {
+					$hidden[ $table ] -= $info['count'];
+				} elseif ( Artws_Sec_Site_Stats::UNDER_MIN === $info['state'] ) {
+					$ranges[ $table ][ $cell ] = range( 0, Artws_Sec_Site_Stats::MIN_BAND_CELL - 1 );
+				} else {
+					$cap                       = Artws_Sec_Site_Stats::NO_BAND === $cell ? max( $caps ) : $caps[ $table ];
+					$ranges[ $table ][ $cell ] = range( Artws_Sec_Site_Stats::MIN_BAND_CELL, max( Artws_Sec_Site_Stats::MIN_BAND_CELL, $cap ) );
+				}
+			}
+		}
+
+		// Sums the cells other than $skip can reach.
+		$sums = static function ( array $cells, array $skip ) {
+			$reach = array( 0 => true );
+			foreach ( $cells as $cell => $values ) {
+				if ( in_array( $cell, $skip, true ) ) {
+					continue;
+				}
+				$next = array();
+				foreach ( array_keys( $reach ) as $sum ) {
+					foreach ( $values as $value ) {
+						$next[ $sum + $value ] = true;
+					}
+				}
+				$reach = $next;
+			}
+			return $reach;
+		};
+
+		$none_withheld = isset( $ranges['revenue'][ Artws_Sec_Site_Stats::NO_BAND ] );
+		$none_values   = $none_withheld ? $ranges['revenue'][ Artws_Sec_Site_Stats::NO_BAND ] : array( 0 );
+		$feasible_none = array();
+		foreach ( $none_values as $none ) {
+			$fits = true;
+			foreach ( array_keys( $result ) as $table ) {
+				$cells = $ranges[ $table ] ?? array();
+				$fits  = $fits && isset( $sums( $cells, array( Artws_Sec_Site_Stats::NO_BAND ) )[ $hidden[ $table ] - ( $none_withheld ? $none : 0 ) ] );
+			}
+			if ( $fits ) {
+				$feasible_none[] = $none;
+			}
+		}
+
+		$possible = array();
+		foreach ( $ranges as $table => $cells ) {
+			foreach ( $cells as $cell => $values ) {
+				if ( Artws_Sec_Site_Stats::NO_BAND === $cell ) {
+					$possible[ $table ][ $cell ] = $feasible_none;
+					continue;
+				}
+				$rest                        = $sums( $cells, array( $cell, Artws_Sec_Site_Stats::NO_BAND ) );
+				$possible[ $table ][ $cell ] = array();
+				foreach ( $values as $value ) {
+					foreach ( $feasible_none as $none ) {
+						if ( isset( $rest[ $hidden[ $table ] - $value - ( $none_withheld ? $none : 0 ) ] ) ) {
+							$possible[ $table ][ $cell ][] = $value;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return $possible;
+	}
+
+	/**
 	 * A few sites leave every cell under 5.
 	 */
 	public function test_few_sites_hide_every_band() {
@@ -410,6 +591,22 @@ class Artws_Sec_Site_Stats_Test extends Artws_Sec_Scan_Test_Case {
 		$this->assertCount( 1, $rows );
 		$this->assertSame( '8.2.0', json_decode( $rows[0]->request, true )['php_ver'] );
 		$this->assertSame( array(), Artws_Sec_Site_Store::latest_requests_by_site_key( (int) $rows[0]->id, $max, 10 ) );
+	}
+
+	/**
+	 * A scan whose registration is gone (one saved while the site was being deleted) does not count.
+	 */
+	public function test_collect_leaves_out_scans_without_a_registration() {
+		global $wpdb;
+		self::scan( self::register( 'https://kept.example.jp' ), self::NOW );
+		$gone = self::register( 'https://gone.example.jp' );
+		self::scan( $gone, self::NOW + 1, array( 'php_ver' => '7.4.1' ) );
+		$wpdb->delete( Artws_Sec_Db::sites_table(), array( 'id' => $gone ), array( '%d' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Test fixture.
+
+		$result = Artws_Sec_Site_Stats::collect();
+
+		$this->assertSame( 1, $result['sites'] );
+		$this->assertSame( array( '8.3' => 1 ), $result['versions']['php'] );
 	}
 
 	/**

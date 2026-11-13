@@ -85,7 +85,8 @@ class Artws_Sec_Admin_Sites_Test extends Artws_Sec_Scan_Test_Case {
 	 */
 	private static function csv( $search = '' ) {
 		$handle = fopen( 'php://memory', 'w+' );
-		Artws_Sec_Admin_Sites::write_csv( $handle, Artws_Sec_Admin_Sites::csv_batches( $search ) );
+		// The way handle_download() writes it: the first batch is read before the file starts.
+		Artws_Sec_Admin_Sites::write_csv( $handle, Artws_Sec_Admin_Sites::open_csv( $search ) );
 		rewind( $handle );
 		$csv = stream_get_contents( $handle );
 		fclose( $handle );
@@ -293,23 +294,37 @@ class Artws_Sec_Admin_Sites_Test extends Artws_Sec_Scan_Test_Case {
 
 	/**
 	 * Values that a spreadsheet would read as a formula get a leading apostrophe.
+	 *
+	 * The versions are where a sender can put one: POST /scan takes any text
+	 * without control characters there, while site_url must start with
+	 * http(s):// and locale with a letter. Every column is defused all the same.
 	 */
 	public function test_csv_defuses_formulas() {
-		$site = self::register( '=HYPERLINK("https://evil.example","x")' );
-		self::scan( $site, self::NOW, array( 'locale' => '@SUM(1)' ) );
-		foreach ( array( '+1', '-1', "\tx", "\rx" ) as $i => $url ) {
-			self::register( $url . $i );
-		}
+		self::publish_contract_feed();
+		$response = self::send(
+			'POST',
+			'/scan',
+			self::sample_request(
+				array(
+					'jp4wc_ver' => '@SUM(1)',
+					'wp_ver'    => '=1+1',
+					'wc_ver'    => '+1',
+					'php_ver'   => '-1',
+				)
+			)
+		);
+		$this->assertSame( 200, $response->get_status() );
 
 		$rows = self::parse_csv( self::csv() );
 
-		$this->assertSame( '\'=HYPERLINK("https://evil.example","x")', $rows[1][1] );
-		$this->assertSame( "'@SUM(1)", $rows[1][9] );
-		$this->assertSame( "'+10", $rows[2][1] );
-		$this->assertSame( "'-11", $rows[3][1] );
-		$this->assertSame( "'\tx2", Artws_Sec_Admin_Sites::csv_value( 'site_url', "\tx2" ) );
-		$this->assertSame( "'\rx3", Artws_Sec_Admin_Sites::csv_value( 'site_url', "\rx3" ) );
+		$this->assertSame( array( "'@SUM(1)", "'=1+1", "'+1", "'-1" ), array_slice( $rows[1], 5, 4 ) );
+		$this->assertSame( 'https://example.jp', $rows[1][1] );
+		$this->assertSame( 'ja', $rows[1][9] );
+		foreach ( array( '=A1', '+A1', '-A1', '@A1', "\tA1", "\rA1" ) as $value ) {
+			$this->assertSame( "'" . $value, Artws_Sec_Admin_Sites::csv_value( 'site_url', $value ) );
+		}
 		$this->assertSame( 'https://example.jp', Artws_Sec_Admin_Sites::csv_value( 'site_url', 'https://example.jp' ) );
+		$this->assertSame( '8.3.12', Artws_Sec_Admin_Sites::csv_value( 'php_ver', '8.3.12' ) );
 		$this->assertSame( '', Artws_Sec_Admin_Sites::csv_value( 'php_ver', null ) );
 	}
 
@@ -332,6 +347,22 @@ class Artws_Sec_Admin_Sites_Test extends Artws_Sec_Scan_Test_Case {
 		sort( $sorted );
 		$this->assertSame( $sorted, $ids );
 		$this->assertStringNotContainsString( 'other.example.jp', self::csv( 'match-' ) );
+	}
+
+	/**
+	 * A CSV without registrations has the header row only.
+	 */
+	public function test_csv_without_registrations() {
+		self::register( 'https://example.jp' );
+
+		foreach ( array( 'no-such-site', '' ) as $search ) {
+			if ( '' === $search ) {
+				global $wpdb;
+				$wpdb->query( 'DELETE FROM ' . Artws_Sec_Db::sites_table() ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- Test cleanup of a custom table.
+			}
+			$rows = self::parse_csv( self::csv( $search ) );
+			$this->assertSame( array( array_values( Artws_Sec_Admin_Sites::columns( false ) ) ), $rows, $search );
+		}
 	}
 
 	/**
@@ -419,8 +450,13 @@ class Artws_Sec_Admin_Sites_Test extends Artws_Sec_Scan_Test_Case {
 	 * The Sites tab shows the aggregates, the download with the search and the escaped list.
 	 */
 	public function test_sites_tab() {
-		for ( $i = 0; $i < 6; $i++ ) {
-			self::scan( self::register( 'https://shop-' . $i . '.example.jp' ), self::NOW + $i );
+		// 7 sites in B2 / O2 (with the one below) and 6 in B3 / O3: every other band is empty.
+		for ( $i = 0; $i < 12; $i++ ) {
+			$bands = $i < 6 ? array() : array(
+				'revenue_band' => 'B3',
+				'order_band'   => 'O3',
+			);
+			self::scan( self::register( 'https://shop-' . $i . '.example.jp' ), self::NOW + $i, $bands );
 		}
 		$evil = self::register( 'https://example.jp/"><script>alert(1)</script>' );
 		self::scan( $evil, self::NOW + 10, array( 'php_ver' => '<b>8.4</b>' ) );
@@ -428,11 +464,13 @@ class Artws_Sec_Admin_Sites_Test extends Artws_Sec_Scan_Test_Case {
 
 		$html = self::render( 'sites' );
 
-		$this->assertStringContainsString( '7 sites with a scan', $html );
-		$this->assertMatchesRegularExpression( '/<th scope="row">8\.3<\/th>\s*<td>6<\/td>\s*<td>85\.7%<\/td>/', $html );
+		$this->assertStringContainsString( '13 sites with a scan', $html );
+		$this->assertMatchesRegularExpression( '/<th scope="row">8\.3<\/th>\s*<td>12<\/td>\s*<td>92\.3%<\/td>/', $html );
 		$this->assertMatchesRegularExpression( '/<th scope="row">Unknown<\/th>\s*<td>1<\/td>/', $html );
-		$this->assertMatchesRegularExpression( '/<th scope="row">B2<\/th>\s*<td>7<\/td>/', $html );
-		$this->assertMatchesRegularExpression( '/<th scope="row">B0<\/th>\s*<td>Under 5<\/td>/', $html );
+		// The empty bands are known to be 0 unless one of the two others is withheld too.
+		$this->assertMatchesRegularExpression( '/<th scope="row">B2<\/th>\s*<td>7<\/td>\s*<td>53\.8%<\/td>/', $html );
+		$this->assertMatchesRegularExpression( '/<th scope="row">B3<\/th>\s*<td>—<\/td>\s*<td><\/td>/', $html );
+		$this->assertMatchesRegularExpression( '/<th scope="row">B0<\/th>\s*<td>Under 5<\/td>\s*<td><\/td>/', $html );
 		$this->assertStringContainsString( 'article 6, paragraph 6', $html );
 		$this->assertMatchesRegularExpression( '/admin-post\.php\?action=artws_sec_download_sites&#038;s=example\.jp%2F%22&#038;_wpnonce=[0-9a-f]+/', $html );
 		$this->assertStringContainsString( '1 registration.', $html );

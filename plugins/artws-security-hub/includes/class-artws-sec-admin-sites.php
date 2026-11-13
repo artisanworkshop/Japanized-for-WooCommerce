@@ -147,10 +147,8 @@ class Artws_Sec_Admin_Sites {
 	public static function handle_download() {
 		Artws_Sec_Admin::check_request( self::DOWNLOAD_ACTION );
 
-		$batches = self::csv_batches( self::search() );
 		try {
-			// Reads the first batch before anything is sent, so that a failed read can still answer with an error page.
-			$batches->current();
+			$batches = self::open_csv( self::search() );
 		} catch ( Artws_Sec_Feed_Exception $e ) {
 			wp_die( esc_html__( 'The registrations could not be read. Try again later.', 'artws-security-hub' ), '', array( 'response' => 500 ) );
 		}
@@ -199,7 +197,27 @@ class Artws_Sec_Admin_Sites {
 	}
 
 	/**
+	 * Starts reading the registrations for the CSV and reads the first batch.
+	 *
+	 * The first batch is read before anything is sent, so that a failed read
+	 * can still answer with an error page.
+	 *
+	 * @param string $search Part of the site URL to look for, or ''.
+	 * @return Generator<int, array[]> From csv_batches(), at its first batch.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
+	 */
+	public static function open_csv( $search ) {
+		$batches = self::csv_batches( $search );
+		$batches->current();
+		return $batches;
+	}
+
+	/**
 	 * Reads the registrations for the CSV, BATCH_SIZE at a time in the order of their IDs.
+	 *
+	 * The first batch is yielded even when it is empty: a generator that ends
+	 * before its first yield is closed, and open_csv() has already started it,
+	 * so the foreach of write_csv() would throw.
 	 *
 	 * @param string $search Part of the site URL to look for, or ''.
 	 * @return Generator<int, array[]> Rows from build_row() without the bands.
@@ -209,10 +227,10 @@ class Artws_Sec_Admin_Sites {
 		$after = 0;
 		do {
 			$sites = Artws_Sec_Site_Store::sites_after( $after, $search, self::BATCH_SIZE );
+			yield self::rows( $sites, false );
 			if ( array() === $sites ) {
 				return;
 			}
-			yield self::rows( $sites, false );
 			$after = (int) end( $sites )->id;
 			$read  = count( $sites );
 		} while ( self::BATCH_SIZE === $read );
@@ -311,8 +329,9 @@ class Artws_Sec_Admin_Sites {
 	/**
 	 * Returns a value as a CSV cell, defused against formulas.
 	 *
-	 * The sender chooses site_url and locale, so a value that starts like a
-	 * formula gets a leading apostrophe.
+	 * A value that starts like a formula gets a leading apostrophe. The
+	 * versions can: POST /scan takes any text without control characters
+	 * there (site_url and locale cannot, but every column is defused).
 	 *
 	 * @param string          $key   Row key.
 	 * @param int|string|null $value Row value.
