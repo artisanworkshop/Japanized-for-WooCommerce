@@ -53,8 +53,10 @@ WP-Cron の日次イベント `artws_sec_feed_update` が Wordfence Intelligence
 
 ### 管理画面（設定 > Security Hub）
 
+Sites（既定）/ Plugins / Feed のタブ（`&tab=`）。無料診断の Sites・Plugins タブは「無料診断の REST API」の「管理画面」を見る。Feed タブ:
+
 - 最後の成功（version・件数）、stale、最後の実行の結果とエラー、除外件数と除外例（最大 20 件）
-- 「Update now」: 取り込みを WP-Cron に積む。WP-CLI があれば `wp cron event run artws_sec_feed_update` でその場で走らせて結果を見られる
+- 「Update now」: 取り込みを WP-Cron に積む。WP-CLI があれば `wp cron event run artws_sec_feed_update` でその場で走らせて結果を見られる。「Update now」「Allow fewer records…」の後は Feed タブに戻る
 - EOL（manifest の `eol.{php,wordpress,woocommerce}.min_supported`）: 数字とドットだけ。保存すると manifest を書き直す（取り込みの実行中なら 1 分後に `artws_sec_feed_republish` で書き直す。既定 PHP 8.2 / WordPress 6.7 / WooCommerce 10.2）
 
 WP-Cron はアクセスが無いと走らない。取り込みは数十秒かかるので、`DISABLE_WP_CRON` とサーバーの cron（例: `*/15 * * * * wp --path=/path/to/wordpress cron event run --due-now`）で回すのがよい。`DISABLE_WP_CRON` はサイトのすべての予定（WordPress・WooCommerce を含む）に効く。Pressable では最初から true で、Pressable 側が予定を走らせているので、何も設定しない（DEPLOY.md の 6-2）。
@@ -137,6 +139,20 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 | `artws_sec_client_ip` | — | レート制限が数える送信元アドレス |
 | `artws_sec_require_https` | true | http の要求を 403 にするか |
 
+### 管理画面（Sites・Plugins タブ）
+
+SSH と WP-CLI なしで、どのサイトが登録し、いつ診断したかを確かめるための画面（本番での動作確認、問い合わせ・削除依頼の確認）。`manage_options` の利用者だけが見られる。
+
+- **集計（Sites タブの一番上）と上位 30（Plugins タブ）**（`Artws_Sec_Site_Stats`）: 1 サイト 1 カウント。サイトは `sites.site_key`（`site_key()` の単位）で数え、同じサイトの登録が複数あっても（401 の後の再登録など）1 と数える。値は、そのサイトの全登録の診断のうち最新のもの（`created_at` が最も新しい、同時刻なら `id` が大きい）の `request` から取る。数えるのは、診断が表に残っているサイト（日次の削除が保存期間を守る）。集計を始めたときの最大の診断 ID までを 200 件ずつ読む（集計中に届いた診断で同じサイトを 2 回数えない。`request` は software を最大 1,000 件持てるので、一度に読む件数を抑えている）。集計に 1 秒を超えたら、結果を 10 分 transient（`artws_sec_site_stats`）に置く。表の上に、登録サイト数と集計した時刻を出す
+  - 版（PHP / WordPress / WooCommerce）は先頭の「メジャー.マイナー」（`8.3.12` → 8.3、`7.0-RC1` → 7.0）。合わない値・空は Unknown。新しい順で Unknown は最後
+  - 売上・注文規模の帯は、同意の版を問わず数える（利用規約 第4条第4項第2号「本サービスの改善」の範囲）。**5 未満（0 を含む）のマスは数も割合も出さず「Under 5」**。表の合計は登録サイト数なので、隠したマスの合計は差し引きで分かる。各マスの範囲（「Under 5」は 0〜4、「—」は 5 以上で、同じ表で表示中のマスのうち後ろのもの以下・前のものより小さい。最小のもの・同数なら上のものから隠す規則とコードは公開されている）と合わせて、隠したマスのどれかの値が一つに決まる間は、その表で見えているマスのうち最小のもの（同数なら上のもの）も「—」にする（例: 2 マスの「Under 5」の合計が 8 なら両方 4 と決まる。帯が 1 つに集中していれば、ほかが 0 と決まるのでその帯も隠す）。「帯を送らなかった」サイトの数は両方の表に同じ値で入るので、片方で隠したら両方で隠し、両表から分かる範囲を突き合わせて調べる。テスト（`test_no_withheld_band_can_be_worked_out`）が、この範囲と合計から取りうる値を数えて確かめている
+  - **限界（2026-11-13 決定、レビュー R1-2）**: 守るのは「表の数と範囲の計算からは割り出せない」まで。コードを読み、候補の値の組ごとにこの規則を走らせ直して同じ画面になるものを探す相手には、「—」が付いたこと自体（隠す前に割り出せた）から値が決まる場合が残る（例: B0・B1 が Under 5、B2 が「—」、合計 53 なら B0 = B1 = 4）。隠すかどうかを値で決める限り原理的に残る。この画面を見られるのは DB を読める運営者だけで、2026-11 の同意の帯は一覧に 1 件ずつ出るので、これを受け入れている
+  - 上位 30: 最新の診断の `software[]` のうち `plugin` だけ。1 サイトで同じ slug が重複しても 1（どれかが有効なら有効）。順位は有効にしているサイトの数、同数は slug の昇順で同順位。テーマは数えない
+- **登録の一覧（Sites タブ）**: 1 行 = 1 登録。最終診断日時の新しい順、20 件ずつ、サイト URL の部分一致の検索（`$wpdb->esc_like()`）。最新の診断の版・言語・総合スコア（`report.score.total`）と診断回数を出す。`token_hash`・`scan_key`・送信内容の全文は出さない。日時はサイトのタイムゾーン
+  - **帯は、`Artws_Sec_Admin_Sites::BAND_LISTING_CONSENT_VERSIONS`（`2026-11`）の同意で送られた診断だけに出す**。利用規約 2026-11-05 施行の改定（第4条第4項第4号「担当者による登録ごとの確認」と第5項）で認められた使い方で、附則により改定前（`2026-10`）の同意の帯は、同意し直すまで出さない（「—」）。同意文の版を足すときは、利用目的が登録ごとの確認を含むかを規約で確かめてからこの定数に足す
+- **CSV（「Download CSV」、`admin-post.php?action=artws_sec_download_sites`）**: 一覧と同じ列（帯の列は無い）を ID 順に 200 件ずつ書く。検索中ならその条件に合う行だけ。UTF-8 の BOM 付き、日時は ISO 8601（オフセット付き）、`= + - @` タブ・CR で始まる値は先頭に `'`（全列。送信側が自由に決められるのは版の列: `POST /scan` は制御文字以外の任意の文字列を受け付ける。`site_url` は `http(s)://`、`locale` は英字で始まる）。`manage_options` と nonce を確かめ、最初の読み出しに失敗したら 500 のエラー画面、途中で失敗したら最後に「not complete」の行を書く
+  - **運用: CSV は集計にだけ使い、使った後すぐに削除する**（利用規約 第6条第6項、プライバシーポリシー「保存期間と削除」）。手元に残すと、保存期間（180 日）と削除の申込みの約束の外に出るため。ボタンの横にも同じことを出している
+
 ### 運用
 
 - **反映した直後は 503 になる**: 0.2.0 までの取り込みはインデックスを書いていない。ZIP を置き換えたら「Update now」か `wp cron event run artws_sec_feed_update` で取り込みを1回走らせる
@@ -144,7 +160,7 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 - **匿名の REST を止めるプラグイン**: ログインしていない要求の REST API を止めるセキュリティプラグインや、`Authorization: Bearer` を自分の認証（JWT など）として読むプラグインがあると、この API が動かない。`artws-sec/v1` を除外する
 - **CDN・リバースプロキシ**: 背後に置くと `REMOTE_ADDR` がプロキシの IP になり、全サイトが1つの送信元として数えられる。プロキシが上書きするヘッダーのキーを `ARTWS_SEC_CLIENT_IP_HEADER` に入れる（クライアントが自由に書ける `X-Forwarded-For` をそのまま信じない。リストなら最後の値を使う）。プロキシを通らずに届く要求はどのヘッダーも書けるので、プロキシを置かないとき（wc.artws.info）は入れない。TLS をプロキシで終える場合は、`is_ssl()` が true になるよう wp-config.php で `$_SERVER['HTTPS']` を設定する（しないと全要求が 403）
 - **毎日の削除**: WP-Cron の `artws_sec_scan_cleanup` が、180 日より古い診断・180 日診断の無い登録・終わったレート制限の窓を消す。無効化で止まる（データは残る）
-- **プラグインの削除**: `uninstall.php` が無料診断の4表と `artws_sec_db_version` を消す（診断データを保存期間より長く残さない）。脆弱性フィード（S1 の option と配信ファイル）は残る
+- **プラグインの削除**: `uninstall.php` が無料診断の4表と `artws_sec_db_version`、集計のキャッシュ（`artws_sec_site_stats`）を消す（診断データを保存期間より長く残さない）。脆弱性フィード（S1 の option と配信ファイル）は残る
 - **公開前に必要なもの**: wc.artws.info のプライバシーポリシーと利用規約（保存する項目・保存期間 180 日・削除の方法を書く。#256 の未決事項）。トークンを失った登録の診断は API では消せず、保存期間で消えることも書く。問い合わせで削除を受けるなら `site_url` で登録を探して手で消すが、同じ URL の登録には他人のもの（開発環境など）も含まれうるので、サイトの持ち主であることを確かめてから消す
 
 ## 開発
