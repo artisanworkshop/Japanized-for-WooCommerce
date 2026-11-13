@@ -213,11 +213,17 @@ class Artws_Sec_Admin_Sites_Test extends Artws_Sec_Scan_Test_Case {
 		$this->assertSame( 'https://site-4.example.jp', $second['rows'][0]->site_url );
 		$this->assertCount( 20, Artws_Sec_Site_Store::list_sites( '', 20, 0 )['rows'] );
 
+		// add_query_arg() does not encode the value it adds, so paginate_links() finds %#% in the base.
+		$html = self::render( 'sites' );
+		$this->assertMatchesRegularExpression( '/<a class="next page-numbers" href="[^"]*[?&](?:#038;|amp;)?paged=2"/', $html );
+		$this->assertStringNotContainsString( '%25%23%25', $html );
+
 		$_GET['paged'] = '2';
+		$_GET['s']     = 'example.jp';
 		$html          = self::render( 'sites' );
 		$this->assertStringContainsString( 'site-0.example.jp', $html );
 		$this->assertStringNotContainsString( 'site-24.example.jp', $html );
-		$this->assertStringContainsString( 'class="page-numbers"', $html );
+		$this->assertMatchesRegularExpression( '/<a class="prev page-numbers" href="[^"]*s=example\.jp[^"]*paged=1"/', $html );
 	}
 
 	/**
