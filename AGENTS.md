@@ -79,3 +79,4 @@ Report defects that change behaviour: security holes, data loss, wrong results, 
 - A change that needs a step on the server adds it to `DEPLOY.md`.
 - A new check ID in `JP4WC_Security_Checks::CHECKS` is added to `Artws_Sec_Report_Builder::CHECKS` and `Artws_Sec_Report_Templates` (ja and en) in the same PR, with a `DEPLOY.md` row that deploys the server before the client tag.
 - `hosting/pressable/custom-redirects.php` repeats the feed file names and the default feed directory: a change to `Artws_Sec_Feed_Publisher::FILES` / `MANIFEST` or to that directory changes it in the same PR. It never redirects (the client sends `redirection => 0`) and never sends `Content-Encoding` with a `.json.gz`.
+- The Security Hub CSV never carries `revenue_band` / `order_band`, and the registration list shows them only for scans whose `consent_version` is in `Artws_Sec_Admin_Sites::BAND_LISTING_CONSENT_VERSIONS` (terms 4.4.4, 4.5, 6.6).

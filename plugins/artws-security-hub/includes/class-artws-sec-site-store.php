@@ -327,6 +327,203 @@ class Artws_Sec_Site_Store {
 	}
 
 	/**
+	 * Returns a page of registrations for the settings page, the latest scan first.
+	 *
+	 * @param string $search   Part of the site URL to look for, or ''.
+	 * @param int    $per_page Rows per page.
+	 * @param int    $page     Page number, from 1.
+	 * @return array{total: int, rows: object[]} The number of matching registrations and the page's rows
+	 *                                           (id, site_url, created_at, last_scan_at; never the token hash).
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
+	 */
+	public static function list_sites( $search, $per_page, $page ) {
+		global $wpdb;
+
+		$table                = Artws_Sec_Db::sites_table();
+		list( $where, $args ) = self::search_condition( $search );
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Custom table; the condition comes from search_condition(), and the values of all placeholders are passed as one array.
+		$count = "SELECT COUNT(*) FROM {$table} WHERE {$where}";
+		$total = $wpdb->get_var( array() === $args ? $count : $wpdb->prepare( $count, $args ) );
+		self::check_read();
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, site_url, created_at, last_scan_at FROM {$table} WHERE {$where} ORDER BY last_scan_at DESC, id DESC LIMIT %d OFFSET %d",
+				array_merge( $args, array( (int) $per_page, ( max( 1, (int) $page ) - 1 ) * (int) $per_page ) )
+			)
+		);
+		// phpcs:enable
+		self::check_read();
+
+		return array(
+			'total' => (int) $total,
+			'rows'  => is_array( $rows ) ? $rows : array(),
+		);
+	}
+
+	/**
+	 * Returns the registrations after an ID, in the order of their IDs (for the CSV download).
+	 *
+	 * @param int    $after_id Last ID already read, or 0.
+	 * @param string $search   Part of the site URL to look for, or ''.
+	 * @param int    $limit    Most rows.
+	 * @return object[] Rows (id, site_url, created_at, last_scan_at; never the token hash).
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
+	 */
+	public static function sites_after( $after_id, $search, $limit ) {
+		global $wpdb;
+
+		$table                = Artws_Sec_Db::sites_table();
+		list( $where, $args ) = self::search_condition( $search );
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Custom table; the condition comes from search_condition(), and the values of all placeholders are passed as one array.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, site_url, created_at, last_scan_at FROM {$table} WHERE id > %d AND {$where} ORDER BY id LIMIT %d",
+				array_merge( array( (int) $after_id ), $args, array( (int) $limit ) )
+			)
+		);
+		// phpcs:enable
+		self::check_read();
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Returns the latest scan of each site: the one created last, or of those created at the same second, the last saved.
+	 *
+	 * @param int[] $site_ids Site IDs.
+	 * @return array<int, object> Site ID => row (site_id, created_at, request, report). Sites without a scan are missing.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
+	 */
+	public static function latest_scans( array $site_ids ) {
+		global $wpdb;
+
+		$ids = self::id_list( $site_ids );
+		if ( '' === $ids ) {
+			return array();
+		}
+		$scans = Artws_Sec_Db::scans_table();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table; the IDs are integers from id_list().
+		$rows = $wpdb->get_results( "SELECT c.site_id, c.created_at, c.request, c.report FROM {$scans} c WHERE c.site_id IN ( {$ids} ) AND NOT EXISTS ( SELECT 1 FROM {$scans} n WHERE n.site_id = c.site_id AND ( n.created_at > c.created_at OR ( n.created_at = c.created_at AND n.id > c.id ) ) )" );
+		self::check_read();
+
+		$latest = array();
+		foreach ( (array) $rows as $row ) {
+			$latest[ (int) $row->site_id ] = $row;
+		}
+		return $latest;
+	}
+
+	/**
+	 * Returns how many scans each site has.
+	 *
+	 * @param int[] $site_ids Site IDs.
+	 * @return array<int, int> Site ID => number of scans. Sites without a scan are missing.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
+	 */
+	public static function scan_counts( array $site_ids ) {
+		global $wpdb;
+
+		$ids = self::id_list( $site_ids );
+		if ( '' === $ids ) {
+			return array();
+		}
+		$scans = Artws_Sec_Db::scans_table();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table; the IDs are integers from id_list().
+		$rows = $wpdb->get_results( "SELECT site_id, COUNT(*) AS scans FROM {$scans} WHERE site_id IN ( {$ids} ) GROUP BY site_id" );
+		self::check_read();
+
+		$counts = array();
+		foreach ( (array) $rows as $row ) {
+			$counts[ (int) $row->site_id ] = (int) $row->scans;
+		}
+		return $counts;
+	}
+
+	/**
+	 * Returns the highest scan ID, so that the aggregates read a fixed set of scans.
+	 *
+	 * @return int 0 when there is no scan.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
+	 */
+	public static function max_scan_id() {
+		global $wpdb;
+
+		$scans = Artws_Sec_Db::scans_table();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table.
+		$max = $wpdb->get_var( "SELECT MAX(id) FROM {$scans}" );
+		self::check_read();
+		return (int) $max;
+	}
+
+	/**
+	 * Returns the request of the latest scan of each site, counting every registration of a site_key as one site.
+	 *
+	 * The latest scan is the one created last over all the registrations of
+	 * the site_key, or of those created at the same second, the last saved.
+	 * Only scans up to $max_id are read, so that a scan saved while the
+	 * aggregates are read does not count its site a second time. Scans whose
+	 * registration is gone are left out.
+	 *
+	 * @param int $after_id Last scan ID already read, or 0.
+	 * @param int $max_id   Highest scan ID to read (max_scan_id()).
+	 * @param int $limit    Most rows.
+	 * @return object[] Rows (id, request) in the order of their IDs.
+	 * @throws Artws_Sec_Feed_Exception When the data cannot be read.
+	 */
+	public static function latest_requests_by_site_key( $after_id, $max_id, $limit ) {
+		global $wpdb;
+
+		$scans = Artws_Sec_Db::scans_table();
+		$sites = Artws_Sec_Db::sites_table();
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom tables.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT c.id, c.request FROM {$scans} c INNER JOIN {$sites} s ON s.id = c.site_id
+				WHERE c.id > %d AND c.id <= %d AND NOT EXISTS (
+					SELECT 1 FROM {$scans} n INNER JOIN {$sites} t ON t.id = n.site_id
+					WHERE t.site_key = s.site_key AND n.id <= %d
+						AND ( n.created_at > c.created_at OR ( n.created_at = c.created_at AND n.id > c.id ) )
+				)
+				ORDER BY c.id LIMIT %d",
+				(int) $after_id,
+				(int) $max_id,
+				(int) $max_id,
+				(int) $limit
+			)
+		);
+		// phpcs:enable
+		self::check_read();
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Returns the WHERE condition of a site URL search and its values.
+	 *
+	 * @param string $search Part of the site URL to look for, or ''.
+	 * @return array{0: string, 1: array} Condition with placeholders, and their values.
+	 */
+	private static function search_condition( $search ) {
+		global $wpdb;
+
+		if ( ! is_string( $search ) || '' === $search ) {
+			return array( '1 = 1', array() );
+		}
+		return array( 'site_url LIKE %s', array( '%' . $wpdb->esc_like( $search ) . '%' ) );
+	}
+
+	/**
+	 * Returns site IDs as a comma-separated list of integers.
+	 *
+	 * @param int[] $site_ids Site IDs.
+	 * @return string '' when there is none.
+	 */
+	private static function id_list( array $site_ids ) {
+		$ids = array_unique( array_filter( array_map( 'intval', $site_ids ) ) );
+		return implode( ',', $ids );
+	}
+
+	/**
 	 * Throws when the last query failed, so that a failed read is not taken for "no such row".
 	 *
 	 * @throws Artws_Sec_Feed_Exception When the last query failed.

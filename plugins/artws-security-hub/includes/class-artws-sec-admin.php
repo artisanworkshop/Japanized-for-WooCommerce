@@ -1,6 +1,6 @@
 <?php
 /**
- * Settings page: feed status, end-of-life versions and manual runs.
+ * Settings page: the registered sites, the plugins they use, and the feed (status, end-of-life versions, manual runs).
  *
  * @package Artws_Security_Hub
  */
@@ -23,6 +23,11 @@ class Artws_Sec_Admin {
 	const SETTINGS_GROUP = 'artws_sec_feed';
 
 	/**
+	 * Tabs of the settings page (&tab=); the first one is the default.
+	 */
+	const TABS = array( 'sites', 'plugins', 'feed' );
+
+	/**
 	 * Registers the admin hooks.
 	 */
 	public static function register_hooks() {
@@ -30,6 +35,7 @@ class Artws_Sec_Admin {
 		add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
 		add_action( 'admin_post_artws_sec_run_update', array( __CLASS__, 'handle_run_update' ) );
 		add_action( 'admin_post_artws_sec_accept_drop', array( __CLASS__, 'handle_accept_drop' ) );
+		add_action( 'admin_post_' . Artws_Sec_Admin_Sites::DOWNLOAD_ACTION, array( 'Artws_Sec_Admin_Sites', 'handle_download' ) );
 	}
 
 	/**
@@ -122,14 +128,23 @@ class Artws_Sec_Admin {
 			return;
 		}
 
-		$state  = Artws_Sec_Feed_Updater::get_state();
-		$status = Artws_Sec_Feed_Updater::get_status();
-		$eol    = Artws_Sec_Feed_Updater::get_eol();
+		$tab    = self::current_tab();
+		$labels = array(
+			'sites'   => __( 'Sites', 'artws-security-hub' ),
+			'plugins' => __( 'Plugins', 'artws-security-hub' ),
+			'feed'    => __( 'Feed', 'artws-security-hub' ),
+		);
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only selects which message to show after a redirect.
 		$notice = isset( $_GET['artws_sec_notice'] ) ? sanitize_key( wp_unslash( $_GET['artws_sec_notice'] ) ) : '';
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Artws Security Hub', 'artws-security-hub' ); ?></h1>
+
+			<nav class="nav-tab-wrapper" aria-label="<?php esc_attr_e( 'Security Hub sections', 'artws-security-hub' ); ?>">
+				<?php foreach ( $labels as $name => $label ) : ?>
+					<a href="<?php echo esc_url( self::tab_url( $name ) ); ?>" class="nav-tab<?php echo $tab === $name ? ' nav-tab-active' : ''; ?>"<?php echo $tab === $name ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $label ); ?></a>
+				<?php endforeach; ?>
+			</nav>
 
 			<?php if ( 'scheduled' === $notice ) : ?>
 				<div class="notice notice-success"><p><?php esc_html_e( 'The update is scheduled and runs with the next WP-Cron request.', 'artws-security-hub' ); ?></p></div>
@@ -137,6 +152,56 @@ class Artws_Sec_Admin {
 				<div class="notice notice-success"><p><?php esc_html_e( 'The next update may publish fewer records than the last one.', 'artws-security-hub' ); ?></p></div>
 			<?php endif; ?>
 
+			<?php
+			if ( 'plugins' === $tab ) {
+				Artws_Sec_Admin_Sites::render_plugins_tab();
+			} elseif ( 'feed' === $tab ) {
+				self::render_feed_tab();
+			} else {
+				Artws_Sec_Admin_Sites::render_sites_tab();
+			}
+			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Returns the tab of the request: one of TABS, the first when missing or unknown.
+	 *
+	 * @return string
+	 */
+	public static function current_tab() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only selects which tab to show.
+		$tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+		return in_array( $tab, self::TABS, true ) ? $tab : self::TABS[0];
+	}
+
+	/**
+	 * Returns the URL of a tab of the settings page.
+	 *
+	 * @param string $tab One of TABS.
+	 * @return string
+	 */
+	public static function tab_url( $tab ) {
+		return add_query_arg(
+			array(
+				'page' => self::PAGE,
+				'tab'  => $tab,
+			),
+			admin_url( 'options-general.php' )
+		);
+	}
+
+	/**
+	 * Renders the Feed tab: the vulnerability feed and the end-of-life versions.
+	 *
+	 * The EOL form posts to options.php, which returns to the referer: this tab.
+	 */
+	private static function render_feed_tab() {
+		$state  = Artws_Sec_Feed_Updater::get_state();
+		$status = Artws_Sec_Feed_Updater::get_status();
+		$eol    = Artws_Sec_Feed_Updater::get_eol();
+		?>
 			<h2><?php esc_html_e( 'Vulnerability feed', 'artws-security-hub' ); ?></h2>
 			<table class="widefat striped" style="max-width: 60em;">
 				<tbody>
@@ -254,7 +319,6 @@ class Artws_Sec_Admin {
 				</table>
 				<?php submit_button(); ?>
 			</form>
-		</div>
 		<?php
 	}
 
@@ -291,9 +355,11 @@ class Artws_Sec_Admin {
 	/**
 	 * Stops unless the request comes from an administrator with a valid nonce.
 	 *
+	 * Also used by the CSV download (Artws_Sec_Admin_Sites::handle_download()).
+	 *
 	 * @param string $action Nonce action.
 	 */
-	private static function check_request( $action ) {
+	public static function check_request( $action ) {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'artws-security-hub' ), 403 );
 		}
@@ -301,12 +367,12 @@ class Artws_Sec_Admin {
 	}
 
 	/**
-	 * Returns to the settings page with a message.
+	 * Returns to the Feed tab with a message.
 	 *
 	 * @param string $notice Message key.
 	 */
 	private static function redirect( $notice ) {
-		wp_safe_redirect( add_query_arg( 'artws_sec_notice', $notice, admin_url( 'options-general.php?page=' . self::PAGE ) ) );
+		wp_safe_redirect( add_query_arg( 'artws_sec_notice', $notice, self::tab_url( 'feed' ) ) );
 		exit;
 	}
 }

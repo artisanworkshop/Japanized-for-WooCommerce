@@ -2,7 +2,7 @@
 
 wc.artws.info に artws-security-hub を入れて、脆弱性フィード（`/feed/v1/`）と無料診断の REST API（`/wp-json/artws-sec/v1/`）を動かすまでの手順。上から順に進め、各節の「確認」で結果を確かめる。
 
-- 対象の版: 0.5.0
+- 対象の版: 0.6.0
 - 仕組みや設定値の理由: [README.md](README.md)
 - JP4WC とやり取りする JSON の決まり: [契約 README](../../tests/fixtures/security-feed/README.md)
 
@@ -246,7 +246,7 @@ curl -s https://wc.artws.info/feed/ | head -3
 
 ### 無料診断の API
 
-契約のサンプルで実際に 1 回登録し、読めることを確かめてから消す。リポジトリの直下で実行する。
+契約のサンプルで実際に 1 回登録し、読めることを確かめてから消す。リポジトリの直下で、1 から 4 までを同じターミナルで続けて実行する（3 は 1 で取った `TOKEN` を使う。別のターミナルや、`/tmp/artws-scan.json` が無い状態で 3 を実行すると、空のトークンで送って 401 になり、登録が残る）。
 
 ```bash
 BASE=https://wc.artws.info/wp-json/artws-sec/v1
@@ -256,15 +256,21 @@ curl -4 -s -X POST "$BASE/scan" -H 'Content-Type: application/json' \
   --data @tests/fixtures/security-feed/scan-request.json > /tmp/artws-scan.json
 jq '{site_token, scan: .report.token, score: .report.score.total, error: .code}' /tmp/artws-scan.json
 
-TOKEN=$(jq -r .site_token /tmp/artws-scan.json)
-SCAN=$(jq -r .report.token /tmp/artws-scan.json)
+TOKEN=$(jq -r '.site_token // empty' /tmp/artws-scan.json)
+SCAN=$(jq -r '.report.token // empty' /tmp/artws-scan.json)
+[ -n "$TOKEN" ] && [ -n "$SCAN" ] || echo '!! site_token が無い。1 の error を見る（登録されていないので 2・3 は不要）'
 
 # 2. Authorization ヘッダーがサーバーで落ちないか（200 なら OK、401 なら落ちている → 11 へ）
 curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" "$BASE/scan/$SCAN"
 
-# 3. 後片付け: テストの登録を消す（204）
-curl -s -o /dev/null -w '%{http_code}\n' -X DELETE -H "Authorization: Bearer $TOKEN" "$BASE/site"
-rm /tmp/artws-scan.json
+# 3. 後片付け: テストの登録を消す（204）。204 のときだけ応答のファイル（トークン入り）を消す
+if [ -n "$TOKEN" ]; then
+  CODE=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE -H "Authorization: Bearer $TOKEN" "$BASE/site")
+  echo "$CODE"
+  [ "$CODE" = 204 ] && rm /tmp/artws-scan.json
+else
+  echo '!! TOKEN が空。API では消せないので、下の「テストの登録が消せなかったとき」へ'
+fi
 
 # 4. http の要求を受け付けないか（403、または https へのリダイレクト）
 curl -s -o /dev/null -w '%{http_code}\n' -X POST http://wc.artws.info/wp-json/artws-sec/v1/scan
@@ -287,12 +293,42 @@ wp db query "SELECT hits FROM $(wp db prefix)artws_sec_limits WHERE limit_key = 
 
 この手順でサンプルを 1 回送ると、送信元 IP の枠（1 時間 20 回）を 1 回使う。
 
+#### テストの登録が消せなかったとき
+
+API で登録を消せるのは、その登録のトークンを持つ要求だけ（契約どおり）。トークンを失ったら（3 が 401、`TOKEN` が空、`/tmp/artws-scan.json` が無い）、本番のサーバーの WP-CLI で消す。放っておいても、180 日後の日次の削除で消える。ただしそれまでは、管理画面の集計・一覧・CSV にテストの分が入り続ける。
+
+wc.artws.info に SSH で入って実行する（入り方は「1. 事前に用意するもの」の「あると楽なもの」）。手元の wp-env の `wp` は、本番に届かない。
+
+```bash
+wp option get home
+# → https://wc.artws.info（本番に入っていることを確かめる）
+
+wp db query "SELECT id, site_url, FROM_UNIXTIME(created_at) AS created FROM $(wp db prefix)artws_sec_sites WHERE site_url = 'https://example.jp'"
+# → サンプルの site_url（https://example.jp）の登録。created が 1 を実行した時刻（DB のタイムゾーン）の行を選ぶ
+#   何も出なければ、もう消えている（ここで終わり）
+
+wp eval 'var_export( Artws_Sec_Site_Store::delete_site( <id> ) );'
+# <id> は上の id。診断 → 登録 → 診断の順に消し、true を返す
+# 該当の行が無くても true を返すので、消えたかは次の行で確かめる
+
+wp db query "SELECT COUNT(*) FROM $(wp db prefix)artws_sec_sites WHERE id = <id>"
+# → 0
+```
+
 ### データベース
 
 ```bash
 wp db query "SHOW INDEX FROM $(wp db prefix)artws_sec_sites WHERE Key_name = 'site_key'"
 # → Non_unique が 1（同じ URL の登録をいくつでも持てる）
 ```
+
+### 管理画面
+
+設定 > Security Hub を開く。
+
+- [ ] Sites タブ（既定）に、登録サイト数・版の表・帯の表と登録の一覧が出る（まだ登録が無ければ「0 sites」と「No registrations found.」）。読み出しのエラーの表示が出ていない
+- [ ] Plugins タブに上位のプラグインが出る。Feed タブに今までの取り込みの結果と EOL が出る
+- [ ] 「Download CSV」で CSV がダウンロードできる。確かめたら、その CSV はすぐに削除する（利用規約 第6条第6項）
 
 ## 9. 公開する前に
 
@@ -327,6 +363,7 @@ JP4WC の無料診断（#260）を出す前に、wc.artws.info にプライバ�
 | 0.3.x → 0.4.0 以降 | `artws_sec_db_version` が `2` になったことと、8 の「データベース」を確かめる。0.3.x で登録したサイトのトークンはそのまま使える。ただし移行の直前 1 時間に診断したサイトは、移行の直後にもう 1 回診断できる（一度きり） |
 | 0.4.0 → 0.4.1 以降 | 追加の作業なし。下の「0.4.1 に更新したとき」で、同意の版 2026-11 の要求が Web から受け付けられることを確かめる。**同意の版 2026-11 を送る JP4WC（#298、2026-11-05 リリース）より前、2026-11-04 までに反映する。** 反映前にその JP4WC を出すと、同意し直した利用者の診断がすべて 400（`artws_sec_unknown_consent_version`）になり、画面には「最新版に更新して再試行」と出る（すでに最新版なので直せない）。2026-10 を送る JP4WC 3.0.0 は、0.4.0 でも 0.4.1 でも診断できる。その JP4WC を出した後は 0.4.0 以前に戻さず、3.0.0 が使われている間は `2026-10` を外さない |
 | 0.4.1 → 0.5.0 以降 | 追加の作業なし（表の変更もない）。チェック A-06（著者 ID からユーザー名を割り出せる）の文言を足した版。**A-06 を送る JP4WC 3.1.0 のタグより前に反映する。** 反映前にその JP4WC を出すと、A-06 が fail のストアの報告には A-06 が載らず、セキュリティタブの比較で「タブのチェックだけが見つけた項目」に出る（診断そのものは動く）。反映したかは、プラグインの一覧の版か `wp eval 'var_export( isset( Artws_Sec_Report_Builder::CHECKS["A-06"] ) );'` が `true` になることで確かめる |
+| 0.5.0 → 0.6.0 以降 | 追加の作業なし（表の変更もない）。管理画面に集計・プラグイン上位 30・登録の一覧・CSV を足した版（#296）。8 の「管理画面」を確かめる。JP4WC のリリースとは関係しないので、いつ反映してもよい（0.4.1 から直接 0.6.0 にするときは、上の 0.5.0 の行も当てはまる） |
 
 ### 0.4.1 に更新したとき
 

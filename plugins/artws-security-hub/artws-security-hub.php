@@ -3,7 +3,7 @@
  * Plugin Name: Artws Security Hub
  * Plugin URI: https://github.com/artisanworkshop/Japanized-for-WooCommerce/tree/main/plugins/artws-security-hub
  * Description: Server side of the Japanized for WooCommerce security check on wc.artws.info: serves the vulnerability feed and answers the free security check.
- * Version: 0.5.0
+ * Version: 0.6.0
  * Requires at least: 6.7
  * Requires PHP: 8.3
  * Author: Artisan Workshop
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ARTWS_SEC_VERSION', '0.5.0' );
+define( 'ARTWS_SEC_VERSION', '0.6.0' );
 define( 'ARTWS_SEC_PLUGIN_FILE', __FILE__ );
 define( 'ARTWS_SEC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -32,9 +32,11 @@ require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-feed-builder.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-feed-publisher.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-feed-updater.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-admin.php';
+require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-admin-sites.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-scan-request.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-rate-limiter.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-site-store.php';
+require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-site-stats.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-report-templates.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-report-builder.php';
 require_once ARTWS_SEC_PLUGIN_DIR . 'includes/class-artws-sec-rest-controller.php';
