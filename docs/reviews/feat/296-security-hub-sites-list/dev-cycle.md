@@ -3,10 +3,10 @@
 - 記録: docs/reviews/feat/296-security-hub-sites-list/
 - タスク: issue #296 artws-security-hub 管理画面に集計・プラグイン上位 30・登録一覧・CSV（auto-commit）
 - 開始: 2026-11-13
-- PR: 未作成
-- 現在のステップ: 4（push・PR 作成）
-- Copilot: 依頼 0 回 / 未収束
-- Codex: 依頼 0 回 / 未収束（`--request-codex` が必要）
+- PR: #332 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/332
+- 現在のステップ: 6（G2 依頼・待ち、Copilot のみ）
+- Copilot: 依頼 1 回 / 未収束
+- Codex: 依頼 1 回 / 収束（G1 で新規指摘なし）
 
 ## 決定（計画承認 2026-11-13）
 - 版 0.6.0（0.5.0 は #318 A-06 が使用済み・未反映）
@@ -21,3 +21,5 @@
 | 2026-11-13 | 1 | 計画承認 |
 | 2026-11-13 | 2 | 実装コミット 2 件（6ce0104 feat、0b10a39 docs）。lint 0/0、PHPUnit 463 件 green。主要ロジックの変異テストで検出を確認 |
 | 2026-11-13 | 3 | review-loop R3 APPROVE。R1: High 1（空の CSV で fatal）・Medium 3（帯の割り出し・孤立した診断のテスト・CSV インジェクションの入口）を修正（50bf73b）、Low 2 を backlog。R2: R1-2 の残りをユーザー判断（今の規則 + 同数の順序 + 説明を狭める）で修正（9407fff） |
+| 2026-11-13 18:06 | 4 | upstream に push（2d6c81f、T=2026-11-13T09:06:28Z）、PR #332 作成 |
+| 2026-11-13 18:17 | 7 | G1: CI green、Codex 0 件（収束）、Copilot 2 件（G1-1 修正 7aca69d、G1-2 本文のみ・保留） |
