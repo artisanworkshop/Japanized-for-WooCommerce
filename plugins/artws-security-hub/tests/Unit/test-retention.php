@@ -400,7 +400,7 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * Deleting the plugin drops its tables, its version option and the cleanup event.
+	 * Deleting the plugin drops its tables, its version option, the cleanup event and the cached aggregates.
 	 *
 	 * The test library turns DROP TABLE into DROP TEMPORARY TABLE, so the
 	 * real tables stay; the test checks the statements uninstall.php sends.
@@ -416,6 +416,7 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 			PHP_INT_MAX
 		);
 		Artws_Sec_Site_Store::schedule_events();
+		set_transient( Artws_Sec_Site_Stats::CACHE_KEY, array( 'sites' => 1 ), Artws_Sec_Site_Stats::CACHE_TTL );
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 			define( 'WP_UNINSTALL_PLUGIN', 'artws-security-hub/artws-security-hub.php' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Set by WordPress when it runs uninstall.php.
 		}
@@ -431,5 +432,6 @@ class Artws_Sec_Retention_Test extends Artws_Sec_Scan_Test_Case {
 		$this->assertEqualsCanonicalizing( array( Artws_Sec_Db::sites_table(), Artws_Sec_Db::scans_table(), Artws_Sec_Db::limits_table(), Artws_Sec_Db::vulns_table() ), $dropped );
 		$this->assertFalse( get_option( Artws_Sec_Db::VERSION_OPTION ) );
 		$this->assertFalse( wp_next_scheduled( Artws_Sec_Site_Store::CLEANUP_HOOK ) );
+		$this->assertFalse( get_transient( Artws_Sec_Site_Stats::CACHE_KEY ) );
 	}
 }
