@@ -28,7 +28,7 @@ class Artws_Sec_Admin_Test extends Artws_Sec_Feed_Test_Case {
 	 * Tear down.
 	 */
 	public function tear_down() {
-		unset( $_REQUEST['_wpnonce'] );
+		unset( $_REQUEST['_wpnonce'], $_GET['tab'] );
 		wp_clear_scheduled_hook( Artws_Sec_Feed_Updater::UPDATE_HOOK, array( 'manual' ) );
 		parent::tear_down();
 	}
@@ -111,6 +111,7 @@ class Artws_Sec_Admin_Test extends Artws_Sec_Feed_Test_Case {
 		$redirect = self::run_handler( array( 'Artws_Sec_Admin', 'handle_run_update' ) );
 
 		$this->assertStringContainsString( 'artws_sec_notice=scheduled', $redirect );
+		$this->assertStringContainsString( 'tab=feed', $redirect );
 		$this->assertNotFalse( wp_next_scheduled( Artws_Sec_Feed_Updater::UPDATE_HOOK, array( 'manual' ) ) );
 	}
 
@@ -123,6 +124,7 @@ class Artws_Sec_Admin_Test extends Artws_Sec_Feed_Test_Case {
 		$redirect = self::run_handler( array( 'Artws_Sec_Admin', 'handle_accept_drop' ) );
 
 		$this->assertStringContainsString( 'artws_sec_notice=drop_accepted', $redirect );
+		$this->assertStringContainsString( 'tab=feed', $redirect );
 		$this->assertSame( '1', (string) get_option( Artws_Sec_Feed_Updater::ACCEPT_DROP_OPTION ) );
 	}
 
@@ -179,6 +181,7 @@ class Artws_Sec_Admin_Test extends Artws_Sec_Feed_Test_Case {
 			false
 		);
 
+		$_GET['tab'] = 'feed';
 		ob_start();
 		Artws_Sec_Admin::render_page();
 		$html = ob_get_clean();
@@ -189,5 +192,49 @@ class Artws_Sec_Admin_Test extends Artws_Sec_Feed_Test_Case {
 		$this->assertStringNotContainsString( '<script>alert(1)', $html );
 		$this->assertStringNotContainsString( '<img src=x>', $html );
 		$this->assertStringContainsString( 'name="artws_sec_feed_eol[php]"', $html );
+	}
+
+	/**
+	 * The page opens on the Sites tab, and each tab shows its own part.
+	 */
+	public function test_page_shows_the_requested_tab() {
+		$render = static function ( $tab ) {
+			if ( null === $tab ) {
+				unset( $_GET['tab'] );
+			} else {
+				$_GET['tab'] = $tab;
+			}
+			ob_start();
+			Artws_Sec_Admin::render_page();
+			return ob_get_clean();
+		};
+
+		foreach ( array( null, 'sites', 'unknown', array( 'feed' ) ) as $tab ) {
+			$html = $render( $tab );
+			$this->assertStringContainsString( '<h2>Registrations</h2>', $html, wp_json_encode( $tab ) );
+			$this->assertStringNotContainsString( 'Vulnerability feed', $html );
+			$this->assertMatchesRegularExpression( '/class="nav-tab nav-tab-active" aria-current="page">Sites</', $html );
+		}
+
+		$html = $render( 'plugins' );
+		$this->assertStringContainsString( 'Plugins on the most sites', $html );
+		$this->assertStringNotContainsString( '<h2>Registrations</h2>', $html );
+
+		$html = $render( 'feed' );
+		$this->assertStringContainsString( 'Vulnerability feed', $html );
+		$this->assertStringContainsString( 'name="artws_sec_feed_eol[php]"', $html );
+		$this->assertStringNotContainsString( '<h2>Registrations</h2>', $html );
+		$this->assertStringContainsString( 'tab=feed', Artws_Sec_Admin::tab_url( 'feed' ) );
+	}
+
+	/**
+	 * Users without manage_options see nothing.
+	 */
+	public function test_page_needs_manage_options() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		ob_start();
+		Artws_Sec_Admin::render_page();
+		$this->assertSame( '', ob_get_clean() );
 	}
 }

@@ -12,5 +12,8 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 require_once __DIR__ . '/includes/class-artws-sec-db.php';
 require_once __DIR__ . '/includes/class-artws-sec-site-store.php';
+require_once __DIR__ . '/includes/class-artws-sec-site-stats.php';
 
 Artws_Sec_Db::uninstall();
+// The aggregates kept from a slow count on the settings page.
+delete_transient( Artws_Sec_Site_Stats::CACHE_KEY );
