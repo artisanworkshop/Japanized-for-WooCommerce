@@ -177,6 +177,8 @@ class Artws_Sec_Admin_Sites_Test extends Artws_Sec_Scan_Test_Case {
 			$rows[0]
 		);
 		$this->assertSame( 0, $rows[2]['scans'] );
+		$this->assertSame( self::NOW - 450, $rows[2]['created_at'] );
+		$this->assertNull( $rows[2]['last_scan_at'] );
 		$this->assertNull( $rows[2]['php_ver'] );
 		$this->assertNull( $rows[2]['score'] );
 		$this->assertArrayNotHasKey( 'token_hash', (array) $list['rows'][0] );
@@ -287,7 +289,8 @@ class Artws_Sec_Admin_Sites_Test extends Artws_Sec_Scan_Test_Case {
 		$this->assertSame( wp_date( 'c', self::NOW - 100 ), $rows[1][2] );
 		$this->assertMatchesRegularExpression( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/D', $rows[1][3] );
 		$this->assertSame( array( '1', '2.9.19', '6.9.1', '10.6.2', '8.3.12', 'ja', '80' ), array_slice( $rows[1], 4 ) );
-		$this->assertSame( array( '0', '', '', '', '', '', '' ), array_slice( $rows[2], 4 ) );
+		$this->assertSame( wp_date( 'c', self::NOW - 50 ), $rows[2][2] );
+		$this->assertSame( array( '', '0', '', '', '', '', '', '' ), array_slice( $rows[2], 3 ) );
 		$this->assertStringNotContainsString( 'B4', $csv );
 		$this->assertStringNotContainsString( 'O3', $csv );
 	}

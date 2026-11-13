@@ -269,7 +269,8 @@ class Artws_Sec_Admin_Sites {
 	 * @param object|null $latest     Latest scan of the site, or null.
 	 * @param int         $scans      Number of scans of the site.
 	 * @param bool        $with_bands Whether the row may carry the bands. Without, it has no band keys at all.
-	 * @return array<string, int|string|null> Keyed like columns(); null where there is no value.
+	 * @return array<string, int|string|null> Keyed like columns(); null where there is no value (the last scan and
+	 *                                         the values of the latest scan, for a registration without a scan).
 	 */
 	public static function build_row( $site, $latest, $scans, $with_bands ) {
 		$request = null === $latest ? null : json_decode( (string) $latest->request, true );
@@ -282,7 +283,8 @@ class Artws_Sec_Admin_Sites {
 			'id'           => (int) $site->id,
 			'site_url'     => (string) $site->site_url,
 			'created_at'   => (int) $site->created_at,
-			'last_scan_at' => (int) $site->last_scan_at,
+			// A registration starts with last_scan_at at its own time; without a scan left, there is no last scan to show.
+			'last_scan_at' => null === $latest ? null : (int) $site->last_scan_at,
 			'scans'        => (int) $scans,
 			'jp4wc_ver'    => self::text( $request, 'jp4wc_ver' ),
 			'wp_ver'       => self::text( $request, 'wp_ver' ),
