@@ -4,8 +4,8 @@
 - タスク: issue #296 artws-security-hub 管理画面に集計・プラグイン上位 30・登録一覧・CSV（auto-commit）
 - 開始: 2026-11-13
 - PR: #332 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/332
-- 現在のステップ: 6（G3 依頼・待ち、Copilot のみ）
-- Copilot: 依頼 2 回 / 未収束
+- 現在のステップ: 8（最終報告）
+- Copilot: 依頼 3 回 / 上限
 - Codex: 依頼 1 回 / 収束（G1 で新規指摘なし）
 
 ## 決定（計画承認 2026-11-13）
@@ -24,3 +24,4 @@
 | 2026-11-13 18:06 | 4 | upstream に push（2d6c81f、T=2026-11-13T09:06:28Z）、PR #332 作成 |
 | 2026-11-13 18:17 | 7 | G1: CI green、Codex 0 件（収束）、Copilot 2 件（G1-1 修正 7aca69d、G1-2 本文のみ・保留） |
 | 2026-11-13 18:30 | 7 | G2: CI green、Copilot 本文のみ 1 件（G2-1 ページ送りの %#% のエンコード → 誤検知。テストを強化） |
+| 2026-11-13 18:44 | 7 | G3: CI green、Copilot 本文のみ 1 件（G3-1 アンインストールのキャッシュ削除のテスト → 修正 aab150f）。Copilot は上限、再依頼しない |
