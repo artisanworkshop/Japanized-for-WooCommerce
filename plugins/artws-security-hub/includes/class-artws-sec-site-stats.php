@@ -266,12 +266,20 @@ class Artws_Sec_Site_Stats {
 	 * the number of sites, which is the total of each table, so the cells not
 	 * shown add up to a known number. Each of them has a known range as well:
 	 * 0 to MIN_BAND_CELL - 1 for UNDER_MIN, and for HIDDEN from MIN_BAND_CELL
-	 * up to the smallest cell still shown (this method always hides the
-	 * smallest one, and the code is public). While a cell's value follows
-	 * from the total and the ranges of the others, the smallest cell still
-	 * shown in its table (the first of equal ones) is HIDDEN as well. The
-	 * NO_BAND cell is in both tables with the same number, so it is hidden in
-	 * both or in neither, and what one table tells about it narrows the other.
+	 * up to the cells still shown in its table: at most those after it and
+	 * less than those before it (this method hides the smallest cell, the
+	 * first of equal ones, and the code is public). While a cell's value
+	 * follows from the total and the ranges of the others, the smallest cell
+	 * still shown in its table is HIDDEN as well. The NO_BAND cell is in both
+	 * tables with the same number, so it is hidden in both or in neither, and
+	 * what one table tells about it narrows the other.
+	 *
+	 * This keeps a withheld cell from being worked out with the table's
+	 * numbers and these ranges. It does not stop someone who runs this method
+	 * on every possible set of counts and keeps those that give the same page:
+	 * that a cell was hidden at all says that something could be worked out
+	 * before, which can narrow the values further. Only users who can read
+	 * the database see the page (decided on issue #296, review R1-2).
 	 *
 	 * @param array<string, int> $revenue Revenue band => sites.
 	 * @param array<string, int> $order   Order band => sites.
@@ -344,9 +352,9 @@ class Artws_Sec_Site_Stats {
 				if ( self::UNDER_MIN === $states[ $table ][ $cell ] ) {
 					$ranges[ $table ][ $cell ] = array( 0, self::MIN_BAND_CELL - 1 );
 				} else {
-					// A hidden cell is at most every cell still shown in the table it was hidden in.
+					// Bounded by the cells still shown in the table it was hidden in.
 					$from                      = ( self::NO_BAND === $cell && null !== $none_hidden_in ) ? $none_hidden_in : $table;
-					$ranges[ $table ][ $cell ] = array( self::MIN_BAND_CELL, self::smallest_shown_count( $tables[ $from ], $states[ $from ] ) );
+					$ranges[ $table ][ $cell ] = array( self::MIN_BAND_CELL, self::hidden_cap( $tables[ $from ], $states[ $from ], $cell ) );
 				}
 			}
 		}
@@ -443,15 +451,28 @@ class Artws_Sec_Site_Stats {
 	}
 
 	/**
-	 * Returns the number of the smallest cell still shown, or the total of the table when none is.
+	 * Returns the largest value a hidden cell can have, from the cells still shown in the table it was hidden in.
+	 *
+	 * It was the smallest cell shown when it was hidden, and the first of
+	 * equal ones: so it is less than a cell shown before it, and at most one
+	 * shown after it. NO_BAND is the last cell, so it is less than all of them.
 	 *
 	 * @param array<string, int>    $cells  Cell => sites.
 	 * @param array<string, string> $states Cell => state.
-	 * @return int
+	 * @param string                $hidden The hidden cell.
+	 * @return int The total of the table when no cell is shown.
 	 */
-	private static function smallest_shown_count( array $cells, array $states ) {
-		$smallest = self::smallest_shown( $cells, $states );
-		return null === $smallest ? (int) array_sum( $cells ) : (int) $cells[ $smallest ];
+	private static function hidden_cap( array $cells, array $states, $hidden ) {
+		$cap    = (int) array_sum( $cells );
+		$before = true;
+		foreach ( $cells as $cell => $count ) {
+			if ( $cell === $hidden ) {
+				$before = false;
+			} elseif ( self::SHOWN === $states[ $cell ] ) {
+				$cap = min( $cap, $before ? $count - 1 : $count );
+			}
+		}
+		return $cap;
 	}
 
 	/**

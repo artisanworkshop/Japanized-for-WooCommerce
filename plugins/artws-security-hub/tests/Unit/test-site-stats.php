@@ -231,7 +231,7 @@ class Artws_Sec_Site_Stats_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
-	 * A withheld cell whose value could still be worked out is covered by the next smallest cells (examples A, B and C of review R1-2).
+	 * A withheld cell whose value could still be worked out is covered by the next smallest cells (examples of review R1-2).
 	 */
 	public function test_a_withheld_band_that_can_be_worked_out_hides_more() {
 		// A: "—" at B2 would be at least 5 and at most the smallest cell shown (5), so B5 = 50 - 43 - 5 = 2.
@@ -260,7 +260,8 @@ class Artws_Sec_Site_Stats_Test extends Artws_Sec_Scan_Test_Case {
 		$this->assertSame( Artws_Sec_Site_Stats::HIDDEN, $states['order'][ Artws_Sec_Site_Stats::NO_BAND ] );
 		$this->assertSame( Artws_Sec_Site_Stats::HIDDEN, $states['order']['O4'] );
 		$this->assertSame( array( 'B0', 'B1', 'B2', 'B3' ), array_keys( $states['revenue'], Artws_Sec_Site_Stats::SHOWN, true ) );
-		// C: on its own, the revenue table puts "not sent" at 5 to 7 and the order table at 7 to 9, so together it is 7.
+		// C: once O3 is hidden, the revenue table puts "not sent" at 5 to 7 and the order table at 7 to 8, so together it is 7:
+		// the order table, which narrows it most, hides O4 too.
 		$states = self::states(
 			Artws_Sec_Site_Stats::suppress_bands(
 				array_combine( Artws_Sec_Scan_Request::REVENUE_BANDS, array( 9, 9, 9, 9, 9, 0 ) ),
@@ -269,22 +270,37 @@ class Artws_Sec_Site_Stats_Test extends Artws_Sec_Scan_Test_Case {
 			)
 		);
 		$this->assertSame(
-			array( Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::UNDER_MIN, Artws_Sec_Site_Stats::HIDDEN ),
+			array( Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::UNDER_MIN, Artws_Sec_Site_Stats::HIDDEN ),
 			array_values( $states['revenue'] )
 		);
 		$this->assertSame(
-			array( Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::HIDDEN ),
+			array( Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::SHOWN, Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::HIDDEN, Artws_Sec_Site_Stats::HIDDEN ),
 			array_values( $states['order'] )
 		);
+
+		// D: a "—" after a shown cell of the same number would have been that cell, so B3 < B2 = 6 puts B3 at 5 and B4 at 2.
+		$states = self::states(
+			Artws_Sec_Site_Stats::suppress_bands(
+				array_combine( Artws_Sec_Scan_Request::REVENUE_BANDS, array( 20, 20, 6, 5, 2, 20 ) ),
+				array_combine( Artws_Sec_Scan_Request::ORDER_BANDS, array( 20, 20, 20, 13, 0 ) ),
+				20
+			)
+		);
+		$this->assertSame( Artws_Sec_Site_Stats::HIDDEN, $states['revenue']['B2'] );
+		$this->assertSame( Artws_Sec_Site_Stats::HIDDEN, $states['revenue']['B3'] );
 	}
 
 	/**
 	 * No withheld band can be worked out from what the page shows, whatever the counts.
 	 *
-	 * Checked by listing every value a withheld cell can take: the cells of a
-	 * table add up to the number of sites, "Under 5" is 0 to 4, "—" is at least
-	 * 5 and at most the smallest cell shown in its table (for "not sent", in
-	 * either table), and "not sent" is the same in both tables.
+	 * Checked by listing every value a withheld cell can take from the table's
+	 * numbers and the ranges the code puts on it: the cells of a table add up
+	 * to the number of sites, "Under 5" is 0 to 4, "—" is at least 5, at most
+	 * a cell shown after it and less than one shown before it (cells are
+	 * hidden smallest first, the first of equal ones; "not sent" is the last
+	 * cell, hidden in either table), and "not sent" is the same in both
+	 * tables. It does not run the code on every possible set of counts, which
+	 * can narrow the values further (see suppress_bands()).
 	 */
 	public function test_no_withheld_band_can_be_worked_out() {
 		$seed  = 296;
@@ -335,11 +351,19 @@ class Artws_Sec_Site_Stats_Test extends Artws_Sec_Scan_Test_Case {
 	 * @return array<string, array<string, int[]>> Table => withheld cell => possible values.
 	 */
 	private static function possible_values( array $result, $sites ) {
-		$caps = array();
-		foreach ( $result as $table => $cells ) {
-			$shown          = array_column( array_filter( $cells, static fn( $cell ) => Artws_Sec_Site_Stats::SHOWN === $cell['state'] ), 'count' );
-			$caps[ $table ] = array() === $shown ? $sites : min( $shown );
-		}
+		// The largest value of a "—" cell: less than a shown cell before it, at most one after it.
+		$cap = static function ( array $cells, $hidden ) use ( $sites ) {
+			$cap    = $sites;
+			$before = true;
+			foreach ( $cells as $cell => $info ) {
+				if ( $cell === $hidden ) {
+					$before = false;
+				} elseif ( Artws_Sec_Site_Stats::SHOWN === $info['state'] ) {
+					$cap = min( $cap, $before ? $info['count'] - 1 : $info['count'] );
+				}
+			}
+			return $cap;
+		};
 
 		$ranges = array();
 		$hidden = array();
@@ -351,8 +375,9 @@ class Artws_Sec_Site_Stats_Test extends Artws_Sec_Scan_Test_Case {
 				} elseif ( Artws_Sec_Site_Stats::UNDER_MIN === $info['state'] ) {
 					$ranges[ $table ][ $cell ] = range( 0, Artws_Sec_Site_Stats::MIN_BAND_CELL - 1 );
 				} else {
-					$cap                       = Artws_Sec_Site_Stats::NO_BAND === $cell ? max( $caps ) : $caps[ $table ];
-					$ranges[ $table ][ $cell ] = range( Artws_Sec_Site_Stats::MIN_BAND_CELL, max( Artws_Sec_Site_Stats::MIN_BAND_CELL, $cap ) );
+					// Which table "not sent" was hidden in is not on the page: either one.
+					$highest                   = Artws_Sec_Site_Stats::NO_BAND === $cell ? max( $cap( $result['revenue'], $cell ), $cap( $result['order'], $cell ) ) : $cap( $cells, $cell );
+					$ranges[ $table ][ $cell ] = $highest < Artws_Sec_Site_Stats::MIN_BAND_CELL ? array() : range( Artws_Sec_Site_Stats::MIN_BAND_CELL, $highest );
 				}
 			}
 		}
