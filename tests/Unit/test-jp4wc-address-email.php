@@ -53,6 +53,8 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		delete_option( 'wc4jp-yomigana-required' );
 		delete_option( 'wc4jp-honorific-suffix' );
 		delete_option( 'wc4jp-company-name' );
+		// get_formatted_address() keeps the formats it built; don't hand them to later tests.
+		WC()->countries->address_formats = array();
 		parent::tearDown();
 	}
 
@@ -222,6 +224,150 @@ class JP4WC_Address_Email_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( '{first_name}', $replacements );
 		$this->assertSame( 'John', $replacements['{first_name}'] );
 		$this->assertStringNotContainsString( '様', $replacements['{first_name}'] );
+	}
+
+	/**
+	 * Names of Japanese addresses that have none (#333).
+	 *
+	 * @return array
+	 */
+	public function nameless_address_provider() {
+		return array(
+			'empty names'           => array(
+				array(
+					'{first_name}' => '',
+					'{last_name}'  => '',
+				),
+				array(
+					'first_name' => '',
+					'last_name'  => '',
+					'country'    => 'JP',
+				),
+			),
+			'white space only'      => array(
+				array(
+					'{first_name}' => ' ',
+					'{last_name}'  => "\t",
+				),
+				array(
+					'first_name' => ' ',
+					'last_name'  => "\t",
+					'country'    => 'JP',
+				),
+			),
+			'names from args only'  => array(
+				array(),
+				array(
+					'first_name' => '',
+					'last_name'  => '',
+					'country'    => 'JP',
+				),
+			),
+			'no name keys anywhere' => array(
+				array(),
+				array(
+					'postcode' => '150-0002',
+					'country'  => 'JP',
+				),
+			),
+		);
+	}
+
+	/**
+	 * A Japanese address without a name gets no honorific suffix (#333).
+	 *
+	 * WooCommerce passes empty {first_name} / {last_name} for the store address, so the
+	 * name line used to be 様 alone.
+	 *
+	 * @dataProvider nameless_address_provider
+	 *
+	 * @param array $fields Replacements WooCommerce passes to the filter.
+	 * @param array $args   Address data.
+	 */
+	public function test_address_replacements_skips_honorific_suffix_without_name( $fields, $args ) {
+		update_option( 'wc4jp-honorific-suffix', '1' );
+
+		$replacements = apply_filters( 'woocommerce_formatted_address_replacements', $fields, $args );
+
+		$this->assertStringNotContainsString( '様', $replacements['{first_name}'] ?? '' );
+	}
+
+	/**
+	 * Formatting a Japanese address with a name still adds 様 (#333).
+	 *
+	 * @dataProvider named_address_provider
+	 *
+	 * @param string $first_name First name.
+	 * @param string $expected   Name line expected in the formatted address.
+	 */
+	public function test_formatted_address_keeps_honorific_suffix_with_name( $first_name, $expected ) {
+		update_option( 'wc4jp-honorific-suffix', '1' );
+		WC()->countries->address_formats = array();
+
+		$address = WC()->countries->get_formatted_address(
+			array(
+				'first_name' => $first_name,
+				'last_name'  => '山田',
+				'country'    => 'JP',
+				'state'      => 'JP13',
+				'postcode'   => '150-0002',
+				'city'       => '渋谷区',
+				'address_1'  => '道玄坂2-1',
+			),
+			"\n"
+		);
+
+		$this->assertContains( $expected, explode( "\n", $address ), $address );
+	}
+
+	/**
+	 * Japanese addresses with a name.
+	 *
+	 * @return array
+	 */
+	public function named_address_provider() {
+		return array(
+			'last and first name' => array( '太郎', '山田 太郎様' ),
+			'last name only'      => array( '', '山田 様' ),
+		);
+	}
+
+	/**
+	 * The store address in e-mail footers ({store_address}) ends without 様 (#333).
+	 *
+	 * @dataProvider selling_locations_provider
+	 *
+	 * @param string $allowed   woocommerce_allowed_countries.
+	 * @param array  $countries woocommerce_specific_allowed_countries.
+	 */
+	public function test_store_address_has_no_honorific_suffix( $allowed, $countries ) {
+		update_option( 'wc4jp-honorific-suffix', '1' );
+		update_option( 'woocommerce_default_country', 'JP:JP13' );
+		update_option( 'woocommerce_store_address', '道玄坂2-1' );
+		update_option( 'woocommerce_store_address_2', '' );
+		update_option( 'woocommerce_store_city', '渋谷区' );
+		update_option( 'woocommerce_store_postcode', '150-0002' );
+		update_option( 'woocommerce_allowed_countries', $allowed );
+		update_option( 'woocommerce_specific_allowed_countries', $countries );
+		WC()->countries->address_formats = array();
+
+		$store_address = WC()->mailer()->get_store_address();
+
+		$this->assertStringContainsString( '150-0002', $store_address );
+		$this->assertStringContainsString( '道玄坂2-1', $store_address );
+		$this->assertStringNotContainsString( '様', $store_address );
+	}
+
+	/**
+	 * Selling to every country shows the country in the address; selling to Japan only does not.
+	 *
+	 * @return array
+	 */
+	public function selling_locations_provider() {
+		return array(
+			'all countries' => array( 'all', array() ),
+			'Japan only'    => array( 'specific', array( 'JP' ) ),
+		);
 	}
 
 	// ------------------------------------------------------------------
