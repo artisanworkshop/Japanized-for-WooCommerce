@@ -193,7 +193,7 @@ class JP4WC_Address_Fields {
 		// Apply honorific suffix here (PHP-only): WooCommerce Blocks JS replaces format
 		// placeholders client-side and never calls this filter, so 様 is kept out of the
 		// format string itself (see address_formats()).
-		if ( get_option( 'wc4jp-honorific-suffix' ) && isset( $fields['{first_name}'] ) && isset( $args['country'] ) && 'JP' === $args['country'] ) {
+		if ( get_option( 'wc4jp-honorific-suffix' ) && isset( $fields['{first_name}'] ) && isset( $args['country'] ) && 'JP' === $args['country'] && $this->has_name( $fields ) ) {
 			$fields['{first_name}'] .= '様';
 		}
 
@@ -206,6 +206,25 @@ class JP4WC_Address_Fields {
 		}
 
 		return $fields;
+	}
+
+	/**
+	 * Whether the address has a name to put the honorific after.
+	 *
+	 * WooCommerce passes the name placeholders even for an address without a name
+	 * (the store address in e-mail footers), where 様 alone would make a line of its own.
+	 *
+	 * @since 3.1.1
+	 * @param array $fields The formatted address fields.
+	 * @return bool
+	 */
+	private function has_name( $fields ) {
+		foreach ( array( '{first_name}', '{last_name}' ) as $key ) {
+			if ( isset( $fields[ $key ] ) && '' !== trim( (string) $fields[ $key ] ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
