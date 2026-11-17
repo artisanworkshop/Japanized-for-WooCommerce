@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -169,6 +169,9 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 3.1.1 - 2026-11-17 =
+* **Fixed** - With the honorific "様" turned on, an address in Japan without a name no longer gets "様" on a line of its own. WooCommerce formats the store address that way, so "様" ended the footer of every WooCommerce e-mail when the footer text has `{store_address}` (the default since WooCommerce 9.9), and it also followed the store address of the e-mail editor's Store Address tag and the default store address of the point of sale, and came before the address of local pickup locations saved with Checkout block orders. Addresses with a name, including a last name only, keep "様" (#333)
 
 = 3.1.0 - 2026-11-16 =
 * **Added** - A hardening option on the Security tab, "Hide user names from visitors" (off by default), so that visitors cannot collect the user names to try passwords against. For visitors who are not logged in, author pages (`?author=` links, `/author/<name>/` and their feeds) answer "not found" instead of redirecting to an address with the user name, author links lead to the home page, and the users sitemap, the `comment-author-<name>` class of comments and reviews and the author in oEmbed data leave user names out. For everyone, a failed login on the WordPress login page and the WooCommerce My account and checkout forms, a lost password request on the WordPress and WooCommerce forms, and a REST API request with a wrong application password get the same answer whether the user exists or not. Logged-in users see the site as before; theme author pages are not shown to visitors while the option is on, and a display name that is the same as the user name still shows it (#318)
