@@ -341,6 +341,29 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Asserts that a request is DELETE /site with the contract's body, which
+	 * carries the site's current home_url() (site-delete-request.schema.json).
+	 *
+	 * @param int $index Index of the request.
+	 */
+	private function assert_deletion_body( $index ) {
+		$schema = self::fixture( 'schema/site-delete-request.schema.json' );
+		$body   = json_decode( (string) $this->requests[ $index ]['body'], true );
+
+		$this->assertSame( 'DELETE', $this->requests[ $index ]['method'] );
+		$this->assertSame( 'application/json', $this->requests[ $index ]['headers']['Content-Type'] );
+		$this->assertSame(
+			array(
+				'schema_version' => 1,
+				'site_url'       => home_url(),
+			),
+			$body
+		);
+		$this->assertEqualsCanonicalizing( array_keys( $schema['properties'] ), array_keys( $body ) );
+		$this->assertEqualsCanonicalizing( $schema['required'], array_keys( $body ) );
+	}
+
+	/**
 	 * Lets get_plugins() return these plugins.
 	 *
 	 * @param array $plugins Plugin file => header data.
@@ -437,6 +460,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertSame( 1, preg_match( '/^\* \*\*Artisan Workshop free security check\*\*.*$/m', $readme, $entry ), 'The readme has an External Services entry for the free check.' );
 		preg_match_all( '/`([a-z0-9_]+)`/', $entry[0], $listed );
 		$this->assertEqualsCanonicalizing( array_merge( self::SENT_KEYS, self::SOFTWARE_KEYS, self::FINDING_KEYS ), array_unique( $listed[1] ) );
+		$this->assertMatchesRegularExpression( '/`DELETE [^`]+` with it and [^;]*`site_url`/', $entry[0], 'The readme says that the deletion carries the site address.' );
 	}
 
 	/**
@@ -1409,6 +1433,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertSame( 'jp4wc_security_scan_cancelled', $response->get_data()['code'] );
 		$this->assertSame( array( 'POST', 'DELETE' ), wp_list_pluck( $this->requests, 'method' ) );
 		$this->assertSame( 'Bearer ' . self::fixture( 'scan-response.json' )['site_token'], $this->authorization( 1 ) );
+		$this->assert_deletion_body( 1 );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::TOKEN_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::REPORT_OPTION ) );
 	}
@@ -1464,11 +1489,59 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertSame( 'DELETE', $this->requests[0]['method'] );
 		$this->assertSame( 'https://wc.artws.info/wp-json/artws-sec/v1/site', $this->requests[0]['url'] );
 		$this->assertSame( 'Bearer ' . self::TOKEN, $this->authorization( 0 ) );
+		$this->assert_deletion_body( 0 );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::TOKEN_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::CONSENT_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::REPORT_OPTION ) );
 		$this->assertNull( $response->get_data()['consent'] );
 		$this->assertTrue( $response->get_data()['remote_deleted'] );
+	}
+
+	/**
+	 * The deletion carries the site's current address, not the URL kept with
+	 * the token: a search-replace rewrites that one in a staging copy, and
+	 * wc.artws.info compares the address with the site it issued the token to.
+	 */
+	public function test_deletion_sends_the_current_address() {
+		self::store_token( 'https://EXAMPLE.org/' );
+		self::consent();
+		$this->responses = array( self::response( 204 ) );
+
+		$this->assertSame( 200, $this->dispatch( 'DELETE' )->get_status() );
+
+		$this->assertCount( 1, $this->requests );
+		$this->assertNotSame( 'https://EXAMPLE.org/', home_url() );
+		$this->assert_deletion_body( 0 );
+	}
+
+	/**
+	 * An address that the contract does not allow goes without a body, as up
+	 * to 3.1.x, so that the server does not refuse the deletion with 400 and
+	 * what is kept here is still deleted.
+	 */
+	public function test_deletion_without_a_valid_address_sends_no_body() {
+		$address = static function () {
+			return 'http://example.org/a b';
+		};
+		add_filter( 'home_url', $address );
+		try {
+			self::store_token( 'http://example.org/a b' );
+			self::consent();
+			$this->responses = array( self::response( 204 ) );
+
+			$response = $this->dispatch( 'DELETE' );
+		} finally {
+			remove_filter( 'home_url', $address );
+		}
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertTrue( $response->get_data()['remote_deleted'] );
+		$this->assertCount( 1, $this->requests );
+		$this->assertSame( 'Bearer ' . self::TOKEN, $this->authorization( 0 ) );
+		$this->assertNull( $this->requests[0]['body'] );
+		$this->assertArrayNotHasKey( 'Content-Type', $this->requests[0]['headers'] );
+		$this->assertFalse( get_option( JP4WC_Security_Scan::TOKEN_OPTION ) );
+		$this->assertFalse( get_option( JP4WC_Security_Scan::CONSENT_OPTION ) );
 	}
 
 	/**
@@ -1545,6 +1618,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertCount( 1, $this->requests );
 		$this->assertSame( 'DELETE', $this->requests[0]['method'] );
 		$this->assertSame( 'Bearer ' . self::TOKEN, $this->authorization( 0 ) );
+		$this->assert_deletion_body( 0 );
 		$this->assertSame( JP4WC_Security_Scan::UNINSTALL_TIMEOUT, $this->requests[0]['args']['timeout'] );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::TOKEN_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::CONSENT_OPTION ) );
