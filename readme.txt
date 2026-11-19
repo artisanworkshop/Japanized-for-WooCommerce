@@ -5,7 +5,7 @@ Tags: woocommerce, ecommerce, e-commerce, Japanese
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.3
-Stable tag: 3.1.1
+Stable tag: 3.2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -169,6 +169,9 @@ For support, please visit the [plugin support forum](https://wordpress.org/suppo
 Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
+
+= 3.2.0 - 2026-11-19 =
+* **Fixed** - On a staging site made from a copy of the production database with a search-replace tool (`wp search-replace`, WP Migrate, Duplicator or a host's staging tool), "Delete check data" on the Security tab and deleting the plugin deleted the production site's free security check data on wc.artws.info, because the copy took over the production site's token. The deletion request now sends the current site address with the token, and wc.artws.info refuses a token that was issued to another site; the copy then deletes only the data kept on it and says so. A production site moved to a new address with a search-replace tool also deletes only the data kept on it, and its registration for the old address is deleted after the 180-day retention (#329)
 
 = 3.1.1 - 2026-11-17 =
 * **Fixed** - With the honorific "様" turned on, an address in Japan without a name no longer gets "様" on a line of its own. WooCommerce formats the store address that way, so "様" ended the footer of every WooCommerce e-mail when the footer text has `{store_address}` (the default since WooCommerce 9.9), and it also followed the store address of the e-mail editor's Store Address tag and the default store address of the point of sale, and came before the address of local pickup locations saved with Checkout block orders. Addresses with a name, including a last name only, keep "様" (#333)
