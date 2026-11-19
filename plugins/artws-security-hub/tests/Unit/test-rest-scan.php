@@ -71,6 +71,55 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * Returns the body of DELETE /site that JP4WC 3.2.0 and later send: the contract's sample with a site_url.
+	 *
+	 * @param string $site_url Site URL.
+	 * @return array
+	 */
+	private static function delete_body( $site_url = 'https://example.jp' ) {
+		$body             = json_decode( file_get_contents( ARTWS_SEC_CONTRACT_DIR . '/site-delete-request.json' ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local fixture file.
+		$body['site_url'] = $site_url;
+		return $body;
+	}
+
+	/**
+	 * Builds a DELETE /site request with a raw body.
+	 *
+	 * @param string      $body         Raw body, or '' for none.
+	 * @param string|null $token        Site token for the Authorization header.
+	 * @param string      $content_type Content-Type of the body.
+	 * @return WP_REST_Request
+	 */
+	private static function delete_request( $body, $token, $content_type = 'application/json' ) {
+		$request = new WP_REST_Request( 'DELETE', '/artws-sec/v1/site' );
+		if ( '' !== $body ) {
+			$request->set_header( 'Content-Type', $content_type );
+			$request->set_body( $body );
+		}
+		if ( null !== $token ) {
+			$request->set_header( 'Authorization', 'Bearer ' . $token );
+		}
+		return $request;
+	}
+
+	/**
+	 * Sends GET /scan/{token} with a site_url in the query string.
+	 *
+	 * @param string      $scan     Scan token.
+	 * @param string|null $token    Site token for the Authorization header.
+	 * @param mixed       $site_url Value of the site_url query parameter.
+	 * @return WP_REST_Response
+	 */
+	private static function get_scan_with( $scan, $token, $site_url ) {
+		$request = new WP_REST_Request( 'GET', '/artws-sec/v1/scan/' . $scan );
+		if ( null !== $token ) {
+			$request->set_header( 'Authorization', 'Bearer ' . $token );
+		}
+		$request->set_query_params( array( 'site_url' => $site_url ) );
+		return rest_get_server()->dispatch( $request );
+	}
+
+	/**
 	 * The routes are registered.
 	 */
 	public function test_routes_are_registered() {
@@ -204,7 +253,34 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 	}
 
 	/**
+	 * GET /scan/{token} with the site_url of another site is 401; the site the token
+	 * was issued to gets the report, whatever the scheme, the case of the host or a trailing slash.
+	 */
+	public function test_get_scan_with_a_site_url() {
+		list( $token, $scan ) = $this->register_site();
+
+		$this->assert_error( self::get_scan_with( $scan, $token, 'https://staging.example.jp' ), 401, 'artws_sec_unauthorized' );
+		$this->assert_error( self::get_scan_with( $scan, $token, 'https://example.jp/staging' ), 401, 'artws_sec_unauthorized' );
+		foreach ( array( 'https://example.jp', 'http://EXAMPLE.jp/' ) as $site_url ) {
+			$this->assertSame( 200, self::get_scan_with( $scan, $token, $site_url )->get_status(), $site_url );
+		}
+	}
+
+	/**
+	 * A site_url query that the contract does not allow is 400, before the scan is looked up.
+	 */
+	public function test_get_scan_with_an_invalid_site_url() {
+		list( $token, $scan ) = $this->register_site();
+
+		foreach ( array( 'https://example.jp/a b', 'ftp://example.jp', '', array( 'https://example.jp' ) ) as $site_url ) {
+			$this->assert_error( self::get_scan_with( $scan, $token, $site_url ), 400, 'artws_sec_invalid_request' );
+			$this->assert_error( self::get_scan_with( 'scn_short', null, $site_url ), 400, 'artws_sec_invalid_request' );
+		}
+	}
+
+	/**
 	 * DELETE /site removes the registration and its scans (its reports are then 404 and its token 401); another registration of the same site_url stays.
+	 * The request has no body, as clients before JP4WC 3.2.0 send it: the token alone still deletes.
 	 */
 	public function test_delete_site() {
 		list( $token, $scan ) = $this->register_site();
@@ -237,6 +313,131 @@ class Artws_Sec_Rest_Scan_Test extends Artws_Sec_Scan_Test_Case {
 
 		$this->assert_error( self::send( 'POST', '/scan', self::sample_request() ), 429, 'artws_sec_rate_limited' );
 		$this->assertSame( 0, self::count_rows( Artws_Sec_Db::sites_table() ) );
+	}
+
+	/**
+	 * DELETE /site with the site_url of the site the token was issued to deletes it,
+	 * whatever the scheme, the case of the host or a trailing slash.
+	 */
+	public function test_delete_site_from_the_issuing_site() {
+		$this->assert_matches_schema( json_decode( wp_json_encode( self::delete_body() ) ), 'site-delete-request' );
+
+		foreach ( array( 'https://example.jp', 'http://EXAMPLE.jp/' ) as $site_url ) {
+			list( $token, $scan ) = $this->register_site();
+
+			$this->assertSame( 204, self::send( 'DELETE', '/site', self::delete_body( $site_url ), $token )->get_status(), $site_url );
+			$this->assertNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+			$this->assert_error( self::send( 'GET', '/scan/' . $scan, null, $token ), 404, 'artws_sec_scan_not_found' );
+		}
+	}
+
+	/**
+	 * A token sent with the site_url of another site is 401 and deletes nothing: a
+	 * staging copy made with a search-replace keeps the production token under its
+	 * own URL. The site the token was issued to can still delete.
+	 */
+	public function test_delete_site_from_another_site_url() {
+		list( $token, $scan ) = $this->register_site();
+		$before               = self::dump_tables();
+
+		$this->assert_error( self::send( 'DELETE', '/site', self::delete_body( 'https://staging.example.jp' ), $token ), 401, 'artws_sec_unauthorized' );
+		$this->assert_error( self::send( 'DELETE', '/site', self::delete_body( 'https://example.jp/staging' ), $token ), 401, 'artws_sec_unauthorized' );
+
+		$this->assertSame( $before, self::dump_tables() );
+		$this->assertSame( 200, self::send( 'GET', '/scan/' . $scan, null, $token )->get_status() );
+		$this->assertSame( 204, self::send( 'DELETE', '/site', self::delete_body(), $token )->get_status() );
+	}
+
+	/**
+	 * Keys the deletion request does not define are dropped, not refused.
+	 */
+	public function test_delete_site_ignores_unknown_keys() {
+		list( $token, ) = $this->register_site();
+		$body           = self::delete_body();
+		$body['reason'] = 'closing the shop';
+
+		$this->assertSame( 204, self::send( 'DELETE', '/site', $body, $token )->get_status() );
+		$this->assertNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+	}
+
+	/**
+	 * Bodies of DELETE /site that do not match the contract.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public function invalid_delete_body_provider() {
+		return array(
+			'list'                   => array( '["https://example.jp"]' ),
+			'empty object'           => array( '{}' ),
+			'null'                   => array( 'null' ),
+			'number'                 => array( '1' ),
+			'missing schema_version' => array( '{"site_url":"https://example.jp"}' ),
+			'newer schema_version'   => array( '{"schema_version":2,"site_url":"https://example.jp"}' ),
+			'schema_version as text' => array( '{"schema_version":"1","site_url":"https://example.jp"}' ),
+			'missing site_url'       => array( '{"schema_version":1}' ),
+			'site_url not http(s)'   => array( '{"schema_version":1,"site_url":"ftp://example.jp"}' ),
+			'site_url with a space'  => array( '{"schema_version":1,"site_url":"https://example.jp/a b"}' ),
+			'site_url too long'      => array( '{"schema_version":1,"site_url":"https://example.jp/' . str_repeat( 'a', 2048 ) . '"}' ),
+			'site_url not a string'  => array( '{"schema_version":1,"site_url":["https://example.jp"]}' ),
+		);
+	}
+
+	/**
+	 * A body that does not match the contract is 400 and deletes nothing, before
+	 * the token is looked at.
+	 *
+	 * @dataProvider invalid_delete_body_provider
+	 *
+	 * @param string $body Raw JSON body.
+	 */
+	public function test_invalid_delete_body( $body ) {
+		list( $token, ) = $this->register_site();
+		$wrong          = Artws_Sec_Site_Store::new_token( Artws_Sec_Site_Store::SITE_TOKEN_PREFIX );
+
+		foreach ( array( $token, $wrong, null ) as $sent ) {
+			$this->assert_error( rest_get_server()->dispatch( self::delete_request( $body, $sent ) ), 400, 'artws_sec_invalid_request' );
+		}
+		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+	}
+
+	/**
+	 * A body that is not JSON is 400 (WordPress refuses a broken JSON body itself) and deletes nothing.
+	 */
+	public function test_delete_body_that_is_not_json() {
+		list( $token, ) = $this->register_site();
+
+		$this->assertSame( 400, rest_get_server()->dispatch( self::delete_request( '{"schema_version":1,', $token ) )->get_status() );
+		$this->assert_error( rest_get_server()->dispatch( self::delete_request( 'schema_version=1&site_url=https%3A%2F%2Fexample.jp', $token, 'application/x-www-form-urlencoded' ) ), 400, 'artws_sec_invalid_request' );
+		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+	}
+
+	/**
+	 * A deletion body over 1 MB is 413 and deletes nothing.
+	 */
+	public function test_delete_body_too_large() {
+		list( $token, )  = $this->register_site();
+		$body            = self::delete_body();
+		$body['padding'] = str_repeat( 'a', Artws_Sec_Rest_Controller::MAX_BODY_BYTES );
+
+		$this->assert_error( self::send( 'DELETE', '/site', $body, $token ), 413, 'artws_sec_request_too_large' );
+		$this->assertNotNull( Artws_Sec_Site_Store::find_site_by_token( $token ) );
+	}
+
+	/**
+	 * DELETE /site reads site_url from the JSON body only: a site_url in the query
+	 * string neither refuses a request nor stands in for a missing body.
+	 */
+	public function test_delete_site_url_comes_from_the_body() {
+		list( $first, )  = $this->register_site();
+		list( $second, ) = $this->register_site();
+
+		$request = self::delete_request( wp_json_encode( self::delete_body() ), $first );
+		$request->set_query_params( array( 'site_url' => 'https://staging.example.jp' ) );
+		$this->assertSame( 204, rest_get_server()->dispatch( $request )->get_status() );
+
+		$request = self::delete_request( '', $second );
+		$request->set_query_params( array( 'site_url' => 'https://staging.example.jp' ) );
+		$this->assertSame( 204, rest_get_server()->dispatch( $request )->get_status() );
 	}
 
 	/**

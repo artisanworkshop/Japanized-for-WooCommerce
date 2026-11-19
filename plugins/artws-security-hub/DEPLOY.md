@@ -2,7 +2,7 @@
 
 wc.artws.info に artws-security-hub を入れて、脆弱性フィード（`/feed/v1/`）と無料診断の REST API（`/wp-json/artws-sec/v1/`）を動かすまでの手順。上から順に進め、各節の「確認」で結果を確かめる。
 
-- 対象の版: 0.6.0
+- 対象の版: 0.7.0
 - 仕組みや設定値の理由: [README.md](README.md)
 - JP4WC とやり取りする JSON の決まり: [契約 README](../../tests/fixtures/security-feed/README.md)
 
@@ -262,10 +262,18 @@ SCAN=$(jq -r '.report.token // empty' /tmp/artws-scan.json)
 
 # 2. Authorization ヘッダーがサーバーで落ちないか（200 なら OK、401 なら落ちている → 11 へ）
 curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" "$BASE/scan/$SCAN"
+#    別のサイトの site_url を付けた要求を断るか（0.7.0 以降。401 なら OK、200 なら前の版が答えている）
+curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" "$BASE/scan/$SCAN?site_url=https%3A%2F%2Fstaging.example.jp"
 
-# 3. 後片付け: テストの登録を消す（204）。204 のときだけ応答のファイル（トークン入り）を消す
+# 3. 後片付け: テストの登録を消す。
+#    先に別のサイトの site_url の本文で送り、断られる（401）ことを確かめる（0.7.0 以降。DELETE の本文が
+#    PHP まで届いていることも分かる。204 なら前の版が答えていて、登録はここで消える）。
+#    次にサンプルの site_url（https://example.jp）の本文で送る（204）。204 のときだけ応答のファイル（トークン入り）を消す
 if [ -n "$TOKEN" ]; then
-  CODE=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE -H "Authorization: Bearer $TOKEN" "$BASE/site")
+  curl -s -o /dev/null -w '%{http_code}\n' -X DELETE -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+    --data '{"schema_version":1,"site_url":"https://staging.example.jp"}' "$BASE/site"
+  CODE=$(curl -s -o /dev/null -w '%{http_code}' -X DELETE -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+    --data @tests/fixtures/security-feed/site-delete-request.json "$BASE/site")
   echo "$CODE"
   [ "$CODE" = 204 ] && rm /tmp/artws-scan.json
 else
@@ -364,6 +372,7 @@ JP4WC の無料診断（#260）を出す前に、wc.artws.info にプライバ�
 | 0.4.0 → 0.4.1 以降 | 追加の作業なし。下の「0.4.1 に更新したとき」で、同意の版 2026-11 の要求が Web から受け付けられることを確かめる。**同意の版 2026-11 を送る JP4WC（#298、2026-11-05 リリース）より前、2026-11-04 までに反映する。** 反映前にその JP4WC を出すと、同意し直した利用者の診断がすべて 400（`artws_sec_unknown_consent_version`）になり、画面には「最新版に更新して再試行」と出る（すでに最新版なので直せない）。2026-10 を送る JP4WC 3.0.0 は、0.4.0 でも 0.4.1 でも診断できる。その JP4WC を出した後は 0.4.0 以前に戻さず、3.0.0 が使われている間は `2026-10` を外さない |
 | 0.4.1 → 0.5.0 以降 | 追加の作業なし（表の変更もない）。チェック A-06（著者 ID からユーザー名を割り出せる）の文言を足した版。**A-06 を送る JP4WC 3.1.0 のタグより前に反映する。** 反映前にその JP4WC を出すと、A-06 が fail のストアの報告には A-06 が載らず、セキュリティタブの比較で「タブのチェックだけが見つけた項目」に出る（診断そのものは動く）。反映したかは、プラグインの一覧の版か `wp eval 'var_export( isset( Artws_Sec_Report_Builder::CHECKS["A-06"] ) );'` が `true` になることで確かめる |
 | 0.5.0 → 0.6.0 以降 | 追加の作業なし（表の変更もない）。管理画面に集計・プラグイン上位 30・登録の一覧・CSV を足した版（#296）。8 の「管理画面」を確かめる。JP4WC のリリースとは関係しないので、いつ反映してもよい（0.4.1 から直接 0.6.0 にするときは、上の 0.5.0 の行も当てはまる） |
+| 0.6.0 → 0.7.0 以降 | 追加の作業なし（表の変更もない）。`DELETE /site` の本文と `GET /scan/{token}` のクエリの `site_url` を、トークンの発行先のサイトと照合する版（#329）。8 の「無料診断の API」の 2・3 で、別のサイトの `site_url` が 401 になることを確かめる。**`site_url` を送る JP4WC 3.2.0 のタグより前に反映する。** 先に JP4WC を出しても削除は動く（前の版は本文を読まない）が、URL 置換で作ったステージングが本番のトークンで送る削除を断れない。本文の無い削除（JP4WC 3.1.x 以前）は今までどおり受け付ける |
 
 ### 0.4.1 に更新したとき
 
