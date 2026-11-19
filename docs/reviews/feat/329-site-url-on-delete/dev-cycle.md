@@ -4,8 +4,8 @@
 - タスク: #329 artws-security-hub: DELETE /site と GET /scan でも site_url を発行先と照合する（クライアントも同じ PR で site_url を送る。auto-commit）
 - 開始: 2026-11-19
 - PR: #338 https://github.com/artisanworkshop/Japanized-for-WooCommerce/pull/338
-- 現在のステップ: 7（ゲート G2 の依頼）
-- Copilot: 依頼 1 回 / 未収束（G1 は本文のみ 2 件、どちらも保留）
+- 現在のステップ: 8（完了。最終報告済み）
+- Copilot: 依頼 2 回 / 収束（G2 で新規指摘なし。G1 の本文 2 件は保留）
 - Codex: 依頼 1 回 / 収束（G1 で新規指摘なし）
 
 ## 計画の要点（2026-11-19 承認）
@@ -23,3 +23,5 @@
 | 2026-11-19 | 3 | review-loop R1（Medium 5 件修正: 72941f1・7a12cbc・73c2815、Low 1 件 backlog）→ R2 APPROVE（R2-1 を b44ae60 で修正、Low 2 件 backlog） |
 | 2026-11-19 | 4 | push（upstream、a5d42d8、T=2026-11-19T03:31:55Z）、PR #338 作成（milestone Version 3.2.0） |
 | 2026-11-19 | 6-7 | G1: CI green（2 ワークフロー）。Codex 0 件 = 収束。Copilot 本文のみ 2 件（G1-1 デプロイ前の承認、G1-2 readme の例外）→ どちらも保留。修正なし |
+| 2026-11-19 | 6-7 | G2（40dd011、T=2026-11-19T03:42:37Z）: CI green。Copilot 0 件（本文は G1-1 の言い直し）= 収束 |
+| 2026-11-19 | 8 | 最終報告（final-report.md） |
