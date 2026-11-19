@@ -383,4 +383,66 @@ class Artws_Sec_Scan_Request_Test extends Artws_Sec_Feed_Test_Case {
 		);
 		$this->assertIsArray( Artws_Sec_Scan_Request::normalize( $data ) );
 	}
+
+	/**
+	 * Returns the contract's sample deletion request (DELETE /site).
+	 *
+	 * @return array
+	 */
+	private static function delete_sample() {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local fixture.
+		return json_decode( file_get_contents( ARTWS_SEC_CONTRACT_DIR . '/site-delete-request.json' ), true );
+	}
+
+	/**
+	 * The sample deletion request comes back unchanged and matches its schema;
+	 * keys the contract does not define are dropped.
+	 */
+	public function test_site_delete_sample_is_accepted_as_is() {
+		$request = Artws_Sec_Scan_Request::normalize_site_delete( self::delete_sample() );
+		$this->assertSame( self::delete_sample(), $request );
+		$this->assert_matches_schema( json_decode( wp_json_encode( $request ) ), 'site-delete-request' );
+
+		$data           = self::delete_sample();
+		$data['reason'] = 'closing the shop';
+		$this->assertSame( self::delete_sample(), Artws_Sec_Scan_Request::normalize_site_delete( $data ) );
+	}
+
+	/**
+	 * Deletion requests that must be refused, and the field the error names.
+	 *
+	 * @return array<string, array{mixed, string}>
+	 */
+	public function invalid_site_delete_provider() {
+		return array(
+			'not an object'          => array( 'https://example.jp', 'body' ),
+			'list'                   => array( array( 1, 'https://example.jp' ), 'body' ),
+			'missing schema_version' => array( array( 'site_url' => 'https://example.jp' ), 'schema_version' ),
+			'missing site_url'       => array( array( 'schema_version' => 1 ), 'site_url' ),
+			'site_url not http(s)'   => array(
+				array(
+					'schema_version' => 1,
+					'site_url'       => 'ftp://example.jp',
+				),
+				'site_url',
+			),
+		);
+	}
+
+	/**
+	 * A deletion request that does not match the contract is a 400 error.
+	 *
+	 * @dataProvider invalid_site_delete_provider
+	 *
+	 * @param mixed  $data  Decoded body.
+	 * @param string $field Field the error names.
+	 */
+	public function test_invalid_site_delete_is_refused( $data, $field ) {
+		$error = Artws_Sec_Scan_Request::normalize_site_delete( $data );
+
+		$this->assertWPError( $error );
+		$this->assertSame( 'artws_sec_invalid_request', $error->get_error_code() );
+		$this->assertSame( array( 'status' => 400 ), $error->get_error_data() );
+		$this->assertSame( "The request has an invalid $field.", $error->get_error_message() );
+	}
 }
