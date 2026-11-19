@@ -6,7 +6,7 @@ wc.artws.info で動かす WordPress プラグイン。Japanized for WooCommerce
 |---|---|---|
 | S0（#261） | 土台（lint・テスト・CI）と JSON 形式の確定 | 完了 |
 | S1（#262） | Wordfence Intelligence V3 の取り込みと `/feed/v1/` の配信 | 完了（0.2.0） |
-| S2（#263） | REST `artws-sec/v1`（`POST /scan`・`GET /scan/{token}`・`DELETE /site`） | このディレクトリ（0.3.0。0.4.0 で登録をトークン単位に変更） |
+| S2（#263） | REST `artws-sec/v1`（`POST /scan`・`GET /scan/{token}`・`DELETE /site`） | このディレクトリ（0.3.0。0.4.0 で登録をトークン単位に変更、0.7.0 で `GET /scan/{token}`・`DELETE /site` でも `site_url` を照合（#329）） |
 
 JP4WC とやり取りする JSON の形式は、リポジトリ直下の `tests/fixtures/security-feed/`（README と JSON Schema）で定める。
 
@@ -121,8 +121,8 @@ Alias /feed/v1/ /path/to/wp-content/artws-security-feed/v1/
 
 ### 作り
 
-- `Artws_Sec_Rest_Controller`: 経路と判定の順序。経路は WordPress のユーザーではなく `Authorization: Bearer <site_token>` で認証するので、`permission_callback` は `__return_true`。本文は JSON の本文だけを読む（クエリ文字列は読まない）
-- `Artws_Sec_Scan_Request`: 送信データの検査。契約の Schema を手書きで写したもの（テストで Schema 本体と突き合わせている）。Schema に無いキーはどの階層でも捨て、保存しない
+- `Artws_Sec_Rest_Controller`: 経路と判定の順序。経路は WordPress のユーザーではなく `Authorization: Bearer <site_token>` で認証するので、`permission_callback` は `__return_true`。本文は JSON の本文だけを読む（クエリ文字列は読まない。例外は `GET /scan/{token}` の `site_url` で、GET には本文が無いのでクエリから読む）。要求が `site_url` を持てば（`POST /scan` は常に、`GET /scan/{token}`・`DELETE /site` は付けたときだけ）、トークンの発行先のサイトと照合する
+- `Artws_Sec_Scan_Request`: 送信データ（`POST /scan`）と削除の申込み（`DELETE /site`）の本文の検査。契約の Schema を手書きで写したもの（テストで Schema 本体と突き合わせている）。Schema に無いキーはどの階層でも捨て、保存しない
 - `Artws_Sec_Report_Builder` / `Artws_Sec_Report_Templates`: レポートの組み立てと文言（チェック ID ごとに日本語と英語）。V-01（既知の脆弱性）と V-03（サポート終了）はサーバーが判定し、ほかのチェックは送られた状態を使う。チェックの重大度・点数・範囲の判定は JP4WC の `JP4WC_Security_Checks` / `JP4WC_Security_Scanner` と同じで、テストがクライアントのクラスを読み込んで突き合わせる
 - `Artws_Sec_Vuln_Index`: 照合用のインデックス。`.json.gz` を診断のたびに展開すると数百 MB 使うので、取り込み（S1）が公開するデータを slug ごとに1行ずつ表に書き、診断は送られたソフトウェアの行だけを読む。取り込みはフィードを公開した後に新しい世代を書き、書き終えてから state の `index_version` を切り替える。置き換えた1つ前の世代は残す（直前の状態を読んだ診断が空振りしない）。インデックスを書けなくてもフィードの公開は成功のままで、診断は前の世代を使い続ける（管理画面の結果にメッセージが出て、次の取り込みでやり直す）。インデックスが公開中のフィードに追いつかないまま `artws_sec_feed_stale_after`（48 時間）を過ぎると、診断は脆弱性データを古いものとして扱う（何も見つからなければ V-01 は「確認できず」、次の手順に「データが古い」旨）。インデックスが読めない・WordPress コアの行が無いときは、「脆弱性なし」と答えずに 503 を返す
 - `Artws_Sec_Site_Store`: 登録（`site_token` の SHA-256 と、トークン付きの要求が発行先のサイトから来たかを確かめる正規化した `site_url`）と診断の保存、保存期間による削除。同じ `site_url` の登録はいくつあってもよい

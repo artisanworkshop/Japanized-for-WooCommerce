@@ -14,7 +14,9 @@ defined( 'ABSPATH' ) || exit;
  * saves it; GET /scan/{token} returns a saved report; DELETE /site deletes a
  * site's data. The routes are public: each request is authenticated by the
  * site token in "Authorization: Bearer", as tests/fixtures/security-feed/README.md
- * describes, not by a WordPress user.
+ * describes, not by a WordPress user. A request that carries a site_url (always
+ * on POST /scan; on GET and DELETE since 0.7.0, from JP4WC 3.2.0 on) is refused
+ * when the token was issued to another site.
  */
 class Artws_Sec_Rest_Controller {
 
@@ -130,7 +132,7 @@ class Artws_Sec_Rest_Controller {
 		} else {
 			// A token issued to another site_url is refused too: the site moved, or the token came with a copy of it.
 			$site = Artws_Sec_Site_Store::find_site_by_token( $token );
-			if ( null === $site || Artws_Sec_Site_Store::site_key( $normalized['site_url'] ) !== $site->site_key ) {
+			if ( null === $site || ! self::from_issuing_site( $site, $normalized['site_url'] ) ) {
 				return self::unauthorized();
 			}
 			$site_token = null;
@@ -223,13 +225,19 @@ class Artws_Sec_Rest_Controller {
 			return self::https_required();
 		}
 
+		// A GET has no body, so a client that sends its site_url puts it in the query string.
+		$site_url = $request->get_query_params()['site_url'] ?? null;
+		if ( null !== $site_url && ! Artws_Sec_Scan_Request::is_site_url( $site_url ) ) {
+			return self::error( 'artws_sec_invalid_request', 'The request has an invalid site_url.', 400 );
+		}
+
 		// From the route only: get_param() would let a "token" in the query string replace it.
 		$scan = Artws_Sec_Site_Store::find_scan( $request->get_url_params()['token'] ?? null );
 		$site = null === $scan ? null : Artws_Sec_Site_Store::find_site( (int) $scan->site_id );
 		if ( null === $site ) {
 			return self::error( 'artws_sec_scan_not_found', 'No such scan.', 404 );
 		}
-		if ( ! Artws_Sec_Site_Store::token_matches( $site, self::bearer_token( $request ) ) ) {
+		if ( ! Artws_Sec_Site_Store::token_matches( $site, self::bearer_token( $request ) ) || ! self::from_issuing_site( $site, $site_url ) ) {
 			return self::unauthorized();
 		}
 
@@ -272,16 +280,46 @@ class Artws_Sec_Rest_Controller {
 		if ( ! self::is_https() ) {
 			return self::https_required();
 		}
+		if ( strlen( (string) $request->get_body() ) > self::MAX_BODY_BYTES ) {
+			return self::error( 'artws_sec_request_too_large', 'The request body is too large.', 413 );
+		}
+
+		// Clients before JP4WC 3.2.0 send no body: their token alone still deletes.
+		$site_url = null;
+		if ( '' !== (string) $request->get_body() ) {
+			// Only the JSON body: a site_url in the query string is not read.
+			$normalized = Artws_Sec_Scan_Request::normalize_site_delete( $request->get_json_params() );
+			if ( is_wp_error( $normalized ) ) {
+				return self::error( $normalized->get_error_code(), $normalized->get_error_message(), 400 );
+			}
+			$site_url = $normalized['site_url'];
+		}
 
 		// The rate limit rows stay: deleting does not give the client address its scans back.
+		// A token sent from another site (a copy made with a search-replace keeps the
+		// production token under its own URL) deletes nothing.
 		$site = Artws_Sec_Site_Store::find_site_by_token( self::bearer_token( $request ) );
-		if ( null === $site ) {
+		if ( null === $site || ! self::from_issuing_site( $site, $site_url ) ) {
 			return self::unauthorized();
 		}
 		if ( ! Artws_Sec_Site_Store::delete_site( (int) $site->id ) ) {
 			return self::server_error();
 		}
 		return self::response( null, 204 );
+	}
+
+	/**
+	 * Whether a request's site_url is the site its token was issued to.
+	 *
+	 * The scheme, the case of the host and a trailing slash make no difference
+	 * (Artws_Sec_Site_Store::site_key()).
+	 *
+	 * @param object      $site     Row of the sites table.
+	 * @param string|null $site_url URL the request carries, or null when it carries none.
+	 * @return bool True also for a request without a site_url.
+	 */
+	private static function from_issuing_site( $site, $site_url ) {
+		return null === $site_url || Artws_Sec_Site_Store::site_key( $site_url ) === $site->site_key;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Checks the body of POST /scan against the JSON contract.
+ * Checks the bodies of POST /scan and DELETE /site against the JSON contract.
  *
  * @package Artws_Security_Hub
  */
@@ -11,6 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * Artws_Sec_Scan_Request
  *
  * A hand-written copy of tests/fixtures/security-feed/schema/scan-request.schema.json
+ * and site-delete-request.schema.json
  * (the plugin does not load Composer packages at run time; the tests check
  * that what this class returns, the schema accepts). Keys the schema does not
  * define are dropped rather than rejected, at every level, as the contract
@@ -140,6 +141,28 @@ class Artws_Sec_Scan_Request {
 	}
 
 	/**
+	 * Returns the body of DELETE /site with only the contract's keys, or why it is invalid.
+	 *
+	 * @param mixed $data Body decoded with json_decode( …, true ).
+	 * @return array{schema_version: int, site_url: string}|WP_Error The request, or a WP_Error with status 400.
+	 */
+	public static function normalize_site_delete( $data ) {
+		if ( ! is_array( $data ) || ( array() !== $data && array_is_list( $data ) ) ) {
+			return self::invalid( 'body' );
+		}
+		if ( ! isset( $data['schema_version'] ) || 1 !== $data['schema_version'] ) {
+			return self::invalid( 'schema_version' );
+		}
+		if ( ! self::is_site_url( $data['site_url'] ?? null ) ) {
+			return self::invalid( 'site_url' );
+		}
+		return array(
+			'schema_version' => 1,
+			'site_url'       => $data['site_url'],
+		);
+	}
+
+	/**
 	 * Returns the consent texts the server accepts.
 	 *
 	 * @return string[]
@@ -217,7 +240,7 @@ class Artws_Sec_Scan_Request {
 	 * @param mixed $url Value to check.
 	 * @return bool
 	 */
-	private static function is_site_url( $url ) {
+	public static function is_site_url( $url ) {
 		$space = Artws_Sec_Record_Validator::WHITESPACE;
 		return Artws_Sec_Record_Validator::is_text( $url, 1, 2048 ) && 1 === preg_match( '/^https?:\/\/[^' . $space . '\/?#]+[^' . $space . ']*$/uD', $url );
 	}
