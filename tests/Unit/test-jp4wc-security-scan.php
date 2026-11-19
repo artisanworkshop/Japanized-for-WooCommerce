@@ -1470,13 +1470,17 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 
 	/**
 	 * Deleting sends DELETE /site with the token, then removes the consent,
-	 * the token and the report; a 401 counts as deleted.
+	 * the token and the report. A 401 removes them too (the token cannot be
+	 * used), but the answer does not say that the data on wc.artws.info was
+	 * deleted: since server 0.7.0 a 401 can also mean that the token was
+	 * issued to another site and nothing was deleted there.
 	 *
 	 * @dataProvider deleted_provider
 	 *
-	 * @param int $status Status of DELETE /site.
+	 * @param int  $status         Status of DELETE /site.
+	 * @param bool $remote_deleted Expected remote_deleted.
 	 */
-	public function test_delete_removes_everything( $status ) {
+	public function test_delete_removes_everything( $status, $remote_deleted ) {
 		self::store_token( home_url() );
 		self::consent();
 		update_option( JP4WC_Security_Scan::REPORT_OPTION, array( 'report' => array() ) );
@@ -1494,7 +1498,7 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 		$this->assertFalse( get_option( JP4WC_Security_Scan::CONSENT_OPTION ) );
 		$this->assertFalse( get_option( JP4WC_Security_Scan::REPORT_OPTION ) );
 		$this->assertNull( $response->get_data()['consent'] );
-		$this->assertTrue( $response->get_data()['remote_deleted'] );
+		$this->assertSame( $remote_deleted, $response->get_data()['remote_deleted'] );
 	}
 
 	/**
@@ -1551,8 +1555,8 @@ class JP4WC_Security_Scan_Test extends WP_UnitTestCase {
 	 */
 	public function deleted_provider() {
 		return array(
-			'deleted'         => array( 204 ),
-			'already deleted' => array( 401 ),
+			'deleted'              => array( 204, true ),
+			'gone or another site' => array( 401, false ),
 		);
 	}
 
