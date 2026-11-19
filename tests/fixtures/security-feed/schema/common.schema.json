@@ -17,6 +17,12 @@
             "maxLength": 2048,
             "pattern": "^https://[^\\s/?#]+[^\\s]*$"
         },
+        "site_url": {
+            "description": "home_url() of the site that sends the request, when it sends it.",
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https?://[^\\s/?#]+[^\\s]*$"
+        },
         "feed_version": {
             "description": "Opaque identifier of one generated feed. Changes whenever any feed file changes.",
             "type": "string",

@@ -53,14 +53,15 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 	 */
 	public function sample_provider() {
 		return array(
-			'manifest'     => array( 'manifest.json', 'manifest' ),
-			'plugin feed'  => array( 'vuln-plugins.json', 'vuln-file' ),
-			'theme feed'   => array( 'vuln-themes.json', 'vuln-file' ),
-			'core feed'    => array( 'vuln-core.json', 'vuln-file' ),
-			'scan request' => array( 'scan-request.json', 'scan-request' ),
-			'response'     => array( 'scan-response.json', 'scan-response' ),
-			'report'       => array( 'report.json', 'report' ),
-			'error'        => array( 'error-rate-limited.json', 'error' ),
+			'manifest'       => array( 'manifest.json', 'manifest' ),
+			'plugin feed'    => array( 'vuln-plugins.json', 'vuln-file' ),
+			'theme feed'     => array( 'vuln-themes.json', 'vuln-file' ),
+			'core feed'      => array( 'vuln-core.json', 'vuln-file' ),
+			'scan request'   => array( 'scan-request.json', 'scan-request' ),
+			'delete request' => array( 'site-delete-request.json', 'site-delete-request' ),
+			'response'       => array( 'scan-response.json', 'scan-response' ),
+			'report'         => array( 'report.json', 'report' ),
+			'error'          => array( 'error-rate-limited.json', 'error' ),
 		);
 	}
 
@@ -530,6 +531,42 @@ class Artws_Sec_Contract_Schemas_Test extends TestCase {
 				'scan-request',
 				static function ( $d ) {
 					$d->reregister = true;
+				},
+			),
+			// Deletion request.
+			'delete request: missing site_url'             => array(
+				'site-delete-request.json',
+				'site-delete-request',
+				static function ( $d ) {
+					unset( $d->site_url );
+				},
+			),
+			'delete request: site_url not http(s)'         => array(
+				'site-delete-request.json',
+				'site-delete-request',
+				static function ( $d ) {
+					$d->site_url = 'ftp://example.jp';
+				},
+			),
+			'delete request: site_url with a space'        => array(
+				'site-delete-request.json',
+				'site-delete-request',
+				static function ( $d ) {
+					$d->site_url = 'https://example.jp/a b';
+				},
+			),
+			'delete request: newer schema_version'         => array(
+				'site-delete-request.json',
+				'site-delete-request',
+				static function ( $d ) {
+					$d->schema_version = 2;
+				},
+			),
+			'delete request: unknown top-level key'        => array(
+				'site-delete-request.json',
+				'site-delete-request',
+				static function ( $d ) {
+					$d->site_token = 'sit_not-in-the-body';
 				},
 			),
 			// Scan response.

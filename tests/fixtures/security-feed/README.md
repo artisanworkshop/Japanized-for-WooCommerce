@@ -7,6 +7,7 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
 | フィードの manifest（`GET /feed/v1/manifest.json`） | `schema/manifest.schema.json` | `manifest.json` |
 | 脆弱性ファイル（`GET /feed/v1/vuln-{plugins,themes,core}.json.gz` を展開したもの） | `schema/vuln-file.schema.json` | `vuln-*.json`（`vuln-*.json.gz` はそのまま配信される形） |
 | 無料診断の送信データ（`POST /wp-json/artws-sec/v1/scan` の本文） | `schema/scan-request.schema.json` | `scan-request.json` |
+| 削除の申込み（`DELETE /wp-json/artws-sec/v1/site` の本文。JP4WC 3.2.0 から） | `schema/site-delete-request.schema.json` | `site-delete-request.json` |
 | 診断の応答（`POST /scan` と `GET /scan/{token}` の 200。レポートと、登録時だけ `site_token`） | `schema/scan-response.schema.json` | `scan-response.json` |
 | レポート（診断の応答の `report`） | `schema/report.schema.json` | `report.json` |
 | `artws-sec/v1` のエラー応答 | `schema/error.schema.json` | `error-rate-limited.json` |
@@ -78,15 +79,20 @@ JP4WC（クライアント）と wc.artws.info の `artws-security-hub`（サー
   - レート制限: 1登録（`site_token`）1時間1回、送信元 IP（IPv6 は /64）1時間20回。登録した要求の診断がその登録の1回目。400・401・403・413・503 になった要求は数えない。超過したら 429 で、`data.retry_at` と `Retry-After` ヘッダーに次に実行できる時刻を入れる。
   - サーバーがまだ脆弱性データを持っていないとき・読めないときは 503（何も登録しない）。認証の判定（401）はこれより先に行う。
 - `GET /scan/{token}`: `Authorization` が必須。トークンの形式が違う・診断が無い（期限切れ・削除済みを含む）なら 404、診断はあるがトークンが一致しないなら 401。
+  - クエリに `site_url` を付けてよい（サーバー 0.7.0 から）。付けた要求は、`site_url` が上の形でなければ何も引く前に 400、登録時と別のサイトなら 401（`POST /scan` と同じ照合）。付けない要求は今のとおり。JP4WC はこの経路を呼ばない。
 - `DELETE /site`: `Authorization` のトークンの登録と、その診断をすべて削除して 204（本文なし）。同じ `site_url` の他の登録は残る。未知のトークンは 401（削除済みの場合を含むので、クライアントは 401 を「削除済み」として扱ってよい）。
+  - 本文 `{schema_version, site_url}`（`schema/site-delete-request.schema.json`）を付けてよい（サーバー 0.7.0 から。JP4WC 3.2.0 から送る）。付けた要求は、Schema に合わなければ 400、`site_url` が登録時と別のサイトなら 401 で、何も削除しない（`POST /scan` と同じ照合）。判定の順序は https（403）→ 本文の大きさ（413）→ 本文（400）→ トークンと `site_url`（401）。知らないキーは捨てる。読むのは JSON の本文だけで、クエリの `site_url` は読まない。
+  - 本文の無い要求（JP4WC 3.1.x 以前）は今のとおりトークンだけで削除する。照合が多重防御として効くのは、古い版が減ってから。
+  - クライアントは、トークンと一緒に保存した URL ではなく、送る時点の `home_url()` を送る。URL 置換（`wp search-replace`、移行・ステージングのツール）はシリアライズされた option の中の URL も書き換えるので、本番から複製したステージングではトークンの保存 URL もステージングの URL になり、クライアントの規則（URL が今と違うトークンは使わない）が効かない。今の `home_url()` を送れば、本番のトークンで本番のデータを消す要求をサーバーが 401 で断れる。`home_url()` が上の形でない（`POST /scan` を送れない）ときは、本文を付けずに送る（400 で手元の削除まで止めないため）。
+  - 401 を受けたクライアントは、今のとおり手元のトークン・同意・レポートを消す。URL 置換でドメインを移した本番の削除もこの 401 になり、旧登録のデータは保存期間で消える（許容。移転後の診断は 401 を受けて登録し直す）。
 - 診断は 180 日保存し、それより古いものは毎日削除する。180 日診断の無い登録はトークンごと削除する（その後のトークン付きの要求は 401 になり、新しく登録し直す）。トークンを失った登録の診断は API では消せず、この保存期間で消える。
 - エラーの本文は `{schema_version, code, message, data: {status, retry_at?}}`（`schema/error.schema.json`）。`message` は英語のログ用で、クライアントは画面に出さず、ステータスに応じた自分の文言を出す。WordPress 自身が返すエラー（存在しない経路、JSON でない本文など）はこの形でないので、クライアントはステータスで判断する。`code`:
 
 | ステータス | `code` | 意味 |
 |---|---|---|
-| 400 | `artws_sec_invalid_request` | 本文が Schema に合わない |
+| 400 | `artws_sec_invalid_request` | 本文（`GET /scan/{token}` では `site_url` クエリ）が Schema に合わない |
 | 400 | `artws_sec_unknown_consent_version` | サーバーが知らない `consent_version` |
-| 401 | `artws_sec_unauthorized` | トークンが無い・合わない |
+| 401 | `artws_sec_unauthorized` | トークンが無い・合わない、`site_url` が登録時と別のサイト |
 | 403 | `artws_sec_https_required` | http で送った |
 | 404 | `artws_sec_scan_not_found` | 診断が無い |
 | 413 | `artws_sec_request_too_large` | 本文が大きすぎる |

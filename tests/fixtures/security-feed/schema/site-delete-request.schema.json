@@ -1,0 +1,20 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://wc.artws.info/schema/security/v1/site-delete-request.schema.json",
+    "title": "Deletion request (DELETE /wp-json/artws-sec/v1/site)",
+    "description": "The body JP4WC 3.2.0 and later send with DELETE /site, so that the server can refuse a site token copied to another site. Earlier clients send no body, which the server still accepts.",
+    "type": "object",
+    "required": [
+        "schema_version",
+        "site_url"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "schema_version": {
+            "$ref": "common.schema.json#/$defs/schema_version"
+        },
+        "site_url": {
+            "$ref": "common.schema.json#/$defs/site_url"
+        }
+    }
+}

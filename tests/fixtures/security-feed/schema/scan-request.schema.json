@@ -30,10 +30,7 @@
             "$ref": "common.schema.json#/$defs/schema_version"
         },
         "site_url": {
-            "description": "home_url().",
-            "type": "string",
-            "maxLength": 2048,
-            "pattern": "^https?://[^\\s/?#]+[^\\s]*$"
+            "$ref": "common.schema.json#/$defs/site_url"
         },
         "wp_ver": {
             "$ref": "#/$defs/version"
