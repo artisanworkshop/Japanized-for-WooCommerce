@@ -4,7 +4,7 @@
 - タスク: #329 artws-security-hub: DELETE /site と GET /scan でも site_url を発行先と照合する（クライアントも同じ PR で site_url を送る。auto-commit）
 - 開始: 2026-11-19
 - PR: 未作成
-- 現在のステップ: 2（実装）
+- 現在のステップ: 4（push・PR 作成）
 - Copilot: 依頼 0 回 / 未収束
 - Codex: 依頼 0 回 / 未収束
 
@@ -19,3 +19,5 @@
 |---|---|---|
 | 2026-11-19 | 1 | 計画承認 |
 | 2026-11-19 | 2 | ブランチ作成（ccca09b から） |
+| 2026-11-19 | 2 | 実装コミット 4 件（c53f94e 契約、0fc2693 サーバー 0.7.0、a5c6847 クライアント、f732edb docs）。品質チェック green（ルート lint・PHPUnit 1140、サーバー lint・PHPUnit 494）。新しいテストは変更前のコードで落ちることを確認 |
+| 2026-11-19 | 3 | review-loop R1（Medium 5 件修正: 72941f1・7a12cbc・73c2815、Low 1 件 backlog）→ R2 APPROVE（R2-1 を b44ae60 で修正、Low 2 件 backlog） |
