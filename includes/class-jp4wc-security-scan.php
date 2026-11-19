@@ -879,20 +879,24 @@ class JP4WC_Security_Scan {
 	 * consent, the token and the report kept here.
 	 *
 	 * A 401 means the registration is gone already, or that wc.artws.info
-	 * issued the token to another site (delete_request()). A token issued to
+	 * issued the token to another site (delete_request()): either way the token
+	 * cannot be used, and only what is kept here is deleted. A token issued to
 	 * another URL is not sent (it belongs to the site this database was copied
 	 * from): only what is kept here is deleted.
 	 *
 	 * @return array{remote_deleted: bool}|WP_Error remote_deleted (since 3.1.0)
-	 *         is false when nothing was sent to wc.artws.info, because no
-	 *         token for this site's URL is kept here.
+	 *         is true only when wc.artws.info confirmed the deletion: false
+	 *         when nothing was sent, because no token for this site's URL is
+	 *         kept here, and (since 3.2.0) when it answered 401, which can mean
+	 *         that it deleted nothing.
 	 */
 	public static function delete_site() {
 		if ( ! self::lock() ) {
 			return self::busy_error();
 		}
 		try {
-			$token = self::usable_token();
+			$token          = self::usable_token();
+			$remote_deleted = false;
 			if ( null !== $token ) {
 				$response = self::delete_request( $token );
 				if ( is_wp_error( $response ) ) {
@@ -902,9 +906,10 @@ class JP4WC_Security_Scan {
 				if ( 401 !== $status && ( $status < 200 || $status >= 300 ) ) {
 					return self::status_error( $status, $response );
 				}
+				$remote_deleted = 401 !== $status;
 			}
 			self::forget_all();
-			return array( 'remote_deleted' => null !== $token );
+			return array( 'remote_deleted' => $remote_deleted );
 		} finally {
 			self::unlock();
 		}
@@ -1006,8 +1011,9 @@ class JP4WC_Security_Scan {
 	 * The body carries home_url(), never the URL kept with the token: a
 	 * search-replace rewrites that one in a copy of the database, so a staging
 	 * copy would send the production token with the address it was issued to.
-	 * wc.artws.info refuses a token issued to another site with 401, which
-	 * delete_site() takes as "gone" and so deletes only what is kept here. An
+	 * wc.artws.info refuses a token issued to another site with 401, after
+	 * which delete_site() deletes only what is kept here and does not say that
+	 * the data on wc.artws.info was deleted. An
 	 * address that the contract does not allow goes without a body, as up to
 	 * 3.1.x: the server would answer 400 and the deletion here could not go on.
 	 *
