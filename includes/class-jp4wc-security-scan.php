@@ -31,7 +31,10 @@ require_once __DIR__ . '/class-jp4wc-security-scanner.php';
  * on the production site's consent. A hash, not the URL: the search-replace
  * that moves a database to another URL (WP-CLI, migration and staging tools)
  * rewrites URLs inside serialized options too, which would make the copy's
- * consent name the copy.
+ * consent name the copy. The same search-replace rewrites the URL kept with
+ * the token, so such a copy takes the production token for its own: DELETE
+ * /site therefore carries the current home_url(), and wc.artws.info refuses
+ * a token issued to another site (since 3.2.0, with artws-security-hub 0.7.0).
  */
 class JP4WC_Security_Scan {
 
@@ -861,7 +864,7 @@ class JP4WC_Security_Scan {
 		// deleted, as uninstall promises.
 		if ( ! self::consent_in_database() ) {
 			self::forget_registration();
-			self::request( 'DELETE', 'site', null === $token ? $result['site_token'] : $token, null, self::UNINSTALL_TIMEOUT );
+			self::delete_request( null === $token ? $result['site_token'] : $token, self::UNINSTALL_TIMEOUT );
 			return new WP_Error(
 				'jp4wc_security_scan_cancelled',
 				__( 'The check data was deleted while the check ran, so its result was not kept.', 'woocommerce-for-japan' ),
@@ -875,9 +878,10 @@ class JP4WC_Security_Scan {
 	 * Deletes this site's data on wc.artws.info (DELETE /site), then the
 	 * consent, the token and the report kept here.
 	 *
-	 * A 401 means the registration is gone already. A token issued to another
-	 * URL is not sent (it belongs to the site this database was copied from):
-	 * only what is kept here is deleted.
+	 * A 401 means the registration is gone already, or that wc.artws.info
+	 * issued the token to another site (delete_request()). A token issued to
+	 * another URL is not sent (it belongs to the site this database was copied
+	 * from): only what is kept here is deleted.
 	 *
 	 * @return array{remote_deleted: bool}|WP_Error remote_deleted (since 3.1.0)
 	 *         is false when nothing was sent to wc.artws.info, because no
@@ -890,7 +894,7 @@ class JP4WC_Security_Scan {
 		try {
 			$token = self::usable_token();
 			if ( null !== $token ) {
-				$response = self::request( 'DELETE', 'site', $token );
+				$response = self::delete_request( $token );
 				if ( is_wp_error( $response ) ) {
 					return self::unreachable_error();
 				}
@@ -940,7 +944,7 @@ class JP4WC_Security_Scan {
 	private static function uninstall_site() {
 		$token = self::usable_token();
 		if ( null !== $token ) {
-			self::request( 'DELETE', 'site', $token, null, self::UNINSTALL_TIMEOUT );
+			self::delete_request( $token, self::UNINSTALL_TIMEOUT );
 		}
 		self::forget_all();
 		delete_option( self::LOCK_OPTION );
@@ -997,6 +1001,35 @@ class JP4WC_Security_Scan {
 	}
 
 	/**
+	 * Sends DELETE /site with the site's current address.
+	 *
+	 * The body carries home_url(), never the URL kept with the token: a
+	 * search-replace rewrites that one in a copy of the database, so a staging
+	 * copy would send the production token with the address it was issued to.
+	 * wc.artws.info refuses a token issued to another site with 401, which
+	 * delete_site() takes as "gone" and so deletes only what is kept here. An
+	 * address that the contract does not allow goes without a body, as up to
+	 * 3.1.x: the server would answer 400 and the deletion here could not go on.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param string $token   Site token.
+	 * @param int    $timeout Seconds.
+	 * @return array|WP_Error
+	 */
+	private static function delete_request( $token, $timeout = self::REQUEST_TIMEOUT ) {
+		$site_url = home_url();
+		$body     = null;
+		if ( self::is_site_url( $site_url ) ) {
+			$body = array(
+				'schema_version' => 1,
+				'site_url'       => $site_url,
+			);
+		}
+		return self::request( 'DELETE', 'site', $token, $body, $timeout );
+	}
+
+	/**
 	 * Returns the HTTP status of a response, or 0 for a request that failed.
 	 *
 	 * @param array|WP_Error $response Response.
@@ -1013,8 +1046,7 @@ class JP4WC_Security_Scan {
 	 * @return WP_Error|null
 	 */
 	private static function payload_error( array $payload ) {
-		$site_url = $payload['site_url'];
-		$valid    = is_string( $site_url ) && strlen( $site_url ) <= 2048 && 1 === preg_match( '~^https?://[^\s/?#]+\S*$~D', $site_url );
+		$valid = self::is_site_url( $payload['site_url'] );
 		foreach ( array( 'wp_ver', 'wc_ver', 'php_ver', 'jp4wc_ver' ) as $key ) {
 			$valid = $valid && self::is_text( $payload[ $key ], 1, 64 );
 		}
@@ -1026,6 +1058,18 @@ class JP4WC_Security_Scan {
 			__( 'This site cannot be checked: its address or a version of WordPress, WooCommerce, PHP or this plugin cannot be sent as the check requires.', 'woocommerce-for-japan' ),
 			array( 'status' => 409 )
 		);
+	}
+
+	/**
+	 * Whether a value is a site URL the contract allows (site_url).
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param mixed $site_url Value to check.
+	 * @return bool
+	 */
+	private static function is_site_url( $site_url ) {
+		return is_string( $site_url ) && strlen( $site_url ) <= 2048 && 1 === preg_match( '~^https?://[^\s/?#]+\S*$~D', $site_url );
 	}
 
 	/**
