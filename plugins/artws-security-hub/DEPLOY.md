@@ -268,8 +268,8 @@ curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" "$BAS
 # 3. 後片付け: テストの登録を消す。
 #    先に別のサイトの site_url の本文で送り、断られる（401）ことを確かめる（0.7.0 以降。DELETE の本文が
 #    PHP まで届いていることも分かる）。204 なら登録はここで消えていて、次の要求は 401 になる（応答のファイルは手で消す）。
-#    2 の 2 行目も 200 なら前の版が答えている。2 の 2 行目が 401 なのにここが 204 なら、DELETE の本文が PHP まで
-#    届いていない（途中の層が落としている）。そのままでは JP4WC 3.2.0 の照合が効かないので、3.2.0 のタグを止めて調べる。
+#    2 の site_url 付きの GET（2 本目の curl）も 200 なら、前の版が答えている。2 本目の curl が 401 なのにここが 204 なら、
+#    DELETE の本文が PHP まで届いていない（途中の層が落としている）。そのままでは JP4WC 3.2.0 の照合が効かないので、3.2.0 のタグを止めて調べる。
 #    次にサンプルの site_url（https://example.jp）の本文で送る（204）。204 のときだけ応答のファイル（トークン入り）を消す
 if [ -n "$TOKEN" ]; then
   curl -s -o /dev/null -w '%{http_code}\n' -X DELETE -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
